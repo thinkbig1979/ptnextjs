@@ -1,0 +1,305 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light dark;
+    --background: 228 33% 98%;
+    --foreground: 0 0% 10%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 18%;
+    --accent: 18 100% 50%;
+    --accent-foreground: 0 0% 100%;
+    --muted: 220 13% 91%;
+    --muted-foreground: 220 9% 46%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+    --border: 220 13% 91%;
+    --input: 220 13% 95%;
+    --primary: 0 0% 10%;
+    --primary-foreground: 0 0% 100%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+    --ring: 18 100% 50%;
+    --radius: 0.5rem;
+  }
+
+  /* Enhanced media query for better mobile browser support */
+  @media (prefers-color-scheme: dark) {
+    :root:not(.light) {
+      --background: 240 100% 8%;
+      --foreground: 0 0% 96%;
+      --secondary: 240 29% 13%;
+      --secondary-foreground: 0 0% 88%;
+      --accent: 18 100% 50%;
+      --accent-foreground: 0 0% 100%;
+      --muted: 215 28% 17%;
+      --muted-foreground: 215 20% 65%;
+      --card: 222 47% 16%;
+      --card-foreground: 0 0% 96%;
+      --border: 215 28% 17%;
+      --input: 215 28% 17%;
+      --primary: 0 0% 96%;
+      --primary-foreground: 0 0% 10%;
+      --popover: 222 47% 16%;
+      --popover-foreground: 0 0% 96%;
+      --ring: 18 100% 50%;
+    }
+  }
+
+  .dark {
+    --background: 240 100% 8%;
+    --foreground: 0 0% 96%;
+    --secondary: 240 29% 13%;
+    --secondary-foreground: 0 0% 88%;
+    --accent: 18 100% 50%;
+    --accent-foreground: 0 0% 100%;
+    --muted: 215 28% 17%;
+    --muted-foreground: 215 20% 65%;
+    --card: 222 47% 16%;
+    --card-foreground: 0 0% 96%;
+    --border: 215 28% 17%;
+    --input: 215 28% 17%;
+    --primary: 0 0% 96%;
+    --primary-foreground: 0 0% 10%;
+    --popover: 222 47% 16%;
+    --popover-foreground: 0 0% 96%;
+    --ring: 18 100% 50%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-poppins-light;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-cormorant;
+  }
+
+  .font-cormorant {
+    font-family: 'Cormorant', serif;
+  }
+
+  .font-poppins-light {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 300;
+  }
+
+  .font-poppins-medium {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+  }
+
+  .bg-gradient-hero {
+    background: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--secondary)) 100%);
+  }
+
+  .dark .bg-gradient-hero {
+    background: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--secondary)) 100%);
+  }
+
+  .parallax-bg {
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .parallax-bg {
+      background-attachment: scroll;
+    }
+  }
+
+  .animate-count-up {
+    animation: countUp 2s ease-out forwards;
+  }
+
+  @keyframes countUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  .dark .hover-lift:hover {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Custom scrollbar styles for dropdowns */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+  
+  .scrollbar-thumb-gray-300::-webkit-scrollbar-thumb {
+    background-color: #d1d5db;
+    border-radius: 4px;
+  }
+  
+  .dark .scrollbar-thumb-gray-600::-webkit-scrollbar-thumb {
+    background-color: #4b5563;
+    border-radius: 4px;
+  }
+  
+  .scrollbar-track-transparent::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  /* Blog content typography styles */
+  .prose {
+    max-width: none;
+  }
+  
+  .prose h1 {
+    @apply text-4xl md:text-5xl font-cormorant font-bold mb-8 mt-12 text-foreground;
+    line-height: 1.1;
+  }
+  
+  .prose h2 {
+    @apply text-3xl md:text-4xl font-cormorant font-bold mb-6 mt-10 text-foreground;
+    line-height: 1.2;
+  }
+  
+  .prose h3 {
+    @apply text-2xl md:text-3xl font-cormorant font-semibold mb-5 mt-8 text-foreground;
+    line-height: 1.25;
+  }
+  
+  .prose h4 {
+    @apply text-xl md:text-2xl font-cormorant font-semibold mb-4 mt-6 text-foreground;
+    line-height: 1.3;
+  }
+  
+  .prose h5 {
+    @apply text-lg md:text-xl font-cormorant font-medium mb-3 mt-5 text-foreground;
+    line-height: 1.35;
+  }
+  
+  .prose h6 {
+    @apply text-base md:text-lg font-cormorant font-medium mb-3 mt-4 text-foreground;
+    line-height: 1.4;
+  }
+  
+  .prose p {
+    @apply text-base md:text-lg font-poppins-light leading-relaxed mb-6 text-foreground;
+  }
+  
+  .prose ul,
+  .prose ol {
+    @apply mb-6 text-foreground;
+  }
+  
+  .prose li {
+    @apply text-base md:text-lg font-poppins-light leading-relaxed mb-2;
+  }
+  
+  .prose blockquote {
+    @apply border-l-4 border-accent pl-6 my-8 italic text-lg;
+  }
+  
+  .prose code {
+    @apply bg-muted px-2 py-1 rounded text-sm;
+  }
+  
+  .prose pre {
+    @apply bg-muted p-4 rounded-lg overflow-x-auto mb-6;
+  }
+  
+  .prose strong {
+    @apply font-medium text-foreground;
+  }
+  
+  .prose em {
+    @apply italic;
+  }
+  
+  .prose a {
+    @apply text-accent hover:text-accent/80 underline;
+  }
+
+  /* Text wrapping utilities */
+  .word-wrap {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  .hyphens-auto {
+    hyphens: auto;
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+  }
+
+  /* Mobile button highlighting fixes */
+  @media (max-width: 768px) {
+    button:focus,
+    button:active {
+      outline: none !important;
+      background-color: transparent !important;
+    }
+    
+    button[data-state="open"] {
+      background-color: transparent !important;
+    }
+    
+    /* Specifically target theme toggle button */
+    button[aria-label*="theme" i],
+    button[aria-describedby*="theme" i] {
+      -webkit-tap-highlight-color: transparent !important;
+      tap-highlight-color: transparent !important;
+    }
+    
+    /* Remove any lingering focus states on touch devices */
+    button:focus:not(:focus-visible) {
+      background-color: transparent !important;
+      outline: none !important;
+    }
+    
+    /* Improve dropdown scrolling on mobile */
+    [data-radix-select-content],
+    [data-radix-dropdown-menu-content] {
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+    }
+    
+    /* Responsive typography adjustments for mobile */
+    .prose h1 {
+      @apply text-3xl mt-8 mb-6;
+    }
+    
+    .prose h2 {
+      @apply text-2xl mt-7 mb-5;
+    }
+    
+    .prose h3 {
+      @apply text-xl mt-6 mb-4;
+    }
+    
+    .prose p {
+      @apply text-base mb-5;
+    }
+  }
+}
