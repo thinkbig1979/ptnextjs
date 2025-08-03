@@ -6,13 +6,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar, User, Clock, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { blogPosts } from "@/lib/data";
+import { getBlogPosts } from "@/lib/data-cms";
 import { formatDate } from "@/lib/utils";
 import { BlogClient } from "./_components/blog-client";
 
 const blogCategories = ["Technology Trends", "Industry News", "Innovation", "Product Updates"];
 
-export default function BlogPage() {
+export default async function BlogPage() {
+  const blogPosts = await getBlogPosts();
   const featuredPost = blogPosts.find(post => post?.featured);
 
   return (

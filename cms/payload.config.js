@@ -80,6 +80,9 @@ exports.default = (0, payload_1.buildConfig)({
                     name: 'content',
                     type: 'richText',
                     required: true,
+                    editor: {
+                        type: 'default',
+                    },
                 },
                 {
                     name: 'author',

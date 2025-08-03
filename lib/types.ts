@@ -1,3 +1,56 @@
+// Main application types
+export interface Partner {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  logo?: string;
+  website?: string;
+  founded?: number;
+  location?: string;
+  tags: string[];
+  featured?: boolean;
+}
+
+export interface Product {
+  id: string;
+  name: string;
+  partnerId: string;
+  partnerName: string;
+  category: string;
+  description: string;
+  image?: string;
+  features: string[];
+  price?: string;
+  tags: string[];
+}
+
+export interface BlogPost {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  author: string;
+  publishedAt: string;
+  category: string;
+  tags: string[];
+  image?: string;
+  featured?: boolean;
+  readTime?: string;
+}
+
+export interface TeamMember {
+  id: string;
+  name: string;
+  role: string;
+  bio: string;
+  image?: string;
+  email?: string;
+  linkedin?: string;
+}
+
+// Legacy expense tracker types (keeping for backward compatibility)
 export type Expense = {
   id: string
   amount: number

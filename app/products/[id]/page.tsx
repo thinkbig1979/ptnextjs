@@ -15,7 +15,7 @@ import {
   ExternalLink
 } from "lucide-react";
 import Link from "next/link";
-import { products, partners } from "@/lib/data";
+import { getProducts, getProductById, getPartnerByProduct } from "@/lib/data-cms";
 import { notFound } from "next/navigation";
 import ProductDetailClient from "./_components/product-detail-client";
 
@@ -24,6 +24,7 @@ export const dynamic = 'force-static';
 
 // Generate static params for all products
 export async function generateStaticParams() {
+  const products = await getProducts();
   return products.map((product) => ({
     id: product.id,
   }));
@@ -40,14 +41,14 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   const { id } = await params;
 
   // Find the product by ID
-  const product = products.find(p => p.id === id);
+  const product = await getProductById(id);
   
   if (!product) {
     notFound();
   }
 
   // Find the partner information
-  const partner = partners.find(p => p.id === product.partnerId);
+  const partner = await getPartnerByProduct(product.id);
   
   // Generate placeholder specifications
   const specifications = [

@@ -7,7 +7,7 @@ const app = express()
 // Initialize Payload
 const start = async () => {
   // Import the config
-  const configModule = await import('./payload.config.ts')
+  const configModule = await import('./payload.config.js')
   const config = configModule.default
 
   await payload.init({
