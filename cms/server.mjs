@@ -6,8 +6,12 @@ const app = express()
 
 // Initialize Payload
 const start = async () => {
+  // Import the config
+  const configModule = await import('./payload.config.ts')
+  const config = configModule.default
+
   await payload.init({
-    secret: process.env.PAYLOAD_SECRET || 'your-secret-key',
+    config,
     express: app,
     onInit: () => {
       payload.logger.info(`Payload Admin URL: ${payload.getAdminURL()}`)

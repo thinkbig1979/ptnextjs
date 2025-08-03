@@ -1,28 +1,20 @@
 
-
 /**
- * Development-only Payload CMS startup script
+ * Development-only Payload CMS startup script (JavaScript version)
  * This script starts Payload CMS only during development mode
  * It runs alongside the Next.js dev server on port 3001
  * Updated for Step 4: Admin UI integration at /admin
  */
 
-import express from 'express'
-import payload from 'payload'
-import path from 'path'
-import { fileURLToPath } from 'url'
-import cors from 'cors'
-import { buildConfig } from 'payload'
-import { sqliteAdapter } from '@payloadcms/db-sqlite'
+const express = require('express')
+const cors = require('cors')
+const path = require('path')
 
 // Environment check - only run in development
 if (process.env.NODE_ENV !== 'development') {
   console.log('🚫 Payload CMS startup skipped (not in development mode)')
   process.exit(0)
 }
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
 
 console.log('🚀 Starting Payload CMS in development mode...')
 console.log('🔗 Integration: Admin UI accessible via Next.js at http://localhost:3000/admin')
@@ -37,68 +29,61 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
 }))
 
-// Payload configuration directly here to avoid import issues
-const payloadConfig = buildConfig({
-  secret: process.env.PAYLOAD_SECRET || 'your-secret-key',
-  db: sqliteAdapter({
-    client: {
-      url: process.env.DATABASE_URL || './payload.db',
-    },
-  }),
-  admin: {
-    user: 'users',
-    cors: process.env.NODE_ENV === 'development' 
-      ? ['http://localhost:3000', 'http://localhost:3001']
-      : [process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3001'],
-    autoLogin: process.env.NODE_ENV === 'development' ? {
-      email: 'admin@paulthamessuperyachttechnology.com',
-      password: 'admin123',
-      prefillOnly: true,
-    } : undefined,
-  },
-  collections: [
-    {
-      slug: 'users',
-      auth: true,
-      admin: {
-        useAsTitle: 'email',
-      },
-      fields: [
-        {
-          name: 'name',
-          type: 'text',
-          required: true,
-        },
-        {
-          name: 'role',
-          type: 'select',
-          options: [
-            { label: 'Admin', value: 'admin' },
-            { label: 'Editor', value: 'editor' },
-            { label: 'Author', value: 'author' },
-          ],
-          defaultValue: 'editor',
-          required: true,
-        },
-      ],
-    },
-  ],
-  serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3001',
-  typescript: {
-    outputFile: path.resolve(__dirname, '../cms/payload-types.ts'),
-  },
-  cors: process.env.NODE_ENV === 'development' 
-    ? ['http://localhost:3000', 'http://localhost:3001']
-    : [process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3001'],
-})
-
 // Function to start Payload CMS
 const startPayloadCMS = async () => {
   try {
+    // Dynamic import for ESM payload
+    const payload = (await import('payload')).default
+    const { buildConfig } = await import('payload')
+    const { sqliteAdapter } = await import('@payloadcms/db-sqlite')
+
+    // Payload configuration
+    const payloadConfig = buildConfig({
+      secret: process.env.PAYLOAD_SECRET || 'your-secret-key',
+      db: sqliteAdapter({
+        client: {
+          url: process.env.DATABASE_URL || `file:${path.resolve(process.cwd(), 'payload.db')}`,
+        },
+      }),
+      admin: {
+        user: 'users',
+      },
+      collections: [
+        {
+          slug: 'users',
+          auth: true,
+          admin: {
+            useAsTitle: 'email',
+          },
+          fields: [
+            {
+              name: 'name',
+              type: 'text',
+              required: true,
+            },
+            {
+              name: 'role',
+              type: 'select',
+              options: [
+                { label: 'Admin', value: 'admin' },
+                { label: 'Editor', value: 'editor' },
+                { label: 'Author', value: 'author' },
+              ],
+              defaultValue: 'editor',
+              required: true,
+            },
+          ],
+        },
+      ],
+      serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3001',
+      typescript: {
+        outputFile: path.resolve(__dirname, '../cms/payload-types.ts'),
+      },
+    })
     
     // Initialize Payload with the Express app
     await payload.init({
-      ...payloadConfig,
+      config: payloadConfig,
       express: app,
       onInit: async () => {
         payload.logger.info(`✅ Payload CMS initialized successfully`)

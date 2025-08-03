@@ -1,4 +1,5 @@
 
+
 import { buildConfig } from 'payload'
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
 
@@ -9,7 +10,7 @@ export default buildConfig({
   // Database configuration with SQLite
   db: sqliteAdapter({
     client: {
-      url: process.env.DATABASE_URL || './payload.db',
+      url: process.env.DATABASE_URL || `file:${process.cwd()}/payload.db`,
     },
   }),
 
@@ -84,6 +85,9 @@ export default buildConfig({
           name: 'content',
           type: 'richText',
           required: true,
+          editor: {
+            type: 'default',
+          },
         },
         {
           name: 'author',
@@ -434,7 +438,6 @@ export default buildConfig({
     {
       slug: 'media',
       upload: {
-        staticURL: '/media',
         staticDir: 'media',
         imageSizes: [
           {

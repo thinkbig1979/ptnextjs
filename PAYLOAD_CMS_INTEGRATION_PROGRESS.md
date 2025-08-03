@@ -132,15 +132,59 @@ npx tsx scripts/start-payload-dev.ts
 
 ---
 
-### ⏳ Step 4: Set Up Payload Admin Interface
-**Status**: ⏳ PENDING
-**Target Date**: TBD
+### 🔄 Step 4: Host Admin UI at `/admin`
+**Status**: 🔄 IN PROGRESS
+**Completion Date**: 2025-08-03 (Partial)
 
-**Planned Tasks**:
-- [ ] Configure admin panel access
-- [ ] Set up authentication
-- [ ] Create admin user account
+**Tasks Completed**:
+- [x] Created Next.js middleware to proxy `/admin` requests to Payload CMS (port 3001)
+- [x] Updated Payload CMS configuration for better integration
+- [x] Created JavaScript-based startup script (start-payload-dev.js) to avoid TypeScript compilation issues
+- [x] Fixed Payload configuration errors (RichText editor, SQLite URL format, CORS settings)
+- [x] Enhanced development scripts for integrated workflow
+- [x] Updated shell scripts to use JavaScript version of Payload startup
+
+**Current Status**:
+- ✅ **Middleware Integration**: Next.js middleware is properly configured at `/middleware.ts` to proxy `/admin` routes
+- ✅ **Development Scripts**: Both Next.js and Payload CMS can run simultaneously via `./scripts/dev-with-cms.sh`
+- ✅ **Configuration**: Payload CMS configuration updated and compiles successfully
+- ⚠️ **Admin Interface**: Payload CMS initializes but admin routes return 404 (investigation needed)
+
+**Files Created/Updated**:
+- `/middleware.ts` - Next.js middleware for admin route proxying
+- `/scripts/start-payload-dev.js` - JavaScript-based Payload CMS startup script
+- `/scripts/dev-with-cms.sh` - Updated to use JavaScript version
+- `/cms/payload.config.ts` - Fixed configuration errors and compatibility issues
+- `/cms/server.mjs` - Updated to properly import TypeScript config
+
+**Technical Implementation Details**:
+- **Middleware Strategy**: Uses NextResponse.rewrite() to proxy `/admin/*` to `http://localhost:3001/admin/*`
+- **CORS Configuration**: Configured for localhost:3000 and localhost:3001 origins
+- **Database**: SQLite with proper file URL format (`file:/path/to/payload.db`)
+- **Admin Panel**: Configured with users collection for authentication
+- **Development Workflow**: Both servers run on separate ports (3000 for Next.js, 3001 for Payload)
+
+**Known Issues**:
+- Payload CMS admin panel returns 404 despite successful initialization (routes not mounting properly)
+- This appears to be a Payload CMS internal routing issue that needs further investigation
+
+**Next Steps (Remaining)**:
+- [ ] Investigate Payload CMS admin route mounting issue
+- [ ] Test admin interface accessibility at http://localhost:3000/admin
+- [ ] Verify authentication and user management
 - [ ] Test CRUD operations in admin interface
+- [ ] Complete integration testing
+
+**Usage (Current)**:
+```bash
+# Start both servers with integrated setup
+./scripts/dev-with-cms.sh
+
+# Access points (when fully working):
+# - Next.js App: http://localhost:3000
+# - Admin Panel: http://localhost:3000/admin (via middleware)
+# - Direct CMS: http://localhost:3001/admin (direct access)
+```
 
 ---
 

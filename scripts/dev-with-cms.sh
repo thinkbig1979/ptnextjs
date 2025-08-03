@@ -1,50 +1,52 @@
 
 #!/bin/bash
 
-# Development script to run Next.js and Payload CMS simultaneously
-# This script starts both servers in development mode
-
-echo "🚀 Starting Next.js with Payload CMS in development mode..."
-echo "📝 Note: This will start two servers:"
-echo "   - Next.js: http://localhost:3000"
-echo "   - Payload CMS: http://localhost:3001"
+echo "🚀 Starting Next.js Development Server with Payload CMS Integration"
+echo "=================================================="
 echo ""
 
-# Set environment to development
+# Set development environment
 export NODE_ENV=development
 
-# Function to cleanup child processes on exit
-cleanup() {
-    echo ""
-    echo "🛑 Shutting down development servers..."
-    kill $(jobs -p) 2>/dev/null
-    exit 0
-}
-
-# Set trap to cleanup on script exit
-trap cleanup SIGINT SIGTERM
-
-# Start Next.js development server in background
-echo "🔵 Starting Next.js development server..."
+echo "📦 Starting Next.js Development Server (Port 3000)..."
 npm run dev &
 NEXTJS_PID=$!
 
-# Wait a moment for Next.js to start
-sleep 3
-
-# Start Payload CMS development server in background
-echo "🟡 Starting Payload CMS development server..."
-npx tsx scripts/start-payload-dev.ts &
+echo "⚡ Starting Payload CMS Development Server (Port 3001)..."
+node scripts/start-payload-dev.js &
 PAYLOAD_PID=$!
 
-# Wait for both processes
 echo ""
 echo "✅ Both servers are starting up..."
-echo "🔗 Next.js: http://localhost:3000"
-echo "🔗 Payload CMS Admin: http://localhost:3001/admin"
-echo "🔗 Payload CMS API: http://localhost:3001/api"
 echo ""
-echo "Press Ctrl+C to stop both servers"
+echo "🌐 ACCESS POINTS:"
+echo "📱 Next.js App: http://localhost:3000"
+echo "🎨 CMS Admin Panel: http://localhost:3000/admin (INTEGRATED)"
+echo "📡 CMS API: http://localhost:3000/api/payload (INTEGRATED)"
+echo ""
+echo "🔧 DIRECT CMS ACCESS (Development):"
+echo "🛠️  Direct Admin: http://localhost:3001/admin"
+echo "🔗 Direct API: http://localhost:3001/api"
+echo ""
+echo "🔐 Default CMS Login:"
+echo "📧 Email: admin@paulthamessuperyachttechnology.com"
+echo "🔑 Password: admin123"
+echo ""
+echo "💡 Press Ctrl+C to stop both servers"
+echo "=================================================="
+
+# Function to handle cleanup
+cleanup() {
+    echo ""
+    echo "🛑 Shutting down development servers..."
+    kill $NEXTJS_PID 2>/dev/null
+    kill $PAYLOAD_PID 2>/dev/null
+    echo "✅ Both servers stopped successfully"
+    exit 0
+}
+
+# Set trap to cleanup on exit
+trap cleanup SIGINT SIGTERM
 
 # Wait for either process to exit
-wait $NEXTJS_PID $PAYLOAD_PID
+wait
