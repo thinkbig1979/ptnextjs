@@ -14,9 +14,9 @@ import { formatDate } from "@/lib/utils";
 import { notFound } from "next/navigation";
 
 interface BlogPostPageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export default function BlogPostPage({ params }: BlogPostPageProps) {
@@ -27,8 +27,11 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
 
   const [isSaved, setIsSaved] = React.useState(false);
 
+  // Properly unwrap the params Promise using React.use()
+  const { slug } = React.use(params);
+
   // Find the blog post by slug
-  const post = blogPosts.find(p => p.slug === params.slug);
+  const post = blogPosts.find(p => p.slug === slug);
   
   if (!post) {
     notFound();

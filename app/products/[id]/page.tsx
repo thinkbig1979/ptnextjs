@@ -28,9 +28,9 @@ import { products, partners } from "@/lib/data";
 import { notFound } from "next/navigation";
 
 interface ProductDetailPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default function ProductDetailPage({ params }: ProductDetailPageProps) {
@@ -39,8 +39,11 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
     threshold: 0.1,
   });
 
+  // Properly unwrap the params Promise using React.use()
+  const { id } = React.use(params);
+
   // Find the product by ID
-  const product = products.find(p => p.id === params.id);
+  const product = products.find(p => p.id === id);
 
   // Handler functions
   const handleRequestQuote = () => {

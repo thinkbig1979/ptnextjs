@@ -30,9 +30,9 @@ import { partners, products } from "@/lib/data";
 import { notFound } from "next/navigation";
 
 interface PartnerDetailPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default function PartnerDetailPage({ params }: PartnerDetailPageProps) {
@@ -41,8 +41,11 @@ export default function PartnerDetailPage({ params }: PartnerDetailPageProps) {
     threshold: 0.1,
   });
 
+  // Properly unwrap the params Promise using React.use()
+  const { id } = React.use(params);
+
   // Find the partner by ID
-  const partner = partners.find(p => p.id === params.id);
+  const partner = partners.find(p => p.id === id);
 
   // Handler functions
   const handleCallPartner = () => {
