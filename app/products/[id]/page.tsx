@@ -1,9 +1,4 @@
 
-"use client";
-
-import * as React from "react";
-import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,15 +12,22 @@ import {
   Zap, 
   Shield, 
   Wrench,
-  Phone,
-  Mail,
-  ExternalLink,
-  Download,
-  Play
+  ExternalLink
 } from "lucide-react";
 import Link from "next/link";
 import { products, partners } from "@/lib/data";
 import { notFound } from "next/navigation";
+import ProductDetailClient from "./_components/product-detail-client";
+
+// Enable static generation
+export const dynamic = 'force-static';
+
+// Generate static params for all products
+export async function generateStaticParams() {
+  return products.map((product) => ({
+    id: product.id,
+  }));
+}
 
 interface ProductDetailPageProps {
   params: Promise<{
@@ -33,34 +35,12 @@ interface ProductDetailPageProps {
   }>;
 }
 
-export default function ProductDetailPage({ params }: ProductDetailPageProps) {
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
-
-  // Properly unwrap the params Promise using React.use()
-  const { id } = React.use(params);
+export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
+  // Await the params in server component
+  const { id } = await params;
 
   // Find the product by ID
   const product = products.find(p => p.id === id);
-
-  // Handler functions
-  const handleRequestQuote = () => {
-    alert(`Quote request for "${product?.name}" has been submitted. Our sales team will contact you shortly.`);
-  };
-
-  const handleContactSales = () => {
-    alert(`Contacting sales team about "${product?.name}". You will be redirected to our contact form.`);
-  };
-
-  const handleDownloadBrochure = () => {
-    alert(`Downloading brochure for "${product?.name}". The download will start shortly.`);
-  };
-
-  const handleDemoVideo = () => {
-    alert(`Opening demo video for "${product?.name}". The video player will launch shortly.`);
-  };
   
   if (!product) {
     notFound();
@@ -92,31 +72,20 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
     <div className="min-h-screen py-12">
       <div className="container max-w-6xl">
         {/* Back Button */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
-          className="mb-8"
-        >
+        <div className="mb-8">
           <Button asChild variant="ghost" className="group">
             <Link href="/products">
               <ArrowLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
               Back to Products
             </Link>
           </Button>
-        </motion.div>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Main Content */}
           <div className="lg:col-span-2">
             {/* Header */}
-            <motion.div
-              ref={ref}
-              initial={{ opacity: 0, y: 30 }}
-              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-              transition={{ duration: 0.8 }}
-              className="mb-8"
-            >
+            <div className="mb-8">
               <div className="flex items-center space-x-2 mb-4">
                 <Badge variant="secondary">{product.category}</Badge>
                 <Badge variant="outline">Professional Grade</Badge>
@@ -144,39 +113,20 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                   </div>
                 </div>
               )}
-            </motion.div>
+            </div>
 
             {/* Hero Image */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="mb-8"
-            >
-              <div className="aspect-video bg-gradient-to-br from-accent/20 to-primary/20 rounded-lg flex items-center justify-center relative overflow-hidden">
+            <div className="mb-8">
+              <div className="aspect-video bg-gradient-to-br from-accent/20 to-primary/20 rounded-lg flex items-center justify-center">
                 <div className="text-center">
                   <Package className="w-16 h-16 text-accent/60 mx-auto mb-4" />
                   <p className="text-sm text-muted-foreground">Product Image Placeholder</p>
                 </div>
-                <Button 
-                  variant="secondary" 
-                  size="sm" 
-                  className="absolute top-4 right-4"
-                  onClick={handleDemoVideo}
-                >
-                  <Play className="w-4 h-4 mr-2" />
-                  Demo Video
-                </Button>
               </div>
-            </motion.div>
+            </div>
 
             {/* Key Features */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="mb-8"
-            >
+            <div className="mb-8">
               <h2 className="text-2xl font-cormorant font-bold mb-4">Key Features</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {product.features.map((feature, index) => (
@@ -186,15 +136,10 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                   </div>
                 ))}
               </div>
-            </motion.div>
+            </div>
 
             {/* Benefits */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="mb-8"
-            >
+            <div className="mb-8">
               <h2 className="text-2xl font-cormorant font-bold mb-4">Benefits</h2>
               <div className="space-y-3">
                 {benefits.map((benefit, index) => (
@@ -204,15 +149,10 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                   </div>
                 ))}
               </div>
-            </motion.div>
+            </div>
 
             {/* Technical Specifications */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-              className="mb-8"
-            >
+            <div className="mb-8">
               <h2 className="text-2xl font-cormorant font-bold mb-4">Technical Specifications</h2>
               <Card>
                 <CardContent className="p-6">
@@ -226,15 +166,10 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                   </div>
                 </CardContent>
               </Card>
-            </motion.div>
+            </div>
 
             {/* Installation & Support */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
-              className="mb-8"
-            >
+            <div className="mb-8">
               <h2 className="text-2xl font-cormorant font-bold mb-4">Installation & Support</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Card>
@@ -273,18 +208,13 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                   </CardContent>
                 </Card>
               </div>
-            </motion.div>
+            </div>
           </div>
 
           {/* Sidebar */}
           <div className="lg:col-span-1">
             {/* Contact Card */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="mb-6"
-            >
+            <div className="mb-6">
               <Card className="sticky top-6 overflow-hidden">
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
@@ -298,22 +228,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                     <div className="text-sm text-muted-foreground break-words">Custom quotes available</div>
                   </div>
                   
-                  <div className="space-y-3">
-                    <Button className="w-full bg-accent hover:bg-accent/90 h-auto py-3" onClick={handleRequestQuote}>
-                      <Phone className="w-4 h-4 mr-2 flex-shrink-0" />
-                      <span className="break-words">Request Quote</span>
-                    </Button>
-                    
-                    <Button variant="outline" className="w-full h-auto py-3" onClick={handleContactSales}>
-                      <Mail className="w-4 h-4 mr-2 flex-shrink-0" />
-                      <span className="break-words">Contact Sales</span>
-                    </Button>
-                    
-                    <Button variant="outline" className="w-full h-auto py-3" onClick={handleDownloadBrochure}>
-                      <Download className="w-4 h-4 mr-2 flex-shrink-0" />
-                      <span className="break-words">Download Brochure</span>
-                    </Button>
-                  </div>
+                  <ProductDetailClient product={product} partner={partner} />
 
                   <Separator />
 
@@ -359,7 +274,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                   </div>
                 </CardContent>
               </Card>
-            </motion.div>
+            </div>
           </div>
         </div>
       </div>

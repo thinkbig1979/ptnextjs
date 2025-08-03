@@ -1,17 +1,23 @@
 
-"use client";
-
-import * as React from "react";
-import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, User, Clock, ArrowLeft, Share2, BookmarkPlus, Bookmark } from "lucide-react";
+import { Calendar, User, Clock, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { blogPosts, getRelatedPosts } from "@/lib/data";
 import { formatDate } from "@/lib/utils";
 import { notFound } from "next/navigation";
+import BlogPostClient from "./_components/blog-post-client";
+
+// Enable static generation
+export const dynamic = 'force-static';
+
+// Generate static params for all blog posts
+export async function generateStaticParams() {
+  return blogPosts.map((post) => ({
+    slug: post.slug,
+  }));
+}
 
 interface BlogPostPageProps {
   params: Promise<{
@@ -19,16 +25,9 @@ interface BlogPostPageProps {
   }>;
 }
 
-export default function BlogPostPage({ params }: BlogPostPageProps) {
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
-
-  const [isSaved, setIsSaved] = React.useState(false);
-
-  // Properly unwrap the params Promise using React.use()
-  const { slug } = React.use(params);
+export default async function BlogPostPage({ params }: BlogPostPageProps) {
+  // Await the params in server component
+  const { slug } = await params;
 
   // Find the blog post by slug
   const post = blogPosts.find(p => p.slug === slug);
@@ -39,73 +38,21 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
 
   const relatedPosts = getRelatedPosts(post.id, 3);
 
-  const handleSave = () => {
-    setIsSaved(!isSaved);
-    // Here you could implement actual saving functionality
-    // For now, we'll just toggle the state
-  };
-
-  const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: post.title,
-          text: post.excerpt,
-          url: window.location.href,
-        });
-      } catch (error) {
-        // If native sharing fails, fall back to copying URL
-        copyToClipboard();
-      }
-    } else {
-      // Fallback for browsers that don't support native sharing
-      copyToClipboard();
-    }
-  };
-
-  const copyToClipboard = async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      // You could show a toast notification here
-      alert('Link copied to clipboard!');
-    } catch (error) {
-      // Fallback for older browsers
-      const textArea = document.createElement('textarea');
-      textArea.value = window.location.href;
-      document.body.appendChild(textArea);
-      textArea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textArea);
-      alert('Link copied to clipboard!');
-    }
-  };
-
   return (
     <div className="min-h-screen py-12">
       <div className="container max-w-4xl">
         {/* Back Button */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
-          className="mb-8"
-        >
+        <div className="mb-8">
           <Button asChild variant="ghost" className="group">
             <Link href="/blog">
               <ArrowLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
               Back to Blog
             </Link>
           </Button>
-        </motion.div>
+        </div>
 
         {/* Article Header */}
-        <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.8 }}
-          className="mb-12"
-        >
+        <div className="mb-12">
           <div className="flex items-center space-x-2 mb-4">
             <Badge variant="secondary">{post.category}</Badge>
             <div className="flex items-center text-sm text-muted-foreground space-x-4">
@@ -139,43 +86,20 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
               </div>
             </div>
             
-            <div className="flex items-center space-x-2">
-              <Button variant="outline" size="sm" onClick={handleSave}>
-                {isSaved ? (
-                  <Bookmark className="w-4 h-4 mr-2 fill-current" />
-                ) : (
-                  <BookmarkPlus className="w-4 h-4 mr-2" />
-                )}
-                {isSaved ? 'Saved' : 'Save'}
-              </Button>
-              <Button variant="outline" size="sm" onClick={handleShare}>
-                <Share2 className="w-4 h-4 mr-2" />
-                Share
-              </Button>
-            </div>
+            <BlogPostClient post={post} />
           </div>
-        </motion.div>
+        </div>
 
         {/* Article Content */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="prose prose-lg max-w-none mb-12"
-        >
+        <div className="prose prose-lg max-w-none mb-12">
           <div 
             className="text-foreground leading-relaxed font-poppins-light"
             dangerouslySetInnerHTML={{ __html: post.content }}
           />
-        </motion.div>
+        </div>
 
         {/* Tags */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="mb-12"
-        >
+        <div className="mb-12">
           <h3 className="text-lg font-medium mb-4">Tags</h3>
           <div className="flex flex-wrap gap-2">
             {post.tags.map((tag) => (
@@ -184,16 +108,11 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
               </Badge>
             ))}
           </div>
-        </motion.div>
+        </div>
 
         {/* Related Posts */}
         {relatedPosts.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="border-t pt-12"
-          >
+          <div className="border-t pt-12">
             <h3 className="text-2xl font-cormorant font-bold mb-8">Related Articles</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {relatedPosts.map((relatedPost) => (
@@ -224,7 +143,7 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
                 </Card>
               ))}
             </div>
-          </motion.div>
+          </div>
         )}
       </div>
     </div>
