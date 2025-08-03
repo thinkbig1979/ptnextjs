@@ -1,9 +1,9 @@
 
 /**
- * Development-only Payload CMS startup script (JavaScript version)
- * This script starts Payload CMS only during development mode
- * It runs alongside the Next.js dev server on port 3001
- * Updated for Step 4: Admin UI integration at /admin
+ * STEP 6: Isolated Payload CMS Development Server
+ * This script starts Payload CMS as a completely separate service
+ * It runs independently from Next.js on port 3001
+ * No routing coupling or middleware integration
  */
 
 const express = require('express')
@@ -16,12 +16,12 @@ if (process.env.NODE_ENV !== 'development') {
   process.exit(0)
 }
 
-console.log('🚀 Starting Payload CMS in development mode...')
-console.log('🔗 Integration: Admin UI accessible via Next.js at http://localhost:3000/admin')
+console.log('🚀 Starting Payload CMS in ISOLATED development mode...')
+console.log('🔗 STEP 6: Running as independent service - No Next.js routing coupling')
 
 const app = express()
 
-// Configure CORS for Next.js integration
+// Configure CORS for isolated service communication
 app.use(cors({
   origin: ['http://localhost:3000', 'http://localhost:3001'],
   credentials: true,
@@ -89,8 +89,8 @@ const startPayloadCMS = async () => {
         payload.logger.info(`✅ Payload CMS initialized successfully`)
         payload.logger.info(`📊 Admin Panel (Direct): ${payload.getAdminURL()}`)
         payload.logger.info(`🔌 API Endpoint (Direct): ${payload.getAdminURL().replace('/admin', '/api')}`)
-        payload.logger.info(`🌐 Admin Panel (via Next.js): http://localhost:3000/admin`)
-        payload.logger.info(`🔗 API Endpoint (via Next.js): http://localhost:3000/api/payload`)
+        payload.logger.info(`🔒 ISOLATED: No Next.js routing integration`)
+        payload.logger.info(`🔄 API Communication: Direct HTTP calls only`)
         
         // Seed initial admin user if not exists
         try {
@@ -130,9 +130,9 @@ const startPayloadCMS = async () => {
       console.log(`🛠️  Direct Admin Panel: http://localhost:${port}/admin`)
       console.log(`🔗 Direct API: http://localhost:${port}/api`)
       console.log('')
-      console.log('🌟 INTEGRATED ACCESS (Recommended):')
-      console.log(`🎨 Admin Panel: http://localhost:3000/admin`)
-      console.log(`📡 API Access: http://localhost:3000/api/payload`)
+      console.log('🔒 ISOLATED ARCHITECTURE (Step 6):')
+      console.log(`✨ No routing conflicts with Next.js`)
+      console.log(`🚀 Independent deployment capability`)
       console.log('')
       console.log('📝 Note: This server runs only in development mode')
       console.log('🔄 Restart this script if you make changes to CMS config')

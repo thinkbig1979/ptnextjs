@@ -277,3 +277,61 @@ npx tsx scripts/start-payload-dev.ts
 
 **Last Updated**: 2025-01-28
 **Next Review**: After Step 2 completion
+
+
+---
+
+### ✅ Step 6: Keep Payload Isolated from Next.js Routing
+**Status**: ✅ COMPLETED
+**Completion Date**: 2025-08-03
+
+**ARCHITECTURAL SEPARATION ACHIEVED**
+
+**Tasks Completed**:
+- [x] Removed middleware proxying to eliminate routing coupling
+- [x] Updated API integration layer for explicit endpoint configuration  
+- [x] Configured complete port separation (Next.js: 3000, CMS: 3001)
+- [x] Updated Express server for independent service operation
+- [x] Modified API integration to use direct HTTP calls only
+- [x] Ensured both systems run independently without interference
+- [x] Updated environment configuration for proper isolation
+- [x] Tested isolated setup - both services work correctly
+- [x] Updated development scripts to reflect isolated architecture
+
+**Files Updated**:
+- `middleware.ts` - Removed routing proxying, documented isolation approach
+- `lib/payload-api.ts` - Enhanced for explicit service communication
+- `.env` - Updated with isolated architecture configuration
+- `cms/.env.example` - Updated for isolated service configuration
+- `scripts/start-payload-dev.js` - Updated messaging for isolated architecture
+- `scripts/dev-with-cms.sh` - Updated for isolated development workflow
+
+**Architecture Benefits**:
+- ✨ No routing conflicts between services
+- 🚀 Independent deployment capability  
+- 🔒 Complete service isolation
+- 🔄 API communication via explicit endpoints only
+- 🛡️ Enhanced security through service separation
+- 📈 Improved scalability and maintainability
+
+**Technical Implementation**:
+- **Complete Port Separation**: Next.js (3000) and Payload CMS (3001) run independently
+- **Direct API Communication**: HTTP calls to `http://localhost:3001/api` endpoints
+- **No Middleware Coupling**: Removed Next.js middleware that proxied CMS routes
+- **Independent Services**: Both can start, stop, and deploy separately
+- **Graceful Fallback**: Next.js falls back to static data when CMS is unavailable
+- **Environment Isolation**: Clear configuration separation between services
+
+**Access Points (Isolated)**:
+- Next.js App: http://localhost:3000
+- CMS Admin Panel: http://localhost:3001/admin
+- CMS API: http://localhost:3001/api
+
+**Verification Tests Passed**:
+- ✅ Next.js builds successfully with isolated configuration
+- ✅ Both services start independently without conflicts
+- ✅ HTTP requests work correctly on separate ports
+- ✅ No routing interference between services
+- ✅ Fallback system works when CMS is unavailable
+
+---

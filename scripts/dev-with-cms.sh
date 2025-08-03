@@ -1,8 +1,10 @@
 
 #!/bin/bash
 
-echo "🚀 Starting Next.js Development Server with Payload CMS Integration"
-echo "=================================================="
+echo "🚀 Starting ISOLATED Next.js and Payload CMS Development Servers"
+echo "=================================================================="
+echo ""
+echo "🏗️  STEP 6: Payload CMS Isolation - Complete Architectural Separation"
 echo ""
 
 # Set development environment
@@ -17,23 +19,25 @@ node scripts/start-payload-dev.js &
 PAYLOAD_PID=$!
 
 echo ""
-echo "✅ Both servers are starting up..."
+echo "✅ Both servers are starting up as ISOLATED services..."
 echo ""
-echo "🌐 ACCESS POINTS:"
+echo "🌐 ISOLATED ACCESS POINTS:"
 echo "📱 Next.js App: http://localhost:3000"
-echo "🎨 CMS Admin Panel: http://localhost:3000/admin (INTEGRATED)"
-echo "📡 CMS API: http://localhost:3000/api/payload (INTEGRATED)"
+echo "🎨 CMS Admin Panel: http://localhost:3001/admin (ISOLATED)"
+echo "📡 CMS API: http://localhost:3001/api (ISOLATED)"
 echo ""
-echo "🔧 DIRECT CMS ACCESS (Development):"
-echo "🛠️  Direct Admin: http://localhost:3001/admin"
-echo "🔗 Direct API: http://localhost:3001/api"
+echo "🔧 ARCHITECTURAL BENEFITS:"
+echo "✨ No routing conflicts between services"
+echo "🚀 Independent deployment capability"
+echo "🔒 Complete service isolation"
+echo "🔄 API communication via explicit endpoints"
 echo ""
 echo "🔐 Default CMS Login:"
 echo "📧 Email: admin@paulthamessuperyachttechnology.com"
 echo "🔑 Password: admin123"
 echo ""
 echo "💡 Press Ctrl+C to stop both servers"
-echo "=================================================="
+echo "=================================================================="
 
 # Function to handle cleanup
 cleanup() {
