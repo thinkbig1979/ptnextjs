@@ -1,9 +1,6 @@
 
-"use client";
 
 import * as React from "react";
-import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -12,39 +9,23 @@ import Link from "next/link";
 import { partners } from "@/lib/data";
 
 export function FeaturedPartnersSection() {
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
-
   const featuredPartners = partners.filter(partner => partner?.featured).slice(0, 6);
 
   return (
     <section className="py-20 bg-secondary/30">
       <div className="container max-w-screen-xl">
-        <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-16"
-        >
+        <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-cormorant font-bold mb-4">
             Featured Technology Partners
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-poppins-light">
             Discover our carefully curated selection of leading superyacht technology providers
           </p>
-        </motion.div>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {featuredPartners.map((partner, index) => (
-            <motion.div
-              key={partner?.id}
-              initial={{ opacity: 0, y: 30 }}
-              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-            >
+            <div key={partner?.id}>
               <Card className="h-full hover-lift cursor-pointer group">
                 <CardHeader>
                   <div className="flex items-center space-x-3 mb-3">
@@ -74,23 +55,18 @@ export function FeaturedPartnersSection() {
                   </div>
                 </CardContent>
               </Card>
-            </motion.div>
+            </div>
           ))}
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
-          className="text-center mt-12"
-        >
+        <div className="text-center mt-12">
           <Button asChild size="lg" variant="accent" className="group">
             <Link href="/partners">
               View All Partners
               <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </Button>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

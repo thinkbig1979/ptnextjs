@@ -1,14 +1,11 @@
 
-"use client";
 
 import * as React from "react";
-import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Mail, MapPin, Calendar, Users, Ship, Target, Award } from "lucide-react";
+import { MapPin, Calendar, Users, Ship, Target, Award } from "lucide-react";
 import { companyInfo, teamMembers } from "@/lib/data";
+import { AboutClient } from "./_components/about-client";
 
 const values = [
   {
@@ -41,42 +38,21 @@ const stats = [
 ];
 
 export default function AboutPage() {
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
-
-  const [teamRef, teamInView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
-
   return (
     <div className="min-h-screen py-12">
       <div className="container max-w-screen-xl">
         {/* Header */}
-        <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-16"
-        >
+        <div className="text-center mb-16">
           <h1 className="text-4xl md:text-6xl font-cormorant font-bold mb-6">
             About Paul Thames
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-poppins-light leading-relaxed">
             {companyInfo.tagline}
           </p>
-        </motion.div>
+        </div>
 
         {/* Company Story */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="mb-20"
-        >
+        <div className="mb-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
               <h2 className="text-3xl md:text-4xl font-cormorant font-bold">Our Story</h2>
@@ -110,41 +86,25 @@ export default function AboutPage() {
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
 
-        {/* Stats */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="mb-20"
-        >
+        {/* Stats - Static content */}
+        <div className="mb-20">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={inView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.6, delay: 0.5 + index * 0.1 }}
-                className="text-center space-y-2"
-              >
+              <div key={stat.label} className="text-center space-y-2">
                 <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto">
                   <stat.icon className="w-6 h-6 text-accent" />
                 </div>
                 <div className="text-3xl font-cormorant font-bold">{stat.value}</div>
                 <p className="text-sm text-muted-foreground font-poppins-light">{stat.label}</p>
-              </motion.div>
+              </div>
             ))}
           </div>
-        </motion.div>
+        </div>
 
-        {/* Values */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="mb-20"
-        >
+        {/* Values - Static content */}
+        <div className="mb-20">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-cormorant font-bold mb-4">Our Values</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-poppins-light">
@@ -154,12 +114,7 @@ export default function AboutPage() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {values.map((value, index) => (
-              <motion.div
-                key={value.title}
-                initial={{ opacity: 0, y: 30 }}
-                animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-                transition={{ duration: 0.6, delay: 0.7 + index * 0.1 }}
-              >
+              <div key={value.title}>
                 <Card className="h-full hover-lift">
                   <CardHeader className="text-center">
                     <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -173,19 +128,13 @@ export default function AboutPage() {
                     </CardDescription>
                   </CardContent>
                 </Card>
-              </motion.div>
+              </div>
             ))}
           </div>
-        </motion.div>
+        </div>
 
-        {/* Team */}
-        <motion.div
-          ref={teamRef}
-          initial={{ opacity: 0, y: 30 }}
-          animate={teamInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.8 }}
-          className="mb-20"
-        >
+        {/* Team - Static content */}
+        <div className="mb-20">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-cormorant font-bold mb-4">Our Team</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-poppins-light">
@@ -195,12 +144,7 @@ export default function AboutPage() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {teamMembers.map((member, index) => (
-              <motion.div
-                key={member?.id}
-                initial={{ opacity: 0, y: 30 }}
-                animate={teamInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-              >
+              <div key={member?.id}>
                 <Card className="h-full hover-lift">
                   <CardHeader className="text-center">
                     <div className="w-20 h-20 bg-gradient-to-br from-accent/20 to-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -215,23 +159,13 @@ export default function AboutPage() {
                     <p className="text-sm text-muted-foreground font-poppins-light">
                       {member?.bio}
                     </p>
-                    {member?.email && (
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="w-full group"
-                        onClick={() => window.open(`mailto:${member.email}`, '_blank')}
-                      >
-                        <Mail className="mr-2 h-3 w-3" />
-                        Contact
-                      </Button>
-                    )}
+                    <AboutClient member={member} />
                   </CardContent>
                 </Card>
-              </motion.div>
+              </div>
             ))}
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

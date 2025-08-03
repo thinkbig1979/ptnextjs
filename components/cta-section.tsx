@@ -1,20 +1,12 @@
 
-"use client";
 
 import * as React from "react";
-import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Mail, Phone } from "lucide-react";
 import Link from "next/link";
 import { companyInfo } from "@/lib/data";
 
 export function CTASection() {
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
-
   return (
     <section className="py-20 bg-accent text-accent-foreground relative overflow-hidden">
       {/* Background Pattern */}
@@ -24,13 +16,7 @@ export function CTASection() {
       </div>
 
       <div className="container max-w-screen-xl relative z-10">
-        <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.8 }}
-          className="text-center space-y-8"
-        >
+        <div className="text-center space-y-8">
           <h2 className="text-3xl md:text-5xl font-cormorant font-bold">
             Ready to Transform Your Yacht?
           </h2>
@@ -52,7 +38,7 @@ export function CTASection() {
               <span className="font-poppins-medium">{companyInfo.phone}</span>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
