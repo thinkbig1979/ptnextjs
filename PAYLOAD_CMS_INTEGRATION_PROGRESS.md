@@ -64,7 +64,55 @@ This document tracks the progress of integrating Payload CMS v3 with SQLite into
 
 ---
 
-### ⏳ Step 3: Set Up Payload Admin Interface
+### ✅ Step 3: Add Dev-Only Payload Startup Logic
+**Status**: ✅ COMPLETED
+**Completion Date**: 2025-01-28
+
+**Tasks Completed**:
+- [x] Created development-only startup script at `scripts/start-payload-dev.ts`
+- [x] Implemented environment check (`NODE_ENV === 'development'`) to conditionally start Payload
+- [x] Added Express server setup that works alongside Next.js dev server
+- [x] Configured different port allocation (3001 for Payload, 3000 for Next.js)
+- [x] Added proper error handling and logging for development workflow
+- [x] Created helper scripts for running both servers simultaneously
+- [x] Added required Payload dependencies to main project
+- [x] Ensured production builds remain unaffected
+
+**Files Created**:
+- `scripts/start-payload-dev.ts` - Development-only Payload CMS startup script
+- `scripts/dev-with-cms.sh` - Helper script to run both Next.js and Payload CMS
+- `scripts/start-cms-only.sh` - Helper script to run only Payload CMS
+
+**Technical Implementation**:
+- **Environment Safety**: Script only runs when `NODE_ENV === 'development'`
+- **Port Management**: Payload CMS runs on port 3001, Next.js on port 3000
+- **Dynamic Config Loading**: Imports CMS configuration from `/cms/payload.config.ts`
+- **Process Management**: Proper SIGINT/SIGTERM handling for graceful shutdown
+- **Development Experience**: Clear logging and helpful startup messages
+
+**Usage Commands**:
+```bash
+# Run both Next.js and Payload CMS together
+./scripts/dev-with-cms.sh
+
+# Run only Payload CMS (for CMS development)
+./scripts/start-cms-only.sh
+
+# Run only Next.js (standard development)
+npm run dev
+
+# Run Payload CMS directly with tsx
+npx tsx scripts/start-payload-dev.ts
+```
+
+**Production Safety**:
+- Script automatically exits if not in development mode
+- No impact on `npm run build` or production deployments
+- Dependencies added only affect development workflow
+
+---
+
+### ⏳ Step 4: Set Up Payload Admin Interface
 **Status**: ⏳ PENDING
 **Target Date**: TBD
 
@@ -76,7 +124,7 @@ This document tracks the progress of integrating Payload CMS v3 with SQLite into
 
 ---
 
-### ⏳ Step 4: Create Data Migration Scripts
+### ⏳ Step 5: Create Data Migration Scripts
 **Status**: ⏳ PENDING
 **Target Date**: TBD
 
@@ -89,7 +137,7 @@ This document tracks the progress of integrating Payload CMS v3 with SQLite into
 
 ---
 
-### ⏳ Step 5: Integrate Payload with Next.js API Routes
+### ⏳ Step 6: Integrate Payload with Next.js API Routes
 **Status**: ⏳ PENDING
 **Target Date**: TBD
 
@@ -101,7 +149,7 @@ This document tracks the progress of integrating Payload CMS v3 with SQLite into
 
 ---
 
-### ⏳ Step 6: Update Next.js Components
+### ⏳ Step 7: Update Next.js Components
 **Status**: ⏳ PENDING
 **Target Date**: TBD
 
@@ -114,7 +162,7 @@ This document tracks the progress of integrating Payload CMS v3 with SQLite into
 
 ---
 
-### ⏳ Step 7: Testing and Final Integration
+### ⏳ Step 8: Testing and Final Integration
 **Status**: ⏳ PENDING
 **Target Date**: TBD
 
