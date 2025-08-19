@@ -37,8 +37,6 @@
     ".build/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules",
-    "scripts/**/*",
-    "cms/**/*"
+    "node_modules"
   ]
 }

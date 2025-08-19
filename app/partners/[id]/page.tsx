@@ -17,7 +17,7 @@ import {
   Lightbulb
 } from "lucide-react";
 import Link from "next/link";
-import { getPartners, getPartnerById, getProductsByPartner } from "@/lib/data-cms";
+import { partners, getPartnerById, getProductsByPartner } from "@/app/lib/data";
 import { notFound } from "next/navigation";
 import PartnerDetailClient from "./_components/partner-detail-client";
 
@@ -26,7 +26,6 @@ export const dynamic = 'force-static';
 
 // Generate static params for all partners
 export async function generateStaticParams() {
-  const partners = await getPartners();
   return partners.map((partner) => ({
     id: partner.id,
   }));
@@ -43,14 +42,14 @@ export default async function PartnerDetailPage({ params }: PartnerDetailPagePro
   const { id } = await params;
 
   // Find the partner by ID
-  const partner = await getPartnerById(id);
+  const partner = getPartnerById(id);
   
   if (!partner) {
     notFound();
   }
 
   // Find products from this partner
-  const partnerProducts = await getProductsByPartner(partner.id);
+  const partnerProducts = getProductsByPartner(partner.id);
 
   // Generate placeholder data
   const achievements = [

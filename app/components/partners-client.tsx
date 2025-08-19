@@ -206,7 +206,13 @@ export function PartnersClient() {
                       {partner?.category}
                     </Badge>
                   </div>
-                  <CardTitle className="group-hover:text-accent transition-colors">
+                  <CardTitle 
+                    className="group-hover:text-accent transition-colors hover:underline cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      router.push(`/partners/${partner?.id}`);
+                    }}
+                  >
                     {partner?.name}
                   </CardTitle>
                   <CardDescription className="line-clamp-3">

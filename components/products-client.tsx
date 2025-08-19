@@ -194,7 +194,13 @@ export function ProductsClient() {
                     {product?.category}
                   </Badge>
                 </div>
-                <CardTitle className="group-hover:text-accent transition-colors line-clamp-2">
+                <CardTitle 
+                  className="group-hover:text-accent transition-colors line-clamp-2 hover:underline cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    router.push(`/products/${product?.id}`);
+                  }}
+                >
                   {product?.name}
                 </CardTitle>
                 <CardDescription className="line-clamp-3">

@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar, User, Clock, ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { getBlogPosts, getBlogPostBySlug, getRelatedPosts } from "@/lib/data-cms";
+import { blogPosts, getRelatedPosts } from "@/app/lib/data";
 import { formatDate } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import BlogPostClient from "./_components/blog-post-client";
@@ -14,8 +14,7 @@ export const dynamic = 'force-static';
 
 // Generate static params for all blog posts
 export async function generateStaticParams() {
-  const posts = await getBlogPosts();
-  return posts.map((post) => ({
+  return blogPosts.map((post) => ({
     slug: post.slug,
   }));
 }
@@ -31,13 +30,13 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
 
   // Find the blog post by slug
-  const post = await getBlogPostBySlug(slug);
+  const post = blogPosts.find(p => p.slug === slug);
   
   if (!post) {
     notFound();
   }
 
-  const relatedPosts = await getRelatedPosts(post.id, 3);
+  const relatedPosts = getRelatedPosts(post.id, 3);
 
   return (
     <div className="min-h-screen py-12">

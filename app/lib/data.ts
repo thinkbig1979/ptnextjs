@@ -1,5 +1,5 @@
 
-import researchData from '../data/superyacht_technology_research.json';
+import researchData from '../../data/superyacht_technology_research.json';
 import { blogContent } from './blog-content';
 
 export interface Partner {
@@ -269,6 +269,14 @@ export const getRelatedPosts = (currentPostId: string, limit: number = 3): BlogP
 
 export const getPartnerByName = (partnerName: string): Partner | undefined => {
   return partners.find(partner => partner.name === partnerName);
+};
+
+export const getPartnerById = (id: string): Partner | undefined => {
+  return partners.find(partner => partner.id === id);
+};
+
+export const getProductById = (id: string): Product | undefined => {
+  return products.find(product => product.id === id);
 };
 
 // URL parameter utilities
