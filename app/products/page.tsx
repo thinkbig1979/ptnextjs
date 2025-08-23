@@ -1,10 +1,16 @@
 
 
 import * as React from "react";
-import { SuspenseWrapper } from "@/components/suspense-wrapper";
-import { ProductsClient } from "@/components/products-client";
+import { Suspense } from "react";
+import { ProductsDisplay } from "@/components/products-display";
+import dataService from "@/lib/data-service";
 
-export default function ProductsPage() {
+export default async function ProductsPage() {
+  // Fetch data at build time
+  const products = await dataService.getProducts();
+  const partners = await dataService.getPartners();
+  const categories = await dataService.getCategories();
+
   return (
     <div className="min-h-screen py-12">
       <div className="container max-w-screen-xl">
@@ -18,8 +24,8 @@ export default function ProductsPage() {
           </p>
         </div>
 
-        {/* Client-side content wrapped in Suspense */}
-        <SuspenseWrapper fallback={<div className="space-y-8 animate-pulse">
+        {/* Server-rendered content with client-side interactivity */}
+        <Suspense fallback={<div className="space-y-8 animate-pulse">
           <div className="h-12 bg-muted/20 rounded" />
           <div className="h-6 bg-muted/20 rounded w-48" />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -28,8 +34,8 @@ export default function ProductsPage() {
             ))}
           </div>
         </div>}>
-          <ProductsClient />
-        </SuspenseWrapper>
+          <ProductsDisplay products={products} partners={partners} categories={categories} />
+        </Suspense>
       </div>
     </div>
   );

@@ -6,10 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Building2 } from "lucide-react";
 import Link from "next/link";
-import { partners } from "@/lib/data";
 
-export function FeaturedPartnersSection() {
-  const featuredPartners = partners.filter(partner => partner?.featured).slice(0, 6);
+interface FeaturedPartnersSectionProps {
+  featuredPartners: any[];
+}
+
+export function FeaturedPartnersSection({ featuredPartners }: FeaturedPartnersSectionProps) {
 
   return (
     <section className="py-20 bg-secondary/30">
@@ -43,7 +45,7 @@ export function FeaturedPartnersSection() {
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-wrap gap-1 mb-4">
-                    {partner?.tags?.slice(0, 3).map((tag) => (
+                    {partner?.tags?.slice(0, 3).map((tag: string) => (
                       <Badge key={tag} variant="outline" className="text-xs">
                         {tag}
                       </Badge>

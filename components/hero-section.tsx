@@ -5,7 +5,6 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Users, Ship, Zap } from "lucide-react";
 import Link from "next/link";
-import { companyInfo } from "@/lib/data";
 import { HeroClient } from "./hero-client";
 
 const stats = [
@@ -14,7 +13,12 @@ const stats = [
   { icon: Zap, label: "Technology Solutions", value: 500, suffix: "+" },
 ];
 
-export function HeroSection() {
+interface HeroSectionProps {
+  companyInfo: any;
+}
+
+export function HeroSection({ companyInfo }: HeroSectionProps) {
+  
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-gradient-hero overflow-hidden">
       {/* Background Pattern */}
@@ -37,7 +41,7 @@ export function HeroSection() {
             </h1>
             
             <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto font-poppins-light leading-relaxed">
-              {companyInfo.description}
+              {companyInfo?.description || "Amsterdam's premier superyacht technology consultancy, connecting discerning yacht owners with cutting-edge marine technology solutions."}
             </p>
           </div>
 

@@ -6,11 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Calendar, User, Clock } from "lucide-react";
 import Link from "next/link";
-import { blogPosts } from "@/lib/data";
 import { formatDate } from "@/lib/utils";
 
-export function FeaturedBlogSection() {
-  const featuredPosts = blogPosts.filter(post => post?.featured).slice(0, 3);
+interface FeaturedBlogSectionProps {
+  featuredPosts: any[];
+}
+
+export function FeaturedBlogSection({ featuredPosts }: FeaturedBlogSectionProps) {
 
   return (
     <section className="py-20 bg-secondary/30">

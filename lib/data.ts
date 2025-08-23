@@ -56,7 +56,7 @@ export interface TeamMember {
 // Transform research data into structured format
 export const partners: Partner[] = researchData.partner_companies.map((partner: any, index: number) => ({
   id: `partner-${index + 1}`,
-  name: partner.company,
+  name: partner.company + ' - FB',
   category: partner.category,
   description: partner.description,
   founded: partner.founded || 2000 + (index % 20) + 5,
@@ -68,9 +68,9 @@ export const partners: Partner[] = researchData.partner_companies.map((partner: 
 export const products: Product[] = researchData.partner_companies.flatMap((partner: any, partnerIndex: number) => 
   (partner.sample_products || []).map((product: any, productIndex: number) => ({
     id: `product-${partnerIndex}-${productIndex}`,
-    name: product.name,
+    name: product.name + ' - FB',
     partnerId: `partner-${partnerIndex + 1}`,
-    partnerName: partner.company,
+    partnerName: partner.company + ' - FB',
     category: partner.category,
     description: product.description,
     features: product.features || [],
@@ -95,10 +95,10 @@ export const blogPosts: BlogPost[] = researchData.industry_trends.map((trend: an
   return {
     id: `blog-${index + 1}`,
     slug: slug,
-    title: trend.title,
+    title: trend.title + ' - FB',
     excerpt: fullExcerpt,
     content: blogContent[slug] || trend.summary,
-    author: ['Paul Thames', 'Sarah Johnson', 'Michael Chen', 'Lisa Rodriguez'][index % 4],
+    author: ['Paul Thames - FB', 'Sarah Johnson - FB', 'Michael Chen - FB', 'Lisa Rodriguez - FB'][index % 4],
     publishedAt: new Date(2024, 11 - index, 15 - (index * 3)).toISOString(),
     category: ['Technology Trends', 'Industry News', 'Innovation', 'Product Updates'][index % 4],
     tags: [
@@ -122,28 +122,28 @@ export const blogPosts: BlogPost[] = researchData.industry_trends.map((trend: an
 export const teamMembers: TeamMember[] = [
   {
     id: 'team-1',
-    name: 'Paul Thames',
+    name: 'Paul Thames - FB',
     role: 'CEO & Founder',
     bio: 'With over 15 years of experience in marine technology and business development, Paul founded PT to bridge the gap between innovative superyacht technology providers and discerning yacht owners.',
     email: 'paul@paulthames.com',
   },
   {
     id: 'team-2',
-    name: 'Sarah Johnson',
+    name: 'Sarah Johnson - FB',
     role: 'Chief Technology Officer',
     bio: 'Sarah brings deep technical expertise in marine systems integration and has overseen technology implementations on over 200 superyacht projects worldwide.',
     email: 'sarah@paulthames.com',
   },
   {
     id: 'team-3',
-    name: 'Michael Chen',
+    name: 'Michael Chen - FB',
     role: 'Marketing Manager',
     bio: 'Michael specializes in luxury brand marketing and has been instrumental in establishing PT as a trusted name in the superyacht technology sector.',
     email: 'michael@paulthames.com',
   },
   {
     id: 'team-4',
-    name: 'Lisa Rodriguez',
+    name: 'Lisa Rodriguez - FB',
     role: 'Sales Manager',
     bio: 'Lisa leverages her extensive network in the superyacht industry to connect clients with the perfect technology solutions for their vessels.',
     email: 'lisa@paulthames.com',
@@ -151,8 +151,8 @@ export const teamMembers: TeamMember[] = [
 ];
 
 export const companyInfo = {
-  name: 'Paul Thames',
-  tagline: 'Connecting Superyacht Technology Excellence',
+  name: 'Paul Thames - FB',
+  tagline: 'Connecting Superyacht Technology Excellence - FB',
   description: 'Paul Thames (PT) is Amsterdam\'s premier superyacht technology consultancy, specializing in connecting discerning yacht owners with cutting-edge marine technology solutions.',
   founded: 2018,
   location: 'Amsterdam, Netherlands',

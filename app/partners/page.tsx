@@ -1,10 +1,15 @@
 
 
 import * as React from "react";
-import { SuspenseWrapper } from "@/components/suspense-wrapper";
-import { PartnersClient } from "@/components/partners-client";
+import { Suspense } from "react";
+import { PartnersDisplay } from "@/components/partners-display";
+import dataService from "@/lib/data-service";
 
-export default function PartnersPage() {
+export default async function PartnersPage() {
+  // Fetch data at build time
+  const partners = await dataService.getPartners();
+  const categories = await dataService.getCategories();
+
   return (
     <div className="min-h-screen py-12">
       <div className="container max-w-screen-xl">
@@ -18,8 +23,8 @@ export default function PartnersPage() {
           </p>
         </div>
 
-        {/* Client-side content wrapped in Suspense */}
-        <SuspenseWrapper fallback={<div className="space-y-8 animate-pulse">
+        {/* Server-rendered content with client-side interactivity */}
+        <Suspense fallback={<div className="space-y-8 animate-pulse">
           <div className="h-12 bg-muted/20 rounded" />
           <div className="h-6 bg-muted/20 rounded w-48" />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -28,8 +33,8 @@ export default function PartnersPage() {
             ))}
           </div>
         </div>}>
-          <PartnersClient />
-        </SuspenseWrapper>
+          <PartnersDisplay partners={partners} categories={categories} />
+        </Suspense>
       </div>
     </div>
   );

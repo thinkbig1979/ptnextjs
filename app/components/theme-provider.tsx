@@ -2,7 +2,8 @@
 
 import * as React from "react"
 import { ThemeProvider as NextThemesProvider } from "next-themes"
-import { type ThemeProviderProps } from "next-themes/dist/types"
+// import { type ThemeProviderProps } from "next-themes/dist/types"
+type ThemeProviderProps = React.ComponentProps<typeof NextThemesProvider>
 
 // Enhanced system theme detection for Firefox mobile compatibility
 function detectSystemTheme(): 'light' | 'dark' {

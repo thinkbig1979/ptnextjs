@@ -12,11 +12,14 @@ import { SearchFilter } from "@/components/search-filter";
 import { Pagination } from "@/components/pagination";
 import { Package, Building2, ArrowRight, Star } from "lucide-react";
 import Link from "next/link";
-import { products, categories, searchProducts, getProductsByCategory, parseFilterParams, getProductsByPartnerName } from "@/lib/data";
+import { parseFilterParams } from "@/lib/data";
+import { dataService } from "@/lib/data-service";
 
 const ITEMS_PER_PAGE = 12;
 
 export function ProductsClient() {
+  console.log('ProductsClient: Component mounted');
+  
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -26,11 +29,42 @@ export function ProductsClient() {
   const [selectedCategory, setSelectedCategory] = React.useState(urlParams.category);
   const [currentPage, setCurrentPage] = React.useState(1);
   const [selectedPartner, setSelectedPartner] = React.useState(urlParams.partner);
+  
+  // Data state
+  const [products, setProducts] = React.useState<any[]>([]);
+  const [categories, setCategories] = React.useState<string[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  
 
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
   });
+
+  // Load data on component mount
+  React.useEffect(() => {
+    async function loadData() {
+      try {
+        setLoading(true);
+        console.log('ProductsClient: Loading data...');
+        const [productsData, categoriesData] = await Promise.all([
+          dataService.getProducts(),
+          dataService.getCategories()
+        ]);
+        console.log('ProductsClient: Loaded products:', productsData);
+        console.log('ProductsClient: Loaded categories:', categoriesData);
+        setProducts(productsData);
+        setCategories(categoriesData.map(cat => cat.name));
+        console.log('ProductsClient: State updated with products count:', productsData.length);
+      } catch (error) {
+        console.error('Failed to load data:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    loadData();
+  }, []);
 
   // Update state when URL parameters change
   React.useEffect(() => {
@@ -53,25 +87,47 @@ export function ProductsClient() {
 
   // Filter products based on search, category, and partner
   const filteredProducts = React.useMemo(() => {
+    console.log('ProductsClient: Filtering products...');
+    console.log('ProductsClient: loading:', loading, 'products.length:', products.length);
+    console.log('ProductsClient: searchQuery:', searchQuery, 'selectedCategory:', selectedCategory, 'selectedPartner:', selectedPartner);
+    
+    if (loading || !products.length) {
+      console.log('ProductsClient: No products to filter - loading or empty array');
+      return [];
+    }
+    
     let filtered = products;
+    console.log('ProductsClient: Starting with', filtered.length, 'products');
 
     // Apply search filter
     if (searchQuery.trim()) {
-      filtered = searchProducts(searchQuery);
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(product => 
+        product?.name?.toLowerCase().includes(query) ||
+        product?.description?.toLowerCase().includes(query) ||
+        product?.tags?.some((tag: string) => tag.toLowerCase().includes(query)) ||
+        product?.features?.some((feature: string) => feature.toLowerCase().includes(query))
+      );
+      console.log('ProductsClient: After search filter:', filtered.length, 'products');
     }
 
     // Apply category filter
     if (selectedCategory !== "all") {
+      const beforeCount = filtered.length;
       filtered = filtered.filter(product => product?.category === selectedCategory);
+      console.log('ProductsClient: After category filter (' + selectedCategory + '):', filtered.length, 'products (was', beforeCount + ')');
     }
 
     // Apply partner filter
     if (selectedPartner) {
+      const beforeCount = filtered.length;
       filtered = filtered.filter(product => product?.partnerName === selectedPartner);
+      console.log('ProductsClient: After partner filter (' + selectedPartner + '):', filtered.length, 'products (was', beforeCount + ')');
     }
 
+    console.log('ProductsClient: Final filtered products:', filtered.length);
     return filtered;
-  }, [searchQuery, selectedCategory, selectedPartner]);
+  }, [products, searchQuery, selectedCategory, selectedPartner, loading]);
 
   // Paginate results
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
@@ -133,8 +189,33 @@ export function ProductsClient() {
     setCurrentPage(1);
   }, [searchQuery, selectedCategory]);
 
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading products...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
+      {/* DEBUG INFO - Remove this after debugging */}
+      <div className="mb-4 p-4 bg-yellow-100 border border-yellow-400 rounded text-xs">
+        <strong>DEBUG INFO:</strong><br/>
+        Loading: {loading ? 'true' : 'false'}<br/>
+        Products count: {products.length}<br/>
+        Categories count: {categories.length}<br/>
+        Selected category: "{selectedCategory}"<br/>
+        Search query: "{searchQuery}"<br/>
+        Selected partner: "{selectedPartner}"<br/>
+        Filtered products count: {filteredProducts.length}<br/>
+        Categories: {JSON.stringify(categories)}
+      </div>
+
       {/* Search and Filter */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -208,7 +289,7 @@ export function ProductsClient() {
                     <div className="space-y-2">
                       <h4 className="font-poppins-medium text-sm text-foreground">Key Features:</h4>
                       <ul className="text-sm text-muted-foreground space-y-1">
-                        {product.features.slice(0, 3).map((feature, idx) => (
+                        {product.features.slice(0, 3).map((feature: string, idx: number) => (
                           <li key={idx} className="flex items-center space-x-2">
                             <Star className="w-3 h-3 text-accent" />
                             <span className="font-poppins-light">{feature}</span>
@@ -220,7 +301,7 @@ export function ProductsClient() {
 
                   {/* Tags */}
                   <div className="flex flex-wrap gap-1">
-                    {product?.tags?.slice(0, 3).map((tag) => (
+                    {product?.tags?.slice(0, 3).map((tag: string) => (
                       <Badge key={tag} variant="outline" className="text-xs">
                         {tag}
                       </Badge>

@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
 import { Toaster } from "@/components/ui/sonner";
+import dataService from "@/lib/data-service";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,11 +23,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const useStrapi = process.env.NODE_ENV === 'production' || process.env.USE_STRAPI_CMS === 'true';
+  
+  // Fetch company info at build time for footer
+  const companyInfo = await dataService.getCompanyInfo();
+  
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -35,6 +41,11 @@ export default function RootLayout({
         <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000029" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.__USE_STRAPI__ = ${useStrapi};`,
+          }}
+        />
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -114,7 +125,7 @@ export default function RootLayout({
             <main className="flex-1">
               {children}
             </main>
-            <Footer />
+            <Footer companyInfo={companyInfo} />
           </div>
           <Toaster />
         </ThemeProvider>

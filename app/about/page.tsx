@@ -4,8 +4,8 @@ import * as React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Calendar, Users, Ship, Target, Award } from "lucide-react";
-import { companyInfo, teamMembers } from "@/lib/data";
 import { AboutClient } from "./_components/about-client";
+import dataService from "@/lib/data-service";
 
 const values = [
   {
@@ -37,7 +37,11 @@ const stats = [
   { label: "Countries Served", value: "25+", icon: MapPin },
 ];
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  // Fetch data at build time
+  const companyInfo = await dataService.getCompanyInfo();
+  const teamMembers = await dataService.getTeamMembers();
+
   return (
     <div className="min-h-screen py-12">
       <div className="container max-w-screen-xl">
@@ -47,31 +51,32 @@ export default function AboutPage() {
             About Paul Thames
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-poppins-light leading-relaxed">
-            {companyInfo.tagline}
+            {companyInfo?.tagline || "Excellence in superyacht technology solutions"}
           </p>
         </div>
 
         {/* Company Story */}
-        <div className="mb-20">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-6">
-              <h2 className="text-3xl md:text-4xl font-cormorant font-bold">Our Story</h2>
-              <div className="prose prose-lg text-muted-foreground font-poppins-light space-y-4">
-                {companyInfo.story.split('\n\n').map((paragraph, index) => (
-                  <p key={index}>{paragraph}</p>
-                ))}
+        {companyInfo && (
+          <div className="mb-20">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div className="space-y-6">
+                <h2 className="text-3xl md:text-4xl font-cormorant font-bold">Our Story</h2>
+                <div className="prose prose-lg text-muted-foreground font-poppins-light space-y-4">
+                  {companyInfo.story.split('\n\n').map((paragraph: string, index: number) => (
+                    <p key={index}>{paragraph}</p>
+                  ))}
+                </div>
+                <div className="flex items-center space-x-4 pt-4">
+                  <Badge variant="secondary" className="flex items-center space-x-1">
+                    <MapPin className="w-3 h-3" />
+                    <span>{companyInfo.location}</span>
+                  </Badge>
+                  <Badge variant="secondary" className="flex items-center space-x-1">
+                    <Calendar className="w-3 h-3" />
+                    <span>Est. {companyInfo.founded}</span>
+                  </Badge>
+                </div>
               </div>
-              <div className="flex items-center space-x-4 pt-4">
-                <Badge variant="secondary" className="flex items-center space-x-1">
-                  <MapPin className="w-3 h-3" />
-                  <span>{companyInfo.location}</span>
-                </Badge>
-                <Badge variant="secondary" className="flex items-center space-x-1">
-                  <Calendar className="w-3 h-3" />
-                  <span>Est. {companyInfo.founded}</span>
-                </Badge>
-              </div>
-            </div>
             <div className="relative">
               <div className="aspect-square bg-gradient-to-br from-accent/20 to-primary/20 rounded-2xl p-8 flex items-center justify-center">
                 <div className="text-center space-y-4">
@@ -87,6 +92,7 @@ export default function AboutPage() {
             </div>
           </div>
         </div>
+        )}
 
         {/* Stats - Static content */}
         <div className="mb-20">
