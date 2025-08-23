@@ -6,6 +6,7 @@ import {
   teamMembers as staticTeamMembers, 
   companyInfo as staticCompanyInfo,
   categories as staticCategories,
+  blogCategories as staticBlogCategories,
   getPartnersByCategory as staticGetPartnersByCategory,
   getProductsByCategory as staticGetProductsByCategory,
   getBlogPostsByCategory as staticGetBlogPostsByCategory,
@@ -100,6 +101,44 @@ class DataService {
     }
 
     this.logContentSource('Categories', 'empty');
+    return [];
+  }
+
+  // Blog Categories
+  async getBlogCategories() {
+    if (await this.shouldUseStrapi()) {
+      try {
+        // For now, we'll extract categories from blog posts since Strapi might not have a separate blog categories endpoint
+        const posts = await strapiClient.getBlogPosts();
+        const categories = Array.from(new Set(posts.map(post => post.category)))
+          .map(name => ({
+            id: name.toLowerCase().replace(/\s+/g, '-'),
+            name,
+            slug: name.toLowerCase().replace(/\s+/g, '-'),
+            description: `${name} category for blog posts`,
+            icon: '',
+            color: '#0066cc',
+          }));
+        this.logContentSource('Blog Categories', 'strapi');
+        return categories;
+      } catch (error) {
+        console.error('Failed to fetch blog categories from Strapi:', error);
+      }
+    }
+    
+    if (this.shouldUseFallback()) {
+      this.logContentSource('Blog Categories', 'fallback');
+      return staticBlogCategories.map(name => ({
+        id: name.toLowerCase().replace(/\s+/g, '-'),
+        name,
+        slug: name.toLowerCase().replace(/\s+/g, '-'),
+        description: `${name} category for blog posts`,
+        icon: '',
+        color: '#0066cc',
+      }));
+    }
+
+    this.logContentSource('Blog Categories', 'empty');
     return [];
   }
 

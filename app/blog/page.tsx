@@ -13,7 +13,7 @@ import dataService from "@/lib/data-service";
 export default async function BlogPage() {
   // Fetch data at build time
   const blogPosts = await dataService.getBlogPosts();
-  const categories = await dataService.getCategories();
+  const categories = await dataService.getBlogCategories();
   const blogCategories = categories.map(cat => cat.name);
   
   const featuredPost = blogPosts.find(post => post?.featured);

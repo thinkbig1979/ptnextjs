@@ -212,6 +212,7 @@ export const searchBlogPosts = (query: string): BlogPost[] => {
 };
 
 export const categories = Array.from(new Set(partners.map(p => p.category)));
+export const blogCategories = Array.from(new Set(blogPosts.map(p => p.category)));
 
 // Cross-filtering helper functions
 export const getProductsByPartner = (partnerId: string): Product[] => {
