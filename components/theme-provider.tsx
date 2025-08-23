@@ -2,7 +2,8 @@
 
 import * as React from "react"
 import { ThemeProvider as NextThemesProvider } from "next-themes"
-import { type ThemeProviderProps } from "next-themes/dist/types"
+// import { type ThemeProviderProps } from "next-themes/dist/types"
+type ThemeProviderProps = React.ComponentProps<typeof NextThemesProvider>
 
 // Enhanced system theme detection for Firefox mobile compatibility
 function detectSystemTheme(): 'light' | 'dark' {
@@ -36,7 +37,7 @@ function detectSystemTheme(): 'light' | 'dark' {
     try {
       if (method()) return 'dark'
     } catch (e) {
-      console.debug('Theme detection method failed:', e)
+      // Theme detection method failed
     }
   }
   
@@ -60,7 +61,7 @@ function EnhancedThemeProvider({ children, ...props }: ThemeProviderProps) {
     const handleChange = (e: MediaQueryListEvent) => {
       const newTheme = e.matches ? 'dark' : 'light'
       setSystemTheme(newTheme)
-      console.debug('System theme changed to:', newTheme)
+      // System theme changed
     }
     
     // Add listener
@@ -83,7 +84,7 @@ function EnhancedThemeProvider({ children, ...props }: ThemeProviderProps) {
         const currentTheme = detectSystemTheme()
         if (currentTheme !== systemTheme) {
           setSystemTheme(currentTheme)
-          console.debug('Firefox mobile theme change detected:', currentTheme)
+          // Firefox mobile theme change detected
         }
       }, 2000)
     }

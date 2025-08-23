@@ -10,15 +10,23 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SearchFilter } from "@/components/search-filter";
 import { Pagination } from "@/components/pagination";
-import { Package, Building2, ArrowRight, Star } from "lucide-react";
+import { Package, Building2, ArrowRight, Star, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { AnimatePresence } from "framer-motion";
+import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { products, categories, searchProducts, getProductsByCategory, parseFilterParams, getProductsByPartnerName } from "@/lib/data";
+import { parseFilterParams } from "@/lib/data";
+import { dataService } from "@/lib/data-service";
 
 const ITEMS_PER_PAGE = 12;
 
 export function ProductsClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  
+  // State for async data
+  const [products, setProducts] = React.useState<any[]>([]);
+  const [categories, setCategories] = React.useState<any[]>([]);
+  const [loading, setLoading] = React.useState(true);
   
   // Initialize state from URL parameters
   const urlParams = parseFilterParams(searchParams);
@@ -31,6 +39,46 @@ export function ProductsClient() {
     triggerOnce: true,
     threshold: 0.1,
   });
+
+  // Load initial data from Strapi
+  React.useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+
+      try {
+        // Timeout wrapper function
+        const withTimeout = (promise: Promise<any>, ms = 10000) => {
+          return Promise.race([
+            promise,
+            new Promise((_, reject) =>
+              setTimeout(() => reject(new Error(`Timeout after ${ms}ms`)), ms)
+            )
+          ]);
+        };
+
+        const [productsData, categoriesData] = await Promise.all([
+          withTimeout(dataService.getProducts(), 10000).catch(err => {
+            console.error('Failed to load products:', err);
+            throw err;
+          }),
+          withTimeout(dataService.getCategories(), 10000).catch(err => {
+            console.error('Failed to load categories:', err);
+            throw err;
+          })
+        ]);
+
+        setProducts(productsData);
+        setCategories(categoriesData);
+
+      } catch (error) {
+        console.error('Failed to load data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
 
   // Update state when URL parameters change
   React.useEffect(() => {
@@ -57,7 +105,14 @@ export function ProductsClient() {
 
     // Apply search filter
     if (searchQuery.trim()) {
-      filtered = searchProducts(searchQuery);
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(product => 
+        product?.name?.toLowerCase().includes(query) ||
+        product?.description?.toLowerCase().includes(query) ||
+        product?.tags?.some((tag: string) => tag.toLowerCase().includes(query)) ||
+        product?.category?.toLowerCase().includes(query) ||
+        product?.partnerName?.toLowerCase().includes(query)
+      );
     }
 
     // Apply category filter
@@ -71,7 +126,7 @@ export function ProductsClient() {
     }
 
     return filtered;
-  }, [searchQuery, selectedCategory, selectedPartner]);
+  }, [products, searchQuery, selectedCategory, selectedPartner]);
 
   // Paginate results
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
@@ -133,173 +188,239 @@ export function ProductsClient() {
     setCurrentPage(1);
   }, [searchQuery, selectedCategory]);
 
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <p className="text-muted-foreground font-poppins-light">Loading products...</p>
+      </div>
+    );
+  }
+
   return (
     <>
       {/* Search and Filter */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
-        animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-      >
-        <SearchFilter
-          searchQuery={searchQuery}
-          onSearchChange={handleSearchChange}
-          categories={categories}
-          selectedCategory={selectedCategory}
-          onCategoryChange={handleCategoryChange}
-          placeholder="Search products and services..."
-        />
-      </motion.div>
-
-      {/* Results Summary */}
-      <motion.div
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="space-y-6 mb-8"
         ref={ref}
-        initial={{ opacity: 0 }}
-        animate={inView ? { opacity: 1 } : { opacity: 0 }}
-        transition={{ duration: 0.4, delay: 0.4 }}
-        className="mb-8"
       >
-        <p className="text-muted-foreground font-poppins-light">
-          Showing {paginatedProducts.length} of {filteredProducts.length} products
-          {selectedCategory !== "all" && ` in ${selectedCategory}`}
-          {selectedPartner && ` from ${selectedPartner}`}
-        </p>
+        {/* Search Bar */}
+        <div className="relative max-w-2xl mx-auto">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          <Input
+            type="text"
+            placeholder="Search products, partners, or categories..."
+            value={searchQuery}
+            onChange={(e) => handleSearchChange(e.target.value)}
+            className="pl-10 h-12 text-base border-2 border-border/50 focus:border-primary bg-background/50 backdrop-blur-sm font-poppins-light"
+          />
+        </div>
+
+        {/* Category Filters */}
+        <div className="flex flex-wrap justify-center gap-2 max-w-4xl mx-auto">
+          <Button
+            variant={selectedCategory === "all" ? "default" : "outline"}
+            onClick={() => handleCategoryChange("all")}
+            className="font-poppins-medium transition-all duration-300 hover:scale-105"
+          >
+            All Categories
+          </Button>
+          {categories.map((category) => (
+            <Button
+              key={category.id}
+              variant={selectedCategory === category.name ? "default" : "outline"}
+              onClick={() => handleCategoryChange(category.name)}
+              className="font-poppins-medium transition-all duration-300 hover:scale-105"
+            >
+              {category.name}
+            </Button>
+          ))}
+        </div>
+
+        {/* Results Summary */}
+        <div className="text-center text-muted-foreground font-poppins-light">
+          Showing {filteredProducts.length} of {products.length} products
+          {searchQuery && (
+            <span className="block mt-1 text-sm">
+              Search results for "<span className="text-foreground font-poppins-medium">{searchQuery}</span>"
+            </span>
+          )}
+        </div>
       </motion.div>
 
       {/* Products Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-        {paginatedProducts.map((product, index) => (
+      <AnimatePresence mode="wait">
+        {filteredProducts.length > 0 ? (
           <motion.div
-            key={product?.id}
-            initial={{ opacity: 0, y: 30 }}
-            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-            transition={{ duration: 0.6, delay: 0.1 * index }}
+            key="products-grid"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
           >
-            <Card className="h-full hover-lift cursor-pointer group">
-              <CardHeader>
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center">
-                      <Package className="w-5 h-5 text-accent" />
+            {paginatedProducts.map((product, index) => (
+              <motion.div
+                key={product.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ 
+                  opacity: inView ? 1 : 0, 
+                  y: inView ? 0 : 20 
+                }}
+                transition={{ 
+                  duration: 0.5, 
+                  delay: index * 0.1 
+                }}
+              >
+                <Card className="h-full hover:shadow-lg transition-all duration-300 hover:scale-[1.02] border-border/50 bg-card/50 backdrop-blur-sm">
+                  <CardHeader className="space-y-4">
+                    <div className="aspect-video bg-muted rounded-lg flex items-center justify-center overflow-hidden">
+                      {product.image ? (
+                        <img 
+                          src={product.image} 
+                          alt={product.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <Package className="h-12 w-12 text-muted-foreground" />
+                      )}
                     </div>
-                  </div>
-                  <Badge 
-                    variant="secondary" 
-                    className="cursor-pointer hover:bg-accent hover:text-accent-foreground transition-colors"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleCategoryClick(product?.category || '');
-                    }}
-                  >
-                    {product?.category}
-                  </Badge>
-                </div>
-                <CardTitle 
-                  className="group-hover:text-accent transition-colors line-clamp-2 hover:underline cursor-pointer"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push(`/products/${product?.id}`);
-                  }}
-                >
-                  {product?.name}
-                </CardTitle>
-                <CardDescription className="line-clamp-3">
-                  {product?.description}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {/* Features */}
-                  {product?.features && product.features.length > 0 && (
-                    <div className="space-y-2">
-                      <h4 className="font-poppins-medium text-sm text-foreground">Key Features:</h4>
-                      <ul className="text-sm text-muted-foreground space-y-1">
-                        {product.features.slice(0, 3).map((feature, idx) => (
-                          <li key={idx} className="flex items-center space-x-2">
-                            <Star className="w-3 h-3 text-accent" />
-                            <span className="font-poppins-light">{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
+                    <div>
+                      <CardTitle className="text-xl font-poppins-semibold line-clamp-2 text-foreground">
+                        {product.name}
+                      </CardTitle>
+                      <p className="text-sm text-muted-foreground font-poppins-light mt-1">
+                        by{' '}
+                        <button
+                          onClick={() => navigateToPartner(product.partnerName)}
+                          className="text-primary hover:text-primary/80 transition-colors font-poppins-medium underline underline-offset-2"
+                        >
+                          {product.partnerName}
+                        </button>
+                      </p>
                     </div>
-                  )}
-
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-1">
-                    {product?.tags?.slice(0, 3).map((tag) => (
-                      <Badge key={tag} variant="outline" className="text-xs">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                  
-                  {/* Partner Info */}
-                  <div className="flex items-center justify-between text-sm text-muted-foreground pt-2 border-t">
-                    <div className="flex items-center space-x-1">
-                      <Building2 className="w-3 h-3" />
-                      <span className="font-poppins-light">{product?.partnerName}</span>
-                    </div>
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex flex-col gap-2">
-                    <Button 
-                      variant="default" 
-                      size="sm" 
-                      className="w-full group bg-accent hover:bg-accent/90"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigateToPartner(product?.partnerName || '');
-                      }}
-                    >
-                      Go to Partner
-                      <Building2 className="ml-2 h-3 w-3 group-hover:translate-x-1 transition-transform" />
-                    </Button>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <p className="text-sm text-muted-foreground line-clamp-3 font-poppins-light">
+                      {product.description}
+                    </p>
                     
-                    <Button 
-                      asChild
-                      variant="outline" 
-                      size="sm" 
-                      className="w-full group"
-                    >
-                      <Link href={`/products/${product?.id}`}>
-                        Learn More
-                        <ArrowRight className="ml-2 h-3 w-3 group-hover:translate-x-1 transition-transform" />
-                      </Link>
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                    <div className="flex flex-wrap gap-2">
+                      {product.tags?.slice(0, 3).map((tag: string, index: number) => (
+                        <Badge 
+                          key={index} 
+                          variant="secondary"
+                          className="text-xs font-poppins-light bg-secondary/50"
+                        >
+                          {tag}
+                        </Badge>
+                      ))}
+                      {product.tags?.length > 3 && (
+                        <Badge variant="outline" className="text-xs font-poppins-light">
+                          +{product.tags.length - 3} more
+                        </Badge>
+                      )}
+                    </div>
+                    
+                    <div className="pt-2 border-t border-border/50">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground font-poppins-light">Category</span>
+                        <Badge 
+                          variant="outline"
+                          className="font-poppins-medium cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
+                          onClick={() => handleCategoryClick(product.category)}
+                        >
+                          {product.category}
+                        </Badge>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
           </motion.div>
-        ))}
-      </div>
-
-      {/* No Results */}
-      {filteredProducts.length === 0 && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-center py-12"
-        >
-          <p className="text-muted-foreground font-poppins-light text-lg">
-            No products found matching your criteria. Try adjusting your search or filters.
-          </p>
-        </motion.div>
-      )}
+        ) : (
+          <motion.div
+            key="no-results"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="text-center py-12"
+          >
+            <Package className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-xl font-poppins-semibold text-foreground mb-2">No products found</h3>
+            <p className="text-muted-foreground font-poppins-light mb-4">
+              {searchQuery 
+                ? `No products match your search for "${searchQuery}"`
+                : "No products match your current filters"
+              }
+            </p>
+            {(searchQuery || selectedCategory !== "all" || selectedPartner) && (
+              <Button
+                onClick={() => {
+                  setSearchQuery("");
+                  setSelectedCategory("all");
+                  setSelectedPartner("");
+                  updateUrlParams({ search: "", category: "all", partner: "" });
+                }}
+                variant="outline"
+                className="font-poppins-medium"
+              >
+                Clear Filters
+              </Button>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Pagination */}
       {totalPages > 1 && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
+          animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : 20 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="flex justify-center mt-12"
         >
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
-          />
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="font-poppins-medium"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Previous
+            </Button>
+            
+            <div className="flex items-center space-x-1">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <Button
+                  key={page}
+                  variant={currentPage === page ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setCurrentPage(page)}
+                  className="w-10 h-10 font-poppins-medium"
+                >
+                  {page}
+                </Button>
+              ))}
+            </div>
+            
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="font-poppins-medium"
+            >
+              Next
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
         </motion.div>
       )}
     </>
