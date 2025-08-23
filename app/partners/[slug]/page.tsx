@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,39 +16,55 @@ import {
   Lightbulb
 } from "lucide-react";
 import Link from "next/link";
-import { partners, getPartnerById, getProductsByPartner } from "@/app/lib/data";
+import dataService from "@/lib/data-service";
 import { notFound } from "next/navigation";
 import PartnerDetailClient from "./_components/partner-detail-client";
 
 // Enable static generation
-export const dynamic = 'force-static';
+export const dynamic = 'auto';
 
 // Generate static params for all partners
 export async function generateStaticParams() {
-  return partners.map((partner) => ({
-    id: partner.id,
-  }));
+  try {
+    const partners = await dataService.getPartners();
+    console.log(`generateStaticParams: Found ${partners.length} partners`);
+    if (partners.length > 0) {
+      console.log('First few partner slugs:', partners.slice(0, 3).map(p => p.slug));
+    }
+    return partners.map((partner) => ({
+      slug: partner.slug,
+    }));
+  } catch (error) {
+    console.error('generateStaticParams error:', error);
+    // Return empty array as fallback
+    return [];
+  }
 }
 
 interface PartnerDetailPageProps {
   params: Promise<{
-    id: string;
+    slug: string;
   }>;
 }
 
 export default async function PartnerDetailPage({ params }: PartnerDetailPageProps) {
   // Await the params in server component
-  const { id } = await params;
+  const { slug } = await params;
 
-  // Find the partner by ID
-  const partner = getPartnerById(id);
+  // Validate slug format (basic sanitization)
+  if (!slug || typeof slug !== 'string' || slug.length > 100 || !/^[a-z0-9-]+$/.test(slug)) {
+    notFound();
+  }
+
+  // Find the partner by slug using data service
+  const partner = await dataService.getPartnerBySlug(slug);
   
   if (!partner) {
     notFound();
   }
 
   // Find products from this partner
-  const partnerProducts = getProductsByPartner(partner.id);
+  const partnerProducts = await dataService.getProductsByPartner(partner.id);
 
   // Generate placeholder data
   const achievements = [

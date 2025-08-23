@@ -15,7 +15,7 @@ import {
   ExternalLink
 } from "lucide-react";
 import Link from "next/link";
-import { products, getProductById, getPartnerByProduct } from "@/app/lib/data";
+import dataService from "@/lib/data-service";
 import { notFound } from "next/navigation";
 import ProductDetailClient from "./_components/product-detail-client";
 
@@ -24,9 +24,15 @@ export const dynamic = 'force-static';
 
 // Generate static params for all products
 export async function generateStaticParams() {
-  return products.map((product) => ({
-    id: product.id,
-  }));
+  try {
+    const products = await dataService.getProducts();
+    return products.map((product) => ({
+      id: product.id,
+    }));
+  } catch (error) {
+    console.error('generateStaticParams error:', error);
+    return [];
+  }
 }
 
 interface ProductDetailPageProps {
@@ -40,14 +46,14 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   const { id } = await params;
 
   // Find the product by ID
-  const product = getProductById(id);
+  const product = await dataService.getProductById(id);
   
   if (!product) {
     notFound();
   }
 
   // Find the partner information
-  const partner = getPartnerByProduct(product.id);
+  const partner = await dataService.getPartnerByProduct(product.id);
   
   // Generate placeholder specifications
   const specifications = [
@@ -228,7 +234,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                     <div className="text-sm text-muted-foreground break-words">Custom quotes available</div>
                   </div>
                   
-                  <ProductDetailClient product={product} partner={partner} />
+                  <ProductDetailClient product={product} partner={partner ?? undefined} />
 
                   <Separator />
 
@@ -237,7 +243,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                     <div>
                       <h4 className="font-medium mb-2">About the Manufacturer</h4>
                       <div className="border rounded-lg p-3 bg-card hover:bg-muted/50 transition-colors">
-                        <Link href={`/partners/${partner.id}`} className="block">
+                        <Link href={`/partners/${partner.slug}`} className="block">
                           <div className="flex items-start space-x-3">
                             <div className="text-left flex-1">
                               <div className="font-medium text-foreground mb-1 word-wrap break-words hyphens-auto">

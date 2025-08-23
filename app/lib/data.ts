@@ -4,6 +4,7 @@ import { blogContent } from './blog-content';
 
 export interface Partner {
   id: string;
+  slug: string;
   name: string;
   category: string;
   description: string;
@@ -53,9 +54,18 @@ export interface TeamMember {
   linkedin?: string;
 }
 
+// Create slugs from titles
+const createSlug = (title: string): string => {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+};
+
 // Transform research data into structured format
 export const partners: Partner[] = researchData.partner_companies.map((partner: any, index: number) => ({
   id: `partner-${index + 1}`,
+  slug: createSlug(partner.company),
   name: partner.company,
   category: partner.category,
   description: partner.description,
@@ -77,14 +87,6 @@ export const products: Product[] = researchData.partner_companies.flatMap((partn
     tags: [partner.category, ...(product.features || []).slice(0, 2)],
   }))
 );
-
-// Create slugs from titles
-const createSlug = (title: string): string => {
-  return title
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '');
-};
 
 export const blogPosts: BlogPost[] = researchData.industry_trends.map((trend: any, index: number) => {
   const slug = createSlug(trend.title);

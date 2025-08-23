@@ -4,6 +4,7 @@ import { blogContent } from './blog-content';
 
 export interface Partner {
   id: string;
+  slug: string;
   name: string;
   category: string;
   description: string;
@@ -53,17 +54,29 @@ export interface TeamMember {
   linkedin?: string;
 }
 
+// Create slugs from titles
+const createSlug = (title: string): string => {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+};
+
 // Transform research data into structured format
-export const partners: Partner[] = researchData.partner_companies.map((partner: any, index: number) => ({
-  id: `partner-${index + 1}`,
-  name: partner.company + ' - FB',
-  category: partner.category,
-  description: partner.description,
-  founded: partner.founded || 2000 + (index % 20) + 5,
-  location: partner.location || 'Netherlands',
-  tags: partner.tags || [partner.category],
-  featured: index < 6,
-}));
+export const partners: Partner[] = researchData.partner_companies.map((partner: any, index: number) => {
+  const partnerName = partner.company + ' - FB';
+  return {
+    id: `partner-${index + 1}`,
+    slug: createSlug(partnerName),
+    name: partnerName,
+    category: partner.category,
+    description: partner.description,
+    founded: partner.founded || 2000 + (index % 20) + 5,
+    location: partner.location || 'Netherlands',
+    tags: partner.tags || [partner.category],
+    featured: index < 6,
+  };
+});
 
 export const products: Product[] = researchData.partner_companies.flatMap((partner: any, partnerIndex: number) => 
   (partner.sample_products || []).map((product: any, productIndex: number) => ({
@@ -77,14 +90,6 @@ export const products: Product[] = researchData.partner_companies.flatMap((partn
     tags: [partner.category, ...(product.features || []).slice(0, 2)],
   }))
 );
-
-// Create slugs from titles
-const createSlug = (title: string): string => {
-  return title
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '');
-};
 
 export const blogPosts: BlogPost[] = researchData.industry_trends.map((trend: any, index: number) => {
   const slug = createSlug(trend.title);
@@ -269,6 +274,18 @@ export const getRelatedPosts = (currentPostId: string, limit: number = 3): BlogP
 
 export const getPartnerByName = (partnerName: string): Partner | undefined => {
   return partners.find(partner => partner.name === partnerName);
+};
+
+export const getPartnerById = (id: string): Partner | undefined => {
+  return partners.find(partner => partner.id === id);
+};
+
+export const getPartnerBySlug = (slug: string): Partner | undefined => {
+  return partners.find(partner => partner.slug === slug);
+};
+
+export const getProductById = (id: string): Product | undefined => {
+  return products.find(product => product.id === id);
 };
 
 // URL parameter utilities

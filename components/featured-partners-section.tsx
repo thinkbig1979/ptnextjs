@@ -27,7 +27,7 @@ export function FeaturedPartnersSection({ featuredPartners }: FeaturedPartnersSe
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {featuredPartners.map((partner, index) => (
-            <div key={partner?.id}>
+            <Link key={partner?.id} href={`/partners/${partner?.slug}`} className="block h-full">
               <Card className="h-full hover-lift cursor-pointer group">
                 <CardHeader>
                   <div className="flex items-center space-x-3 mb-3">
@@ -51,13 +51,17 @@ export function FeaturedPartnersSection({ featuredPartners }: FeaturedPartnersSe
                       </Badge>
                     ))}
                   </div>
-                  <div className="flex items-center justify-between text-sm text-muted-foreground">
+                  <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
                     <span>Est. {partner?.founded}</span>
                     <span>{partner?.location}</span>
                   </div>
+                  <div className="flex items-center text-accent text-sm font-medium group-hover:text-accent/80 transition-colors">
+                    <span>Learn more</span>
+                    <ArrowRight className="ml-2 h-3 w-3 group-hover:translate-x-1 transition-transform" />
+                  </div>
                 </CardContent>
               </Card>
-            </div>
+            </Link>
           ))}
         </div>
 

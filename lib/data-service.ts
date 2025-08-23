@@ -16,6 +16,7 @@ import {
   getPartnerByProduct as staticGetPartnerByProduct,
   getRelatedPosts as staticGetRelatedPosts,
   getPartnerByName as staticGetPartnerByName,
+  getPartnerBySlug as staticGetPartnerBySlug,
 } from './data';
 import { Partner, Product, BlogPost, TeamMember } from './data';
 
@@ -173,6 +174,28 @@ class DataService {
     }
 
     this.logContentSource('Partner by Name', 'empty');
+    return null;
+  }
+
+  async getPartnerBySlug(slug: string): Promise<Partner | null> {
+    if (await this.shouldUseStrapi()) {
+      try {
+        const partners = await strapiClient.getPartners();
+        const partner = partners.find(partner => partner.slug === slug) || null;
+        if (partner) this.logContentSource('Partner by Slug', 'strapi');
+        return partner;
+      } catch (error) {
+        console.error('Failed to fetch partner from Strapi:', error);
+      }
+    }
+    
+    if (this.shouldUseFallback()) {
+      const partner = staticGetPartnerBySlug(slug) || null;
+      if (partner) this.logContentSource('Partner by Slug', 'fallback');
+      return partner;
+    }
+
+    this.logContentSource('Partner by Slug', 'empty');
     return null;
   }
 

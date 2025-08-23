@@ -6,10 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Building2 } from "lucide-react";
 import Link from "next/link";
-import { partners } from "@/lib/data";
+import { Partner } from "@/lib/data";
 
-export function FeaturedPartnersSection() {
-  const featuredPartners = partners.filter(partner => partner?.featured).slice(0, 6);
+interface FeaturedPartnersSectionProps {
+  featuredPartners: Partner[];
+}
+
+export function FeaturedPartnersSection({ featuredPartners }: FeaturedPartnersSectionProps) {
+  // Take first 6 partners from the passed data
+  const displayPartners = featuredPartners.slice(0, 6);
 
   return (
     <section className="py-20 bg-secondary/30">
@@ -24,38 +29,42 @@ export function FeaturedPartnersSection() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {featuredPartners.map((partner, index) => (
-            <div key={partner?.id}>
+          {displayPartners.map((partner, index) => (
+            <Link key={partner?.id} href={`/partners/${partner?.slug}`} className="block h-full">
               <Card className="h-full hover-lift cursor-pointer group">
-                <CardHeader>
-                  <div className="flex items-center space-x-3 mb-3">
-                    <div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center">
-                      <Building2 className="w-5 h-5 text-accent" />
+                  <CardHeader>
+                    <div className="flex items-center space-x-3 mb-3">
+                      <div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center">
+                        <Building2 className="w-5 h-5 text-accent" />
+                      </div>
+                      <Badge variant="secondary">{partner?.category}</Badge>
                     </div>
-                    <Badge variant="secondary">{partner?.category}</Badge>
-                  </div>
-                  <CardTitle className="group-hover:text-accent transition-colors">
-                    {partner?.name}
-                  </CardTitle>
-                  <CardDescription className="line-clamp-3">
-                    {partner?.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-1 mb-4">
-                    {partner?.tags?.slice(0, 3).map((tag) => (
-                      <Badge key={tag} variant="outline" className="text-xs">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                  <div className="flex items-center justify-between text-sm text-muted-foreground">
-                    <span>Est. {partner?.founded}</span>
-                    <span>{partner?.location}</span>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+                    <CardTitle className="group-hover:text-accent transition-colors">
+                      {partner?.name}
+                    </CardTitle>
+                    <CardDescription className="line-clamp-3">
+                      {partner?.description}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex flex-wrap gap-1 mb-4">
+                      {partner?.tags?.slice(0, 3).map((tag) => (
+                        <Badge key={tag} variant="outline" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                    <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
+                      <span>Est. {partner?.founded}</span>
+                      <span>{partner?.location}</span>
+                    </div>
+                    <div className="flex items-center text-accent text-sm font-medium group-hover:text-accent/80 transition-colors">
+                      <span>Learn more</span>
+                      <ArrowRight className="ml-2 h-3 w-3 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </CardContent>
+                </Card>
+            </Link>
           ))}
         </div>
 

@@ -31,6 +31,13 @@ class StrapiClient {
     this.baseUrl = baseUrl;
   }
 
+  private createSlug(name: string): string {
+    return name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+  }
+
   private async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
     
@@ -82,7 +89,8 @@ class StrapiClient {
     const response = await this.request<StrapiResponse<StrapiEntry[]>>(endpoint);
     
     return response.data.map(item => ({
-      id: item.id.toString(),
+      id: item.attributes.id || item.id.toString(),
+      slug: this.createSlug(item.attributes.name),
       name: item.attributes.name,
       category: item.attributes.category?.data?.attributes?.name || '',
       description: item.attributes.description,
@@ -97,11 +105,16 @@ class StrapiClient {
 
   async getPartnerById(id: string): Promise<Partner | null> {
     try {
-      const response = await this.request<StrapiResponse<StrapiEntry>>(`/partners/${id}?populate=*`);
-      const item = response.data;
+      const response = await this.request<StrapiResponse<StrapiEntry[]>>(`/partners?populate=*&filters[id][$eq]=${id}`);
+      const item = response.data[0];
+      
+      if (!item) {
+        return null;
+      }
       
       return {
-        id: item.id.toString(),
+        id: item.attributes.id || item.id.toString(),
+        slug: this.createSlug(item.attributes.name),
         name: item.attributes.name,
         category: item.attributes.category?.data?.attributes?.name || '',
         description: item.attributes.description,
@@ -265,6 +278,7 @@ class StrapiClient {
     
     return response.data.map(item => ({
       id: item.id.toString(),
+      slug: this.createSlug(item.attributes.name),
       name: item.attributes.name,
       category: item.attributes.category?.data?.attributes?.name || '',
       description: item.attributes.description,

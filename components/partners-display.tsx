@@ -229,7 +229,7 @@ export function PartnersDisplay({ partners, categories }: PartnersDisplayProps) 
                     className="group-hover:text-accent transition-colors hover:underline cursor-pointer"
                     onClick={(e) => {
                       e.stopPropagation();
-                      router.push(`/partners/${partner?.id}`);
+                      router.push(`/partners/${partner?.slug}`);
                     }}
                   >
                     {partner?.name}
@@ -290,7 +290,7 @@ export function PartnersDisplay({ partners, categories }: PartnersDisplayProps) 
                         size="sm" 
                         className="w-full group"
                       >
-                        <Link href={`/partners/${partner?.id}`}>
+                        <Link href={`/partners/${partner?.slug}`}>
                           Learn More
                           <ArrowRight className="ml-2 h-3 w-3 group-hover:translate-x-1 transition-transform" />
                         </Link>
