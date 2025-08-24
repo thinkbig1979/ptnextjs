@@ -1,9 +1,25 @@
 
 import Link from "next/link";
 import { Anchor, Mail, Phone, MapPin } from "lucide-react";
-import { companyInfo } from "@/lib/data";
+interface FooterProps {
+  companyInfo?: {
+    name: string;
+    tagline: string;
+    email: string;
+    phone: string;
+    address: string;
+  };
+}
 
-export function Footer() {
+export function Footer({ companyInfo }: FooterProps) {
+  // Default company info if not provided
+  const company = companyInfo || {
+    name: 'Paul Thames',
+    tagline: 'Connecting Superyacht Technology Excellence',
+    email: 'info@paulthames.com',
+    phone: '+31 20 555 0123',
+    address: 'Amsterdam, Netherlands'
+  };
   return (
     <footer className="bg-card border-t">
       <div className="container max-w-screen-xl py-12">
@@ -15,7 +31,7 @@ export function Footer() {
               <span className="font-cormorant text-xl font-bold">Paul Thames</span>
             </div>
             <p className="font-poppins-light text-sm text-muted-foreground">
-              {companyInfo.tagline}
+              {company.tagline}
             </p>
           </div>
 
@@ -41,11 +57,11 @@ export function Footer() {
             <div className="space-y-2">
               <div className="flex items-center space-x-2 font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors cursor-pointer">
                 <Mail className="h-4 w-4" />
-                <span>{companyInfo.email}</span>
+                <span>{company.email}</span>
               </div>
               <div className="flex items-center space-x-2 font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors cursor-pointer">
                 <Phone className="h-4 w-4" />
-                <span>{companyInfo.phone}</span>
+                <span>{company.phone}</span>
               </div>
               <div className="flex items-center space-x-2 font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors">
                 <MapPin className="h-4 w-4" />

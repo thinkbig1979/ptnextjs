@@ -16,33 +16,41 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import dataService from "@/lib/data-service";
+import { staticDataService } from "@/lib/static-data-service";
+import { OptimizedImage } from "@/components/ui/optimized-image";
 import { notFound, redirect } from "next/navigation";
 import ProductDetailClient from "./_components/product-detail-client";
 
-// Enable static generation
+// Force static generation for optimal SEO and performance
 export const dynamic = 'force-static';
+export const dynamicParams = true;
+export const revalidate = false;
 
-// Generate static params for all products (both IDs and slugs)
+// Generate static params for all products at build time
 export async function generateStaticParams() {
   try {
-    const products = await dataService.getProducts();
-    console.log(`generateStaticParams: Found ${products.length} products`);
+    console.log('🏗️  Generating static params for product pages...');
+    const products = await staticDataService.getAllProducts();
+    console.log(`📋 Found ${products.length} products for static generation`);
     
-    // Generate params for both IDs and slugs
+    // Generate params for both IDs and slugs for backward compatibility
     const params = products.flatMap((product) => {
-      const result = [{ id: product.id }]; // Always include ID
+      const result = [{ id: product.id }]; // Always include numeric ID
       if (product.slug && product.slug !== product.id) {
-        result.push({ id: product.slug }); // Include slug if different from ID
+        result.push({ id: product.slug }); // Include slug-based URL
       }
       return result;
     });
     
-    console.log(`Generated ${params.length} static params`);
+    console.log(`✅ Generated ${params.length} static product params`);
+    if (params.length > 0) {
+      console.log('🔗 Sample product URLs:', params.slice(0, 3).map(p => p.id), '...');
+    }
+    
     return params;
   } catch (error) {
-    console.error('generateStaticParams error:', error);
-    return [];
+    console.error('❌ Failed to generate static params for products:', error);
+    throw error; // Fail the build if we can't generate static params
   }
 }
 
@@ -62,11 +70,11 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   }
 
   // Try to find product by slug first, then by ID
-  let product = await dataService.getProductBySlug(id);
+  let product = await staticDataService.getProductBySlug(id);
   
   if (!product) {
     // Try to find by ID if not found by slug
-    product = await dataService.getProductById(id);
+    product = await staticDataService.getProductById(id);
     
     // If found by ID and has a slug, redirect to slug-based URL for SEO
     if (product && product.slug && product.slug !== id) {
@@ -75,11 +83,17 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   }
   
   if (!product) {
+    console.warn(`⚠️  Product not found for ID/slug: ${id}`);
     notFound();
   }
 
+  console.log(`✅ Loading product: ${product.name}`);
+
   // Find the partner information
-  const partner = await dataService.getPartnerByProduct(product.id);
+  const partner = await staticDataService.getPartnerById(product.partnerId);
+  if (partner) {
+    console.log(`🤝 Partner found: ${partner.name}`);
+  }
   
   // Generate placeholder specifications
   const specifications = [
@@ -154,46 +168,40 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
             {/* Product Image Gallery */}
             <div className="mb-8">
-              {mainImage ? (
-                <div className="space-y-4">
-                  {/* Main Image */}
-                  <div className="aspect-video relative overflow-hidden rounded-lg border">
-                    <Image
-                      src={mainImage.url}
-                      alt={mainImage.altText || product.name}
-                      fill
-                      className="object-cover"
-                      priority
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 66vw, 50vw"
-                    />
-                  </div>
+              <div className="space-y-4">
+                {/* Main Image */}
+                <div className="rounded-lg border overflow-hidden">
+                  <OptimizedImage
+                    src={mainImage?.url}
+                    alt={mainImage?.altText || product.name}
+                    fallbackType="product"
+                    aspectRatio="video"
+                    fill
+                    className="object-cover"
+                    priority
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 66vw, 50vw"
+                  />
+                </div>
 
-                  {/* Image Gallery */}
-                  {galleryImages.length > 0 && (
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {galleryImages.slice(0, 4).map((image) => (
-                        <div key={image.id} className="aspect-square relative overflow-hidden rounded-lg border cursor-pointer hover:opacity-80 transition-opacity">
-                          <Image
-                            src={image.url}
-                            alt={image.altText || product?.name || ''}
-                            fill
-                            className="object-cover"
-                            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 200px"
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ) : (
-                // Fallback placeholder when no images
-                <div className="aspect-video bg-gradient-to-br from-accent/20 to-primary/20 rounded-lg flex items-center justify-center">
-                  <div className="text-center">
-                    <Package className="w-16 h-16 text-accent/60 mx-auto mb-4" />
-                    <p className="text-sm text-muted-foreground">Product Image</p>
+                {/* Image Gallery */}
+                {galleryImages.length > 0 && (
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {galleryImages.slice(0, 4).map((image) => (
+                      <div key={image.id} className="cursor-pointer hover:opacity-80 transition-opacity rounded-lg border overflow-hidden">
+                        <OptimizedImage
+                          src={image.url}
+                          alt={image.altText || product?.name || ''}
+                          fallbackType="product"
+                          aspectRatio="square"
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 200px"
+                        />
+                      </div>
+                    ))}
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
 
             {/* Key Features */}

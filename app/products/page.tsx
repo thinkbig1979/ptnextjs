@@ -2,14 +2,33 @@
 
 import * as React from "react";
 import { Suspense } from "react";
-import { ProductsDisplay } from "@/components/products-display";
-import dataService from "@/lib/data-service";
+import { ProductsClient } from "@/app/components/products-client";
+import { staticDataService } from "@/lib/static-data-service";
 
-export default async function ProductsPage() {
-  // Fetch data at build time
-  const products = await dataService.getProducts();
-  const partners = await dataService.getPartners();
-  const categories = await dataService.getCategories();
+// Force static generation for optimal SEO and performance
+export const dynamic = 'force-static';
+export const revalidate = false;
+
+interface ProductsPageProps {
+  searchParams?: {
+    category?: string;
+    search?: string;
+    partner?: string;
+  };
+}
+
+export default async function ProductsPage({ searchParams }: ProductsPageProps) {
+  console.log('🏗️  Rendering Products page (static generation) with searchParams:', searchParams);
+  
+  // Fetch all data at build time for static generation
+  const [products, categories] = await Promise.all([
+    staticDataService.getAllProducts(),
+    staticDataService.getCategories()
+  ]);
+  
+  const categoryNames = categories.map(cat => cat.name);
+  
+  console.log(`📋 Static generation: Loaded ${products.length} products, ${categories.length} categories`);
 
   return (
     <div className="min-h-screen py-12">
@@ -24,9 +43,8 @@ export default async function ProductsPage() {
           </p>
         </div>
 
-        {/* Server-rendered content with client-side interactivity */}
+        {/* Client component with all data passed as props */}
         <Suspense fallback={<div className="space-y-8 animate-pulse">
-          <div className="h-12 bg-muted/20 rounded" />
           <div className="h-6 bg-muted/20 rounded w-48" />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[...Array(6)].map((_, i) => (
@@ -34,7 +52,10 @@ export default async function ProductsPage() {
             ))}
           </div>
         </div>}>
-          <ProductsDisplay products={products} partners={partners} categories={categories} />
+          <ProductsClient 
+            initialProducts={products}
+            initialCategories={categoryNames}
+          />
         </Suspense>
       </div>
     </div>

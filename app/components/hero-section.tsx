@@ -5,7 +5,6 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Users, Ship, Zap } from "lucide-react";
 import Link from "next/link";
-import { companyInfo } from "@/lib/data";
 import { HeroClient } from "./hero-client";
 
 const stats = [
@@ -14,7 +13,15 @@ const stats = [
   { icon: Zap, label: "Technology Solutions", value: 500, suffix: "+" },
 ];
 
-export function HeroSection() {
+interface HeroSectionProps {
+  companyInfo: {
+    name: string;
+    tagline: string;
+    description: string;
+  };
+}
+
+export function HeroSection({ companyInfo }: HeroSectionProps) {
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-gradient-hero overflow-hidden">
       {/* Background Pattern */}

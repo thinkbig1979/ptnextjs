@@ -5,7 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Calendar, Users, Ship, Target, Award } from "lucide-react";
 import { AboutClient } from "./_components/about-client";
-import dataService from "@/lib/data-service";
+import { staticDataService } from "@/lib/static-data-service";
+import { OptimizedImage } from "@/components/ui/optimized-image";
 
 const values = [
   {
@@ -39,8 +40,8 @@ const stats = [
 
 export default async function AboutPage() {
   // Fetch data at build time
-  const companyInfo = await dataService.getCompanyInfo();
-  const teamMembers = await dataService.getTeamMembers();
+  const companyInfo = await staticDataService.getCompanyInfo();
+  const teamMembers = await staticDataService.getTeamMembers();
 
   return (
     <div className="min-h-screen py-12">
@@ -153,8 +154,17 @@ export default async function AboutPage() {
               <div key={member?.id}>
                 <Card className="h-full hover-lift">
                   <CardHeader className="text-center">
-                    <div className="w-20 h-20 bg-gradient-to-br from-accent/20 to-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Users className="w-8 h-8 text-accent" />
+                    <div className="w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden">
+                      <OptimizedImage
+                        src={member?.image}
+                        alt={member?.name || 'Team member'}
+                        fallbackType="team"
+                        aspectRatio="square"
+                        fill
+                        className="object-cover"
+                        sizes="80px"
+                        iconSize="md"
+                      />
                     </div>
                     <CardTitle>{member?.name}</CardTitle>
                     <CardDescription className="font-poppins-medium text-accent">

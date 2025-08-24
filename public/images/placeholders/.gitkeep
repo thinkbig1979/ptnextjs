@@ -1,0 +1,10 @@
+# Placeholder images directory
+# Professional placeholder images should be placed here:
+# - product-placeholder.jpg (1920x1080, product/technology theme)
+# - partner-placeholder.jpg (1920x1080, company/building theme)  
+# - team-placeholder.jpg (1080x1080, professional headshot theme)
+# - company-placeholder.jpg (1920x1080, maritime/yacht theme)
+# - generic-placeholder.jpg (1920x1080, general business theme)
+
+# For now, the OptimizedImage component will fall back to icon-based placeholders
+# Professional placeholder images can be added later for enhanced visual appeal

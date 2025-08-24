@@ -13,14 +13,16 @@ import { Pagination } from "@/components/pagination";
 import { Package, Building2, ArrowRight, Star } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { parseFilterParams } from "@/lib/data";
-import { dataService } from "@/lib/data-service";
-
+import { parseFilterParams } from "@/lib/utils";
+import { OptimizedImage } from "@/components/ui/optimized-image";
 const ITEMS_PER_PAGE = 12;
 
-export function ProductsClient() {
-  console.log('ProductsClient: Component mounted');
-  
+interface ProductsClientProps {
+  initialProducts: any[];
+  initialCategories: string[];
+}
+
+export function ProductsClient({ initialProducts, initialCategories }: ProductsClientProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -31,41 +33,12 @@ export function ProductsClient() {
   const [currentPage, setCurrentPage] = React.useState(1);
   const [selectedPartner, setSelectedPartner] = React.useState(urlParams.partner);
   
-  // Data state
-  const [products, setProducts] = React.useState<any[]>([]);
-  const [categories, setCategories] = React.useState<string[]>([]);
-  const [loading, setLoading] = React.useState(true);
-  
 
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
   });
 
-  // Load data on component mount
-  React.useEffect(() => {
-    async function loadData() {
-      try {
-        setLoading(true);
-        console.log('ProductsClient: Loading data...');
-        const [productsData, categoriesData] = await Promise.all([
-          dataService.getProducts(),
-          dataService.getCategories()
-        ]);
-        console.log('ProductsClient: Loaded products:', productsData);
-        console.log('ProductsClient: Loaded categories:', categoriesData);
-        setProducts(productsData);
-        setCategories(categoriesData.map(cat => cat.name));
-        console.log('ProductsClient: State updated with products count:', productsData.length);
-      } catch (error) {
-        console.error('Failed to load data:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    
-    loadData();
-  }, []);
 
   // Update state when URL parameters change
   React.useEffect(() => {
@@ -88,17 +61,7 @@ export function ProductsClient() {
 
   // Filter products based on search, category, and partner
   const filteredProducts = React.useMemo(() => {
-    console.log('ProductsClient: Filtering products...');
-    console.log('ProductsClient: loading:', loading, 'products.length:', products.length);
-    console.log('ProductsClient: searchQuery:', searchQuery, 'selectedCategory:', selectedCategory, 'selectedPartner:', selectedPartner);
-    
-    if (loading || !products.length) {
-      console.log('ProductsClient: No products to filter - loading or empty array');
-      return [];
-    }
-    
-    let filtered = products;
-    console.log('ProductsClient: Starting with', filtered.length, 'products');
+    let filtered = initialProducts;
 
     // Apply search filter
     if (searchQuery.trim()) {
@@ -109,26 +72,20 @@ export function ProductsClient() {
         product?.tags?.some((tag: string) => tag.toLowerCase().includes(query)) ||
         product?.features?.some((feature: string) => feature.toLowerCase().includes(query))
       );
-      console.log('ProductsClient: After search filter:', filtered.length, 'products');
     }
 
     // Apply category filter
     if (selectedCategory !== "all") {
-      const beforeCount = filtered.length;
       filtered = filtered.filter(product => product?.category === selectedCategory);
-      console.log('ProductsClient: After category filter (' + selectedCategory + '):', filtered.length, 'products (was', beforeCount + ')');
     }
 
     // Apply partner filter
     if (selectedPartner) {
-      const beforeCount = filtered.length;
       filtered = filtered.filter(product => product?.partnerName === selectedPartner);
-      console.log('ProductsClient: After partner filter (' + selectedPartner + '):', filtered.length, 'products (was', beforeCount + ')');
     }
 
-    console.log('ProductsClient: Final filtered products:', filtered.length);
     return filtered;
-  }, [products, searchQuery, selectedCategory, selectedPartner, loading]);
+  }, [initialProducts, searchQuery, selectedCategory, selectedPartner]);
 
   // Paginate results
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
@@ -191,16 +148,6 @@ export function ProductsClient() {
   }, [searchQuery, selectedCategory]);
 
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading products...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -214,7 +161,7 @@ export function ProductsClient() {
         <SearchFilter
           searchQuery={searchQuery}
           onSearchChange={handleSearchChange}
-          categories={categories}
+          categories={initialCategories}
           selectedCategory={selectedCategory}
           onCategoryChange={handleCategoryChange}
           placeholder="Search products and services..."
@@ -253,21 +200,15 @@ export function ProductsClient() {
               }}
             >
               {/* Product Image */}
-              <div className="aspect-video relative overflow-hidden">
-                {product?.mainImage?.url || product?.image ? (
-                  <Image
-                    src={product.mainImage?.url || product.image || ''}
-                    alt={product?.mainImage?.altText || product?.name || ''}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-accent/20 to-primary/20 flex items-center justify-center">
-                    <Package className="w-12 h-12 text-accent/60" />
-                  </div>
-                )}
-              </div>
+              <OptimizedImage
+                src={product?.mainImage?.url || product?.image}
+                alt={product?.mainImage?.altText || product?.name || 'Product image'}
+                fallbackType="product"
+                aspectRatio="video"
+                fill
+                className="group-hover:scale-105 transition-transform duration-300"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
               
               <CardHeader>
                 <div className="flex items-center justify-between mb-3">

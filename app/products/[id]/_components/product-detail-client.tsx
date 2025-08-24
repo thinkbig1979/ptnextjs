@@ -11,7 +11,7 @@ import {
   Download,
   Play
 } from "lucide-react";
-import type { Product, Partner } from "@/lib/data";
+import type { Product, Partner } from "@/lib/types";
 
 interface ProductDetailClientProps {
   product: Product;

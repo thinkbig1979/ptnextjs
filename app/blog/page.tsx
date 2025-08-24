@@ -8,12 +8,12 @@ import { Calendar, User, Clock, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { formatDate } from "@/lib/utils";
 import { BlogClient } from "./_components/blog-client";
-import dataService from "@/lib/data-service";
+import { staticDataService } from "@/lib/static-data-service";
 
 export default async function BlogPage() {
   // Fetch data at build time
-  const blogPosts = await dataService.getBlogPosts();
-  const categories = await dataService.getBlogCategories();
+  const blogPosts = await staticDataService.getAllBlogPosts();
+  const categories = await staticDataService.getBlogCategories();
   const blogCategories = categories.map(cat => cat.name);
   
   const featuredPost = blogPosts.find(post => post?.featured);

@@ -4,9 +4,13 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Mail, Phone } from "lucide-react";
 import Link from "next/link";
-import { companyInfo } from "@/lib/data";
+interface CTASectionProps {
+  companyInfo: {
+    phone: string;
+  };
+}
 
-export function CTASection() {
+export function CTASection({ companyInfo }: CTASectionProps) {
   return (
     <section className="py-20 bg-accent text-accent-foreground relative overflow-hidden">
       {/* Background Pattern */}

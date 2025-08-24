@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { Button } from "@/components/ui/button";
 import { Share2, BookmarkPlus, Bookmark } from "lucide-react";
-import type { BlogPost } from "@/lib/data";
+import type { BlogPost } from "@/lib/types";
 
 interface BlogPostClientProps {
   post: BlogPost;

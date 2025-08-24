@@ -1,4 +1,4 @@
-import { Partner, Product, ProductImage, BlogPost, TeamMember } from './data.js';
+import { Partner, Product, ProductImage, BlogPost, TeamMember } from './types';
 
 const STRAPI_API_URL = process.env.STRAPI_API_URL || 
   process.env.NEXT_PUBLIC_STRAPI_API_URL || 
@@ -59,6 +59,7 @@ class StrapiClient {
     const url = `${this.baseUrl}${endpoint}`;
     
     try {
+      console.log(`🔍 Strapi API Request: ${url}`);
       const response = await fetch(url, {
         headers: {
           'Content-Type': 'application/json',
@@ -71,7 +72,9 @@ class StrapiClient {
         throw new Error(`Strapi API error: ${response.status} ${response.statusText}`);
       }
 
-      return await response.json();
+      const data = await response.json();
+      console.log(`✅ Strapi API Response for ${endpoint}:`, JSON.stringify(data, null, 2));
+      return data;
     } catch (error) {
       console.error(`Strapi API request failed for ${endpoint}:`, error);
       throw error;
@@ -112,6 +115,7 @@ class StrapiClient {
       category: item.attributes.category?.data?.attributes?.name || '',
       description: item.attributes.description,
       logo: item.attributes.logo?.data?.attributes?.url,
+      image: item.attributes.image?.data?.attributes?.url,
       website: item.attributes.website,
       founded: item.attributes.founded,
       location: item.attributes.location,
@@ -122,27 +126,40 @@ class StrapiClient {
 
   async getPartnerById(id: string): Promise<Partner | null> {
     try {
-      const response = await this.request<StrapiResponse<StrapiEntry[]>>(`/partners?populate=*&filters[id][$eq]=${id}`);
-      const item = response.data[0];
+      console.log(`🔍 StrapiClient.getPartnerById: Looking for partner with ID "${id}"`);
+      
+      // Get all partners and find the one with matching custom ID
+      const response = await this.request<StrapiResponse<StrapiEntry[]>>('/partners?populate=*&pagination[pageSize]=100');
+      
+      console.log(`🔍 StrapiClient.getPartnerById: Retrieved ${response.data.length} partners`);
+      
+      // Find partner by custom ID attribute
+      const item = response.data.find(partner => partner.attributes.id === id);
       
       if (!item) {
+        console.log(`❌ No partner found with custom ID "${id}"`);
         return null;
       }
       
-      return {
+      const partner = {
         id: item.attributes.id || item.id.toString(),
         slug: item.attributes.slug || this.createSlug(item.attributes.name),
         name: item.attributes.name,
         category: item.attributes.category?.data?.attributes?.name || '',
         description: item.attributes.description,
         logo: item.attributes.logo?.data?.attributes?.url,
+        image: item.attributes.image?.data?.attributes?.url,
         website: item.attributes.website,
         founded: item.attributes.founded,
         location: item.attributes.location,
         tags: item.attributes.tags?.data?.map((tag: any) => tag.attributes.name) || [],
         featured: item.attributes.featured,
       };
+      
+      console.log(`✅ StrapiClient.getPartnerById: Found partner "${partner.name}" for ID "${id}"`);
+      return partner;
     } catch (error) {
+      console.error(`❌ StrapiClient.getPartnerById error for ID "${id}":`, error);
       return null;
     }
   }
@@ -163,6 +180,7 @@ class StrapiClient {
         category: item.attributes.category?.data?.attributes?.name || '',
         description: item.attributes.description,
         logo: item.attributes.logo?.data?.attributes?.url,
+        image: item.attributes.image?.data?.attributes?.url,
         website: item.attributes.website,
         founded: item.attributes.founded,
         location: item.attributes.location,
@@ -237,17 +255,25 @@ class StrapiClient {
   }
 
   async getProductBySlug(slug: string): Promise<Product | null> {
+    const endpoint = `/products?filters[slug][$eq]=${encodeURIComponent(slug)}&populate[partner]=*&populate[category]=*&populate[tags]=*&populate[product_images][populate]=image`;
+    console.log(`🔍 StrapiClient.getProductBySlug: Making API call to: ${this.baseUrl}${endpoint}`);
+    
     try {
-      const response = await this.request<StrapiResponse<StrapiEntry[]>>(`/products?filters[slug][$eq]=${encodeURIComponent(slug)}&populate[partner]=*&populate[category]=*&populate[tags]=*&populate[product_images][populate]=image`);
+      const response = await this.request<StrapiResponse<StrapiEntry[]>>(endpoint);
+      
+      console.log(`🔍 Strapi API Response: Found ${response.data.length} products for slug "${slug}"`);
       
       if (response.data.length === 0) {
+        console.log(`❌ No products returned from Strapi for slug "${slug}"`);
         return null;
       }
       
       const item = response.data[0];
+      console.log(`🔍 Processing product: ID ${item.id}, name "${item.attributes.name}"`);
+      
       const { images, mainImage } = this.processProductImages(item.attributes.product_images?.data || []);
       
-      return {
+      const product = {
         id: item.id.toString(),
         slug: item.attributes.slug || this.createSlug(item.attributes.name),
         name: item.attributes.name,
@@ -262,7 +288,11 @@ class StrapiClient {
         price: item.attributes.price,
         tags: item.attributes.tags?.data?.map((tag: any) => tag.attributes.name) || [],
       };
+      
+      console.log(`✅ StrapiClient: Returning product "${product.name}" with slug "${product.slug}"`);
+      return product;
     } catch (error) {
+      console.error(`❌ StrapiClient error for slug "${slug}":`, error);
       return null;
     }
   }
@@ -370,6 +400,7 @@ class StrapiClient {
       category: item.attributes.category?.data?.attributes?.name || '',
       description: item.attributes.description,
       logo: item.attributes.logo?.data?.attributes?.url,
+      image: item.attributes.image?.data?.attributes?.url,
       website: item.attributes.website,
       founded: item.attributes.founded,
       location: item.attributes.location,

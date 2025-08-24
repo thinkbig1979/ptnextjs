@@ -17,28 +17,38 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import dataService from "@/lib/data-service";
+import { staticDataService } from "@/lib/static-data-service";
+import { OptimizedImage } from "@/components/ui/optimized-image";
 import { notFound } from "next/navigation";
 import PartnerDetailClient from "./_components/partner-detail-client";
 
-// Enable static generation
-export const dynamic = 'auto';
+// Force static generation for optimal SEO and performance
+export const dynamic = 'force-static';
+export const dynamicParams = true;
+export const revalidate = false;
 
-// Generate static params for all partners
+// Generate static params for all partners at build time
 export async function generateStaticParams() {
   try {
-    const partners = await dataService.getPartners();
-    console.log(`generateStaticParams: Found ${partners.length} partners`);
-    if (partners.length > 0) {
-      console.log('First few partner slugs:', partners.slice(0, 3).map(p => p.slug));
+    console.log('🏗️  Generating static params for partner pages...');
+    const partners = await staticDataService.getAllPartners();
+    console.log(`📋 Found ${partners.length} partners for static generation`);
+    
+    const params = partners
+      .filter(partner => partner.slug) // Only include partners with valid slugs
+      .map((partner) => ({
+        slug: partner.slug,
+      }));
+    
+    if (params.length > 0) {
+      console.log('🔗 Partner slugs to generate:', params.slice(0, 3).map(p => p.slug), '...');
     }
-    return partners.map((partner) => ({
-      slug: partner.slug,
-    }));
+    
+    console.log(`✅ Generated ${params.length} static partner params`);
+    return params;
   } catch (error) {
-    console.error('generateStaticParams error:', error);
-    // Return empty array as fallback
-    return [];
+    console.error('❌ Failed to generate static params for partners:', error);
+    throw error; // Fail the build if we can't generate static params
   }
 }
 
@@ -57,15 +67,19 @@ export default async function PartnerDetailPage({ params }: PartnerDetailPagePro
     notFound();
   }
 
-  // Find the partner by slug using data service
-  const partner = await dataService.getPartnerBySlug(slug);
+  // Find the partner by slug using static data service
+  const partner = await staticDataService.getPartnerBySlug(slug);
   
   if (!partner) {
+    console.warn(`⚠️  Partner not found for slug: ${slug}`);
     notFound();
   }
 
+  console.log(`✅ Loading partner: ${partner.name}`);
+
   // Find products from this partner
-  const partnerProducts = await dataService.getProductsByPartner(partner.id);
+  const partnerProducts = await staticDataService.getProductsByPartner(partner.id);
+  console.log(`📦 Found ${partnerProducts.length} products for partner: ${partner.name}`);
 
   // Generate placeholder data
   const achievements = [
@@ -141,11 +155,16 @@ export default async function PartnerDetailPage({ params }: PartnerDetailPagePro
 
             {/* Company Image */}
             <div className="mb-8">
-              <div className="aspect-video bg-gradient-to-br from-accent/20 to-primary/20 rounded-lg flex items-center justify-center relative overflow-hidden">
-                <div className="text-center">
-                  <Building2 className="w-16 h-16 text-accent/60 mx-auto mb-4" />
-                  <p className="text-sm text-muted-foreground">Company Overview Image</p>
-                </div>
+              <div className="rounded-lg border overflow-hidden">
+                <OptimizedImage
+                  src={partner?.image}
+                  alt={`${partner.name} company overview`}
+                  fallbackType="partner"
+                  aspectRatio="video"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 66vw, 50vw"
+                />
               </div>
             </div>
 
@@ -212,21 +231,15 @@ export default async function PartnerDetailPage({ params }: PartnerDetailPagePro
                     <Card key={product.id} className="hover-lift cursor-pointer group overflow-hidden">
                       <Link href={`/products/${product.slug || product.id}`}>
                         {/* Product Image */}
-                        <div className="aspect-video relative overflow-hidden">
-                          {product.mainImage?.url || product.image ? (
-                            <Image
-                              src={product.mainImage?.url || product.image || ''}
-                              alt={product.mainImage?.altText || product.name}
-                              fill
-                              className="object-cover group-hover:scale-105 transition-transform duration-300"
-                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                            />
-                          ) : (
-                            <div className="w-full h-full bg-gradient-to-br from-accent/20 to-primary/20 flex items-center justify-center">
-                              <Package className="w-8 h-8 text-accent/60" />
-                            </div>
-                          )}
-                        </div>
+                        <OptimizedImage
+                          src={product.mainImage?.url || product.image}
+                          alt={product.mainImage?.altText || product.name}
+                          fallbackType="product"
+                          aspectRatio="video"
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                        />
                         
                         <CardHeader>
                           <div className="flex items-center space-x-2 mb-2">

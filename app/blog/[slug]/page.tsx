@@ -7,21 +7,27 @@ import Link from "next/link";
 import { formatDate } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import BlogPostClient from "./_components/blog-post-client";
-import dataService from "@/lib/data-service";
+import { staticDataService } from "@/lib/static-data-service";
+import { OptimizedImage } from "@/components/ui/optimized-image";
 
-// Enable static generation
-export const dynamic = 'auto';
+// Force static generation for optimal SEO and performance
+export const dynamic = 'force-static';
+export const dynamicParams = true;
+export const revalidate = false;
 
 // Generate static params for all blog posts
 export async function generateStaticParams() {
   try {
-    const blogPosts = await dataService.getBlogPosts();
-    return blogPosts.map((post) => ({
-      slug: post.slug,
-    }));
+    console.log('🏗️  Generating static params for blog post pages...');
+    const blogPostSlugs = await staticDataService.getBlogPostSlugs();
+    console.log(`📋 Found ${blogPostSlugs.length} blog posts for static generation`);
+    
+    const params = blogPostSlugs.map((slug) => ({ slug }));
+    console.log(`✅ Generated ${params.length} static blog post params`);
+    return params;
   } catch (error) {
-    console.error('generateStaticParams error:', error);
-    return [];
+    console.error('❌ Failed to generate static params for blog posts:', error);
+    throw error; // Fail the build if we can't generate static params
   }
 }
 
@@ -35,15 +41,21 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   // Await the params in server component
   const { slug } = await params;
 
-  // Find the blog post by slug using data service
-  const blogPosts = await dataService.getBlogPosts();
-  const post = blogPosts.find(p => p.slug === slug);
+  // Find the blog post by slug using static data service
+  const post = await staticDataService.getBlogPostBySlug(slug);
   
   if (!post) {
+    console.warn(`⚠️  Blog post not found for slug: ${slug}`);
     notFound();
   }
 
-  const relatedPosts = await dataService.getRelatedPosts(post.id, 3);
+  console.log(`✅ Loading blog post: ${post.title}`);
+
+  // Get related posts (simplified version for static generation)
+  const allBlogPosts = await staticDataService.getAllBlogPosts();
+  const relatedPosts = allBlogPosts
+    .filter(p => p.id !== post.id && p.category === post.category)
+    .slice(0, 3);
 
   return (
     <div className="min-h-screen py-12">
@@ -96,6 +108,23 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <BlogPostClient post={post} />
           </div>
         </div>
+
+        {/* Featured Image */}
+        {post.image && (
+          <div className="mb-12">
+            <div className="rounded-lg border overflow-hidden">
+              <OptimizedImage
+                src={post.image}
+                alt={post.title}
+                fallbackType="generic"
+                aspectRatio="video"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 800px"
+              />
+            </div>
+          </div>
+        )}
 
         {/* Article Content */}
         <div className="prose prose-lg max-w-none mb-12">

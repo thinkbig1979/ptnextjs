@@ -11,12 +11,19 @@ import { SearchFilter } from "@/components/search-filter";
 import { Pagination } from "@/components/pagination";
 import { Building2, MapPin, Calendar, ExternalLink, Package, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { partners, categories, searchPartners, getPartnersByCategory, parseFilterParams, getProductsByPartner } from "@/lib/data";
+import { parseFilterParams } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { OptimizedImage } from "@/components/ui/optimized-image";
 
 const ITEMS_PER_PAGE = 12;
 
-export function PartnersClient() {
+interface PartnersClientProps {
+  initialPartners: any[];
+  initialCategories: string[];
+  initialProducts?: any[];
+}
+
+export function PartnersClient({ initialPartners, initialCategories, initialProducts = [] }: PartnersClientProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -53,11 +60,16 @@ export function PartnersClient() {
 
   // Filter partners based on search and category
   const filteredPartners = React.useMemo(() => {
-    let filtered = partners;
+    let filtered = initialPartners;
 
     // Apply search filter
     if (searchQuery.trim()) {
-      filtered = searchPartners(searchQuery);
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(partner => 
+        partner?.name?.toLowerCase().includes(query) ||
+        partner?.description?.toLowerCase().includes(query) ||
+        partner?.tags?.some((tag: string) => tag.toLowerCase().includes(query))
+      );
     }
 
     // Apply category filter
@@ -74,7 +86,7 @@ export function PartnersClient() {
     }
 
     return filtered;
-  }, [searchQuery, selectedCategory, highlightedPartner]);
+  }, [initialPartners, searchQuery, selectedCategory, highlightedPartner]);
 
   // Paginate results
   const totalPages = Math.ceil(filteredPartners.length / ITEMS_PER_PAGE);
@@ -147,7 +159,7 @@ export function PartnersClient() {
         <SearchFilter
           searchQuery={searchQuery}
           onSearchChange={handleSearchChange}
-          categories={categories}
+          categories={initialCategories}
           selectedCategory={selectedCategory}
           onCategoryChange={handleCategoryChange}
           placeholder="Search partners by name, description, or technology..."
@@ -171,7 +183,8 @@ export function PartnersClient() {
       {/* Partners Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
         {paginatedPartners.map((partner, index) => {
-          const partnerProducts = getProductsByPartner(partner?.id || '');
+          // Find products for this partner from the provided products data
+          const partnerProducts = initialProducts.filter(product => product?.partnerId === partner?.id);
           const isHighlighted = highlightedPartner === partner?.name;
           
           return (
@@ -182,6 +195,17 @@ export function PartnersClient() {
               transition={{ duration: 0.6, delay: 0.1 * index }}
             >
               <Card className={`h-full hover-lift cursor-pointer group ${isHighlighted ? 'ring-2 ring-accent shadow-lg' : ''}`}>
+                {/* Partner Image */}
+                <OptimizedImage
+                  src={partner?.image}
+                  alt={`${partner?.name} company overview` || 'Partner company overview'}
+                  fallbackType="partner"
+                  aspectRatio="video"
+                  fill
+                  className="group-hover:scale-105 transition-transform duration-300"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
+                
                 <CardHeader>
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center space-x-3">
@@ -222,7 +246,7 @@ export function PartnersClient() {
                 <CardContent>
                   <div className="space-y-4">
                     <div className="flex flex-wrap gap-1">
-                      {partner?.tags?.slice(0, 3).map((tag) => (
+                      {partner?.tags?.slice(0, 3).map((tag: string) => (
                         <Badge key={tag} variant="outline" className="text-xs">
                           {tag}
                         </Badge>

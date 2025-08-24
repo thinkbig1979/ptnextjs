@@ -11,7 +11,7 @@ import {
   ExternalLink,
   Globe
 } from "lucide-react";
-import type { Partner } from "@/lib/data";
+import type { Partner } from "@/lib/types";
 
 interface PartnerDetailClientProps {
   partner: Partner;

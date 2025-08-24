@@ -2,13 +2,34 @@
 
 import * as React from "react";
 import { Suspense } from "react";
-import { PartnersDisplay } from "@/components/partners-display";
-import dataService from "@/lib/data-service";
+import { PartnersClient } from "@/app/components/partners-client";
+import { staticDataService } from "@/lib/static-data-service";
 
-export default async function PartnersPage() {
-  // Fetch data at build time
-  const partners = await dataService.getPartners();
-  const categories = await dataService.getCategories();
+// Force static generation for optimal SEO and performance
+export const dynamic = 'force-static';
+export const revalidate = false;
+
+interface PartnersPageProps {
+  searchParams?: {
+    category?: string;
+    search?: string;
+    partner?: string;
+  };
+}
+
+export default async function PartnersPage({ searchParams }: PartnersPageProps) {
+  console.log('🏗️  Rendering Partners page (static generation) with searchParams:', searchParams);
+  
+  // Fetch all data at build time for static generation
+  const [partners, products, categories] = await Promise.all([
+    staticDataService.getAllPartners(),
+    staticDataService.getAllProducts(),
+    staticDataService.getCategories()
+  ]);
+  
+  const categoryNames = categories.map(cat => cat.name);
+  
+  console.log(`📋 Static generation: Loaded ${partners.length} partners, ${products.length} products, ${categories.length} categories`);
 
   return (
     <div className="min-h-screen py-12">
@@ -23,9 +44,8 @@ export default async function PartnersPage() {
           </p>
         </div>
 
-        {/* Server-rendered content with client-side interactivity */}
+        {/* Client component with all data passed as props */}
         <Suspense fallback={<div className="space-y-8 animate-pulse">
-          <div className="h-12 bg-muted/20 rounded" />
           <div className="h-6 bg-muted/20 rounded w-48" />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[...Array(6)].map((_, i) => (
@@ -33,7 +53,11 @@ export default async function PartnersPage() {
             ))}
           </div>
         </div>}>
-          <PartnersDisplay partners={partners} categories={categories} />
+          <PartnersClient 
+            initialPartners={partners}
+            initialCategories={categoryNames}
+            initialProducts={products}
+          />
         </Suspense>
       </div>
     </div>

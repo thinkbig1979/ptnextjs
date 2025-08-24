@@ -6,11 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Calendar, User, Clock } from "lucide-react";
 import Link from "next/link";
-import { blogPosts } from "@/lib/data";
 import { formatDate } from "@/lib/utils";
+import { OptimizedImage } from "@/components/ui/optimized-image";
 
-export function FeaturedBlogSection() {
-  const featuredPosts = blogPosts.filter(post => post?.featured).slice(0, 3);
+interface FeaturedBlogSectionProps {
+  featuredPosts: any[];
+}
+
+export function FeaturedBlogSection({ featuredPosts }: FeaturedBlogSectionProps) {
+  // Use the first 3 featured posts
+  const featured = featuredPosts.slice(0, 3);
 
   return (
     <section className="py-20 bg-secondary/30">
@@ -25,10 +30,21 @@ export function FeaturedBlogSection() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {featuredPosts.map((post, index) => (
+          {featured.map((post, index) => (
             <div key={post?.id}>
-              <Card className="h-full hover-lift cursor-pointer group">
+              <Card className="h-full hover-lift cursor-pointer group overflow-hidden">
                 <Link href={`/blog/${post?.slug}`} className="block h-full">
+                  {/* Blog Post Image */}
+                  <OptimizedImage
+                    src={post?.image}
+                    alt={post?.title || 'Blog post image'}
+                    fallbackType="generic"
+                    aspectRatio="video"
+                    fill
+                    className="group-hover:scale-105 transition-transform duration-300"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  />
+                  
                 <CardHeader>
                   <div className="flex items-center space-x-2 mb-3">
                     <Badge variant="secondary">{post?.category}</Badge>

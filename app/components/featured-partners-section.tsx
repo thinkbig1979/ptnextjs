@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Building2 } from "lucide-react";
 import Link from "next/link";
-import { Partner } from "@/lib/data";
+import { Partner } from "@/lib/types";
+import { OptimizedImage } from "@/components/ui/optimized-image";
 
 interface FeaturedPartnersSectionProps {
   featuredPartners: Partner[];
@@ -31,21 +32,32 @@ export function FeaturedPartnersSection({ featuredPartners }: FeaturedPartnersSe
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {displayPartners.map((partner, index) => (
             <Link key={partner?.id} href={`/partners/${partner?.slug}`} className="block h-full">
-              <Card className="h-full hover-lift cursor-pointer group">
-                  <CardHeader>
-                    <div className="flex items-center space-x-3 mb-3">
-                      <div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center">
-                        <Building2 className="w-5 h-5 text-accent" />
-                      </div>
-                      <Badge variant="secondary">{partner?.category}</Badge>
+              <Card className="h-full hover-lift cursor-pointer group overflow-hidden">
+                {/* Partner Image */}
+                <OptimizedImage
+                  src={partner?.image}
+                  alt={`${partner?.name} company overview`}
+                  fallbackType="partner"
+                  aspectRatio="video"
+                  fill
+                  className="group-hover:scale-105 transition-transform duration-300"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
+                
+                <CardHeader>
+                  <div className="flex items-center space-x-3 mb-3">
+                    <div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center">
+                      <Building2 className="w-5 h-5 text-accent" />
                     </div>
-                    <CardTitle className="group-hover:text-accent transition-colors">
-                      {partner?.name}
-                    </CardTitle>
-                    <CardDescription className="line-clamp-3">
-                      {partner?.description}
-                    </CardDescription>
-                  </CardHeader>
+                    <Badge variant="secondary">{partner?.category}</Badge>
+                  </div>
+                  <CardTitle className="group-hover:text-accent transition-colors">
+                    {partner?.name}
+                  </CardTitle>
+                  <CardDescription className="line-clamp-3">
+                    {partner?.description}
+                  </CardDescription>
+                </CardHeader>
                   <CardContent>
                     <div className="flex flex-wrap gap-1 mb-4">
                       {partner?.tags?.slice(0, 3).map((tag) => (

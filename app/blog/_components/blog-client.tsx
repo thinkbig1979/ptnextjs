@@ -10,7 +10,16 @@ import { SearchFilter } from "@/components/search-filter";
 import { Pagination } from "@/components/pagination";
 import { Calendar, User, Clock } from "lucide-react";
 import Link from "next/link";
-import { searchBlogPosts } from "@/lib/data";
+import { OptimizedImage } from "@/components/ui/optimized-image";
+// Static search implementation for blog posts
+const searchBlogPosts = (query: string, posts: any[]): any[] => {
+  const lowercaseQuery = query.toLowerCase();
+  return posts.filter(post => 
+    post.title.toLowerCase().includes(lowercaseQuery) ||
+    post.excerpt.toLowerCase().includes(lowercaseQuery) ||
+    post.tags.some((tag: string) => tag.toLowerCase().includes(lowercaseQuery))
+  );
+};
 import { formatDate } from "@/lib/utils";
 
 const ITEMS_PER_PAGE = 9;
@@ -36,7 +45,7 @@ export function BlogClient({ blogPosts, categories }: BlogClientProps) {
 
     // Apply search filter
     if (searchQuery.trim()) {
-      filtered = searchBlogPosts(searchQuery);
+      filtered = searchBlogPosts(searchQuery, blogPosts);
     }
 
     // Apply category filter
@@ -100,8 +109,19 @@ export function BlogClient({ blogPosts, categories }: BlogClientProps) {
             animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
             transition={{ duration: 0.6, delay: 0.1 * index }}
           >
-            <Card className="h-full hover-lift cursor-pointer group">
+            <Card className="h-full hover-lift cursor-pointer group overflow-hidden">
               <Link href={`/blog/${post?.slug}`} className="block h-full">
+                {/* Blog Post Image */}
+                <OptimizedImage
+                  src={post?.image}
+                  alt={post?.title || 'Blog post image'}
+                  fallbackType="generic"
+                  aspectRatio="video"
+                  fill
+                  className="group-hover:scale-105 transition-transform duration-300"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
+                
               <CardHeader>
                 <div className="flex items-center justify-between mb-3">
                   <Badge variant="secondary">{post?.category}</Badge>

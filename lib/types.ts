@@ -6,6 +6,7 @@ export interface Partner {
   category: string;
   description: string;
   logo?: string;
+  image?: string; // Partner overview/company image
   website?: string;
   founded?: number;
   location?: string;
