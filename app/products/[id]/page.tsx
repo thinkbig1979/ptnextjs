@@ -15,20 +15,31 @@ import {
   ExternalLink
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import dataService from "@/lib/data-service";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import ProductDetailClient from "./_components/product-detail-client";
 
 // Enable static generation
 export const dynamic = 'force-static';
 
-// Generate static params for all products
+// Generate static params for all products (both IDs and slugs)
 export async function generateStaticParams() {
   try {
     const products = await dataService.getProducts();
-    return products.map((product) => ({
-      id: product.id,
-    }));
+    console.log(`generateStaticParams: Found ${products.length} products`);
+    
+    // Generate params for both IDs and slugs
+    const params = products.flatMap((product) => {
+      const result = [{ id: product.id }]; // Always include ID
+      if (product.slug && product.slug !== product.id) {
+        result.push({ id: product.slug }); // Include slug if different from ID
+      }
+      return result;
+    });
+    
+    console.log(`Generated ${params.length} static params`);
+    return params;
   } catch (error) {
     console.error('generateStaticParams error:', error);
     return [];
@@ -45,8 +56,23 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   // Await the params in server component
   const { id } = await params;
 
-  // Find the product by ID
-  const product = await dataService.getProductById(id);
+  // Validate the parameter format (basic sanitization)
+  if (!id || typeof id !== 'string' || id.length > 100) {
+    notFound();
+  }
+
+  // Try to find product by slug first, then by ID
+  let product = await dataService.getProductBySlug(id);
+  
+  if (!product) {
+    // Try to find by ID if not found by slug
+    product = await dataService.getProductById(id);
+    
+    // If found by ID and has a slug, redirect to slug-based URL for SEO
+    if (product && product.slug && product.slug !== id) {
+      redirect(`/products/${product.slug}`);
+    }
+  }
   
   if (!product) {
     notFound();
@@ -68,11 +94,16 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   const benefits = [
     "Enhanced performance and reliability",
     "Reduced maintenance requirements",
-    "Energy efficient operation",
+    "Energy efficient operation", 
     "Seamless integration with existing systems",
     "24/7 technical support included",
     "Comprehensive training provided"
   ];
+
+  // Get all product images (main + gallery)
+  const allImages = product?.images && product.images.length > 0 ? product.images : [];
+  const mainImage = product?.mainImage || allImages[0];
+  const galleryImages = allImages.filter(img => !img.isMain);
 
   return (
     <div className="min-h-screen py-12">
@@ -121,14 +152,48 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
               )}
             </div>
 
-            {/* Hero Image */}
+            {/* Product Image Gallery */}
             <div className="mb-8">
-              <div className="aspect-video bg-gradient-to-br from-accent/20 to-primary/20 rounded-lg flex items-center justify-center">
-                <div className="text-center">
-                  <Package className="w-16 h-16 text-accent/60 mx-auto mb-4" />
-                  <p className="text-sm text-muted-foreground">Product Image Placeholder</p>
+              {mainImage ? (
+                <div className="space-y-4">
+                  {/* Main Image */}
+                  <div className="aspect-video relative overflow-hidden rounded-lg border">
+                    <Image
+                      src={mainImage.url}
+                      alt={mainImage.altText || product.name}
+                      fill
+                      className="object-cover"
+                      priority
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 66vw, 50vw"
+                    />
+                  </div>
+
+                  {/* Image Gallery */}
+                  {galleryImages.length > 0 && (
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {galleryImages.slice(0, 4).map((image) => (
+                        <div key={image.id} className="aspect-square relative overflow-hidden rounded-lg border cursor-pointer hover:opacity-80 transition-opacity">
+                          <Image
+                            src={image.url}
+                            alt={image.altText || product?.name || ''}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 200px"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              </div>
+              ) : (
+                // Fallback placeholder when no images
+                <div className="aspect-video bg-gradient-to-br from-accent/20 to-primary/20 rounded-lg flex items-center justify-center">
+                  <div className="text-center">
+                    <Package className="w-16 h-16 text-accent/60 mx-auto mb-4" />
+                    <p className="text-sm text-muted-foreground">Product Image</p>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Key Features */}

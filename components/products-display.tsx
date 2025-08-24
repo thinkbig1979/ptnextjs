@@ -31,10 +31,10 @@ export function ProductsDisplay({ products, partners, categories }: ProductsDisp
   );
   
   // Initialize state from URL parameters
-  const [searchQuery, setSearchQuery] = React.useState(searchParams.get('search') || '');
-  const [selectedCategory, setSelectedCategory] = React.useState(searchParams.get('category') || 'all');
+  const [searchQuery, setSearchQuery] = React.useState((searchParams || new URLSearchParams()).get('search') || '');
+  const [selectedCategory, setSelectedCategory] = React.useState((searchParams || new URLSearchParams()).get('category') || 'all');
   const [currentPage, setCurrentPage] = React.useState(1);
-  const [selectedPartner, setSelectedPartner] = React.useState(searchParams.get('partner') || '');
+  const [selectedPartner, setSelectedPartner] = React.useState((searchParams || new URLSearchParams()).get('partner') || '');
 
   const [ref, inView] = useInView({
     triggerOnce: true,
@@ -43,9 +43,9 @@ export function ProductsDisplay({ products, partners, categories }: ProductsDisp
 
   // Update state when URL parameters change
   React.useEffect(() => {
-    setSearchQuery(searchParams.get('search') || '');
-    setSelectedCategory(searchParams.get('category') || 'all');
-    setSelectedPartner(searchParams.get('partner') || '');
+    setSearchQuery((searchParams || new URLSearchParams()).get('search') || '');
+    setSelectedCategory((searchParams || new URLSearchParams()).get('category') || 'all');
+    setSelectedPartner((searchParams || new URLSearchParams()).get('partner') || '');
   }, [searchParams]);
 
   // Navigation functions
@@ -97,7 +97,7 @@ export function ProductsDisplay({ products, partners, categories }: ProductsDisp
 
   // Function to update URL parameters
   const updateUrlParams = React.useCallback((params: { search?: string; category?: string; partner?: string }) => {
-    const current = new URLSearchParams(Array.from(searchParams.entries()));
+    const current = new URLSearchParams(Array.from((searchParams || new URLSearchParams()).entries()));
     
     // Update or remove search parameter
     if (params.search !== undefined) {
@@ -226,7 +226,13 @@ export function ProductsDisplay({ products, partners, categories }: ProductsDisp
                   delay: index * 0.1 
                 }}
               >
-                <Card className="h-full hover:shadow-lg transition-all duration-300 hover:scale-[1.02] border-border/50 bg-card/50 backdrop-blur-sm">
+                <Card 
+                  className="h-full hover:shadow-lg transition-all duration-300 hover:scale-[1.02] border-border/50 bg-card/50 backdrop-blur-sm cursor-pointer"
+                  onClick={() => {
+                    const url = product?.slug ? `/products/${product.slug}` : `/products/${product.id}`;
+                    router.push(url);
+                  }}
+                >
                   <CardHeader className="space-y-4">
                     <div className="aspect-video bg-muted rounded-lg flex items-center justify-center overflow-hidden">
                       {product.image ? (
@@ -246,7 +252,10 @@ export function ProductsDisplay({ products, partners, categories }: ProductsDisp
                       <p className="text-sm text-muted-foreground font-poppins-light mt-1">
                         by{' '}
                         <button
-                          onClick={() => navigateToPartner(product.partnerName)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigateToPartner(product.partnerName);
+                          }}
                           className="text-primary hover:text-primary/80 transition-colors font-poppins-medium underline underline-offset-2"
                         >
                           {product.partnerName}
@@ -282,7 +291,10 @@ export function ProductsDisplay({ products, partners, categories }: ProductsDisp
                         <Badge 
                           variant="outline"
                           className="font-poppins-medium cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
-                          onClick={() => handleCategoryClick(product.category)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCategoryClick(product.category);
+                          }}
                         >
                           {product.category}
                         </Badge>

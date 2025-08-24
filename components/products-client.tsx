@@ -29,7 +29,7 @@ export function ProductsClient() {
   const [loading, setLoading] = React.useState(true);
   
   // Initialize state from URL parameters
-  const urlParams = parseFilterParams(searchParams);
+  const urlParams = parseFilterParams(searchParams || new URLSearchParams());
   const [searchQuery, setSearchQuery] = React.useState(urlParams.search);
   const [selectedCategory, setSelectedCategory] = React.useState(urlParams.category);
   const [currentPage, setCurrentPage] = React.useState(1);
@@ -82,7 +82,7 @@ export function ProductsClient() {
 
   // Update state when URL parameters change
   React.useEffect(() => {
-    const params = parseFilterParams(searchParams);
+    const params = parseFilterParams(searchParams || new URLSearchParams());
     setSearchQuery(params.search);
     setSelectedCategory(params.category);
     setSelectedPartner(params.partner);
@@ -137,7 +137,7 @@ export function ProductsClient() {
 
   // Function to update URL parameters
   const updateUrlParams = React.useCallback((params: { search?: string; category?: string; partner?: string }) => {
-    const current = new URLSearchParams(Array.from(searchParams.entries()));
+    const current = new URLSearchParams(Array.from((searchParams || new URLSearchParams()).entries()));
     
     // Update or remove search parameter
     if (params.search !== undefined) {

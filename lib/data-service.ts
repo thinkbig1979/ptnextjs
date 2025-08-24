@@ -18,13 +18,15 @@ import {
   getRelatedPosts as staticGetRelatedPosts,
   getPartnerByName as staticGetPartnerByName,
   getPartnerBySlug as staticGetPartnerBySlug,
+  getProductBySlug as staticGetProductBySlug,
 } from './data';
 import { Partner, Product, BlogPost, TeamMember } from './data';
 
-const USE_STRAPI = process.env.NODE_ENV === 'production' || 
-  process.env.USE_STRAPI_CMS === 'true' || 
+// Fix: Only use Strapi in production if explicitly enabled and available
+const USE_STRAPI = process.env.USE_STRAPI_CMS === 'true' || 
   process.env.NEXT_PUBLIC_USE_STRAPI_CMS === 'true';
 
+// Fix: Default to enabling fallback unless explicitly disabled
 const DISABLE_CONTENT_FALLBACK = process.env.DISABLE_CONTENT_FALLBACK === 'true';
 
 
@@ -41,13 +43,28 @@ async function checkStrapiHealth(): Promise<boolean> {
   }
 
   try {
-    await strapiClient.getCategories();
-    strapiAvailable = true;
-    lastHealthCheck = now;
-    return true;
+    // More comprehensive health check - try to get actual data
+    const testCategories = await strapiClient.getCategories();
+    const testProducts = await strapiClient.getProducts();
+    
+    // Ensure we got real data, not empty responses
+    if (testCategories.length > 0 || testProducts.length > 0) {
+      strapiAvailable = true;
+      lastHealthCheck = now;
+      console.log(`✅ Strapi health check passed: ${testCategories.length} categories, ${testProducts.length} products`);
+      return true;
+    } else {
+      throw new Error('Strapi returned empty data');
+    }
   } catch (error) {
     const fallbackStatus = DISABLE_CONTENT_FALLBACK ? 'disabled' : 'enabled';
-    console.log(`Strapi not available, static fallback ${fallbackStatus}`);
+    console.error(`❌ Strapi health check failed:`, error);
+    console.log(`📋 Static content fallback: ${fallbackStatus}`);
+    
+    if (DISABLE_CONTENT_FALLBACK) {
+      console.warn('🚨 Production mode: No fallback data will be served');
+    }
+    
     strapiAvailable = false;
     lastHealthCheck = now;
     return false;
@@ -73,7 +90,19 @@ class DataService {
 
   private logContentSource(contentType: string, source: 'strapi' | 'fallback' | 'empty') {
     // Content source logging (can be enabled for debugging)
-    // console.log(`${contentType}: ${source}`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`📊 ${contentType}: ${source}`);
+    }
+  }
+  
+  private handleStrapiError(contentType: string, error: any) {
+    console.error(`❌ Failed to fetch ${contentType} from Strapi:`, error);
+    
+    if (DISABLE_CONTENT_FALLBACK) {
+      console.warn(`🚨 Production mode: Returning empty ${contentType} data`);
+    } else {
+      console.log(`📋 Falling back to static ${contentType} data`);
+    }
   }
 
   // Categories
@@ -84,7 +113,7 @@ class DataService {
         this.logContentSource('Categories', 'strapi');
         return categories;
       } catch (error) {
-        console.error('Failed to fetch categories from Strapi:', error);
+        this.handleStrapiError('Categories', error);
       }
     }
     
@@ -219,12 +248,17 @@ class DataService {
   async getPartnerBySlug(slug: string): Promise<Partner | null> {
     if (await this.shouldUseStrapi()) {
       try {
+        // Fallback: Get all partners and filter by slug as a temporary fix
         const partners = await strapiClient.getPartners();
-        const partner = partners.find(partner => partner.slug === slug) || null;
-        if (partner) this.logContentSource('Partner by Slug', 'strapi');
-        return partner;
+        const partner = partners.find(p => p.slug === slug) || null;
+        if (partner) {
+          this.logContentSource('Partner by Slug', 'strapi');
+          console.log('✅ Found partner by slug fallback:', partner.name);
+          return partner;
+        }
+        console.log('❌ No partner found with slug via fallback:', slug);
       } catch (error) {
-        console.error('Failed to fetch partner from Strapi:', error);
+        this.handleStrapiError('Partner by Slug', error);
       }
     }
     
@@ -291,6 +325,33 @@ class DataService {
     }
 
     this.logContentSource('Product by ID', 'empty');
+    return null;
+  }
+
+  async getProductBySlug(slug: string): Promise<Product | null> {
+    if (await this.shouldUseStrapi()) {
+      try {
+        // Fallback: Get all products and filter by slug as a temporary fix
+        const products = await strapiClient.getProducts();
+        const product = products.find(p => p.slug === slug) || null;
+        if (product) {
+          this.logContentSource('Product by Slug', 'strapi');
+          console.log('✅ Found product by slug fallback:', product.name);
+          return product;
+        }
+        console.log('❌ No product found with slug via fallback:', slug);
+      } catch (error) {
+        this.handleStrapiError('Product by Slug', error);
+      }
+    }
+    
+    if (this.shouldUseFallback()) {
+      const product = staticGetProductBySlug(slug) || null;
+      if (product) this.logContentSource('Product by Slug', 'fallback');
+      return product;
+    }
+
+    this.logContentSource('Product by Slug', 'empty');
     return null;
   }
 

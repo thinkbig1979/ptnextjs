@@ -14,29 +14,11 @@ const dataPath = join(__dirname, 'data/superyacht_technology_research.json');
 const researchData = JSON.parse(readFileSync(dataPath, 'utf8'));
 
 // Transform research data into structured format (matching lib/data.ts logic)
-const partners = researchData.partner_companies.map((partner, index) => ({
-  id: `partner-${index + 1}`,
-  name: partner.company,
-  category: partner.category,
-  description: partner.description,
-  founded: partner.founded || 2000 + (index % 20) + 5,
-  location: partner.location || 'Netherlands',
-  tags: partner.tags || [partner.category],
-  featured: index < 6,
-}));
-
-const products = researchData.partner_companies.flatMap((partner, partnerIndex) => 
-  (partner.sample_products || []).map((product, productIndex) => ({
-    id: `product-${partnerIndex}-${productIndex}`,
-    name: product.name,
-    partnerId: `partner-${partnerIndex + 1}`,
-    partnerName: partner.company,
-    category: partner.category,
-    description: product.description,
-    features: product.features || [],
-    tags: [partner.category, ...(product.features || []).slice(0, 2)],
-  }))
-);
+// First, create a mapping of categories to their key technologies for features
+const categoryTechnologies = {};
+researchData.technology_categories.forEach(cat => {
+  categoryTechnologies[cat.category] = cat.key_technologies || [];
+});
 
 // Create slugs from titles
 const createSlug = (title) => {
@@ -45,6 +27,55 @@ const createSlug = (title) => {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '');
 };
+
+const partners = researchData.partner_companies.map((partner, index) => ({
+  id: `partner-${index + 1}`,
+  slug: createSlug(partner.company),
+  name: partner.company,
+  category: partner.category,
+  description: partner.description,
+  logo: `https://via.placeholder.com/200x100?text=${encodeURIComponent(partner.company.split(' ')[0])}`,
+  website: `https://www.${partner.company.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`,
+  founded: partner.founded || 2000 + (index % 20) + 5,
+  location: partner.location || 'Netherlands',
+  tags: partner.tags || [partner.category],
+  featured: index < 6,
+}));
+
+const products = researchData.partner_companies.flatMap((partner, partnerIndex) => 
+  (partner.sample_products || []).map((product, productIndex) => {
+    const categoryFeatures = categoryTechnologies[partner.category] || [];
+    const productFeatures = categoryFeatures.slice(0, 4); // Limit to 4 features per product
+    
+    return {
+      id: `product-${partnerIndex}-${productIndex}`,
+      slug: createSlug(product.name),
+      name: product.name,
+      partnerId: `partner-${partnerIndex + 1}`,
+      partnerName: partner.company,
+      category: partner.category,
+      description: product.description,
+      image: `https://via.placeholder.com/400x300?text=${encodeURIComponent(product.name.split(' ')[0])}`,
+      images: [
+        {
+          id: `img-${partnerIndex}-${productIndex}-1`,
+          url: `https://via.placeholder.com/400x300?text=${encodeURIComponent(product.name.split(' ')[0])}`,
+          altText: `${product.name} main image`,
+          isMain: true
+        },
+        {
+          id: `img-${partnerIndex}-${productIndex}-2`,
+          url: `https://via.placeholder.com/400x300?text=${encodeURIComponent(product.name.split(' ').slice(-1)[0])}`,
+          altText: `${product.name} detail view`,
+          isMain: false
+        }
+      ],
+      features: productFeatures,
+      price: partnerIndex < 5 ? `$${(productIndex + 1) * 15000 + Math.floor(Math.random() * 20000)}` : undefined,
+      tags: [partner.category, ...productFeatures.slice(0, 2)],
+    }
+  })
+);
 
 const blogPosts = researchData.industry_trends.map((trend, index) => {
   const slug = createSlug(trend.title);
@@ -222,6 +253,12 @@ app.get('/api/partners', (req, res) => {
     filteredPartners = filteredPartners.filter(p => p.featured === featured);
   }
   
+  // Filter by slug
+  if (req.query['filters[slug][$eq]']) {
+    const slug = req.query['filters[slug][$eq]'];
+    filteredPartners = filteredPartners.filter(p => p.slug === slug);
+  }
+  
   // Search functionality
   if (req.query['filters[$or][0][name][$containsi]']) {
     const query = decodeURIComponent(req.query['filters[$or][0][name][$containsi]']);
@@ -231,6 +268,7 @@ app.get('/api/partners', (req, res) => {
   const partnerData = filteredPartners.map(partner => formatStrapiEntry({
     ...partner,
     category: { data: { attributes: { name: partner.category } } },
+    logo: { data: { attributes: { url: partner.logo } } },
     tags: { data: partner.tags.map(tag => ({ attributes: { name: tag } })) }
   }));
   
@@ -247,6 +285,7 @@ app.get('/api/partners/:id', (req, res) => {
   const partnerData = formatStrapiEntry({
     ...partner,
     category: { data: { attributes: { name: partner.category } } },
+    logo: { data: { attributes: { url: partner.logo } } },
     tags: { data: partner.tags.map(tag => ({ attributes: { name: tag } })) }
   });
   
@@ -269,6 +308,12 @@ app.get('/api/products', (req, res) => {
     filteredProducts = filteredProducts.filter(p => p.partnerId === partnerId);
   }
   
+  // Filter by slug
+  if (req.query['filters[slug][$eq]']) {
+    const slug = req.query['filters[slug][$eq]'];
+    filteredProducts = filteredProducts.filter(p => p.slug === slug);
+  }
+  
   // Search functionality
   if (req.query['filters[$or][0][name][$containsi]']) {
     const query = decodeURIComponent(req.query['filters[$or][0][name][$containsi]']);
@@ -280,6 +325,14 @@ app.get('/api/products', (req, res) => {
     partner: { data: { id: product.partnerId, attributes: { name: product.partnerName } } },
     category: { data: { attributes: { name: product.category } } },
     features: product.features.map(feature => ({ title: feature })),
+    product_images: { data: product.images.map(img => ({ 
+      id: img.id, 
+      attributes: { 
+        image: { data: { attributes: { url: img.url } } },
+        altText: img.altText,
+        isMain: img.isMain 
+      } 
+    })) },
     tags: { data: product.tags.map(tag => ({ attributes: { name: tag } })) }
   }));
   
@@ -298,6 +351,14 @@ app.get('/api/products/:id', (req, res) => {
     partner: { data: { id: product.partnerId, attributes: { name: product.partnerName } } },
     category: { data: { attributes: { name: product.category } } },
     features: product.features.map(feature => ({ title: feature })),
+    product_images: { data: product.images.map(img => ({ 
+      id: img.id, 
+      attributes: { 
+        image: { data: { attributes: { url: img.url } } },
+        altText: img.altText,
+        isMain: img.isMain 
+      } 
+    })) },
     tags: { data: product.tags.map(tag => ({ attributes: { name: tag } })) }
   });
   

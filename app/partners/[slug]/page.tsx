@@ -16,6 +16,7 @@ import {
   Lightbulb
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import dataService from "@/lib/data-service";
 import { notFound } from "next/navigation";
 import PartnerDetailClient from "./_components/partner-detail-client";
@@ -208,11 +209,27 @@ export default async function PartnerDetailPage({ params }: PartnerDetailPagePro
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {partnerProducts.slice(0, 4).map((product) => (
-                    <Card key={product.id} className="hover-lift cursor-pointer group">
-                      <Link href={`/products/${product.id}`}>
+                    <Card key={product.id} className="hover-lift cursor-pointer group overflow-hidden">
+                      <Link href={`/products/${product.slug || product.id}`}>
+                        {/* Product Image */}
+                        <div className="aspect-video relative overflow-hidden">
+                          {product.mainImage?.url || product.image ? (
+                            <Image
+                              src={product.mainImage?.url || product.image || ''}
+                              alt={product.mainImage?.altText || product.name}
+                              fill
+                              className="object-cover group-hover:scale-105 transition-transform duration-300"
+                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-accent/20 to-primary/20 flex items-center justify-center">
+                              <Package className="w-8 h-8 text-accent/60" />
+                            </div>
+                          )}
+                        </div>
+                        
                         <CardHeader>
                           <div className="flex items-center space-x-2 mb-2">
-                            <Package className="w-4 h-4 text-accent" />
                             <Badge variant="outline" className="text-xs">{product.category}</Badge>
                           </div>
                           <CardTitle className="text-lg group-hover:text-accent transition-colors line-clamp-2">

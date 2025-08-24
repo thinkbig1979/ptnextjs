@@ -1,6 +1,7 @@
 // Main application types
 export interface Partner {
   id: string;
+  slug?: string;
   name: string;
   category: string;
   description: string;
@@ -12,14 +13,24 @@ export interface Partner {
   featured?: boolean;
 }
 
+export interface ProductImage {
+  id: string;
+  url: string;
+  altText?: string;
+  isMain: boolean;
+}
+
 export interface Product {
   id: string;
+  slug?: string;
   name: string;
   partnerId: string;
   partnerName: string;
   category: string;
   description: string;
-  image?: string;
+  image?: string; // For backward compatibility
+  images: ProductImage[];
+  mainImage?: ProductImage;
   features: string[];
   price?: string;
   tags: string[];

@@ -30,10 +30,10 @@ export function PartnersDisplay({ partners, categories }: PartnersDisplayProps) 
   );
   
   // Initialize state from URL parameters
-  const [searchQuery, setSearchQuery] = React.useState(searchParams.get('search') || '');
-  const [selectedCategory, setSelectedCategory] = React.useState(searchParams.get('category') || 'all');
+  const [searchQuery, setSearchQuery] = React.useState((searchParams || new URLSearchParams()).get('search') || '');
+  const [selectedCategory, setSelectedCategory] = React.useState((searchParams || new URLSearchParams()).get('category') || 'all');
   const [currentPage, setCurrentPage] = React.useState(1);
-  const [highlightedPartner, setHighlightedPartner] = React.useState(searchParams.get('partner') || '');
+  const [highlightedPartner, setHighlightedPartner] = React.useState((searchParams || new URLSearchParams()).get('partner') || '');
 
   const [ref, inView] = useInView({
     triggerOnce: true,
@@ -42,9 +42,9 @@ export function PartnersDisplay({ partners, categories }: PartnersDisplayProps) 
 
   // Update state when URL parameters change
   React.useEffect(() => {
-    setSearchQuery(searchParams.get('search') || '');
-    setSelectedCategory(searchParams.get('category') || 'all');
-    setHighlightedPartner(searchParams.get('partner') || '');
+    setSearchQuery((searchParams || new URLSearchParams()).get('search') || '');
+    setSelectedCategory((searchParams || new URLSearchParams()).get('category') || 'all');
+    setHighlightedPartner((searchParams || new URLSearchParams()).get('partner') || '');
   }, [searchParams]);
 
   // Navigation functions
@@ -104,7 +104,7 @@ export function PartnersDisplay({ partners, categories }: PartnersDisplayProps) 
 
   // Function to update URL parameters
   const updateUrlParams = React.useCallback((params: { search?: string; category?: string; partner?: string }) => {
-    const current = new URLSearchParams(Array.from(searchParams.entries()));
+    const current = new URLSearchParams(Array.from((searchParams || new URLSearchParams()).entries()));
     
     // Update or remove search parameter
     if (params.search !== undefined) {

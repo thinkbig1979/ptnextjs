@@ -1,4 +1,4 @@
-import { Partner, Product, BlogPost, TeamMember } from './data.js';
+import { Partner, Product, ProductImage, BlogPost, TeamMember } from './data.js';
 
 const STRAPI_API_URL = process.env.STRAPI_API_URL || 
   process.env.NEXT_PUBLIC_STRAPI_API_URL || 
@@ -36,6 +36,23 @@ class StrapiClient {
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '');
+  }
+
+  private processProductImages(productImages: any[]): { images: ProductImage[], mainImage?: ProductImage } {
+    if (!productImages || !Array.isArray(productImages)) {
+      return { images: [] };
+    }
+
+    const images: ProductImage[] = productImages.map((imageEntry: any) => ({
+      id: imageEntry.id?.toString() || '',
+      url: imageEntry.attributes?.image?.data?.attributes?.url || '',
+      altText: imageEntry.attributes?.altText || '',
+      isMain: imageEntry.attributes?.isMain || false,
+    })).filter(img => img.url);
+
+    const mainImage = images.find(img => img.isMain) || images[0];
+
+    return { images, mainImage };
   }
 
   private async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
@@ -90,7 +107,7 @@ class StrapiClient {
     
     return response.data.map(item => ({
       id: item.attributes.id || item.id.toString(),
-      slug: this.createSlug(item.attributes.name),
+      slug: item.attributes.slug || this.createSlug(item.attributes.name),
       name: item.attributes.name,
       category: item.attributes.category?.data?.attributes?.name || '',
       description: item.attributes.description,
@@ -114,7 +131,34 @@ class StrapiClient {
       
       return {
         id: item.attributes.id || item.id.toString(),
-        slug: this.createSlug(item.attributes.name),
+        slug: item.attributes.slug || this.createSlug(item.attributes.name),
+        name: item.attributes.name,
+        category: item.attributes.category?.data?.attributes?.name || '',
+        description: item.attributes.description,
+        logo: item.attributes.logo?.data?.attributes?.url,
+        website: item.attributes.website,
+        founded: item.attributes.founded,
+        location: item.attributes.location,
+        tags: item.attributes.tags?.data?.map((tag: any) => tag.attributes.name) || [],
+        featured: item.attributes.featured,
+      };
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async getPartnerBySlug(slug: string): Promise<Partner | null> {
+    try {
+      const response = await this.request<StrapiResponse<StrapiEntry[]>>(`/partners?filters[slug][$eq]=${encodeURIComponent(slug)}&populate=*`);
+      
+      if (response.data.length === 0) {
+        return null;
+      }
+      
+      const item = response.data[0];
+      return {
+        id: item.attributes.id || item.id.toString(),
+        slug: item.attributes.slug || this.createSlug(item.attributes.name),
         name: item.attributes.name,
         category: item.attributes.category?.data?.attributes?.name || '',
         description: item.attributes.description,
@@ -132,7 +176,7 @@ class StrapiClient {
 
   // Products
   async getProducts(params?: { category?: string; partnerId?: string }): Promise<Product[]> {
-    let endpoint = '/products?populate=*&pagination[pageSize]=100';
+    let endpoint = '/products?populate[partner]=*&populate[category]=*&populate[tags]=*&populate[product_images][populate]=image&pagination[pageSize]=100';
     
     if (params?.category && params.category !== 'all') {
       endpoint += `&filters[category][name][$eq]=${encodeURIComponent(params.category)}`;
@@ -144,33 +188,76 @@ class StrapiClient {
 
     const response = await this.request<StrapiResponse<StrapiEntry[]>>(endpoint);
     
-    return response.data.map(item => ({
-      id: item.id.toString(),
-      name: item.attributes.name,
-      partnerId: item.attributes.partner?.data?.id?.toString() || '',
-      partnerName: item.attributes.partner?.data?.attributes?.name || '',
-      category: item.attributes.category?.data?.attributes?.name || '',
-      description: item.attributes.description,
-      image: item.attributes.image?.data?.attributes?.url,
-      features: item.attributes.features?.map((feature: any) => feature.title) || [],
-      price: item.attributes.price,
-      tags: item.attributes.tags?.data?.map((tag: any) => tag.attributes.name) || [],
-    }));
-  }
-
-  async getProductById(id: string): Promise<Product | null> {
-    try {
-      const response = await this.request<StrapiResponse<StrapiEntry>>(`/products/${id}?populate=*`);
-      const item = response.data;
+    return response.data.map(item => {
+      const { images, mainImage } = this.processProductImages(item.attributes.product_images?.data || []);
       
       return {
         id: item.id.toString(),
+        slug: item.attributes.slug || this.createSlug(item.attributes.name),
         name: item.attributes.name,
         partnerId: item.attributes.partner?.data?.id?.toString() || '',
         partnerName: item.attributes.partner?.data?.attributes?.name || '',
         category: item.attributes.category?.data?.attributes?.name || '',
         description: item.attributes.description,
-        image: item.attributes.image?.data?.attributes?.url,
+        image: mainImage?.url || item.attributes.image?.data?.attributes?.url, // Fallback to legacy image
+        images,
+        mainImage,
+        features: item.attributes.features?.map((feature: any) => feature.title) || [],
+        price: item.attributes.price,
+        tags: item.attributes.tags?.data?.map((tag: any) => tag.attributes.name) || [],
+      };
+    });
+  }
+
+  async getProductById(id: string): Promise<Product | null> {
+    try {
+      const response = await this.request<StrapiResponse<StrapiEntry>>(`/products/${id}?populate[partner]=*&populate[category]=*&populate[tags]=*&populate[product_images][populate]=image`);
+      const item = response.data;
+      
+      const { images, mainImage } = this.processProductImages(item.attributes.product_images?.data || []);
+      
+      return {
+        id: item.id.toString(),
+        slug: item.attributes.slug || this.createSlug(item.attributes.name),
+        name: item.attributes.name,
+        partnerId: item.attributes.partner?.data?.id?.toString() || '',
+        partnerName: item.attributes.partner?.data?.attributes?.name || '',
+        category: item.attributes.category?.data?.attributes?.name || '',
+        description: item.attributes.description,
+        image: mainImage?.url || item.attributes.image?.data?.attributes?.url, // Fallback to legacy image
+        images,
+        mainImage,
+        features: item.attributes.features?.map((feature: any) => feature.title) || [],
+        price: item.attributes.price,
+        tags: item.attributes.tags?.data?.map((tag: any) => tag.attributes.name) || [],
+      };
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async getProductBySlug(slug: string): Promise<Product | null> {
+    try {
+      const response = await this.request<StrapiResponse<StrapiEntry[]>>(`/products?filters[slug][$eq]=${encodeURIComponent(slug)}&populate[partner]=*&populate[category]=*&populate[tags]=*&populate[product_images][populate]=image`);
+      
+      if (response.data.length === 0) {
+        return null;
+      }
+      
+      const item = response.data[0];
+      const { images, mainImage } = this.processProductImages(item.attributes.product_images?.data || []);
+      
+      return {
+        id: item.id.toString(),
+        slug: item.attributes.slug || this.createSlug(item.attributes.name),
+        name: item.attributes.name,
+        partnerId: item.attributes.partner?.data?.id?.toString() || '',
+        partnerName: item.attributes.partner?.data?.attributes?.name || '',
+        category: item.attributes.category?.data?.attributes?.name || '',
+        description: item.attributes.description,
+        image: mainImage?.url || item.attributes.image?.data?.attributes?.url, // Fallback to legacy image
+        images,
+        mainImage,
         features: item.attributes.features?.map((feature: any) => feature.title) || [],
         price: item.attributes.price,
         tags: item.attributes.tags?.data?.map((tag: any) => tag.attributes.name) || [],
@@ -292,21 +379,28 @@ class StrapiClient {
   }
 
   async searchProducts(query: string): Promise<Product[]> {
-    const endpoint = `/products?populate=*&pagination[pageSize]=100&filters[$or][0][name][$containsi]=${encodeURIComponent(query)}&filters[$or][1][description][$containsi]=${encodeURIComponent(query)}`;
+    const endpoint = `/products?populate[partner]=*&populate[category]=*&populate[tags]=*&populate[product_images][populate]=image&pagination[pageSize]=100&filters[$or][0][name][$containsi]=${encodeURIComponent(query)}&filters[$or][1][description][$containsi]=${encodeURIComponent(query)}`;
     const response = await this.request<StrapiResponse<StrapiEntry[]>>(endpoint);
     
-    return response.data.map(item => ({
-      id: item.id.toString(),
-      name: item.attributes.name,
-      partnerId: item.attributes.partner?.data?.id?.toString() || '',
-      partnerName: item.attributes.partner?.data?.attributes?.name || '',
-      category: item.attributes.category?.data?.attributes?.name || '',
-      description: item.attributes.description,
-      image: item.attributes.image?.data?.attributes?.url,
-      features: item.attributes.features?.map((feature: any) => feature.title) || [],
-      price: item.attributes.price,
-      tags: item.attributes.tags?.data?.map((tag: any) => tag.attributes.name) || [],
-    }));
+    return response.data.map(item => {
+      const { images, mainImage } = this.processProductImages(item.attributes.product_images?.data || []);
+      
+      return {
+        id: item.id.toString(),
+        slug: item.attributes.slug || this.createSlug(item.attributes.name),
+        name: item.attributes.name,
+        partnerId: item.attributes.partner?.data?.id?.toString() || '',
+        partnerName: item.attributes.partner?.data?.attributes?.name || '',
+        category: item.attributes.category?.data?.attributes?.name || '',
+        description: item.attributes.description,
+        image: mainImage?.url || item.attributes.image?.data?.attributes?.url, // Fallback to legacy image
+        images,
+        mainImage,
+        features: item.attributes.features?.map((feature: any) => feature.title) || [],
+        price: item.attributes.price,
+        tags: item.attributes.tags?.data?.map((tag: any) => tag.attributes.name) || [],
+      };
+    });
   }
 
   async searchBlogPosts(query: string): Promise<BlogPost[]> {

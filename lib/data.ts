@@ -2,6 +2,13 @@
 import researchData from '../data/superyacht_technology_research.json';
 import { blogContent } from './blog-content';
 
+export interface ProductImage {
+  id: string;
+  url: string;
+  altText?: string;
+  isMain: boolean;
+}
+
 export interface Partner {
   id: string;
   slug: string;
@@ -18,12 +25,15 @@ export interface Partner {
 
 export interface Product {
   id: string;
+  slug?: string;
   name: string;
   partnerId: string;
   partnerName: string;
   category: string;
   description: string;
-  image?: string;
+  image?: string; // For backward compatibility
+  images: ProductImage[];
+  mainImage?: ProductImage;
   features: string[];
   price?: string;
   tags: string[];
@@ -78,17 +88,68 @@ export const partners: Partner[] = researchData.partner_companies.map((partner: 
   };
 });
 
+// Helper function to generate Unsplash placeholder images
+const generateProductImages = (productName: string, productId: string): ProductImage[] => {
+  const baseUrl = 'https://images.unsplash.com';
+  const categories = ['technology', 'yacht', 'marine', 'electronics', 'navigation', 'luxury'];
+  const randomCategory = categories[Math.abs(productId.split('').reduce((a, b) => a + b.charCodeAt(0), 0)) % categories.length];
+  
+  const images: ProductImage[] = [
+    {
+      id: `${productId}-main`,
+      url: `${baseUrl}/800x600/?${randomCategory},technology&sig=${productId}-main`,
+      altText: `${productName} - Main Product Image`,
+      isMain: true
+    },
+    {
+      id: `${productId}-detail-1`,
+      url: `${baseUrl}/800x600/?${randomCategory},detail&sig=${productId}-detail-1`,
+      altText: `${productName} - Detail View 1`,
+      isMain: false
+    },
+    {
+      id: `${productId}-detail-2`,
+      url: `${baseUrl}/800x600/?${randomCategory},closeup&sig=${productId}-detail-2`,
+      altText: `${productName} - Detail View 2`,
+      isMain: false
+    },
+    {
+      id: `${productId}-installed`,
+      url: `${baseUrl}/800x600/?${randomCategory},installation&sig=${productId}-installed`,
+      altText: `${productName} - Installed View`,
+      isMain: false
+    }
+  ];
+  
+  return images;
+};
+
 export const products: Product[] = researchData.partner_companies.flatMap((partner: any, partnerIndex: number) => 
-  (partner.sample_products || []).map((product: any, productIndex: number) => ({
-    id: `product-${partnerIndex}-${productIndex}`,
-    name: product.name + ' - FB',
-    partnerId: `partner-${partnerIndex + 1}`,
-    partnerName: partner.company + ' - FB',
-    category: partner.category,
-    description: product.description,
-    features: product.features || [],
-    tags: [partner.category, ...(product.features || []).slice(0, 2)],
-  }))
+  (partner.sample_products || []).map((product: any, productIndex: number) => {
+    const productId = `product-${partnerIndex}-${productIndex}`;
+    const productName = product.name + ' - FB';
+    const images = generateProductImages(productName, productId);
+    const mainImage = images.find(img => img.isMain);
+    
+    return {
+      id: productId,
+      slug: createSlug(productName),
+      name: productName,
+      partnerId: `partner-${partnerIndex + 1}`,
+      partnerName: partner.company + ' - FB',
+      category: partner.category,
+      description: product.description,
+      image: mainImage?.url, // For backward compatibility
+      images,
+      mainImage,
+      features: Array.isArray(product.features) ? product.features : [
+        'Professional Grade Quality',
+        'Marine Certified Components',
+        'Extended Warranty Coverage'
+      ],
+      tags: [partner.category, 'Marine Technology', 'Professional Grade'],
+    };
+  })
 );
 
 export const blogPosts: BlogPost[] = researchData.industry_trends.map((trend: any, index: number) => {
@@ -287,6 +348,10 @@ export const getPartnerBySlug = (slug: string): Partner | undefined => {
 
 export const getProductById = (id: string): Product | undefined => {
   return products.find(product => product.id === id);
+};
+
+export const getProductBySlug = (slug: string): Product | undefined => {
+  return products.find(product => product.slug === slug);
 };
 
 // URL parameter utilities

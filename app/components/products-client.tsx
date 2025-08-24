@@ -12,6 +12,7 @@ import { SearchFilter } from "@/components/search-filter";
 import { Pagination } from "@/components/pagination";
 import { Package, Building2, ArrowRight, Star } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { parseFilterParams } from "@/lib/data";
 import { dataService } from "@/lib/data-service";
 
@@ -24,7 +25,7 @@ export function ProductsClient() {
   const searchParams = useSearchParams();
   
   // Initialize state from URL parameters
-  const urlParams = parseFilterParams(searchParams);
+  const urlParams = parseFilterParams(searchParams || new URLSearchParams());
   const [searchQuery, setSearchQuery] = React.useState(urlParams.search);
   const [selectedCategory, setSelectedCategory] = React.useState(urlParams.category);
   const [currentPage, setCurrentPage] = React.useState(1);
@@ -68,7 +69,7 @@ export function ProductsClient() {
 
   // Update state when URL parameters change
   React.useEffect(() => {
-    const params = parseFilterParams(searchParams);
+    const params = parseFilterParams(searchParams || new URLSearchParams());
     setSearchQuery(params.search);
     setSelectedCategory(params.category);
     setSelectedPartner(params.partner);
@@ -138,7 +139,7 @@ export function ProductsClient() {
 
   // Function to update URL parameters
   const updateUrlParams = React.useCallback((params: { search?: string; category?: string; partner?: string }) => {
-    const current = new URLSearchParams(Array.from(searchParams.entries()));
+    const current = new URLSearchParams(Array.from((searchParams || new URLSearchParams()).entries()));
     
     // Update or remove search parameter
     if (params.search !== undefined) {
@@ -203,18 +204,6 @@ export function ProductsClient() {
 
   return (
     <>
-      {/* DEBUG INFO - Remove this after debugging */}
-      <div className="mb-4 p-4 bg-yellow-100 border border-yellow-400 rounded text-xs">
-        <strong>DEBUG INFO:</strong><br/>
-        Loading: {loading ? 'true' : 'false'}<br/>
-        Products count: {products.length}<br/>
-        Categories count: {categories.length}<br/>
-        Selected category: "{selectedCategory}"<br/>
-        Search query: "{searchQuery}"<br/>
-        Selected partner: "{selectedPartner}"<br/>
-        Filtered products count: {filteredProducts.length}<br/>
-        Categories: {JSON.stringify(categories)}
-      </div>
 
       {/* Search and Filter */}
       <motion.div
@@ -256,29 +245,49 @@ export function ProductsClient() {
             animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
             transition={{ duration: 0.6, delay: 0.1 * index }}
           >
-            <Card className="h-full hover-lift cursor-pointer group">
+            <Card 
+              className="h-full hover-lift cursor-pointer group overflow-hidden"
+              onClick={() => {
+                const url = product?.slug ? `/products/${product.slug}` : `/products/${product.id}`;
+                router.push(url);
+              }}
+            >
+              {/* Product Image */}
+              <div className="aspect-video relative overflow-hidden">
+                {product?.mainImage?.url || product?.image ? (
+                  <Image
+                    src={product.mainImage?.url || product.image || ''}
+                    alt={product?.mainImage?.altText || product?.name || ''}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-accent/20 to-primary/20 flex items-center justify-center">
+                    <Package className="w-12 h-12 text-accent/60" />
+                  </div>
+                )}
+              </div>
+              
               <CardHeader>
                 <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center">
-                      <Package className="w-5 h-5 text-accent" />
-                    </div>
+                  <div className="flex items-center space-x-2">
+                    <Badge 
+                      variant="secondary" 
+                      className="cursor-pointer hover:bg-accent hover:text-accent-foreground transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCategoryClick(product?.category || '');
+                      }}
+                    >
+                      {product?.category}
+                    </Badge>
                   </div>
-                  <Badge 
-                    variant="secondary" 
-                    className="cursor-pointer hover:bg-accent hover:text-accent-foreground transition-colors"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleCategoryClick(product?.category || '');
-                    }}
-                  >
-                    {product?.category}
-                  </Badge>
                 </div>
                 <CardTitle className="group-hover:text-accent transition-colors line-clamp-2">
                   {product?.name}
                 </CardTitle>
-                <CardDescription className="line-clamp-3">
+                <CardDescription className="line-clamp-2">
                   {product?.description}
                 </CardDescription>
               </CardHeader>
@@ -337,7 +346,7 @@ export function ProductsClient() {
                       size="sm" 
                       className="w-full group"
                     >
-                      <Link href={`/products/${product?.id}`}>
+                      <Link href={`/products/${product?.slug || product?.id}`}>
                         Learn More
                         <ArrowRight className="ml-2 h-3 w-3 group-hover:translate-x-1 transition-transform" />
                       </Link>
