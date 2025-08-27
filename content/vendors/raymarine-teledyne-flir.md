@@ -1,8 +1,8 @@
 ---
 name: Raymarine (Teledyne FLIR)
 slug: raymarine-teledyne-flir
-logo: /media/partners/logos/raymarine-teledyne-flir.png
-image: /media/partners/images/raymarine-teledyne-flir-overview.jpg
+logo: /media/vendors/logos/raymarine-teledyne-flir.png
+image: /media/vendors/images/raymarine-teledyne-flir-overview.jpg
 website: 'https://www.raymarine.com'
 founded: 1923
 location: 'Portsmouth, UK'
