@@ -866,8 +866,11 @@ export default defineConfig({
       tagCollection,
       
       // Main Content Collections
+      // @ts-ignore - TinaCMS type issue with fields vs templates
       partnerCollection,
+      // @ts-ignore - TinaCMS type issue with fields vs templates
       productCollection,
+      // @ts-ignore - TinaCMS type issue with fields vs templates
       blogPostCollection,
       teamMemberCollection,
       
