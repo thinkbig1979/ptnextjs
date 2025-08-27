@@ -3,7 +3,7 @@ name: "Starlink Maritime Integration"
 slug: "starlink-maritime-integration"
 description: "Complete Starlink installation and integration services providing up to 350 Mbps global internet connectivity with professional-grade mounting and networking."
 price: "Contact for pricing"
-partner: "content/partners/marine-data-solutions.md"
+vendor: "content/vendors/marine-data-solutions.md"
 category: "content/categories/communication-systems.md"
 tags: []
 product_images: []
@@ -17,7 +17,6 @@ seo:
 # Starlink Maritime Integration
 
 Complete Starlink installation and integration services providing up to 350 Mbps global internet connectivity with professional-grade mounting and networking.
-
 
 
 

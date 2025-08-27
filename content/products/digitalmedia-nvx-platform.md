@@ -3,7 +3,7 @@ name: "DigitalMedia NVX Platform"
 slug: "digitalmedia-nvx-platform"
 description: "4K/60 HDR video distribution system over 1 Gig Ethernet with zero latency, infinitely scalable networked AV for entertainment and presentation systems."
 price: "Contact for pricing"
-partner: "content/partners/crestron.md"
+vendor: "content/vendors/crestron.md"
 category: "content/categories/automation-&-entertainment.md"
 tags: []
 product_images: []

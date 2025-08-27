@@ -3,7 +3,7 @@ name: "Hybrid Connectivity Solutions"
 slug: "hybrid-connectivity-solutions"
 description: "Combined VSAT and LEO satellite systems with 4G/5G backup providing seamless global communications and redundant connectivity options."
 price: "Contact for pricing"
-partner: "content/partners/marine-data-solutions.md"
+vendor: "content/vendors/marine-data-solutions.md"
 category: "content/categories/communication-systems.md"
 tags: []
 product_images: []

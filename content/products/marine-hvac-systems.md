@@ -3,7 +3,7 @@ name: "Marine HVAC Systems"
 slug: "marine-hvac-systems"
 description: "Complete climate control solutions with variable-speed compressors, smart controls, and modular designs optimized for marine environments and energy efficiency."
 price: "Contact for pricing"
-partner: "content/partners/heinen-hopman.md"
+vendor: "content/vendors/heinen-hopman.md"
 category: "content/categories/hvac-systems.md"
 tags: []
 product_images: []

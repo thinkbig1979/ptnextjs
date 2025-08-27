@@ -3,7 +3,7 @@ name: "Power Management Systems (PMS)"
 slug: "power-management-systems-pms-"
 description: "Advanced electrical distribution and monitoring systems with automated load management, generator control, and battery monitoring for optimal power efficiency."
 price: "Contact for pricing"
-partner: "content/partners/fine-line-marine-electric.md"
+vendor: "content/vendors/fine-line-marine-electric.md"
 category: "content/categories/automation-technology.md"
 tags: []
 product_images: []

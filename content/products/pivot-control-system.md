@@ -3,7 +3,7 @@ name: "Pivot Control System"
 slug: "pivot-control-system"
 description: "Integrated control app for iOS devices enabling seamless control of AV, lighting, environmental systems, and crew communication from iPads, iPhones, or Apple Watch."
 price: "Contact for pricing"
-partner: "content/partners/vbh-van-berge-henegouwen-.md"
+vendor: "content/vendors/vbh-van-berge-henegouwen-.md"
 category: "content/categories/entertainment-technology.md"
 tags: []
 product_images: []

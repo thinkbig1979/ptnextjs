@@ -3,7 +3,7 @@ name: "HEM Freshwater Systems"
 slug: "hem-freshwater-systems"
 description: "Reverse-osmosis desalination systems delivering 30-120 m³/day capacity, installed on over 70 of the top 100 superyachts worldwide."
 price: "Contact for pricing"
-partner: "content/partners/evac-group.md"
+vendor: "content/vendors/evac-group.md"
 category: "content/categories/water-management-systems.md"
 tags: []
 product_images: []

@@ -3,7 +3,7 @@ name: "ECLIPSE Control Platform"
 slug: "eclipse-control-platform"
 description: "All-in-one RGB lighting control system managing both underwater and above-water LED fixtures with scene presets, dimming, and color-mixing capabilities."
 price: "Contact for pricing"
-partner: "content/partners/lumishore.md"
+vendor: "content/vendors/lumishore.md"
 category: "content/categories/lighting-systems.md"
 tags: []
 product_images: []
@@ -17,7 +17,4 @@ seo:
 # ECLIPSE Control Platform
 
 All-in-one RGB lighting control system managing both underwater and above-water LED fixtures with scene presets, dimming, and color-mixing capabilities.
-
-
-
 

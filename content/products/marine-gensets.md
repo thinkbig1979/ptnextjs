@@ -3,7 +3,7 @@ name: "Marine Gensets"
 slug: "marine-gensets"
 description: "Complete generator sets from 20-2,500 kW with sound attenuation, vibration isolation, and advanced control systems for hotel power applications."
 price: "Contact for pricing"
-partner: "content/partners/caterpillar-marine.md"
+vendor: "content/vendors/caterpillar-marine.md"
 category: "content/categories/propulsion-systems.md"
 tags: []
 product_images: []

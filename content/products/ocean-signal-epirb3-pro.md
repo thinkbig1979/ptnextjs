@@ -3,7 +3,7 @@ name: "Ocean Signal EPIRB3 Pro"
 slug: "ocean-signal-epirb3-pro"
 description: "Professional-grade Emergency Position Indicating Radio Beacon with GPS positioning, 406 MHz transmission, and 121.5 MHz homing signal for maritime distress alerting."
 price: "Contact for pricing"
-partner: "content/partners/ocean-safety.md"
+vendor: "content/vendors/ocean-safety.md"
 category: "content/categories/safety-equipment.md"
 tags: []
 product_images: []

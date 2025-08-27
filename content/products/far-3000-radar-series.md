@@ -3,7 +3,7 @@ name: "FAR-3000 Radar Series"
 slug: "far-3000-radar-series"
 description: "Professional marine radar systems with ARPA functionality, target tracking, and weather detection capabilities for commercial and superyacht applications."
 price: "Contact for pricing"
-partner: "content/partners/furuno-electric-co-.md"
+vendor: "content/vendors/furuno-electric-co-.md"
 category: "content/categories/navigation-systems.md"
 tags: []
 product_images: []

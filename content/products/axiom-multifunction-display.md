@@ -3,7 +3,7 @@ name: "Axiom Multifunction Display"
 slug: "axiom-multifunction-display"
 description: "The Raymarine Axiom series represents the pinnacle of marine multifunction display technology, combining powerful performance with an intuitive user interface. Designed for both recreational and commercial applications, the Axiom MFD delivers exceptional navigation capabilities in a robust, weatherproof package."
 price: "Contact for pricing"
-partner: "content/partners/raymarine-teledyne-flir.md"
+vendor: "content/vendors/raymarine-teledyne-flir.md"
 category: "content/categories/navigation-systems.md"
 tags:
   - "content/tags/radar.md"

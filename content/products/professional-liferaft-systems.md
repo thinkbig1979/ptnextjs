@@ -3,7 +3,7 @@ name: "Professional Liferaft Systems"
 slug: "professional-liferaft-systems"
 description: "SOLAS-approved liferafts with extended survival equipment, GPS tracking, and specialized provisions designed for superyacht crew and guest safety."
 price: "Contact for pricing"
-partner: "content/partners/ocean-safety.md"
+vendor: "content/vendors/ocean-safety.md"
 category: "content/categories/safety-equipment.md"
 tags: []
 product_images: []

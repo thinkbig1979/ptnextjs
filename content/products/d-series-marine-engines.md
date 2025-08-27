@@ -3,7 +3,7 @@ name: "D-Series Marine Engines"
 slug: "d-series-marine-engines"
 description: "High-performance marine diesel engines with advanced fuel injection, turbocharging, and aftertreatment systems meeting latest emission standards."
 price: "Contact for pricing"
-partner: "content/partners/volvo-penta.md"
+vendor: "content/vendors/volvo-penta.md"
 category: "content/categories/propulsion-systems.md"
 tags: []
 product_images: []

@@ -3,7 +3,7 @@ name: "DRS Cyclone Open Array Radar"
 slug: "drs-cyclone-open-array-radar"
 description: "1.8m open-array CHIRP radar with 12kW power, Doppler TMI, RangeFusion technology, and 96 NM range capability for professional navigation."
 price: "Contact for pricing"
-partner: "content/partners/raymarine-teledyne-flir-.md"
+vendor: "content/vendors/raymarine-teledyne-flir-.md"
 category: "content/categories/navigation-systems.md"
 tags: []
 product_images: []

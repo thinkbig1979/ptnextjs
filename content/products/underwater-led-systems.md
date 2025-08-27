@@ -3,7 +3,7 @@ name: "Underwater LED Systems"
 slug: "underwater-led-systems"
 description: "High-output underwater LED modules in various configurations with full-spectrum color capabilities and marine-grade construction for hull illumination."
 price: "Contact for pricing"
-partner: "content/partners/lumishore.md"
+vendor: "content/vendors/lumishore.md"
 category: "content/categories/lighting-systems.md"
 tags: []
 product_images: []

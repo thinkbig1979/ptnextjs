@@ -3,7 +3,7 @@ name: "Marine Genset Solutions"
 slug: "marine-genset-solutions"
 description: "Complete generator packages with sound enclosures, vibration isolation, and remote monitoring capabilities for superyacht hotel power requirements."
 price: "Contact for pricing"
-partner: "content/partners/yanmar-marine.md"
+vendor: "content/vendors/yanmar-marine.md"
 category: "content/categories/propulsion-systems.md"
 tags: []
 product_images: []

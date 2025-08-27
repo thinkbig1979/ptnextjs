@@ -3,7 +3,7 @@ name: "AV System Integration"
 slug: "av-system-integration"
 description: "Custom audio-visual systems including multi-zone entertainment, cinema installations, and integrated control platforms for luxury yacht applications."
 price: "Contact for pricing"
-partner: "content/partners/triton-technical.md"
+vendor: "content/vendors/triton-technical.md"
 category: "content/categories/communication-&-entertainment.md"
 tags: []
 product_images: []

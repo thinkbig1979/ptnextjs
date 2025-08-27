@@ -3,7 +3,7 @@ name: "Freshwater Generation Systems"
 slug: "freshwater-generation-systems"
 description: "Reverse osmosis watermakers with energy recovery, automatic flushing, and remote monitoring capabilities for continuous freshwater production at sea."
 price: "Contact for pricing"
-partner: "content/partners/alfa-laval.md"
+vendor: "content/vendors/alfa-laval.md"
 category: "content/categories/water-management-systems.md"
 tags: []
 product_images: []

@@ -3,7 +3,7 @@ name: "FMD-3000 Display Series"
 slug: "fmd-3000-display-series"
 description: "Multi-function displays integrating radar, chart plotter, fish finder, and navigation data in a single unit with touch-screen operation."
 price: "Contact for pricing"
-partner: "content/partners/furuno-electric-co-.md"
+vendor: "content/vendors/furuno-electric-co-.md"
 category: "content/categories/navigation-systems.md"
 tags: []
 product_images: []

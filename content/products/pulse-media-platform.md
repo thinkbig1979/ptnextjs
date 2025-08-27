@@ -3,7 +3,7 @@ name: "Pulse Media Platform"
 slug: "pulse-media-platform"
 description: "Proprietary media-delivery platform providing unified content management, smart recommendations, modern UI, and full streaming support with crew-friendly operation."
 price: "Contact for pricing"
-partner: "content/partners/vbh-van-berge-henegouwen-.md"
+vendor: "content/vendors/vbh-van-berge-henegouwen-.md"
 category: "content/categories/entertainment-technology.md"
 tags: []
 product_images: []

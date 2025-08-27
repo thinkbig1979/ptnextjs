@@ -3,7 +3,7 @@ name: "IPS Pod Drive Systems"
 slug: "ips-pod-drive-systems"
 description: "Innovative pod propulsion systems (IPS 500-1200) with 360-degree steering, joystick control, Dynamic Positioning System, and improved fuel efficiency."
 price: "Contact for pricing"
-partner: "content/partners/volvo-penta.md"
+vendor: "content/vendors/volvo-penta.md"
 category: "content/categories/propulsion-systems.md"
 tags: []
 product_images: []

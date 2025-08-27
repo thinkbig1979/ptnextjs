@@ -267,10 +267,10 @@ class TinaCMSDataService {
     })
   }
 
-  // Vendors - New primary methods
+  // Vendors - New primary methods (updated to read from content/vendors)
   async getAllVendors(): Promise<Vendor[]> {
     return this.getCached('vendors', async () => {
-      const vendorsPath = path.resolve(process.cwd(), 'content/partners')
+      const vendorsPath = path.resolve(process.cwd(), 'content/vendors')
       const files = await fs.readdir(vendorsPath)
       
       const vendors = await Promise.all(

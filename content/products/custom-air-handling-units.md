@@ -3,7 +3,7 @@ name: "Custom Air Handling Units"
 slug: "custom-air-handling-units"
 description: "Bespoke air handling systems with advanced filtration, humidity control, and silent operation designed specifically for luxury yacht applications."
 price: "Contact for pricing"
-partner: "content/partners/heinen-hopman.md"
+vendor: "content/vendors/heinen-hopman.md"
 category: "content/categories/hvac-systems.md"
 tags: []
 product_images: []

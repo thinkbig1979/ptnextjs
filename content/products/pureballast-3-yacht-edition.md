@@ -3,7 +3,7 @@ name: "PureBallast 3 Yacht Edition"
 slug: "pureballast-3-yacht-edition"
 description: "Plug-and-play ballast water treatment system with chemical-free UV disinfection, white marine-grade coating, and full automation with IMO/USCG approval."
 price: "Contact for pricing"
-partner: "content/partners/alfa-laval.md"
+vendor: "content/vendors/alfa-laval.md"
 category: "content/categories/water-management-systems.md"
 tags: []
 product_images: []

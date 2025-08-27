@@ -32,7 +32,7 @@ export async function validateContentStructure(): Promise<ContentValidationResul
 
   const expectedDirectories = [
     'content/categories',
-    'content/partners', 
+    'content/vendors', 
     'content/products',
     'content/blog/categories',
     'content/blog/posts',
@@ -65,7 +65,7 @@ export async function validateMediaStructure(): Promise<ContentValidationResult>
 
   const expectedMediaDirectories = [
     'public/media/categories',
-    'public/media/partners',
+    'public/media/vendors',
     'public/media/products',
     'public/media/blog',
     'public/media/team',
@@ -228,7 +228,7 @@ function extractMediaReferences(content: string): string[] {
 export async function ensureDirectoryStructure(): Promise<void> {
   const directories = [
     'content/categories',
-    'content/partners',
+    'content/vendors',
     'content/products', 
     'content/blog/categories',
     'content/blog/posts',
@@ -237,10 +237,10 @@ export async function ensureDirectoryStructure(): Promise<void> {
     'content/company',
     'public/media/categories/icons',
     'public/media/categories/placeholders',
-    'public/media/partners/logos',
-    'public/media/partners/images',
-    'public/media/partners/social',
-    'public/media/partners/placeholders',
+    'public/media/vendors/logos',
+    'public/media/vendors/images',
+    'public/media/vendors/social',
+    'public/media/vendors/placeholders',
     'public/media/products/placeholders',
     'public/media/products/social',
     'public/media/blog/posts',

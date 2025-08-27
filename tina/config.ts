@@ -226,11 +226,11 @@ const seoFields = [
   },
 ];
 
-// Vendor Collection (Main Content) - Renamed from Partner
+// Vendor Collection (Main Content) - Updated path to content/vendors
 const vendorCollection = {
   name: "vendor",
   label: "Vendors",
-  path: "content/partners",
+  path: "content/vendors",
   format: "md" as const,
   
   fields: [

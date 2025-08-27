@@ -3,7 +3,7 @@ name: "SOLAS Liferafts"
 slug: "solas-liferafts"
 description: "IMO-approved inflatable liferafts in various capacities with advanced survival equipment, GPS beacons, and extended provision packages for superyacht applications."
 price: "Contact for pricing"
-partner: "content/partners/viking-life-saving-equipment.md"
+vendor: "content/vendors/viking-life-saving-equipment.md"
 category: "content/categories/safety-equipment.md"
 tags: []
 product_images: []

@@ -3,7 +3,7 @@ name: "Series 2000 Marine Engines"
 slug: "series-2000-marine-engines"
 description: "High-speed V-engines delivering 720-1,939 kW (966-2,600 bhp) with exceptional power density, sequential turbocharging, and airless SCR for compact engine rooms."
 price: "Contact for pricing"
-partner: "content/partners/mtu-rolls-royce-power-systems-.md"
+vendor: "content/vendors/mtu-rolls-royce-power-systems-.md"
 category: "content/categories/propulsion-systems.md"
 tags: []
 product_images: []

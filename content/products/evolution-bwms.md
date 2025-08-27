@@ -3,7 +3,7 @@ name: "Evolution BWMS"
 slug: "evolution-bwms"
 description: "Chemical-free ballast water management system using fine-mesh filtration and UV disinfection, with UV Transmission feedback control and IMO G8/USCG Type Approval."
 price: "Contact for pricing"
-partner: "content/partners/evac-group.md"
+vendor: "content/vendors/evac-group.md"
 category: "content/categories/water-management-systems.md"
 tags: []
 product_images: []
@@ -17,7 +17,5 @@ seo:
 # Evolution BWMS
 
 Chemical-free ballast water management system using fine-mesh filtration and UV disinfection, with UV Transmission feedback control and IMO G8/USCG Type Approval.
-
-
 
 

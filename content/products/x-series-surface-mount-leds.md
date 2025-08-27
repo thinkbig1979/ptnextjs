@@ -3,7 +3,7 @@ name: "X-Series Surface Mount LEDs"
 slug: "x-series-surface-mount-leds"
 description: "Flush-mount underwater LED fixtures with ultra-slim profile, high-intensity output, and integrated controllers for seamless hull installation."
 price: "Contact for pricing"
-partner: "content/partners/oceanled.md"
+vendor: "content/vendors/oceanled.md"
 category: "content/categories/lighting-systems.md"
 tags: []
 product_images: []

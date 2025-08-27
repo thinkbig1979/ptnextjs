@@ -3,7 +3,7 @@ name: "6AYM-WET Series"
 slug: "6aym-wet-series"
 description: "High-speed marine diesel engines with common-rail injection, turbocharging, and wet exhaust systems optimized for superyacht applications up to 1,000 hp."
 price: "Contact for pricing"
-partner: "content/partners/yanmar-marine.md"
+vendor: "content/vendors/yanmar-marine.md"
 category: "content/categories/propulsion-systems.md"
 tags: []
 product_images: []
