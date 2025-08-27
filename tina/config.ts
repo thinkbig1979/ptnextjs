@@ -311,6 +311,7 @@ const partnerCollection = {
       name: "tags",
       label: "Technology Tags",
       collections: ["tag"],
+      list: true,
       description: "Relevant technology tags for this partner",
     },
     
@@ -389,6 +390,7 @@ const productCollection = {
       name: "tags",
       label: "Product Tags",
       collections: ["tag"],
+      list: true,
       description: "Relevant tags for this product",
     },
     
@@ -598,6 +600,7 @@ const blogPostCollection = {
       name: "tags",
       label: "Tags",
       collections: ["tag"],
+      list: true,
       description: "Relevant tags for this post",
     },
     
