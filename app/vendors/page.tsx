@@ -1,15 +1,41 @@
-
-
 import * as React from "react";
 import { Suspense } from "react";
 import { VendorsClient } from "@/app/components/vendors-client";
 import { tinaCMSDataService } from "@/lib/tinacms-data-service";
+import { Metadata } from "next";
 
 // Force static generation for optimal SEO and performance
 export const dynamic = 'force-static';
 export const revalidate = false;
 
-interface PartnersPageProps {
+export const metadata: Metadata = {
+  title: "Vendors | Paul Thames - Superyacht Technology Solutions",
+  description: "Explore our comprehensive directory of superyacht technology vendors and marine electronics suppliers. Find the right solutions for your yacht projects.",
+  keywords: [
+    "superyacht vendors",
+    "marine technology suppliers", 
+    "yacht equipment vendors",
+    "marine electronics suppliers",
+    "superyacht technology partners",
+    "yacht systems vendors"
+  ],
+  openGraph: {
+    title: "Vendors | Paul Thames - Superyacht Technology Solutions",
+    description: "Explore our comprehensive directory of superyacht technology vendors and marine electronics suppliers.",
+    type: "website",
+    url: "/vendors",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Vendors | Paul Thames - Superyacht Technology Solutions", 
+    description: "Explore our comprehensive directory of superyacht technology vendors and marine electronics suppliers.",
+  },
+  alternates: {
+    canonical: "/vendors"
+  }
+};
+
+interface VendorsPageProps {
   searchParams?: {
     category?: string;
     search?: string;
@@ -17,10 +43,10 @@ interface PartnersPageProps {
   };
 }
 
-export default async function PartnersPage({ searchParams }: PartnersPageProps) {
-  console.log('🏗️  Rendering Partners page (static generation) with searchParams:', searchParams);
+export default async function VendorsPage({ searchParams }: VendorsPageProps) {
+  console.log('🏗️  Rendering Vendors page (static generation) with searchParams:', searchParams);
   
-  // Fetch all vendors data at build time for static generation (partners are a subset)
+  // Fetch all data at build time for static generation
   const [vendors, products, categories] = await Promise.all([
     tinaCMSDataService.getAllVendors(),
     tinaCMSDataService.getAllProducts(),
@@ -37,10 +63,10 @@ export default async function PartnersPage({ searchParams }: PartnersPageProps) 
         {/* Static Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-6xl font-cormorant font-bold mb-4">
-            Technology Partners
+            Technology Vendors
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-poppins-light">
-            Discover our extensive network of leading superyacht technology providers and marine electronics specialists
+            Discover our comprehensive directory of superyacht technology vendors and marine electronics suppliers
           </p>
         </div>
 
@@ -57,9 +83,9 @@ export default async function PartnersPage({ searchParams }: PartnersPageProps) 
             initialVendors={vendors}
             initialCategories={categoryNames}
             initialProducts={products}
-            showPartnersOnly={true}
-            baseUrl="/partners"
-            pageTitle="partners"
+            showPartnersOnly={false} // Show ALL vendors
+            baseUrl="/vendors"
+            pageTitle="vendors"
           />
         </Suspense>
       </div>
