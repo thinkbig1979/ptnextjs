@@ -1,29 +1,17 @@
-// Strapi relation and component types
-export interface StrapiRelation<T = any> {
-  data: T | null;
-}
-
-export interface StrapiRelationArray<T = any> {
-  data: T[];
-}
-
-export interface StrapiMediaFile {
-  id: number;
+// Media file types
+export interface MediaFile {
+  id: number | string;
   name: string;
   alternativeText?: string;
   caption?: string;
   width?: number;
   height?: number;
-  formats?: any;
-  hash: string;
-  ext: string;
-  mime: string;
-  size: number;
   url: string;
-  previewUrl?: string;
-  provider: string;
-  createdAt: string;
-  updatedAt: string;
+  ext?: string;
+  mime?: string;
+  size?: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 // Component types
@@ -51,7 +39,7 @@ export interface SEO {
   meta_title?: string;
   meta_description?: string;
   keywords?: string;
-  og_image?: StrapiRelation<StrapiMediaFile>;
+  og_image?: MediaFile;
   canonical_url?: string;
   no_index?: boolean;
 }
@@ -103,7 +91,7 @@ export interface Tag {
   publishedAt: string;
 }
 
-// Main application types - updated for Strapi integration
+// Main application types
 export interface Partner {
   id: string;
   slug?: string;

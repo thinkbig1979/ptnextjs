@@ -1,5 +1,5 @@
 // This file has been deprecated in favor of static-data-service.ts
-// All data now comes from Strapi CMS at build time
+// All data now comes from TinaCMS at build time
 
 export interface ProductImage {
   id: string;

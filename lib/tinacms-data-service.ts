@@ -1,6 +1,6 @@
 /**
  * TinaCMS Data Service for Static Site Generation
- * Replaces Strapi client with TinaCMS local content queries
+ * TinaCMS local content queries for static site generation
  */
 
 import { resolve } from 'path'

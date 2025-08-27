@@ -17,14 +17,11 @@ debug-*.ts
 **/debug/**
 
 # Migration and Setup Files
-MIGRATION_INSTRUCTIONS.md
-STRAPI_SETUP.md
 *-migration.*
 *-export.*
 data-export-*.json
 
 # CMS and Database files
-strapi-cms/
 payload.db
 *.db
 
