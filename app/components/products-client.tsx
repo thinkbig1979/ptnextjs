@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SearchFilter } from "@/components/search-filter";
 import { Pagination } from "@/components/pagination";
+import { VendorToggle } from "@/components/ui/vendor-toggle";
 import { Package, Building2, ArrowRight, Star } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -20,9 +21,10 @@ const ITEMS_PER_PAGE = 12;
 interface ProductsClientProps {
   initialProducts: any[];
   initialCategories: string[];
+  initialVendors: any[];
 }
 
-export function ProductsClient({ initialProducts, initialCategories }: ProductsClientProps) {
+export function ProductsClient({ initialProducts, initialCategories, initialVendors }: ProductsClientProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -32,6 +34,9 @@ export function ProductsClient({ initialProducts, initialCategories }: ProductsC
   const [selectedCategory, setSelectedCategory] = React.useState(urlParams.category);
   const [currentPage, setCurrentPage] = React.useState(1);
   const [selectedPartner, setSelectedPartner] = React.useState(urlParams.partner);
+  const [vendorView, setVendorView] = React.useState<"partners" | "all">(
+    searchParams?.get('view') === 'all' ? 'all' : 'partners'
+  );
   
 
   const [ref, inView] = useInView({
@@ -46,6 +51,7 @@ export function ProductsClient({ initialProducts, initialCategories }: ProductsC
     setSearchQuery(params.search);
     setSelectedCategory(params.category);
     setSelectedPartner(params.partner);
+    setVendorView(searchParams?.get('view') === 'all' ? 'all' : 'partners');
   }, [searchParams]);
 
   // Navigation functions
@@ -59,7 +65,15 @@ export function ProductsClient({ initialProducts, initialCategories }: ProductsC
     setCurrentPage(1);
   }, []);
 
-  // Filter products based on search, category, and partner
+  // Create vendor lookup map for fast partner status checking
+  const vendorLookup = React.useMemo(() => {
+    return initialVendors.reduce((lookup, vendor) => {
+      lookup[vendor.id] = vendor;
+      return lookup;
+    }, {} as Record<string, any>);
+  }, [initialVendors]);
+
+  // Filter products based on search, category, partner, and vendor view
   const filteredProducts = React.useMemo(() => {
     let filtered = initialProducts;
 
@@ -87,8 +101,19 @@ export function ProductsClient({ initialProducts, initialCategories }: ProductsC
       filtered = filtered.filter(product => product?.partnerName === selectedPartner);
     }
 
+    // Apply vendor view filter (partners only vs all vendors)
+    if (vendorView === "partners") {
+      filtered = filtered.filter(product => {
+        const vendorId = product?.vendorId || product?.partnerId;
+        if (!vendorId) return false;
+        const vendor = vendorLookup[vendorId];
+        return vendor?.partner === true;
+      });
+    }
+    // For "all" view, no additional filtering needed - show all products
+
     return filtered;
-  }, [initialProducts, searchQuery, selectedCategory, selectedPartner]);
+  }, [initialProducts, searchQuery, selectedCategory, selectedPartner, vendorView, vendorLookup]);
 
   // Paginate results
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
@@ -98,7 +123,7 @@ export function ProductsClient({ initialProducts, initialCategories }: ProductsC
   );
 
   // Function to update URL parameters
-  const updateUrlParams = React.useCallback((params: { search?: string; category?: string; partner?: string }) => {
+  const updateUrlParams = React.useCallback((params: { search?: string; category?: string; partner?: string; view?: "partners" | "all" }) => {
     const current = new URLSearchParams(Array.from((searchParams || new URLSearchParams()).entries()));
     
     // Update or remove search parameter
@@ -127,6 +152,15 @@ export function ProductsClient({ initialProducts, initialCategories }: ProductsC
         current.delete('partner');
       }
     }
+    
+    // Update or remove view parameter
+    if (params.view !== undefined) {
+      if (params.view === 'all') {
+        current.set('view', params.view);
+      } else {
+        current.delete('view'); // Default to partners view
+      }
+    }
 
     const search = current.toString();
     const query = search ? `?${search}` : '';
@@ -145,10 +179,15 @@ export function ProductsClient({ initialProducts, initialCategories }: ProductsC
     updateUrlParams({ category });
   }, [updateUrlParams]);
 
+  const handleVendorViewChange = React.useCallback((view: "partners" | "all") => {
+    setVendorView(view);
+    updateUrlParams({ view });
+  }, [updateUrlParams]);
+
   // Reset page when filters change
   React.useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, selectedCategory]);
+  }, [searchQuery, selectedCategory, vendorView]);
 
 
 
@@ -171,6 +210,19 @@ export function ProductsClient({ initialProducts, initialCategories }: ProductsC
         />
       </motion.div>
 
+      {/* Vendor Toggle */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+        transition={{ duration: 0.6, delay: 0.3 }}
+        className="mb-8"
+      >
+        <VendorToggle
+          value={vendorView}
+          onValueChange={handleVendorViewChange}
+        />
+      </motion.div>
+
       {/* Results Summary */}
       <motion.div
         ref={ref}
@@ -181,6 +233,7 @@ export function ProductsClient({ initialProducts, initialCategories }: ProductsC
       >
         <p className="text-muted-foreground font-poppins-light">
           Showing {paginatedProducts.length} of {filteredProducts.length} products
+          {vendorView === "partners" ? " from partners" : " from all vendors"}
           {selectedCategory !== "all" && ` in ${selectedCategory}`}
           {selectedPartner && ` from ${selectedPartner}`}
         </p>

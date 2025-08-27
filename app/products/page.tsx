@@ -14,6 +14,7 @@ interface ProductsPageProps {
     category?: string;
     search?: string;
     partner?: string;
+    view?: "partners" | "all";
   };
 }
 
@@ -21,14 +22,15 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   console.log('🏗️  Rendering Products page (static generation) with searchParams:', searchParams);
   
   // Fetch all data at build time for static generation
-  const [products, categories] = await Promise.all([
+  const [products, categories, vendors] = await Promise.all([
     tinaCMSDataService.getAllProducts(),
-    tinaCMSDataService.getCategories()
+    tinaCMSDataService.getCategories(),
+    tinaCMSDataService.getAllVendors()
   ]);
   
   const categoryNames = categories.map(cat => cat.name);
   
-  console.log(`📋 Static generation: Loaded ${products.length} products, ${categories.length} categories`);
+  console.log(`📋 Static generation: Loaded ${products.length} products, ${categories.length} categories, ${vendors.length} vendors`);
 
   return (
     <div className="min-h-screen py-12">
@@ -55,6 +57,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           <ProductsClient 
             initialProducts={products}
             initialCategories={categoryNames}
+            initialVendors={vendors}
           />
         </Suspense>
       </div>

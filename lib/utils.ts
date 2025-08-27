@@ -32,6 +32,7 @@ export const parseFilterParams = (searchParams: URLSearchParams) => {
     category: searchParams.get('category') || 'all',
     partner: searchParams.get('partner') || '',
     search: searchParams.get('search') || '',
+    view: searchParams.get('view') || 'partners',
   };
 };
 

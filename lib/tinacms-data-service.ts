@@ -359,6 +359,25 @@ class TinaCMSDataService {
     } as Partner))
   }
 
+  // Optimized method specifically for featured partners (homepage performance)
+  async getFeaturedPartners(): Promise<Partner[]> {
+    return this.getCached('featured-partners', async () => {
+      const allVendors = await this.getAllVendors()
+      
+      // Efficient compound filtering: featured AND partner
+      // This ensures only featured partners appear on homepage, not featured suppliers
+      const featuredPartners = allVendors.filter(vendor => 
+        vendor.featured === true && vendor.partner === true
+      )
+      
+      console.log(`🎯 Homepage filtering: ${featuredPartners.length} featured partners selected from ${allVendors.length} total vendors`)
+      
+      return featuredPartners.map(vendor => ({
+        ...vendor,
+      } as Partner))
+    })
+  }
+
   async getPartnerBySlug(slug: string): Promise<Partner | null> {
     const vendor = await this.getVendorBySlug(slug)
     return vendor ? { ...vendor } as Partner : null

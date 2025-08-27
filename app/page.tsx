@@ -9,7 +9,7 @@ import { tinaCMSDataService } from "@/lib/tinacms-data-service";
 export default async function HomePage() {
   const [companyInfo, featuredPartners, featuredPosts] = await Promise.all([
     tinaCMSDataService.getCompanyInfo(),
-    tinaCMSDataService.getPartners({ featured: true }),
+    tinaCMSDataService.getFeaturedPartners(), // Optimized method for compound filtering
     tinaCMSDataService.getBlogPosts({ featured: true })
   ]);
 
