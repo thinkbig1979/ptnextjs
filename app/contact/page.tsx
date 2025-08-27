@@ -3,33 +3,35 @@
 import * as React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
-import { companyInfo } from "@/lib/data";
+import { staticDataService } from "@/lib/static-data-service";
 import { ContactClient } from "./_components/contact-client";
 
-const contactInfo = [
-  {
-    icon: MapPin,
-    title: "Address",
-    details: [companyInfo.address],
-  },
-  {
-    icon: Phone,
-    title: "Phone",
-    details: [companyInfo.phone],
-  },
-  {
-    icon: Mail,
-    title: "Email",
-    details: [companyInfo.email, "sales@paulthames.com"],
-  },
-  {
-    icon: Clock,
-    title: "Business Hours",
-    details: ["Monday - Friday: 9:00 AM - 6:00 PM CET", "Weekend: By appointment"],
-  },
-];
-
-export default function ContactPage() {
+export default async function ContactPage() {
+  // Fetch company info at build time
+  const companyInfo = await staticDataService.getCompanyInfo();
+  
+  const contactInfo = [
+    {
+      icon: MapPin,
+      title: "Address",
+      details: [companyInfo.address],
+    },
+    {
+      icon: Phone,
+      title: "Phone",
+      details: [companyInfo.phone],
+    },
+    {
+      icon: Mail,
+      title: "Email",
+      details: [companyInfo.email, "sales@paulthames.com"],
+    },
+    {
+      icon: Clock,
+      title: "Business Hours",
+      details: ["Monday - Friday: 9:00 AM - 6:00 PM CET", "Weekend: By appointment"],
+    },
+  ];
   return (
     <div className="min-h-screen py-12">
       <div className="container max-w-screen-xl">

@@ -3,7 +3,18 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:with-strapi": "./scripts/dev-with-strapi.sh",
+    "strapi:dev": "cd strapi-cms && npm run develop",
+    "strapi:build": "cd strapi-cms && npm run build",
+    "strapi:start": "cd strapi-cms && npm run start",
+    "validate-cms": "tsx scripts/validate-cms.ts",
+    "prebuild": "npm run validate-cms",
     "build": "next build",
+    "build:static": "DISABLE_CONTENT_FALLBACK=true NEXT_OUTPUT_MODE=export next build",
+    "deploy:build": "./scripts/deploy-static.sh build-only",
+    "deploy:netlify": "./scripts/deploy-static.sh netlify",
+    "deploy:vercel": "./scripts/deploy-static.sh vercel",
+    "deploy:s3": "./scripts/deploy-static.sh aws-s3",
     "start": "next start",
     "lint": "next lint"
   },

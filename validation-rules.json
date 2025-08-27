@@ -1,0 +1,412 @@
+{
+  "metadata": {
+    "generated": "2025-08-25",
+    "phase": "Phase 1.2 - Data Flow Analysis",
+    "source": "Extracted from codebase validation logic"
+  },
+  "validation_categories": {
+    "field_validation": {
+      "description": "Individual field validation rules",
+      "rules": {
+        "required_fields": {
+          "description": "Fields that must have values",
+          "implementation": "TypeScript required properties + runtime checks",
+          "fields": [
+            "Partner.id", "Partner.name", "Partner.category", "Partner.description", "Partner.tags",
+            "Product.id", "Product.name", "Product.partnerId", "Product.partnerName", "Product.category", "Product.description", "Product.images", "Product.features", "Product.tags",
+            "ProductImage.id", "ProductImage.url", "ProductImage.isMain",
+            "BlogPost.id", "BlogPost.slug", "BlogPost.title", "BlogPost.excerpt", "BlogPost.content", "BlogPost.author", "BlogPost.publishedAt", "BlogPost.category", "BlogPost.tags",
+            "TeamMember.id", "TeamMember.name", "TeamMember.role", "TeamMember.bio",
+            "Category.id", "Category.name", "Category.slug", "Category.description", "Category.icon", "Category.color",
+            "CompanyInfo.*" 
+          ]
+        },
+        "string_length": {
+          "description": "String field length constraints",
+          "rules": {
+            "Partner.name": {"min": 2, "max": 100},
+            "Partner.description": {"min": 50, "max": 1000},
+            "Partner.location": {"max": 100},
+            "Product.name": {"min": 2, "max": 200},
+            "Product.description": {"min": 50, "max": 2000},
+            "Product.price": {"max": 50},
+            "ProductImage.altText": {"max": 200},
+            "BlogPost.title": {"min": 5, "max": 200},
+            "BlogPost.excerpt": {"min": 50, "max": 300},
+            "BlogPost.content": {"min": 200},
+            "BlogPost.author": {"max": 100},
+            "BlogPost.readTime": {"max": 20},
+            "TeamMember.name": {"min": 2, "max": 100},
+            "TeamMember.role": {"max": 100},
+            "TeamMember.bio": {"min": 50, "max": 1000},
+            "Category.name": {"max": 100},
+            "Category.description": {"min": 20, "max": 500},
+            "CompanyInfo.name": {"max": 100},
+            "CompanyInfo.tagline": {"max": 200},
+            "CompanyInfo.description": {"min": 100, "max": 1000},
+            "CompanyInfo.location": {"max": 100},
+            "CompanyInfo.address": {"max": 500},
+            "CompanyInfo.story": {"min": 200}
+          }
+        },
+        "array_constraints": {
+          "description": "Array field validation rules",
+          "rules": {
+            "Partner.tags": {"min_items": 1, "type": "string[]"},
+            "Product.images": {"min_items": 1, "type": "ProductImage[]"},
+            "Product.features": {"min_items": 1, "type": "string[]"},
+            "Product.tags": {"min_items": 1, "type": "string[]"},
+            "BlogPost.tags": {"min_items": 1, "type": "string[]"}
+          }
+        },
+        "numeric_ranges": {
+          "description": "Numeric field validation ranges",
+          "rules": {
+            "Partner.founded": {"min": 1800, "max": 2025},
+            "CompanyInfo.founded": {"min": 1800, "max": 2025}
+          }
+        }
+      }
+    },
+    "format_validation": {
+      "description": "Field format validation rules",
+      "rules": {
+        "url_fields": {
+          "description": "Fields that must be valid URLs",
+          "implementation": "URL format validation + protocol checking",
+          "fields": [
+            "Partner.website", "Partner.logo", "Partner.image",
+            "Product.image", "ProductImage.url",
+            "BlogPost.image",
+            "TeamMember.image", "TeamMember.linkedin"
+          ],
+          "pattern": "^https?://[^\\s]+$",
+          "additional_rules": {
+            "image_urls": {
+              "fields": ["Partner.logo", "Partner.image", "Product.image", "ProductImage.url", "BlogPost.image", "TeamMember.image"],
+              "allowed_formats": [".jpg", ".jpeg", ".png", ".webp", ".gif"],
+              "max_size": "5MB"
+            },
+            "linkedin_urls": {
+              "fields": ["TeamMember.linkedin"],
+              "pattern": "^https://([a-z]+\\.)?linkedin\\.com/in/[a-zA-Z0-9-]+/?$"
+            }
+          }
+        },
+        "email_fields": {
+          "description": "Fields that must be valid email addresses",
+          "implementation": "RFC 5322 email validation",
+          "fields": ["TeamMember.email", "CompanyInfo.email"],
+          "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+        },
+        "datetime_fields": {
+          "description": "Fields that must be valid ISO datetime strings",
+          "implementation": "ISO 8601 date parsing validation",
+          "fields": ["BlogPost.publishedAt"],
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?Z?$",
+          "additional_rules": {
+            "future_dates": {
+              "allowed": true,
+              "description": "Blog posts can be scheduled for future publication"
+            }
+          }
+        },
+        "color_fields": {
+          "description": "Fields that must be valid hex colors",
+          "implementation": "Hex color format validation",
+          "fields": ["Category.color"],
+          "pattern": "^#[0-9A-Fa-f]{6}$",
+          "examples": ["#FF0000", "#00FF00", "#0066CC"]
+        },
+        "phone_fields": {
+          "description": "Fields that must be valid phone numbers",
+          "implementation": "International phone format validation",
+          "fields": ["CompanyInfo.phone"],
+          "pattern": "^\\+?[1-9]\\d{1,14}$",
+          "description_text": "International format with optional + prefix"
+        },
+        "slug_fields": {
+          "description": "Fields that must be URL-safe slugs",
+          "implementation": "URL-safe string validation + auto-generation",
+          "fields": ["Partner.slug", "Product.slug", "BlogPost.slug", "Category.slug"],
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+          "auto_generate": {
+            "source_field": "name",
+            "transformation": "toLowerCase() → replace(/[^a-z0-9]+/g, '-') → replace(/(^-|-$)/g, '')"
+          }
+        }
+      }
+    },
+    "unique_constraints": {
+      "description": "Fields that must have unique values across entities",
+      "implementation": "Database unique constraints + application-level checking",
+      "constraints": {
+        "primary_keys": {
+          "description": "Primary identifier uniqueness",
+          "fields": [
+            "Partner.id", "Product.id", "ProductImage.id", "BlogPost.id", 
+            "TeamMember.id", "Category.id"
+          ],
+          "scope": "global",
+          "enforcement": "database_constraint"
+        },
+        "slug_uniqueness": {
+          "description": "URL slug uniqueness within entity type",
+          "fields": [
+            "Partner.slug", "Product.slug", "BlogPost.slug", "Category.slug"
+          ],
+          "scope": "per_entity_type",
+          "enforcement": "database_constraint",
+          "validation_method": "validateCMSContent()"
+        },
+        "name_uniqueness": {
+          "description": "Name uniqueness where required",
+          "fields": ["Category.name"],
+          "scope": "global",
+          "enforcement": "database_constraint"
+        }
+      }
+    },
+    "relationship_validation": {
+      "description": "Validation rules for entity relationships",
+      "rules": {
+        "foreign_key_constraints": {
+          "description": "Foreign key reference validation",
+          "constraints": {
+            "Product.partnerId": {
+              "target": "Partner.id",
+              "rule": "must_exist",
+              "on_delete": "restrict",
+              "validation_method": "validateCMSContent()",
+              "error_message": "Product partner reference must exist"
+            }
+          }
+        },
+        "category_references": {
+          "description": "Category string reference validation", 
+          "constraints": {
+            "Partner.category": {
+              "target": "Category.name",
+              "rule": "must_exist",
+              "type": "string_reference"
+            },
+            "Product.category": {
+              "target": "Category.name", 
+              "rule": "must_exist",
+              "type": "string_reference"
+            },
+            "BlogPost.category": {
+              "target": "BlogCategory.name",
+              "rule": "must_exist", 
+              "type": "string_reference"
+            }
+          }
+        },
+        "many_to_many_validation": {
+          "description": "Many-to-many relationship validation",
+          "constraints": {
+            "Partner.tags": {
+              "target": "Tag",
+              "rule": "all_must_exist",
+              "min_items": 1,
+              "type": "string_array"
+            },
+            "Product.tags": {
+              "target": "Tag",
+              "rule": "all_must_exist", 
+              "min_items": 1,
+              "type": "string_array"
+            },
+            "BlogPost.tags": {
+              "target": "Tag",
+              "rule": "all_must_exist",
+              "min_items": 1, 
+              "type": "string_array"
+            }
+          }
+        }
+      }
+    },
+    "business_logic_validation": {
+      "description": "Domain-specific business rules",
+      "rules": {
+        "product_image_constraints": {
+          "description": "ProductImage component business rules",
+          "rule": "main_image_uniqueness",
+          "implementation": "processProductImages()",
+          "constraint": "Only one ProductImage per Product should have isMain: true",
+          "resolution": "If multiple isMain or none, first image becomes main",
+          "code_location": "/lib/strapi-client.ts:53"
+        },
+        "founding_year_validation": {
+          "description": "Reasonable founding year validation",
+          "rule": "reasonable_founding_year",
+          "fields": ["Partner.founded", "CompanyInfo.founded"],
+          "constraint": "1800 < founded < (current_year + 1)",
+          "rationale": "Companies should have reasonable founding years"
+        },
+        "content_completeness": {
+          "description": "Content type minimum requirements",
+          "rules": {
+            "cms_content_minimums": {
+              "implementation": "validateCMSContent()",
+              "constraints": {
+                "partners_count": {"min": 1, "error": "No partners found in CMS"},
+                "products_count": {"min": 1, "error": "No products found in CMS"}, 
+                "categories_count": {"min": 1, "error": "No categories found in CMS"}
+              }
+            }
+          }
+        },
+        "slug_generation": {
+          "description": "Automatic slug generation rules",
+          "implementation": "createSlug()",
+          "algorithm": "name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')",
+          "fallback": "If slug not provided, auto-generate from name",
+          "uniqueness": "Must verify uniqueness after generation",
+          "code_location": "/lib/strapi-client.ts:34"
+        }
+      }
+    },
+    "runtime_validation": {
+      "description": "Validation performed during application runtime",
+      "validation_points": {
+        "build_time": {
+          "description": "Validation during static site generation",
+          "methods": [
+            "validateCMSContent()",
+            "TypeScript compilation checks",
+            "Strapi schema validation"
+          ],
+          "failure_behavior": "Build fails if validation errors found"
+        },
+        "api_request_time": {
+          "description": "Validation during API data fetching",
+          "methods": [
+            "Strapi API response validation",
+            "Type transformation validation",
+            "Required field checking"
+          ],
+          "failure_behavior": "Log errors, throw exceptions for critical failures"
+        },
+        "component_render_time": {
+          "description": "Validation during component rendering",
+          "methods": [
+            "Prop validation (TypeScript)",
+            "Null/undefined checking",
+            "Array length validation"
+          ],
+          "failure_behavior": "Graceful degradation with fallback UI"
+        }
+      }
+    }
+  },
+  "validation_implementation": {
+    "typescript_types": {
+      "description": "Compile-time type validation",
+      "files": ["/lib/types.ts", "/lib/strapi-client.ts", "/lib/static-data-service.ts"],
+      "enforcement": "TypeScript compiler",
+      "benefits": ["Catches type mismatches", "Ensures required fields", "IDE intellisense"]
+    },
+    "strapi_schemas": {
+      "description": "CMS-level validation",
+      "location": "Strapi content type schemas", 
+      "enforcement": "Strapi validation engine",
+      "benefits": ["Data integrity", "Field constraints", "Relationship validation"]
+    },
+    "runtime_checks": {
+      "description": "Application runtime validation",
+      "methods": {
+        "validateCMSContent": {
+          "file": "/lib/static-data-service.ts:215",
+          "purpose": "Build-time CMS content validation",
+          "checks": [
+            "Content type existence",
+            "Relationship integrity", 
+            "Unique constraint validation",
+            "Business rule compliance"
+          ]
+        },
+        "processProductImages": {
+          "file": "/lib/strapi-client.ts:41", 
+          "purpose": "ProductImage component validation",
+          "checks": [
+            "Valid image URLs",
+            "Main image logic",
+            "Alt text presence"
+          ]
+        },
+        "createSlug": {
+          "file": "/lib/strapi-client.ts:34",
+          "purpose": "URL-safe slug generation",
+          "checks": [
+            "Character sanitization",
+            "Format compliance"
+          ]
+        }
+      }
+    },
+    "error_handling": {
+      "description": "How validation errors are handled",
+      "strategies": {
+        "build_time_errors": {
+          "behavior": "Fail fast - build stops",
+          "rationale": "Static site must have valid data",
+          "example": "throw new Error('Static build failed: Unable to fetch from Strapi CMS')"
+        },
+        "runtime_errors": {
+          "behavior": "Log and gracefully degrade",
+          "rationale": "User experience should not break",
+          "example": "console.error('Validation failed:', error); return fallback_content"
+        },
+        "user_input_errors": {
+          "behavior": "Display error messages",
+          "rationale": "Guide user to correct input",
+          "example": "Form validation with error messages"
+        }
+      }
+    }
+  },
+  "validation_testing": {
+    "test_scenarios": {
+      "positive_cases": [
+        "Valid data passes all validations",
+        "Auto-generated slugs are URL-safe",
+        "Main image selection works correctly",
+        "Required fields are present"
+      ],
+      "negative_cases": [
+        "Missing required fields trigger errors",
+        "Invalid URLs are rejected",
+        "Invalid email formats are rejected", 
+        "Foreign key violations are caught",
+        "Duplicate slugs are prevented",
+        "Invalid founding years are rejected"
+      ],
+      "edge_cases": [
+        "Empty arrays in required array fields",
+        "Multiple main images in ProductImage array",
+        "Special characters in names/slugs",
+        "Very long text fields",
+        "Future dates in publishedAt"
+      ]
+    }
+  },
+  "recommendations": {
+    "immediate": [
+      "Implement comprehensive Strapi schema validation",
+      "Add input sanitization for user-generated content",
+      "Create comprehensive validation test suite"
+    ],
+    "medium_term": [
+      "Add field-level validation error messages",
+      "Implement progressive validation (warn vs error)",
+      "Add validation performance monitoring"
+    ],
+    "long_term": [
+      "Consider validation rule configuration system", 
+      "Add custom validation rule engine",
+      "Implement validation analytics and reporting"
+    ]
+  }
+}

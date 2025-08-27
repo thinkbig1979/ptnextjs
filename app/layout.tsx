@@ -6,7 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
 import { Toaster } from "@/components/ui/sonner";
-import dataService from "@/lib/data-service";
+import { staticDataService } from "@/lib/static-data-service";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,10 +28,10 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const useStrapi = process.env.NODE_ENV === 'production' || process.env.USE_STRAPI_CMS === 'true';
+  // Static site generation - always use Strapi data
   
   // Fetch company info at build time for footer
-  const companyInfo = await dataService.getCompanyInfo();
+  const companyInfo = await staticDataService.getCompanyInfo();
   
   return (
     <html lang="en" suppressHydrationWarning>
@@ -43,7 +43,7 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <script
           dangerouslySetInnerHTML={{
-            __html: `window.__USE_STRAPI__ = ${useStrapi};`,
+            __html: `window.__USE_STRAPI__ = true;`,
           }}
         />
         <script

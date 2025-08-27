@@ -10,7 +10,19 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
-  images: { unoptimized: true },
+  images: { 
+    unoptimized: true,
+    domains: ['images.unsplash.com', 'localhost']
+  },
+  
+  // Static export configuration
+  trailingSlash: true,
+  generateBuildId: async () => {
+    // Use timestamp for cache busting in static builds
+    return process.env.NODE_ENV === 'production' 
+      ? Date.now().toString()
+      : 'development';
+  },
   
   // 301 Redirects for SEO preservation - Partner URLs
   async redirects() {

@@ -1,0 +1,536 @@
+{
+  "metadata": {
+    "generated": "2025-08-25",
+    "phase": "Phase 2.2 - Content Architecture Design",
+    "purpose": "Reusable component definitions for Strapi content types"
+  },
+  "component_categories": {
+    "product": {
+      "description": "Components specific to product content",
+      "icon": "package"
+    },
+    "shared": {
+      "description": "Reusable components across content types",
+      "icon": "puzzle-piece"
+    }
+  },
+  "components": {
+    "product.product-image": {
+      "display_name": "Product Image",
+      "description": "Repeatable product image component with metadata",
+      "category": "product",
+      "icon": "picture",
+      "collectionName": "components_product_product_images",
+      "info": {
+        "displayName": "Product Image",
+        "description": "Product image with alt text and main image flag"
+      },
+      "attributes": {
+        "image": {
+          "type": "media",
+          "multiple": false,
+          "required": true,
+          "allowedTypes": ["images"],
+          "pluginOptions": {
+            "i18n": {
+              "localized": false
+            }
+          }
+        },
+        "alt_text": {
+          "type": "string",
+          "maxLength": 200,
+          "required": false,
+          "pluginOptions": {
+            "i18n": {
+              "localized": true
+            }
+          }
+        },
+        "is_main": {
+          "type": "boolean",
+          "default": false,
+          "required": true,
+          "pluginOptions": {
+            "i18n": {
+              "localized": false
+            }
+          }
+        },
+        "caption": {
+          "type": "text",
+          "maxLength": 300,
+          "required": false,
+          "pluginOptions": {
+            "i18n": {
+              "localized": true
+            }
+          }
+        },
+        "order": {
+          "type": "integer",
+          "required": false,
+          "pluginOptions": {
+            "i18n": {
+              "localized": false
+            }
+          }
+        }
+      },
+      "usage": {
+        "parent_types": ["products"],
+        "field_name": "product_images",
+        "repeatable": true,
+        "min_entries": 1,
+        "max_entries": null
+      },
+      "validation_rules": {
+        "business_logic": [
+          "Only one image per product should have is_main: true",
+          "Alt text should be provided for accessibility",
+          "Image must be uploaded and accessible"
+        ],
+        "technical": [
+          "Image file must be valid format (JPEG, PNG, WebP)",
+          "File size should be under 5MB",
+          "Alt text should be descriptive"
+        ]
+      }
+    },
+    "product.feature": {
+      "display_name": "Product Feature", 
+      "description": "Repeatable product feature with title and description",
+      "category": "product",
+      "icon": "star",
+      "collectionName": "components_product_features",
+      "info": {
+        "displayName": "Product Feature",
+        "description": "Product feature with title, description and optional icon"
+      },
+      "attributes": {
+        "title": {
+          "type": "string",
+          "maxLength": 100,
+          "required": true,
+          "pluginOptions": {
+            "i18n": {
+              "localized": true
+            }
+          }
+        },
+        "description": {
+          "type": "richtext",
+          "maxLength": 500,
+          "required": false,
+          "pluginOptions": {
+            "i18n": {
+              "localized": true
+            }
+          }
+        },
+        "icon": {
+          "type": "string",
+          "maxLength": 50,
+          "required": false,
+          "description": "Icon name or class (e.g., 'check-circle', 'gear')",
+          "pluginOptions": {
+            "i18n": {
+              "localized": false
+            }
+          }
+        },
+        "order": {
+          "type": "integer",
+          "required": false,
+          "pluginOptions": {
+            "i18n": {
+              "localized": false
+            }
+          }
+        }
+      },
+      "usage": {
+        "parent_types": ["products"],
+        "field_name": "features",
+        "repeatable": true,
+        "min_entries": 1,
+        "max_entries": null
+      },
+      "validation_rules": {
+        "business_logic": [
+          "Feature title must be descriptive",
+          "Features should be ordered logically",
+          "Avoid duplicate feature titles within same product"
+        ],
+        "technical": [
+          "Title is required and cannot be empty",
+          "Description should enhance understanding if provided",
+          "Icon should reference valid icon system"
+        ]
+      }
+    },
+    "shared.seo": {
+      "display_name": "SEO Metadata",
+      "description": "Reusable SEO metadata component for all content types",
+      "category": "shared",
+      "icon": "search",
+      "collectionName": "components_shared_seos",
+      "info": {
+        "displayName": "SEO Metadata",
+        "description": "Search engine optimization metadata"
+      },
+      "attributes": {
+        "meta_title": {
+          "type": "string",
+          "maxLength": 60,
+          "required": false,
+          "description": "Custom page title for SEO (60 chars max)",
+          "pluginOptions": {
+            "i18n": {
+              "localized": true
+            }
+          }
+        },
+        "meta_description": {
+          "type": "text",
+          "maxLength": 160,
+          "required": false,
+          "description": "Meta description for search engines (160 chars max)",
+          "pluginOptions": {
+            "i18n": {
+              "localized": true
+            }
+          }
+        },
+        "keywords": {
+          "type": "text",
+          "maxLength": 255,
+          "required": false,
+          "description": "Comma-separated keywords",
+          "pluginOptions": {
+            "i18n": {
+              "localized": true
+            }
+          }
+        },
+        "og_image": {
+          "type": "media",
+          "multiple": false,
+          "required": false,
+          "allowedTypes": ["images"],
+          "description": "Open Graph image for social sharing",
+          "pluginOptions": {
+            "i18n": {
+              "localized": false
+            }
+          }
+        },
+        "canonical_url": {
+          "type": "string",
+          "maxLength": 255,
+          "required": false,
+          "description": "Canonical URL if different from default",
+          "pluginOptions": {
+            "i18n": {
+              "localized": false
+            }
+          }
+        },
+        "no_index": {
+          "type": "boolean",
+          "default": false,
+          "required": false,
+          "description": "Prevent search engine indexing",
+          "pluginOptions": {
+            "i18n": {
+              "localized": false
+            }
+          }
+        }
+      },
+      "usage": {
+        "parent_types": ["partners", "products", "blog-posts", "company-info"],
+        "field_name": "seo",
+        "repeatable": false,
+        "min_entries": 0,
+        "max_entries": 1
+      },
+      "validation_rules": {
+        "seo_best_practices": [
+          "Meta title should be unique and descriptive",
+          "Meta description should encourage clicks",
+          "Keywords should be relevant and not stuffed",
+          "OG image should be 1200x630px for best results"
+        ],
+        "technical": [
+          "Meta title under 60 characters",
+          "Meta description under 160 characters", 
+          "Canonical URL must be valid if provided",
+          "OG image must be accessible URL"
+        ]
+      }
+    },
+    "shared.social-media": {
+      "display_name": "Social Media Links",
+      "description": "Reusable social media links component",
+      "category": "shared", 
+      "icon": "share",
+      "collectionName": "components_shared_social_medias",
+      "info": {
+        "displayName": "Social Media Links",
+        "description": "Social media profile and page links"
+      },
+      "attributes": {
+        "facebook": {
+          "type": "string",
+          "maxLength": 255,
+          "required": false,
+          "description": "Facebook page or profile URL",
+          "regex": "^https://www\\.facebook\\.com/.*",
+          "pluginOptions": {
+            "i18n": {
+              "localized": false
+            }
+          }
+        },
+        "twitter": {
+          "type": "string",
+          "maxLength": 255,
+          "required": false,
+          "description": "Twitter/X profile URL",
+          "regex": "^https://(www\\.)?(twitter\\.com|x\\.com)/.*",
+          "pluginOptions": {
+            "i18n": {
+              "localized": false
+            }
+          }
+        },
+        "linkedin": {
+          "type": "string",
+          "maxLength": 255,
+          "required": false,
+          "description": "LinkedIn company or profile URL",
+          "regex": "^https://([a-z]+\\.)?linkedin\\.com/(company|in)/.*",
+          "pluginOptions": {
+            "i18n": {
+              "localized": false
+            }
+          }
+        },
+        "instagram": {
+          "type": "string",
+          "maxLength": 255,
+          "required": false,
+          "description": "Instagram profile URL",
+          "regex": "^https://www\\.instagram\\.com/.*",
+          "pluginOptions": {
+            "i18n": {
+              "localized": false
+            }
+          }
+        },
+        "youtube": {
+          "type": "string",
+          "maxLength": 255,
+          "required": false,
+          "description": "YouTube channel URL",
+          "regex": "^https://www\\.youtube\\.com/(c/|channel/|user/).*",
+          "pluginOptions": {
+            "i18n": {
+              "localized": false
+            }
+          }
+        }
+      },
+      "usage": {
+        "parent_types": ["company-info"],
+        "field_name": "social_media",
+        "repeatable": false,
+        "min_entries": 0,
+        "max_entries": 1,
+        "optional_usage": ["partners", "team-members"]
+      },
+      "validation_rules": {
+        "url_validation": [
+          "All URLs must be valid and accessible",
+          "URLs must use HTTPS protocol",
+          "URLs should point to official profiles/pages"
+        ],
+        "platform_specific": [
+          "Facebook: Must be valid facebook.com URL",
+          "Twitter: Accept both twitter.com and x.com domains",
+          "LinkedIn: Support both company and personal profiles",
+          "Instagram: Must be instagram.com URL",
+          "YouTube: Support channel, user, and custom URLs"
+        ]
+      }
+    }
+  },
+  "component_relationships": {
+    "parent_child": {
+      "products": [
+        "product.product-image (repeatable)",
+        "product.feature (repeatable)",
+        "shared.seo (single)"
+      ],
+      "partners": [
+        "shared.seo (single)"
+      ],
+      "blog-posts": [
+        "shared.seo (single)"
+      ],
+      "company-info": [
+        "shared.social-media (single)",
+        "shared.seo (single)"
+      ]
+    },
+    "reusability_matrix": {
+      "shared.seo": {
+        "used_by": ["partners", "products", "blog-posts", "company-info"],
+        "reusability_score": "high"
+      },
+      "shared.social-media": {
+        "used_by": ["company-info"],
+        "potential_use": ["partners", "team-members"],
+        "reusability_score": "medium"
+      },
+      "product.product-image": {
+        "used_by": ["products"],
+        "reusability_score": "low"
+      },
+      "product.feature": {
+        "used_by": ["products"],
+        "potential_use": ["partners"],
+        "reusability_score": "low"
+      }
+    }
+  },
+  "technical_implementation": {
+    "file_structure": {
+      "components": {
+        "product": [
+          "product-image.json",
+          "feature.json"
+        ],
+        "shared": [
+          "seo.json", 
+          "social-media.json"
+        ]
+      },
+      "path": "/strapi-cms/src/components/{category}/{component-name}.json"
+    },
+    "database_tables": {
+      "components_product_product_images": {
+        "purpose": "Store product image component data",
+        "relationships": ["products via product_images field"]
+      },
+      "components_product_features": {
+        "purpose": "Store product feature component data", 
+        "relationships": ["products via features field"]
+      },
+      "components_shared_seos": {
+        "purpose": "Store SEO metadata component data",
+        "relationships": ["multiple content types via seo field"]
+      },
+      "components_shared_social_medias": {
+        "purpose": "Store social media links component data",
+        "relationships": ["company-info via social_media field"]
+      }
+    },
+    "api_responses": {
+      "component_population": {
+        "products": "populate[0]=product_images&populate[1]=product_images.image&populate[2]=features&populate[3]=seo",
+        "partners": "populate=seo",
+        "blog_posts": "populate=seo", 
+        "company_info": "populate[0]=social_media&populate[1]=seo"
+      }
+    }
+  },
+  "migration_strategy": {
+    "current_to_component": {
+      "product_images": {
+        "current": "Product.images: ProductImage[] (interface)",
+        "migration": "Convert to product.product-image repeatable component",
+        "data_mapping": {
+          "id": "auto-generated",
+          "url": "image field in component",
+          "altText": "alt_text field",
+          "isMain": "is_main field",
+          "caption": "new field (empty initially)"
+        }
+      },
+      "product_features": {
+        "current": "Product.features: string[] (simple array)",
+        "migration": "Convert to product.feature repeatable component",
+        "data_mapping": {
+          "string_value": "title field in component",
+          "description": "new field (empty initially)",
+          "icon": "new field (empty initially)",
+          "order": "array index as order"
+        }
+      },
+      "seo_metadata": {
+        "current": "No SEO fields in current interfaces",
+        "migration": "Add shared.seo component to all content types",
+        "initialization": "All seo components start empty/optional"
+      },
+      "social_media": {
+        "current": "No social media fields in CompanyInfo",
+        "migration": "Add shared.social-media component to company-info",
+        "initialization": "Component starts empty/optional"
+      }
+    }
+  },
+  "validation_and_constraints": {
+    "component_level": {
+      "product.product-image": [
+        "Image file must be uploaded",
+        "Only one is_main per product validation needed at parent level",
+        "Alt text recommended for accessibility"
+      ],
+      "product.feature": [
+        "Title cannot be empty",
+        "Avoid duplicate titles within same product"
+      ],
+      "shared.seo": [
+        "Meta title optimal length: 50-60 characters", 
+        "Meta description optimal length: 150-160 characters",
+        "Canonical URL must be valid format"
+      ],
+      "shared.social-media": [
+        "All URLs must be valid format",
+        "Platform-specific URL validation",
+        "HTTPS protocol required"
+      ]
+    },
+    "parent_level": {
+      "products_with_images": [
+        "At least one product image required",
+        "Exactly one main image enforced",
+        "Image order should be sequential"
+      ],
+      "products_with_features": [
+        "At least one feature required",
+        "Feature order should be logical",
+        "No duplicate feature titles"
+      ]
+    }
+  },
+  "extensibility_considerations": {
+    "future_components": {
+      "potential_additions": [
+        "shared.address (for partners/company)",
+        "shared.contact-info (phone, email, etc.)",
+        "product.specification (technical specs)",
+        "product.pricing (complex pricing models)",
+        "blog.author (author bio component)",
+        "shared.video (video embeds)"
+      ]
+    },
+    "component_evolution": {
+      "versioning_strategy": "Add new fields to existing components rather than create new versions",
+      "backward_compatibility": "New fields should be optional to maintain compatibility",
+      "deprecation_path": "Mark fields as deprecated before removal in future versions"
+    }
+  }
+}

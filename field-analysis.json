@@ -1,0 +1,702 @@
+{
+  "metadata": {
+    "generated": "2025-08-25",
+    "source": "Phase 1 Discovery Analysis",
+    "total_types": 7,
+    "total_fields": 52
+  },
+  "types": {
+    "Partner": {
+      "location": "/lib/types.ts:2-15",
+      "purpose": "Marine technology company data structure",
+      "usage_patterns": [
+        "Featured partners display on homepage",
+        "Partners listing page with filtering",
+        "Partner detail pages with products",
+        "Cross-reference in products"
+      ],
+      "fields": {
+        "id": {
+          "type": "string",
+          "required": true,
+          "unique": true,
+          "description": "Unique identifier",
+          "validation": ["not_empty", "unique_constraint"]
+        },
+        "slug": {
+          "type": "string",
+          "required": false,
+          "unique": true,
+          "description": "URL-friendly identifier",
+          "validation": ["url_safe", "unique_constraint", "auto_generate_from_name"]
+        },
+        "name": {
+          "type": "string",
+          "required": true,
+          "description": "Company name",
+          "validation": ["not_empty", "min_length:2", "max_length:100"]
+        },
+        "category": {
+          "type": "string",
+          "required": true,
+          "description": "Technology category",
+          "relationship": "many_to_one",
+          "target": "Category.name",
+          "validation": ["not_empty", "exists_in_categories"]
+        },
+        "description": {
+          "type": "text",
+          "required": true,
+          "description": "Company description",
+          "validation": ["not_empty", "min_length:50", "max_length:1000"]
+        },
+        "logo": {
+          "type": "media",
+          "required": false,
+          "description": "Company logo URL",
+          "validation": ["valid_url", "image_format"]
+        },
+        "image": {
+          "type": "media",
+          "required": false,
+          "description": "Company overview image URL",
+          "validation": ["valid_url", "image_format"]
+        },
+        "website": {
+          "type": "string",
+          "required": false,
+          "description": "Company website URL",
+          "validation": ["valid_url"]
+        },
+        "founded": {
+          "type": "integer",
+          "required": false,
+          "description": "Founding year",
+          "validation": ["min_value:1800", "max_value:2025"]
+        },
+        "location": {
+          "type": "string",
+          "required": false,
+          "description": "Company location",
+          "validation": ["max_length:100"]
+        },
+        "tags": {
+          "type": "relation",
+          "required": true,
+          "description": "Technology tags array",
+          "relationship": "many_to_many",
+          "target": "Tag",
+          "validation": ["not_empty", "min_items:1"]
+        },
+        "featured": {
+          "type": "boolean",
+          "required": false,
+          "description": "Featured status flag",
+          "default": false
+        }
+      },
+      "relationships": {
+        "products": {
+          "type": "one_to_many",
+          "target": "Product",
+          "foreign_key": "partnerId"
+        },
+        "category": {
+          "type": "many_to_one", 
+          "target": "Category",
+          "field": "category"
+        },
+        "tags": {
+          "type": "many_to_many",
+          "target": "Tag",
+          "field": "tags"
+        }
+      }
+    },
+    "Product": {
+      "location": "/lib/types.ts:24-38",
+      "purpose": "Product/service offerings from partners",
+      "usage_patterns": [
+        "Products listing page with filtering",
+        "Product detail pages",
+        "Partner profile product listings",
+        "Search functionality"
+      ],
+      "fields": {
+        "id": {
+          "type": "string",
+          "required": true,
+          "unique": true,
+          "description": "Unique identifier",
+          "validation": ["not_empty", "unique_constraint"]
+        },
+        "slug": {
+          "type": "string",
+          "required": false,
+          "unique": true,
+          "description": "URL-friendly identifier",
+          "validation": ["url_safe", "unique_constraint", "auto_generate_from_name"]
+        },
+        "name": {
+          "type": "string",
+          "required": true,
+          "description": "Product name",
+          "validation": ["not_empty", "min_length:2", "max_length:200"]
+        },
+        "partnerId": {
+          "type": "relation",
+          "required": true,
+          "description": "Foreign key to Partner",
+          "relationship": "many_to_one",
+          "target": "Partner",
+          "validation": ["not_empty", "exists_in_partners"]
+        },
+        "partnerName": {
+          "type": "string",
+          "required": true,
+          "description": "Denormalized partner name",
+          "computed": true,
+          "source": "Partner.name",
+          "validation": ["not_empty"]
+        },
+        "category": {
+          "type": "string",
+          "required": true,
+          "description": "Product category",
+          "relationship": "many_to_one",
+          "target": "Category.name",
+          "validation": ["not_empty", "exists_in_categories"]
+        },
+        "description": {
+          "type": "text",
+          "required": true,
+          "description": "Product description",
+          "validation": ["not_empty", "min_length:50", "max_length:2000"]
+        },
+        "image": {
+          "type": "media",
+          "required": false,
+          "description": "Legacy single image (deprecated)",
+          "deprecated": true
+        },
+        "images": {
+          "type": "component",
+          "required": true,
+          "description": "Multiple images array",
+          "component": "ProductImage",
+          "multiple": true,
+          "validation": ["not_empty", "min_items:1"]
+        },
+        "mainImage": {
+          "type": "component",
+          "required": false,
+          "description": "Computed main image",
+          "component": "ProductImage",
+          "computed": true,
+          "source": "images.find(img => img.isMain) || images[0]"
+        },
+        "features": {
+          "type": "component",
+          "required": true,
+          "description": "Product features array",
+          "multiple": true,
+          "validation": ["not_empty", "min_items:1"]
+        },
+        "price": {
+          "type": "string",
+          "required": false,
+          "description": "Pricing information",
+          "validation": ["max_length:50"]
+        },
+        "tags": {
+          "type": "relation",
+          "required": true,
+          "description": "Product tags array",
+          "relationship": "many_to_many",
+          "target": "Tag",
+          "validation": ["not_empty", "min_items:1"]
+        }
+      },
+      "relationships": {
+        "partner": {
+          "type": "many_to_one",
+          "target": "Partner",
+          "foreign_key": "partnerId"
+        },
+        "images": {
+          "type": "one_to_many_component",
+          "target": "ProductImage",
+          "field": "images"
+        },
+        "category": {
+          "type": "many_to_one",
+          "target": "Category", 
+          "field": "category"
+        },
+        "tags": {
+          "type": "many_to_many",
+          "target": "Tag",
+          "field": "tags"
+        }
+      }
+    },
+    "ProductImage": {
+      "location": "/lib/types.ts:17-22",
+      "purpose": "Component for handling multiple product images",
+      "type": "component",
+      "usage_patterns": [
+        "Product image galleries",
+        "Main image selection",
+        "Image alt text management"
+      ],
+      "fields": {
+        "id": {
+          "type": "string",
+          "required": true,
+          "unique": true,
+          "description": "Unique identifier",
+          "validation": ["not_empty", "unique_constraint"]
+        },
+        "url": {
+          "type": "media",
+          "required": true,
+          "description": "Image URL",
+          "validation": ["not_empty", "valid_url", "image_format"]
+        },
+        "altText": {
+          "type": "string",
+          "required": false,
+          "description": "Alt text for accessibility",
+          "validation": ["max_length:200"]
+        },
+        "isMain": {
+          "type": "boolean",
+          "required": true,
+          "description": "Main image flag",
+          "validation": ["only_one_main_per_product"]
+        }
+      },
+      "constraints": {
+        "business_logic": [
+          "Only one image per product should have isMain: true",
+          "Alt text should be provided for accessibility"
+        ]
+      }
+    },
+    "BlogPost": {
+      "location": "/lib/types.ts:40-53",
+      "purpose": "Blog/content marketing articles",
+      "usage_patterns": [
+        "Blog listing page",
+        "Blog post detail pages",
+        "Featured blog posts on homepage",
+        "Category-based filtering",
+        "Search functionality"
+      ],
+      "fields": {
+        "id": {
+          "type": "string",
+          "required": true,
+          "unique": true,
+          "description": "Unique identifier",
+          "validation": ["not_empty", "unique_constraint"]
+        },
+        "slug": {
+          "type": "string",
+          "required": true,
+          "unique": true,
+          "description": "URL-friendly identifier",
+          "validation": ["not_empty", "url_safe", "unique_constraint"]
+        },
+        "title": {
+          "type": "string",
+          "required": true,
+          "description": "Post title",
+          "validation": ["not_empty", "min_length:5", "max_length:200"]
+        },
+        "excerpt": {
+          "type": "text",
+          "required": true,
+          "description": "Post summary",
+          "validation": ["not_empty", "min_length:50", "max_length:300"]
+        },
+        "content": {
+          "type": "richtext",
+          "required": true,
+          "description": "Full post content",
+          "validation": ["not_empty", "min_length:200"]
+        },
+        "author": {
+          "type": "string",
+          "required": true,
+          "description": "Post author",
+          "validation": ["not_empty", "max_length:100"]
+        },
+        "publishedAt": {
+          "type": "datetime",
+          "required": true,
+          "description": "Publication date",
+          "validation": ["not_empty", "valid_iso_date"]
+        },
+        "category": {
+          "type": "string",
+          "required": true,
+          "description": "Post category",
+          "relationship": "many_to_one",
+          "target": "BlogCategory.name",
+          "validation": ["not_empty", "exists_in_blog_categories"]
+        },
+        "tags": {
+          "type": "relation",
+          "required": true,
+          "description": "Post tags array",
+          "relationship": "many_to_many",
+          "target": "Tag",
+          "validation": ["not_empty", "min_items:1"]
+        },
+        "image": {
+          "type": "media",
+          "required": false,
+          "description": "Featured image URL",
+          "validation": ["valid_url", "image_format"]
+        },
+        "featured": {
+          "type": "boolean",
+          "required": false,
+          "description": "Featured status flag",
+          "default": false
+        },
+        "readTime": {
+          "type": "string",
+          "required": false,
+          "description": "Estimated read time",
+          "validation": ["max_length:20"]
+        }
+      },
+      "relationships": {
+        "category": {
+          "type": "many_to_one",
+          "target": "BlogCategory",
+          "field": "category"
+        },
+        "tags": {
+          "type": "many_to_many",
+          "target": "Tag",
+          "field": "tags"
+        }
+      }
+    },
+    "TeamMember": {
+      "location": "/lib/types.ts:55-63",
+      "purpose": "Company team member profiles",
+      "usage_patterns": [
+        "About page team display",
+        "Team member profile pages"
+      ],
+      "fields": {
+        "id": {
+          "type": "string",
+          "required": true,
+          "unique": true,
+          "description": "Unique identifier",
+          "validation": ["not_empty", "unique_constraint"]
+        },
+        "name": {
+          "type": "string",
+          "required": true,
+          "description": "Member name",
+          "validation": ["not_empty", "min_length:2", "max_length:100"]
+        },
+        "role": {
+          "type": "string",
+          "required": true,
+          "description": "Job title/role",
+          "validation": ["not_empty", "max_length:100"]
+        },
+        "bio": {
+          "type": "text",
+          "required": true,
+          "description": "Biography",
+          "validation": ["not_empty", "min_length:50", "max_length:1000"]
+        },
+        "image": {
+          "type": "media",
+          "required": false,
+          "description": "Profile image URL",
+          "validation": ["valid_url", "image_format"]
+        },
+        "email": {
+          "type": "email",
+          "required": false,
+          "description": "Contact email",
+          "validation": ["valid_email"]
+        },
+        "linkedin": {
+          "type": "string",
+          "required": false,
+          "description": "LinkedIn profile URL",
+          "validation": ["valid_url", "linkedin_format"]
+        }
+      }
+    },
+    "Category": {
+      "location": "/lib/static-data-service.ts:9-16",
+      "purpose": "Technology and content categorization",
+      "usage_patterns": [
+        "Partner categorization",
+        "Product categorization",
+        "Filtering and navigation"
+      ],
+      "fields": {
+        "id": {
+          "type": "string",
+          "required": true,
+          "unique": true,
+          "description": "Unique identifier",
+          "validation": ["not_empty", "unique_constraint"]
+        },
+        "name": {
+          "type": "string",
+          "required": true,
+          "unique": true,
+          "description": "Category display name",
+          "validation": ["not_empty", "unique_constraint", "max_length:100"]
+        },
+        "slug": {
+          "type": "string",
+          "required": true,
+          "unique": true,
+          "description": "URL-friendly identifier",
+          "validation": ["not_empty", "url_safe", "unique_constraint"]
+        },
+        "description": {
+          "type": "text",
+          "required": true,
+          "description": "Category description",
+          "validation": ["not_empty", "min_length:20", "max_length:500"]
+        },
+        "icon": {
+          "type": "string",
+          "required": true,
+          "description": "Icon identifier/URL",
+          "validation": ["not_empty"]
+        },
+        "color": {
+          "type": "string",
+          "required": true,
+          "description": "Brand color (hex)",
+          "validation": ["not_empty", "hex_color"]
+        }
+      },
+      "relationships": {
+        "partners": {
+          "type": "one_to_many",
+          "target": "Partner",
+          "foreign_key": "category"
+        },
+        "products": {
+          "type": "one_to_many", 
+          "target": "Product",
+          "foreign_key": "category"
+        }
+      }
+    },
+    "CompanyInfo": {
+      "location": "/lib/static-data-service.ts:18-28",
+      "purpose": "Single-type company information",
+      "type": "single_type",
+      "usage_patterns": [
+        "Company information display",
+        "Contact information",
+        "About page content"
+      ],
+      "fields": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "description": "Company name",
+          "validation": ["not_empty", "max_length:100"]
+        },
+        "tagline": {
+          "type": "string",
+          "required": true,
+          "description": "Company tagline",
+          "validation": ["not_empty", "max_length:200"]
+        },
+        "description": {
+          "type": "text",
+          "required": true,
+          "description": "Company description",
+          "validation": ["not_empty", "min_length:100", "max_length:1000"]
+        },
+        "founded": {
+          "type": "integer",
+          "required": true,
+          "description": "Founding year",
+          "validation": ["not_empty", "min_value:1800", "max_value:2025"]
+        },
+        "location": {
+          "type": "string",
+          "required": true,
+          "description": "Company location",
+          "validation": ["not_empty", "max_length:100"]
+        },
+        "address": {
+          "type": "text",
+          "required": true,
+          "description": "Physical address",
+          "validation": ["not_empty", "max_length:500"]
+        },
+        "phone": {
+          "type": "string",
+          "required": true,
+          "description": "Contact phone",
+          "validation": ["not_empty", "phone_format"]
+        },
+        "email": {
+          "type": "email",
+          "required": true,
+          "description": "Contact email",
+          "validation": ["not_empty", "valid_email"]
+        },
+        "story": {
+          "type": "richtext",
+          "required": true,
+          "description": "Company story/about",
+          "validation": ["not_empty", "min_length:200"]
+        }
+      }
+    }
+  },
+  "derived_types": {
+    "Tag": {
+      "purpose": "Many-to-many relationship target for tags",
+      "inferred": true,
+      "fields": {
+        "id": {
+          "type": "string",
+          "required": true,
+          "unique": true
+        },
+        "name": {
+          "type": "string",
+          "required": true,
+          "unique": true
+        },
+        "slug": {
+          "type": "string",
+          "required": true,
+          "unique": true
+        }
+      }
+    },
+    "BlogCategory": {
+      "purpose": "Separate categorization for blog posts",
+      "inferred": true,
+      "fields": {
+        "id": {
+          "type": "string",
+          "required": true,
+          "unique": true
+        },
+        "name": {
+          "type": "string",
+          "required": true,
+          "unique": true
+        },
+        "slug": {
+          "type": "string",
+          "required": true,
+          "unique": true
+        },
+        "description": {
+          "type": "text",
+          "required": false
+        }
+      }
+    },
+    "Feature": {
+      "purpose": "Product features component",
+      "inferred": true,
+      "type": "component",
+      "fields": {
+        "title": {
+          "type": "string",
+          "required": true
+        },
+        "description": {
+          "type": "text",
+          "required": false
+        }
+      }
+    }
+  },
+  "validation_summary": {
+    "unique_constraints": [
+      "Partner.id",
+      "Partner.slug",
+      "Product.id", 
+      "Product.slug",
+      "BlogPost.id",
+      "BlogPost.slug",
+      "TeamMember.id",
+      "Category.id",
+      "Category.name", 
+      "Category.slug"
+    ],
+    "foreign_key_constraints": [
+      "Product.partnerId -> Partner.id",
+      "Partner.category -> Category.name",
+      "Product.category -> Category.name",
+      "BlogPost.category -> BlogCategory.name"
+    ],
+    "format_validations": [
+      "email fields -> valid email format",
+      "url fields -> valid URL format",
+      "datetime fields -> ISO date format",
+      "color fields -> hex color format",
+      "phone fields -> phone number format"
+    ],
+    "business_logic_constraints": [
+      "Only one ProductImage per Product should have isMain: true",
+      "Founded year should be reasonable (1800 < year < current + 1)",
+      "Tags arrays should not be empty for content items",
+      "Images arrays should not be empty for products"
+    ]
+  },
+  "strapi_considerations": {
+    "collection_types": [
+      "Partner",
+      "Product", 
+      "BlogPost",
+      "TeamMember",
+      "Category",
+      "Tag",
+      "BlogCategory"
+    ],
+    "single_types": [
+      "CompanyInfo"
+    ],
+    "components": [
+      "ProductImage",
+      "Feature"
+    ],
+    "media_fields": [
+      "Partner.logo",
+      "Partner.image",
+      "Product.image",
+      "ProductImage.url",
+      "BlogPost.image",
+      "TeamMember.image"
+    ],
+    "relation_fields": [
+      "Product.partnerId",
+      "Partner.tags",
+      "Product.tags",
+      "BlogPost.tags",
+      "Partner.category",
+      "Product.category",
+      "BlogPost.category"
+    ]
+  }
+}
