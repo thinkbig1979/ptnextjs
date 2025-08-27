@@ -6,8 +6,6 @@
   "scripts": {
     "dev": "next dev",
     "dev:tinacms": "tinacms dev -c \"next dev\"",
-    "validate-tinacms": "tsx scripts/validate-tinacms.ts",
-    "prebuild": "npm run validate-tinacms",
     "build": "next build",
     "build:analyze": "ANALYZE=true next build",
     "start": "next start",

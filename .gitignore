@@ -2,7 +2,6 @@ node_modules/
 .next/
 .build/
 *.log
-payload.db
 *.tsbuildinfo
 
 # Development and Debug Files
@@ -22,7 +21,6 @@ debug-*.ts
 data-export-*.json
 
 # CMS and Database files
-payload.db
 *.db
 
 # Scripts

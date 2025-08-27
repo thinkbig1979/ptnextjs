@@ -157,7 +157,15 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                     <Building2 className="w-6 h-6 text-accent" />
                   </div>
                   <div>
-                    <div className="font-medium">Manufactured by {partner.name}</div>
+                    <div className="font-medium">
+                      Manufactured by{" "}
+                      <Link 
+                        href={`/partners/${partner.slug}`}
+                        className="text-accent hover:text-accent/80 transition-colors underline underline-offset-4 decoration-2"
+                      >
+                        {partner.name}
+                      </Link>
+                    </div>
                     <div className="text-sm text-muted-foreground">
                       {partner.location} • Est. {partner.founded}
                     </div>
