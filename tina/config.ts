@@ -226,10 +226,10 @@ const seoFields = [
   },
 ];
 
-// Partner Collection (Main Content)
-const partnerCollection = {
-  name: "partner",
-  label: "Partners",
+// Vendor Collection (Main Content) - Renamed from Partner
+const vendorCollection = {
+  name: "vendor",
+  label: "Vendors",
   path: "content/partners",
   format: "md" as const,
   
@@ -294,8 +294,14 @@ const partnerCollection = {
     {
       type: "boolean" as const,
       name: "featured",
-      label: "Featured Partner",
-      description: "Mark as featured partner for homepage display",
+      label: "Featured Vendor",
+      description: "Mark as featured vendor for homepage display",
+    },
+    {
+      type: "boolean" as const,
+      name: "partner",
+      label: "Is Partner",
+      description: "Indicates if this vendor is also a strategic partner (true for existing partners, false for suppliers-only)",
     },
     
     // Relationships
@@ -304,7 +310,7 @@ const partnerCollection = {
       name: "category",
       label: "Primary Category",
       collections: ["category"],
-      description: "Main technology category for this partner",
+      description: "Main technology category for this vendor",
     },
     {
       type: "reference" as const,
@@ -312,7 +318,7 @@ const partnerCollection = {
       label: "Technology Tags",
       collections: ["tag"],
       list: true,
-      description: "Relevant technology tags for this partner",
+      description: "Relevant technology tags for this vendor",
     },
     
     // SEO Component
@@ -372,11 +378,11 @@ const productCollection = {
     // Primary Relationships
     {
       type: "reference" as const,
-      name: "partner",
-      label: "Partner Company",
-      collections: ["partner"],
+      name: "vendor",
+      label: "Vendor Company",
+      collections: ["vendor"],
       required: true,
-      description: "The partner company that offers this product",
+      description: "The vendor company that offers this product",
     },
     {
       type: "reference" as const,
@@ -867,7 +873,7 @@ export default defineConfig({
       
       // Main Content Collections
       // @ts-ignore - TinaCMS type issue with fields vs templates
-      partnerCollection,
+      vendorCollection,
       // @ts-ignore - TinaCMS type issue with fields vs templates
       productCollection,
       // @ts-ignore - TinaCMS type issue with fields vs templates

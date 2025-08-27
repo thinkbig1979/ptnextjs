@@ -1,19 +1,24 @@
 ---
-name: "Raymarine (Teledyne FLIR)"
-slug: "raymarine-teledyne-flir"
-logo: "/media/partners/logos/raymarine-teledyne-flir.png"
-image: "/media/partners/images/raymarine-teledyne-flir-overview.jpg"
-website: "https://www.raymarine.com"
+name: Raymarine (Teledyne FLIR)
+slug: raymarine-teledyne-flir
+logo: /media/partners/logos/raymarine-teledyne-flir.png
+image: /media/partners/images/raymarine-teledyne-flir-overview.jpg
+website: 'https://www.raymarine.com'
 founded: 1923
-location: "Portsmouth, UK"
+location: 'Portsmouth, UK'
 featured: true
-category: "content/categories/navigation-systems.md"
+category: content/categories/navigation-systems.md
 tags:
-  - "content/tags/radar.md"
+  - content/tags/radar.md
 seo:
-  meta_title: "Raymarine Marine Electronics - Advanced Navigation Systems | Paul Thames"
-  meta_description: "Discover Raymarine's cutting-edge marine electronics and navigation systems. Leading manufacturer of radar, chartplotters, and autopilot solutions."
-  keywords: "marine electronics, navigation, radar, chartplotter, Raymarine, Teledyne FLIR"
+  meta_title: Raymarine Marine Electronics - Advanced Navigation Systems | Paul Thames
+  meta_description: >-
+    Discover Raymarine's cutting-edge marine electronics and navigation systems.
+    Leading manufacturer of radar, chartplotters, and autopilot solutions.
+  keywords: >-
+    marine electronics, navigation, radar, chartplotter, Raymarine, Teledyne
+    FLIR
+partner: true
 ---
 
 # Raymarine (Teledyne FLIR)

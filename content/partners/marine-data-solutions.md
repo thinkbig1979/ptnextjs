@@ -1,19 +1,22 @@
 ---
-name: "Marine Data Solutions"
-slug: "marine-data-solutions"
-logo: ""
-image: ""
-website: ""
+name: Marine Data Solutions
+slug: marine-data-solutions
+logo: ''
+image: ''
+website: ''
 founded: 2013
-location: "International"
+location: International
 featured: false
-category: "content/categories/communication-systems.md"
+category: content/categories/communication-systems.md
 tags: []
 seo:
-  meta_title: "Marine Data Solutions - Marine Technology Partner | Paul Thames"
-  meta_description: "Satellite communication specialist providing Starlink Maritime integration, VSAT solutions, and high-speed maritime internet for global connectivity."
-  keywords: "marine technology, marine data solutions, communication systems"
-  og_image: ""
+  meta_title: Marine Data Solutions - Marine Technology Partner | Paul Thames
+  meta_description: >-
+    Satellite communication specialist providing Starlink Maritime integration,
+    VSAT solutions, and high-speed maritime internet for global connectivity.
+  keywords: 'marine technology, marine data solutions, communication systems'
+  og_image: ''
+partner: true
 ---
 
 # Marine Data Solutions

@@ -8,7 +8,7 @@ import * as fs from 'fs/promises'
 import * as path from 'path'
 import matter from 'gray-matter'
 import { marked } from 'marked'
-import { Partner, Product, BlogPost, TeamMember } from './types'
+import { Vendor, Partner, Product, BlogPost, TeamMember } from './types'
 
 interface Category {
   id: string
@@ -107,6 +107,25 @@ class TinaCMSDataService {
     return `/media/${mediaPath.replace(/^\/+/, '')}`
   }
 
+  private transformTinaVendor(tinaVendor: any, filename: string): Vendor {
+    return {
+      id: filename,
+      slug: tinaVendor.slug || filename,
+      name: tinaVendor.name,
+      category: '', // Will be resolved later
+      description: tinaVendor.description,
+      logo: this.transformMediaPath(tinaVendor.logo),
+      image: this.transformMediaPath(tinaVendor.image),
+      website: tinaVendor.website,
+      founded: tinaVendor.founded,
+      location: tinaVendor.location,
+      tags: [], // Will be resolved later
+      featured: tinaVendor.featured || false,
+      partner: tinaVendor.partner !== undefined ? tinaVendor.partner : true, // Default to true for existing records
+    }
+  }
+
+  // Legacy method for backward compatibility
   private transformTinaPartner(tinaPartner: any, filename: string): Partner {
     return {
       id: filename,
@@ -121,6 +140,7 @@ class TinaCMSDataService {
       location: tinaPartner.location,
       tags: [], // Will be resolved later
       featured: tinaPartner.featured || false,
+      partner: tinaPartner.partner !== undefined ? tinaPartner.partner : true, // Default to true for existing records
     }
   }
 
@@ -132,6 +152,9 @@ class TinaCMSDataService {
       id: filename,
       slug: tinaProduct.slug || filename,
       name: tinaProduct.name,
+      vendorId: '', // Will be resolved later
+      vendorName: '', // Will be resolved later
+      // Legacy backward compatibility
       partnerId: '', // Will be resolved later
       partnerName: '', // Will be resolved later
       category: '', // Will be resolved later
@@ -244,15 +267,15 @@ class TinaCMSDataService {
     })
   }
 
-  // Partners
-  async getAllPartners(): Promise<Partner[]> {
-    return this.getCached('partners', async () => {
-      const partnersPath = path.resolve(process.cwd(), 'content/partners')
-      const files = await fs.readdir(partnersPath)
+  // Vendors - New primary methods
+  async getAllVendors(): Promise<Vendor[]> {
+    return this.getCached('vendors', async () => {
+      const vendorsPath = path.resolve(process.cwd(), 'content/partners')
+      const files = await fs.readdir(vendorsPath)
       
-      const partners = await Promise.all(
+      const vendors = await Promise.all(
         files.filter(file => file.endsWith('.md')).map(async (file) => {
-          const filePath = path.join(partnersPath, file)
+          const filePath = path.join(vendorsPath, file)
           const content = await fs.readFile(filePath, 'utf-8')
           const { data, content: bodyContent } = matter(content)
           const filename = file.replace('.md', '')
@@ -260,54 +283,90 @@ class TinaCMSDataService {
           // Extract description from body content if not in frontmatter
           const description = data.description || this.extractDescription(bodyContent)
           
-          let partner = this.transformTinaPartner(data, filename)
-          partner.description = description
+          let vendor = this.transformTinaVendor(data, filename)
+          vendor.description = description
           
           // Resolve category reference
           if (data.category) {
             const categoryData = await this.resolveReference(data.category)
-            partner.category = categoryData?.name || ''
+            vendor.category = categoryData?.name || ''
           }
           
           // Resolve tag references
           if (data.tags && Array.isArray(data.tags)) {
             const tagPromises = data.tags.map((tagRef: string) => this.resolveReference(tagRef))
             const tagData = await Promise.all(tagPromises)
-            partner.tags = tagData.filter(Boolean).map(tag => tag.name).filter(Boolean)
+            vendor.tags = tagData.filter(Boolean).map(tag => tag.name).filter(Boolean)
           }
           
-          return partner
+          return vendor
         })
       )
       
-      return partners
+      return vendors
     })
   }
 
-  async getPartners(params?: { category?: string; featured?: boolean }): Promise<Partner[]> {
-    const allPartners = await this.getAllPartners()
+  async getVendors(params?: { category?: string; featured?: boolean; partnersOnly?: boolean }): Promise<Vendor[]> {
+    const allVendors = await this.getAllVendors()
     
-    let filtered = allPartners
+    let filtered = allVendors
     
     if (params?.category && params.category !== 'all') {
-      filtered = filtered.filter(partner => partner.category === params.category)
+      filtered = filtered.filter(vendor => vendor.category === params.category)
     }
     
     if (params?.featured) {
-      filtered = filtered.filter(partner => partner.featured)
+      filtered = filtered.filter(vendor => vendor.featured)
+    }
+    
+    if (params?.partnersOnly) {
+      filtered = filtered.filter(vendor => vendor.partner === true)
     }
     
     return filtered
   }
 
+  async getVendorBySlug(slug: string): Promise<Vendor | null> {
+    const vendors = await this.getAllVendors()
+    return vendors.find(vendor => vendor.slug === slug) || null
+  }
+
+  async getVendorById(id: string): Promise<Vendor | null> {
+    const vendors = await this.getAllVendors()
+    return vendors.find(vendor => vendor.id === id) || null
+  }
+
+  // Partners - Legacy methods for backward compatibility
+  async getAllPartners(): Promise<Partner[]> {
+    // Use the new vendor methods internally for consistency
+    const vendors = await this.getAllVendors()
+    // Convert Vendor[] to Partner[] for backward compatibility
+    return vendors.map(vendor => ({
+      ...vendor,
+      // Partner interface doesn't have the 'partner' field, so we exclude it
+    } as Partner))
+  }
+
+  async getPartners(params?: { category?: string; featured?: boolean }): Promise<Partner[]> {
+    // Use the new vendor methods internally and convert result
+    const vendors = await this.getVendors({
+      ...params,
+      partnersOnly: true // Only return records where partner = true
+    })
+    return vendors.map(vendor => ({
+      ...vendor,
+    } as Partner))
+  }
+
   async getPartnerBySlug(slug: string): Promise<Partner | null> {
-    const partners = await this.getAllPartners()
-    return partners.find(partner => partner.slug === slug) || null
+    const vendor = await this.getVendorBySlug(slug)
+    return vendor ? { ...vendor } as Partner : null
   }
 
   async getPartnerById(id: string): Promise<Partner | null> {
-    const partners = await this.getAllPartners()
-    return partners.find(partner => partner.id === id) || null
+    const vendor = await this.getVendorById(id)
+    return vendor ? { ...vendor } as Partner : null
   }
 
   // Products
@@ -325,12 +384,16 @@ class TinaCMSDataService {
           
           let product = this.transformTinaProduct(data, filename)
           
-          // Resolve partner reference
-          if (data.partner) {
-            const partnerData = await this.resolveReference(data.partner)
-            if (partnerData) {
-              product.partnerId = data.partner.split('/').pop()?.replace('.md', '') || ''
-              product.partnerName = partnerData.name || ''
+          // Resolve vendor/partner reference (handle both new and legacy field names)
+          const vendorRef = data.vendor || data.partner
+          if (vendorRef) {
+            const vendorData = await this.resolveReference(vendorRef)
+            if (vendorData) {
+              product.vendorId = vendorRef.split('/').pop()?.replace('.md', '') || ''
+              product.vendorName = vendorData.name || ''
+              // Maintain backward compatibility
+              product.partnerId = product.vendorId
+              product.partnerName = product.vendorName
             }
           }
           
@@ -355,7 +418,7 @@ class TinaCMSDataService {
     })
   }
 
-  async getProducts(params?: { category?: string; partnerId?: string }): Promise<Product[]> {
+  async getProducts(params?: { category?: string; partnerId?: string; vendorId?: string }): Promise<Product[]> {
     const allProducts = await this.getAllProducts()
     
     let filtered = allProducts
@@ -364,8 +427,12 @@ class TinaCMSDataService {
       filtered = filtered.filter(product => product.category === params.category)
     }
     
-    if (params?.partnerId) {
-      filtered = filtered.filter(product => product.partnerId === params.partnerId)
+    // Support both vendorId and partnerId for backward compatibility
+    const targetId = params?.vendorId || params?.partnerId
+    if (targetId) {
+      filtered = filtered.filter(product => 
+        product.vendorId === targetId || product.partnerId === targetId
+      )
     }
     
     return filtered
@@ -379,6 +446,10 @@ class TinaCMSDataService {
   async getProductById(id: string): Promise<Product | null> {
     const products = await this.getAllProducts()
     return products.find(product => product.id === id) || null
+  }
+
+  async getProductsByVendor(vendorId: string): Promise<Product[]> {
+    return this.getProducts({ vendorId })
   }
 
   async getProductsByPartner(partnerId: string): Promise<Product[]> {
@@ -487,6 +558,16 @@ class TinaCMSDataService {
   }
 
   // Search functionality
+  async searchVendors(query: string): Promise<Vendor[]> {
+    const vendors = await this.getAllVendors()
+    const searchLower = query.toLowerCase()
+    
+    return vendors.filter(vendor => 
+      vendor.name.toLowerCase().includes(searchLower) ||
+      vendor.description.toLowerCase().includes(searchLower)
+    )
+  }
+
   async searchPartners(query: string): Promise<Partner[]> {
     const partners = await this.getAllPartners()
     const searchLower = query.toLowerCase()
@@ -518,6 +599,11 @@ class TinaCMSDataService {
   }
 
   // Utility methods for static generation
+  async getVendorSlugs(): Promise<string[]> {
+    const vendors = await this.getAllVendors()
+    return vendors.map(vendor => vendor.slug).filter(Boolean) as string[]
+  }
+
   async getPartnerSlugs(): Promise<string[]> {
     const partners = await this.getAllPartners()
     return partners.map(partner => partner.slug).filter(Boolean) as string[]
@@ -541,14 +627,14 @@ class TinaCMSDataService {
       console.log('🔍 Validating TinaCMS content...')
       
       // Validate required data exists
-      const [partners, products, categories] = await Promise.all([
-        this.getAllPartners(),
+      const [vendors, products, categories] = await Promise.all([
+        this.getAllVendors(),
         this.getAllProducts(),
         this.getCategories()
       ])
 
-      if (partners.length === 0) {
-        errors.push('No partners found in TinaCMS content')
+      if (vendors.length === 0) {
+        errors.push('No vendors found in TinaCMS content')
       }
 
       if (products.length === 0) {
@@ -559,20 +645,23 @@ class TinaCMSDataService {
         errors.push('No categories found in TinaCMS content')
       }
 
-      // Validate partner-product relationships
-      const partnerIds = new Set(partners.map(p => p.id))
-      const orphanedProducts = products.filter(p => p.partnerId && !partnerIds.has(p.partnerId))
+      // Validate vendor-product relationships
+      const vendorIds = new Set(vendors.map(v => v.id))
+      const orphanedProducts = products.filter(p => 
+        (p.vendorId && !vendorIds.has(p.vendorId)) || 
+        (p.partnerId && !vendorIds.has(p.partnerId))
+      )
       
       if (orphanedProducts.length > 0) {
-        errors.push(`${orphanedProducts.length} products have invalid partner references`)
+        errors.push(`${orphanedProducts.length} products have invalid vendor/partner references`)
       }
 
       // Validate slugs are unique
-      const partnerSlugs = partners.map(p => p.slug).filter(Boolean)
-      const duplicatePartnerSlugs = partnerSlugs.filter((slug, index) => partnerSlugs.indexOf(slug) !== index)
+      const vendorSlugs = vendors.map(v => v.slug).filter(Boolean)
+      const duplicateVendorSlugs = vendorSlugs.filter((slug, index) => vendorSlugs.indexOf(slug) !== index)
       
-      if (duplicatePartnerSlugs.length > 0) {
-        errors.push(`Duplicate partner slugs found: ${duplicatePartnerSlugs.join(', ')}`)
+      if (duplicateVendorSlugs.length > 0) {
+        errors.push(`Duplicate vendor slugs found: ${duplicateVendorSlugs.join(', ')}`)
       }
 
       const productSlugs = products.map(p => p.slug).filter(Boolean)

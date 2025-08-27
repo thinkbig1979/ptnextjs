@@ -92,6 +92,36 @@ export interface Tag {
 }
 
 // Main application types
+export interface Vendor {
+  id: string;
+  slug?: string;
+  name: string;
+  description: string;
+  logo?: string; // TinaCMS uses direct string paths
+  image?: string; // TinaCMS uses direct string paths
+  website?: string;
+  founded?: number;
+  location?: string;
+  featured?: boolean;
+  partner?: boolean; // New field: indicates if vendor is also a strategic partner
+  createdAt?: string;
+  updatedAt?: string;
+  publishedAt?: string;
+  
+  // TinaCMS simplified relations
+  category?: string; // Resolved category name
+  tags?: string[]; // Resolved tag names array
+  products?: Product[];
+  seo?: SEO;
+  
+  // Computed/backward compatibility fields
+  categoryName?: string; // Alias for category
+  tagNames?: string[]; // Alias for tags
+  logoUrl?: string; // Alias for logo
+  imageUrl?: string; // Alias for image
+}
+
+// Legacy Partner interface for backward compatibility
 export interface Partner {
   id: string;
   slug?: string;
@@ -103,6 +133,7 @@ export interface Partner {
   founded?: number;
   location?: string;
   featured?: boolean;
+  partner?: boolean; // New field for backward compatibility
   createdAt?: string;
   updatedAt?: string;
   publishedAt?: string;
@@ -132,8 +163,11 @@ export interface Product {
   publishedAt?: string;
   
   // TinaCMS simplified relations
-  partnerId?: string; // Resolved partner ID
-  partnerName?: string; // Resolved partner name
+  vendorId?: string; // Resolved vendor ID
+  vendorName?: string; // Resolved vendor name
+  // Legacy fields for backward compatibility
+  partnerId?: string; // Alias for vendorId
+  partnerName?: string; // Alias for vendorName
   category?: string; // Resolved category name
   tags?: string[]; // Resolved tag names array
   seo?: SEO;

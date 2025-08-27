@@ -1,19 +1,23 @@
 ---
-name: "Ocean Safety"
-slug: "ocean-safety"
-logo: ""
-image: ""
-website: ""
+name: Ocean Safety
+slug: ocean-safety
+logo: ''
+image: ''
+website: ''
 founded: 2014
-location: "International"
+location: International
 featured: false
-category: "content/categories/safety-equipment.md"
+category: content/categories/safety-equipment.md
 tags: []
 seo:
-  meta_title: "Ocean Safety - Marine Technology Partner | Paul Thames"
-  meta_description: "UK manufacturer with 30 years' marine safety experience offering lifejackets, liferafts, EPIRBs, rescue equipment and comprehensive global servicing n"
-  keywords: "marine technology, ocean safety, safety equipment"
-  og_image: ""
+  meta_title: Ocean Safety - Marine Technology Partner | Paul Thames
+  meta_description: >-
+    UK manufacturer with 30 years' marine safety experience offering
+    lifejackets, liferafts, EPIRBs, rescue equipment and comprehensive global
+    servicing n
+  keywords: 'marine technology, ocean safety, safety equipment'
+  og_image: ''
+partner: true
 ---
 
 # Ocean Safety

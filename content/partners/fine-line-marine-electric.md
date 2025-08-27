@@ -1,19 +1,23 @@
 ---
-name: "Fine Line Marine Electric"
-slug: "fine-line-marine-electric"
-logo: ""
-image: ""
-website: ""
+name: Fine Line Marine Electric
+slug: fine-line-marine-electric
+logo: ''
+image: ''
+website: ''
 founded: 2008
-location: "International"
+location: International
 featured: false
-category: "content/categories/automation-technology.md"
+category: content/categories/automation-technology.md
 tags: []
 seo:
-  meta_title: "Fine Line Marine Electric - Marine Technology Partner | Paul Thames"
-  meta_description: "ABYC-certified automation specialist providing power management, alarm monitoring, lighting control, and comprehensive automation systems for superyac"
-  keywords: "marine technology, fine line marine electric, automation technology"
-  og_image: ""
+  meta_title: Fine Line Marine Electric - Marine Technology Partner | Paul Thames
+  meta_description: >-
+    ABYC-certified automation specialist providing power management, alarm
+    monitoring, lighting control, and comprehensive automation systems for
+    superyac
+  keywords: 'marine technology, fine line marine electric, automation technology'
+  og_image: ''
+partner: true
 ---
 
 # Fine Line Marine Electric
