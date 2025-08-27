@@ -38,8 +38,8 @@ function Logo() {
 
   const currentTheme = resolvedTheme || theme;
   const logoSrc = currentTheme === 'dark' 
-    ? '/images/Paul-Thames-logo-PNG-white.png'
-    : '/images/Paul-Thames-logo-PNG-black.png';
+    ? '/media/company/logos/Paul-Thames-logo-PNG-white.png'
+    : '/media/company/logos/Paul-Thames-logo-PNG-black.png';
 
   return (
     <div className="relative h-12 w-48">

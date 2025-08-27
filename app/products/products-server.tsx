@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Package, Building2, ArrowRight, Star } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { staticDataService } from "@/lib/static-data-service";
+import { tinaCMSDataService } from "@/lib/tinacms-data-service";
 import { Product, Partner } from "@/lib/types";
 
 interface ProductsServerProps {
@@ -20,9 +20,9 @@ export async function ProductsServer({ searchParams }: ProductsServerProps) {
   
   // Get all data at build time
   const [allProducts, allPartners, categories] = await Promise.all([
-    staticDataService.getAllProducts(),
-    staticDataService.getAllPartners(),
-    staticDataService.getCategories()
+    tinaCMSDataService.getAllProducts(),
+    tinaCMSDataService.getAllPartners(),
+    tinaCMSDataService.getCategories()
   ]);
 
   console.log(`📋 Loaded ${allProducts.length} products, ${allPartners.length} partners, ${categories.length} categories`);
@@ -47,8 +47,8 @@ export async function ProductsServer({ searchParams }: ProductsServerProps) {
     filteredProducts = filteredProducts.filter(product => 
       product.name.toLowerCase().includes(query) ||
       product.description.toLowerCase().includes(query) ||
-      product.tags.some(tag => tag.toLowerCase().includes(query)) ||
-      product.features.some(feature => feature.toLowerCase().includes(query))
+      (product.tags && product.tags.some(tag => tag.toLowerCase().includes(query))) ||
+      (product.features && product.features.some(feature => feature.title.toLowerCase().includes(query)))
     );
   }
 
@@ -71,7 +71,7 @@ export async function ProductsServer({ searchParams }: ProductsServerProps) {
       {/* Products Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {filteredProducts.map((product) => {
-          const partner = partnersMap.get(product.partnerId);
+          const partner = product.partnerId ? partnersMap.get(product.partnerId) : undefined;
           
           return (
             <Card 
@@ -121,10 +121,10 @@ export async function ProductsServer({ searchParams }: ProductsServerProps) {
                     <div className="space-y-2">
                       <h4 className="font-poppins-medium text-sm text-foreground">Key Features:</h4>
                       <ul className="text-sm text-muted-foreground space-y-1">
-                        {product.features.slice(0, 3).map((feature: string, idx: number) => (
+                        {product.features.slice(0, 3).map((feature, idx) => (
                           <li key={idx} className="flex items-center space-x-2">
                             <Star className="w-3 h-3 text-accent" />
-                            <span className="font-poppins-light">{feature}</span>
+                            <span className="font-poppins-light">{feature.title}</span>
                           </li>
                         ))}
                       </ul>

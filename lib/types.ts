@@ -29,12 +29,11 @@ export interface StrapiMediaFile {
 // Component types
 export interface ProductImage {
   id: string;
-  image?: StrapiRelation<StrapiMediaFile>;
-  url: string; // Computed from image.data.attributes.url
+  url: string; // TinaCMS direct image path
   alt_text?: string;
   altText?: string; // Computed from alt_text for backward compatibility
-  is_main: boolean;
-  isMain: boolean; // Computed from is_main for backward compatibility
+  is_main?: boolean;
+  isMain: boolean; // TinaCMS uses isMain directly
   caption?: string;
   order?: number;
 }
@@ -110,27 +109,27 @@ export interface Partner {
   slug?: string;
   name: string;
   description: string;
-  logo?: StrapiRelation<StrapiMediaFile>;
-  image?: StrapiRelation<StrapiMediaFile>;
+  logo?: string; // TinaCMS uses direct string paths
+  image?: string; // TinaCMS uses direct string paths
   website?: string;
   founded?: number;
   location?: string;
   featured?: boolean;
-  createdAt: string;
-  updatedAt: string;
-  publishedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
+  publishedAt?: string;
   
-  // Relations
-  category?: StrapiRelation<Category>;
-  tags?: StrapiRelationArray<Tag>;
-  products?: StrapiRelationArray<Product>;
+  // TinaCMS simplified relations
+  category?: string; // Resolved category name
+  tags?: string[]; // Resolved tag names array
+  products?: Product[];
   seo?: SEO;
   
   // Computed/backward compatibility fields
-  categoryName?: string; // Computed from category.data.attributes.name
-  tagNames?: string[]; // Computed from tags.data[].attributes.name
-  logoUrl?: string; // Computed from logo.data.attributes.url
-  imageUrl?: string; // Computed from image.data.attributes.url
+  categoryName?: string; // Alias for category
+  tagNames?: string[]; // Alias for tags
+  logoUrl?: string; // Alias for logo
+  imageUrl?: string; // Alias for image
 }
 
 export interface Product {
@@ -139,29 +138,27 @@ export interface Product {
   name: string;
   description: string;
   price?: string;
-  image?: StrapiRelation<StrapiMediaFile>; // Legacy field for backward compatibility
-  createdAt: string;
-  updatedAt: string;
-  publishedAt: string;
+  image?: string; // TinaCMS uses direct string paths
+  createdAt?: string;
+  updatedAt?: string;
+  publishedAt?: string;
   
-  // Relations
-  partner?: StrapiRelation<Partner>;
-  category?: StrapiRelation<Category>;
-  tags?: StrapiRelationArray<Tag>;
+  // TinaCMS simplified relations
+  partnerId?: string; // Resolved partner ID
+  partnerName?: string; // Resolved partner name
+  category?: string; // Resolved category name
+  tags?: string[]; // Resolved tag names array
   seo?: SEO;
   
-  // Components
-  product_images: ProductImage[];
-  features: Feature[];
+  // Components (simplified structure)
+  images: ProductImage[]; // Product images array
+  features: Feature[]; // Product features array
   
   // Computed/backward compatibility fields
-  partnerId?: string; // Computed from partner.data.id
-  partnerName?: string; // Computed from partner.data.attributes.name
-  categoryName?: string; // Computed from category.data.attributes.name
-  tagNames?: string[]; // Computed from tags.data[].attributes.name
-  images?: ProductImage[]; // Alias for product_images
-  mainImage?: ProductImage; // Computed from product_images.find(img => img.isMain)
-  imageUrl?: string; // Computed from image.data.attributes.url or mainImage.url
+  categoryName?: string; // Alias for category
+  tagNames?: string[]; // Alias for tags
+  mainImage?: ProductImage; // Computed from images.find(img => img.isMain)
+  imageUrl?: string; // Alias for image or mainImage.url
 }
 
 export interface BlogPost {
@@ -171,24 +168,23 @@ export interface BlogPost {
   excerpt: string;
   content: string;
   author: string;
-  published_at: string;
-  publishedAt: string; // Computed from published_at for backward compatibility
+  publishedAt: string; // TinaCMS uses single publishedAt field
   featured?: boolean;
-  read_time?: string;
-  readTime?: string; // Computed from read_time for backward compatibility
-  image?: StrapiRelation<StrapiMediaFile>;
-  createdAt: string;
-  updatedAt: string;
+  readTime?: string; // TinaCMS uses direct readTime field
+  image?: string; // TinaCMS uses direct string paths
+  createdAt?: string;
+  updatedAt?: string;
   
-  // Relations
-  blog_category?: StrapiRelation<BlogCategory>;
-  tags?: StrapiRelationArray<Tag>;
+  // TinaCMS simplified relations
+  category?: string; // Resolved blog category name
+  tags?: string[]; // Resolved tag names array
   seo?: SEO;
   
   // Computed/backward compatibility fields
-  category?: string; // Computed from blog_category.data.attributes.name
-  tagNames?: string[]; // Computed from tags.data[].attributes.name
-  imageUrl?: string; // Computed from image.data.attributes.url
+  published_at?: string; // Alias for publishedAt
+  read_time?: string; // Alias for readTime
+  tagNames?: string[]; // Alias for tags
+  imageUrl?: string; // Alias for image
 }
 
 export interface TeamMember {
@@ -196,20 +192,20 @@ export interface TeamMember {
   name: string;
   role: string;
   bio: string;
-  image?: StrapiRelation<StrapiMediaFile>;
+  image?: string; // TinaCMS uses direct string paths
   email?: string;
   linkedin?: string;
   order?: number;
-  createdAt: string;
-  updatedAt: string;
-  publishedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
+  publishedAt?: string;
   
-  // Computed fields
-  imageUrl?: string; // Computed from image.data.attributes.url
+  // Computed fields (for backward compatibility)
+  imageUrl?: string; // Alias for image
 }
 
 export interface CompanyInfo {
-  id: string;
+  id?: string;
   name: string;
   tagline: string;
   description: string;
@@ -219,17 +215,17 @@ export interface CompanyInfo {
   phone: string;
   email: string;
   story: string;
-  logo?: StrapiRelation<StrapiMediaFile>;
-  createdAt: string;
-  updatedAt: string;
-  publishedAt: string;
+  logo?: string; // TinaCMS uses direct string paths
+  createdAt?: string;
+  updatedAt?: string;
+  publishedAt?: string;
   
   // Components
   social_media?: SocialMedia;
   seo?: SEO;
   
-  // Computed fields
-  logoUrl?: string; // Computed from logo.data.attributes.url
+  // Computed fields (for backward compatibility)
+  logoUrl?: string; // Alias for logo
 }
 
 // Legacy expense tracker types (keeping for backward compatibility)

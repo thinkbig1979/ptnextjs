@@ -70,7 +70,10 @@ export function ProductsClient({ initialProducts, initialCategories }: ProductsC
         product?.name?.toLowerCase().includes(query) ||
         product?.description?.toLowerCase().includes(query) ||
         product?.tags?.some((tag: string) => tag.toLowerCase().includes(query)) ||
-        product?.features?.some((feature: string) => feature.toLowerCase().includes(query))
+        product?.features?.some((feature: any) => 
+          (typeof feature === 'string' ? feature : feature?.title || '')
+            .toLowerCase().includes(query)
+        )
       );
     }
 
@@ -239,10 +242,12 @@ export function ProductsClient({ initialProducts, initialCategories }: ProductsC
                     <div className="space-y-2">
                       <h4 className="font-poppins-medium text-sm text-foreground">Key Features:</h4>
                       <ul className="text-sm text-muted-foreground space-y-1">
-                        {product.features.slice(0, 3).map((feature: string, idx: number) => (
-                          <li key={idx} className="flex items-center space-x-2">
+                        {product.features.slice(0, 3).map((feature: any, idx: number) => (
+                          <li key={feature?.id || idx} className="flex items-center space-x-2">
                             <Star className="w-3 h-3 text-accent" />
-                            <span className="font-poppins-light">{feature}</span>
+                            <span className="font-poppins-light">
+                              {typeof feature === 'string' ? feature : (feature?.title || 'Feature')}
+                            </span>
                           </li>
                         ))}
                       </ul>

@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Suspense } from "react";
 import { PartnersClient } from "@/app/components/partners-client";
-import { staticDataService } from "@/lib/static-data-service";
+import { tinaCMSDataService } from "@/lib/tinacms-data-service";
 
 // Force static generation for optimal SEO and performance
 export const dynamic = 'force-static';
@@ -22,9 +22,9 @@ export default async function PartnersPage({ searchParams }: PartnersPageProps) 
   
   // Fetch all data at build time for static generation
   const [partners, products, categories] = await Promise.all([
-    staticDataService.getAllPartners(),
-    staticDataService.getAllProducts(),
-    staticDataService.getCategories()
+    tinaCMSDataService.getAllPartners(),
+    tinaCMSDataService.getAllProducts(),
+    tinaCMSDataService.getCategories()
   ]);
   
   const categoryNames = categories.map(cat => cat.name);

@@ -38,3 +38,13 @@ scripts/cleanup-*
 *.tmp
 *.temp
 create-public-role.js
+
+# TinaCMS
+.tina/
+admin/
+.env.local
+.env.production.local
+
+# TinaCMS generated files
+tina/__generated__/
+.tina/__generated__/

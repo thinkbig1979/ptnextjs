@@ -7,7 +7,7 @@ import Link from "next/link";
 import { formatDate } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import BlogPostClient from "./_components/blog-post-client";
-import { staticDataService } from "@/lib/static-data-service";
+import { tinaCMSDataService } from "@/lib/tinacms-data-service";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 
 // Force static generation for optimal SEO and performance
@@ -19,7 +19,7 @@ export const revalidate = false;
 export async function generateStaticParams() {
   try {
     console.log('🏗️  Generating static params for blog post pages...');
-    const blogPostSlugs = await staticDataService.getBlogPostSlugs();
+    const blogPostSlugs = await tinaCMSDataService.getBlogPostSlugs();
     console.log(`📋 Found ${blogPostSlugs.length} blog posts for static generation`);
     
     const params = blogPostSlugs.map((slug) => ({ slug }));
@@ -42,7 +42,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
 
   // Find the blog post by slug using static data service
-  const post = await staticDataService.getBlogPostBySlug(slug);
+  const post = await tinaCMSDataService.getBlogPostBySlug(slug);
   
   if (!post) {
     console.warn(`⚠️  Blog post not found for slug: ${slug}`);
@@ -52,7 +52,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   console.log(`✅ Loading blog post: ${post.title}`);
 
   // Get related posts (simplified version for static generation)
-  const allBlogPosts = await staticDataService.getAllBlogPosts();
+  const allBlogPosts = await tinaCMSDataService.getAllBlogPosts();
   const relatedPosts = allBlogPosts
     .filter(p => p.id !== post.id && p.category === post.category)
     .slice(0, 3);
@@ -135,16 +135,18 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </div>
 
         {/* Tags */}
-        <div className="mb-12">
-          <h3 className="text-lg font-medium mb-4">Tags</h3>
-          <div className="flex flex-wrap gap-2">
-            {post.tags.map((tag) => (
-              <Badge key={tag} variant="outline">
-                {tag}
-              </Badge>
-            ))}
+        {post.tags && post.tags.length > 0 && (
+          <div className="mb-12">
+            <h3 className="text-lg font-medium mb-4">Tags</h3>
+            <div className="flex flex-wrap gap-2">
+              {post.tags.map((tag) => (
+                <Badge key={tag} variant="outline">
+                  {tag}
+                </Badge>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Related Posts */}
         {relatedPosts.length > 0 && (

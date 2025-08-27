@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { staticDataService } from "@/lib/static-data-service";
+import { tinaCMSDataService } from "@/lib/tinacms-data-service";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { notFound } from "next/navigation";
 import PartnerDetailClient from "./_components/partner-detail-client";
@@ -31,7 +31,7 @@ export const revalidate = false;
 export async function generateStaticParams() {
   try {
     console.log('🏗️  Generating static params for partner pages...');
-    const partners = await staticDataService.getAllPartners();
+    const partners = await tinaCMSDataService.getAllPartners();
     console.log(`📋 Found ${partners.length} partners for static generation`);
     
     const params = partners
@@ -68,7 +68,7 @@ export default async function PartnerDetailPage({ params }: PartnerDetailPagePro
   }
 
   // Find the partner by slug using static data service
-  const partner = await staticDataService.getPartnerBySlug(slug);
+  const partner = await tinaCMSDataService.getPartnerBySlug(slug);
   
   if (!partner) {
     console.warn(`⚠️  Partner not found for slug: ${slug}`);
@@ -78,7 +78,7 @@ export default async function PartnerDetailPage({ params }: PartnerDetailPagePro
   console.log(`✅ Loading partner: ${partner.name}`);
 
   // Find products from this partner
-  const partnerProducts = await staticDataService.getProductsByPartner(partner.id);
+  const partnerProducts = await tinaCMSDataService.getProductsByPartner(partner.id);
   console.log(`📦 Found ${partnerProducts.length} products for partner: ${partner.name}`);
 
   // Generate placeholder data
@@ -253,11 +253,11 @@ export default async function PartnerDetailPage({ params }: PartnerDetailPagePro
                           <p className="text-sm text-muted-foreground line-clamp-2">
                             {product.description}
                           </p>
-                          {product.features.length > 0 && (
+                          {product.features && product.features.length > 0 && (
                             <div className="mt-3">
                               <div className="flex items-center space-x-1 text-xs text-muted-foreground">
                                 <Star className="w-3 h-3" />
-                                <span>{product.features[0]}</span>
+                                <span>{product.features[0].title}</span>
                               </div>
                             </div>
                           )}
@@ -333,16 +333,18 @@ export default async function PartnerDetailPage({ params }: PartnerDetailPagePro
                   <Separator />
 
                   {/* Tags */}
-                  <div>
-                    <h4 className="font-medium mb-2">Specializations</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {partner.tags.map((tag) => (
-                        <Badge key={tag} variant="outline" className="text-xs">
-                          {tag}
-                        </Badge>
-                      ))}
+                  {partner.tags && partner.tags.length > 0 && (
+                    <div>
+                      <h4 className="font-medium mb-2">Specializations</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {partner.tags.map((tag) => (
+                          <Badge key={tag} variant="outline" className="text-xs">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </CardContent>
               </Card>
             </div>

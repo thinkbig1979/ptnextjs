@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Suspense } from "react";
 import { ProductsClient } from "@/app/components/products-client";
-import { staticDataService } from "@/lib/static-data-service";
+import { tinaCMSDataService } from "@/lib/tinacms-data-service";
 
 // Force static generation for optimal SEO and performance
 export const dynamic = 'force-static';
@@ -22,8 +22,8 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   
   // Fetch all data at build time for static generation
   const [products, categories] = await Promise.all([
-    staticDataService.getAllProducts(),
-    staticDataService.getCategories()
+    tinaCMSDataService.getAllProducts(),
+    tinaCMSDataService.getCategories()
   ]);
   
   const categoryNames = categories.map(cat => cat.name);

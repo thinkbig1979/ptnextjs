@@ -1,0 +1,25 @@
+{
+  "name": "Paul Thames",
+  "tagline": "Advanced Marine Technology Solutions",
+  "description": "Leading provider of cutting-edge marine technology solutions.",
+  "founded": 2018,
+  "location": "Maritime District, UK",
+  "address": "123 Marina Boulevard\nPortsmouth, Hampshire PO1 2AB\nUnited Kingdom",
+  "phone": "+44 23 9283 1234",
+  "email": "info@paulthames.com",
+  "story": "Founded in 2018, Paul Thames has established itself as a premier provider...",
+  "logo": "/media/company/logos/primary.png",
+  "social_media": {
+    "linkedin": "",
+    "twitter": "",
+    "facebook": "",
+    "instagram": "",
+    "youtube": ""
+  },
+  "seo": {
+    "meta_title": "Paul Thames - Advanced Marine Technology Solutions",
+    "meta_description": "Leading provider of cutting-edge marine technology solutions.",
+    "keywords": "marine technology, yacht systems, navigation, communication, vessel automation",
+    "og_image": "/media/company/social/og-default.jpg"
+  }
+}

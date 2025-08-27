@@ -16,11 +16,11 @@ interface OptimizedImageProps extends Omit<ImageProps, 'src'> {
 }
 
 const placeholderImages = {
-  product: '/images/placeholders/product-placeholder.jpg',
-  partner: '/images/placeholders/partner-placeholder.jpg',
-  team: '/images/placeholders/team-placeholder.jpg',
-  company: '/images/placeholders/company-placeholder.jpg',
-  generic: '/images/placeholders/generic-placeholder.jpg',
+  product: '/media/products/placeholders/product-image-placeholder.svg',
+  partner: '/media/partners/placeholders/partner-image-placeholder.svg',
+  team: '/media/team/placeholders/team-member-placeholder.svg',
+  company: '/media/system/placeholders/logo-placeholder.svg',
+  generic: '/media/system/placeholders/image-placeholder.svg',
 };
 
 const fallbackIcons = {

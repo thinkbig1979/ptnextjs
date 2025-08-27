@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Building2, MapPin, Calendar, ExternalLink, Package, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { staticDataService } from "@/lib/static-data-service";
+import { tinaCMSDataService } from "@/lib/tinacms-data-service";
 import { Partner, Product } from "@/lib/types";
 
 interface PartnersServerProps {
@@ -19,9 +19,9 @@ export async function PartnersServer({ searchParams }: PartnersServerProps) {
   
   // Get all data at build time
   const [allPartners, allProducts, categories] = await Promise.all([
-    staticDataService.getAllPartners(),
-    staticDataService.getAllProducts(),
-    staticDataService.getCategories()
+    tinaCMSDataService.getAllPartners(),
+    tinaCMSDataService.getAllProducts(),
+    tinaCMSDataService.getCategories()
   ]);
 
   console.log(`📋 Loaded ${allPartners.length} partners, ${allProducts.length} products, ${categories.length} categories`);
@@ -40,7 +40,7 @@ export async function PartnersServer({ searchParams }: PartnersServerProps) {
     filteredPartners = filteredPartners.filter(partner => 
       partner.name.toLowerCase().includes(query) ||
       partner.description.toLowerCase().includes(query) ||
-      partner.tags.some(tag => tag.toLowerCase().includes(query))
+      (partner.tags && partner.tags.some(tag => tag.toLowerCase().includes(query)))
     );
   }
 
@@ -55,10 +55,12 @@ export async function PartnersServer({ searchParams }: PartnersServerProps) {
   // Create a map of partner products for quick lookup
   const partnerProductsMap = new Map<string, Product[]>();
   allProducts.forEach(product => {
-    if (!partnerProductsMap.has(product.partnerId)) {
+    if (product.partnerId && !partnerProductsMap.has(product.partnerId)) {
       partnerProductsMap.set(product.partnerId, []);
     }
-    partnerProductsMap.get(product.partnerId)?.push(product);
+    if (product.partnerId) {
+      partnerProductsMap.get(product.partnerId)?.push(product);
+    }
   });
 
   return (

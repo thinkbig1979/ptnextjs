@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Calendar, Users, Ship, Target, Award } from "lucide-react";
 import { AboutClient } from "./_components/about-client";
-import { staticDataService } from "@/lib/static-data-service";
+import { tinaCMSDataService } from "@/lib/tinacms-data-service";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 
 const values = [
@@ -40,8 +40,8 @@ const stats = [
 
 export default async function AboutPage() {
   // Fetch data at build time
-  const companyInfo = await staticDataService.getCompanyInfo();
-  const teamMembers = await staticDataService.getTeamMembers();
+  const companyInfo = await tinaCMSDataService.getCompanyInfo();
+  const teamMembers = await tinaCMSDataService.getTeamMembers();
 
   return (
     <div className="min-h-screen py-12">

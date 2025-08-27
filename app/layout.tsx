@@ -6,7 +6,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
 import { Toaster } from "@/components/ui/sonner";
-import { staticDataService } from "@/lib/static-data-service";
+import { TinaProvider } from "@/components/tina-provider";
+import { tinaCMSDataService } from "@/lib/tinacms-data-service";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,10 +29,10 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Static site generation - always use Strapi data
+  // Static site generation - always use TinaCMS data
   
   // Fetch company info at build time for footer
-  const companyInfo = await staticDataService.getCompanyInfo();
+  const companyInfo = await tinaCMSDataService.getCompanyInfo();
   
   return (
     <html lang="en" suppressHydrationWarning>
@@ -43,7 +44,7 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <script
           dangerouslySetInnerHTML={{
-            __html: `window.__USE_STRAPI__ = true;`,
+            __html: `window.__USE_TINACMS__ = true;`,
           }}
         />
         <script
@@ -114,21 +115,23 @@ export default async function RootLayout({
         />
       </head>
       <body className={inter.className} suppressHydrationWarning>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem={true}
-          disableTransitionOnChange={false}
-        >
-          <div className="min-h-screen flex flex-col">
-            <Navigation />
-            <main className="flex-1">
-              {children}
-            </main>
-            <Footer companyInfo={companyInfo} />
-          </div>
-          <Toaster />
-        </ThemeProvider>
+        <TinaProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem={true}
+            disableTransitionOnChange={false}
+          >
+            <div className="min-h-screen flex flex-col">
+              <Navigation />
+              <main className="flex-1">
+                {children}
+              </main>
+              <Footer companyInfo={companyInfo} />
+            </div>
+            <Toaster />
+          </ThemeProvider>
+        </TinaProvider>
       </body>
     </html>
   );

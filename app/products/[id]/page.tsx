@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { staticDataService } from "@/lib/static-data-service";
+import { tinaCMSDataService } from "@/lib/tinacms-data-service";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { notFound, redirect } from "next/navigation";
 import ProductDetailClient from "./_components/product-detail-client";
@@ -30,7 +30,7 @@ export const revalidate = false;
 export async function generateStaticParams() {
   try {
     console.log('🏗️  Generating static params for product pages...');
-    const products = await staticDataService.getAllProducts();
+    const products = await tinaCMSDataService.getAllProducts();
     console.log(`📋 Found ${products.length} products for static generation`);
     
     // Generate params for both IDs and slugs for backward compatibility
@@ -70,11 +70,11 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   }
 
   // Try to find product by slug first, then by ID
-  let product = await staticDataService.getProductBySlug(id);
+  let product = await tinaCMSDataService.getProductBySlug(id);
   
   if (!product) {
     // Try to find by ID if not found by slug
-    product = await staticDataService.getProductById(id);
+    product = await tinaCMSDataService.getProductById(id);
     
     // If found by ID and has a slug, redirect to slug-based URL for SEO
     if (product && product.slug && product.slug !== id) {
@@ -90,7 +90,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   console.log(`✅ Loading product: ${product.name}`);
 
   // Find the partner information
-  const partner = await staticDataService.getPartnerById(product.partnerId);
+  const partner = product.partnerId ? await tinaCMSDataService.getPartnerById(product.partnerId) : null;
   if (partner) {
     console.log(`🤝 Partner found: ${partner.name}`);
   }
@@ -115,9 +115,9 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   ];
 
   // Get all product images (main + gallery)
-  const allImages = product?.images && product.images.length > 0 ? product.images : [];
+  const allImages = Array.isArray(product?.images) && product.images.length > 0 ? product.images : [];
   const mainImage = product?.mainImage || allImages[0];
-  const galleryImages = allImages.filter(img => !img.isMain);
+  const galleryImages = allImages.filter(img => img && !img.isMain) || [];
 
   return (
     <div className="min-h-screen py-12">
@@ -184,7 +184,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                 </div>
 
                 {/* Image Gallery */}
-                {galleryImages.length > 0 && (
+                {galleryImages && galleryImages.length > 0 && (
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {galleryImages.slice(0, 4).map((image) => (
                       <div key={image.id} className="cursor-pointer hover:opacity-80 transition-opacity rounded-lg border overflow-hidden">
@@ -205,17 +205,21 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             </div>
 
             {/* Key Features */}
-            <div className="mb-8">
-              <h2 className="text-2xl font-cormorant font-bold mb-4">Key Features</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {product.features.map((feature, index) => (
-                  <div key={index} className="flex items-start space-x-3 p-4 bg-card rounded-lg border">
-                    <Star className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                    <span className="font-poppins-light">{feature}</span>
-                  </div>
-                ))}
+            {Array.isArray(product.features) && product.features.length > 0 && (
+              <div className="mb-8">
+                <h2 className="text-2xl font-cormorant font-bold mb-4">Key Features</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {product.features.map((feature, index) => (
+                    <div key={feature?.id || index} className="flex items-start space-x-3 p-4 bg-card rounded-lg border">
+                      <Star className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                      <span className="font-poppins-light">
+                        {typeof feature === 'string' ? feature : (feature?.title || 'Feature')}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Benefits */}
             <div className="mb-8">
@@ -323,9 +327,9 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                                 {partner.name}
                               </div>
                               <div className="text-sm text-muted-foreground leading-relaxed word-wrap break-words hyphens-auto">
-                                {partner.description.length > 120 
+                                {partner.description && partner.description.length > 120 
                                   ? `${partner.description.substring(0, 120)}...` 
-                                  : partner.description}
+                                  : partner.description || 'Partner description coming soon.'}
                               </div>
                               <div className="flex items-center text-accent text-sm mt-2">
                                 <span className="mr-1">Learn more</span>
@@ -341,16 +345,18 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                   <Separator />
 
                   {/* Tags */}
-                  <div>
-                    <h4 className="font-medium mb-2">Categories</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {product.tags.map((tag) => (
-                        <Badge key={tag} variant="outline" className="text-xs break-words">
-                          {tag}
-                        </Badge>
-                      ))}
+                  {Array.isArray(product.tags) && product.tags.length > 0 && (
+                    <div>
+                      <h4 className="font-medium mb-2">Categories</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {product.tags.map((tag) => (
+                          <Badge key={tag} variant="outline" className="text-xs break-words">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </CardContent>
               </Card>
             </div>

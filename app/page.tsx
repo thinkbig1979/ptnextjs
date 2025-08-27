@@ -4,13 +4,13 @@ import { FeaturedPartnersSection } from "@/components/featured-partners-section"
 import { ServicesOverviewSection } from "@/components/services-overview-section";
 import { FeaturedBlogSection } from "@/components/featured-blog-section";
 import { CTASection } from "@/components/cta-section";
-import { staticDataService } from "@/lib/static-data-service";
+import { tinaCMSDataService } from "@/lib/tinacms-data-service";
 
 export default async function HomePage() {
   const [companyInfo, featuredPartners, featuredPosts] = await Promise.all([
-    staticDataService.getCompanyInfo(),
-    staticDataService.getPartners({ featured: true }),
-    staticDataService.getBlogPosts({ featured: true })
+    tinaCMSDataService.getCompanyInfo(),
+    tinaCMSDataService.getPartners({ featured: true }),
+    tinaCMSDataService.getBlogPosts({ featured: true })
   ]);
 
   return (

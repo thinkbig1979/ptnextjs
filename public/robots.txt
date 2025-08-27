@@ -1,0 +1,32 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://paulthamessuperyachttechnology.com/sitemap.xml
+
+# Crawl delays and specific directives
+Crawl-delay: 1
+
+# Block admin areas
+Disallow: /admin/
+Disallow: /api/
+
+# Block development files
+Disallow: /_next/
+Disallow: /scripts/
+Disallow: /migration-scripts/
+
+# Allow important pages
+Allow: /
+Allow: /products
+Allow: /partners
+Allow: /blog
+Allow: /about
+Allow: /contact
+
+# Additional crawling hints
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /

@@ -3,12 +3,12 @@
 import * as React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
-import { staticDataService } from "@/lib/static-data-service";
+import { tinaCMSDataService } from "@/lib/tinacms-data-service";
 import { ContactClient } from "./_components/contact-client";
 
 export default async function ContactPage() {
   // Fetch company info at build time
-  const companyInfo = await staticDataService.getCompanyInfo();
+  const companyInfo = await tinaCMSDataService.getCompanyInfo();
   
   const contactInfo = [
     {
