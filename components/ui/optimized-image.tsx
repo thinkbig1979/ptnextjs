@@ -3,12 +3,12 @@
 import * as React from "react";
 import Image, { ImageProps } from "next/image";
 import { cn } from "@/lib/utils";
-import { Package, Building2, Users, Ship, Briefcase } from "lucide-react";
+import { Package, Building2, Users, Ship, Briefcase, FileText, Tag } from "lucide-react";
 
 interface OptimizedImageProps extends Omit<ImageProps, 'src'> {
   src?: string | null;
   alt: string;
-  fallbackType?: 'product' | 'partner' | 'team' | 'company' | 'generic';
+  fallbackType?: 'product' | 'partner' | 'team' | 'company' | 'generic' | 'blog' | 'category';
   className?: string;
   aspectRatio?: 'square' | 'video' | 'portrait' | 'landscape';
   showIcon?: boolean;
@@ -21,6 +21,8 @@ const placeholderImages = {
   team: '/media/team/placeholders/team-member-placeholder.svg',
   company: '/media/system/placeholders/logo-placeholder.svg',
   generic: '/media/system/placeholders/image-placeholder.svg',
+  blog: '/media/blog/placeholders/blog-post-placeholder.svg',
+  category: '/media/categories/placeholders/category-icon-placeholder.svg',
 };
 
 const fallbackIcons = {
@@ -29,6 +31,8 @@ const fallbackIcons = {
   team: Users,
   company: Ship,
   generic: Briefcase,
+  blog: FileText,
+  category: Tag,
 };
 
 const iconSizes = {
@@ -115,31 +119,17 @@ export function OptimizedImage({
     );
   }
 
-  // Fallback placeholder
+  // Contextual icon fallback (no more placeholder SVGs)
   return (
     <div className={containerClasses}>
-      {/* Try to use placeholder image first */}
-      {placeholderImages[fallbackType] ? (
-        <Image
-          src={placeholderImages[fallbackType]}
-          alt={`${fallbackType} placeholder`}
-          fill={fill}
-          className="object-cover opacity-80"
-          {...props}
-        />
-      ) : null}
-      
-      {/* Icon overlay */}
-      {showIcon && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center space-y-2">
-            <FallbackIcon className={cn(iconSizes[iconSize], 'text-accent/60 mx-auto')} />
-            <p className="text-xs text-muted-foreground capitalize">
-              {fallbackType} Image
-            </p>
-          </div>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="text-center space-y-2">
+          <FallbackIcon className={cn(iconSizes[iconSize], 'text-accent/60 mx-auto')} />
+          <p className="text-xs text-muted-foreground capitalize">
+            {fallbackType === 'partner' ? 'Vendor' : fallbackType}
+          </p>
         </div>
-      )}
+      </div>
     </div>
   );
 }

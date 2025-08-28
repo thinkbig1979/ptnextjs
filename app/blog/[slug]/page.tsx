@@ -116,7 +116,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               <OptimizedImage
                 src={post.image}
                 alt={post.title}
-                fallbackType="generic"
+                fallbackType="blog"
                 aspectRatio="video"
                 fill
                 className="object-cover"

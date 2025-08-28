@@ -115,7 +115,7 @@ export function BlogClient({ blogPosts, categories }: BlogClientProps) {
                 <OptimizedImage
                   src={post?.image}
                   alt={post?.title || 'Blog post image'}
-                  fallbackType="generic"
+                  fallbackType="blog"
                   aspectRatio="video"
                   fill
                   className="group-hover:scale-105 transition-transform duration-300"
