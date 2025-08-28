@@ -38,14 +38,14 @@ export function VendorCard({
       transition={{ duration: 0.6, delay: 0.1 * animationIndex }}
     >
       <Card className={`h-full hover-lift cursor-pointer group ${isHighlighted ? 'ring-2 ring-accent shadow-lg' : ''}`}>
-        {/* Vendor Image */}
+        {/* Company Logo */}
         <OptimizedImage
-          src={vendor?.image}
-          alt={`${vendor?.name} company overview` || 'Vendor company overview'}
+          src={vendor?.logo}
+          alt={`${vendor?.name} company logo` || 'Vendor company logo'}
           fallbackType="partner"
           aspectRatio="video"
           fill
-          className="group-hover:scale-105 transition-transform duration-300"
+          className="group-hover:scale-105 transition-transform duration-300 object-contain bg-white p-4"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
         

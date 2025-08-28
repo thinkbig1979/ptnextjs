@@ -176,9 +176,27 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
                 {vendor.partner && <Badge variant="default" className="bg-green-600">Partner</Badge>}
               </div>
               
-              <h1 className="text-4xl md:text-5xl font-cormorant font-bold mb-4">
-                {vendor.name}
-              </h1>
+              {/* Company Logo and Name Header */}
+              <div className="flex items-center space-x-6 mb-6">
+                {vendor.logo && (
+                  <div className="flex-shrink-0">
+                    <OptimizedImage
+                      src={vendor.logo}
+                      alt={`${vendor.name} logo`}
+                      fallbackType="partner"
+                      aspectRatio="square"
+                      fill={false}
+                      className="w-20 h-20 object-contain bg-white rounded-lg border border-border p-2"
+                      sizes="80px"
+                    />
+                  </div>
+                )}
+                <div className="flex-grow">
+                  <h1 className="text-4xl md:text-5xl font-cormorant font-bold">
+                    {vendor.name}
+                  </h1>
+                </div>
+              </div>
               
               <p className="text-xl text-muted-foreground mb-6 font-poppins-light leading-relaxed">
                 {vendor.description}
