@@ -304,6 +304,29 @@ const vendorCollection = {
       description: "Indicates if this vendor is also a strategic partner (true for existing partners, false for suppliers-only)",
     },
     
+    // Services Component
+    {
+      type: "object" as const,
+      name: "services",
+      label: "Services & Support",
+      list: true,
+      description: "Services and support offered by this vendor",
+      fields: [
+        {
+          type: "string" as const,
+          name: "service",
+          label: "Service Name",
+          required: true,
+          description: "Name of the service or support offering",
+        },
+      ],
+      ui: {
+        itemProps: (item: any) => ({
+          label: item?.service || "Service",
+        }),
+      },
+    },
+    
     // Relationships
     {
       type: "reference" as const,
@@ -827,6 +850,13 @@ const companyInfoCollection = {
       label: "Company Story",
       required: true,
       description: "Extended company story and background",
+    },
+    {
+      type: "rich-text" as const,
+      name: "mission",
+      label: "Company Mission Statement",
+      required: true,
+      description: "Company mission statement displayed on vendor/partner pages",
     },
     {
       type: "image" as const,

@@ -1,12 +1,14 @@
 ---
 name: Alfa Laval
 slug: alfa-laval
+description: ''
 logo: ''
 image: ''
 website: ''
 founded: 2017
 location: International
 featured: false
+partner: false
 category: content/categories/water-management-systems.md
 tags: []
 seo:
@@ -16,19 +18,5 @@ seo:
     waste treatment solutions with global service network and yacht-specific d
   keywords: 'marine technology, alfa laval, water management systems'
   og_image: ''
-partner: true
 ---
 
-# Alfa Laval
-
-Marine technology leader offering PureBallast BWMS, freshwater systems, and waste treatment solutions with global service network and yacht-specific designs.
-
-
-
-## Location
-
-International
-
-## Company History
-
-Founded in 2017

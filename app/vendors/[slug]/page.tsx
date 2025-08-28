@@ -118,8 +118,11 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
 
   console.log(`✅ Loading vendor: ${vendor.name}`);
 
-  // Find products from this vendor
-  const vendorProducts = await tinaCMSDataService.getProductsByVendor(vendor.id);
+  // Find products from this vendor and get company info for mission
+  const [vendorProducts, companyInfo] = await Promise.all([
+    tinaCMSDataService.getProductsByVendor(vendor.id),
+    tinaCMSDataService.getCompanyInfo()
+  ]);
   console.log(`📦 Found ${vendorProducts.length} products for vendor: ${vendor.name}`);
 
   // Generate placeholder data
@@ -130,14 +133,17 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
     { icon: Lightbulb, title: "Innovation Focus", description: "R&D investment of 15% of annual revenue" }
   ];
 
-  const services = [
-    "Custom System Design & Integration",
-    "Professional Installation Services",
-    "24/7 Technical Support", 
-    "Comprehensive Training Programs",
-    "Preventive Maintenance Plans",
-    "Warranty & Extended Service Options"
-  ];
+  // Get services from vendor data or use fallback
+  const services = vendor.services && vendor.services.length > 0 
+    ? vendor.services.map((s: any) => s.service)
+    : [
+        "Custom System Design & Integration",
+        "Professional Installation Services",
+        "24/7 Technical Support", 
+        "Comprehensive Training Programs",
+        "Preventive Maintenance Plans",
+        "Warranty & Extended Service Options"
+      ];
 
   const companyStats = [
     { label: "Years in Business", value: new Date().getFullYear() - (vendor.founded || 2000) },
@@ -322,11 +328,11 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground font-poppins-light leading-relaxed">
-                    At {vendor.name}, we are dedicated to revolutionizing the superyacht industry through 
+                    {companyInfo?.mission || `At ${vendor.name}, we are dedicated to revolutionizing the superyacht industry through 
                     cutting-edge technology solutions. Our commitment to excellence drives us to deliver 
                     innovative products that enhance safety, efficiency, and luxury aboard the world's 
                     finest vessels. We partner with yacht owners, builders, and operators to create 
-                    seamless integration of advanced marine technologies.
+                    seamless integration of advanced marine technologies.`}
                   </p>
                 </CardContent>
               </Card>

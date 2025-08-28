@@ -8,8 +8,8 @@ description: >
   Caterpillar Marine ensure that you have an engine on board that will work as
   hard as you do. Select from our wide range of Commercial Propulsion Engines,
   High Performance Propulsion Engines, Marine Generators, and Auxiliary Engines.
-logo: /media/vendors/placeholders/vendor-logo-placeholder.svg
-image: /media/vendors/placeholders/vendor-image-placeholder.svg
+logo: /media/vendors/logos/caterpillar-marine-logo.png
+image: /media/vendors/images/caterpillar-marine-overview.jpg
 website: 'https://www.cat.com/en_US/products/new/power-systems/marine-power-systems.html'
 founded: 2015
 location: International
@@ -17,6 +17,13 @@ featured: false
 partner: false
 category: content/categories/propulsion-systems.md
 tags: []
+services:
+  - service: Custom System Design & Integration
+  - service: Professional Installation Services
+  - service: 24/7 Technical Support
+  - service: Comprehensive Training Programs
+  - service: Preventive Maintenance Plans
+  - service: Warranty & Extended Service Options
 seo:
   meta_title: Caterpillar Marine - Marine Technology Partner | Paul Thames
   meta_description: >-

@@ -1,12 +1,14 @@
 ---
 name: Furuno Electric Co.
 slug: furuno-electric-co-
+description: ''
 logo: ''
 image: ''
 website: ''
 founded: 2004
 location: International
 featured: false
+partner: false
 category: content/categories/navigation-systems.md
 tags: []
 seo:
@@ -16,19 +18,5 @@ seo:
     speed-logs and AIS systems with decades of commercial and recreational na
   keywords: 'marine technology, furuno electric co., navigation systems'
   og_image: ''
-partner: true
 ---
 
-# Furuno Electric Co.
-
-Global supplier of marine radar, GPS/chartplotter, ECDIS/INS, echo-sounders, speed-logs and AIS systems with decades of commercial and recreational navigation experience.
-
-
-
-## Location
-
-International
-
-## Company History
-
-Founded in 2004

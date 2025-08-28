@@ -77,8 +77,11 @@ export default async function PartnerDetailPage({ params }: PartnerDetailPagePro
 
   console.log(`✅ Loading partner: ${partner.name}`);
 
-  // Find products from this partner
-  const partnerProducts = await tinaCMSDataService.getProductsByPartner(partner.id);
+  // Find products from this partner and get company info for mission
+  const [partnerProducts, companyInfo] = await Promise.all([
+    tinaCMSDataService.getProductsByPartner(partner.id),
+    tinaCMSDataService.getCompanyInfo()
+  ]);
   console.log(`📦 Found ${partnerProducts.length} products for partner: ${partner.name}`);
 
   // Generate placeholder data
@@ -89,14 +92,17 @@ export default async function PartnerDetailPage({ params }: PartnerDetailPagePro
     { icon: Lightbulb, title: "Innovation Focus", description: "R&D investment of 15% of annual revenue" }
   ];
 
-  const services = [
-    "Custom System Design & Integration",
-    "Professional Installation Services",
-    "24/7 Technical Support",
-    "Comprehensive Training Programs",
-    "Preventive Maintenance Plans",
-    "Warranty & Extended Service Options"
-  ];
+  // Get services from partner data or use fallback
+  const services = partner.services && partner.services.length > 0 
+    ? partner.services.map((s: any) => s.service)
+    : [
+        "Custom System Design & Integration",
+        "Professional Installation Services",
+        "24/7 Technical Support",
+        "Comprehensive Training Programs",
+        "Preventive Maintenance Plans",
+        "Warranty & Extended Service Options"
+      ];
 
   const companyStats = [
     { label: "Years in Business", value: new Date().getFullYear() - (partner.founded || 2000) },
@@ -280,11 +286,11 @@ export default async function PartnerDetailPage({ params }: PartnerDetailPagePro
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground font-poppins-light leading-relaxed">
-                    At {partner.name}, we are dedicated to revolutionizing the superyacht industry through 
+                    {companyInfo?.mission || `At ${partner.name}, we are dedicated to revolutionizing the superyacht industry through 
                     cutting-edge technology solutions. Our commitment to excellence drives us to deliver 
                     innovative products that enhance safety, efficiency, and luxury aboard the world's 
                     finest vessels. We partner with yacht owners, builders, and operators to create 
-                    seamless integration of advanced marine technologies.
+                    seamless integration of advanced marine technologies.`}
                   </p>
                 </CardContent>
               </Card>
