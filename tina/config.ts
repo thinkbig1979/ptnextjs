@@ -313,12 +313,25 @@ const vendorCollection = {
       description: "Main technology category for this vendor",
     },
     {
-      type: "reference" as const,
+      type: "object" as const,
       name: "tags",
       label: "Technology Tags",
-      collections: ["tag"],
       list: true,
       description: "Relevant technology tags for this vendor",
+      fields: [
+        {
+          type: "reference" as const,
+          name: "tag",
+          label: "Tag",
+          collections: ["tag"],
+          required: true,
+        },
+      ],
+      ui: {
+        itemProps: (item: any) => ({
+          label: item?.tag?.name || "Select Tag",
+        }),
+      },
     },
     
     // SEO Component
@@ -392,12 +405,25 @@ const productCollection = {
       description: "Primary category for this product",
     },
     {
-      type: "reference" as const,
+      type: "object" as const,
       name: "tags",
       label: "Product Tags",
-      collections: ["tag"],
       list: true,
       description: "Relevant tags for this product",
+      fields: [
+        {
+          type: "reference" as const,
+          name: "tag",
+          label: "Tag",
+          collections: ["tag"],
+          required: true,
+        },
+      ],
+      ui: {
+        itemProps: (item: any) => ({
+          label: item?.tag?.name || "Select Tag",
+        }),
+      },
     },
     
     // Product Images Component
@@ -602,12 +628,25 @@ const blogPostCollection = {
       description: "Primary category for blog organization",
     },
     {
-      type: "reference" as const,
+      type: "object" as const,
       name: "tags",
       label: "Tags",
-      collections: ["tag"],
       list: true,
       description: "Relevant tags for this post",
+      fields: [
+        {
+          type: "reference" as const,
+          name: "tag",
+          label: "Tag",
+          collections: ["tag"],
+          required: true,
+        },
+      ],
+      ui: {
+        itemProps: (item: any) => ({
+          label: item?.tag?.name || "Select Tag",
+        }),
+      },
     },
     
     // SEO Component
