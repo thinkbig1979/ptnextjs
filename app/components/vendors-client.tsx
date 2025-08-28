@@ -17,6 +17,7 @@ interface VendorsClientProps {
   initialCategories: string[];
   initialProducts?: Product[];
   showPartnersOnly?: boolean; // Filter to show only partners (partner: true)
+  showNonPartnersOnly?: boolean; // Filter to show only non-partners (partner: false or undefined)
   baseUrl?: string; // "/partners" or "/vendors"
   pageTitle?: string; // For dynamic page title in results
 }
@@ -26,6 +27,7 @@ export function VendorsClient({
   initialCategories, 
   initialProducts = [],
   showPartnersOnly = false,
+  showNonPartnersOnly = false,
   baseUrl = "/vendors",
   pageTitle = "vendors"
 }: VendorsClientProps) {
@@ -72,6 +74,11 @@ export function VendorsClient({
       filtered = filtered.filter(vendor => vendor.partner === true);
     }
 
+    // Apply non-partner filter if showNonPartnersOnly is true
+    if (showNonPartnersOnly) {
+      filtered = filtered.filter(vendor => vendor.partner !== true);
+    }
+
     // Apply search filter
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
@@ -96,7 +103,7 @@ export function VendorsClient({
     }
 
     return filtered;
-  }, [initialVendors, searchQuery, selectedCategory, highlightedVendor, showPartnersOnly]);
+  }, [initialVendors, searchQuery, selectedCategory, highlightedVendor, showPartnersOnly, showNonPartnersOnly]);
 
   // Paginate results
   const totalPages = Math.ceil(filteredVendors.length / ITEMS_PER_PAGE);

@@ -11,7 +11,8 @@ featured: true
 read_time: 8 min read
 image: /media/blog/placeholders/blog-post-placeholder.svg
 blog_category: content/blog/categories/technology-trends.md
-tags: content/tags/radar.md
+tags:
+  - content/tags/radar.md
 seo:
   meta_title: AI-Driven Automation in Marine Technology | Paul Thames
   meta_description: >-
@@ -27,7 +28,7 @@ seo:
 
 The maritime industry stands on the brink of a technological revolution. Artificial intelligence and machine learning are transforming how we design, operate, and maintain marine vessels, ushering in an era of unprecedented automation and efficiency.
 
-![](</public/media/pixel lighting 3.png>)
+![](/public/media/pixel%20lighting%203.png)
 
 ## The Current Landscape
 

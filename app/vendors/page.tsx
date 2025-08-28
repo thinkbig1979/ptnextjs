@@ -83,7 +83,7 @@ export default async function VendorsPage({ searchParams }: VendorsPageProps) {
             initialVendors={vendors}
             initialCategories={categoryNames}
             initialProducts={products}
-            showPartnersOnly={false} // Show ALL vendors
+            showNonPartnersOnly={true} // Show only non-partners (vendors that are NOT partners)
             baseUrl="/vendors"
             pageTitle="vendors"
           />

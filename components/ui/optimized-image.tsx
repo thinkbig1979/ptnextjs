@@ -17,7 +17,7 @@ interface OptimizedImageProps extends Omit<ImageProps, 'src'> {
 
 const placeholderImages = {
   product: '/media/products/placeholders/product-image-placeholder.svg',
-  partner: '/media/partners/placeholders/partner-image-placeholder.svg',
+  partner: '/media/vendors/placeholders/vendor-image-placeholder.svg',
   team: '/media/team/placeholders/team-member-placeholder.svg',
   company: '/media/system/placeholders/logo-placeholder.svg',
   generic: '/media/system/placeholders/image-placeholder.svg',
