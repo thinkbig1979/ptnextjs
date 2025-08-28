@@ -15,8 +15,6 @@ founded: 2015
 location: International
 featured: false
 partner: false
-category: content/categories/propulsion-systems.md
-tags: []
 services:
   - service: Custom System Design & Integration
   - service: Professional Installation Services
@@ -24,6 +22,8 @@ services:
   - service: Comprehensive Training Programs
   - service: Preventive Maintenance Plans
   - service: Warranty & Extended Service Options
+category: content/categories/propulsion-systems.md
+tags: []
 seo:
   meta_title: Caterpillar Marine - Marine Technology Partner | Paul Thames
   meta_description: >-

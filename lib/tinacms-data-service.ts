@@ -100,6 +100,9 @@ class TinaCMSDataService {
     // If it starts with '/media/', it's already correct for public access
     if (mediaPath.startsWith('/media/')) return mediaPath
     
+    // If it starts with '/public/media/', remove the '/public' prefix
+    if (mediaPath.startsWith('/public/media/')) return mediaPath.replace('/public', '')
+    
     // If it starts with 'media/', add leading slash
     if (mediaPath.startsWith('media/')) return `/${mediaPath}`
     
@@ -122,6 +125,7 @@ class TinaCMSDataService {
       tags: [], // Will be resolved later
       featured: tinaVendor.featured || false,
       partner: tinaVendor.partner !== undefined ? tinaVendor.partner : true, // Default to true for existing records
+      services: tinaVendor.services || [], // Include services field
     }
   }
 
