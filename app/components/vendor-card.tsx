@@ -17,7 +17,7 @@ interface VendorCardProps {
   animationIndex?: number;
   inView?: boolean;
   onCategoryClick?: (category: string) => void;
-  onNavigateToProducts?: (vendorName: string) => void;
+  onNavigateToProducts?: (vendor: Vendor) => void;
   baseUrl?: string; // "/partners" or "/vendors"
 }
 
@@ -123,7 +123,9 @@ export function VendorCard({
                   className="w-full group bg-accent hover:bg-accent/90"
                   onClick={(e) => {
                     e.stopPropagation();
-                    onNavigateToProducts?.(vendor?.name || '');
+                    if (vendor) {
+                      onNavigateToProducts?.(vendor);
+                    }
                   }}
                 >
                   See Products & Services ({vendorProducts.length})

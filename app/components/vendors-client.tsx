@@ -55,8 +55,14 @@ export function VendorsClient({
   }, [searchParams]);
 
   // Navigation functions
-  const navigateToProducts = React.useCallback((vendorName: string) => {
-    const url = `/products?partner=${encodeURIComponent(vendorName)}`;
+  const navigateToProducts = React.useCallback((vendor: Vendor) => {
+    let url = `/products?partner=${encodeURIComponent(vendor.name)}`;
+    
+    // If vendor is not a partner, add view=all to show all vendors' products by default
+    if (!vendor.partner) {
+      url += '&view=all';
+    }
+    
     router.push(url);
   }, [router]);
 
