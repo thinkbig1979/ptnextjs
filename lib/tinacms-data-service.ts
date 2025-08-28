@@ -103,6 +103,15 @@ class TinaCMSDataService {
     // If it starts with '/public/media/', remove the '/public' prefix
     if (mediaPath.startsWith('/public/media/')) return mediaPath.replace('/public', '')
     
+    // If it starts with '/public/', remove the '/public' prefix and add '/media'
+    if (mediaPath.startsWith('/public/')) return mediaPath.replace('/public', '/media')
+    
+    // If it starts with 'public/media/', remove 'public/' prefix and add leading slash
+    if (mediaPath.startsWith('public/media/')) return `/${mediaPath.replace('public/', '')}`
+    
+    // If it starts with 'public/', replace with '/media/'
+    if (mediaPath.startsWith('public/')) return mediaPath.replace('public/', '/media/')
+    
     // If it starts with 'media/', add leading slash
     if (mediaPath.startsWith('media/')) return `/${mediaPath}`
     
