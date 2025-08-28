@@ -15,15 +15,7 @@ interface OptimizedImageProps extends Omit<ImageProps, 'src'> {
   iconSize?: 'sm' | 'md' | 'lg';
 }
 
-const placeholderImages = {
-  product: '/media/products/placeholders/product-image-placeholder.svg',
-  partner: '/media/vendors/placeholders/vendor-image-placeholder.svg',
-  team: '/media/team/placeholders/team-member-placeholder.svg',
-  company: '/media/system/placeholders/logo-placeholder.svg',
-  generic: '/media/system/placeholders/image-placeholder.svg',
-  blog: '/media/blog/placeholders/blog-post-placeholder.svg',
-  category: '/media/categories/placeholders/category-icon-placeholder.svg',
-};
+// Placeholder SVGs removed - now using contextual icons only
 
 const fallbackIcons = {
   product: Package,

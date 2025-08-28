@@ -9,7 +9,7 @@ author: Paul Thames
 published_at: 2024-08-15T10:00:00.000Z
 featured: true
 read_time: 8 min read
-image: /media/blog/placeholders/blog-post-placeholder.svg
+# image: # No image specified - will use contextual icon fallback
 blog_category: content/blog/categories/technology-trends.md
 tags:
   - content/tags/radar.md

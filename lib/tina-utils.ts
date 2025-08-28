@@ -140,15 +140,9 @@ export function getMediaUrl(mediaPath?: string, fallbackType?: string): string {
     return mediaPath;
   }
   
-  const placeholders = {
-    logo: '/media/system/placeholders/logo-placeholder.svg',
-    avatar: '/media/system/placeholders/avatar-placeholder.svg', 
-    product: '/media/system/placeholders/image-placeholder.svg',
-    hero: '/media/system/placeholders/image-placeholder.svg',
-    default: '/media/system/placeholders/image-placeholder.svg'
-  };
-  
-  return placeholders[fallbackType as keyof typeof placeholders] || placeholders.default;
+  // Placeholder SVGs removed - OptimizedImage component now uses contextual icons
+  // Return empty string to let OptimizedImage handle fallback with contextual icons
+  return '';
 }
 
 /**

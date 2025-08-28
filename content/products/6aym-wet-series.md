@@ -8,9 +8,8 @@ price: Contact for pricing
 vendor: content/vendors/yanmar-marine.md
 category: content/categories/propulsion-systems.md
 tags: []
-product_images:
-  - image: /media/products/placeholders/product-image-placeholder.svg
-    is_main: true
+product_images: []
+# No product images specified - will use contextual icon fallback
 features: []
 seo:
   meta_title: 6AYM-WET Series - Yanmar Marine | Paul Thames

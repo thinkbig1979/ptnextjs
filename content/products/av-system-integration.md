@@ -8,10 +8,8 @@ price: Contact for pricing
 vendor: content/vendors/triton-technical.md
 category: content/categories/communication-&-entertainment.md
 tags: []
-product_images:
-  - image: /media/products/placeholders/product-image-placeholder.svg
-    alt_text: speaker
-    is_main: true
+product_images: []
+# No product images specified - will use contextual icon fallback
 features: []
 seo:
   meta_title: AV System Integration - Triton Technical | Paul Thames
