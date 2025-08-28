@@ -186,6 +186,8 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
                       fallbackType="partner"
                       aspectRatio="square"
                       fill={false}
+                      width={80}
+                      height={80}
                       className="w-20 h-20 object-contain bg-white rounded-lg border border-border p-2"
                       sizes="80px"
                     />
