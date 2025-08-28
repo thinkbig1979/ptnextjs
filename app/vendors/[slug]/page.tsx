@@ -328,7 +328,7 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground font-poppins-light leading-relaxed">
-                    {companyInfo?.mission || `At ${vendor.name}, we are dedicated to revolutionizing the superyacht industry through 
+                    {(companyInfo as any)?.mission || `At ${vendor.name}, we are dedicated to revolutionizing the superyacht industry through 
                     cutting-edge technology solutions. Our commitment to excellence drives us to deliver 
                     innovative products that enhance safety, efficiency, and luxury aboard the world's 
                     finest vessels. We partner with yacht owners, builders, and operators to create 

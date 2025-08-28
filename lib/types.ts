@@ -92,6 +92,10 @@ export interface Tag {
 }
 
 // Main application types
+export interface VendorService {
+  service: string;
+}
+
 export interface Vendor {
   id: string;
   slug?: string;
@@ -112,6 +116,7 @@ export interface Vendor {
   category?: string; // Resolved category name
   tags?: string[]; // Resolved tag names array
   products?: Product[];
+  services?: VendorService[]; // Services offered by vendor
   seo?: SEO;
   
   // Computed/backward compatibility fields
@@ -142,6 +147,7 @@ export interface Partner {
   category?: string; // Resolved category name
   tags?: string[]; // Resolved tag names array
   products?: Product[];
+  services?: VendorService[]; // Services offered by partner
   seo?: SEO;
   
   // Computed/backward compatibility fields
@@ -237,6 +243,7 @@ export interface CompanyInfo {
   phone: string;
   email: string;
   story: string;
+  mission?: string; // Company mission statement
   logo?: string; // TinaCMS uses direct string paths
   createdAt?: string;
   updatedAt?: string;
