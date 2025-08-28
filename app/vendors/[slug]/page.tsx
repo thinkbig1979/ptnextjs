@@ -179,7 +179,7 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
               {/* Company Logo and Name Header */}
               <div className="flex items-center space-x-6 mb-6">
                 {vendor.logo && (
-                  <div className="flex-shrink-0">
+                  <div className="flex-shrink-0 flex items-center justify-center">
                     <OptimizedImage
                       src={vendor.logo}
                       alt={`${vendor.name} logo`}
