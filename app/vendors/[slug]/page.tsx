@@ -177,9 +177,9 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
               </div>
               
               {/* Company Logo and Name Header */}
-              <div className="flex items-center space-x-6 mb-6">
+              <div className="flex items-start space-x-6 mb-6">
                 {vendor.logo && (
-                  <div className="flex-shrink-0 flex items-center justify-center">
+                  <div className="flex-shrink-0 mt-2">
                     <OptimizedImage
                       src={vendor.logo}
                       alt={`${vendor.name} logo`}
@@ -194,7 +194,7 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
                   </div>
                 )}
                 <div className="flex-grow">
-                  <h1 className="text-4xl md:text-5xl font-cormorant font-bold">
+                  <h1 className="text-4xl md:text-5xl font-cormorant font-bold leading-tight">
                     {vendor.name}
                   </h1>
                 </div>
