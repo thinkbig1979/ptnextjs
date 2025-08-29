@@ -649,6 +649,297 @@ const productCollection = {
       },
     },
     
+    // Product Specifications Component
+    {
+      type: "object" as const,
+      name: "specifications",
+      label: "Technical Specifications",
+      list: true,
+      description: "Technical specifications for the product",
+      fields: [
+        {
+          type: "string" as const,
+          name: "label",
+          label: "Specification Label",
+          required: true,
+          description: "Label for the specification (e.g., 'Power Rating', 'Operating Voltage')",
+        },
+        {
+          type: "string" as const,
+          name: "value",
+          label: "Specification Value",
+          required: true,
+          description: "Value for the specification (e.g., '50-100kW', '12V/24V DC')",
+        },
+        {
+          type: "number" as const,
+          name: "order",
+          label: "Display Order",
+          ui: {
+            component: "number",
+            parse: (value: any) => Number(value),
+            format: (value: any) => value?.toString(),
+          },
+          description: "Sort order for specifications display",
+        },
+      ],
+      ui: {
+        itemProps: (item: any) => ({
+          label: `${item?.label || "Specification"}: ${item?.value || ""}`,
+        }),
+      },
+    },
+    
+    // Product Benefits Component
+    {
+      type: "object" as const,
+      name: "benefits",
+      label: "Product Benefits",
+      list: true,
+      description: "Key benefits and advantages of the product",
+      fields: [
+        {
+          type: "string" as const,
+          name: "benefit",
+          label: "Benefit Description",
+          required: true,
+          description: "Description of the product benefit",
+        },
+        {
+          type: "string" as const,
+          name: "icon",
+          label: "Benefit Icon",
+          description: "Lucide icon name for the benefit (e.g., 'CheckCircle', 'Zap', 'Shield')",
+        },
+        {
+          type: "number" as const,
+          name: "order",
+          label: "Display Order",
+          ui: {
+            component: "number",
+            parse: (value: any) => Number(value),
+            format: (value: any) => value?.toString(),
+          },
+          description: "Sort order for benefits display",
+        },
+      ],
+      ui: {
+        itemProps: (item: any) => ({
+          label: item?.benefit || "Product Benefit",
+        }),
+      },
+    },
+    
+    // Product Services Component
+    {
+      type: "object" as const,
+      name: "services",
+      label: "Installation & Support Services",
+      list: true,
+      description: "Services offered with this product",
+      fields: [
+        {
+          type: "string" as const,
+          name: "title",
+          label: "Service Title",
+          required: true,
+          description: "Title of the service (e.g., 'Professional Installation', 'Ongoing Support')",
+        },
+        {
+          type: "string" as const,
+          name: "description",
+          label: "Service Description",
+          required: true,
+          ui: {
+            component: "textarea",
+          },
+          description: "Detailed description of the service",
+        },
+        {
+          type: "string" as const,
+          name: "icon",
+          label: "Service Icon",
+          description: "Lucide icon name for the service (e.g., 'Wrench', 'Zap', 'Shield')",
+        },
+        {
+          type: "number" as const,
+          name: "order",
+          label: "Display Order",
+          ui: {
+            component: "number",
+            parse: (value: any) => Number(value),
+            format: (value: any) => value?.toString(),
+          },
+          description: "Sort order for services display",
+        },
+      ],
+      ui: {
+        itemProps: (item: any) => ({
+          label: item?.title || "Product Service",
+        }),
+      },
+    },
+    
+    // Product Pricing Component
+    {
+      type: "object" as const,
+      name: "pricing",
+      label: "Pricing Configuration",
+      description: "Pricing display configuration for the product",
+      fields: [
+        {
+          type: "string" as const,
+          name: "display_text",
+          label: "Display Text",
+          description: "Text to display (e.g., 'Contact for Pricing', 'Starting from $1,999')",
+        },
+        {
+          type: "string" as const,
+          name: "subtitle",
+          label: "Subtitle",
+          description: "Optional subtitle text (e.g., 'Custom quotes available', 'Volume discounts available')",
+        },
+        {
+          type: "boolean" as const,
+          name: "show_contact_form",
+          label: "Show Contact Form",
+          description: "Whether to show contact/quote form for this product",
+        },
+        {
+          type: "string" as const,
+          name: "currency",
+          label: "Currency",
+          description: "Currency symbol or code if showing actual price",
+        },
+      ],
+    },
+    
+    // Product Action Buttons Component
+    {
+      type: "object" as const,
+      name: "action_buttons",
+      label: "Action Buttons",
+      list: true,
+      description: "Configurable action buttons for the product",
+      fields: [
+        {
+          type: "string" as const,
+          name: "label",
+          label: "Button Label",
+          required: true,
+          description: "Text to display on the button",
+        },
+        {
+          type: "string" as const,
+          name: "type",
+          label: "Button Type",
+          required: true,
+          options: [
+            { value: "primary", label: "Primary" },
+            { value: "secondary", label: "Secondary" },
+            { value: "outline", label: "Outline" },
+          ],
+          description: "Visual style of the button",
+        },
+        {
+          type: "string" as const,
+          name: "action",
+          label: "Action Type",
+          required: true,
+          options: [
+            { value: "contact", label: "Contact Form" },
+            { value: "quote", label: "Request Quote" },
+            { value: "download", label: "Download Resource" },
+            { value: "external_link", label: "External Link" },
+            { value: "video", label: "Demo Video" },
+          ],
+          description: "Type of action when button is clicked",
+        },
+        {
+          type: "string" as const,
+          name: "action_data",
+          label: "Action Data",
+          description: "Additional data for the action (e.g., download URL, external link)",
+        },
+        {
+          type: "string" as const,
+          name: "icon",
+          label: "Icon",
+          description: "Lucide icon name for the button (e.g., 'Phone', 'Mail', 'Download')",
+        },
+        {
+          type: "number" as const,
+          name: "order",
+          label: "Display Order",
+          ui: {
+            component: "number",
+            parse: (value: any) => Number(value),
+            format: (value: any) => value?.toString(),
+          },
+          description: "Sort order for buttons display",
+        },
+      ],
+      ui: {
+        itemProps: (item: any) => ({
+          label: `${item?.label || "Button"} (${item?.type || "primary"})`,
+        }),
+      },
+    },
+    
+    // Product Badges Component
+    {
+      type: "object" as const,
+      name: "badges",
+      label: "Product Badges",
+      list: true,
+      description: "Quality badges and certifications for the product",
+      fields: [
+        {
+          type: "string" as const,
+          name: "label",
+          label: "Badge Label",
+          required: true,
+          description: "Text to display on the badge",
+        },
+        {
+          type: "string" as const,
+          name: "type",
+          label: "Badge Type",
+          required: true,
+          options: [
+            { value: "secondary", label: "Secondary" },
+            { value: "outline", label: "Outline" },
+            { value: "success", label: "Success" },
+            { value: "warning", label: "Warning" },
+            { value: "info", label: "Info" },
+          ],
+          description: "Visual style of the badge",
+        },
+        {
+          type: "string" as const,
+          name: "icon",
+          label: "Badge Icon",
+          description: "Lucide icon name for the badge",
+        },
+        {
+          type: "number" as const,
+          name: "order",
+          label: "Display Order",
+          ui: {
+            component: "number",
+            parse: (value: any) => Number(value),
+            format: (value: any) => value?.toString(),
+          },
+          description: "Sort order for badges display",
+        },
+      ],
+      ui: {
+        itemProps: (item: any) => ({
+          label: `${item?.label || "Badge"} (${item?.type || "secondary"})`,
+        }),
+      },
+    },
+    
     // SEO Component
     {
       type: "object" as const,

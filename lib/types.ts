@@ -180,6 +180,48 @@ export interface Partner {
   imageUrl?: string; // Alias for image
 }
 
+export interface ProductSpecification {
+  label: string;
+  value: string;
+  order?: number;
+}
+
+export interface ProductBenefit {
+  benefit: string;
+  icon?: string;
+  order?: number;
+}
+
+export interface ProductService {
+  title: string;
+  description: string;
+  icon?: string;
+  order?: number;
+}
+
+export interface ProductPricing {
+  display_text?: string;
+  subtitle?: string;
+  show_contact_form?: boolean;
+  currency?: string;
+}
+
+export interface ProductActionButton {
+  label: string;
+  type: 'primary' | 'secondary' | 'outline';
+  action: 'contact' | 'quote' | 'download' | 'external_link' | 'video';
+  action_data?: string;
+  icon?: string;
+  order?: number;
+}
+
+export interface ProductBadge {
+  label: string;
+  type: 'secondary' | 'outline' | 'success' | 'warning' | 'info';
+  icon?: string;
+  order?: number;
+}
+
 export interface Product {
   id: string;
   slug?: string;
@@ -204,6 +246,14 @@ export interface Product {
   // Components (simplified structure)
   images: ProductImage[]; // Product images array
   features: Feature[]; // Product features array
+  
+  // New CMS-driven components
+  specifications?: ProductSpecification[]; // Technical specifications
+  benefits?: ProductBenefit[]; // Product benefits
+  services?: ProductService[]; // Installation/support services
+  pricing?: ProductPricing; // Pricing configuration
+  action_buttons?: ProductActionButton[]; // Configurable action buttons
+  badges?: ProductBadge[]; // Product badges/certifications
   
   // Computed/backward compatibility fields
   categoryName?: string; // Alias for category
