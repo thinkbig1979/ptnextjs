@@ -96,6 +96,19 @@ export interface VendorService {
   service: string;
 }
 
+export interface VendorStatistic {
+  label: string;
+  value: string;
+  order?: number;
+}
+
+export interface VendorAchievement {
+  title: string;
+  description: string;
+  icon?: string;
+  order?: number;
+}
+
 export interface Vendor {
   id: string;
   slug?: string;
@@ -118,6 +131,11 @@ export interface Vendor {
   products?: Product[];
   services?: VendorService[]; // Services offered by vendor
   seo?: SEO;
+  
+  // New company-specific content
+  mission?: string; // Company-specific mission statement
+  statistics?: VendorStatistic[]; // Company statistics/metrics
+  achievements?: VendorAchievement[]; // Why choose us achievements
   
   // Computed/backward compatibility fields
   categoryName?: string; // Alias for category
@@ -149,6 +167,11 @@ export interface Partner {
   products?: Product[];
   services?: VendorService[]; // Services offered by partner
   seo?: SEO;
+  
+  // New company-specific content (for backward compatibility)
+  mission?: string; // Company-specific mission statement
+  statistics?: VendorStatistic[]; // Company statistics/metrics
+  achievements?: VendorAchievement[]; // Why choose us achievements
   
   // Computed/backward compatibility fields
   categoryName?: string; // Alias for category

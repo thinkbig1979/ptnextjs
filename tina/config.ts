@@ -327,6 +327,105 @@ const vendorCollection = {
       },
     },
     
+    // Company Mission
+    {
+      type: "rich-text" as const,
+      name: "mission",
+      label: "Company Mission Statement",
+      description: "Company-specific mission statement (if different from global company mission)",
+    },
+    
+    // Company Statistics Component
+    {
+      type: "object" as const,
+      name: "statistics",
+      label: "Company Statistics",
+      list: true,
+      description: "Key company metrics and statistics to display",
+      fields: [
+        {
+          type: "string" as const,
+          name: "label",
+          label: "Statistic Label",
+          required: true,
+          description: "Label for the statistic (e.g., 'Years in Business', 'Global Installations')",
+        },
+        {
+          type: "string" as const,
+          name: "value",
+          label: "Statistic Value",
+          required: true,
+          description: "Value for the statistic (e.g., '25+', '2,500+', '150+')",
+        },
+        {
+          type: "number" as const,
+          name: "order",
+          label: "Display Order",
+          ui: {
+            component: "number",
+            parse: (value: any) => Number(value),
+            format: (value: any) => value?.toString(),
+          },
+          description: "Sort order for statistics display",
+        },
+      ],
+      ui: {
+        itemProps: (item: any) => ({
+          label: `${item?.label || "Statistic"}: ${item?.value || ""}`,
+        }),
+      },
+    },
+    
+    // Company Achievements Component  
+    {
+      type: "object" as const,
+      name: "achievements",
+      label: "Why Choose Us - Key Achievements",
+      list: true,
+      description: "Company achievements and differentiators for 'Why Choose Us' section",
+      fields: [
+        {
+          type: "string" as const,
+          name: "title",
+          label: "Achievement Title",
+          required: true,
+          description: "Brief title for the achievement (e.g., 'Industry Leader', 'Quality Certified')",
+        },
+        {
+          type: "string" as const,
+          name: "description",
+          label: "Achievement Description",
+          required: true,
+          ui: {
+            component: "textarea",
+          },
+          description: "Detailed description of the achievement or differentiator",
+        },
+        {
+          type: "string" as const,
+          name: "icon",
+          label: "Icon Identifier",
+          description: "Lucide icon name (e.g., 'Award', 'Users', 'CheckCircle', 'Lightbulb')",
+        },
+        {
+          type: "number" as const,
+          name: "order",
+          label: "Display Order",
+          ui: {
+            component: "number",
+            parse: (value: any) => Number(value),
+            format: (value: any) => value?.toString(),
+          },
+          description: "Sort order for achievements display",
+        },
+      ],
+      ui: {
+        itemProps: (item: any) => ({
+          label: item?.title || "Achievement",
+        }),
+      },
+    },
+    
     // Relationships
     {
       type: "reference" as const,
