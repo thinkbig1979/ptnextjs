@@ -84,32 +84,36 @@ export default async function PartnerDetailPage({ params }: PartnerDetailPagePro
   ]);
   console.log(`📦 Found ${partnerProducts.length} products for partner: ${partner.name}`);
 
-  // Generate placeholder data
-  const achievements = [
-    { icon: Award, title: "Industry Leader", description: "Over 20 years of marine technology excellence" },
-    { icon: Users, title: "Global Reach", description: "Serving customers in 45+ countries worldwide" },
-    { icon: CheckCircle, title: "Quality Certified", description: "ISO 9001:2015 and marine industry certifications" },
-    { icon: Lightbulb, title: "Innovation Focus", description: "R&D investment of 15% of annual revenue" }
-  ];
+  // Icon mapping for achievements
+  const iconMap: Record<string, typeof Award> = {
+    Award,
+    Users,
+    CheckCircle,
+    Lightbulb,
+    Building2,
+    Package,
+    MapPin,
+    Calendar,
+    Star,
+    Target
+  };
 
-  // Get services from partner data or use fallback
+  // Get company statistics from CMS or generate minimal fallback
+  const companyStats = partner.statistics && partner.statistics.length > 0 
+    ? partner.statistics.sort((a, b) => (a.order || 0) - (b.order || 0))
+    : [
+        { label: "Product Lines", value: partnerProducts.length.toString() }
+      ].filter(stat => parseInt(stat.value) > 0); // Only show if there are actual products
+
+  // Get achievements from CMS (no fallback - hide section if empty)
+  const achievements = partner.achievements && partner.achievements.length > 0
+    ? partner.achievements.sort((a, b) => (a.order || 0) - (b.order || 0))
+    : [];
+
+  // Get services from partner data (no fallback - hide section if empty)  
   const services = partner.services && partner.services.length > 0 
     ? partner.services.map((s: any) => s.service)
-    : [
-        "Custom System Design & Integration",
-        "Professional Installation Services",
-        "24/7 Technical Support",
-        "Comprehensive Training Programs",
-        "Preventive Maintenance Plans",
-        "Warranty & Extended Service Options"
-      ];
-
-  const companyStats = [
-    { label: "Years in Business", value: new Date().getFullYear() - (partner.founded || 2000) },
-    { label: "Global Installations", value: "2,500+" },
-    { label: "Certified Technicians", value: "150+" },
-    { label: "Product Lines", value: partnerProducts.length || "10+" }
-  ];
+    : [];
 
   return (
     <div className="min-h-screen py-12">
@@ -175,50 +179,56 @@ export default async function PartnerDetailPage({ params }: PartnerDetailPagePro
             </div>
 
             {/* Company Stats */}
-            <div className="mb-8">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {companyStats.map((stat, index) => (
-                  <Card key={index}>
-                    <CardContent className="p-4 text-center">
-                      <div className="text-2xl font-cormorant font-bold text-accent">{stat.value}</div>
-                      <div className="text-sm text-muted-foreground">{stat.label}</div>
-                    </CardContent>
-                  </Card>
-                ))}
+            {companyStats.length > 0 && (
+              <div className="mb-8">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {companyStats.map((stat, index) => (
+                    <Card key={index}>
+                      <CardContent className="p-4 text-center">
+                        <div className="text-2xl font-cormorant font-bold text-accent">{stat.value}</div>
+                        <div className="text-sm text-muted-foreground">{stat.label}</div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Key Achievements */}
-            <div className="mb-8">
-              <h2 className="text-2xl font-cormorant font-bold mb-4">Why Choose {partner.name}</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {achievements.map((achievement, index) => {
-                  const IconComponent = achievement.icon;
-                  return (
-                    <div key={index} className="flex items-start space-x-3 p-4 bg-card rounded-lg border">
-                      <IconComponent className="w-6 h-6 text-accent mt-0.5 flex-shrink-0" />
-                      <div>
-                        <h3 className="font-medium mb-1">{achievement.title}</h3>
-                        <p className="text-sm text-muted-foreground">{achievement.description}</p>
+            {achievements.length > 0 && (
+              <div className="mb-8">
+                <h2 className="text-2xl font-cormorant font-bold mb-4">Why Choose {partner.name}</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {achievements.map((achievement, index) => {
+                    const IconComponent = achievement.icon && iconMap[achievement.icon] ? iconMap[achievement.icon] : Award;
+                    return (
+                      <div key={index} className="flex items-start space-x-3 p-4 bg-card rounded-lg border">
+                        <IconComponent className="w-6 h-6 text-accent mt-0.5 flex-shrink-0" />
+                        <div>
+                          <h3 className="font-medium mb-1">{achievement.title}</h3>
+                          <p className="text-sm text-muted-foreground">{achievement.description}</p>
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Services */}
-            <div className="mb-8">
-              <h2 className="text-2xl font-cormorant font-bold mb-4">Services & Support</h2>
-              <div className="space-y-3">
-                {services.map((service, index) => (
-                  <div key={index} className="flex items-center space-x-3">
-                    <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                    <span className="font-poppins-light">{service}</span>
-                  </div>
-                ))}
+            {services.length > 0 && (
+              <div className="mb-8">
+                <h2 className="text-2xl font-cormorant font-bold mb-4">Services & Support</h2>
+                <div className="space-y-3">
+                  {services.map((service, index) => (
+                    <div key={index} className="flex items-center space-x-3">
+                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                      <span className="font-poppins-light">{service}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Products */}
             {partnerProducts.length > 0 && (
@@ -276,25 +286,25 @@ export default async function PartnerDetailPage({ params }: PartnerDetailPagePro
             )}
 
             {/* Company Mission */}
-            <div>
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Target className="w-5 h-5 text-accent" />
-                    <span>Our Mission</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground font-poppins-light leading-relaxed">
-                    {(companyInfo as any)?.mission || `At ${partner.name}, we are dedicated to revolutionizing the superyacht industry through 
-                    cutting-edge technology solutions. Our commitment to excellence drives us to deliver 
-                    innovative products that enhance safety, efficiency, and luxury aboard the world's 
-                    finest vessels. We partner with yacht owners, builders, and operators to create 
-                    seamless integration of advanced marine technologies.`}
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
+            {(partner.mission || (companyInfo as any)?.mission) && (
+              <div>
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center space-x-2">
+                      <Target className="w-5 h-5 text-accent" />
+                      <span>{partner.mission ? `${partner.name} Mission` : 'Our Mission'}</span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-muted-foreground font-poppins-light leading-relaxed"
+                         dangerouslySetInnerHTML={{ 
+                           __html: partner.mission || (companyInfo as any)?.mission 
+                         }} 
+                    />
+                  </CardContent>
+                </Card>
+              </div>
+            )}
           </div>
 
           {/* Sidebar */}
