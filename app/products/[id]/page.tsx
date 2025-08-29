@@ -95,24 +95,29 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
     console.log(`🤝 Partner found: ${partner.name}`);
   }
   
-  // Generate placeholder specifications
-  const specifications = [
-    { label: "Power Rating", value: "50-100kW" },
-    { label: "Operating Voltage", value: "12V/24V DC" },
-    { label: "Temperature Range", value: "-20°C to +60°C" },
-    { label: "IP Rating", value: "IP67 Marine Grade" },
-    { label: "Certification", value: "CE, FCC, IMO Compliant" },
-    { label: "Warranty", value: "3 Years Extended" },
-  ];
+  // Use CMS specifications if available, otherwise fallback to defaults
+  const specifications = Array.isArray(product.specifications) && product.specifications.length > 0 
+    ? product.specifications.sort((a, b) => (a.order || 0) - (b.order || 0))
+    : [
+        { label: "Power Rating", value: "50-100kW" },
+        { label: "Operating Voltage", value: "12V/24V DC" },
+        { label: "Temperature Range", value: "-20°C to +60°C" },
+        { label: "IP Rating", value: "IP67 Marine Grade" },
+        { label: "Certification", value: "CE, FCC, IMO Compliant" },
+        { label: "Warranty", value: "3 Years Extended" },
+      ];
 
-  const benefits = [
-    "Enhanced performance and reliability",
-    "Reduced maintenance requirements",
-    "Energy efficient operation", 
-    "Seamless integration with existing systems",
-    "24/7 technical support included",
-    "Comprehensive training provided"
-  ];
+  // Use CMS benefits if available, otherwise fallback to defaults
+  const benefits = Array.isArray(product.benefits) && product.benefits.length > 0 
+    ? product.benefits.sort((a, b) => (a.order || 0) - (b.order || 0))
+    : [
+        { benefit: "Enhanced performance and reliability" },
+        { benefit: "Reduced maintenance requirements" },
+        { benefit: "Energy efficient operation" }, 
+        { benefit: "Seamless integration with existing systems" },
+        { benefit: "24/7 technical support included" },
+        { benefit: "Comprehensive training provided" }
+      ];
 
   // Get all product images (main + gallery)
   const allImages = Array.isArray(product?.images) && product.images.length > 0 ? product.images : [];
@@ -139,7 +144,22 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             <div className="mb-8">
               <div className="flex items-center space-x-2 mb-4">
                 <Badge variant="secondary">{product.category}</Badge>
-                <Badge variant="outline">Professional Grade</Badge>
+                {Array.isArray(product.badges) && product.badges.length > 0 ? (
+                  product.badges
+                    .sort((a, b) => (a.order || 0) - (b.order || 0))
+                    .map((badge) => (
+                      <Badge key={badge.label} variant={badge.type as any} className="flex items-center gap-1">
+                        {badge.icon && (
+                          <span className="w-3 h-3">
+                            {/* Icon would be rendered here based on badge.icon */}
+                          </span>
+                        )}
+                        {badge.label}
+                      </Badge>
+                    ))
+                ) : (
+                  <Badge variant="outline">Professional Grade</Badge>
+                )}
               </div>
               
               <h1 className="text-4xl md:text-5xl font-cormorant font-bold mb-4">
@@ -230,76 +250,71 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             )}
 
             {/* Benefits */}
-            <div className="mb-8">
-              <h2 className="text-2xl font-cormorant font-bold mb-4">Benefits</h2>
-              <div className="space-y-3">
-                {benefits.map((benefit, index) => (
-                  <div key={index} className="flex items-center space-x-3">
-                    <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                    <span className="font-poppins-light">{benefit}</span>
-                  </div>
-                ))}
+            {benefits.length > 0 && (
+              <div className="mb-8">
+                <h2 className="text-2xl font-cormorant font-bold mb-4">Benefits</h2>
+                <div className="space-y-3">
+                  {benefits.map((benefit, index) => (
+                    <div key={index} className="flex items-center space-x-3">
+                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                      <span className="font-poppins-light">
+                        {typeof benefit === 'string' ? benefit : benefit.benefit}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Technical Specifications */}
-            <div className="mb-8">
-              <h2 className="text-2xl font-cormorant font-bold mb-4">Technical Specifications</h2>
-              <Card>
-                <CardContent className="p-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {specifications.map((spec, index) => (
-                      <div key={index} className="flex justify-between items-center py-2 border-b last:border-b-0">
-                        <span className="font-poppins-medium text-sm">{spec.label}</span>
-                        <span className="font-poppins-light text-sm text-muted-foreground">{spec.value}</span>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Installation & Support */}
-            <div className="mb-8">
-              <h2 className="text-2xl font-cormorant font-bold mb-4">Installation & Support</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {specifications.length > 0 && (
+              <div className="mb-8">
+                <h2 className="text-2xl font-cormorant font-bold mb-4">Technical Specifications</h2>
                 <Card>
-                  <CardHeader className="text-center">
-                    <Wrench className="w-8 h-8 text-accent mx-auto mb-2" />
-                    <CardTitle className="text-lg">Professional Installation</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground text-center">
-                      Certified technicians handle complete installation and system integration.
-                    </p>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader className="text-center">
-                    <Zap className="w-8 h-8 text-accent mx-auto mb-2" />
-                    <CardTitle className="text-lg">Quick Setup</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground text-center">
-                      Streamlined installation process with minimal downtime for your vessel.
-                    </p>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader className="text-center">
-                    <Shield className="w-8 h-8 text-accent mx-auto mb-2" />
-                    <CardTitle className="text-lg">Ongoing Support</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground text-center">
-                      24/7 technical support and regular maintenance services available.
-                    </p>
+                  <CardContent className="p-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {specifications.map((spec, index) => (
+                        <div key={index} className="flex justify-between items-center py-2 border-b last:border-b-0">
+                          <span className="font-poppins-medium text-sm">{spec.label}</span>
+                          <span className="font-poppins-light text-sm text-muted-foreground">{spec.value}</span>
+                        </div>
+                      ))}
+                    </div>
                   </CardContent>
                 </Card>
               </div>
-            </div>
+            )}
+
+            {/* Installation & Support */}
+            {Array.isArray(product.services) && product.services.length > 0 && (
+              <div className="mb-8">
+                <h2 className="text-2xl font-cormorant font-bold mb-4">Installation & Support</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {product.services
+                    .sort((a, b) => (a.order || 0) - (b.order || 0))
+                    .map((service, index) => (
+                      <Card key={index}>
+                        <CardHeader className="text-center">
+                          {service.icon && (
+                            <div className="w-8 h-8 text-accent mx-auto mb-2">
+                              {/* Icon would be rendered here based on service.icon */}
+                              {service.icon === 'Wrench' && <Wrench className="w-8 h-8" />}
+                              {service.icon === 'Zap' && <Zap className="w-8 h-8" />}
+                              {service.icon === 'Shield' && <Shield className="w-8 h-8" />}
+                            </div>
+                          )}
+                          <CardTitle className="text-lg">{service.title}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-sm text-muted-foreground text-center">
+                            {service.description}
+                          </p>
+                        </CardContent>
+                      </Card>
+                    ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Sidebar */}
@@ -314,10 +329,21 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4 break-words">
-                  <div className="text-center p-4 bg-accent/10 rounded-lg">
-                    <div className="text-2xl font-cormorant font-bold text-accent mb-1 break-words">Contact for Pricing</div>
-                    <div className="text-sm text-muted-foreground break-words">Custom quotes available</div>
-                  </div>
+                  {product.pricing ? (
+                    <div className="text-center p-4 bg-accent/10 rounded-lg">
+                      <div className="text-2xl font-cormorant font-bold text-accent mb-1 break-words">
+                        {product.pricing.display_text || "Contact for Pricing"}
+                      </div>
+                      <div className="text-sm text-muted-foreground break-words">
+                        {product.pricing.subtitle || "Custom quotes available"}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center p-4 bg-accent/10 rounded-lg">
+                      <div className="text-2xl font-cormorant font-bold text-accent mb-1 break-words">Contact for Pricing</div>
+                      <div className="text-sm text-muted-foreground break-words">Custom quotes available</div>
+                    </div>
+                  )}
                   
                   <ProductDetailClient product={product} partner={partner ?? undefined} />
 
