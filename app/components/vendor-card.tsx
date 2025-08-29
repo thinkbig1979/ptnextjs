@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Building2, MapPin, Calendar, ExternalLink, Package, ArrowRight } from "lucide-react";
+import { Building2, MapPin, Calendar, Package, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { Vendor, Product } from "@/lib/types";
@@ -45,7 +45,7 @@ export function VendorCard({
           fallbackType="partner"
           aspectRatio="video"
           fill
-          className="group-hover:scale-105 transition-transform duration-300 object-contain bg-white p-4"
+          className="group-hover:scale-105 transition-transform duration-300"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
         
@@ -145,19 +145,6 @@ export function VendorCard({
                 </Link>
               </Button>
               
-              {vendor?.website && (
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="w-full group"
-                  asChild
-                >
-                  <Link href={vendor.website} target="_blank" rel="noopener noreferrer">
-                    Visit Website
-                    <ExternalLink className="ml-2 h-3 w-3 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                </Button>
-              )}
             </div>
           </div>
         </CardContent>
