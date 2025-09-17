@@ -26,7 +26,7 @@ The following features have been successfully implemented and are currently live
 
 ### Features
 
-- [ ] Landing Page Redesign - Create compelling homepage focused on vendor acquisition `M`
+- [x] Landing Page Redesign - Create compelling homepage focused on vendor acquisition `M`
 - [ ] Enhanced Vendor Detail Pages - Expand vendor profiles with more comprehensive information `M`
 - [ ] Product Catalog Optimization - Improve product presentation and categorization `M`
 - [ ] Advanced Search & Filtering - Implement industry-specific search with faceted filtering `L`
