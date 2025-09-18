@@ -456,6 +456,460 @@ const vendorCollection = {
       },
     },
     
+    // Enhanced Profile Components for Platform Vision
+    {
+      type: "object" as const,
+      name: "certifications",
+      label: "Certifications",
+      list: true,
+      description: "Company certifications and accreditations",
+      fields: [
+        {
+          type: "string" as const,
+          name: "name",
+          label: "Certification Name",
+          required: true,
+          description: "Name of the certification (e.g., 'ISO 9001:2015')",
+        },
+        {
+          type: "string" as const,
+          name: "issuer",
+          label: "Issuing Organization",
+          required: true,
+          description: "Organization that issued the certification (e.g., 'Lloyd's Register')",
+        },
+        {
+          type: "number" as const,
+          name: "year",
+          label: "Year Obtained",
+          ui: {
+            component: "number",
+            parse: (value: any) => Number(value),
+            format: (value: any) => value?.toString(),
+            validate: (value: any) => {
+              if (value && (value < 1800 || value > new Date().getFullYear())) {
+                return `Year must be between 1800 and ${new Date().getFullYear()}`
+              }
+            }
+          },
+          description: "Year the certification was obtained",
+        },
+        {
+          type: "datetime" as const,
+          name: "expiryDate",
+          label: "Expiry Date",
+          description: "When the certification expires (if applicable)",
+        },
+        {
+          type: "string" as const,
+          name: "certificateUrl",
+          label: "Certificate URL",
+          description: "Link to certificate document or verification page",
+          ui: {
+            validate: (value: any) => {
+              if (value && typeof value === 'string' && !value.match(/^https?:\/\/.+/)) {
+                return "Must be a valid HTTP(S) URL"
+              }
+            }
+          }
+        },
+        {
+          type: "image" as const,
+          name: "logo",
+          label: "Certification Logo",
+          description: "Logo or badge for the certification",
+        },
+      ],
+      ui: {
+        itemProps: (item: any) => ({
+          label: `${item?.name || "Certification"} - ${item?.issuer || ""}`,
+        }),
+      },
+    },
+    {
+      type: "object" as const,
+      name: "awards",
+      label: "Awards & Recognition",
+      list: true,
+      description: "Awards and industry recognition received",
+      fields: [
+        {
+          type: "string" as const,
+          name: "title",
+          label: "Award Title",
+          required: true,
+          description: "Title of the award (e.g., 'Best Electrical Integrator 2024')",
+        },
+        {
+          type: "number" as const,
+          name: "year",
+          label: "Year Received",
+          required: true,
+          ui: {
+            component: "number",
+            parse: (value: any) => Number(value),
+            format: (value: any) => value?.toString(),
+            validate: (value: any) => {
+              if (value && (value < 1800 || value > new Date().getFullYear())) {
+                return `Year must be between 1800 and ${new Date().getFullYear()}`
+              }
+            }
+          },
+          description: "Year the award was received",
+        },
+        {
+          type: "string" as const,
+          name: "organization",
+          label: "Awarding Organization",
+          description: "Organization that presented the award",
+        },
+        {
+          type: "string" as const,
+          name: "category",
+          label: "Award Category",
+          description: "Category or type of award",
+        },
+        {
+          type: "rich-text" as const,
+          name: "description",
+          label: "Award Description",
+          description: "Description of the award and achievement",
+        },
+      ],
+      ui: {
+        itemProps: (item: any) => ({
+          label: `${item?.title || "Award"} (${item?.year || ""})`,
+        }),
+      },
+    },
+    {
+      type: "object" as const,
+      name: "socialProof",
+      label: "Social Proof",
+      description: "Social proof metrics and customer information",
+      fields: [
+        {
+          type: "number" as const,
+          name: "followers",
+          label: "Social Media Followers",
+          ui: {
+            component: "number",
+            parse: (value: any) => Number(value),
+            format: (value: any) => value?.toString(),
+            validate: (value: any) => {
+              if (value && (value < 0 || value > 100000000)) {
+                return "Followers must be between 0 and 100,000,000"
+              }
+            }
+          },
+          description: "Total social media followers across platforms",
+        },
+        {
+          type: "number" as const,
+          name: "projectsCompleted",
+          label: "Projects Completed",
+          ui: {
+            component: "number",
+            parse: (value: any) => Number(value),
+            format: (value: any) => value?.toString(),
+            validate: (value: any) => {
+              if (value && (value < 0 || value > 100000)) {
+                return "Projects completed must be between 0 and 100,000"
+              }
+            }
+          },
+          description: "Total number of projects completed",
+        },
+        {
+          type: "number" as const,
+          name: "yearsInBusiness",
+          label: "Years in Business",
+          ui: {
+            component: "number",
+            parse: (value: any) => Number(value),
+            format: (value: any) => value?.toString(),
+            validate: (value: any) => {
+              if (value && (value < 0 || value > 200)) {
+                return "Years in business must be between 0 and 200"
+              }
+            }
+          },
+          description: "Number of years in business",
+        },
+        {
+          type: "string" as const,
+          name: "customerList",
+          label: "Notable Customers",
+          list: true,
+          description: "List of notable customers (can be anonymized)",
+        },
+      ],
+    },
+    {
+      type: "object" as const,
+      name: "videoIntroduction",
+      label: "Video Introduction",
+      description: "Company video introduction or showcase",
+      fields: [
+        {
+          type: "string" as const,
+          name: "videoUrl",
+          label: "Video URL",
+          description: "URL to company introduction video (YouTube, Vimeo, etc.)",
+          ui: {
+            validate: (value: any) => {
+              if (value && typeof value === 'string' && !value.match(/^https?:\/\/.+/)) {
+                return "Must be a valid HTTP(S) URL"
+              }
+            }
+          }
+        },
+        {
+          type: "image" as const,
+          name: "thumbnailImage",
+          label: "Video Thumbnail",
+          description: "Custom thumbnail image for the video",
+        },
+        {
+          type: "string" as const,
+          name: "title",
+          label: "Video Title",
+          description: "Title for the video section",
+        },
+        {
+          type: "string" as const,
+          name: "description",
+          label: "Video Description",
+          description: "Brief description of the video content",
+        },
+      ],
+    },
+    {
+      type: "object" as const,
+      name: "caseStudies",
+      label: "Case Studies",
+      list: true,
+      description: "Detailed project case studies",
+      fields: [
+        {
+          type: "string" as const,
+          name: "title",
+          label: "Case Study Title",
+          required: true,
+          description: "Title of the case study project",
+        },
+        {
+          type: "string" as const,
+          name: "slug",
+          label: "URL Slug",
+          required: true,
+          description: "URL-friendly identifier for the case study",
+        },
+        {
+          type: "string" as const,
+          name: "client",
+          label: "Client Name",
+          description: "Client name (can be anonymized)",
+        },
+        {
+          type: "rich-text" as const,
+          name: "challenge",
+          label: "Challenge",
+          required: true,
+          description: "Description of the challenge or problem faced",
+        },
+        {
+          type: "rich-text" as const,
+          name: "solution",
+          label: "Solution",
+          required: true,
+          description: "Description of the solution implemented",
+        },
+        {
+          type: "rich-text" as const,
+          name: "results",
+          label: "Results",
+          description: "Outcomes and results achieved",
+        },
+        {
+          type: "image" as const,
+          name: "images",
+          label: "Case Study Images",
+          list: true,
+          description: "Images showcasing the project",
+        },
+        {
+          type: "string" as const,
+          name: "technologies",
+          label: "Technologies Used",
+          list: true,
+          description: "Technologies and systems used in the project",
+        },
+      ],
+      ui: {
+        itemProps: (item: any) => ({
+          label: item?.title || "Case Study",
+        }),
+      },
+    },
+    {
+      type: "object" as const,
+      name: "innovationHighlights",
+      label: "Innovation Highlights",
+      list: true,
+      description: "Technologies and unique approaches that set the company apart",
+      fields: [
+        {
+          type: "string" as const,
+          name: "technology",
+          label: "Technology/Innovation",
+          required: true,
+          description: "Name of the technology or innovation",
+        },
+        {
+          type: "rich-text" as const,
+          name: "description",
+          label: "Description",
+          description: "Detailed description of the innovation",
+        },
+        {
+          type: "string" as const,
+          name: "uniqueApproach",
+          label: "Unique Approach",
+          description: "What makes this approach unique",
+        },
+        {
+          type: "string" as const,
+          name: "benefitsToClients",
+          label: "Benefits to Clients",
+          list: true,
+          description: "List of benefits this innovation provides to clients",
+        },
+      ],
+      ui: {
+        itemProps: (item: any) => ({
+          label: item?.technology || "Innovation",
+        }),
+      },
+    },
+    {
+      type: "object" as const,
+      name: "teamMembers",
+      label: "Team Members",
+      list: true,
+      description: "Key team members for interactive organizational chart",
+      fields: [
+        {
+          type: "string" as const,
+          name: "name",
+          label: "Full Name",
+          required: true,
+          description: "Team member's full name",
+        },
+        {
+          type: "string" as const,
+          name: "position",
+          label: "Position/Title",
+          required: true,
+          description: "Job title or position",
+        },
+        {
+          type: "rich-text" as const,
+          name: "bio",
+          label: "Biography",
+          description: "Professional biography",
+        },
+        {
+          type: "image" as const,
+          name: "photo",
+          label: "Profile Photo",
+          description: "Professional headshot",
+        },
+        {
+          type: "string" as const,
+          name: "linkedinUrl",
+          label: "LinkedIn Profile",
+          description: "LinkedIn profile URL",
+          ui: {
+            validate: (value: any) => {
+              if (value && typeof value === 'string' && !value.match(/^https?:\/\/.+/)) {
+                return "Must be a valid HTTP(S) URL"
+              }
+            }
+          }
+        },
+        {
+          type: "string" as const,
+          name: "expertise",
+          label: "Areas of Expertise",
+          list: true,
+          description: "List of expertise areas",
+        },
+      ],
+      ui: {
+        itemProps: (item: any) => ({
+          label: `${item?.name || "Team Member"} - ${item?.position || ""}`,
+        }),
+      },
+    },
+    {
+      type: "object" as const,
+      name: "yachtProjects",
+      label: "Yacht Projects Portfolio",
+      list: true,
+      description: "Portfolio of yacht projects showing systems supplied",
+      fields: [
+        {
+          type: "string" as const,
+          name: "yachtName",
+          label: "Yacht Name",
+          required: true,
+          description: "Name of the yacht project",
+        },
+        {
+          type: "string" as const,
+          name: "systems",
+          label: "Systems Supplied",
+          list: true,
+          required: true,
+          description: "List of systems supplied (AV, IT, Security, Lighting, etc.)",
+        },
+        {
+          type: "number" as const,
+          name: "projectYear",
+          label: "Project Year",
+          ui: {
+            component: "number",
+            parse: (value: any) => Number(value),
+            format: (value: any) => value?.toString(),
+            validate: (value: any) => {
+              if (value && (value < 1900 || value > new Date().getFullYear() + 5)) {
+                return `Project year must be between 1900 and ${new Date().getFullYear() + 5}`
+              }
+            }
+          },
+          description: "Year the project was completed",
+        },
+        {
+          type: "string" as const,
+          name: "role",
+          label: "Role in Project",
+          description: "Company's role in the project (primary contractor, subcontractor, etc.)",
+        },
+        {
+          type: "string" as const,
+          name: "description",
+          label: "Project Description",
+          description: "Brief description of the project and involvement",
+        },
+      ],
+      ui: {
+        itemProps: (item: any) => ({
+          label: `${item?.yachtName || "Yacht Project"} (${item?.projectYear || ""})`,
+        }),
+      },
+    },
+
     // SEO Component
     {
       type: "object" as const,

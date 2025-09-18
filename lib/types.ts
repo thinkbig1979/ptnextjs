@@ -109,6 +109,73 @@ export interface VendorAchievement {
   order?: number;
 }
 
+// Enhanced vendor profile interfaces for Platform Vision
+export interface VendorCertification {
+  name: string;
+  issuer: string;
+  year?: number;
+  expiryDate?: string;
+  certificateUrl?: string;
+  logo?: string;
+}
+
+export interface VendorAward {
+  title: string;
+  year: number;
+  organization?: string;
+  category?: string;
+  description?: string;
+}
+
+export interface VendorSocialProof {
+  followers?: number;
+  projectsCompleted?: number;
+  yearsInBusiness?: number;
+  customerList?: string[];
+}
+
+export interface VendorVideoIntroduction {
+  videoUrl?: string;
+  thumbnailImage?: string;
+  title?: string;
+  description?: string;
+}
+
+export interface VendorCaseStudy {
+  title: string;
+  slug: string;
+  client?: string;
+  challenge: string;
+  solution: string;
+  results?: string;
+  images?: string[];
+  technologies?: string[];
+}
+
+export interface VendorInnovationHighlight {
+  technology: string;
+  description?: string;
+  uniqueApproach?: string;
+  benefitsToClients?: string[];
+}
+
+export interface VendorTeamMember {
+  name: string;
+  position: string;
+  bio?: string;
+  photo?: string;
+  linkedinUrl?: string;
+  expertise?: string[];
+}
+
+export interface VendorYachtProject {
+  yachtName: string;
+  systems: string[];
+  projectYear?: number;
+  role?: string;
+  description?: string;
+}
+
 export interface Vendor {
   id: string;
   slug?: string;
@@ -136,7 +203,17 @@ export interface Vendor {
   mission?: string; // Company-specific mission statement
   statistics?: VendorStatistic[]; // Company statistics/metrics
   achievements?: VendorAchievement[]; // Why choose us achievements
-  
+
+  // Enhanced profile content for Platform Vision
+  certifications?: VendorCertification[];
+  awards?: VendorAward[];
+  socialProof?: VendorSocialProof;
+  videoIntroduction?: VendorVideoIntroduction;
+  caseStudies?: VendorCaseStudy[];
+  innovationHighlights?: VendorInnovationHighlight[];
+  teamMembers?: VendorTeamMember[];
+  yachtProjects?: VendorYachtProject[];
+
   // Computed/backward compatibility fields
   categoryName?: string; // Alias for category
   tagNames?: string[]; // Alias for tags
@@ -144,40 +221,10 @@ export interface Vendor {
   imageUrl?: string; // Alias for image
 }
 
-// Legacy Partner interface for backward compatibility
-export interface Partner {
-  id: string;
-  slug?: string;
-  name: string;
-  description: string;
-  logo?: string; // TinaCMS uses direct string paths
-  image?: string; // TinaCMS uses direct string paths
-  website?: string;
-  founded?: number;
-  location?: string;
-  featured?: boolean;
-  partner?: boolean; // New field for backward compatibility
-  createdAt?: string;
-  updatedAt?: string;
-  publishedAt?: string;
-  
-  // TinaCMS simplified relations
-  category?: string; // Resolved category name
-  tags?: string[]; // Resolved tag names array
-  products?: Product[];
-  services?: VendorService[]; // Services offered by partner
-  seo?: SEO;
-  
-  // New company-specific content (for backward compatibility)
-  mission?: string; // Company-specific mission statement
-  statistics?: VendorStatistic[]; // Company statistics/metrics
-  achievements?: VendorAchievement[]; // Why choose us achievements
-  
-  // Computed/backward compatibility fields
-  categoryName?: string; // Alias for category
-  tagNames?: string[]; // Alias for tags
-  logoUrl?: string; // Alias for logo
-  imageUrl?: string; // Alias for image
+// Legacy Partner interface for backward compatibility - simplified to extend Vendor
+export interface Partner extends Vendor {
+  // Partner is now simply an alias for Vendor to eliminate duplication
+  // All functionality is inherited from the Vendor interface
 }
 
 export interface ProductSpecification {

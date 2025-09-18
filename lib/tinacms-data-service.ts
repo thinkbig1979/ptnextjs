@@ -35,7 +35,21 @@ class TinaCMSDataService {
   private cache: Map<string, any> = new Map()
   private readonly CACHE_TTL = 5 * 60 * 1000 // 5 minutes
 
+  private cleanExpiredCache() {
+    const now = Date.now();
+    for (const [key, cached] of this.cache.entries()) {
+      if (now - cached.timestamp >= this.CACHE_TTL) {
+        this.cache.delete(key);
+      }
+    }
+  }
+
   private async getCached<T>(key: string, fetcher: () => Promise<T>): Promise<T> {
+    // Clean expired entries periodically
+    if (this.cache.size > 0 && Math.random() < 0.1) {
+      this.cleanExpiredCache();
+    }
+
     const cached = this.cache.get(key)
     if (cached && Date.now() - cached.timestamp < this.CACHE_TTL) {
       console.log(`📋 Using cached ${key}`)
@@ -53,7 +67,7 @@ class TinaCMSDataService {
       return data
     } catch (error) {
       console.error(`❌ Failed to fetch ${key}:`, error)
-      
+
       // Always throw the error for static builds - no fallbacks
       throw new Error(`Static build failed: Unable to fetch ${key} from TinaCMS. Ensure content files are properly formatted.`)
     }
@@ -135,26 +149,93 @@ class TinaCMSDataService {
       featured: tinaVendor.featured || false,
       partner: tinaVendor.partner !== undefined ? tinaVendor.partner : true, // Default to true for existing records
       services: tinaVendor.services || [], // Include services field
+
+      // Enhanced profile fields for Platform Vision
+      certifications: tinaVendor.certifications?.map((cert: any) => {
+        if (!cert || typeof cert !== 'object') return null;
+        return {
+          name: cert.name || '',
+          issuer: cert.issuer || '',
+          year: typeof cert.year === 'number' ? cert.year : undefined,
+          expiryDate: cert.expiryDate || undefined,
+          certificateUrl: cert.certificateUrl || undefined,
+          logo: this.transformMediaPath(cert.logo || ''),
+        };
+      }).filter(Boolean) || [],
+
+      awards: tinaVendor.awards?.map((award: any) => {
+        if (!award || typeof award !== 'object') return null;
+        return {
+          title: award.title || '',
+          year: typeof award.year === 'number' ? award.year : new Date().getFullYear(),
+          organization: award.organization || undefined,
+          category: award.category || undefined,
+          description: award.description || undefined,
+        };
+      }).filter(Boolean) || [],
+
+      socialProof: tinaVendor.socialProof && typeof tinaVendor.socialProof === 'object' ? {
+        followers: typeof tinaVendor.socialProof.followers === 'number' ? tinaVendor.socialProof.followers : undefined,
+        projectsCompleted: typeof tinaVendor.socialProof.projectsCompleted === 'number' ? tinaVendor.socialProof.projectsCompleted : undefined,
+        yearsInBusiness: typeof tinaVendor.socialProof.yearsInBusiness === 'number' ? tinaVendor.socialProof.yearsInBusiness : undefined,
+        customerList: Array.isArray(tinaVendor.socialProof.customerList) ? tinaVendor.socialProof.customerList : [],
+      } : undefined,
+
+      videoIntroduction: tinaVendor.videoIntroduction ? {
+        videoUrl: tinaVendor.videoIntroduction.videoUrl,
+        thumbnailImage: this.transformMediaPath(tinaVendor.videoIntroduction.thumbnailImage || ''),
+        title: tinaVendor.videoIntroduction.title,
+        description: tinaVendor.videoIntroduction.description,
+      } : undefined,
+
+      caseStudies: tinaVendor.caseStudies?.map((caseStudy: any) => {
+        if (!caseStudy || typeof caseStudy !== 'object') return null;
+        return {
+          title: caseStudy.title || '',
+          slug: caseStudy.slug || '',
+          client: caseStudy.client || undefined,
+          challenge: caseStudy.challenge || '',
+          solution: caseStudy.solution || '',
+          results: caseStudy.results || undefined,
+          images: Array.isArray(caseStudy.images) ? caseStudy.images.map((img: string) => this.transformMediaPath(img)) : [],
+          technologies: Array.isArray(caseStudy.technologies) ? caseStudy.technologies : [],
+        };
+      }).filter(Boolean) || [],
+
+      innovationHighlights: tinaVendor.innovationHighlights?.map((innovation: any) => ({
+        technology: innovation.technology,
+        description: innovation.description,
+        uniqueApproach: innovation.uniqueApproach,
+        benefitsToClients: innovation.benefitsToClients || [],
+      })) || [],
+
+      teamMembers: tinaVendor.teamMembers?.map((member: any) => ({
+        name: member.name,
+        position: member.position,
+        bio: member.bio,
+        photo: this.transformMediaPath(member.photo || ''),
+        linkedinUrl: member.linkedinUrl,
+        expertise: member.expertise || [],
+      })) || [],
+
+      yachtProjects: tinaVendor.yachtProjects?.map((project: any) => {
+        if (!project || typeof project !== 'object') return null;
+        return {
+          yachtName: project.yachtName || '',
+          systems: Array.isArray(project.systems) ? project.systems : [],
+          projectYear: typeof project.projectYear === 'number' ? project.projectYear : undefined,
+          role: project.role || undefined,
+          description: project.description || undefined,
+        };
+      }).filter(Boolean) || [],
     }
   }
 
-  // Legacy method for backward compatibility
+  // Legacy method for backward compatibility - simplified to eliminate duplication
   private transformTinaPartner(tinaPartner: any, filename: string): Partner {
-    return {
-      id: filename,
-      slug: tinaPartner.slug || filename,
-      name: tinaPartner.name,
-      category: '', // Will be resolved later
-      description: tinaPartner.description,
-      logo: this.transformMediaPath(tinaPartner.logo),
-      image: this.transformMediaPath(tinaPartner.image),
-      website: tinaPartner.website,
-      founded: tinaPartner.founded,
-      location: tinaPartner.location,
-      tags: [], // Will be resolved later
-      featured: tinaPartner.featured || false,
-      partner: tinaPartner.partner !== undefined ? tinaPartner.partner : true, // Default to true for existing records
-    }
+    // Partner is now just an alias for Vendor, so we reuse the transformation logic
+    const vendor = this.transformTinaVendor(tinaPartner, filename);
+    return vendor as Partner; // Type cast since Partner extends Vendor
   }
 
   private transformTinaProduct(tinaProduct: any, filename: string): Product {
