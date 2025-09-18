@@ -508,6 +508,12 @@ class TinaCMSDataService {
               product.partnerId = product.vendorId
               product.partnerName = product.vendorName
             }
+              // Resolve full vendor object
+              const vendorFilename = vendorRef.split("/").pop()?.replace(".md", "") || ""
+              const fullVendor = this.transformTinaVendor(vendorData, vendorFilename)
+              product.vendor = fullVendor
+              // Maintain backward compatibility
+              product.partner = fullVendor
           }
           
           // Resolve category reference

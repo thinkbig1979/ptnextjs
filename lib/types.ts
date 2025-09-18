@@ -307,6 +307,10 @@ export interface Product {
   tagNames?: string[]; // Alias for tags
   mainImage?: ProductImage; // Computed from images.find(img => img.isMain)
   imageUrl?: string; // Alias for image or mainImage.url
+  
+  // Resolved vendor/partner objects
+  vendor?: Vendor; // Resolved vendor object
+  partner?: Partner; // Legacy resolved partner object (alias for vendor)
 }
 
 export interface BlogPost {

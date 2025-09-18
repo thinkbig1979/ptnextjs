@@ -7,19 +7,19 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
 
 ## Tasks
 
-- [ ] 1. Git Branch Setup and Foundation
-  - [ ] 1.1 Create "platform-vision" branch from main
-  - [ ] 1.2 Verify build and development environment works on new branch
-  - [ ] 1.3 Update branch protection if needed
-  - [ ] 1.4 Confirm all existing functionality remains intact
+- [x] 1. Git Branch Setup and Foundation
+  - [x] 1.1 Create "platform-vision" branch from main
+  - [x] 1.2 Verify build and development environment works on new branch
+  - [x] 1.3 Update branch protection if needed
+  - [x] 1.4 Confirm all existing functionality remains intact
 
-- [ ] 2. TinaCMS Schema Extensions for Enhanced Profiles
-  - [ ] 2.1 Write tests for new vendor schema fields (certifications, awards, social proof)
-  - [ ] 2.2 Extend vendor collection schema in tina/config.ts with new fields
-  - [ ] 2.3 Add TypeScript interfaces in lib/types.ts for new vendor data structures
-  - [ ] 2.4 Update TinaCMSDataService with vendor enhancement methods
-  - [ ] 2.5 Test schema validation and content saving through TinaCMS admin
-  - [ ] 2.6 Verify all tests pass for vendor schema extensions
+- [x] 2. TinaCMS Schema Extensions for Enhanced Profiles
+  - [x] 2.1 Write tests for new vendor schema fields (certifications, awards, social proof)
+  - [x] 2.2 Extend vendor collection schema in tina/config.ts with new fields
+  - [x] 2.3 Add TypeScript interfaces in lib/types.ts for new vendor data structures
+  - [x] 2.4 Update TinaCMSDataService with vendor enhancement methods
+  - [x] 2.5 Test schema validation and content saving through TinaCMS admin
+  - [x] 2.6 Verify all tests pass for vendor schema extensions
 
 - [ ] 3. Enhanced Company Profile Components
   - [ ] 3.1 Write tests for certification badge, awards display, and social proof components
