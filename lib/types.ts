@@ -269,6 +269,125 @@ export interface ProductBadge {
   order?: number;
 }
 
+// Product Comparison and Enhancement Types
+export interface ComparisonMetric {
+  metricId: string;
+  name: string;
+  value: number;
+  unit?: string;
+  category: 'performance' | 'efficiency' | 'reliability' | 'physical' | 'environmental';
+  weight?: number;
+  tolerance?: {
+    min: number;
+    max: number;
+  };
+  benchmarkValue?: number;
+}
+
+export interface PerformanceData {
+  metricId: string;
+  name: string;
+  value: number;
+  unit?: string;
+  category: string;
+  timestamp: Date;
+  trend?: 'up' | 'down' | 'stable';
+  benchmarkValue?: number;
+  tolerance?: {
+    min: number;
+    max: number;
+  };
+  historicalData?: {
+    timestamp: Date;
+    value: number;
+  }[];
+}
+
+export interface SystemCompatibility {
+  system: string;
+  compatibility: 'full' | 'partial' | 'adapter' | 'none';
+  notes?: string;
+  requirements?: string[];
+  complexity?: 'simple' | 'moderate' | 'complex';
+  estimatedCost?: string;
+}
+
+export interface SystemRequirements {
+  powerSupply?: string;
+  mounting?: string;
+  operatingTemp?: string;
+  certification?: string;
+  ipRating?: string;
+}
+
+export interface IntegrationCompatibility {
+  supportedProtocols?: string[];
+  systemRequirements?: SystemRequirements;
+  compatibilityMatrix?: SystemCompatibility[];
+}
+
+export interface OwnerReview {
+  id: string;
+  productId: string;
+  ownerName: string;
+  yachtName?: string;
+  yachtLength?: string;
+  rating: number;
+  title: string;
+  review: string;
+  pros?: string[];
+  cons?: string[];
+  installationDate?: string;
+  verified?: boolean;
+  helpful?: number;
+  images?: string[];
+  useCase?: 'commercial_charter' | 'private_use' | 'racing' | 'expedition' | 'day_sailing';
+  flagged?: boolean;
+  vendorResponse?: {
+    message: string;
+    respondedAt: string;
+    respondedBy: string;
+  };
+}
+
+export interface VisualDemoHotspot {
+  position: {
+    x: number;
+    y: number;
+  };
+  title: string;
+  description?: string;
+  action?: 'highlight' | 'zoom' | 'info' | 'navigate';
+}
+
+export interface CameraPosition {
+  name: string;
+  position: {
+    x: number;
+    y: number;
+    z: number;
+  };
+}
+
+export interface VisualDemoContent {
+  type: '360-image' | '3d-model' | 'video' | 'interactive';
+  title: string;
+  description?: string;
+  imageUrl?: string;
+  modelUrl?: string;
+  videoUrl?: string;
+  hotspots?: VisualDemoHotspot[];
+  animations?: string[];
+  cameraPositions?: CameraPosition[];
+  materials?: {
+    [key: string]: {
+      color?: string;
+      metalness?: number;
+      roughness?: number;
+    };
+  };
+}
+
 export interface Product {
   id: string;
   slug?: string;
@@ -307,7 +426,23 @@ export interface Product {
   tagNames?: string[]; // Alias for tags
   mainImage?: ProductImage; // Computed from images.find(img => img.isMain)
   imageUrl?: string; // Alias for image or mainImage.url
-  
+
+  // Product Comparison and Enhancement Fields
+  comparisonMetrics?: {
+    [key: string]: {
+      value: number;
+      unit?: string;
+    };
+  }; // Computed from comparison_metrics schema
+  performanceMetrics?: PerformanceData[]; // Performance data for metrics display
+  integrationCompatibility?: string[]; // Computed from integration_compatibility.supported_protocols
+  systemRequirements?: SystemRequirements; // Computed from integration_compatibility.system_requirements
+  compatibilityMatrix?: SystemCompatibility[]; // Computed from integration_compatibility.compatibility_matrix
+  ownerReviews?: OwnerReview[]; // Computed from owner_reviews schema
+  averageRating?: number; // Computed from owner reviews
+  totalReviews?: number; // Computed from owner reviews count
+  visualDemo?: VisualDemoContent; // Computed from visual_demo schema
+
   // Resolved vendor/partner objects
   vendor?: Vendor; // Resolved vendor object
   partner?: Partner; // Legacy resolved partner object (alias for vendor)
@@ -379,6 +514,104 @@ export interface CompanyInfo {
   
   // Computed fields (for backward compatibility)
   logoUrl?: string; // Alias for logo
+}
+
+// Yacht Profiles System Types for Platform Vision
+export interface YachtTimelineEvent {
+  date: string;
+  event: string;
+  description?: string;
+  category: 'launch' | 'delivery' | 'refit' | 'milestone' | 'service';
+  location?: string;
+  images?: string[];
+}
+
+export interface YachtSupplierRole {
+  vendorId: string;
+  vendorName: string;
+  discipline: string;
+  systems: string[];
+  role: 'primary' | 'subcontractor' | 'consultant';
+  projectPhase?: string;
+}
+
+export interface YachtSustainabilityMetrics {
+  co2Emissions?: number; // kg CO2 equivalent
+  energyEfficiency?: number; // kWh per nautical mile
+  wasteManagement?: 'excellent' | 'good' | 'fair' | 'poor';
+  waterConservation?: 'excellent' | 'good' | 'fair' | 'poor';
+  materialSustainability?: 'excellent' | 'good' | 'fair' | 'poor';
+  overallScore?: number; // 1-100
+  certifications?: string[];
+}
+
+export interface YachtCustomization {
+  category: string;
+  description: string;
+  vendor?: string;
+  images?: string[];
+  cost?: string;
+  completedDate?: string;
+}
+
+export interface YachtMaintenanceRecord {
+  date: string;
+  type: 'routine' | 'repair' | 'upgrade' | 'inspection';
+  system: string;
+  description: string;
+  vendor?: string;
+  cost?: string;
+  nextService?: string;
+  status: 'completed' | 'in-progress' | 'scheduled';
+}
+
+export interface Yacht {
+  id: string;
+  slug?: string;
+  name: string;
+  description: string;
+  image?: string; // Main yacht image
+  images?: string[]; // Gallery images
+  length?: number; // Length in meters
+  beam?: number; // Beam in meters
+  draft?: number; // Draft in meters
+  displacement?: number; // Displacement in tons
+  builder?: string;
+  designer?: string;
+  launchYear?: number;
+  deliveryYear?: number;
+  homePort?: string;
+  flag?: string;
+  classification?: string;
+  cruisingSpeed?: number; // Knots
+  maxSpeed?: number; // Knots
+  range?: number; // Nautical miles
+  guests?: number; // Guest capacity
+  crew?: number; // Crew capacity
+  featured?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+  publishedAt?: string;
+
+  // Yacht-specific content
+  timeline?: YachtTimelineEvent[];
+  supplierMap?: YachtSupplierRole[];
+  sustainabilityScore?: YachtSustainabilityMetrics;
+  customizations?: YachtCustomization[];
+  maintenanceHistory?: YachtMaintenanceRecord[];
+
+  // Relations
+  category?: string; // Yacht category (motor, sailing, explorer, etc.)
+  tags?: string[]; // Yacht tags/features
+  seo?: SEO;
+
+  // Computed/convenience fields
+  categoryName?: string; // Alias for category
+  tagNames?: string[]; // Alias for tags
+  imageUrl?: string; // Alias for image
+  mainImage?: string; // Computed main image
+  supplierCount?: number; // Computed from supplierMap
+  totalSystems?: number; // Computed from supplierMap systems
 }
 
 // Legacy expense tracker types (keeping for backward compatibility)

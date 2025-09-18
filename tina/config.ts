@@ -1393,7 +1393,561 @@ const productCollection = {
         }),
       },
     },
-    
+
+    // Product Comparison Metrics Component
+    {
+      type: "object" as const,
+      name: "comparison_metrics",
+      label: "Comparison Metrics",
+      description: "Metrics for product comparison matrices",
+      fields: [
+        {
+          type: "object" as const,
+          name: "performance",
+          label: "Performance Metrics",
+          list: true,
+          description: "Performance-related metrics for comparison",
+          fields: [
+            {
+              type: "string" as const,
+              name: "metric_id",
+              label: "Metric ID",
+              required: true,
+              description: "Unique identifier for the metric (e.g., 'power-consumption', 'accuracy')",
+            },
+            {
+              type: "string" as const,
+              name: "name",
+              label: "Metric Name",
+              required: true,
+              description: "Display name for the metric (e.g., 'Power Consumption', 'Positioning Accuracy')",
+            },
+            {
+              type: "number" as const,
+              name: "value",
+              label: "Metric Value",
+              required: true,
+              ui: {
+                component: "number",
+                parse: (value: any) => Number(value),
+                format: (value: any) => value?.toString(),
+              },
+              description: "Numeric value for the metric",
+            },
+            {
+              type: "string" as const,
+              name: "unit",
+              label: "Unit",
+              description: "Unit of measurement (e.g., 'W', '%', 'ms', 'kg')",
+            },
+            {
+              type: "string" as const,
+              name: "category",
+              label: "Metric Category",
+              options: [
+                { value: "performance", label: "Performance" },
+                { value: "efficiency", label: "Efficiency" },
+                { value: "reliability", label: "Reliability" },
+                { value: "physical", label: "Physical Specifications" },
+                { value: "environmental", label: "Environmental" },
+              ],
+              description: "Category for grouping metrics",
+            },
+            {
+              type: "number" as const,
+              name: "weight",
+              label: "Comparison Weight",
+              ui: {
+                component: "number",
+                parse: (value: any) => Number(value),
+                format: (value: any) => value?.toString(),
+              },
+              description: "Weight for comparison ranking (0.0 - 1.0)",
+            },
+            {
+              type: "object" as const,
+              name: "tolerance",
+              label: "Tolerance Range",
+              description: "Acceptable range for the metric",
+              fields: [
+                {
+                  type: "number" as const,
+                  name: "min",
+                  label: "Minimum Value",
+                  ui: {
+                    component: "number",
+                    parse: (value: any) => Number(value),
+                    format: (value: any) => value?.toString(),
+                  },
+                },
+                {
+                  type: "number" as const,
+                  name: "max",
+                  label: "Maximum Value",
+                  ui: {
+                    component: "number",
+                    parse: (value: any) => Number(value),
+                    format: (value: any) => value?.toString(),
+                  },
+                },
+              ],
+            },
+            {
+              type: "number" as const,
+              name: "benchmark_value",
+              label: "Benchmark Value",
+              ui: {
+                component: "number",
+                parse: (value: any) => Number(value),
+                format: (value: any) => value?.toString(),
+              },
+              description: "Industry benchmark for comparison",
+            },
+          ],
+          ui: {
+            itemProps: (item: any) => ({
+              label: `${item?.name || "Metric"}: ${item?.value || ""} ${item?.unit || ""}`,
+            }),
+          },
+        },
+      ],
+    },
+
+    // Integration Compatibility Component
+    {
+      type: "object" as const,
+      name: "integration_compatibility",
+      label: "Integration Compatibility",
+      description: "System compatibility and integration information",
+      fields: [
+        {
+          type: "string" as const,
+          name: "supported_protocols",
+          label: "Supported Protocols",
+          list: true,
+          description: "Communication protocols and standards supported",
+        },
+        {
+          type: "object" as const,
+          name: "system_requirements",
+          label: "System Requirements",
+          description: "Technical requirements for installation",
+          fields: [
+            {
+              type: "string" as const,
+              name: "power_supply",
+              label: "Power Supply",
+              description: "Power requirements (e.g., '12V DC / 24V DC')",
+            },
+            {
+              type: "string" as const,
+              name: "mounting",
+              label: "Mounting Requirements",
+              description: "Physical mounting specifications",
+            },
+            {
+              type: "string" as const,
+              name: "operating_temp",
+              label: "Operating Temperature",
+              description: "Temperature range (e.g., '-20°C to +70°C')",
+            },
+            {
+              type: "string" as const,
+              name: "certification",
+              label: "Certifications",
+              description: "Safety and compliance certifications",
+            },
+            {
+              type: "string" as const,
+              name: "ip_rating",
+              label: "IP Rating",
+              description: "Ingress protection rating (e.g., 'IP67')",
+            },
+          ],
+        },
+        {
+          type: "object" as const,
+          name: "compatibility_matrix",
+          label: "Compatibility Matrix",
+          list: true,
+          description: "Detailed compatibility with other systems",
+          fields: [
+            {
+              type: "string" as const,
+              name: "system",
+              label: "System Name",
+              required: true,
+              description: "Name of the compatible system",
+            },
+            {
+              type: "string" as const,
+              name: "compatibility",
+              label: "Compatibility Level",
+              required: true,
+              options: [
+                { value: "full", label: "Full Compatibility" },
+                { value: "partial", label: "Partial Compatibility" },
+                { value: "adapter", label: "Requires Adapter" },
+                { value: "none", label: "Not Compatible" },
+              ],
+              description: "Level of compatibility with this system",
+            },
+            {
+              type: "string" as const,
+              name: "notes",
+              label: "Compatibility Notes",
+              ui: {
+                component: "textarea",
+              },
+              description: "Additional notes about compatibility",
+            },
+            {
+              type: "string" as const,
+              name: "requirements",
+              label: "Additional Requirements",
+              list: true,
+              description: "Additional hardware or software requirements",
+            },
+            {
+              type: "string" as const,
+              name: "complexity",
+              label: "Installation Complexity",
+              options: [
+                { value: "simple", label: "Simple" },
+                { value: "moderate", label: "Moderate" },
+                { value: "complex", label: "Complex" },
+              ],
+              description: "Complexity of integration setup",
+            },
+            {
+              type: "string" as const,
+              name: "estimated_cost",
+              label: "Estimated Integration Cost",
+              description: "Cost estimate for integration (e.g., '$500-1000')",
+            },
+          ],
+          ui: {
+            itemProps: (item: any) => ({
+              label: `${item?.system || "System"} (${item?.compatibility || "unknown"})`,
+            }),
+          },
+        },
+      ],
+    },
+
+    // Owner Reviews Component
+    {
+      type: "object" as const,
+      name: "owner_reviews",
+      label: "Owner Reviews",
+      list: true,
+      description: "Customer reviews and testimonials",
+      fields: [
+        {
+          type: "string" as const,
+          name: "review_id",
+          label: "Review ID",
+          required: true,
+          description: "Unique identifier for the review",
+        },
+        {
+          type: "string" as const,
+          name: "owner_name",
+          label: "Owner Name",
+          required: true,
+          description: "Name of the yacht owner or captain",
+        },
+        {
+          type: "string" as const,
+          name: "yacht_name",
+          label: "Yacht Name",
+          description: "Name of the yacht",
+        },
+        {
+          type: "string" as const,
+          name: "yacht_length",
+          label: "Yacht Length",
+          description: "Length of the yacht (e.g., '45m', '150ft')",
+        },
+        {
+          type: "number" as const,
+          name: "rating",
+          label: "Rating",
+          required: true,
+          ui: {
+            component: "number",
+            parse: (value: any) => Number(value),
+            format: (value: any) => value?.toString(),
+          },
+          description: "Rating out of 5 stars",
+        },
+        {
+          type: "string" as const,
+          name: "title",
+          label: "Review Title",
+          required: true,
+          description: "Title of the review",
+        },
+        {
+          type: "string" as const,
+          name: "review",
+          label: "Review Content",
+          required: true,
+          ui: {
+            component: "textarea",
+          },
+          description: "Full review text",
+        },
+        {
+          type: "string" as const,
+          name: "pros",
+          label: "Pros",
+          list: true,
+          description: "Positive aspects mentioned in review",
+        },
+        {
+          type: "string" as const,
+          name: "cons",
+          label: "Cons",
+          list: true,
+          description: "Negative aspects mentioned in review",
+        },
+        {
+          type: "datetime" as const,
+          name: "installation_date",
+          label: "Installation Date",
+          description: "When the product was installed",
+        },
+        {
+          type: "boolean" as const,
+          name: "verified",
+          label: "Verified Purchase",
+          description: "Whether this is a verified purchase",
+        },
+        {
+          type: "number" as const,
+          name: "helpful",
+          label: "Helpful Votes",
+          ui: {
+            component: "number",
+            parse: (value: any) => Number(value),
+            format: (value: any) => value?.toString(),
+          },
+          description: "Number of helpful votes received",
+        },
+        {
+          type: "image" as const,
+          name: "images",
+          label: "Review Images",
+          list: true,
+          description: "Images uploaded with the review",
+        },
+        {
+          type: "string" as const,
+          name: "use_case",
+          label: "Use Case",
+          options: [
+            { value: "commercial_charter", label: "Commercial Charter" },
+            { value: "private_use", label: "Private Use" },
+            { value: "racing", label: "Racing" },
+            { value: "expedition", label: "Expedition" },
+            { value: "day_sailing", label: "Day Sailing" },
+          ],
+          description: "How the product is being used",
+        },
+      ],
+      ui: {
+        itemProps: (item: any) => ({
+          label: `${item?.owner_name || "Review"} - ${item?.rating || 0} stars`,
+        }),
+      },
+    },
+
+    // Visual Demo Component
+    {
+      type: "object" as const,
+      name: "visual_demo",
+      label: "Visual Demo",
+      description: "360° images, 3D models, and interactive demonstrations",
+      fields: [
+        {
+          type: "string" as const,
+          name: "type",
+          label: "Demo Type",
+          required: true,
+          options: [
+            { value: "360-image", label: "360° Image" },
+            { value: "3d-model", label: "3D Model" },
+            { value: "video", label: "Video Demo" },
+            { value: "interactive", label: "Interactive Demo" },
+          ],
+          description: "Type of visual demonstration",
+        },
+        {
+          type: "string" as const,
+          name: "title",
+          label: "Demo Title",
+          required: true,
+          description: "Title for the visual demo",
+        },
+        {
+          type: "string" as const,
+          name: "description",
+          label: "Demo Description",
+          ui: {
+            component: "textarea",
+          },
+          description: "Description of what the demo shows",
+        },
+        {
+          type: "image" as const,
+          name: "image_url",
+          label: "360° Image",
+          description: "360° product image file",
+        },
+        {
+          type: "string" as const,
+          name: "model_url",
+          label: "3D Model URL",
+          description: "URL to 3D model file (.glb, .gltf)",
+        },
+        {
+          type: "string" as const,
+          name: "video_url",
+          label: "Video URL",
+          description: "URL to demo video",
+        },
+        {
+          type: "object" as const,
+          name: "hotspots",
+          label: "Interactive Hotspots",
+          list: true,
+          description: "Interactive points on 360° images",
+          fields: [
+            {
+              type: "object" as const,
+              name: "position",
+              label: "Position",
+              required: true,
+              fields: [
+                {
+                  type: "number" as const,
+                  name: "x",
+                  label: "X Position",
+                  ui: {
+                    component: "number",
+                    parse: (value: any) => Number(value),
+                    format: (value: any) => value?.toString(),
+                  },
+                },
+                {
+                  type: "number" as const,
+                  name: "y",
+                  label: "Y Position",
+                  ui: {
+                    component: "number",
+                    parse: (value: any) => Number(value),
+                    format: (value: any) => value?.toString(),
+                  },
+                },
+              ],
+            },
+            {
+              type: "string" as const,
+              name: "title",
+              label: "Hotspot Title",
+              required: true,
+            },
+            {
+              type: "string" as const,
+              name: "description",
+              label: "Hotspot Description",
+            },
+            {
+              type: "string" as const,
+              name: "action",
+              label: "Hotspot Action",
+              options: [
+                { value: "highlight", label: "Highlight Feature" },
+                { value: "zoom", label: "Zoom to Detail" },
+                { value: "info", label: "Show Information" },
+                { value: "navigate", label: "Navigate to View" },
+              ],
+            },
+          ],
+          ui: {
+            itemProps: (item: any) => ({
+              label: item?.title || "Hotspot",
+            }),
+          },
+        },
+        {
+          type: "string" as const,
+          name: "animations",
+          label: "Available Animations",
+          list: true,
+          description: "Available animations for 3D models",
+        },
+        {
+          type: "object" as const,
+          name: "camera_positions",
+          label: "Camera Positions",
+          list: true,
+          description: "Predefined camera positions for 3D models",
+          fields: [
+            {
+              type: "string" as const,
+              name: "name",
+              label: "Position Name",
+              required: true,
+            },
+            {
+              type: "object" as const,
+              name: "position",
+              label: "Camera Position",
+              fields: [
+                {
+                  type: "number" as const,
+                  name: "x",
+                  label: "X",
+                  ui: {
+                    component: "number",
+                    parse: (value: any) => Number(value),
+                    format: (value: any) => value?.toString(),
+                  },
+                },
+                {
+                  type: "number" as const,
+                  name: "y",
+                  label: "Y",
+                  ui: {
+                    component: "number",
+                    parse: (value: any) => Number(value),
+                    format: (value: any) => value?.toString(),
+                  },
+                },
+                {
+                  type: "number" as const,
+                  name: "z",
+                  label: "Z",
+                  ui: {
+                    component: "number",
+                    parse: (value: any) => Number(value),
+                    format: (value: any) => value?.toString(),
+                  },
+                },
+              ],
+            },
+          ],
+          ui: {
+            itemProps: (item: any) => ({
+              label: item?.name || "Camera Position",
+            }),
+          },
+        },
+      ],
+    },
+
     // SEO Component
     {
       type: "object" as const,
@@ -1604,6 +2158,628 @@ const teamMemberCollection = {
   },
 };
 
+// Yacht Collection (Platform Vision)
+const yachtCollection = {
+  name: "yacht",
+  label: "Yachts",
+  path: "content/yachts",
+  format: "md" as const,
+
+  fields: [
+    {
+      type: "string" as const,
+      name: "name",
+      label: "Yacht Name",
+      isTitle: true,
+      required: true,
+      description: "Full yacht name (e.g., 'M/Y Eclipse', 'S/Y Black Pearl')",
+    },
+    {
+      type: "string" as const,
+      name: "slug",
+      label: "URL Slug",
+      required: true,
+      description: "URL-friendly identifier (e.g., 'my-eclipse', 'sy-black-pearl')",
+    },
+    {
+      type: "rich-text" as const,
+      name: "description",
+      label: "Yacht Description",
+      required: true,
+      description: "Detailed description of the yacht and its features",
+    },
+    {
+      type: "image" as const,
+      name: "image",
+      label: "Main Yacht Image",
+      description: "Primary hero image for yacht profile",
+    },
+    {
+      type: "image" as const,
+      name: "images",
+      label: "Gallery Images",
+      list: true,
+      description: "Additional images for yacht gallery",
+    },
+
+    // Basic Yacht Specifications
+    {
+      type: "number" as const,
+      name: "length",
+      label: "Length (meters)",
+      ui: {
+        component: "number",
+        parse: (value: any) => Number(value),
+        format: (value: any) => value?.toString(),
+      },
+      description: "Overall length in meters",
+    },
+    {
+      type: "number" as const,
+      name: "beam",
+      label: "Beam (meters)",
+      ui: {
+        component: "number",
+        parse: (value: any) => Number(value),
+        format: (value: any) => value?.toString(),
+      },
+      description: "Maximum beam in meters",
+    },
+    {
+      type: "number" as const,
+      name: "draft",
+      label: "Draft (meters)",
+      ui: {
+        component: "number",
+        parse: (value: any) => Number(value),
+        format: (value: any) => value?.toString(),
+      },
+      description: "Maximum draft in meters",
+    },
+    {
+      type: "number" as const,
+      name: "displacement",
+      label: "Displacement (tons)",
+      ui: {
+        component: "number",
+        parse: (value: any) => Number(value),
+        format: (value: any) => value?.toString(),
+      },
+      description: "Displacement in tons",
+    },
+    {
+      type: "string" as const,
+      name: "builder",
+      label: "Builder/Shipyard",
+      description: "Name of the shipyard that built the yacht",
+    },
+    {
+      type: "string" as const,
+      name: "designer",
+      label: "Designer",
+      description: "Naval architect or design studio",
+    },
+    {
+      type: "number" as const,
+      name: "launchYear",
+      label: "Launch Year",
+      ui: {
+        component: "number",
+        parse: (value: any) => Number(value),
+        format: (value: any) => value?.toString(),
+        validate: (value: any) => {
+          if (value && (value < 1800 || value > new Date().getFullYear() + 5)) {
+            return `Year must be between 1800 and ${new Date().getFullYear() + 5}`
+          }
+        }
+      },
+      description: "Year the yacht was launched",
+    },
+    {
+      type: "number" as const,
+      name: "deliveryYear",
+      label: "Delivery Year",
+      ui: {
+        component: "number",
+        parse: (value: any) => Number(value),
+        format: (value: any) => value?.toString(),
+        validate: (value: any) => {
+          if (value && (value < 1800 || value > new Date().getFullYear() + 5)) {
+            return `Year must be between 1800 and ${new Date().getFullYear() + 5}`
+          }
+        }
+      },
+      description: "Year the yacht was delivered to owner",
+    },
+    {
+      type: "string" as const,
+      name: "homePort",
+      label: "Home Port",
+      description: "Primary home port or registration location",
+    },
+    {
+      type: "string" as const,
+      name: "flag",
+      label: "Flag State",
+      description: "Flag state/country of registration",
+    },
+    {
+      type: "string" as const,
+      name: "classification",
+      label: "Classification",
+      description: "Classification society (e.g., 'Lloyd's Register', 'ABS')",
+    },
+
+    // Performance Specifications
+    {
+      type: "number" as const,
+      name: "cruisingSpeed",
+      label: "Cruising Speed (knots)",
+      ui: {
+        component: "number",
+        parse: (value: any) => Number(value),
+        format: (value: any) => value?.toString(),
+      },
+      description: "Typical cruising speed in knots",
+    },
+    {
+      type: "number" as const,
+      name: "maxSpeed",
+      label: "Maximum Speed (knots)",
+      ui: {
+        component: "number",
+        parse: (value: any) => Number(value),
+        format: (value: any) => value?.toString(),
+      },
+      description: "Maximum speed in knots",
+    },
+    {
+      type: "number" as const,
+      name: "range",
+      label: "Range (nautical miles)",
+      ui: {
+        component: "number",
+        parse: (value: any) => Number(value),
+        format: (value: any) => value?.toString(),
+      },
+      description: "Range in nautical miles",
+    },
+
+    // Accommodation
+    {
+      type: "number" as const,
+      name: "guests",
+      label: "Guest Capacity",
+      ui: {
+        component: "number",
+        parse: (value: any) => Number(value),
+        format: (value: any) => value?.toString(),
+      },
+      description: "Maximum number of guests",
+    },
+    {
+      type: "number" as const,
+      name: "crew",
+      label: "Crew Capacity",
+      ui: {
+        component: "number",
+        parse: (value: any) => Number(value),
+        format: (value: any) => value?.toString(),
+      },
+      description: "Maximum number of crew members",
+    },
+
+    // Status and Display
+    {
+      type: "boolean" as const,
+      name: "featured",
+      label: "Featured Yacht",
+      description: "Mark as featured yacht for homepage display",
+    },
+
+    // Yacht Timeline
+    {
+      type: "object" as const,
+      name: "timeline",
+      label: "Yacht Timeline",
+      list: true,
+      description: "Key events in the yacht's history",
+      fields: [
+        {
+          type: "datetime" as const,
+          name: "date",
+          label: "Event Date",
+          required: true,
+          description: "Date of the event",
+        },
+        {
+          type: "string" as const,
+          name: "event",
+          label: "Event Name",
+          required: true,
+          description: "Name of the event (e.g., 'Keel Laying', 'Launch', 'Delivery')",
+        },
+        {
+          type: "string" as const,
+          name: "description",
+          label: "Event Description",
+          ui: {
+            component: "textarea",
+          },
+          description: "Detailed description of the event",
+        },
+        {
+          type: "string" as const,
+          name: "category",
+          label: "Event Category",
+          required: true,
+          options: [
+            { value: "launch", label: "Launch" },
+            { value: "delivery", label: "Delivery" },
+            { value: "refit", label: "Refit" },
+            { value: "milestone", label: "Milestone" },
+            { value: "service", label: "Service" },
+          ],
+          description: "Category of the event",
+        },
+        {
+          type: "string" as const,
+          name: "location",
+          label: "Event Location",
+          description: "Location where the event took place",
+        },
+        {
+          type: "image" as const,
+          name: "images",
+          label: "Event Images",
+          list: true,
+          description: "Images from the event",
+        },
+      ],
+      ui: {
+        itemProps: (item: any) => ({
+          label: `${item?.event || "Event"} (${item?.date ? new Date(item.date).getFullYear() : ""})`,
+        }),
+      },
+    },
+
+    // Supplier Map
+    {
+      type: "object" as const,
+      name: "supplierMap",
+      label: "Supplier Map",
+      list: true,
+      description: "Vendors and contractors involved in the yacht project",
+      fields: [
+        {
+          type: "reference" as const,
+          name: "vendor",
+          label: "Vendor",
+          collections: ["vendor"],
+          required: true,
+          description: "Vendor/contractor reference",
+        },
+        {
+          type: "string" as const,
+          name: "discipline",
+          label: "Discipline",
+          required: true,
+          description: "Area of expertise (e.g., 'Electronics', 'Lighting', 'Security')",
+        },
+        {
+          type: "string" as const,
+          name: "systems",
+          label: "Systems Supplied",
+          list: true,
+          required: true,
+          description: "List of systems supplied by this vendor",
+        },
+        {
+          type: "string" as const,
+          name: "role",
+          label: "Role",
+          required: true,
+          options: [
+            { value: "primary", label: "Primary Contractor" },
+            { value: "subcontractor", label: "Subcontractor" },
+            { value: "consultant", label: "Consultant" },
+          ],
+          description: "Role in the project",
+        },
+        {
+          type: "string" as const,
+          name: "projectPhase",
+          label: "Project Phase",
+          description: "Phase of the project when vendor was involved",
+        },
+      ],
+      ui: {
+        itemProps: (item: any) => ({
+          label: `${item?.vendor?.name || "Vendor"} - ${item?.discipline || ""}`,
+        }),
+      },
+    },
+
+    // Sustainability Score
+    {
+      type: "object" as const,
+      name: "sustainabilityScore",
+      label: "Sustainability Metrics",
+      description: "Environmental impact and sustainability metrics",
+      fields: [
+        {
+          type: "number" as const,
+          name: "co2Emissions",
+          label: "CO₂ Emissions (kg equivalent)",
+          ui: {
+            component: "number",
+            parse: (value: any) => Number(value),
+            format: (value: any) => value?.toString(),
+          },
+          description: "Annual CO₂ emissions in kg equivalent",
+        },
+        {
+          type: "number" as const,
+          name: "energyEfficiency",
+          label: "Energy Efficiency (kWh/nm)",
+          ui: {
+            component: "number",
+            parse: (value: any) => Number(value),
+            format: (value: any) => value?.toString(),
+          },
+          description: "Energy consumption in kWh per nautical mile",
+        },
+        {
+          type: "string" as const,
+          name: "wasteManagement",
+          label: "Waste Management",
+          options: [
+            { value: "excellent", label: "Excellent" },
+            { value: "good", label: "Good" },
+            { value: "fair", label: "Fair" },
+            { value: "poor", label: "Poor" },
+          ],
+          description: "Waste management rating",
+        },
+        {
+          type: "string" as const,
+          name: "waterConservation",
+          label: "Water Conservation",
+          options: [
+            { value: "excellent", label: "Excellent" },
+            { value: "good", label: "Good" },
+            { value: "fair", label: "Fair" },
+            { value: "poor", label: "Poor" },
+          ],
+          description: "Water conservation rating",
+        },
+        {
+          type: "string" as const,
+          name: "materialSustainability",
+          label: "Material Sustainability",
+          options: [
+            { value: "excellent", label: "Excellent" },
+            { value: "good", label: "Good" },
+            { value: "fair", label: "Fair" },
+            { value: "poor", label: "Poor" },
+          ],
+          description: "Sustainable material usage rating",
+        },
+        {
+          type: "number" as const,
+          name: "overallScore",
+          label: "Overall Score (1-100)",
+          ui: {
+            component: "number",
+            parse: (value: any) => Number(value),
+            format: (value: any) => value?.toString(),
+            validate: (value: any) => {
+              if (value && (value < 1 || value > 100)) {
+                return "Score must be between 1 and 100"
+              }
+            }
+          },
+          description: "Overall sustainability score out of 100",
+        },
+        {
+          type: "string" as const,
+          name: "certifications",
+          label: "Sustainability Certifications",
+          list: true,
+          description: "Environmental certifications held by the yacht",
+        },
+      ],
+    },
+
+    // Customizations
+    {
+      type: "object" as const,
+      name: "customizations",
+      label: "Customizations",
+      list: true,
+      description: "Custom features and modifications",
+      fields: [
+        {
+          type: "string" as const,
+          name: "category",
+          label: "Category",
+          required: true,
+          description: "Category of customization (e.g., 'Interior', 'Technology', 'Exterior')",
+        },
+        {
+          type: "string" as const,
+          name: "description",
+          label: "Description",
+          required: true,
+          ui: {
+            component: "textarea",
+          },
+          description: "Description of the customization",
+        },
+        {
+          type: "string" as const,
+          name: "vendor",
+          label: "Vendor",
+          description: "Vendor responsible for the customization",
+        },
+        {
+          type: "image" as const,
+          name: "images",
+          label: "Images",
+          list: true,
+          description: "Images of the customization",
+        },
+        {
+          type: "string" as const,
+          name: "cost",
+          label: "Cost",
+          description: "Cost of the customization (if disclosed)",
+        },
+        {
+          type: "datetime" as const,
+          name: "completedDate",
+          label: "Completion Date",
+          description: "Date when the customization was completed",
+        },
+      ],
+      ui: {
+        itemProps: (item: any) => ({
+          label: `${item?.category || "Customization"}: ${item?.description?.substring(0, 50) || ""}...`,
+        }),
+      },
+    },
+
+    // Maintenance History
+    {
+      type: "object" as const,
+      name: "maintenanceHistory",
+      label: "Maintenance History",
+      list: true,
+      description: "Maintenance and service records",
+      fields: [
+        {
+          type: "datetime" as const,
+          name: "date",
+          label: "Service Date",
+          required: true,
+          description: "Date of the maintenance/service",
+        },
+        {
+          type: "string" as const,
+          name: "type",
+          label: "Maintenance Type",
+          required: true,
+          options: [
+            { value: "routine", label: "Routine Maintenance" },
+            { value: "repair", label: "Repair" },
+            { value: "upgrade", label: "Upgrade" },
+            { value: "inspection", label: "Inspection" },
+          ],
+          description: "Type of maintenance performed",
+        },
+        {
+          type: "string" as const,
+          name: "system",
+          label: "System",
+          required: true,
+          description: "System that was serviced (e.g., 'Engine', 'Navigation', 'Electronics')",
+        },
+        {
+          type: "string" as const,
+          name: "description",
+          label: "Description",
+          required: true,
+          ui: {
+            component: "textarea",
+          },
+          description: "Description of the work performed",
+        },
+        {
+          type: "string" as const,
+          name: "vendor",
+          label: "Service Vendor",
+          description: "Vendor who performed the maintenance",
+        },
+        {
+          type: "string" as const,
+          name: "cost",
+          label: "Cost",
+          description: "Cost of the maintenance (if disclosed)",
+        },
+        {
+          type: "datetime" as const,
+          name: "nextService",
+          label: "Next Service Due",
+          description: "Date when next service is due",
+        },
+        {
+          type: "string" as const,
+          name: "status",
+          label: "Status",
+          required: true,
+          options: [
+            { value: "completed", label: "Completed" },
+            { value: "in-progress", label: "In Progress" },
+            { value: "scheduled", label: "Scheduled" },
+          ],
+          description: "Current status of the maintenance",
+        },
+      ],
+      ui: {
+        itemProps: (item: any) => ({
+          label: `${item?.type || "Maintenance"} - ${item?.system || ""} (${item?.date ? new Date(item.date).getFullYear() : ""})`,
+        }),
+      },
+    },
+
+    // Relationships
+    {
+      type: "reference" as const,
+      name: "category",
+      label: "Yacht Category",
+      collections: ["category"],
+      description: "Yacht category (motor yacht, sailing yacht, etc.)",
+    },
+    {
+      type: "object" as const,
+      name: "tags",
+      label: "Yacht Tags",
+      list: true,
+      description: "Relevant tags for this yacht",
+      fields: [
+        {
+          type: "reference" as const,
+          name: "tag",
+          label: "Tag",
+          collections: ["tag"],
+          required: true,
+        },
+      ],
+      ui: {
+        itemProps: (item: any) => ({
+          label: item?.tag?.name || "Select Tag",
+        }),
+      },
+    },
+
+    // SEO Component
+    {
+      type: "object" as const,
+      name: "seo",
+      label: "SEO Settings",
+      description: "Search engine optimization settings",
+      fields: seoFields,
+    },
+  ],
+
+  ui: {
+    filename: {
+      readonly: false,
+      slugify: (values: any) => values.slug,
+    },
+  },
+};
+
 // Company Info Collection (Single-Type)
 const companyInfoCollection = {
   name: "companyInfo",
@@ -1789,6 +2965,8 @@ export default defineConfig({
       vendorCollection,
       // @ts-ignore - TinaCMS type issue with fields vs templates
       productCollection,
+      // @ts-ignore - TinaCMS type issue with fields vs templates
+      yachtCollection,
       // @ts-ignore - TinaCMS type issue with fields vs templates
       blogPostCollection,
       teamMemberCollection,

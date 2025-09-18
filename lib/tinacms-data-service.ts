@@ -8,7 +8,7 @@ import * as fs from 'fs/promises'
 import * as path from 'path'
 import matter from 'gray-matter'
 import { marked } from 'marked'
-import { Vendor, Partner, Product, BlogPost, TeamMember } from './types'
+import { Vendor, Partner, Product, BlogPost, TeamMember, Yacht, YachtTimelineEvent, YachtSupplierRole, YachtSustainabilityMetrics, YachtCustomization, YachtMaintenanceRecord } from './types'
 
 interface Category {
   id: string
@@ -304,6 +304,115 @@ class TinaCMSDataService {
       image: this.transformMediaPath(tinaMember.image),
       email: tinaMember.email,
       linkedin: tinaMember.linkedin,
+    }
+  }
+
+  private transformTinaYacht(tinaYacht: any, filename: string): Yacht {
+    return {
+      id: filename,
+      slug: tinaYacht.slug || filename,
+      name: tinaYacht.name,
+      description: tinaYacht.description,
+      image: this.transformMediaPath(tinaYacht.image),
+      images: Array.isArray(tinaYacht.images) ? tinaYacht.images.map((img: string) => this.transformMediaPath(img)) : [],
+
+      // Basic specifications
+      length: typeof tinaYacht.length === 'number' ? tinaYacht.length : undefined,
+      beam: typeof tinaYacht.beam === 'number' ? tinaYacht.beam : undefined,
+      draft: typeof tinaYacht.draft === 'number' ? tinaYacht.draft : undefined,
+      displacement: typeof tinaYacht.displacement === 'number' ? tinaYacht.displacement : undefined,
+      builder: tinaYacht.builder,
+      designer: tinaYacht.designer,
+      launchYear: typeof tinaYacht.launchYear === 'number' ? tinaYacht.launchYear : undefined,
+      deliveryYear: typeof tinaYacht.deliveryYear === 'number' ? tinaYacht.deliveryYear : undefined,
+      homePort: tinaYacht.homePort,
+      flag: tinaYacht.flag,
+      classification: tinaYacht.classification,
+
+      // Performance specifications
+      cruisingSpeed: typeof tinaYacht.cruisingSpeed === 'number' ? tinaYacht.cruisingSpeed : undefined,
+      maxSpeed: typeof tinaYacht.maxSpeed === 'number' ? tinaYacht.maxSpeed : undefined,
+      range: typeof tinaYacht.range === 'number' ? tinaYacht.range : undefined,
+
+      // Accommodation
+      guests: typeof tinaYacht.guests === 'number' ? tinaYacht.guests : undefined,
+      crew: typeof tinaYacht.crew === 'number' ? tinaYacht.crew : undefined,
+
+      // Status
+      featured: tinaYacht.featured || false,
+
+      // Yacht-specific content
+      timeline: tinaYacht.timeline?.map((event: any) => {
+        if (!event || typeof event !== 'object') return null;
+        return {
+          date: event.date || '',
+          event: event.event || '',
+          description: event.description || undefined,
+          category: event.category || 'milestone',
+          location: event.location || undefined,
+          images: Array.isArray(event.images) ? event.images.map((img: string) => this.transformMediaPath(img)) : [],
+        } as YachtTimelineEvent;
+      }).filter(Boolean) || [],
+
+      supplierMap: tinaYacht.supplierMap?.map((supplier: any) => {
+        if (!supplier || typeof supplier !== 'object') return null;
+        return {
+          vendorId: supplier.vendor || '',
+          vendorName: '', // Will be resolved later
+          discipline: supplier.discipline || '',
+          systems: Array.isArray(supplier.systems) ? supplier.systems : [],
+          role: supplier.role || 'primary',
+          projectPhase: supplier.projectPhase || undefined,
+        } as YachtSupplierRole;
+      }).filter(Boolean) || [],
+
+      sustainabilityScore: tinaYacht.sustainabilityScore && typeof tinaYacht.sustainabilityScore === 'object' ? {
+        co2Emissions: typeof tinaYacht.sustainabilityScore.co2Emissions === 'number' ? tinaYacht.sustainabilityScore.co2Emissions : undefined,
+        energyEfficiency: typeof tinaYacht.sustainabilityScore.energyEfficiency === 'number' ? tinaYacht.sustainabilityScore.energyEfficiency : undefined,
+        wasteManagement: tinaYacht.sustainabilityScore.wasteManagement || undefined,
+        waterConservation: tinaYacht.sustainabilityScore.waterConservation || undefined,
+        materialSustainability: tinaYacht.sustainabilityScore.materialSustainability || undefined,
+        overallScore: typeof tinaYacht.sustainabilityScore.overallScore === 'number' ? tinaYacht.sustainabilityScore.overallScore : undefined,
+        certifications: Array.isArray(tinaYacht.sustainabilityScore.certifications) ? tinaYacht.sustainabilityScore.certifications : [],
+      } as YachtSustainabilityMetrics : undefined,
+
+      customizations: tinaYacht.customizations?.map((customization: any) => {
+        if (!customization || typeof customization !== 'object') return null;
+        return {
+          category: customization.category || '',
+          description: customization.description || '',
+          vendor: customization.vendor || undefined,
+          images: Array.isArray(customization.images) ? customization.images.map((img: string) => this.transformMediaPath(img)) : [],
+          cost: customization.cost || undefined,
+          completedDate: customization.completedDate || undefined,
+        } as YachtCustomization;
+      }).filter(Boolean) || [],
+
+      maintenanceHistory: tinaYacht.maintenanceHistory?.map((record: any) => {
+        if (!record || typeof record !== 'object') return null;
+        return {
+          date: record.date || '',
+          type: record.type || 'routine',
+          system: record.system || '',
+          description: record.description || '',
+          vendor: record.vendor || undefined,
+          cost: record.cost || undefined,
+          nextService: record.nextService || undefined,
+          status: record.status || 'completed',
+        } as YachtMaintenanceRecord;
+      }).filter(Boolean) || [],
+
+      // Relations (will be resolved later)
+      category: '', // Will be resolved later
+      tags: [], // Will be resolved later
+
+      // Computed/backward compatibility fields
+      categoryName: undefined, // Alias for category
+      tagNames: undefined, // Alias for tags
+      imageUrl: this.transformMediaPath(tinaYacht.image), // Alias for image
+      mainImage: this.transformMediaPath(tinaYacht.image), // Computed main image
+      supplierCount: undefined, // Will be computed
+      totalSystems: undefined, // Will be computed
     }
   }
 
@@ -639,20 +748,128 @@ class TinaCMSDataService {
     return this.getCached('team-members', async () => {
       const teamPath = path.resolve(process.cwd(), 'content/team')
       const files = await fs.readdir(teamPath)
-      
+
       const members = await Promise.all(
         files.filter(file => file.endsWith('.md')).map(async (file) => {
           const filePath = path.join(teamPath, file)
           const content = await fs.readFile(filePath, 'utf-8')
           const { data } = matter(content)
           const filename = file.replace('.md', '')
-          
+
           return this.transformTinaTeamMember(data, filename)
         })
       )
-      
+
       return members
     })
+  }
+
+  // Yacht Methods
+  async getAllYachts(): Promise<Yacht[]> {
+    return this.getCached('yachts', async () => {
+      const yachtsPath = path.resolve(process.cwd(), 'content/yachts')
+      try {
+        const files = await fs.readdir(yachtsPath)
+
+        const yachts = await Promise.all(
+          files.filter(file => file.endsWith('.md')).map(async (file) => {
+            const filePath = path.join(yachtsPath, file)
+            const content = await fs.readFile(filePath, 'utf-8')
+            const { data, content: bodyContent } = matter(content)
+            const filename = file.replace('.md', '')
+
+            // Extract description from body content if not in frontmatter
+            const description = data.description || this.extractDescription(bodyContent)
+
+            let yacht = this.transformTinaYacht(data, filename)
+            yacht.description = description
+
+            // Resolve category reference
+            if (data.category) {
+              const categoryData = await this.resolveReference(data.category)
+              yacht.category = categoryData?.name || ''
+            }
+
+            // Resolve tag references
+            if (data.tags && Array.isArray(data.tags)) {
+              const tagPromises = data.tags.map((tagRef: any) => {
+                if (typeof tagRef === 'object' && tagRef.tag) {
+                  return this.resolveReference(tagRef.tag)
+                }
+                return this.resolveReference(tagRef)
+              })
+              const tagData = await Promise.all(tagPromises)
+              yacht.tags = tagData.filter(Boolean).map(tag => tag.name).filter(Boolean)
+            }
+
+            // Resolve supplier map vendor references
+            if (yacht.supplierMap && yacht.supplierMap.length > 0) {
+              for (const supplier of yacht.supplierMap) {
+                if (supplier.vendorId) {
+                  const vendorData = await this.resolveReference(supplier.vendorId)
+                  supplier.vendorName = vendorData?.name || supplier.vendorId
+                }
+              }
+            }
+
+            // Compute fields
+            yacht.categoryName = yacht.category
+            yacht.tagNames = yacht.tags
+            yacht.supplierCount = yacht.supplierMap?.length || 0
+            yacht.totalSystems = yacht.supplierMap?.reduce((total, supplier) => total + (supplier.systems?.length || 0), 0) || 0
+
+            return yacht
+          })
+        )
+
+        return yachts
+      } catch (error) {
+        // Return empty array if yachts directory doesn't exist yet
+        return []
+      }
+    })
+  }
+
+  async getYachts(options?: { featured?: boolean }): Promise<Yacht[]> {
+    const allYachts = await this.getAllYachts()
+
+    if (options?.featured) {
+      return allYachts.filter(yacht => yacht.featured)
+    }
+
+    return allYachts
+  }
+
+  async getYachtBySlug(slug: string): Promise<Yacht | null> {
+    const yachts = await this.getAllYachts()
+    return yachts.find(yacht => yacht.slug === slug) || null
+  }
+
+  async getYachtById(id: string): Promise<Yacht | null> {
+    const yachts = await this.getAllYachts()
+    return yachts.find(yacht => yacht.id === id) || null
+  }
+
+  async getFeaturedYachts(): Promise<Yacht[]> {
+    return this.getYachts({ featured: true })
+  }
+
+  async searchYachts(query: string): Promise<Yacht[]> {
+    const yachts = await this.getAllYachts()
+    const searchTerm = query.toLowerCase()
+
+    return yachts.filter(yacht =>
+      yacht.name.toLowerCase().includes(searchTerm) ||
+      yacht.description.toLowerCase().includes(searchTerm) ||
+      yacht.builder?.toLowerCase().includes(searchTerm) ||
+      yacht.designer?.toLowerCase().includes(searchTerm) ||
+      yacht.homePort?.toLowerCase().includes(searchTerm)
+    )
+  }
+
+  async getYachtSlugs(): Promise<string[]> {
+    const yachts = await this.getAllYachts()
+    return yachts.map(yacht => yacht.slug).filter(Boolean) as string[]
   }
 
   // Company Info

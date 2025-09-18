@@ -3,16 +3,21 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { 
-  ArrowLeft, 
-  Building2, 
-  Package, 
-  Star, 
-  CheckCircle, 
-  Zap, 
-  Shield, 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  ArrowLeft,
+  Building2,
+  Package,
+  Star,
+  CheckCircle,
+  Zap,
+  Shield,
   Wrench,
-  ExternalLink
+  ExternalLink,
+  BarChart3,
+  Settings,
+  MessageSquare,
+  Eye
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -20,6 +25,13 @@ import { tinaCMSDataService } from "@/lib/tinacms-data-service";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { notFound, redirect } from "next/navigation";
 import ProductDetailClient from "./_components/product-detail-client";
+import {
+  ComparisonMatrix,
+  IntegrationNotes,
+  PerformanceMetrics,
+  OwnerReviews,
+  VisualDemo
+} from "@/components/product-comparison";
 
 // Force static generation for optimal SEO and performance
 export const dynamic = 'force-static';
@@ -315,6 +327,149 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                 </div>
               </div>
             )}
+
+            {/* Product Enhancement Sections */}
+            <div className="mb-8">
+              <Tabs defaultValue="overview" className="w-full">
+                <TabsList className="grid w-full grid-cols-5">
+                  <TabsTrigger value="overview" className="flex items-center space-x-2">
+                    <Star className="h-4 w-4" />
+                    <span className="hidden sm:inline">Overview</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="performance" className="flex items-center space-x-2">
+                    <BarChart3 className="h-4 w-4" />
+                    <span className="hidden sm:inline">Performance</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="integration" className="flex items-center space-x-2">
+                    <Settings className="h-4 w-4" />
+                    <span className="hidden sm:inline">Integration</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="reviews" className="flex items-center space-x-2">
+                    <MessageSquare className="h-4 w-4" />
+                    <span className="hidden sm:inline">Reviews</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="demo" className="flex items-center space-x-2">
+                    <Eye className="h-4 w-4" />
+                    <span className="hidden sm:inline">Demo</span>
+                  </TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="overview" className="space-y-6 mt-6">
+                  <div>
+                    <h3 className="text-xl font-cormorant font-bold mb-4">Product Overview</h3>
+                    <Card>
+                      <CardContent className="p-6">
+                        <p className="text-muted-foreground leading-relaxed">
+                          Get comprehensive insights into this product's capabilities, specifications, and real-world performance.
+                          Explore detailed comparisons, integration possibilities, and feedback from actual users.
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="performance" className="space-y-6 mt-6">
+                  <div>
+                    <h3 className="text-xl font-cormorant font-bold mb-4">Performance Metrics</h3>
+                    {product.performanceMetrics && product.performanceMetrics.length > 0 ? (
+                      <PerformanceMetrics
+                        metrics={product.performanceMetrics}
+                        product={product}
+                        visualizationType="table"
+                        showTrends
+                        showBenchmarks
+                        enablePdfDownload
+                        showTolerances
+                        sortable
+                      />
+                    ) : (
+                      <Card>
+                        <CardContent className="p-6 text-center">
+                          <BarChart3 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                          <p className="text-muted-foreground">
+                            Performance metrics will be available soon. Contact our technical team for detailed specifications.
+                          </p>
+                        </CardContent>
+                      </Card>
+                    )}
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="integration" className="space-y-6 mt-6">
+                  <div>
+                    <h3 className="text-xl font-cormorant font-bold mb-4">System Integration</h3>
+                    <IntegrationNotes
+                      product={product}
+                      compatibilityMatrix={product.compatibilityMatrix}
+                      expandable
+                      searchable
+                      showComplexity
+                      showCosts
+                    />
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="reviews" className="space-y-6 mt-6">
+                  <div>
+                    <h3 className="text-xl font-cormorant font-bold mb-4">Owner Reviews</h3>
+                    {product.ownerReviews && product.ownerReviews.length > 0 ? (
+                      <OwnerReviews
+                        reviews={product.ownerReviews}
+                        showStatistics
+                        searchable
+                        showInstallationDates
+                        showYachtSizes
+                        groupByUseCase
+                        allowSubmission
+                      />
+                    ) : (
+                      <Card>
+                        <CardContent className="p-6 text-center">
+                          <MessageSquare className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                          <p className="text-muted-foreground mb-4">
+                            No reviews available yet. Be the first to share your experience with this product.
+                          </p>
+                          <Button variant="outline">
+                            Write a Review
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    )}
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="demo" className="space-y-6 mt-6">
+                  <div>
+                    <h3 className="text-xl font-cormorant font-bold mb-4">Interactive Demo</h3>
+                    {product.visualDemo ? (
+                      <VisualDemo
+                        content={product.visualDemo}
+                        showHotspots
+                        showControls
+                        allowFullscreen
+                        enableGestures
+                        showInfo
+                        allowSharing
+                        accessible
+                        lazyLoad
+                      />
+                    ) : (
+                      <Card>
+                        <CardContent className="p-6 text-center">
+                          <Eye className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                          <p className="text-muted-foreground mb-4">
+                            Interactive demo coming soon. Contact us for a personalized product demonstration.
+                          </p>
+                          <Button variant="outline">
+                            Request Demo
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    )}
+                  </div>
+                </TabsContent>
+              </Tabs>
+            </div>
           </div>
 
           {/* Sidebar */}
