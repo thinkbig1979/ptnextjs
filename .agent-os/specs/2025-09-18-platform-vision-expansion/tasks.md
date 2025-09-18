@@ -31,14 +31,14 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 3.7 Update vendor detail pages to include new profile sections
   - [x] 3.8 Verify all tests pass for enhanced company profile components
 
-- [ ] 4. Case Studies and Innovation Highlights System
-  - [ ] 4.1 Write tests for case study components and navigation
-  - [ ] 4.2 Create CaseStudyCard component for preview display
-  - [ ] 4.3 Build CaseStudyDetail pages with challenge/solution narrative
-  - [ ] 4.4 Implement InnovationHighlights component with technology showcase
-  - [ ] 4.5 Add yacht project portfolio display with systems breakdown
-  - [ ] 4.6 Create navigation between case studies and main vendor profile
-  - [ ] 4.7 Verify all tests pass for case studies system
+- [x] 4. Case Studies and Innovation Highlights System
+  - [x] 4.1 Write tests for case study components and navigation
+  - [x] 4.2 Create CaseStudyCard component for preview display
+  - [x] 4.3 Build CaseStudyDetail pages with challenge/solution narrative
+  - [x] 4.4 Implement InnovationHighlights component with technology showcase
+  - [x] 4.5 Add yacht project portfolio display with systems breakdown
+  - [x] 4.6 Create navigation between case studies and main vendor profile
+  - [x] 4.7 Verify all tests pass for case studies system
 
 - [ ] 5. Product Comparison and Enhancement Features
   - [ ] 5.1 Write tests for product comparison matrix and integration components
