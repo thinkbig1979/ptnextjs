@@ -20,6 +20,11 @@ import { tinaCMSDataService } from "@/lib/tinacms-data-service";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { notFound } from "next/navigation";
 import VendorDetailClient from "./_components/vendor-detail-client";
+import { CertificationBadge } from "@/components/enhanced-profiles/CertificationBadge";
+import { AwardsSection } from "@/components/enhanced-profiles/AwardsSection";
+import { SocialProofMetrics } from "@/components/enhanced-profiles/SocialProofMetrics";
+import { VideoIntroduction } from "@/components/enhanced-profiles/VideoIntroduction";
+import { InteractiveOrgChart } from "@/components/enhanced-profiles/InteractiveOrgChart";
 import { Metadata } from "next";
 
 // Force static generation for optimal SEO and performance
@@ -235,6 +240,30 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
               </div>
             </div>
 
+            {/* Video Introduction */}
+            {vendor.videoIntroduction?.videoUrl && (
+              <div className="mb-8">
+                <VideoIntroduction
+                  video={{
+                    url: vendor.videoIntroduction.videoUrl,
+                    title: vendor.videoIntroduction.title || `${vendor.name} Company Introduction`,
+                    description: vendor.videoIntroduction.description || `Learn more about ${vendor.name} and our innovative marine technology solutions.`,
+                    thumbnailUrl: vendor.videoIntroduction.thumbnailImage || vendor.image
+                  }}
+                />
+              </div>
+            )}
+
+            {/* Social Proof Metrics */}
+            {vendor.socialProof && (
+              <div className="mb-8">
+                <SocialProofMetrics
+                  metrics={vendor.socialProof}
+                  animated={true}
+                />
+              </div>
+            )}
+
             {/* Company Stats */}
             {companyStats.length > 0 && (
               <div className="mb-8">
@@ -248,6 +277,44 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
                     </Card>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {/* Certifications */}
+            {vendor.certifications && vendor.certifications.length > 0 && (
+              <div className="mb-8">
+                <h2 className="text-2xl font-cormorant font-bold mb-4">Certifications & Compliance</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {vendor.certifications.map((cert, index) => (
+                    <CertificationBadge
+                      key={index}
+                      certification={{
+                        name: cert.name,
+                        issuer: cert.issuer,
+                        validUntil: cert.expiryDate,
+                        certificateUrl: cert.certificateUrl,
+                        logoUrl: cert.logo,
+                        isVerified: true // Default to verified for vendor certs
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Awards Section */}
+            {vendor.awards && vendor.awards.length > 0 && (
+              <div className="mb-8">
+                <AwardsSection
+                  awards={vendor.awards.map((award, index) => ({
+                    id: `award-${index}`,
+                    title: award.title,
+                    organization: award.organization || 'Industry Recognition',
+                    year: award.year,
+                    description: award.description || '',
+                    category: award.category || 'General'
+                  }))}
+                />
               </div>
             )}
 
@@ -269,6 +336,27 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
                     );
                   })}
                 </div>
+              </div>
+            )}
+
+            {/* Team Organization Chart */}
+            {vendor.teamMembers && vendor.teamMembers.length > 0 && (
+              <div className="mb-8">
+                <h2 className="text-2xl font-cormorant font-bold mb-4">Our Team</h2>
+                <InteractiveOrgChart
+                  teamMembers={vendor.teamMembers.map((member, index) => ({
+                    id: `member-${index}`,
+                    name: member.name,
+                    title: member.position,
+                    department: member.expertise?.[0] || 'General',
+                    level: 1, // Default level for now
+                    photoUrl: member.photo,
+                    linkedinUrl: member.linkedinUrl,
+                    bio: member.bio,
+                    reportsTo: null // Simplified for now
+                  }))}
+                  animated={true}
+                />
               </div>
             )}
 

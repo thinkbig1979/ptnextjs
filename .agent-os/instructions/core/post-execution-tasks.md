@@ -18,9 +18,62 @@ Follow these steps to mark your progress updates, create a recap, and deliver th
 
 <process_flow>
 
-<step number="1" subagent="test-runner" name="test_suite_verification">
+<step number="1" subagent="general-purpose" name="code_review">
 
-### Step 1: Run All Tests
+### Step 1: Code Review
+
+Use a senior dev subagent specialized in code reviews to perform a comprehensive code review of all changes, addressing any issues encountered immediately.
+
+<instructions>
+  ACTION: Use general-purpose subagent
+  REQUEST: "Act as a senior developer specialized in code reviews. Perform a comprehensive code review of all the modified files in this repository. Look for:
+            - Code quality issues
+            - Best practices violations
+            - Security vulnerabilities
+            - Performance issues
+            - Architectural concerns
+            - Documentation gaps
+            - Test coverage gaps
+            - Style guide violations
+            Address any issues you find immediately by making the necessary fixes."
+  WAIT: For code review completion
+  PROCESS: All identified issues must be resolved
+  REPEAT: Until code review standards are met
+</instructions>
+
+<review_criteria>
+  <quality>
+    - Code clarity and maintainability
+    - Proper error handling
+    - Appropriate abstractions
+  </quality>
+  <security>
+    - Input validation
+    - Authentication/authorization
+    - Data sanitization
+  </security>
+  <performance>
+    - Efficient algorithms
+    - Resource management
+    - Database queries
+  </performance>
+  <standards>
+    - Project coding standards
+    - Documentation requirements
+    - Test coverage expectations
+  </standards>
+</review_criteria>
+
+<failure_handling>
+  <action>fix all identified issues</action>
+  <priority>before proceeding to tests</priority>
+</failure_handling>
+
+</step>
+
+<step number="2" subagent="test-runner" name="test_suite_verification">
+
+### Step 2: Run All Tests
 
 Use the test-runner subagent to run the ALL tests in the application's test suite to ensure no regressions and fix any failures until all tests pass.
 
@@ -47,9 +100,9 @@ Use the test-runner subagent to run the ALL tests in the application's test suit
 
 </step>
 
-<step number="2" subagent="git-workflow" name="git_workflow">
+<step number="3" subagent="git-workflow" name="git_workflow">
 
-### Step 2: Git Workflow
+### Step 3: Git Workflow
 
 Use the git-workflow subagent to create git commit, push to GitHub, and create pull request for the implemented features.
 
@@ -81,9 +134,9 @@ Use the git-workflow subagent to create git commit, push to GitHub, and create p
 
 </step>
 
-<step number="3" subagent="project-manager" name="tasks_list_check">
+<step number="4" subagent="project-manager" name="tasks_list_check">
 
-### Step 3: Tasks Completion Verification
+### Step 4: Tasks Completion Verification
 
 Use the project-manager subagent to read the current spec's tasks.md file and verify that all tasks have been properly marked as complete with [x] or documented with blockers.
 
@@ -98,9 +151,9 @@ Use the project-manager subagent to read the current spec's tasks.md file and ve
 
 </step>
 
-<step number="4" subagent="project-manager" name="roadmap_progress_check">
+<step number="5" subagent="project-manager" name="roadmap_progress_check">
 
-### Step 4: Roadmap Progress Update (conditional)
+### Step 5: Roadmap Progress Update (conditional)
 
 Use the project-manager subagent to read @.agent-os/product/roadmap.md and mark roadmap items as complete with [x] ONLY IF the executed tasks have completed any roadmap item(s) and the spec completes that item.
 
@@ -109,7 +162,7 @@ Use the project-manager subagent to read @.agent-os/product/roadmap.md and mark 
     EVALUATE: Did executed tasks complete any roadmap item(s)?
     IF NO:
       SKIP this entire step
-      PROCEED to step 5
+      PROCEED to step 6
     IF YES:
       CONTINUE with roadmap check
   </preliminary_check>
@@ -132,9 +185,9 @@ Use the project-manager subagent to read @.agent-os/product/roadmap.md and mark 
 
 </step>
 
-<step number="5" subagent="project-manager" name="document_recap">
+<step number="6" subagent="project-manager" name="document_recap">
 
-### Step 5: Create Recap Document
+### Step 6: Create Recap Document
 
 Use the project-manager subagent to create a recap document in .agent-os/recaps/ folder that summarizes what was built for this spec.
 
@@ -177,9 +230,9 @@ Use the project-manager subagent to create a recap document in .agent-os/recaps/
 
 </step>
 
-<step number="6" subagent="project-manager" name="completion_summary">
+<step number="7" subagent="project-manager" name="completion_summary">
 
-### Step 6: Completion Summary
+### Step 7: Completion Summary
 
 Use the project-manager subagent to create a structured summary message with emojis showing what was done, any issues, testing instructions, and PR link.
 
@@ -225,9 +278,9 @@ Use the project-manager subagent to create a structured summary message with emo
 
 </step>
 
-<step number="7" subagent="project-manager" name="completion_notification">
+<step number="8" subagent="project-manager" name="completion_notification">
 
-### Step 7: Task Completion Notification
+### Step 8: Task Completion Notification
 
 Use the project-manager subagent to play a system sound to alert the user that tasks are complete.
 

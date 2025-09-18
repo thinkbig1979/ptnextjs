@@ -21,15 +21,15 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 2.5 Test schema validation and content saving through TinaCMS admin
   - [x] 2.6 Verify all tests pass for vendor schema extensions
 
-- [ ] 3. Enhanced Company Profile Components
-  - [ ] 3.1 Write tests for certification badge, awards display, and social proof components
-  - [ ] 3.2 Create CertificationBadge component with logo and validation display
-  - [ ] 3.3 Build AwardsSection component with timeline and recognition display
-  - [ ] 3.4 Implement SocialProofMetrics component for follower/project counts
-  - [ ] 3.5 Create VideoIntroduction component with react-player integration
-  - [ ] 3.6 Build InteractiveOrgChart component with LinkedIn integration
-  - [ ] 3.7 Update vendor detail pages to include new profile sections
-  - [ ] 3.8 Verify all tests pass for enhanced company profile components
+- [x] 3. Enhanced Company Profile Components
+  - [x] 3.1 Write tests for certification badge, awards display, and social proof components
+  - [x] 3.2 Create CertificationBadge component with logo and validation display
+  - [x] 3.3 Build AwardsSection component with timeline and recognition display
+  - [x] 3.4 Implement SocialProofMetrics component for follower/project counts
+  - [x] 3.5 Create VideoIntroduction component with react-player integration
+  - [x] 3.6 Build InteractiveOrgChart component with LinkedIn integration
+  - [x] 3.7 Update vendor detail pages to include new profile sections
+  - [x] 3.8 Verify all tests pass for enhanced company profile components
 
 - [ ] 4. Case Studies and Innovation Highlights System
   - [ ] 4.1 Write tests for case study components and navigation

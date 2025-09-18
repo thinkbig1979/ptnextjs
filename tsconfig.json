@@ -40,6 +40,11 @@
   ],
   "exclude": [
     "node_modules",
-    "migration-scripts"
+    "migration-scripts",
+    "**/__tests__/**/*",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "jest.config.js",
+    "test-setup.js"
   ]
 }
