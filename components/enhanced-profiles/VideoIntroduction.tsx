@@ -5,6 +5,7 @@ import { Play, RotateCcw, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import dynamic from "next/dynamic";
+import { useLazyLoading, usePerformanceMetrics } from "@/lib/hooks/use-lazy-loading";
 
 // Dynamically import ReactPlayer to avoid SSR issues
 const ReactPlayer = dynamic(() => import("react-player"), {
@@ -86,6 +87,13 @@ export function VideoIntroduction({
   const [hasEnded, setHasEnded] = React.useState(false);
   const [, setIsReady] = React.useState(false);
 
+  // Enhanced lazy loading for video content
+  const { ref: lazyRef, wasVisible } = useLazyLoading({
+    threshold: 0.2,
+    rootMargin: '100px',
+    triggerOnce: true
+  });
+
   // Validate video URL on mount
   const isValidUrl = React.useMemo(() => isValidVideoUrl(video.url), [video.url]);
 
@@ -144,12 +152,26 @@ export function VideoIntroduction({
 
   return (
     <Card
+      ref={lazyRef as React.RefObject<HTMLDivElement>}
       data-testid="video-introduction"
       className={cn("overflow-hidden", className)}
     >
       <CardContent className="p-0">
         <div className="relative aspect-video bg-black">
-          {!hasStarted && video.thumbnailUrl ? (
+          {!wasVisible ? (
+            // Lazy loading placeholder
+            <div className="flex items-center justify-center h-full bg-gradient-to-br from-gray-100 to-gray-200">
+              <div className="text-center">
+                <div className="w-16 h-16 mx-auto mb-4 bg-gray-300 rounded-full flex items-center justify-center">
+                  <Play className="w-6 h-6 text-gray-500" />
+                </div>
+                <p className="text-gray-500 text-sm">Video will load when visible</p>
+              </div>
+            </div>
+          ) : (
+            // Actual video content
+            <div>
+              {!hasStarted && video.thumbnailUrl ? (
             // Thumbnail view
             <div className="relative w-full h-full">
               <Image
@@ -218,6 +240,8 @@ export function VideoIntroduction({
                   </Button>
                 </div>
               )}
+            </div>
+          )}
             </div>
           )}
         </div>

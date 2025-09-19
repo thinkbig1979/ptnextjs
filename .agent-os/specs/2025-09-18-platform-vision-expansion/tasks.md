@@ -72,14 +72,14 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 7.6 Test all external dependency integrations in development environment
   - [x] 7.7 Verify all tests pass for external dependencies
 
-- [ ] 8. Performance Optimization and Caching
-  - [ ] 8.1 Write tests for caching strategy and lazy loading implementation
-  - [ ] 8.2 Implement lazy loading for 360° demos and video content
-  - [ ] 8.3 Extend TinaCMSDataService caching for yacht and enhanced profile data
-  - [ ] 8.4 Optimize timeline and supplier map rendering performance
-  - [ ] 8.5 Implement progressive image loading for enhanced media content
-  - [ ] 8.6 Test build performance and static generation times
-  - [ ] 8.7 Verify all tests pass for performance optimizations
+- [x] 8. Performance Optimization and Caching
+  - [x] 8.1 Write tests for caching strategy and lazy loading implementation
+  - [x] 8.2 Implement lazy loading for 360° demos and video content
+  - [x] 8.3 Extend TinaCMSDataService caching for yacht and enhanced profile data
+  - [x] 8.4 Optimize timeline and supplier map rendering performance
+  - [x] 8.5 Implement progressive image loading for enhanced media content
+  - [x] 8.6 Test build performance and static generation times
+  - [x] 8.7 Verify all tests pass for performance optimizations
 
 - [ ] 9. Content Validation and Sample Data
   - [ ] 9.1 Write tests for content validation and reference integrity

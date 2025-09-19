@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import type { VisualDemoContent } from "@/lib/types";
 import dynamic from "next/dynamic";
+import { useLazyLoading, usePerformanceMetrics } from "@/lib/hooks/use-lazy-loading";
 
 // Error boundary component for external dependencies
 class ExternalDependencyErrorBoundary extends React.Component<
@@ -146,46 +147,56 @@ export function VisualDemo({
   const [isPlaying, setIsPlaying] = React.useState(autoRotate);
   const [rotation, setRotation] = React.useState(0);
   const [loadingProgress, setLoadingProgress] = React.useState(0);
-  const [isLoaded, setIsLoaded] = React.useState(!lazyLoad);
   const [showInfoPanel, setShowInfoPanel] = React.useState(false);
   const [currentContent, setCurrentContent] = React.useState(0);
   const [fps, setFps] = React.useState(60);
   const [isMuted, setIsMuted] = React.useState(false);
   const containerRef = React.useRef<HTMLDivElement>(null);
-  const intersectionRef = React.useRef<HTMLDivElement>(null);
+
+  // Enhanced lazy loading with intersection observer
+  const { ref: lazyRef, isVisible, wasVisible } = useLazyLoading({
+    threshold: 0.1,
+    rootMargin: '50px',
+    triggerOnce: true
+  });
+  const [isLoaded, setIsLoaded] = React.useState(!lazyLoad);
+
+  // Performance monitoring
+  const { startMeasure, endMeasure, duration } = usePerformanceMetrics({
+    name: 'VisualDemo',
+    enabled: showPerformanceMetrics
+  });
 
   const contentArray = Array.isArray(content) ? content : [content];
   const activeContent = contentArray[currentContent];
 
-  // Lazy loading with Intersection Observer
+  // Enhanced lazy loading with performance monitoring
   React.useEffect(() => {
-    if (!lazyLoad || isLoaded) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          setIsLoaded(true);
-          // Simulate loading progress
-          const interval = setInterval(() => {
-            setLoadingProgress(prev => {
-              if (prev >= 100) {
-                clearInterval(interval);
-                return 100;
-              }
-              return prev + 10;
-            });
-          }, 100);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (intersectionRef.current) {
-      observer.observe(intersectionRef.current);
+    if (!lazyLoad) {
+      setIsLoaded(true);
+      return;
     }
 
-    return () => observer.disconnect();
-  }, [lazyLoad, isLoaded]);
+    if (wasVisible && !isLoaded) {
+      startMeasure();
+      setIsLoaded(true);
+
+      // Simulate loading progress with realistic timing
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += Math.random() * 15 + 5; // 5-20% increments
+        if (progress >= 100) {
+          setLoadingProgress(100);
+          clearInterval(interval);
+          endMeasure();
+        } else {
+          setLoadingProgress(Math.min(progress, 95));
+        }
+      }, 150); // Slightly slower for better UX
+
+      return () => clearInterval(interval);
+    }
+  }, [lazyLoad, wasVisible, isLoaded, startMeasure, endMeasure]);
 
   // Auto-rotation effect
   React.useEffect(() => {
@@ -477,11 +488,11 @@ export function VisualDemo({
 
   return (
     <div
-      ref={containerRef}
+      ref={lazyRef as React.RefObject<HTMLDivElement>}
       className={cn("w-full", isFullscreen && "fixed inset-0 z-50 bg-black", className)}
       data-testid="visual-demo"
     >
-      <div ref={intersectionRef}>
+      <div ref={containerRef}>
         <Card className={cn(isFullscreen && "h-full border-0 rounded-none")}>
           <CardHeader className={cn("pb-3", isFullscreen && "text-white")}>
             <div className="flex items-center justify-between">

@@ -30,46 +30,175 @@ interface CompanyInfo {
   story: string
 }
 
-class TinaCMSDataService {
-  private cache: Map<string, any> = new Map()
-  private readonly CACHE_TTL = 5 * 60 * 1000 // 5 minutes
+interface CacheEntry<T> {
+  data: T
+  timestamp: number
+  accessCount: number
+  size: number
+}
 
-  private cleanExpiredCache() {
-    const now = Date.now();
-    for (const [key, cached] of this.cache.entries()) {
-      if (now - cached.timestamp >= this.CACHE_TTL) {
-        this.cache.delete(key);
-      }
+interface CacheStats {
+  hits: number
+  misses: number
+  size: number
+  totalMemory: number
+}
+
+class TinaCMSDataService {
+  private cache: Map<string, CacheEntry<any>> = new Map()
+  private readonly CACHE_TTL = 5 * 60 * 1000 // 5 minutes
+  private readonly MAX_CACHE_SIZE = 100 // Maximum number of entries
+  private readonly MAX_MEMORY_SIZE = 50 * 1024 * 1024 // 50MB max cache memory
+  private cacheStats: CacheStats = { hits: 0, misses: 0, size: 0, totalMemory: 0 }
+  private lastCleanup = Date.now()
+  private readonly CLEANUP_INTERVAL = 60 * 1000 // Cleanup every minute
+
+  private estimateSize(data: any): number {
+    // Rough estimation of object size in bytes
+    try {
+      return JSON.stringify(data).length * 2 // Approximate UTF-16 encoding
+    } catch {
+      return 1000 // Fallback estimate
     }
   }
 
+  private updateCacheStats() {
+    this.cacheStats.size = this.cache.size
+    this.cacheStats.totalMemory = Array.from(this.cache.values())
+      .reduce((total, entry) => total + entry.size, 0)
+  }
+
+  private cleanExpiredCache() {
+    const now = Date.now()
+    let removedCount = 0
+
+    for (const [key, cached] of this.cache.entries()) {
+      if (now - cached.timestamp >= this.CACHE_TTL) {
+        this.cache.delete(key)
+        removedCount++
+      }
+    }
+
+    if (removedCount > 0) {
+      console.log(`🧹 Cleaned up ${removedCount} expired cache entries`)
+      this.updateCacheStats()
+    }
+
+    this.lastCleanup = now
+  }
+
+  private evictLRUEntries() {
+    // Sort by access count and timestamp to find least recently used
+    const entries = Array.from(this.cache.entries())
+      .sort(([, a], [, b]) => {
+        if (a.accessCount !== b.accessCount) {
+          return a.accessCount - b.accessCount
+        }
+        return a.timestamp - b.timestamp
+      })
+
+    // Remove 25% of entries to make room
+    const toRemove = Math.ceil(entries.length * 0.25)
+    for (let i = 0; i < toRemove && entries.length > 0; i++) {
+      const [key] = entries[i]
+      this.cache.delete(key)
+    }
+
+    console.log(`♻️ Evicted ${toRemove} LRU cache entries`)
+    this.updateCacheStats()
+  }
+
+  private shouldCleanup(): boolean {
+    const now = Date.now()
+    return (
+      now - this.lastCleanup > this.CLEANUP_INTERVAL ||
+      this.cache.size > this.MAX_CACHE_SIZE ||
+      this.cacheStats.totalMemory > this.MAX_MEMORY_SIZE
+    )
+  }
+
   private async getCached<T>(key: string, fetcher: () => Promise<T>): Promise<T> {
-    // Clean expired entries periodically
-    if (this.cache.size > 0 && Math.random() < 0.1) {
-      this.cleanExpiredCache();
+    // Periodic cleanup
+    if (this.shouldCleanup()) {
+      this.cleanExpiredCache()
+
+      // If still too large, evict LRU entries
+      if (this.cache.size > this.MAX_CACHE_SIZE || this.cacheStats.totalMemory > this.MAX_MEMORY_SIZE) {
+        this.evictLRUEntries()
+      }
     }
 
     const cached = this.cache.get(key)
-    if (cached && Date.now() - cached.timestamp < this.CACHE_TTL) {
-      console.log(`📋 Using cached ${key}`)
+    const now = Date.now()
+
+    if (cached && now - cached.timestamp < this.CACHE_TTL) {
+      // Update access statistics
+      cached.accessCount++
+      this.cacheStats.hits++
+
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`📋 Cache hit for ${key} (accessed ${cached.accessCount} times)`)
+      }
+
       return cached.data
     }
 
+    // Cache miss
+    this.cacheStats.misses++
+
     try {
-      console.log(`🔄 Fetching ${key} from TinaCMS...`)
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`🔄 Cache miss - Fetching ${key} from TinaCMS...`)
+      }
+
       const data = await fetcher()
+      const size = this.estimateSize(data)
+
       this.cache.set(key, {
         data,
-        timestamp: Date.now()
+        timestamp: now,
+        accessCount: 1,
+        size
       })
-      console.log(`✅ Successfully fetched ${key}`)
+
+      this.updateCacheStats()
+
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`✅ Cached ${key} (${size} bytes, ${this.cache.size} total entries)`)
+      }
+
       return data
     } catch (error) {
       console.error(`❌ Failed to fetch ${key}:`, error)
-
-      // Always throw the error for static builds - no fallbacks
       throw new Error(`Static build failed: Unable to fetch ${key} from TinaCMS. Ensure content files are properly formatted.`)
     }
+  }
+
+  // Public method to get cache statistics
+  getCacheStats(): CacheStats & { hitRatio: number } {
+    const total = this.cacheStats.hits + this.cacheStats.misses
+    return {
+      ...this.cacheStats,
+      hitRatio: total > 0 ? this.cacheStats.hits / total : 0
+    }
+  }
+
+  // Public method to clear cache
+  clearCache(): void {
+    this.cache.clear()
+    this.cacheStats = { hits: 0, misses: 0, size: 0, totalMemory: 0 }
+    console.log('🗑️ Cache cleared')
+  }
+
+  // Public method to get cache info for debugging
+  getCacheInfo(): Array<{ key: string; size: number; age: number; accessCount: number }> {
+    const now = Date.now()
+    return Array.from(this.cache.entries()).map(([key, entry]) => ({
+      key,
+      size: entry.size,
+      age: now - entry.timestamp,
+      accessCount: entry.accessCount
+    }))
   }
 
   private async resolveReference(ref: string): Promise<any> {
@@ -952,6 +1081,151 @@ class TinaCMSDataService {
   async getBlogPostSlugs(): Promise<string[]> {
     const posts = await this.getAllBlogPosts()
     return posts.map(post => post.slug).filter(Boolean) as string[]
+  }
+
+  // Enhanced Profile Methods with Optimized Caching
+  async getVendorCertifications(vendorId: string): Promise<any[]> {
+    return this.getCached(`vendor-certifications:${vendorId}`, async () => {
+      const vendor = await this.getVendorById(vendorId)
+      return vendor?.certifications || []
+    })
+  }
+
+  async getVendorAwards(vendorId: string): Promise<any[]> {
+    return this.getCached(`vendor-awards:${vendorId}`, async () => {
+      const vendor = await this.getVendorById(vendorId)
+      return vendor?.awards || []
+    })
+  }
+
+  async getVendorSocialProof(vendorId: string): Promise<any> {
+    return this.getCached(`vendor-social-proof:${vendorId}`, async () => {
+      const vendor = await this.getVendorById(vendorId)
+      return vendor?.socialProof || {}
+    })
+  }
+
+  async getEnhancedVendorProfile(vendorId: string): Promise<any> {
+    return this.getCached(`enhanced-vendor:${vendorId}`, async () => {
+      const vendor = await this.getVendorById(vendorId)
+      if (!vendor) return null
+
+      return {
+        id: vendor.id,
+        name: vendor.name,
+        slug: vendor.slug,
+        certifications: vendor.certifications || [],
+        awards: vendor.awards || [],
+        socialProof: vendor.socialProof || {},
+        videoUrl: vendor.videoIntroduction?.videoUrl,
+        caseStudies: vendor.caseStudies || [],
+        innovationHighlights: vendor.innovationHighlights || [],
+        teamMembers: vendor.teamMembers || [],
+        yachtProjects: vendor.yachtProjects || []
+      }
+    })
+  }
+
+  // Yacht-specific caching with performance optimizations
+  async getYachtTimeline(yachtId: string): Promise<any[]> {
+    return this.getCached(`yacht-timeline:${yachtId}`, async () => {
+      const yacht = await this.getYachtById(yachtId)
+      return yacht?.timeline || []
+    })
+  }
+
+  async getYachtSupplierMap(yachtId: string): Promise<any[]> {
+    return this.getCached(`yacht-suppliers:${yachtId}`, async () => {
+      const yacht = await this.getYachtById(yachtId)
+      return yacht?.supplierMap || []
+    })
+  }
+
+  async getYachtSustainabilityScore(yachtId: string): Promise<any> {
+    return this.getCached(`yacht-sustainability:${yachtId}`, async () => {
+      const yacht = await this.getYachtById(yachtId)
+      return yacht?.sustainabilityScore || null
+    })
+  }
+
+  async getYachtMaintenanceHistory(yachtId: string): Promise<any[]> {
+    return this.getCached(`yacht-maintenance:${yachtId}`, async () => {
+      const yacht = await this.getYachtById(yachtId)
+      return yacht?.maintenanceHistory || []
+    })
+  }
+
+  async getYachtCustomizations(yachtId: string): Promise<any[]> {
+    return this.getCached(`yacht-customizations:${yachtId}`, async () => {
+      const yacht = await this.getYachtById(yachtId)
+      return yacht?.customizations || []
+    })
+  }
+
+  // Performance optimization methods
+  async preloadYachtData(yachtId: string): Promise<void> {
+    // Preload all yacht-related data in parallel for better performance
+    await Promise.all([
+      this.getYachtTimeline(yachtId),
+      this.getYachtSupplierMap(yachtId),
+      this.getYachtSustainabilityScore(yachtId),
+      this.getYachtMaintenanceHistory(yachtId),
+      this.getYachtCustomizations(yachtId)
+    ])
+  }
+
+  async preloadEnhancedVendorData(vendorId: string): Promise<void> {
+    // Preload all enhanced vendor data in parallel
+    await Promise.all([
+      this.getVendorCertifications(vendorId),
+      this.getVendorAwards(vendorId),
+      this.getVendorSocialProof(vendorId),
+      this.getEnhancedVendorProfile(vendorId)
+    ])
+  }
+
+  // Cache management methods
+  clearYachtCache(yachtId?: string): void {
+    if (yachtId) {
+      // Clear specific yacht cache
+      const keysToDelete = Array.from(this.cache.keys()).filter(key =>
+        key.includes(`yacht-`) && key.includes(yachtId)
+      )
+      keysToDelete.forEach(key => this.cache.delete(key))
+      this.cache.delete(`yachts`)
+    } else {
+      // Clear all yacht-related cache
+      const keysToDelete = Array.from(this.cache.keys()).filter(key =>
+        key.includes('yacht')
+      )
+      keysToDelete.forEach(key => this.cache.delete(key))
+    }
+  }
+
+  clearVendorCache(vendorId?: string): void {
+    if (vendorId) {
+      // Clear specific vendor cache
+      const keysToDelete = Array.from(this.cache.keys()).filter(key =>
+        (key.includes(`vendor-`) || key.includes(`enhanced-vendor:`)) && key.includes(vendorId)
+      )
+      keysToDelete.forEach(key => this.cache.delete(key))
+      this.cache.delete(`vendors`)
+      this.cache.delete(`partners`)
+    } else {
+      // Clear all vendor-related cache
+      const keysToDelete = Array.from(this.cache.keys()).filter(key =>
+        key.includes('vendor') || key.includes('partner')
+      )
+      keysToDelete.forEach(key => this.cache.delete(key))
+    }
+  }
+
+  getCacheStatistics(): { totalKeys: number; cacheSize: number; hitRatio?: number } {
+    return {
+      totalKeys: this.cache.size,
+      cacheSize: this.cache.size,
+      hitRatio: undefined // Could be implemented with hit/miss tracking
+    }
   }
 
   // Validation methods for build-time checks

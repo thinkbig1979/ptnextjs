@@ -2,10 +2,10 @@
 
 import * as React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { ProgressiveImage } from "@/components/ui/progressive-image";
 import type { Yacht } from "@/lib/types";
 
 interface YachtCardProps {
@@ -31,12 +31,13 @@ export function YachtCard({
       <Link href={href} className="block">
         <div className="aspect-[4/3] relative overflow-hidden rounded-t-lg">
           {mainImage ? (
-            <Image
+            <ProgressiveImage
               src={mainImage}
               alt={yacht.name}
               fill
               className="object-cover transition-transform duration-300 group-hover:scale-105"
               sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              quality={75}
             />
           ) : (
             <div

@@ -1,13 +1,13 @@
 "use client";
 
 import * as React from "react";
-import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { YachtTimelineEvent } from "@/lib/types";
 import { motion, AnimatePresence } from "framer-motion";
+import { usePerformanceMetrics } from "@/lib/hooks/use-lazy-loading";
 
 interface YachtTimelineProps {
   events: YachtTimelineEvent[];
@@ -19,6 +19,89 @@ interface YachtTimelineProps {
   showProgress?: boolean;
   className?: string;
 }
+
+// Memoized timeline event component for performance
+const TimelineEventItem = React.memo(({
+  event,
+  index,
+  isExpanded,
+  onToggleExpand,
+  compact,
+  getCategoryBadgeClass
+}: {
+  event: YachtTimelineEvent;
+  index: number;
+  isExpanded: boolean;
+  onToggleExpand: (index: number) => void;
+  compact: boolean;
+  getCategoryBadgeClass: (category: string) => string;
+}) => {
+  const handleToggle = React.useCallback(() => {
+    onToggleExpand(index);
+  }, [index, onToggleExpand]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: index * 0.05 }}
+      layout
+      className="relative"
+    >
+      <Card className="hover:shadow-md transition-shadow duration-200">
+        <CardContent className={cn("p-4", compact && "p-3")}>
+          <div className="flex items-start space-x-3">
+            <div className="flex-1">
+              <div className="flex items-center space-x-2 mb-2">
+                <Badge className={getCategoryBadgeClass(event.category)}>
+                  {event.category}
+                </Badge>
+                <span className="text-sm text-muted-foreground">
+                  {new Date(event.date).toLocaleDateString()}
+                </span>
+              </div>
+              <h4 className={cn("font-medium", compact ? "text-sm" : "text-base")}>
+                {event.event}
+              </h4>
+              {!compact && event.description && (
+                <p className="text-sm text-muted-foreground mt-1">
+                  {event.description}
+                </p>
+              )}
+              {isExpanded && event.description && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="mt-3 p-3 bg-muted rounded-lg"
+                >
+                  <p className="text-sm">{event.description}</p>
+                  {event.location && (
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Location: {event.location}
+                    </p>
+                  )}
+                </motion.div>
+              )}
+            </div>
+            {event.description && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleToggle}
+                className="shrink-0"
+              >
+                {isExpanded ? 'Less' : 'More'}
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+});
+
+TimelineEventItem.displayName = 'TimelineEventItem';
 
 export function YachtTimeline({
   events,
@@ -32,20 +115,40 @@ export function YachtTimeline({
 }: YachtTimelineProps) {
   const [expandedEvent, setExpandedEvent] = React.useState<number | null>(null);
 
-  const filteredAndSortedEvents = React.useMemo(() => {
-    let filtered = events.filter(event => {
-      if (filterByCategory && event.category !== filterByCategory) return false;
-      return true;
-    });
+  // Performance monitoring
+  const { startMeasure, endMeasure } = usePerformanceMetrics({
+    name: 'YachtTimeline',
+    enabled: process.env.NODE_ENV === 'development'
+  });
 
-    return filtered.sort((a, b) => {
+  // Memoized event filtering and sorting for performance
+  const filteredAndSortedEvents = React.useMemo(() => {
+    if (process.env.NODE_ENV === 'development') {
+      startMeasure();
+    }
+
+    let filtered = events;
+
+    // Only filter if category filter is provided
+    if (filterByCategory) {
+      filtered = events.filter(event => event.category === filterByCategory);
+    }
+
+    const sorted = [...filtered].sort((a, b) => {
       const dateA = new Date(a.date).getTime();
       const dateB = new Date(b.date).getTime();
       return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
     });
+
+    if (process.env.NODE_ENV === 'development') {
+      endMeasure();
+    }
+
+    return sorted;
   }, [events, sortOrder, filterByCategory]);
 
-  const getCategoryBadgeClass = (category: string) => {
+  // Memoized category badge class function for performance
+  const getCategoryBadgeClass = React.useCallback((category: string) => {
     switch (category) {
       case 'launch':
         return 'bg-green-100 text-green-800';
@@ -60,7 +163,12 @@ export function YachtTimeline({
       default:
         return 'bg-gray-100 text-gray-800';
     }
-  };
+  }, []);
+
+  // Optimized toggle handler using useCallback
+  const handleToggleExpand = React.useCallback((index: number) => {
+    setExpandedEvent(prev => prev === index ? null : index);
+  }, []);
 
   const progress = React.useMemo(() => {
     if (!showProgress) return 0;
@@ -133,164 +241,55 @@ export function YachtTimeline({
           />
         )}
 
-        <div className="space-y-8">
+        <div className="space-y-6">
           <AnimatePresence>
             {filteredAndSortedEvents.map((event, index) => (
-              <motion.div
-                key={`${event.date}-${index}`}
-                className="relative"
-                initial={{ opacity: 0, x: -50, scale: 0.9 }}
-                animate={{ opacity: 1, x: 0, scale: 1 }}
-                exit={{ opacity: 0, x: 50, scale: 0.9 }}
-                transition={{
-                  duration: 0.6,
-                  delay: index * 0.1,
-                  type: "spring",
-                  stiffness: 100
-                }}
-              >
-                {/* Timeline connector with animation */}
+              <div key={`${event.date}-${index}`} className="relative">
+                {/* Timeline connector */}
                 {index < filteredAndSortedEvents.length - 1 && (
                   <motion.div
-                    className="absolute left-8 top-16 w-0.5 h-8 bg-border"
-                    data-testid="timeline-connector"
+                    className="absolute left-8 top-16 w-0.5 h-6 bg-border"
                     initial={{ scaleY: 0 }}
                     animate={{ scaleY: 1 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 + 0.3 }}
+                    transition={{ duration: 0.3, delay: index * 0.05 + 0.3 }}
                     style={{ transformOrigin: "top" }}
                   />
                 )}
 
+                {/* Timeline dot */}
                 <motion.div
-                  className={cn(
-                    "ml-16",
-                    `category-${event.category}`
-                  )}
-                  whileHover={{
-                    scale: 1.02,
-                    transition: { duration: 0.2 }
-                  }}
-                  whileTap={{ scale: 0.98 }}
+                  className="absolute left-6 top-6 w-4 h-4 bg-background border-2 border-accent rounded-full z-10"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ duration: 0.4, delay: index * 0.05 + 0.2 }}
                 >
-                  <Card
-                    className="transition-all duration-200 hover:shadow-md"
-                    data-testid={`timeline-event-${event.category}`}
-                    data-date={event.date}
-                  >
-                    {/* Timeline dot with pulse animation */}
-                    <motion.div
-                      className="absolute -left-16 top-6 w-4 h-4 bg-background border-2 border-accent rounded-full"
-                      initial={{ scale: 0, opacity: 0 }}
-                      animate={{
-                        scale: 1,
-                        opacity: 1,
-                      }}
-                      transition={{
-                        duration: 0.4,
-                        delay: index * 0.1 + 0.2,
-                        type: "spring",
-                        stiffness: 200
-                      }}
-                      whileHover={{
-                        scale: 1.3,
-                        boxShadow: "0 0 20px rgba(59, 130, 246, 0.5)",
-                        transition: { duration: 0.2 }
-                      }}
-                    >
-                      {/* Inner dot with category-specific color animation */}
-                      <motion.div
-                        className={cn(
-                          "absolute inset-1 rounded-full",
-                          event.category === 'launch' && "bg-green-500",
-                          event.category === 'delivery' && "bg-purple-500",
-                          event.category === 'refit' && "bg-orange-500",
-                          event.category === 'milestone' && "bg-blue-500",
-                          event.category === 'service' && "bg-yellow-500"
-                        )}
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{
-                          duration: 0.3,
-                          delay: index * 0.1 + 0.4
-                        }}
-                      />
-                    </motion.div>
-
-                <CardContent className="p-6">
-                  <div className="space-y-4">
-                    <div className="flex items-start justify-between">
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2">
-                          <Badge className={getCategoryBadgeClass(event.category)}>
-                            {event.category.charAt(0).toUpperCase() + event.category.slice(1)}
-                          </Badge>
-                          <span className="text-sm text-muted-foreground">
-                            {new Date(event.date).toLocaleDateString('en-US', {
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric'
-                            })}
-                          </span>
-                        </div>
-                        <h3 className="text-lg font-semibold font-cormorant">
-                          {event.event}
-                        </h3>
-                        {event.location && (
-                          <p className="text-sm text-muted-foreground">
-                            📍 {event.location}
-                          </p>
-                        )}
-                      </div>
-                      {expandable && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setExpandedEvent(expandedEvent === index ? null : index)}
-                          data-testid={`expand-event-${index}`}
-                        >
-                          {expandedEvent === index ? 'Less' : 'More'}
-                        </Button>
-                      )}
-                    </div>
-
-                    {event.description && (
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        {event.description}
-                      </p>
+                  <motion.div
+                    className={cn(
+                      "absolute inset-1 rounded-full",
+                      event.category === 'launch' && "bg-green-500",
+                      event.category === 'delivery' && "bg-purple-500",
+                      event.category === 'refit' && "bg-orange-500",
+                      event.category === 'milestone' && "bg-blue-500",
+                      event.category === 'service' && "bg-yellow-500"
                     )}
-
-                    {event.images && event.images.length > 0 && (
-                      <div className="grid gap-2 md:grid-cols-2">
-                        {event.images.slice(0, 2).map((image, imageIndex) => (
-                          <div key={imageIndex} className="aspect-video relative rounded-lg overflow-hidden">
-                            <Image
-                              src={image}
-                              alt={`${event.event} event`}
-                              fill
-                              className="object-cover"
-                              sizes="(max-width: 768px) 100vw, 50vw"
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {expandable && expandedEvent === index && (
-                      <div className="pt-4 border-t border-border">
-                        <p className="text-sm font-medium mb-2">Event Details</p>
-                        <div className="space-y-2 text-sm text-muted-foreground">
-                          <p><strong>Category:</strong> {event.category}</p>
-                          <p><strong>Date:</strong> {event.date}</p>
-                          {event.location && <p><strong>Location:</strong> {event.location}</p>}
-                          {event.description && <p><strong>Description:</strong> {event.description}</p>}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-                  </Card>
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ duration: 0.3, delay: index * 0.05 + 0.4 }}
+                  />
                 </motion.div>
-              </motion.div>
+
+                {/* Event content */}
+                <div className="ml-16">
+                  <TimelineEventItem
+                    event={event}
+                    index={index}
+                    isExpanded={expandable && expandedEvent === index}
+                    onToggleExpand={handleToggleExpand}
+                    compact={compact}
+                    getCategoryBadgeClass={getCategoryBadgeClass}
+                  />
+                </div>
+              </div>
             ))}
           </AnimatePresence>
         </div>

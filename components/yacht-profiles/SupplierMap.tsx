@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { YachtSupplierRole } from "@/lib/types";
+import { usePerformanceMetrics } from "@/lib/hooks/use-lazy-loading";
 
 interface SupplierMapProps {
   suppliers: YachtSupplierRole[];
@@ -17,6 +18,63 @@ interface SupplierMapProps {
   className?: string;
 }
 
+// Memoized supplier card component for performance
+const SupplierCard = React.memo(({
+  supplier,
+  onSupplierClick,
+  getRoleBadgeClass
+}: {
+  supplier: YachtSupplierRole;
+  onSupplierClick?: (supplier: YachtSupplierRole) => void;
+  getRoleBadgeClass: (role: string) => string;
+}) => {
+  const handleClick = React.useCallback(() => {
+    onSupplierClick?.(supplier);
+  }, [supplier, onSupplierClick]);
+
+  return (
+    <Card data-testid={`supplier-card-${supplier.vendorId}`}
+      className="hover:shadow-md transition-shadow duration-200 cursor-pointer"
+      onClick={handleClick}
+    >
+      <CardHeader className="pb-2">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-sm font-medium">
+            {supplier.vendorName}
+          </CardTitle>
+          <Badge className={getRoleBadgeClass(supplier.role)}>
+            {supplier.role.charAt(0).toUpperCase() + supplier.role.slice(1)}
+          </Badge>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-2">
+          <p className="text-sm text-muted-foreground">{supplier.discipline}</p>
+          {supplier.projectPhase && (
+            <p className="text-xs text-muted-foreground">{supplier.projectPhase}</p>
+          )}
+          {supplier.systems && supplier.systems.length > 0 && (
+            <div className="flex flex-wrap gap-1">
+              {supplier.systems.slice(0, 3).map((system, index) => (
+                <Badge key={index} variant="outline" className="text-xs">
+                  {system}
+                </Badge>
+              ))}
+              {supplier.systems.length > 3 && (
+                <Badge variant="outline" className="text-xs">
+                  +{supplier.systems.length - 3} more
+                </Badge>
+              )}
+            </div>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+});
+
+SupplierCard.displayName = 'SupplierCard';
+
 export function SupplierMap({
   suppliers,
   groupByDiscipline: _groupByDiscipline = false,
@@ -26,19 +84,44 @@ export function SupplierMap({
   viewMode = 'cards',
   className
 }: SupplierMapProps) {
+  // Performance monitoring
+  const { startMeasure, endMeasure } = usePerformanceMetrics({
+    name: 'SupplierMap',
+    enabled: process.env.NODE_ENV === 'development'
+  });
+
+  // Memoized filtering for performance
   const filteredSuppliers = React.useMemo(() => {
-    return suppliers.filter(supplier => {
+    startMeasure();
+
+    const filtered = suppliers.filter(supplier => {
       if (filterByRole && supplier.role !== filterByRole) return false;
       if (filterByDiscipline && supplier.discipline !== filterByDiscipline) return false;
       return true;
     });
-  }, [suppliers, filterByRole, filterByDiscipline]);
 
-  const totalSystems = React.useMemo(() => {
-    return filteredSuppliers.reduce((total, supplier) => total + supplier.systems.length, 0);
+    endMeasure();
+    return filtered;
+  }, [suppliers, filterByRole, filterByDiscipline, startMeasure, endMeasure]);
+
+  // Memoized grouping by discipline
+  const groupedSuppliers = React.useMemo(() => {
+    const groups: Record<string, YachtSupplierRole[]> = {};
+    filteredSuppliers.forEach(supplier => {
+      if (!groups[supplier.discipline]) {
+        groups[supplier.discipline] = [];
+      }
+      groups[supplier.discipline].push(supplier);
+    });
+    return groups;
   }, [filteredSuppliers]);
 
-  const getRoleBadgeClass = (role: string) => {
+  const totalSystems = React.useMemo(() => {
+    return filteredSuppliers.reduce((total, supplier) => total + (supplier.systems?.length || 0), 0);
+  }, [filteredSuppliers]);
+
+  // Memoized role badge class function
+  const getRoleBadgeClass = React.useCallback((role: string) => {
     switch (role) {
       case 'primary':
         return 'bg-blue-100 text-blue-800';
@@ -49,7 +132,7 @@ export function SupplierMap({
       default:
         return 'bg-gray-100 text-gray-800';
     }
-  };
+  }, []);
 
   if (filteredSuppliers.length === 0) {
     return (
@@ -70,75 +153,57 @@ export function SupplierMap({
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        {filteredSuppliers.map((supplier, index) => (
-          <Card
-            key={index}
-            className={cn(
-              "transition-all duration-200",
-              onSupplierClick && "cursor-pointer hover:shadow-md"
-            )}
-            data-testid={`supplier-card-${supplier.vendorId}`}
-            onClick={() => onSupplierClick?.(supplier)}
-          >
-            <CardHeader className="pb-3">
-              <div className="flex items-start justify-between">
-                <div className="space-y-1">
-                  {viewMode === 'links' && supplier.vendorId ? (
-                    <Link
-                      href={`/vendors/${supplier.vendorId}`}
-                      className="font-semibold hover:text-accent transition-colors"
-                    >
-                      {supplier.vendorName}
-                    </Link>
-                  ) : (
-                    <CardTitle className="text-base">
-                      {supplier.vendorName}
-                    </CardTitle>
-                  )}
-                  <p className="text-sm text-muted-foreground">
-                    {supplier.discipline}
-                  </p>
-                </div>
-                <Badge className={cn("text-xs", getRoleBadgeClass(supplier.role))}>
-                  {supplier.role === 'primary' ? 'Primary' :
-                   supplier.role === 'subcontractor' ? 'Subcontractor' : 'Consultant'}
-                </Badge>
+      {_groupByDiscipline ? (
+        // Grouped by discipline view
+        <div className="space-y-6">
+          {Object.entries(groupedSuppliers).map(([discipline, disciplineSuppliers]) => (
+            <div key={discipline}>
+              <h3 className="text-lg font-semibold mb-3">{discipline} ({disciplineSuppliers.length})</h3>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {disciplineSuppliers.map((supplier, index) => (
+                  <SupplierCard
+                    key={`${supplier.vendorId}-${index}`}
+                    supplier={supplier}
+                    onSupplierClick={onSupplierClick}
+                    getRoleBadgeClass={getRoleBadgeClass}
+                  />
+                ))}
               </div>
-            </CardHeader>
-
-            <CardContent className="pt-0">
-              <div className="space-y-3">
-                <div>
-                  <p className="text-xs font-medium text-muted-foreground mb-2">
-                    Systems Supplied
-                  </p>
-                  <div className="flex flex-wrap gap-1">
-                    {supplier.systems.map((system, systemIndex) => (
-                      <Badge
-                        key={systemIndex}
-                        variant="outline"
-                        className="text-xs"
-                      >
-                        {system}
-                      </Badge>
-                    ))}
-                  </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        // Standard view - check viewMode
+        viewMode === 'links' ? (
+          <div className="space-y-2">
+            {filteredSuppliers.map((supplier, index) => (
+              <Link
+                key={`${supplier.vendorId}-${index}`}
+                href={`/vendors/${supplier.vendorId}`}
+                className="block p-3 rounded-lg border hover:bg-gray-50 transition-colors"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-medium">{supplier.vendorName}</span>
+                  <Badge className={getRoleBadgeClass(supplier.role)}>
+                    {supplier.role.charAt(0).toUpperCase() + supplier.role.slice(1)}
+                  </Badge>
                 </div>
-
-                {supplier.projectPhase && (
-                  <div>
-                    <p className="text-xs font-medium text-muted-foreground mb-1">
-                      Project Phase
-                    </p>
-                    <p className="text-sm">{supplier.projectPhase}</p>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {filteredSuppliers.map((supplier, index) => (
+              <SupplierCard
+                key={`${supplier.vendorId}-${index}`}
+                supplier={supplier}
+                onSupplierClick={onSupplierClick}
+                getRoleBadgeClass={getRoleBadgeClass}
+              />
+            ))}
+          </div>
+        )
+      )}
     </div>
   );
 }
