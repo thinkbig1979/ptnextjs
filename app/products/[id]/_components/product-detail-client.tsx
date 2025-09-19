@@ -2,8 +2,6 @@
 "use client";
 
 import * as React from "react";
-import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
 import { Button } from "@/components/ui/button";
 import { 
   Phone,
@@ -19,14 +17,10 @@ interface ProductDetailClientProps {
   partner: Partner | undefined;
 }
 
-export default function ProductDetailClient({ product, partner }: ProductDetailClientProps) {
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
+export default function ProductDetailClient({ product, partner: _partner }: ProductDetailClientProps) {
 
   // Enhanced handler functions with proper functionality
-  const handleAction = (action: string, actionData?: string, label?: string) => {
+  const handleAction = (action: string, actionData?: string, _label?: string) => {
     switch (action) {
       case 'contact':
         // Redirect to contact form with product context

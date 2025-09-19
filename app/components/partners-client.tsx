@@ -14,13 +14,14 @@ import Link from "next/link";
 import { parseFilterParams } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { OptimizedImage } from "@/components/ui/optimized-image";
+import { Partner, Product } from "@/lib/types";
 
 const ITEMS_PER_PAGE = 12;
 
 interface PartnersClientProps {
-  initialPartners: any[];
+  initialPartners: Partner[];
   initialCategories: string[];
-  initialProducts?: any[];
+  initialProducts?: Product[];
 }
 
 export function PartnersClient({ initialPartners, initialCategories, initialProducts = [] }: PartnersClientProps) {

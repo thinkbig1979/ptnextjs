@@ -11,13 +11,15 @@ import { Pagination } from "@/components/pagination";
 import { Calendar, User, Clock } from "lucide-react";
 import Link from "next/link";
 import { OptimizedImage } from "@/components/ui/optimized-image";
+import { BlogPost } from "@/lib/types";
+
 // Static search implementation for blog posts
-const searchBlogPosts = (query: string, posts: any[]): any[] => {
+const searchBlogPosts = (query: string, posts: BlogPost[]): BlogPost[] => {
   const lowercaseQuery = query.toLowerCase();
   return posts.filter(post => 
     post.title.toLowerCase().includes(lowercaseQuery) ||
     post.excerpt.toLowerCase().includes(lowercaseQuery) ||
-    post.tags.some((tag: string) => tag.toLowerCase().includes(lowercaseQuery))
+    post.tags?.some((tag: string) => tag.toLowerCase().includes(lowercaseQuery))
   );
 };
 import { formatDate } from "@/lib/utils";
@@ -25,7 +27,7 @@ import { formatDate } from "@/lib/utils";
 const ITEMS_PER_PAGE = 9;
 
 interface BlogClientProps {
-  blogPosts: any[];
+  blogPosts: BlogPost[];
   categories: string[];
 }
 

@@ -135,7 +135,7 @@ export function generateSlug(input: string): string {
 /**
  * Gets the appropriate media URL with fallback to placeholder
  */
-export function getMediaUrl(mediaPath?: string, fallbackType?: string): string {
+export function getMediaUrl(mediaPath?: string, _fallbackType?: string): string {
   if (mediaPath && mediaPath.startsWith('/media/')) {
     return mediaPath;
   }
@@ -148,7 +148,7 @@ export function getMediaUrl(mediaPath?: string, fallbackType?: string): string {
 /**
  * Validates frontmatter structure for a given collection type
  */
-export function validateFrontmatter(content: string, collectionType: string): ContentValidationResult {
+export function validateFrontmatter(content: string, _collectionType: string): ContentValidationResult {
   const result: ContentValidationResult = {
     isValid: true,
     errors: [],

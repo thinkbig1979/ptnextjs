@@ -20,13 +20,11 @@ import {
   Eye
 } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import { tinaCMSDataService } from "@/lib/tinacms-data-service";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { notFound, redirect } from "next/navigation";
 import ProductDetailClient from "./_components/product-detail-client";
 import {
-  ComparisonMatrix,
   IntegrationNotes,
   PerformanceMetrics,
   OwnerReviews,
@@ -360,7 +358,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                     <Card>
                       <CardContent className="p-6">
                         <p className="text-muted-foreground leading-relaxed">
-                          Get comprehensive insights into this product's capabilities, specifications, and real-world performance.
+                          Get comprehensive insights into this product&apos;s capabilities, specifications, and real-world performance.
                           Explore detailed comparisons, integration possibilities, and feedback from actual users.
                         </p>
                       </CardContent>

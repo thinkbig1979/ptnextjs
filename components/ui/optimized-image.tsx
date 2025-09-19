@@ -46,7 +46,7 @@ export function OptimizedImage({
   fallbackType = 'generic',
   className,
   aspectRatio,
-  showIcon = true,
+  showIcon: _showIcon = true,
   iconSize = 'md',
   fill,
   ...props

@@ -2,7 +2,7 @@ import * as React from "react";
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { VisualDemo } from '../VisualDemo';
-import type { Product, VisualDemoContent } from '@/lib/types';
+import type { VisualDemoContent } from '@/lib/types';
 
 // Mock @react-three/fiber for 3D rendering tests
 jest.mock('@react-three/fiber', () => ({
@@ -54,17 +54,6 @@ describe('VisualDemo', () => {
     }
   };
 
-  const mockProduct: Product = {
-    id: 'product-1',
-    slug: 'advanced-navigation-system',
-    name: 'Advanced Navigation System',
-    description: 'State-of-the-art marine navigation technology',
-    vendorId: 'vendor-1',
-    vendorName: 'Marine Tech Solutions',
-    images: [],
-    features: [],
-    visualDemo: mockVisualContent
-  };
 
   it('renders 360° image demo with controls', () => {
     render(<VisualDemo content={mockVisualContent} />);

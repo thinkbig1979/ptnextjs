@@ -1,7 +1,6 @@
 
 
 import * as React from "react";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Users, Ship, Zap } from "lucide-react";
 import Link from "next/link";
@@ -60,7 +59,7 @@ export function HeroSection({ companyInfo }: HeroSectionProps) {
 
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-20 pt-20 border-t border-border/50">
-            {stats.map((stat, index) => (
+            {stats.map((stat, _index) => (
               <div key={stat.label} className="text-center space-y-2">
                 <div className="flex justify-center mb-4">
                   <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center">

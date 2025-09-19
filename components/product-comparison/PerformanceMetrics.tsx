@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Download, TrendingUp, TrendingDown, Minus, Search, BarChart3, Grid3X3, FileText, Loader2 } from "lucide-react";
+import { Download, TrendingUp, TrendingDown, Minus, Search, BarChart3, Grid3X3, FileText } from "lucide-react";
 import type { Product, PerformanceData } from "@/lib/types";
 // PDF generation functionality
 
@@ -438,7 +438,7 @@ export function PerformanceMetrics({
           {/* Content based on visualization type */}
           {groupByCategory ? (
             <div className="space-y-6">
-              {Object.entries(groupedMetrics).map(([category, categoryMetrics]) => (
+              {Object.entries(groupedMetrics).map(([category, _categoryMetrics]) => (
                 <div key={category} data-testid={`category-${category}`}>
                   <h3 className="text-lg font-semibold mb-3 capitalize">{category}</h3>
                   {visualizationType === 'table' && renderTableView()}

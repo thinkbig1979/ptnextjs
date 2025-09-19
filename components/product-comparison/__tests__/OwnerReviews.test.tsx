@@ -2,7 +2,7 @@ import * as React from "react";
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { OwnerReviews } from '../OwnerReviews';
-import type { Product, OwnerReview } from '@/lib/types';
+import type { OwnerReview } from '@/lib/types';
 
 describe('OwnerReviews', () => {
   const mockReviews: OwnerReview[] = [
@@ -57,19 +57,6 @@ describe('OwnerReviews', () => {
     }
   ];
 
-  const mockProduct: Product = {
-    id: 'product-1',
-    slug: 'advanced-navigation-system',
-    name: 'Advanced Navigation System',
-    description: 'State-of-the-art marine navigation technology',
-    vendorId: 'vendor-1',
-    vendorName: 'Marine Tech Solutions',
-    images: [],
-    features: [],
-    ownerReviews: mockReviews,
-    averageRating: 4.0,
-    totalReviews: 3
-  };
 
   it('renders owner reviews with rating summary', () => {
     render(<OwnerReviews reviews={mockReviews} />);

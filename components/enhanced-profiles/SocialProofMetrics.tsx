@@ -21,22 +21,6 @@ interface SocialProofMetrics {
   globalPresence?: number;
 }
 
-// Type guard for social proof metrics validation
-function isValidSocialProofMetrics(metrics: unknown): metrics is SocialProofMetrics {
-  if (typeof metrics !== 'object' || metrics === null) {
-    return false;
-  }
-
-  const validKeys = [
-    'linkedinFollowers', 'completedProjects', 'yearsInBusiness',
-    'clientSatisfactionRate', 'industryRanking', 'teamSize', 'globalPresence'
-  ];
-
-  return Object.keys(metrics).every(key => validKeys.includes(key)) &&
-    Object.values(metrics).every(value =>
-      value === undefined || (typeof value === 'number' && value >= 0)
-    );
-}
 
 interface SocialProofMetricsProps {
   metrics: SocialProofMetrics | null;
@@ -93,24 +77,10 @@ export const SocialProofMetrics = React.memo(function SocialProofMetrics({
   animated = false,
   className,
 }: SocialProofMetricsProps) {
-  if (loading || !metrics) {
-    return (
-      <div
-        data-testid="metrics-skeleton"
-        className={cn("grid grid-cols-2 md:grid-cols-4 gap-4", className)}
-      >
-        {Array.from({ length: 6 }).map((_, i) => (
-          <Card key={i}>
-            <CardContent className="p-4">
-              <MetricSkeleton />
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    );
-  }
-
-  const metricItems = React.useMemo(() => [
+  // Always call hooks before any early returns
+  const metricItems = React.useMemo(() => {
+    if (!metrics) return [];
+    return [
     {
       key: 'linkedinFollowers',
       value: metrics.linkedinFollowers,
@@ -174,7 +144,25 @@ export const SocialProofMetrics = React.memo(function SocialProofMetrics({
       formatter: (n: number) => n.toString(),
       color: 'text-red-600'
     }
-  ].filter(item => item.value !== undefined), [metrics]);
+  ].filter(item => item.value !== undefined);
+  }, [metrics]);
+
+  if (loading || !metrics) {
+    return (
+      <div
+        data-testid="metrics-skeleton"
+        className={cn("grid grid-cols-2 md:grid-cols-4 gap-4", className)}
+      >
+        {Array.from({ length: 6 }).map((_, i) => (
+          <Card key={i}>
+            <CardContent className="p-4">
+              <MetricSkeleton />
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div

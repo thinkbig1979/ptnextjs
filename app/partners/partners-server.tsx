@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Building2, MapPin, Calendar, ExternalLink, Package, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { tinaCMSDataService } from "@/lib/tinacms-data-service";
-import { Partner, Product } from "@/lib/types";
+import { Product } from "@/lib/types";
 
 interface PartnersServerProps {
   searchParams?: {

@@ -5,7 +5,7 @@ import { Package, Building2, ArrowRight, Star } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { tinaCMSDataService } from "@/lib/tinacms-data-service";
-import { Product, Partner } from "@/lib/types";
+import { Partner } from "@/lib/types";
 
 interface ProductsServerProps {
   searchParams?: {

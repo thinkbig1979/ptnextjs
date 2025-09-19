@@ -72,7 +72,7 @@ export function ContactClient() {
         <CardHeader>
           <CardTitle className="text-2xl font-cormorant">Send us a Message</CardTitle>
           <CardDescription>
-            Fill out the form below and we'll get back to you within 24 hours.
+            Fill out the form below and we&apos;ll get back to you within 24 hours.
           </CardDescription>
         </CardHeader>
         <CardContent>

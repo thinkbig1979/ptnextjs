@@ -1,7 +1,7 @@
 
 
 import * as React from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Compass, Radio, Zap, Shield, Lightbulb, Settings } from "lucide-react";
 import Link from "next/link";
@@ -53,7 +53,7 @@ export function ServicesOverviewSection() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {services.map((service, index) => (
+          {services.map((service, _index) => (
             <div key={service.title}>
               <Card className="h-full hover-lift group cursor-pointer">
                 <CardHeader>

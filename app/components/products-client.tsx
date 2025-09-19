@@ -11,17 +11,18 @@ import { Button } from "@/components/ui/button";
 import { SearchFilter } from "@/components/search-filter";
 import { Pagination } from "@/components/pagination";
 import { VendorToggle } from "@/components/ui/vendor-toggle";
-import { Package, Building2, ArrowRight, Star } from "lucide-react";
+import { Building2, ArrowRight, Star } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import { parseFilterParams } from "@/lib/utils";
 import { OptimizedImage } from "@/components/ui/optimized-image";
+import { Product, Vendor, Feature } from "@/lib/types";
+
 const ITEMS_PER_PAGE = 12;
 
 interface ProductsClientProps {
-  initialProducts: any[];
+  initialProducts: Product[];
   initialCategories: string[];
-  initialVendors: any[];
+  initialVendors: Vendor[];
 }
 
 export function ProductsClient({ initialProducts, initialCategories, initialVendors }: ProductsClientProps) {
@@ -70,7 +71,7 @@ export function ProductsClient({ initialProducts, initialCategories, initialVend
     return initialVendors.reduce((lookup, vendor) => {
       lookup[vendor.id] = vendor;
       return lookup;
-    }, {} as Record<string, any>);
+    }, {} as Record<string, Vendor>);
   }, [initialVendors]);
 
   // Filter products based on search, category, partner, and vendor view
@@ -84,9 +85,8 @@ export function ProductsClient({ initialProducts, initialCategories, initialVend
         product?.name?.toLowerCase().includes(query) ||
         product?.description?.toLowerCase().includes(query) ||
         product?.tags?.some((tag: string) => tag.toLowerCase().includes(query)) ||
-        product?.features?.some((feature: any) => 
-          (typeof feature === 'string' ? feature : feature?.title || '')
-            .toLowerCase().includes(query)
+        product?.features?.some((feature: Feature) =>
+          feature?.title?.toLowerCase().includes(query)
         )
       );
     }
@@ -295,11 +295,11 @@ export function ProductsClient({ initialProducts, initialCategories, initialVend
                     <div className="space-y-2">
                       <h4 className="font-poppins-medium text-sm text-foreground">Key Features:</h4>
                       <ul className="text-sm text-muted-foreground space-y-1">
-                        {product.features.slice(0, 3).map((feature: any, idx: number) => (
+                        {product.features.slice(0, 3).map((feature: Feature, idx: number) => (
                           <li key={feature?.id || idx} className="flex items-center space-x-2">
                             <Star className="w-3 h-3 text-accent" />
                             <span className="font-poppins-light">
-                              {typeof feature === 'string' ? feature : (feature?.title || 'Feature')}
+                              {feature?.title || 'Feature'}
                             </span>
                           </li>
                         ))}

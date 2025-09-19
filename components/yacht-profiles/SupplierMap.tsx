@@ -19,7 +19,7 @@ interface SupplierMapProps {
 
 export function SupplierMap({
   suppliers,
-  groupByDiscipline = false,
+  groupByDiscipline: _groupByDiscipline = false,
   filterByRole,
   filterByDiscipline,
   onSupplierClick,

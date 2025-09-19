@@ -1,7 +1,7 @@
 
 
 import * as React from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { tinaCMSDataService } from "@/lib/tinacms-data-service";
 import { ContactClient } from "./_components/contact-client";
@@ -51,12 +51,12 @@ export default async function ContactPage() {
             <div>
               <h2 className="text-2xl font-cormorant font-bold mb-6">Get In Touch</h2>
               <p className="text-muted-foreground font-poppins-light mb-8">
-                We're here to help you find the perfect technology solutions for your superyacht. 
+                We&apos;re here to help you find the perfect technology solutions for your superyacht. 
                 Contact us using any of the methods below.
               </p>
             </div>
 
-            {contactInfo.map((info, index) => (
+            {contactInfo.map((info, _index) => (
               <div key={info.title}>
                 <Card className="hover-lift">
                   <CardHeader>

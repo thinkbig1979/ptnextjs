@@ -4,7 +4,6 @@
 import * as React from "react";
 import { Search, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface SearchFilterProps {
@@ -24,7 +23,7 @@ export function SearchFilter({
   selectedCategory,
   onCategoryChange,
   placeholder = "Search...",
-  updateUrl = false,
+  updateUrl: _updateUrl = false,
 }: SearchFilterProps) {
   return (
     <div className="flex flex-col sm:flex-row gap-4 mb-8">

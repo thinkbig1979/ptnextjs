@@ -98,7 +98,7 @@ export default async function AboutPage() {
         {/* Stats - Static content */}
         <div className="mb-20">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat, index) => (
+            {stats.map((stat, _index) => (
               <div key={stat.label} className="text-center space-y-2">
                 <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto">
                   <stat.icon className="w-6 h-6 text-accent" />
@@ -120,7 +120,7 @@ export default async function AboutPage() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {values.map((value, index) => (
+            {values.map((value, _index) => (
               <div key={value.title}>
                 <Card className="h-full hover-lift">
                   <CardHeader className="text-center">
@@ -145,12 +145,12 @@ export default async function AboutPage() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-cormorant font-bold mb-4">Our Team</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-poppins-light">
-              Meet the experts behind Paul Thames' success in superyacht technology
+              Meet the experts behind Paul Thames&apos; success in superyacht technology
             </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {teamMembers.map((member, index) => (
+            {teamMembers.map((member, _index) => (
               <div key={member?.id}>
                 <Card className="h-full hover-lift">
                   <CardHeader className="text-center">

@@ -16,11 +16,11 @@ import {
   Lightbulb
 } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import { tinaCMSDataService } from "@/lib/tinacms-data-service";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { notFound } from "next/navigation";
 import PartnerDetailClient from "./_components/partner-detail-client";
+import { VendorService, CompanyInfo } from "@/lib/types";
 
 // Force static generation for optimal SEO and performance
 export const dynamic = 'force-static';
@@ -112,7 +112,7 @@ export default async function PartnerDetailPage({ params }: PartnerDetailPagePro
 
   // Get services from partner data (no fallback - hide section if empty)  
   const services = partner.services && partner.services.length > 0 
-    ? partner.services.map((s: any) => s.service)
+    ? partner.services.map((s: VendorService) => s.service)
     : [];
 
   return (
@@ -286,7 +286,7 @@ export default async function PartnerDetailPage({ params }: PartnerDetailPagePro
             )}
 
             {/* Company Mission */}
-            {(partner.mission || (companyInfo as any)?.mission) && (
+            {(partner.mission || (companyInfo as CompanyInfo)?.mission) && (
               <div>
                 <Card>
                   <CardHeader>
@@ -298,7 +298,7 @@ export default async function PartnerDetailPage({ params }: PartnerDetailPagePro
                   <CardContent>
                     <div className="text-muted-foreground font-poppins-light leading-relaxed"
                          dangerouslySetInnerHTML={{ 
-                           __html: partner.mission || (companyInfo as any)?.mission 
+                           __html: partner.mission || (companyInfo as CompanyInfo)?.mission || '' 
                          }} 
                     />
                   </CardContent>

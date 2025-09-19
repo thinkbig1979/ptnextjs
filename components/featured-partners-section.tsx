@@ -26,7 +26,7 @@ export function FeaturedPartnersSection({ featuredPartners }: FeaturedPartnersSe
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {featuredPartners.map((partner, index) => (
+          {featuredPartners.map((partner, _index) => (
             <Link key={partner?.id} href={`/partners/${partner?.slug}`} className="block h-full">
               <Card className="h-full hover-lift cursor-pointer group">
                 <CardHeader>

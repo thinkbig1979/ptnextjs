@@ -135,7 +135,7 @@ describe('YachtTimeline', () => {
   it('handles events with images', () => {
     render(<YachtTimeline events={mockTimelineEvents} />);
 
-    const eventWithImage = screen.getByTestId('timeline-event-milestone');
+    screen.getByTestId('timeline-event-milestone');
     const image = screen.getByRole('img', { name: /keel laying/i });
 
     expect(image).toBeInTheDocument();

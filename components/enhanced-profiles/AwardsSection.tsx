@@ -16,28 +16,6 @@ interface Award {
   certificateUrl?: string;
 }
 
-// Type guard for award validation
-function isValidAward(award: unknown): award is Award {
-  return (
-    typeof award === 'object' &&
-    award !== null &&
-    'id' in award &&
-    'title' in award &&
-    'organization' in award &&
-    'year' in award &&
-    'description' in award &&
-    'category' in award &&
-    typeof (award as Award).id === 'string' &&
-    typeof (award as Award).title === 'string' &&
-    typeof (award as Award).organization === 'string' &&
-    typeof (award as Award).year === 'number' &&
-    typeof (award as Award).description === 'string' &&
-    typeof (award as Award).category === 'string' &&
-    ((award as Award).imageUrl === undefined || typeof (award as Award).imageUrl === 'string') &&
-    ((award as Award).certificateUrl === undefined || typeof (award as Award).certificateUrl === 'string') &&
-    (award as Award).year > 1900 && (award as Award).year <= new Date().getFullYear() + 1
-  );
-}
 
 interface AwardsSectionProps {
   awards: Award[];
@@ -83,7 +61,7 @@ export const AwardsSection = React.memo(function AwardsSection({ awards, classNa
         />
 
         <div className="space-y-6">
-          {sortedAwards.map((award, index) => (
+          {sortedAwards.map((award, _index) => (
             <div key={award.id} className="relative flex items-start gap-6">
               {/* Timeline dot */}
               <div className="flex-shrink-0 relative z-10">

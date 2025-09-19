@@ -3,7 +3,6 @@
  * TinaCMS local content queries for static site generation
  */
 
-import { resolve } from 'path'
 import * as fs from 'fs/promises'
 import * as path from 'path'
 import matter from 'gray-matter'

@@ -8,9 +8,10 @@ import { ArrowRight, Calendar, User, Clock } from "lucide-react";
 import Link from "next/link";
 import { formatDate } from "@/lib/utils";
 import { OptimizedImage } from "@/components/ui/optimized-image";
+import { BlogPost } from "@/lib/types";
 
 interface FeaturedBlogSectionProps {
-  featuredPosts: any[];
+  featuredPosts: BlogPost[];
 }
 
 export function FeaturedBlogSection({ featuredPosts }: FeaturedBlogSectionProps) {
@@ -30,7 +31,7 @@ export function FeaturedBlogSection({ featuredPosts }: FeaturedBlogSectionProps)
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {featured.map((post, index) => (
+          {featured.map((post, _index) => (
             <div key={post?.id}>
               <Card className="h-full hover-lift cursor-pointer group overflow-hidden">
                 <Link href={`/blog/${post?.slug}`} className="block h-full">

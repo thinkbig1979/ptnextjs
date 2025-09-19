@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -22,7 +22,6 @@ export function CaseStudyNavigation({
   className
 }: CaseStudyNavigationProps) {
   const router = useRouter();
-  const pathname = usePathname();
 
   const currentIndex = caseStudies.findIndex(cs => cs.slug === currentSlug);
   const previousCase = currentIndex > 0 ? caseStudies[currentIndex - 1] : null;

@@ -14,40 +14,6 @@ interface Certification {
   isVerified: boolean;
 }
 
-// Type guard for certification validation
-function isValidCertification(cert: unknown): cert is Certification {
-  if (typeof cert !== 'object' || cert === null) {
-    return false;
-  }
-
-  const c = cert as Certification;
-  const isValidDate = (dateStr?: string) => {
-    if (!dateStr) return true;
-    const date = new Date(dateStr);
-    return !isNaN(date.getTime());
-  };
-
-  const isValidUrl = (url?: string) => {
-    if (!url) return true;
-    try {
-      new URL(url);
-      return true;
-    } catch {
-      return false;
-    }
-  };
-
-  return (
-    typeof c.name === 'string' &&
-    typeof c.issuer === 'string' &&
-    typeof c.isVerified === 'boolean' &&
-    c.name.length > 0 &&
-    c.issuer.length > 0 &&
-    isValidDate(c.validUntil) &&
-    isValidUrl(c.certificateUrl) &&
-    isValidUrl(c.logoUrl)
-  );
-}
 
 interface CertificationBadgeProps {
   certification: Certification;

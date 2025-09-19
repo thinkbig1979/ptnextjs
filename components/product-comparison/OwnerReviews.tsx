@@ -9,8 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
-import { Star, ThumbsUp, Search, Filter, MessageSquare, Verified, Flag, Calendar } from "lucide-react";
+import { Star, ThumbsUp, Search, MessageSquare, Verified, Flag, Calendar } from "lucide-react";
 import type { OwnerReview } from "@/lib/types";
 
 interface OwnerReviewsProps {

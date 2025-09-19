@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Slider } from "@/components/ui/slider";
 import {
   Maximize2,
   Minimize2,
@@ -73,7 +72,6 @@ const OrbitControls = dynamic(() => import("@react-three/drei").then(mod => ({ d
 const Environment = dynamic(() => import("@react-three/drei").then(mod => ({ default: mod.Environment })), { ssr: false });
 const PerspectiveCamera = dynamic(() => import("@react-three/drei").then(mod => ({ default: mod.PerspectiveCamera })), { ssr: false });
 const Box = dynamic(() => import("@react-three/drei").then(mod => ({ default: mod.Box })), { ssr: false });
-const Sphere = dynamic(() => import("@react-three/drei").then(mod => ({ default: mod.Sphere })), { ssr: false });
 const Text = dynamic(() => import("@react-three/drei").then(mod => ({ default: mod.Text })), { ssr: false });
 
 // Dynamically import ReactPlayer for video functionality
@@ -102,12 +100,6 @@ interface ReactPlayerProps {
   config?: Record<string, unknown>;
 }
 
-interface ThreeCanvasProps {
-  camera?: { position: [number, number, number]; fov: number };
-  className?: string;
-  children?: React.ReactNode;
-  onCreated?: (state: { gl: WebGLRenderingContext | null }) => void;
-}
 
 interface VisualDemoProps {
   content: VisualDemoContent | VisualDemoContent[];

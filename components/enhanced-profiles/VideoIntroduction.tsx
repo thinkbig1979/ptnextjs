@@ -24,21 +24,6 @@ interface VideoData {
   duration?: number;
 }
 
-// Type guard for video data validation
-function isValidVideoData(video: unknown): video is VideoData {
-  return (
-    typeof video === 'object' &&
-    video !== null &&
-    'url' in video &&
-    'title' in video &&
-    'description' in video &&
-    typeof (video as VideoData).url === 'string' &&
-    typeof (video as VideoData).title === 'string' &&
-    typeof (video as VideoData).description === 'string' &&
-    ((video as VideoData).thumbnailUrl === undefined || typeof (video as VideoData).thumbnailUrl === 'string') &&
-    ((video as VideoData).duration === undefined || typeof (video as VideoData).duration === 'number')
-  );
-}
 
 interface VideoIntroductionProps {
   video: VideoData;
@@ -99,28 +84,12 @@ export function VideoIntroduction({
   const [isPlaying, setIsPlaying] = React.useState(autoplay);
   const [hasStarted, setHasStarted] = React.useState(autoplay);
   const [hasEnded, setHasEnded] = React.useState(false);
-  const [isReady, setIsReady] = React.useState(false);
+  const [, setIsReady] = React.useState(false);
 
   // Validate video URL on mount
   const isValidUrl = React.useMemo(() => isValidVideoUrl(video.url), [video.url]);
 
-  // Early return for invalid URLs
-  if (!isValidUrl) {
-    return (
-      <Card
-        data-testid="video-introduction"
-        className={cn("overflow-hidden", className)}
-      >
-        <CardContent className="p-6 text-center">
-          <div className="text-red-600 dark:text-red-400">
-            <p className="font-medium">Invalid Video URL</p>
-            <p className="text-sm mt-1">Only secure video URLs from trusted platforms are allowed.</p>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
+  // Always call hooks before any early returns
   const handlePlayClick = React.useCallback(() => {
     setIsPlaying(true);
     setHasStarted(true);
@@ -155,6 +124,23 @@ export function VideoIntroduction({
   const handleStart = React.useCallback(() => {
     setHasStarted(true);
   }, []);
+
+  // Early return for invalid URLs
+  if (!isValidUrl) {
+    return (
+      <Card
+        data-testid="video-introduction"
+        className={cn("overflow-hidden", className)}
+      >
+        <CardContent className="p-6 text-center">
+          <div className="text-red-600 dark:text-red-400">
+            <p className="font-medium">Invalid Video URL</p>
+            <p className="text-sm mt-1">Only secure video URLs from trusted platforms are allowed.</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card
