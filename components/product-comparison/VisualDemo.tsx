@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -270,10 +271,12 @@ export function VisualDemo({
       }}
     >
       {activeContent.imageUrl ? (
-        <img
+        <Image
           src={activeContent.imageUrl}
           alt={`360° view of ${activeContent.title}. Use arrow keys to rotate or space to toggle auto-rotation.`}
-          className="w-full h-full object-cover"
+          fill
+          sizes="(max-width: 768px) 100vw, 50vw"
+          className="object-cover"
           style={{
             transform: `rotate(${rotation}deg)`,
             transition: 'transform 0.1s ease-out'

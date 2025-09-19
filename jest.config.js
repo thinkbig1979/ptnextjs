@@ -8,6 +8,7 @@ const customJestConfig = {
   setupFilesAfterEnv: ['<rootDir>/test-setup.js'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
+    '^marked$': '<rootDir>/__mocks__/marked.js',
   },
   testEnvironment: 'jsdom',
   collectCoverageFrom: [
@@ -21,6 +22,11 @@ const customJestConfig = {
     '<rootDir>/.next/',
     '<rootDir>/node_modules/',
   ],
+  transformIgnorePatterns: [
+    'node_modules/(?!(@react-three/fiber|react-pdf|react-player|three|@react-three/drei)/)'
+  ],
+  testTimeout: 15000,
+  maxWorkers: 2,
 };
 
 module.exports = createJestConfig(customJestConfig);

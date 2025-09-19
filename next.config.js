@@ -10,10 +10,44 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
-  images: { 
+  images: {
     unoptimized: true,
-    domains: ['images.unsplash.com', 'localhost']
+    domains: [
+      'images.unsplash.com',
+      'localhost',
+      // Add domains for enhanced profile media
+      'cdn.example.com',
+      'media.example.com'
+    ]
   },
+
+  // Enhanced experimental features for platform vision
+  experimental: {
+    optimizePackageImports: [
+      '@radix-ui/react-accordion',
+      '@radix-ui/react-dialog',
+      '@radix-ui/react-select',
+      'framer-motion',
+      'lucide-react'
+    ]
+  },
+
+  // Bundle analyzer configuration
+  ...(process.env.ANALYZE === 'true' && {
+    webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+      if (!dev && !isServer) {
+        const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+        config.plugins.push(
+          new BundleAnalyzerPlugin({
+            analyzerMode: 'static',
+            openAnalyzer: false,
+            reportFilename: path.join(process.cwd(), 'bundle-analyzer-report.html')
+          })
+        );
+      }
+      return config;
+    }
+  }),
   
   // Static export configuration
   trailingSlash: true,

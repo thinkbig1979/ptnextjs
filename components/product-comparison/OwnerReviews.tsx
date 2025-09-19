@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -419,12 +420,15 @@ export function OwnerReviews({
                   {review.images && review.images.length > 0 && (
                     <div className="flex space-x-2 overflow-x-auto">
                       {review.images.map((image, index) => (
-                        <img
-                          key={index}
-                          src={image}
-                          alt={`Review image from ${review.ownerName}`}
-                          className="h-20 w-20 object-cover rounded-lg flex-shrink-0"
-                        />
+                        <div key={index} className="relative h-20 w-20 flex-shrink-0">
+                          <Image
+                            src={image}
+                            alt={`Review image from ${review.ownerName}`}
+                            fill
+                            sizes="80px"
+                            className="object-cover rounded-lg"
+                          />
+                        </div>
                       ))}
                     </div>
                   )}

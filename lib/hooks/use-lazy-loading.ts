@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * Lazy Loading Hook
  * Custom hook for implementing intersection observer-based lazy loading
@@ -217,7 +219,7 @@ export function useMemoryMonitor(): UseMemoryMonitorReturn {
   const updateMemoryInfo = useCallback(() => {
     if (typeof window !== 'undefined' && 'memory' in performance) {
       try {
-        setMemoryInfo((performance as any).memory)
+        setMemoryInfo((performance as Performance & { memory?: MemoryInfo }).memory || null)
       } catch (error) {
         console.warn('Unable to access memory information:', error)
       }
