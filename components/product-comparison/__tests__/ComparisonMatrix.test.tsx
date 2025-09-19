@@ -18,9 +18,9 @@ describe('ComparisonMatrix', () => {
       images: [],
       features: [],
       comparisonMetrics: {
-        powerConsumption: { value: 120, unit: 'W' },
-        accuracy: { value: 95, unit: '%' },
-        responseTime: { value: 50, unit: 'ms' }
+        'power-consumption': { value: 120, unit: 'W' },
+        'accuracy': { value: 95, unit: '%' },
+        'response-time': { value: 50, unit: 'ms' }
       },
       integrationCompatibility: ['NMEA 2000', 'Chart APIs', 'Radar Systems']
     },
@@ -36,9 +36,9 @@ describe('ComparisonMatrix', () => {
       images: [],
       features: [],
       comparisonMetrics: {
-        powerConsumption: { value: 150, unit: 'W' },
-        accuracy: { value: 98, unit: '%' },
-        responseTime: { value: 30, unit: 'ms' }
+        'power-consumption': { value: 150, unit: 'W' },
+        'accuracy': { value: 98, unit: '%' },
+        'response-time': { value: 30, unit: 'ms' }
       },
       integrationCompatibility: ['NMEA 2000', 'GPS Systems', 'Wind Sensors']
     }
@@ -46,21 +46,21 @@ describe('ComparisonMatrix', () => {
 
   const mockMetrics: ComparisonMetric[] = [
     {
-      id: 'power-consumption',
+      metricId: 'power-consumption',
       name: 'Power Consumption',
       category: 'performance',
       unit: 'W',
       weight: 0.8
     },
     {
-      id: 'accuracy',
+      metricId: 'accuracy',
       name: 'Accuracy',
       category: 'performance',
       unit: '%',
       weight: 1.0
     },
     {
-      id: 'response-time',
+      metricId: 'response-time',
       name: 'Response Time',
       category: 'performance',
       unit: 'ms',
@@ -83,7 +83,7 @@ describe('ComparisonMatrix', () => {
     expect(screen.getByText('Accuracy')).toBeInTheDocument();
     expect(screen.getByText('Response Time')).toBeInTheDocument();
     expect(screen.getByText('120 W')).toBeInTheDocument();
-    expect(screen.getByText('95%')).toBeInTheDocument();
+    expect(screen.getByText('95 %')).toBeInTheDocument();
     expect(screen.getByText('50 ms')).toBeInTheDocument();
   });
 
@@ -156,8 +156,8 @@ describe('ComparisonMatrix', () => {
   it('handles responsive design with horizontal scroll', () => {
     render(<ComparisonMatrix products={mockProducts} metrics={mockMetrics} />);
 
-    const matrix = screen.getByTestId('comparison-matrix');
-    expect(matrix).toHaveClass('overflow-x-auto');
+    const scrollContainer = screen.getByTestId('comparison-matrix').querySelector('.overflow-x-auto');
+    expect(scrollContainer).toBeInTheDocument();
   });
 
   it('highlights best value for each metric', () => {

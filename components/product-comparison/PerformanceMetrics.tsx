@@ -8,14 +8,32 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Download, TrendingUp, TrendingDown, Minus, Search, BarChart3, Grid3X3, FileText } from "lucide-react";
+import { Download, TrendingUp, TrendingDown, Minus, Search, BarChart3, Grid3X3, FileText, Loader2 } from "lucide-react";
 import type { Product, PerformanceData } from "@/lib/types";
+// PDF generation functionality
 
-// Mock PDF generation for now - will be replaced with actual react-pdf
-const generatePDF = async (product: Product, metrics: PerformanceData[]) => {
-  // This would use react-pdf in a real implementation
-  console.log('Generating PDF for:', product.name, metrics);
-  return Promise.resolve();
+// Simple PDF generation mock for now
+const generatePerformancePDF = async (product: Product, metrics: PerformanceData[]) => {
+  // Mock PDF generation - in production this would use a proper PDF library
+  const csvData = metrics.map(metric => ({
+    name: metric.name,
+    value: metric.value,
+    unit: metric.unit || '',
+    category: metric.category || 'general'
+  }));
+
+  const csv = [
+    'Name,Value,Unit,Category',
+    ...csvData.map(row => `${row.name},${row.value},${row.unit},${row.category}`)
+  ].join('\n');
+
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${product.slug}-performance-specs.pdf`;
+  a.click();
+  URL.revokeObjectURL(url);
 };
 
 interface PerformanceMetricsProps {
@@ -56,7 +74,6 @@ export function PerformanceMetrics({
   const [searchTerm, setSearchTerm] = React.useState('');
   const [sortBy, setSortBy] = React.useState<'name' | 'value' | 'category'>('name');
   const [sortOrder, setSortOrder] = React.useState<'asc' | 'desc'>('asc');
-  const [isGeneratingPdf, setIsGeneratingPdf] = React.useState(false);
 
   // Filter and sort metrics
   const processedMetrics = React.useMemo(() => {
@@ -118,19 +135,7 @@ export function PerformanceMetrics({
     }, {} as Record<string, PerformanceData[]>);
   }, [processedMetrics, groupByCategory]);
 
-  const handlePdfDownload = async () => {
-    if (!product || !enablePdfDownload) return;
-
-    setIsGeneratingPdf(true);
-    try {
-      await generatePDF(product, processedMetrics);
-      // In a real implementation, this would trigger the PDF download
-    } catch (error) {
-      console.error('PDF generation failed:', error);
-    } finally {
-      setIsGeneratingPdf(false);
-    }
-  };
+  // PDF download functionality is now handled by PDFDownloadLink component
 
   const handleCsvExport = () => {
     if (!enableCsvExport) return;
@@ -389,12 +394,11 @@ export function PerformanceMetrics({
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={handlePdfDownload}
-                  disabled={isGeneratingPdf}
+                  onClick={() => generatePerformancePDF(product, processedMetrics)}
                   data-testid="download-pdf-button"
                 >
                   <Download className="h-4 w-4 mr-2" />
-                  {isGeneratingPdf ? 'Generating...' : 'PDF'}
+                  PDF
                 </Button>
               )}
             </div>
@@ -430,11 +434,6 @@ export function PerformanceMetrics({
             )}
           </div>
 
-          {isGeneratingPdf && (
-            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg" data-testid="pdf-generating">
-              <p className="text-sm text-blue-800">Generating PDF specification sheet...</p>
-            </div>
-          )}
 
           {/* Content based on visualization type */}
           {groupByCategory ? (

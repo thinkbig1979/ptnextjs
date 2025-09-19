@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { YachtTimelineEvent } from "@/lib/types";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface YachtTimelineProps {
   events: YachtTimelineEvent[];
@@ -110,30 +111,110 @@ export function YachtTimeline({
       )}
 
       <div className="relative">
-        {/* Timeline line */}
-        <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-border"></div>
+        {/* Timeline line with animated progress */}
+        <motion.div
+          className="absolute left-8 top-0 bottom-0 w-0.5 bg-border/30"
+          initial={{ scaleY: 0 }}
+          animate={{ scaleY: 1 }}
+          transition={{ duration: 1, delay: 0.2 }}
+          style={{ transformOrigin: "top" }}
+        />
+
+        {showProgress && (
+          <motion.div
+            className="absolute left-8 top-0 w-0.5 bg-primary"
+            initial={{ scaleY: 0 }}
+            animate={{ scaleY: progress / 100 }}
+            transition={{ duration: 1.5, delay: 0.5 }}
+            style={{
+              transformOrigin: "top",
+              height: `${(progress / 100) * 100}%`
+            }}
+          />
+        )}
 
         <div className="space-y-8">
-          {filteredAndSortedEvents.map((event, index) => (
-            <div key={index} className="relative">
-              {/* Timeline connector */}
-              {index < filteredAndSortedEvents.length - 1 && (
-                <div
-                  className="absolute left-8 top-16 w-0.5 h-8 bg-border"
-                  data-testid="timeline-connector"
-                />
-              )}
-
-              <Card
-                className={cn(
-                  "ml-16 transition-all duration-200 hover:shadow-md",
-                  `category-${event.category}`
-                )}
-                data-testid={`timeline-event-${event.category}`}
-                data-date={event.date}
+          <AnimatePresence>
+            {filteredAndSortedEvents.map((event, index) => (
+              <motion.div
+                key={`${event.date}-${index}`}
+                className="relative"
+                initial={{ opacity: 0, x: -50, scale: 0.9 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                exit={{ opacity: 0, x: 50, scale: 0.9 }}
+                transition={{
+                  duration: 0.6,
+                  delay: index * 0.1,
+                  type: "spring",
+                  stiffness: 100
+                }}
               >
-                {/* Timeline dot */}
-                <div className="absolute -left-16 top-6 w-4 h-4 bg-background border-2 border-accent rounded-full"></div>
+                {/* Timeline connector with animation */}
+                {index < filteredAndSortedEvents.length - 1 && (
+                  <motion.div
+                    className="absolute left-8 top-16 w-0.5 h-8 bg-border"
+                    data-testid="timeline-connector"
+                    initial={{ scaleY: 0 }}
+                    animate={{ scaleY: 1 }}
+                    transition={{ duration: 0.3, delay: index * 0.1 + 0.3 }}
+                    style={{ transformOrigin: "top" }}
+                  />
+                )}
+
+                <motion.div
+                  className={cn(
+                    "ml-16",
+                    `category-${event.category}`
+                  )}
+                  whileHover={{
+                    scale: 1.02,
+                    transition: { duration: 0.2 }
+                  }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Card
+                    className="transition-all duration-200 hover:shadow-md"
+                    data-testid={`timeline-event-${event.category}`}
+                    data-date={event.date}
+                  >
+                    {/* Timeline dot with pulse animation */}
+                    <motion.div
+                      className="absolute -left-16 top-6 w-4 h-4 bg-background border-2 border-accent rounded-full"
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{
+                        scale: 1,
+                        opacity: 1,
+                      }}
+                      transition={{
+                        duration: 0.4,
+                        delay: index * 0.1 + 0.2,
+                        type: "spring",
+                        stiffness: 200
+                      }}
+                      whileHover={{
+                        scale: 1.3,
+                        boxShadow: "0 0 20px rgba(59, 130, 246, 0.5)",
+                        transition: { duration: 0.2 }
+                      }}
+                    >
+                      {/* Inner dot with category-specific color animation */}
+                      <motion.div
+                        className={cn(
+                          "absolute inset-1 rounded-full",
+                          event.category === 'launch' && "bg-green-500",
+                          event.category === 'delivery' && "bg-purple-500",
+                          event.category === 'refit' && "bg-orange-500",
+                          event.category === 'milestone' && "bg-blue-500",
+                          event.category === 'service' && "bg-yellow-500"
+                        )}
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{
+                          duration: 0.3,
+                          delay: index * 0.1 + 0.4
+                        }}
+                      />
+                    </motion.div>
 
                 <CardContent className="p-6">
                   <div className="space-y-4">
@@ -207,9 +288,11 @@ export function YachtTimeline({
                     )}
                   </div>
                 </CardContent>
-              </Card>
-            </div>
-          ))}
+                  </Card>
+                </motion.div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
       </div>
 

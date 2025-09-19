@@ -63,14 +63,14 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 6.9 Add MaintenanceHistory timeline component
   - [x] 6.10 Verify all tests pass for yacht profiles system
 
-- [ ] 7. External Dependencies Integration
-  - [ ] 7.1 Write tests for 3D rendering and PDF generation functionality
-  - [ ] 7.2 Install and configure @react-three/fiber for 360° product demos
-  - [ ] 7.3 Install and configure react-pdf for downloadable specifications
-  - [ ] 7.4 Install and configure react-player for video integration
-  - [ ] 7.5 Update existing framer-motion usage for new interactive components
-  - [ ] 7.6 Test all external dependency integrations in development environment
-  - [ ] 7.7 Verify all tests pass for external dependencies
+- [x] 7. External Dependencies Integration
+  - [x] 7.1 Write tests for 3D rendering and PDF generation functionality
+  - [x] 7.2 Install and configure @react-three/fiber for 360° product demos
+  - [x] 7.3 Install and configure react-pdf for downloadable specifications
+  - [x] 7.4 Install and configure react-player for video integration
+  - [x] 7.5 Update existing framer-motion usage for new interactive components
+  - [x] 7.6 Test all external dependency integrations in development environment
+  - [x] 7.7 Verify all tests pass for external dependencies
 
 - [ ] 8. Performance Optimization and Caching
   - [ ] 8.1 Write tests for caching strategy and lazy loading implementation

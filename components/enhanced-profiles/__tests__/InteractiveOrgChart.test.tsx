@@ -105,7 +105,7 @@ describe('InteractiveOrgChart', () => {
   it('filters by department when selected', () => {
     render(<InteractiveOrgChart teamMembers={mockTeamMembers} />);
 
-    const engineeringFilter = screen.getByRole('button', { name: /engineering/i });
+    const engineeringFilter = screen.getByText('Engineering (2)');
     fireEvent.click(engineeringFilter);
 
     expect(screen.getByText('Sarah Johnson')).toBeInTheDocument();
@@ -128,8 +128,8 @@ describe('InteractiveOrgChart', () => {
   it('shows department counts in filter buttons', () => {
     render(<InteractiveOrgChart teamMembers={mockTeamMembers} />);
 
-    const engineeringFilter = screen.getByRole('button', { name: /engineering.*2/i });
-    const executiveFilter = screen.getByRole('button', { name: /executive.*1/i });
+    const engineeringFilter = screen.getByText('Engineering (2)');
+    const executiveFilter = screen.getByText('Executive (1)');
 
     expect(engineeringFilter).toBeInTheDocument();
     expect(executiveFilter).toBeInTheDocument();

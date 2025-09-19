@@ -22,16 +22,92 @@ import {
   VolumeX
 } from "lucide-react";
 import type { VisualDemoContent } from "@/lib/types";
+import dynamic from "next/dynamic";
 
-// Mock Three.js components - in a real implementation these would be from @react-three/fiber
-const MockCanvas = ({ children, ...props }: any) => (
-  <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center" data-testid="three-canvas">
-    {children}
-  </div>
-);
+// Error boundary component for external dependencies
+class ExternalDependencyErrorBoundary extends React.Component<
+  { children: React.ReactNode; fallback?: React.ReactNode },
+  { hasError: boolean; error?: Error }
+> {
+  constructor(props: { children: React.ReactNode; fallback?: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
 
-const MockOrbitControls = () => <div data-testid="orbit-controls" />;
-const MockEnvironment = () => <div data-testid="environment" />;
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('External dependency error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback || (
+        <div className="flex items-center justify-center h-64 lg:h-96 bg-red-50 border border-red-200 rounded-lg">
+          <div className="text-center">
+            <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-2" />
+            <p className="text-red-700 font-medium">Unable to load 3D content</p>
+            <p className="text-red-600 text-sm">Please try refreshing the page</p>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+// Dynamically import Three.js components for client-side rendering
+const Canvas = dynamic(() => import("@react-three/fiber").then(mod => ({ default: mod.Canvas })), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center" data-testid="loading-3d">
+      <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+    </div>
+  ),
+});
+
+const OrbitControls = dynamic(() => import("@react-three/drei").then(mod => ({ default: mod.OrbitControls })), { ssr: false });
+const Environment = dynamic(() => import("@react-three/drei").then(mod => ({ default: mod.Environment })), { ssr: false });
+const PerspectiveCamera = dynamic(() => import("@react-three/drei").then(mod => ({ default: mod.PerspectiveCamera })), { ssr: false });
+const Box = dynamic(() => import("@react-three/drei").then(mod => ({ default: mod.Box })), { ssr: false });
+const Sphere = dynamic(() => import("@react-three/drei").then(mod => ({ default: mod.Sphere })), { ssr: false });
+const Text = dynamic(() => import("@react-three/drei").then(mod => ({ default: mod.Text })), { ssr: false });
+
+// Dynamically import ReactPlayer for video functionality
+const ReactPlayer = dynamic(() => import("react-player"), {
+  ssr: false,
+  loading: () => (
+    <div data-testid="video-loading" className="flex items-center justify-center h-64">
+      <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+    </div>
+  ),
+});
+
+// Type definitions for external dependencies
+interface ReactPlayerProps {
+  url: string;
+  width?: string | number;
+  height?: string | number;
+  controls?: boolean;
+  playing?: boolean;
+  light?: string | boolean;
+  onPlay?: () => void;
+  onPause?: () => void;
+  onEnded?: () => void;
+  onError?: (error: Error | unknown) => void;
+  onDuration?: (duration: number) => void;
+  config?: Record<string, unknown>;
+}
+
+interface ThreeCanvasProps {
+  camera?: { position: [number, number, number]; fov: number };
+  className?: string;
+  children?: React.ReactNode;
+  onCreated?: (state: { gl: WebGLRenderingContext | null }) => void;
+}
 
 interface VisualDemoProps {
   content: VisualDemoContent | VisualDemoContent[];
@@ -173,11 +249,27 @@ export function VisualDemo({
   };
 
   const render360ImageViewer = () => (
-    <div className="relative w-full h-64 lg:h-96 bg-gray-100 rounded-lg overflow-hidden" data-testid="360-viewer">
+    <div
+      className="relative w-full h-64 lg:h-96 bg-gray-100 rounded-lg overflow-hidden"
+      data-testid="360-viewer"
+      role="img"
+      aria-label={`360° view of ${activeContent.title}`}
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'ArrowLeft') {
+          setRotation(prev => (prev - 10) % 360);
+        } else if (e.key === 'ArrowRight') {
+          setRotation(prev => (prev + 10) % 360);
+        } else if (e.key === ' ') {
+          e.preventDefault();
+          setIsPlaying(!isPlaying);
+        }
+      }}
+    >
       {activeContent.imageUrl ? (
         <img
           src={activeContent.imageUrl}
-          alt={activeContent.title}
+          alt={`360° view of ${activeContent.title}. Use arrow keys to rotate or space to toggle auto-rotation.`}
           className="w-full h-full object-cover"
           style={{
             transform: `rotate(${rotation}deg)`,
@@ -224,23 +316,56 @@ export function VisualDemo({
   );
 
   const render3DModelViewer = () => (
-    <div className="relative w-full h-64 lg:h-96" data-testid="3d-model-viewer">
-      <MockCanvas>
-        <MockOrbitControls />
-        <MockEnvironment />
-        <div className="text-center text-muted-foreground">
-          <div className="bg-white/90 rounded-lg p-6 inline-block">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg mx-auto mb-3 flex items-center justify-center">
-              <div className="text-white font-bold text-lg">3D</div>
-            </div>
-            <p className="font-medium">{activeContent.title}</p>
-            <p className="text-sm text-muted-foreground">3D Model Viewer</p>
-            {activeContent.modelUrl && (
-              <p className="text-xs text-blue-600 mt-2">Model: {activeContent.modelUrl.split('/').pop()}</p>
-            )}
-          </div>
-        </div>
-      </MockCanvas>
+    <div
+      className="relative w-full h-64 lg:h-96"
+      data-testid="3d-model-viewer"
+      role="img"
+      aria-label={`Interactive 3D model of ${activeContent.title}. Use mouse to rotate and zoom.`}
+      tabIndex={0}
+    >
+      <ExternalDependencyErrorBoundary>
+        <Canvas
+          camera={{ position: [0, 0, 5], fov: 50 }}
+          className="rounded-lg"
+          data-testid="three-canvas"
+          onCreated={(state) => {
+            // Ensure WebGL context is properly initialized
+            if (!state.gl) {
+              throw new Error('WebGL not supported');
+            }
+          }}
+        >
+        <ambientLight intensity={0.4} />
+        <pointLight position={[10, 10, 10]} />
+
+        {/* Sample 3D object - in production this would load actual models */}
+        <Box args={[2, 1, 1]} position={[0, 0, 0]}>
+          <meshStandardMaterial color="#2563eb" />
+        </Box>
+
+        <Text
+          position={[0, -1.5, 0]}
+          fontSize={0.2}
+          color="#666"
+          anchorX="center"
+          anchorY="middle"
+        >
+          {activeContent.title}
+        </Text>
+
+        <Environment preset="studio" />
+        <OrbitControls
+          enablePan={false}
+          enableZoom={true}
+          enableRotate={true}
+          autoRotate={autoRotate}
+          autoRotateSpeed={2}
+          minDistance={2}
+          maxDistance={10}
+        />
+        <PerspectiveCamera makeDefault />
+        </Canvas>
+      </ExternalDependencyErrorBoundary>
 
       {/* 3D Controls Panel */}
       {showControls && (
@@ -273,17 +398,46 @@ export function VisualDemo({
   );
 
   const renderVideoDemo = () => (
-    <div className="relative w-full h-64 lg:h-96 bg-black rounded-lg overflow-hidden">
-      <div className="absolute inset-0 flex items-center justify-center text-white">
-        <div className="text-center">
-          <Play className="h-16 w-16 mx-auto mb-4" />
-          <p className="font-medium">{activeContent.title}</p>
-          <p className="text-sm text-gray-300">Video Demo</p>
-          {activeContent.videoUrl && (
-            <p className="text-xs text-blue-400 mt-2">Source: {activeContent.videoUrl}</p>
-          )}
+    <div className="relative w-full h-64 lg:h-96 bg-black rounded-lg overflow-hidden" data-testid="video-demo">
+      {activeContent.videoUrl ? (
+        <ExternalDependencyErrorBoundary
+          fallback={
+            <div className="absolute inset-0 flex items-center justify-center text-white bg-red-900/50">
+              <div className="text-center">
+                <AlertCircle className="h-16 w-16 mx-auto mb-4 text-red-400" />
+                <p className="font-medium">Video Player Error</p>
+                <p className="text-sm text-gray-300">Unable to load video player</p>
+              </div>
+            </div>
+          }
+        >
+          {React.createElement(ReactPlayer as React.ComponentType<ReactPlayerProps>, {
+            url: activeContent.videoUrl,
+            width: "100%",
+            height: "100%",
+            controls: showControls,
+            playing: autoRotate, // Use autoRotate as autoplay for videos
+            light: activeContent.imageUrl, // Use imageUrl as poster/thumbnail
+            onPlay: () => onInteraction?.({ type: 'video-play', content: activeContent }),
+            onPause: () => onInteraction?.({ type: 'video-pause', content: activeContent }),
+            onEnded: () => onInteraction?.({ type: 'video-ended', content: activeContent }),
+            onError: (error: any) => {
+              console.error('Video player error:', error);
+              onInteraction?.({ type: 'video-error', content: activeContent, error });
+              onError?.(error);
+            },
+          })}
+        </ExternalDependencyErrorBoundary>
+      ) : (
+        <div className="absolute inset-0 flex items-center justify-center text-white">
+          <div className="text-center">
+            <Play className="h-16 w-16 mx-auto mb-4" />
+            <p className="font-medium">{activeContent.title}</p>
+            <p className="text-sm text-gray-300">Video Demo</p>
+            <p className="text-xs text-red-400 mt-2">No video URL provided</p>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 

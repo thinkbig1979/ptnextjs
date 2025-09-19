@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Users, Linkedin, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface TeamMember {
   id: string;
@@ -145,19 +146,16 @@ export const InteractiveOrgChart = React.memo(function InteractiveOrgChart({
 
       {/* Organization chart */}
       <div className="relative">
-        {/* Connection lines */}
+        {/* Connection lines with animated drawing */}
         <svg
           data-testid="org-chart-connections"
-          className={cn(
-            "absolute inset-0 pointer-events-none z-0",
-            animated && "animate-draw"
-          )}
+          className={cn("absolute inset-0 pointer-events-none z-0", animated && "animate-draw")}
           style={{ zIndex: 0 }}
         >
           {/* Draw connections between levels */}
           {Array.from({ length: maxLevel }, (_, i) => i + 1).map(level => (
             <g key={level}>
-              <line
+              <motion.line
                 x1="50%"
                 y1={`${(level - 1) * 200 + 100}px`}
                 x2="50%"
@@ -165,6 +163,13 @@ export const InteractiveOrgChart = React.memo(function InteractiveOrgChart({
                 stroke="currentColor"
                 strokeWidth="2"
                 className="text-gray-300 dark:text-gray-600"
+                initial={{ pathLength: 0, opacity: 0 }}
+                animate={{ pathLength: 1, opacity: 1 }}
+                transition={{
+                  duration: 0.8,
+                  delay: level * 0.2,
+                  ease: "easeInOut"
+                }}
               />
             </g>
           ))}
@@ -186,19 +191,60 @@ export const InteractiveOrgChart = React.memo(function InteractiveOrgChart({
                 className="flex justify-center"
               >
                 <div className="flex flex-wrap justify-center gap-4 max-w-4xl">
-                  {membersAtLevel.map(member => (
-                    <Card
-                      key={member.id}
-                      data-testid={`member-${member.id}`}
-                      className={cn(
-                        "transition-all duration-200 cursor-pointer hover:shadow-lg hover:-translate-y-1",
-                        compact ? "w-32" : "w-48",
-                        hoveredMember === member.id && "ring-2 ring-blue-500"
-                      )}
-                      onMouseEnter={() => setHoveredMember(member.id)}
-                      onMouseLeave={() => setHoveredMember(null)}
-                      onClick={() => setSelectedMember(member)}
-                    >
+                  <AnimatePresence>
+                    {membersAtLevel.map((member, memberIndex) => (
+                      <motion.div
+                        key={member.id}
+                        layout
+                        initial={{
+                          opacity: 0,
+                          scale: 0.8,
+                          y: 50
+                        }}
+                        animate={{
+                          opacity: 1,
+                          scale: 1,
+                          y: 0
+                        }}
+                        exit={{
+                          opacity: 0,
+                          scale: 0.8,
+                          y: -50
+                        }}
+                        transition={{
+                          duration: 0.5,
+                          delay: (level - 1) * 0.1 + memberIndex * 0.05,
+                          type: "spring",
+                          stiffness: 100,
+                          damping: 15
+                        }}
+                        whileHover={{
+                          scale: 1.05,
+                          y: -8,
+                          transition: { duration: 0.2 }
+                        }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Card
+                          data-testid={`member-${member.id}`}
+                          className={cn(
+                            "cursor-pointer transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500",
+                            compact ? "w-32" : "w-48",
+                            hoveredMember === member.id && "ring-2 ring-blue-500 shadow-xl"
+                          )}
+                          tabIndex={0}
+                          role="button"
+                          aria-label={`View details for ${member.name}, ${member.title} in ${member.department}`}
+                          onMouseEnter={() => setHoveredMember(member.id)}
+                          onMouseLeave={() => setHoveredMember(null)}
+                          onClick={() => setSelectedMember(member)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              setSelectedMember(member);
+                            }
+                          }}
+                        >
                       <CardContent className={cn("p-4 text-center", compact && "p-3")}>
                         {/* Member photo */}
                         <div className="relative mx-auto mb-3">
@@ -255,8 +301,10 @@ export const InteractiveOrgChart = React.memo(function InteractiveOrgChart({
                           </div>
                         )}
                       </CardContent>
-                    </Card>
-                  ))}
+                        </Card>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
                 </div>
               </div>
             );
