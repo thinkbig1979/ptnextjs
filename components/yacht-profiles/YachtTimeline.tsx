@@ -145,7 +145,7 @@ export function YachtTimeline({
     }
 
     return sorted;
-  }, [events, sortOrder, filterByCategory]);
+  }, [events, sortOrder, filterByCategory, endMeasure, startMeasure]);
 
   // Memoized category badge class function for performance
   const getCategoryBadgeClass = React.useCallback((category: string) => {

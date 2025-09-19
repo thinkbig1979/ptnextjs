@@ -154,7 +154,7 @@ export function VisualDemo({
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   // Enhanced lazy loading with intersection observer
-  const { ref: lazyRef, isVisible, wasVisible } = useLazyLoading({
+  const { ref: lazyRef, wasVisible } = useLazyLoading({
     threshold: 0.1,
     rootMargin: '50px',
     triggerOnce: true
@@ -162,7 +162,7 @@ export function VisualDemo({
   const [isLoaded, setIsLoaded] = React.useState(!lazyLoad);
 
   // Performance monitoring
-  const { startMeasure, endMeasure, duration } = usePerformanceMetrics({
+  const { startMeasure, endMeasure } = usePerformanceMetrics({
     name: 'VisualDemo',
     enabled: showPerformanceMetrics
   });

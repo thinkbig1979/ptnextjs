@@ -5,7 +5,7 @@ import { Play, RotateCcw, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import { useLazyLoading, usePerformanceMetrics } from "@/lib/hooks/use-lazy-loading";
+import { useLazyLoading } from "@/lib/hooks/use-lazy-loading";
 
 // Dynamically import ReactPlayer to avoid SSR issues
 const ReactPlayer = dynamic(() => import("react-player"), {

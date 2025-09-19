@@ -62,7 +62,7 @@ export function useLazyLoading({
     return () => {
       observer.disconnect()
     }
-  }, [threshold, rootMargin, triggerOnce]) // Removed wasVisible to prevent infinite re-runs
+  }, [threshold, rootMargin, triggerOnce, wasVisible])
 
   return { ref, isVisible, wasVisible }
 }

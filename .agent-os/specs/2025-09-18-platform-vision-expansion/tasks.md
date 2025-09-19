@@ -81,14 +81,14 @@ These are the tasks to be completed for the spec detailed in @.agent-os/specs/20
   - [x] 8.6 Test build performance and static generation times
   - [x] 8.7 Verify all tests pass for performance optimizations
 
-- [ ] 9. Content Validation and Sample Data
-  - [ ] 9.1 Write tests for content validation and reference integrity
-  - [ ] 9.2 Create sample yacht profiles with complete data for demonstration
-  - [ ] 9.3 Add sample enhanced vendor profiles with certifications and awards
-  - [ ] 9.4 Create sample product comparisons and owner reviews
-  - [ ] 9.5 Test all content relationships and reference resolution
-  - [ ] 9.6 Validate static site generation with new content types
-  - [ ] 9.7 Verify all tests pass for content validation
+- [x] 9. Content Validation and Sample Data
+  - [x] 9.1 Write tests for content validation and reference integrity
+  - [x] 9.2 Create sample yacht profiles with complete data for demonstration
+  - [x] 9.3 Add sample enhanced vendor profiles with certifications and awards
+  - [x] 9.4 Create sample product comparisons and owner reviews
+  - [x] 9.5 Test all content relationships and reference resolution
+  - [x] 9.6 Validate static site generation with new content types
+  - [x] 9.7 Verify all tests pass for content validation
 
 - [ ] 10. Final Integration and Deployment Preparation
   - [ ] 10.1 Write comprehensive integration tests for full platform functionality

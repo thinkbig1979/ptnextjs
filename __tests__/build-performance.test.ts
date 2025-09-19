@@ -36,7 +36,7 @@ describe('Build Performance Tests', () => {
   })
 
   it('should validate caching strategy performance', async () => {
-    const startTime = performance.now()
+    const startTime = Date.now()
 
     // Simulate cache operations
     const cache = new Map<string, { data: any; timestamp: number }>()
@@ -64,23 +64,23 @@ describe('Build Performance Tests', () => {
       }
     }
 
-    const endTime = performance.now()
+    const endTime = Date.now()
     const duration = endTime - startTime
 
-    console.log(`Cache operations (1000 items) took: ${duration.toFixed(2)}ms`)
+    console.log(`Cache operations (1000 items) took: ${duration}ms`)
 
     // Should complete within 100ms for 1000 operations
     expect(duration).toBeLessThan(100)
   })
 
   it('should test lazy loading performance simulation', async () => {
-    const startTime = performance.now()
+    const startTime = Date.now()
 
     // Simulate lazy loading behavior
     const mockIntersectionObserver = {
-      observe: vi.fn(),
-      unobserve: vi.fn(),
-      disconnect: vi.fn()
+      observe: jest.fn(),
+      unobserve: jest.fn(),
+      disconnect: jest.fn()
     }
 
     // Simulate 100 components with lazy loading
@@ -101,17 +101,17 @@ describe('Build Performance Tests', () => {
       }
     }
 
-    const endTime = performance.now()
+    const endTime = Date.now()
     const duration = endTime - startTime
 
-    console.log(`Lazy loading simulation (100 components) took: ${duration.toFixed(2)}ms`)
+    console.log(`Lazy loading simulation (100 components) took: ${duration}ms`)
 
     // Should complete within 200ms for 100 components
     expect(duration).toBeLessThan(200)
   })
 
   it('should test image optimization performance', () => {
-    const startTime = performance.now()
+    const startTime = Date.now()
 
     // Simulate progressive image loading
     const images = Array.from({ length: 50 }, (_, i) => ({
@@ -132,17 +132,17 @@ describe('Build Performance Tests', () => {
       }
     }
 
-    const endTime = performance.now()
+    const endTime = Date.now()
     const duration = endTime - startTime
 
-    console.log(`Image optimization simulation (50 images) took: ${duration.toFixed(2)}ms`)
+    console.log(`Image optimization simulation (50 images) took: ${duration}ms`)
 
     // Should complete within 50ms for 50 images
     expect(duration).toBeLessThan(50)
   })
 
   it('should test virtual scrolling performance', () => {
-    const startTime = performance.now()
+    const startTime = Date.now()
 
     // Simulate virtual scrolling with 10000 items
     const totalItems = 10000
@@ -160,17 +160,17 @@ describe('Build Performance Tests', () => {
     expect(startIndex).toBeGreaterThanOrEqual(0)
     expect(endIndex).toBeLessThan(totalItems)
 
-    const endTime = performance.now()
+    const endTime = Date.now()
     const duration = endTime - startTime
 
-    console.log(`Virtual scrolling calculation (10000 items) took: ${duration.toFixed(2)}ms`)
+    console.log(`Virtual scrolling calculation (10000 items) took: ${duration}ms`)
 
     // Should complete within 5ms for calculations
     expect(duration).toBeLessThan(5)
   })
 
   it('should validate memory usage efficiency', () => {
-    const startTime = performance.now()
+    const startTime = Date.now()
 
     // Simulate memory-efficient operations
     const results: any[] = []
@@ -191,14 +191,13 @@ describe('Build Performance Tests', () => {
       }
     }
 
-    const endTime = performance.now()
+    const endTime = Date.now()
     const duration = endTime - startTime
 
-    console.log(`Memory-efficient operations (1000 items, max 100 in memory) took: ${duration.toFixed(2)}ms`)
+    console.log(`Memory-efficient operations (1000 items, max 100 in memory) took: ${duration}ms`)
 
     // Should maintain reasonable memory usage
     expect(results.length).toBeLessThanOrEqual(100)
     expect(duration).toBeLessThan(50)
   })
 })
-
