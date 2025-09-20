@@ -399,6 +399,18 @@ class TinaCMSDataService {
         : [],
       price: tinaProduct.price,
       tags: [], // Will be resolved later
+
+      // Add missing comparison-related fields
+      comparisonMetrics: tinaProduct.comparisonMetrics || {},
+      specifications: Array.isArray(tinaProduct.specifications)
+        ? tinaProduct.specifications.map((spec: any) => ({
+            label: spec.label || '',
+            value: spec.value || ''
+          }))
+        : [],
+      integrationCompatibility: Array.isArray(tinaProduct.integrationCompatibility)
+        ? tinaProduct.integrationCompatibility
+        : [],
     }
   }
 

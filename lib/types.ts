@@ -429,11 +429,10 @@ export interface Product {
 
   // Product Comparison and Enhancement Fields
   comparisonMetrics?: {
-    [key: string]: {
-      value: number;
-      unit?: string;
+    [category: string]: {
+      [key: string]: string | number | boolean;
     };
-  }; // Computed from comparison_metrics schema
+  }; // Nested structure: category -> key -> value
   performanceMetrics?: PerformanceData[]; // Performance data for metrics display
   integrationCompatibility?: string[]; // Computed from integration_compatibility.supported_protocols
   systemRequirements?: SystemRequirements; // Computed from integration_compatibility.system_requirements
