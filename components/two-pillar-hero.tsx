@@ -3,10 +3,12 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Search, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/ui/logo";
+import Image from "next/image";
 
 interface FounderData {
   name: string;
   role: string;
+  image?: string;
   avatar?: string;
 }
 
@@ -17,7 +19,7 @@ interface PillarData {
   founders: FounderData[];
   ctaText: string;
   ctaUrl: string;
-  features: string[];
+  features?: string[];
 }
 
 interface TwoPillarHeroProps {
@@ -25,6 +27,8 @@ interface TwoPillarHeroProps {
   introDescription?: string;
   leftPillar: PillarData;
   rightPillar: PillarData;
+  heroImage?: string;
+  logo?: string;
   className?: string;
 }
 
@@ -33,10 +37,24 @@ export function TwoPillarHero({
   introDescription = "Amsterdam's premier marine technology consultancy offering two distinct pathways to superyacht innovation",
   leftPillar,
   rightPillar,
+  heroImage,
+  logo,
   className,
 }: TwoPillarHeroProps) {
   return (
     <section className={cn("relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-background to-muted/20", className)}>
+      {/* Hero Background Image */}
+      {heroImage && (
+        <div className="absolute inset-0 opacity-40">
+          <Image
+            src={heroImage}
+            alt="Hero Background"
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
+      )}
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-accent blur-3xl"></div>
@@ -47,7 +65,18 @@ export function TwoPillarHero({
         <div className="text-center space-y-12">
           {/* Logo */}
           <div className="flex justify-center mb-8">
-            <Logo size="6xl" priority />
+            {logo ? (
+              <Image
+                src={logo}
+                alt="Paul Thames Logo"
+                width={400}
+                height={200}
+                className="h-32 w-auto object-contain"
+                priority
+              />
+            ) : (
+              <Logo size="6xl" priority />
+            )}
           </div>
 
           {/* Main Headline */}
@@ -98,49 +127,52 @@ function PillarSection({ pillar, icon }: PillarSectionProps) {
           {pillar.description}
         </p>
 
+        {/* Decorative border */}
+        <div className="border-b-2 border-dotted border-border w-24 mx-auto mb-6"></div>
+
         {/* Founder Team */}
-        <div className="bg-accent/5 rounded-lg p-4 border border-accent/20">
-          <p className="text-sm font-medium text-accent/80 mb-3">
-            {pillar.founders.length === 1 ? "Led by our technical director:" : "Led by our founders:"}
-          </p>
-          <div className={cn(
-            pillar.founders.length === 1 ? "flex justify-center" : "grid grid-cols-1 sm:grid-cols-3 gap-3"
-          )}>
-            {pillar.founders.map((founder, index) => (
-              <div key={index} className="bg-card/50 rounded-lg p-4 border border-accent/20 hover:border-accent/40 transition-colors min-w-[120px]">
-                <div className="flex flex-col items-center text-center space-y-3">
-                  <div className="w-14 h-14 bg-accent/20 rounded-full flex items-center justify-center">
-                    <span className="text-accent font-semibold text-lg">
+        <div className="flex justify-center space-x-6 mb-6">
+          {pillar.founders.map((founder, index) => (
+            <div key={index} className="text-center">
+              <div className="w-20 h-20 rounded-full overflow-hidden mb-2 mx-auto">
+                {founder.image ? (
+                  <Image
+                    src={founder.image}
+                    alt={founder.name}
+                    width={80}
+                    height={80}
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-muted rounded-full flex items-center justify-center">
+                    <span className="text-muted-foreground font-semibold text-lg">
                       {founder.name.split(' ').map(n => n[0]).join('')}
                     </span>
                   </div>
-                  <div>
-                    <p className="font-medium text-sm">{founder.name.split(' ')[0]}</p>
-                    <p className="text-xs text-muted-foreground">{founder.role}</p>
-                  </div>
-                </div>
+                )}
               </div>
-            ))}
-          </div>
+              <p className="text-sm text-muted-foreground">{founder.name}</p>
+            </div>
+          ))}
         </div>
 
-        {/* Features List */}
-        <ul className="space-y-3 text-left">
-          {pillar.features.map((feature, index) => (
-            <li key={index} className="flex items-center gap-3">
-              <svg className="w-5 h-5 text-accent flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
-              </svg>
-              <span className="text-muted-foreground">{feature}</span>
-            </li>
-          ))}
-        </ul>
+        {/* Decorative border */}
+        <div className="border-b-2 border-dotted border-border w-48 mx-auto mb-6"></div>
 
-        {/* CTA Button */}
-        <Button className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-medium py-4 px-6 rounded-lg transition-colors group">
-          {pillar.ctaText}
-          <ArrowRight className="inline-block ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-        </Button>
+        {/* Features List - Only show if features exist */}
+        {pillar.features && pillar.features.length > 0 && (
+          <ul className="space-y-3 text-left">
+            {pillar.features.map((feature, index) => (
+              <li key={index} className="flex items-center gap-3">
+                <svg className="w-5 h-5 text-accent flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+                </svg>
+                <span className="text-muted-foreground">{feature}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 
 import { TwoPillarHero } from "@/components/two-pillar-hero";
+import { CallPaulSection } from "@/components/call-paul-section";
 import { FeaturedPartnersSection } from "@/components/featured-partners-section";
 import { ServicesOverviewSection } from "@/components/services-overview-section";
 import { FeaturedBlogSection } from "@/components/featured-blog-section";
@@ -13,60 +14,58 @@ export default async function HomePage() {
     tinaCMSDataService.getBlogPosts({ featured: true })
   ]);
 
-  // Define the two-pillar data structure
+  // Define the two-pillar data structure with exact pt2 content
   const leftPillarData = {
     title: "Discovery Platform",
-    subtitle: "Public Yacht Data Intelligence",
-    description: "Explore our comprehensive marketplace of vetted marine technology partners and proven solutions. Perfect for yacht owners and builders seeking established technologies.",
+    subtitle: "A searchable platform allowing stakeholders to discover the right tech and solutions.",
+    description: "A searchable platform allowing stakeholders to discover the right tech and solutions.",
     founders: [
       {
-        name: "Thijs van der Meer",
-        role: "Co-founder"
+        name: "Roel",
+        role: "Sales & Business Development",
+        image: "/roel.png"
       },
       {
-        name: "Nigel Roberts",
-        role: "Co-founder"
+        name: "Nigel",
+        role: "Relationships & Events",
+        image: "/nigel.jpg"
       },
       {
-        name: "Roel Janssen",
-        role: "Co-founder"
+        name: "Thijs",
+        role: "Marketing Strategy & Digital",
+        image: "/thijs.png"
       }
     ],
-    features: [
-      "50+ Vetted Technology Partners",
-      "500+ Proven Technology Solutions",
-      "Expert Consultation & Matching"
-    ],
-    ctaText: "Explore Technology Partners",
-    ctaUrl: "/partners"
+    ctaText: "Learn More",
+    ctaUrl: "/discovery-platform"
   };
 
   const rightPillarData = {
-    title: "Bespoke Solutions",
-    subtitle: "Custom Technology Development",
-    description: "Custom-engineered marine technology solutions tailored to your unique requirements. From concept to completion, we design and integrate cutting-edge systems.",
+    title: "Expertise & Bespoke Solutions",
+    subtitle: "Senior technical leadership, scoped discovery, and access to our curated PT Collective.",
+    description: "Senior technical leadership, scoped discovery, and access to our curated PT Collective.",
     founders: [
       {
-        name: "Edwin Thames",
-        role: "CTO & Technical Co-founder"
+        name: "Edwin",
+        role: "Technical Founder / CTO",
+        image: "/edwin.png"
       }
     ],
-    features: [
-      "Audio Visual System Integration",
-      "IT Infrastructure & Networking",
-      "Intelligent Control Systems",
-      "Custom Lighting Solutions"
-    ],
-    ctaText: "Discuss Your Project",
-    ctaUrl: "/contact"
+    ctaText: "Learn More",
+    ctaUrl: "/bespoke-solutions"
   };
 
   return (
     <div className="min-h-screen">
       <TwoPillarHero
+        introTitle="The Bridge Between Yachting Projects & Technology"
+        introDescription="In a crowded market, we provide clarity by connecting stakeholders in yachting projects with the right technology and experts. When off-the-shelf simply will not do, we leverage our network to bring you high quality tailored solutions."
         leftPillar={leftPillarData}
         rightPillar={rightPillarData}
+        heroImage="/heroimagePT-min.png"
+        logo="/Paul-Thames-logo-PNG-white.png"
       />
+      <CallPaulSection />
       <FeaturedPartnersSection featuredPartners={featuredPartners} />
       <ServicesOverviewSection />
       <FeaturedBlogSection featuredPosts={featuredPosts} />
