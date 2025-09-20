@@ -2,6 +2,7 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Search, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Logo } from "@/components/ui/logo";
 
 interface FounderData {
   name: string;
@@ -46,11 +47,7 @@ export function TwoPillarHero({
         <div className="text-center space-y-12">
           {/* Logo */}
           <div className="flex justify-center mb-8">
-            <div className="relative w-64 md:w-96 h-20 md:h-32">
-              <div className="w-full h-full flex items-center justify-center bg-card rounded-lg shadow-sm border border-border/50">
-                <span className="text-2xl md:text-4xl font-cormorant font-bold text-primary">Paul Thames</span>
-              </div>
-            </div>
+            <Logo size="6xl" priority />
           </div>
 
           {/* Main Headline */}

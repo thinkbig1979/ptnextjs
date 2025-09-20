@@ -15,6 +15,7 @@ import { Building2, ArrowRight, Star } from "lucide-react";
 import Link from "next/link";
 import { parseFilterParams } from "@/lib/utils";
 import { OptimizedImage } from "@/components/ui/optimized-image";
+import { CompareButton, ComparisonFloatingButton } from "@/components/ui/product-comparison";
 import { Product, Vendor, Feature } from "@/lib/types";
 
 const ITEMS_PER_PAGE = 12;
@@ -193,6 +194,8 @@ export function ProductsClient({ initialProducts, initialCategories, initialVend
 
   return (
     <>
+      {/* Floating Comparison Button */}
+      <ComparisonFloatingButton />
 
       {/* Search and Filter */}
       <motion.div
@@ -248,38 +251,49 @@ export function ProductsClient({ initialProducts, initialCategories, initialVend
             animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
             transition={{ duration: 0.6, delay: 0.1 * index }}
           >
-            <Card 
-              className="h-full hover-lift cursor-pointer group overflow-hidden"
+            <Card
+              className="h-full hover-lift cursor-pointer group overflow-hidden flex flex-col"
               onClick={() => {
                 const url = product?.slug ? `/products/${product.slug}` : `/products/${product.id}`;
                 router.push(url);
               }}
             >
               {/* Product Image */}
-              <OptimizedImage
-                src={product?.mainImage?.url || product?.image}
-                alt={product?.mainImage?.altText || product?.name || 'Product image'}
-                fallbackType="product"
-                aspectRatio="video"
-                fill
-                className="group-hover:scale-105 transition-transform duration-300"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              />
+              <Link
+                href={`/products/${product?.slug}`}
+                className="aspect-video relative overflow-hidden block"
+              >
+                <OptimizedImage
+                  src={product?.mainImage?.url || product?.image}
+                  alt={product?.mainImage?.altText || product?.name || 'Product image'}
+                  fallbackType="product"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
+              </Link>
               
               <CardHeader>
                 <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center space-x-2">
-                    <Badge 
-                      variant="secondary" 
-                      className="cursor-pointer hover:bg-accent hover:text-accent-foreground transition-colors"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleCategoryClick(product?.category || '');
-                      }}
-                    >
-                      {product?.category}
+                  <Badge
+                    variant="secondary"
+                    className="cursor-pointer hover:bg-accent hover:text-accent-foreground transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleCategoryClick(product?.category || '');
+                    }}
+                  >
+                    {product?.category}
+                  </Badge>
+
+                  {/* Comparison Available Badge */}
+                  {(product?.comparisonMetrics ||
+                    (product?.specifications && product.specifications.length > 0) ||
+                    (product?.integrationCompatibility && product.integrationCompatibility.length > 0)) && (
+                    <Badge variant="outline" className="text-xs">
+                      Comparable
                     </Badge>
-                  </div>
+                  )}
                 </div>
                 <CardTitle className="group-hover:text-accent transition-colors line-clamp-2">
                   {product?.name}
@@ -326,23 +340,27 @@ export function ProductsClient({ initialProducts, initialCategories, initialVend
 
                   {/* Action Buttons */}
                   <div className="flex flex-col gap-2">
-                    <Button 
-                      variant="default" 
-                      size="sm" 
-                      className="w-full group bg-accent hover:bg-accent/90"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigateToPartner(product?.partnerName || '');
-                      }}
-                    >
-                      Go to Partner
-                      <Building2 className="ml-2 h-3 w-3 group-hover:translate-x-1 transition-transform" />
-                    </Button>
-                    
-                    <Button 
+                    <div className="flex gap-2">
+                      <Button
+                        variant="default"
+                        size="sm"
+                        className="flex-1 group bg-accent hover:bg-accent/90"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigateToPartner(product?.partnerName || '');
+                        }}
+                      >
+                        Go to Partner
+                        <Building2 className="ml-2 h-3 w-3 group-hover:translate-x-1 transition-transform" />
+                      </Button>
+
+                      <CompareButton product={product} />
+                    </div>
+
+                    <Button
                       asChild
-                      variant="outline" 
-                      size="sm" 
+                      variant="outline"
+                      size="sm"
                       className="w-full group"
                     >
                       <Link href={`/products/${product?.slug || product?.id}`}>

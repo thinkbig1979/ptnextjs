@@ -134,7 +134,10 @@ yachtProjects:
     completionYear: 2016
     systemsProvided: [Main Engines, Generator Sets, Hybrid Integration]
 category: content/categories/propulsion-systems.md
-tags: []
+tags:
+  - content/tags/marine.md
+  - content/tags/technology.md
+  - content/tags/innovation.md
 seo:
   meta_title: Caterpillar Marine - Marine Technology Partner | Paul Thames
   meta_description: >-
@@ -143,4 +146,3 @@ seo:
   keywords: 'marine technology, caterpillar marine, propulsion systems'
   og_image: ''
 ---
-

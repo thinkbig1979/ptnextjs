@@ -77,7 +77,8 @@ export function PerformanceMetrics({
 
   // Filter and sort metrics
   const processedMetrics = React.useMemo(() => {
-    let filtered = metrics;
+    // Ensure metrics is always an array
+    let filtered = Array.isArray(metrics) ? metrics : [];
 
     // Filter by category if specified
     if (filterByCategory) {
@@ -92,7 +93,7 @@ export function PerformanceMetrics({
     }
 
     // Sort metrics
-    if (sortable) {
+    if (sortable && filtered.length > 0) {
       filtered = [...filtered].sort((a, b) => {
         let aValue: any, bValue: any;
 

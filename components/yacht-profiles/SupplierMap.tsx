@@ -76,7 +76,7 @@ const SupplierCard = React.memo(({
 SupplierCard.displayName = 'SupplierCard';
 
 export function SupplierMap({
-  suppliers,
+  suppliers = [],
   groupByDiscipline: _groupByDiscipline = false,
   filterByRole,
   filterByDiscipline,
@@ -84,6 +84,17 @@ export function SupplierMap({
   viewMode = 'cards',
   className
 }: SupplierMapProps) {
+  // Early return for empty suppliers
+  if (!suppliers || suppliers.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-muted-foreground">
+          No suppliers assigned to this project yet.
+        </p>
+      </div>
+    );
+  }
+
   // Performance monitoring
   const { startMeasure, endMeasure } = usePerformanceMetrics({
     name: 'SupplierMap',
@@ -92,17 +103,21 @@ export function SupplierMap({
 
   // Memoized filtering for performance
   const filteredSuppliers = React.useMemo(() => {
-    startMeasure();
-
     const filtered = suppliers.filter(supplier => {
       if (filterByRole && supplier.role !== filterByRole) return false;
       if (filterByDiscipline && supplier.discipline !== filterByDiscipline) return false;
       return true;
     });
-
-    endMeasure();
     return filtered;
-  }, [suppliers, filterByRole, filterByDiscipline, startMeasure, endMeasure]);
+  }, [suppliers, filterByRole, filterByDiscipline]);
+
+  // Performance measurement effect (separate from memoization)
+  React.useEffect(() => {
+    startMeasure();
+    // Simulate the filtering operation for measurement
+    filteredSuppliers.length;
+    endMeasure();
+  }, [filteredSuppliers, startMeasure, endMeasure]);
 
   // Memoized grouping by discipline
   const groupedSuppliers = React.useMemo(() => {

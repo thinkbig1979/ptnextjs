@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Building2, MapPin, Calendar, Package, ArrowRight } from "lucide-react";
+import { Building2, MapPin, Calendar, Package, ArrowRight, Award, Shield, Users, Star, Trophy } from "lucide-react";
 import Link from "next/link";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { Vendor, Product } from "@/lib/types";
@@ -37,17 +37,21 @@ export function VendorCard({
       animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
       transition={{ duration: 0.6, delay: 0.1 * animationIndex }}
     >
-      <Card className={`h-full hover-lift cursor-pointer group ${isHighlighted ? 'ring-2 ring-accent shadow-lg' : ''}`}>
+      <Card className={`h-full hover-lift cursor-pointer group flex flex-col ${isHighlighted ? 'ring-2 ring-accent shadow-lg' : ''}`}>
         {/* Company Logo */}
-        <OptimizedImage
-          src={vendor?.logo}
-          alt={`${vendor?.name} company logo` || 'Vendor company logo'}
-          fallbackType="partner"
-          aspectRatio="video"
-          fill
-          className="group-hover:scale-105 transition-transform duration-300"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        />
+        <Link
+          href={`${baseUrl}/${vendor?.slug}`}
+          className="aspect-video relative overflow-hidden block"
+        >
+          <OptimizedImage
+            src={vendor?.logo}
+            alt={`${vendor?.name} company logo` || 'Vendor company logo'}
+            fallbackType="partner"
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
+        </Link>
         
         <CardHeader>
           <div className="flex items-center justify-between mb-3">
@@ -60,6 +64,9 @@ export function VendorCard({
               )}
               {isHighlighted && (
                 <Badge variant="default" className="bg-green-500">Highlighted</Badge>
+              )}
+              {vendor?.partner && (
+                <Badge variant="default" className="bg-blue-500">Partner</Badge>
               )}
             </div>
             <Badge 
@@ -113,6 +120,40 @@ export function VendorCard({
                 <span>{vendorProducts.length} product{vendorProducts.length !== 1 ? 's' : ''}</span>
               </div>
             )}
+
+            {/* Enhanced Features Indicators */}
+            <div className="flex flex-wrap gap-2">
+              {(vendor?.certifications && vendor.certifications.length > 0) && (
+                <Badge variant="outline" className="text-xs gap-1">
+                  <Shield className="w-3 h-3" />
+                  {vendor.certifications.length} Certification{vendor.certifications.length !== 1 ? 's' : ''}
+                </Badge>
+              )}
+              {(vendor?.awards && vendor.awards.length > 0) && (
+                <Badge variant="outline" className="text-xs gap-1">
+                  <Trophy className="w-3 h-3" />
+                  {vendor.awards.length} Award{vendor.awards.length !== 1 ? 's' : ''}
+                </Badge>
+              )}
+              {(vendor?.teamMembers && vendor.teamMembers.length > 0) && (
+                <Badge variant="outline" className="text-xs gap-1">
+                  <Users className="w-3 h-3" />
+                  Team Profile
+                </Badge>
+              )}
+              {(vendor?.caseStudies && vendor.caseStudies.length > 0) && (
+                <Badge variant="outline" className="text-xs gap-1">
+                  <Star className="w-3 h-3" />
+                  {vendor.caseStudies.length} Case Stud{vendor.caseStudies.length === 1 ? 'y' : 'ies'}
+                </Badge>
+              )}
+              {(vendor?.yachtProjects && vendor.yachtProjects.length > 0) && (
+                <Badge variant="outline" className="text-xs gap-1">
+                  <Award className="w-3 h-3" />
+                  {vendor.yachtProjects.length} Yacht Project{vendor.yachtProjects.length !== 1 ? 's' : ''}
+                </Badge>
+              )}
+            </div>
 
             {/* Action Buttons */}
             <div className="flex flex-col gap-2">

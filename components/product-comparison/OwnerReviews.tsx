@@ -65,7 +65,8 @@ export function OwnerReviews({
 
   // Filter and sort reviews
   const processedReviews = React.useMemo(() => {
-    let filtered = reviews;
+    // Ensure reviews is always an array
+    let filtered = Array.isArray(reviews) ? reviews : [];
 
     // Filter by rating
     if (filterByRating) {
@@ -87,7 +88,8 @@ export function OwnerReviews({
     }
 
     // Sort reviews
-    filtered = [...filtered].sort((a, b) => {
+    if (filtered.length > 0) {
+      filtered = [...filtered].sort((a, b) => {
       let aValue: any, bValue: any;
 
       switch (sortBy) {
@@ -106,6 +108,7 @@ export function OwnerReviews({
 
       return sortOrder === 'asc' ? aValue - bValue : bValue - aValue;
     });
+    }
 
     return filtered;
   }, [reviews, filterByRating, selectedUseCase, searchTerm, sortBy, sortOrder]);

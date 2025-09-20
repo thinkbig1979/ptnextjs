@@ -3,7 +3,7 @@ name: "Axiom Pro MFD Series"
 slug: "axiom-pro-mfd-series"
 description: "All-in-one GPS chartplotters with quad-core CPUs, multi-touch IPS displays from 7\" to 16\", integrated GPS/GLONASS, RealVision 3D sonar, and network connectivity via RayNet Ethernet."
 price: "Contact for pricing"
-vendor: "content/vendors/raymarine-teledyne-flir-.md"
+vendor: "content/vendors/raymarine-teledyne-flir.md"
 category: "content/categories/navigation-systems.md"
 tags: []
 product_images: []

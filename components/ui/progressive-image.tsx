@@ -79,9 +79,10 @@ export function ProgressiveImage({
         ref={ref as React.RefObject<HTMLDivElement>}
         className={cn(
           "flex items-center justify-center bg-gray-100 text-gray-400 rounded",
+          fill ? "absolute inset-0" : "",
           className
         )}
-        style={{ width, height }}
+        style={fill ? {} : { width, height }}
         role="img"
         aria-label={alt}
       >
@@ -101,9 +102,10 @@ export function ProgressiveImage({
         ref={ref as React.RefObject<HTMLDivElement>}
         className={cn(
           "flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse rounded",
+          fill ? "absolute inset-0" : "",
           className
         )}
-        style={{ width, height }}
+        style={fill ? {} : { width, height }}
         role="img"
         aria-label={`Loading ${alt}`}
         aria-busy="true"
@@ -114,42 +116,60 @@ export function ProgressiveImage({
     );
   }
 
-  const imageProps = {
-    src: imageSrc || src,
-    alt,
-    className: cn(
-      "transition-all duration-300",
-      !isLoaded && placeholder && "filter blur-sm",
-      isLoaded && "filter-none",
-      className
-    ),
-    onLoad: () => {
-      setIsLoaded(true);
-      onLoad?.();
-    },
-    onError: () => {
-      setHasError(true);
-      onError?.();
-    },
-    placeholder: blurDataURL ? "blur" as const : undefined,
-    blurDataURL,
-    priority,
-    sizes,
-    quality,
-    ...(fill ? { fill: true } : { width, height })
-  };
+  // Show placeholder while loading
+  if (!imageSrc || (!isLoaded && imageSrc === placeholder)) {
+    return (
+      <div
+        ref={ref as React.RefObject<HTMLDivElement>}
+        className={cn(
+          "bg-gray-200 animate-pulse flex items-center justify-center",
+          fill ? "absolute inset-0" : "",
+          className
+        )}
+        style={fill ? {} : { width, height }}
+        role="img"
+        aria-label={`Loading ${alt}`}
+      >
+        <div className="w-8 h-8 bg-gray-300 rounded-full animate-bounce" />
+      </div>
+    );
+  }
 
   return (
     <div
       ref={ref as React.RefObject<HTMLDivElement>}
-      className={cn("relative overflow-hidden rounded", !fill && className)}
-    >
-      <Image {...imageProps} alt={alt} />
-      {!isLoaded && (
-        <div className="absolute inset-0 bg-gray-100 animate-pulse flex items-center justify-center">
-          <span className="sr-only">Loading image: {alt}</span>
-        </div>
+      className={cn(
+        "transition-opacity duration-300",
+        fill ? "absolute inset-0" : "relative",
+        isLoaded ? "opacity-100" : "opacity-0"
       )}
+      style={fill ? {} : { width, height }}
+    >
+      <Image
+        src={imageSrc}
+        alt={alt}
+        width={fill ? undefined : width}
+        height={fill ? undefined : height}
+        fill={fill}
+        className={cn(
+          "transition-opacity duration-300",
+          isLoaded ? "opacity-100" : "opacity-0",
+          className
+        )}
+        quality={quality}
+        priority={priority}
+        sizes={sizes}
+        placeholder={blurDataURL ? "blur" : "empty"}
+        blurDataURL={blurDataURL}
+        onLoad={() => {
+          setIsLoaded(true);
+          onLoad?.();
+        }}
+        onError={() => {
+          setHasError(true);
+          onError?.();
+        }}
+      />
     </div>
   );
 }

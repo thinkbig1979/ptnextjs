@@ -3,14 +3,13 @@
 
 import * as React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
+import { Logo } from "@/components/ui/logo";
 
 const navigationItems = [
   { href: "/", label: "Home" },
@@ -23,39 +22,6 @@ const navigationItems = [
   { href: "/contact", label: "Contact" },
 ];
 
-function Logo() {
-  const { theme, resolvedTheme } = useTheme();
-  const [mounted, setMounted] = React.useState(false);
-
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Show a placeholder during SSR to avoid hydration mismatch
-  if (!mounted) {
-    return (
-      <div className="h-12 w-48 sm:h-14 sm:w-56 md:h-16 md:w-64 lg:h-20 lg:w-80 bg-muted animate-pulse rounded" />
-    );
-  }
-
-  const currentTheme = resolvedTheme || theme;
-  const logoSrc = currentTheme === 'dark' 
-    ? '/media/company/logos/Paul-Thames-logo-PNG-white.png'
-    : '/media/company/logos/Paul-Thames-logo-PNG-black.png';
-
-  return (
-    <div className="relative h-12 w-48 sm:h-14 sm:w-56 md:h-16 md:w-64 lg:h-20 lg:w-80">
-      <Image
-        src={logoSrc}
-        alt="Paul Thames"
-        fill
-        className="object-contain"
-        priority
-        sizes="(max-width: 640px) 192px, (max-width: 768px) 224px, (max-width: 1024px) 256px, 320px"
-      />
-    </div>
-  );
-}
 
 export function Navigation() {
   const pathname = usePathname();
@@ -63,9 +29,9 @@ export function Navigation() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-18 sm:h-20 md:h-22 lg:h-26 max-w-screen-xl items-center justify-between px-4 sm:px-6">
+      <div className="container flex h-20 sm:h-24 md:h-22 lg:h-26 max-w-screen-xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="flex items-center">
-          <Logo />
+          <Logo size="mobile-nav" priority />
         </Link>
 
         {/* Desktop Navigation */}

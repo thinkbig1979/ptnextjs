@@ -79,6 +79,7 @@ export function OptimizedImage({
   const containerClasses = cn(
     'relative overflow-hidden bg-gradient-to-br from-accent/10 to-primary/10',
     aspectRatio && aspectRatioClasses[aspectRatio],
+    fill && 'h-full w-full',
     className
   );
 
@@ -93,7 +94,7 @@ export function OptimizedImage({
             </div>
           </div>
         )}
-        
+
         {/* Actual image */}
         <Image
           src={src}

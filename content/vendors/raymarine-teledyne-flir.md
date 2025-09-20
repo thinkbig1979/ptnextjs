@@ -18,7 +18,7 @@ seo:
   keywords: >-
     marine electronics, navigation, radar, chartplotter, Raymarine, Teledyne
     FLIR
-partner: true
+partner: false
 services:
   - Marine Electronics
   - Navigation Systems

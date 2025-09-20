@@ -156,9 +156,9 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
     ? vendor.achievements.sort((a, b) => (a.order || 0) - (b.order || 0))
     : [];
 
-  // Get services from vendor data (no fallback - hide section if empty)  
-  const services = vendor.services && vendor.services.length > 0 
-    ? vendor.services.map((s: any) => s.service)
+  // Get services from vendor data (no fallback - hide section if empty)
+  const services = vendor.services && vendor.services.length > 0
+    ? vendor.services.map((s: any) => typeof s === 'string' ? s : s.service)
     : [];
 
   return (
@@ -188,7 +188,7 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
               {/* Company Logo and Name Header */}
               <div className="flex items-center space-x-6 mb-6">
                 {vendor.logo && (
-                  <div className="flex-shrink-0 w-20 h-20 flex items-center justify-center bg-white rounded-lg border border-border p-2">
+                  <div className="flex-shrink-0 w-20 h-20 flex items-center justify-center p-2">
                     <img
                       src={vendor.logo}
                       alt={`${vendor.name} logo`}
@@ -227,12 +227,11 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
 
             {/* Company Image */}
             <div className="mb-8">
-              <div className="rounded-lg border overflow-hidden">
+              <div className="aspect-video relative rounded-lg border overflow-hidden">
                 <OptimizedImage
                   src={vendor?.image}
                   alt={`${vendor.name} company overview`}
                   fallbackType="partner"
-                  aspectRatio="video"
                   fill
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 66vw, 50vw"
@@ -389,18 +388,19 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {vendorProducts.slice(0, 4).map((product) => (
-                    <Card key={product.id} className="hover-lift cursor-pointer group overflow-hidden">
+                    <Card key={product.id} className="hover-lift cursor-pointer group overflow-hidden flex flex-col">
                       <Link href={`/products/${product.slug || product.id}`}>
                         {/* Product Image */}
-                        <OptimizedImage
-                          src={product.mainImage?.url || product.image}
-                          alt={product.mainImage?.altText || product.name}
-                          fallbackType="product"
-                          aspectRatio="video"
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-300"
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                        />
+                        <div className="aspect-video relative overflow-hidden">
+                          <OptimizedImage
+                            src={product.mainImage?.url || product.image}
+                            alt={product.mainImage?.altText || product.name}
+                            fallbackType="product"
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-300"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                          />
+                        </div>
                         
                         <CardHeader>
                           <div className="flex items-center space-x-2 mb-2">
