@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Suspense } from "react";
 import { ProductsClient } from "@/app/components/products-client";
+import { ComparisonProvider } from "@/components/ui/product-comparison";
 import { tinaCMSDataService } from "@/lib/tinacms-data-service";
 
 // Force static generation for optimal SEO and performance
@@ -46,20 +47,22 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         </div>
 
         {/* Client component with all data passed as props */}
-        <Suspense fallback={<div className="space-y-8 animate-pulse">
-          <div className="h-6 bg-muted/20 rounded w-48" />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-96 bg-muted/20 rounded-lg" />
-            ))}
-          </div>
-        </div>}>
-          <ProductsClient 
-            initialProducts={products}
-            initialCategories={categoryNames}
-            initialVendors={vendors}
-          />
-        </Suspense>
+        <ComparisonProvider>
+          <Suspense fallback={<div className="space-y-8 animate-pulse">
+            <div className="h-6 bg-muted/20 rounded w-48" />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="h-96 bg-muted/20 rounded-lg" />
+              ))}
+            </div>
+          </div>}>
+            <ProductsClient
+              initialProducts={products}
+              initialCategories={categoryNames}
+              initialVendors={vendors}
+            />
+          </Suspense>
+        </ComparisonProvider>
       </div>
     </div>
   );

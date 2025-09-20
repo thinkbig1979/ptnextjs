@@ -482,16 +482,30 @@ class TinaCMSDataService {
         } as YachtTimelineEvent;
       }).filter(Boolean) || [],
 
-      supplierMap: tinaYacht.supplierMap?.map((supplier: any) => {
-        if (!supplier || typeof supplier !== 'object') return null;
-        return {
+      supplierMap: tinaYacht.supplierMap?.flatMap((supplier: any) => {
+        if (!supplier || typeof supplier !== 'object') return [];
+
+        // Handle the structure where suppliers have vendors arrays
+        if (Array.isArray(supplier.vendors)) {
+          return supplier.vendors.map((vendorId: string) => ({
+            vendorId,
+            vendorName: '', // Will be resolved later
+            discipline: supplier.discipline || '',
+            systems: Array.isArray(supplier.systems) ? supplier.systems : [],
+            role: supplier.role || 'primary',
+            projectPhase: supplier.projectPhase || undefined,
+          } as YachtSupplierRole));
+        }
+
+        // Handle the legacy single vendor structure
+        return [{
           vendorId: supplier.vendor || '',
           vendorName: '', // Will be resolved later
           discipline: supplier.discipline || '',
           systems: Array.isArray(supplier.systems) ? supplier.systems : [],
           role: supplier.role || 'primary',
           projectPhase: supplier.projectPhase || undefined,
-        } as YachtSupplierRole;
+        } as YachtSupplierRole];
       }).filter(Boolean) || [],
 
       sustainabilityScore: tinaYacht.sustainabilityScore && typeof tinaYacht.sustainabilityScore === 'object' ? {

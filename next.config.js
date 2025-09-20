@@ -32,22 +32,35 @@ const nextConfig = {
     ]
   },
 
-  // Bundle analyzer configuration
-  ...(process.env.ANALYZE === 'true' && {
-    webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
-      if (!dev && !isServer) {
-        const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-        config.plugins.push(
-          new BundleAnalyzerPlugin({
-            analyzerMode: 'static',
-            openAnalyzer: false,
-            reportFilename: path.join(process.cwd(), 'bundle-analyzer-report.html')
-          })
-        );
-      }
-      return config;
+  // Webpack configuration
+  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+    // Bundle analyzer for development
+    if (process.env.ANALYZE === 'true' && !dev && !isServer) {
+      const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+      config.plugins.push(
+        new BundleAnalyzerPlugin({
+          analyzerMode: 'static',
+          openAnalyzer: false,
+          reportFilename: path.join(process.cwd(), 'bundle-analyzer-report.html')
+        })
+      );
     }
-  }),
+
+    // Exclude Node.js modules from client bundle
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        path: false,
+        'fs/promises': false,
+        crypto: false,
+        stream: false,
+        util: false,
+      };
+    }
+
+    return config;
+  },
   
   // Static export configuration
   trailingSlash: true,
