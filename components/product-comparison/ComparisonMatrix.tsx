@@ -41,8 +41,8 @@ export function ComparisonMatrix({
 
     if (sortBy && metrics.find(m => m.metricId === sortBy)) {
       sorted = sorted.sort((a, b) => {
-        const aValue = a.comparisonMetrics?.[sortBy]?.value || 0;
-        const bValue = b.comparisonMetrics?.[sortBy]?.value || 0;
+        const aValue = Number(a.comparisonMetrics?.[sortBy]?.value) || 0;
+        const bValue = Number(b.comparisonMetrics?.[sortBy]?.value) || 0;
 
         if (sortOrder === 'desc') {
           return bValue - aValue;
@@ -156,7 +156,7 @@ export function ComparisonMatrix({
                           key={`${product.id}-${metric.metricId}`}
                           className={cn(
                             "p-4 text-center",
-                            isBest && "bg-green-50 border-green-200"
+                            isBest && "bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800"
                           )}
                           data-testid={`metric-cell-${product.id}-${metric.metricId}`}
                         >
@@ -166,7 +166,7 @@ export function ComparisonMatrix({
                                 {metricValue.value} {metricValue.unit || metric.unit || ''}
                               </span>
                               {isBest && (
-                                <Badge variant="default" className="text-xs bg-green-100 text-green-800">
+                                <Badge variant="default" className="text-xs bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100">
                                   Best
                                 </Badge>
                               )}

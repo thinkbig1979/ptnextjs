@@ -15,7 +15,9 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "tina:build": "tinacms build",
-    "tina:setup": "tinacms init"
+    "tina:setup": "tinacms init",
+    "dev:clean": "./scripts/kill-dev-servers.sh && npm run dev",
+    "stop:dev": "./scripts/kill-dev-servers.sh"
   },
   "keywords": [
     "nextjs",

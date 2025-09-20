@@ -11,8 +11,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { GitCompare, X, Plus } from "lucide-react";
 import { Product } from "@/lib/types";
 import { OptimizedImage } from "@/components/ui/optimized-image";
@@ -90,25 +88,72 @@ export function CompareButton({ product }: { product: Product }) {
   const isAtLimit = comparedProducts.length >= 3 && !isInComparison;
 
   const handleToggle = React.useCallback((e: React.MouseEvent) => {
+    // Always stop propagation first, regardless of state
     e.stopPropagation();
+    e.preventDefault();
+
+    // Access the native event for stopImmediatePropagation
+    e.nativeEvent.stopImmediatePropagation();
+
+    // Don't do anything if we're at the limit and this product is not in comparison
+    if (isAtLimit) {
+      return false;
+    }
+
     if (isInComparison) {
       removeFromComparison(product.id);
     } else {
       addToComparison(product);
     }
-  }, [product, isInComparison, addToComparison, removeFromComparison]);
+  }, [product, isInComparison, addToComparison, removeFromComparison, isAtLimit]);
 
+  // Create a bulletproof event blocker for disabled state
+  const blockAllEvents = React.useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    e.nativeEvent.stopImmediatePropagation();
+    return false;
+  }, []);
+
+  if (isAtLimit) {
+    // When at limit, render a completely non-interactive disabled button wrapped in event blocker
+    return (
+      <div
+        className="relative"
+        onClick={blockAllEvents}
+        onMouseDown={blockAllEvents}
+        onMouseUp={blockAllEvents}
+        onDoubleClick={blockAllEvents}
+        onContextMenu={blockAllEvents}
+        style={{ pointerEvents: 'all' }}
+      >
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-2 cursor-not-allowed opacity-50 pointer-events-none"
+          disabled={true}
+          tabIndex={-1}
+          aria-disabled={true}
+          title="Maximum 3 products allowed for comparison"
+        >
+          <Plus className="h-3 w-3" />
+          Limit Reached
+        </Button>
+      </div>
+    );
+  }
+
+  // Normal interactive button
   return (
     <Button
       variant={isInComparison ? "default" : "outline"}
       size="sm"
       onClick={handleToggle}
       className="gap-2"
-      disabled={isAtLimit}
-      title={isAtLimit ? "Maximum 3 products allowed for comparison" : undefined}
+      title={isInComparison ? "Remove from comparison" : "Add to comparison"}
     >
       {isInComparison ? <X className="h-3 w-3" /> : <Plus className="h-3 w-3" />}
-      {isInComparison ? "Remove" : isAtLimit ? "Limit Reached" : "Compare"}
+      {isInComparison ? "Remove" : "Compare"}
     </Button>
   );
 }
@@ -147,20 +192,6 @@ export function ComparisonFloatingButton() {
 }
 
 function ProductComparisonTable({ products }: { products: Product[] }) {
-  // Extract all unique specification keys
-  const allSpecKeys = React.useMemo(() => {
-    const keys = new Set<string>();
-    products.forEach(product => {
-      product.specifications?.forEach(spec => {
-        if (spec.label) keys.add(spec.label);
-      });
-      if (product.comparisonMetrics) {
-        Object.keys(product.comparisonMetrics).forEach(key => keys.add(key));
-      }
-    });
-    return Array.from(keys);
-  }, [products]);
-
   if (products.length === 0) {
     return (
       <div className="text-center py-8">
@@ -169,103 +200,205 @@ function ProductComparisonTable({ products }: { products: Product[] }) {
     );
   }
 
+  // Get all unique categories and specs from comparisonMetrics
+  const allCategories = Array.from(new Set(
+    products.flatMap(product =>
+      product.comparisonMetrics ? Object.keys(product.comparisonMetrics) : []
+    )
+  ));
+
+  // Get all unique specification keys from all products
+  const allSpecificationKeys = Array.from(new Set(
+    products.flatMap(product =>
+      product.specifications?.map(s => s.label) || []
+    )
+  ));
+
+  // Helper function to format spec names
+  const formatSpecName = (name: string) => {
+    return name
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^./, str => str.toUpperCase())
+      .trim();
+  };
+
+  // Helper function to format category names
+  const formatCategoryName = (category: string) => {
+    return category
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^./, str => str.toUpperCase())
+      .trim();
+  };
+
   return (
-    <div className="space-y-6">
-      {/* Product Headers */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {products.map((product) => (
-          <Card key={product.id}>
-            <CardHeader className="text-center">
-              <div className="relative aspect-video mb-4 rounded-lg overflow-hidden">
-                <OptimizedImage
-                  src={product.mainImage?.url || product.image}
-                  alt={product.name}
-                  fill
-                  className="object-cover"
-                  fallbackType="product"
-                />
-              </div>
-              <CardTitle className="text-lg">{product.name}</CardTitle>
-              <div className="flex justify-center gap-2">
-                <Badge variant="secondary">{product.category}</Badge>
-                {product.vendorName && (
-                  <Badge variant="outline">{product.vendorName}</Badge>
-                )}
-              </div>
-              {product.price && (
-                <p className="text-lg font-semibold text-primary">{product.price}</p>
-              )}
-            </CardHeader>
-          </Card>
-        ))}
-      </div>
-
-      <Separator />
-
-      {/* Features Comparison */}
-      <div>
-        <h3 className="text-lg font-semibold mb-4">Features</h3>
-        <div className="space-y-2">
-          {products[0]?.features?.map((feature, index) => (
-            <div key={feature.id || index} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div className="font-medium">{feature.title}</div>
-              {products.map((product) => (
-                <div key={`${product.id}-${index}`} className="text-sm text-muted-foreground">
-                  {product.features?.[index]?.description || "—"}
+    <div className="w-full">
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse bg-background">
+          <thead>
+            <tr className="border-b-2 border-border">
+              <th className="text-left py-4 px-4 font-semibold text-foreground w-1/4 sticky left-0 bg-background z-10">
+                <div className="border-r border-border pr-4">
+                  Specification
                 </div>
+              </th>
+              {products.map((product) => (
+                <th key={product.id} className="text-center py-4 px-4 min-w-64">
+                  <div className="space-y-3">
+                    <div className="relative w-16 h-16 mx-auto rounded-lg overflow-hidden bg-muted">
+                      <OptimizedImage
+                        src={product.mainImage?.url || product.image}
+                        alt={product.name}
+                        fill
+                        className="object-cover"
+                        fallbackType="product"
+                      />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-sm text-foreground leading-tight">{product.name}</h4>
+                      <div className="flex justify-center gap-1 mt-1">
+                        <Badge variant="secondary" className="text-xs">{product.category}</Badge>
+                      </div>
+                      {product.vendorName && (
+                        <p className="text-xs text-muted-foreground mt-1">{product.vendorName}</p>
+                      )}
+                      {product.price && (
+                        <p className="text-sm font-semibold text-primary mt-1">{product.price}</p>
+                      )}
+                    </div>
+                  </div>
+                </th>
               ))}
-            </div>
-          ))}
-        </div>
-      </div>
+            </tr>
+          </thead>
+          <tbody>
+            {/* Basic Information */}
+            <tr className="border-b border-border bg-muted/50">
+              <td className="py-3 px-4 font-semibold text-foreground sticky left-0 bg-muted/50 z-10">
+                <div className="border-r border-border pr-4">Description</div>
+              </td>
+              {products.map((product) => (
+                <td key={product.id} className="py-3 px-4 text-center text-sm">
+                  <div className="max-w-xs mx-auto text-left">
+                    {product.description ? (
+                      product.description.length > 100
+                        ? `${product.description.substring(0, 100)}...`
+                        : product.description
+                    ) : "—"}
+                  </div>
+                </td>
+              ))}
+            </tr>
 
-      <Separator />
+            {/* Technical Specifications from comparisonMetrics */}
+            {allCategories.map((category) => {
+              // Get all unique specs for this category across all products
+              const categorySpecs = Array.from(new Set(
+                products.flatMap(product =>
+                  product.comparisonMetrics?.[category]
+                    ? Object.keys(product.comparisonMetrics[category])
+                    : []
+                )
+              ));
 
-      {/* Specifications Comparison */}
-      {allSpecKeys.length > 0 && (
-        <div>
-          <h3 className="text-lg font-semibold mb-4">Specifications</h3>
-          <div className="space-y-3">
-            {allSpecKeys.map((specKey) => (
-              <div key={specKey} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div className="font-medium capitalize">{specKey.replace(/([A-Z])/g, ' $1').trim()}</div>
+              return categorySpecs.map((specKey, index) => (
+                <tr key={`${category}-${specKey}`} className={`border-b border-border ${index === 0 ? 'bg-blue-50 dark:bg-blue-950/30' : ''}`}>
+                  <td className={`py-3 px-4 font-medium sticky left-0 z-10 ${index === 0 ? 'bg-blue-50 dark:bg-blue-950/30' : 'bg-background'}`}>
+                    <div className="border-r border-border pr-4">
+                      {index === 0 && (
+                        <div className="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wide mb-1">
+                          {formatCategoryName(category)}
+                        </div>
+                      )}
+                      <div className="text-foreground">
+                        {formatSpecName(specKey)}
+                      </div>
+                    </div>
+                  </td>
+                  {products.map((product) => {
+                    const categoryData = product.comparisonMetrics?.[category] as Record<string, any>;
+                    const value = categoryData?.[specKey];
+
+                    // Format arrays nicely
+                    let displayValue = value;
+                    if (Array.isArray(value)) {
+                      displayValue = value.length > 3
+                        ? `${value.slice(0, 3).join(', ')} +${value.length - 3} more`
+                        : value.join(', ');
+                    } else if (typeof value === 'boolean') {
+                      displayValue = value ? 'Yes' : 'No';
+                    }
+
+                    return (
+                      <td key={`${product.id}-${specKey}`} className={`py-3 px-4 text-center text-sm ${index === 0 ? 'bg-blue-50 dark:bg-blue-950/30' : ''}`}>
+                        <span className="font-medium text-foreground">
+                          {displayValue || "—"}
+                        </span>
+                      </td>
+                    );
+                  })}
+                </tr>
+              ));
+            })}
+
+            {/* Additional Specifications from specifications array */}
+            {allSpecificationKeys.length > 0 && allSpecificationKeys.map((specKey, index) => (
+              <tr key={`additional-${specKey}`} className={`border-b border-border ${index === 0 ? 'bg-green-50 dark:bg-green-950/30' : ''}`}>
+                <td className={`py-3 px-4 font-medium sticky left-0 z-10 ${index === 0 ? 'bg-green-50 dark:bg-green-950/30' : 'bg-background'}`}>
+                  <div className="border-r border-border pr-4">
+                    {index === 0 && (
+                      <div className="text-xs font-semibold text-green-600 dark:text-green-400 uppercase tracking-wide mb-1">
+                        Additional Specs
+                      </div>
+                    )}
+                    <div className="text-foreground">{specKey}</div>
+                  </div>
+                </td>
                 {products.map((product) => {
                   const spec = product.specifications?.find(s => s.label === specKey);
-                  const metric = product.comparisonMetrics?.[specKey];
-                  const value = spec?.value || (metric ? `${metric.value}${metric.unit ? ` ${metric.unit}` : ''}` : "—");
                   return (
-                    <div key={`${product.id}-${specKey}`} className="text-sm">
-                      {value}
-                    </div>
+                    <td key={`${product.id}-${specKey}`} className={`py-3 px-4 text-center text-sm ${index === 0 ? 'bg-green-50 dark:bg-green-950/30' : ''}`}>
+                      <span className="font-medium text-foreground">
+                        {spec?.value || "—"}
+                      </span>
+                    </td>
                   );
                 })}
-              </div>
+              </tr>
             ))}
-          </div>
-        </div>
-      )}
 
-      <Separator />
-
-      {/* Integration Compatibility */}
-      <div>
-        <h3 className="text-lg font-semibold mb-4">Integration Compatibility</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {products.map((product) => (
-            <div key={product.id} className="space-y-2">
-              <h4 className="font-medium">{product.name}</h4>
-              <div className="flex flex-wrap gap-1">
-                {product.integrationCompatibility?.map((protocol) => (
-                  <Badge key={protocol} variant="outline" className="text-xs">
-                    {protocol}
-                  </Badge>
-                )) || (
-                  <span className="text-sm text-muted-foreground">No compatibility data</span>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
+            {/* Integration Compatibility */}
+            {products.some(p => p.integrationCompatibility?.length) && (
+              <tr className="border-b border-border bg-purple-50 dark:bg-purple-950/30">
+                <td className="py-3 px-4 font-medium sticky left-0 bg-purple-50 dark:bg-purple-950/30 z-10">
+                  <div className="border-r border-border pr-4">
+                    <div className="text-xs font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wide mb-1">
+                      Integration
+                    </div>
+                    <div className="text-foreground">Compatibility</div>
+                  </div>
+                </td>
+                {products.map((product) => (
+                  <td key={product.id} className="py-3 px-4 text-center bg-purple-50 dark:bg-purple-950/30">
+                    <div className="flex flex-wrap justify-center gap-1">
+                      {product.integrationCompatibility?.slice(0, 3).map((protocol) => (
+                        <Badge key={protocol} variant="outline" className="text-xs">
+                          {protocol}
+                        </Badge>
+                      )) || (
+                        <span className="text-sm text-muted-foreground">—</span>
+                      )}
+                      {(product.integrationCompatibility?.length || 0) > 3 && (
+                        <Badge variant="outline" className="text-xs">
+                          +{(product.integrationCompatibility?.length || 0) - 3} more
+                        </Badge>
+                      )}
+                    </div>
+                  </td>
+                ))}
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
     </div>
   );

@@ -6,7 +6,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Development
 - `npm run dev` - Start Next.js development server
+- `npm run dev:clean` - Clean up any existing dev servers and start fresh
 - `npm run dev:tinacms` - Start development server with TinaCMS admin interface (accessible at `/admin`)
+- `npm run stop:dev` - Stop all running dev servers (cleans up background processes)
 - `npm run build` - Build the static site for production
 - `npm run start` - Serve production build locally
 - `npm run lint` - Run ESLint code quality checks

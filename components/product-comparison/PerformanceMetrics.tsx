@@ -167,11 +167,11 @@ export function PerformanceMetrics({
   const getTrendIcon = (trend?: string) => {
     switch (trend) {
       case 'up':
-        return <TrendingUp className="h-4 w-4 text-green-600" data-testid="trend-up" />;
+        return <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" data-testid="trend-up" />;
       case 'down':
-        return <TrendingDown className="h-4 w-4 text-red-600" data-testid="trend-down" />;
+        return <TrendingDown className="h-4 w-4 text-red-600 dark:text-red-400" data-testid="trend-down" />;
       case 'stable':
-        return <Minus className="h-4 w-4 text-gray-600" data-testid="trend-stable" />;
+        return <Minus className="h-4 w-4 text-gray-600 dark:text-gray-400" data-testid="trend-stable" />;
       default:
         return null;
     }
@@ -245,7 +245,7 @@ export function PerformanceMetrics({
             <TableRow
               key={metric.metricId}
               data-testid={`metric-row-${metric.metricId}`}
-              className={isOutOfTolerance(metric) ? 'bg-red-50' : ''}
+              className={isOutOfTolerance(metric) ? 'bg-red-50 dark:bg-red-950/30' : ''}
             >
               <TableCell>
                 <div className="space-y-1">
@@ -300,7 +300,7 @@ export function PerformanceMetrics({
         <Card
           key={metric.metricId}
           data-testid={`metric-card-${metric.metricId}`}
-          className={isOutOfTolerance(metric) ? 'border-red-200 bg-red-50' : ''}
+          className={isOutOfTolerance(metric) ? 'border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/30' : ''}
         >
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
