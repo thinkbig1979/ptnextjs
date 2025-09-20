@@ -12,6 +12,7 @@ import { tinaCMSDataService } from "@/lib/tinacms-data-service";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://paulthames.com'),
   title: "Paul Thames - Superyacht Technology Excellence",
   description: "Amsterdam's premier superyacht technology consultancy, connecting discerning yacht owners with cutting-edge marine technology solutions.",
   keywords: "superyacht, marine technology, yacht technology, Amsterdam, navigation systems, marine electronics",

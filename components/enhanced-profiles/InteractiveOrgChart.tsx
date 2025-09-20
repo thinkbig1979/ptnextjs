@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import React, { useState, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -36,13 +36,13 @@ export const InteractiveOrgChart = React.memo(function InteractiveOrgChart({
   animated = false,
   className,
 }: InteractiveOrgChartProps) {
-  const [selectedMember, setSelectedMember] = React.useState<TeamMember | null>(null);
-  const [hoveredMember, setHoveredMember] = React.useState<string | null>(null);
-  const [selectedDepartment, setSelectedDepartment] = React.useState<string | null>(null);
+  const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
+  const [hoveredMember, setHoveredMember] = useState<string | null>(null);
+  const [selectedDepartment, setSelectedDepartment] = useState<string | null>(null);
 
   // Always call hooks before any early returns
   // Group members by level and department
-  const membersByLevel = React.useMemo(() => {
+  const membersByLevel = useMemo(() => {
     if (teamMembers.length === 0) return {};
     return teamMembers.reduce((acc, member) => {
       if (!acc[member.level]) acc[member.level] = [];
@@ -51,7 +51,7 @@ export const InteractiveOrgChart = React.memo(function InteractiveOrgChart({
     }, {} as Record<number, TeamMember[]>);
   }, [teamMembers]);
 
-  const departments = React.useMemo(() => {
+  const departments = useMemo(() => {
     if (teamMembers.length === 0) return [];
     const deptCounts = teamMembers.reduce((acc, member) => {
       acc[member.department] = (acc[member.department] || 0) + 1;
@@ -60,14 +60,14 @@ export const InteractiveOrgChart = React.memo(function InteractiveOrgChart({
     return Object.entries(deptCounts);
   }, [teamMembers]);
 
-  const filteredMembers = React.useMemo(() => {
+  const filteredMembers = useMemo(() => {
     if (teamMembers.length === 0) return [];
     return selectedDepartment
       ? teamMembers.filter(member => member.department === selectedDepartment)
       : teamMembers;
   }, [teamMembers, selectedDepartment]);
 
-  const maxLevel = React.useMemo(() => {
+  const maxLevel = useMemo(() => {
     if (teamMembers.length === 0) return 0;
     return Math.max(...teamMembers.map(m => m.level));
   }, [teamMembers]);

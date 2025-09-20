@@ -20,11 +20,6 @@ import { tinaCMSDataService } from "@/lib/tinacms-data-service";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { notFound } from "next/navigation";
 import VendorDetailClient from "./_components/vendor-detail-client";
-import { CertificationBadge } from "@/components/enhanced-profiles/CertificationBadge";
-import { AwardsSection } from "@/components/enhanced-profiles/AwardsSection";
-import { SocialProofMetrics } from "@/components/enhanced-profiles/SocialProofMetrics";
-import { VideoIntroduction } from "@/components/enhanced-profiles/VideoIntroduction";
-import { InteractiveOrgChart } from "@/components/enhanced-profiles/InteractiveOrgChart";
 import { Metadata } from "next";
 
 // Force static generation for optimal SEO and performance
@@ -239,27 +234,47 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
               </div>
             </div>
 
-            {/* Video Introduction */}
+            {/* Company Video */}
             {vendor.videoIntroduction?.videoUrl && (
               <div className="mb-8">
-                <VideoIntroduction
-                  video={{
-                    url: vendor.videoIntroduction.videoUrl,
-                    title: vendor.videoIntroduction.title || `${vendor.name} Company Introduction`,
-                    description: vendor.videoIntroduction.description || `Learn more about ${vendor.name} and our innovative marine technology solutions.`,
-                    thumbnailUrl: vendor.videoIntroduction.thumbnailImage || vendor.image
-                  }}
-                />
+                <h2 className="text-2xl font-cormorant font-bold mb-4">Company Video</h2>
+                <Card className="p-4">
+                  <p className="text-muted-foreground">
+                    Watch our company introduction video to learn more about {vendor.name} and our innovative marine technology solutions.
+                  </p>
+                  <Button asChild className="mt-4">
+                    <a href={vendor.videoIntroduction.videoUrl} target="_blank" rel="noopener noreferrer">
+                      Watch Video
+                    </a>
+                  </Button>
+                </Card>
               </div>
             )}
 
-            {/* Social Proof Metrics */}
+            {/* Social Proof */}
             {vendor.socialProof && (
               <div className="mb-8">
-                <SocialProofMetrics
-                  metrics={vendor.socialProof}
-                  animated={true}
-                />
+                <h2 className="text-2xl font-cormorant font-bold mb-4">Company Metrics</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {vendor.socialProof.followers && (
+                    <Card className="p-4 text-center">
+                      <div className="text-2xl font-bold text-primary">{vendor.socialProof.followers.toLocaleString()}</div>
+                      <div className="text-sm text-muted-foreground">Followers</div>
+                    </Card>
+                  )}
+                  {vendor.socialProof.projectsCompleted && (
+                    <Card className="p-4 text-center">
+                      <div className="text-2xl font-bold text-primary">{vendor.socialProof.projectsCompleted.toLocaleString()}</div>
+                      <div className="text-sm text-muted-foreground">Projects Completed</div>
+                    </Card>
+                  )}
+                  {vendor.socialProof.yearsInBusiness && (
+                    <Card className="p-4 text-center">
+                      <div className="text-2xl font-bold text-primary">{vendor.socialProof.yearsInBusiness}</div>
+                      <div className="text-sm text-muted-foreground">Years in Business</div>
+                    </Card>
+                  )}
+                </div>
               </div>
             )}
 
@@ -285,17 +300,26 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
                 <h2 className="text-2xl font-cormorant font-bold mb-4">Certifications & Compliance</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {vendor.certifications.map((cert, index) => (
-                    <CertificationBadge
-                      key={index}
-                      certification={{
-                        name: cert.name,
-                        issuer: cert.issuer,
-                        validUntil: cert.expiryDate,
-                        certificateUrl: cert.certificateUrl,
-                        logoUrl: cert.logo,
-                        isVerified: true // Default to verified for vendor certs
-                      }}
-                    />
+                    <Card key={index} className="p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="font-semibold">{cert.name}</h3>
+                        <Badge variant="outline">Verified</Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-2">Issued by: {cert.issuer}</p>
+                      {cert.expiryDate && (
+                        <p className="text-xs text-muted-foreground">Valid until: {cert.expiryDate}</p>
+                      )}
+                      {cert.certificateUrl && (
+                        <a
+                          href={cert.certificateUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary hover:underline text-sm mt-2 inline-block"
+                        >
+                          View Certificate
+                        </a>
+                      )}
+                    </Card>
                   ))}
                 </div>
               </div>
@@ -304,16 +328,25 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
             {/* Awards Section */}
             {vendor.awards && vendor.awards.length > 0 && (
               <div className="mb-8">
-                <AwardsSection
-                  awards={vendor.awards.map((award, index) => ({
-                    id: `award-${index}`,
-                    title: award.title,
-                    organization: award.organization || 'Industry Recognition',
-                    year: award.year,
-                    description: award.description || '',
-                    category: award.category || 'General'
-                  }))}
-                />
+                <h2 className="text-2xl font-cormorant font-bold mb-4">Awards & Recognition</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {vendor.awards.map((award, index) => (
+                    <Card key={index} className="p-4">
+                      <div className="flex items-start justify-between mb-2">
+                        <h3 className="font-semibold">{award.title}</h3>
+                        {award.year && (
+                          <Badge variant="outline">{award.year}</Badge>
+                        )}
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-2">
+                        {award.organization || 'Industry Recognition'}
+                      </p>
+                      {award.description && (
+                        <p className="text-sm">{award.description}</p>
+                      )}
+                    </Card>
+                  ))}
+                </div>
               </div>
             )}
 
@@ -338,24 +371,34 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
               </div>
             )}
 
-            {/* Team Organization Chart */}
+            {/* Team Section */}
             {vendor.teamMembers && vendor.teamMembers.length > 0 && (
               <div className="mb-8">
                 <h2 className="text-2xl font-cormorant font-bold mb-4">Our Team</h2>
-                <InteractiveOrgChart
-                  teamMembers={vendor.teamMembers.map((member, index) => ({
-                    id: `member-${index}`,
-                    name: member.name,
-                    title: member.position,
-                    department: member.expertise?.[0] || 'General',
-                    level: 1, // Default level for now
-                    photoUrl: member.photo,
-                    linkedinUrl: member.linkedinUrl,
-                    bio: member.bio,
-                    reportsTo: null // Simplified for now
-                  }))}
-                  animated={true}
-                />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {vendor.teamMembers.map((member, index) => (
+                    <Card key={index} className="p-4">
+                      <div className="flex items-center space-x-3">
+                        {member.photo && (
+                          <OptimizedImage
+                            src={member.photo}
+                            alt={member.name}
+                            width={48}
+                            height={48}
+                            className="rounded-full"
+                          />
+                        )}
+                        <div>
+                          <h3 className="font-semibold">{member.name}</h3>
+                          <p className="text-sm text-muted-foreground">{member.position}</p>
+                        </div>
+                      </div>
+                      {member.bio && (
+                        <p className="mt-3 text-sm text-muted-foreground">{member.bio}</p>
+                      )}
+                    </Card>
+                  ))}
+                </div>
               </div>
             )}
 
