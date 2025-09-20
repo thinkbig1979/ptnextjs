@@ -7,6 +7,19 @@ import { OptimizedImage } from '@/components/ui/optimized-image';
 import tinaCMSDataService from '@/lib/tinacms-data-service';
 import { YachtTimelineEvent, YachtCustomization } from '@/lib/types';
 
+// Required for static export
+export async function generateStaticParams() {
+  try {
+    const yachts = await tinaCMSDataService.getAllYachts();
+    return yachts.map((yacht) => ({
+      slug: yacht.slug,
+    }));
+  } catch (error) {
+    console.error('Error generating static params for yacht pages:', error);
+    return [];
+  }
+}
+
 export default async function YachtDetailPage({ params }: { params: { slug: string } }) {
   try {
     const yacht = await tinaCMSDataService.getYachtBySlug(params.slug);

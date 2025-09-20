@@ -17,7 +17,8 @@
     "tina:build": "tinacms build",
     "tina:setup": "tinacms init",
     "dev:clean": "./scripts/kill-dev-servers.sh && npm run dev",
-    "stop:dev": "./scripts/kill-dev-servers.sh"
+    "stop:dev": "./scripts/kill-dev-servers.sh",
+    "build:netlify": "NEXT_OUTPUT_MODE=export npm run build"
   },
   "keywords": [
     "nextjs",

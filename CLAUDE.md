@@ -18,6 +18,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run tina:build` - Build TinaCMS schema and types
 - `npm run tina:setup` - Initialize TinaCMS configuration
 
+### Production/Deployment
+- `npm run build:netlify` - Build static site for Netlify deployment (with export mode)
+
 ## Architecture Overview
 
 This is a **static superyacht technology showcase website** built with Next.js 14 (App Router) and powered by TinaCMS for content management.
