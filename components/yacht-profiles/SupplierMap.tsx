@@ -84,17 +84,7 @@ export function SupplierMap({
   viewMode = 'cards',
   className
 }: SupplierMapProps) {
-  // Early return for empty suppliers
-  if (!suppliers || suppliers.length === 0) {
-    return (
-      <div className="text-center py-8">
-        <p className="text-muted-foreground">
-          No suppliers assigned to this project yet.
-        </p>
-      </div>
-    );
-  }
-
+  // All hooks must be called before any early returns
   // Performance monitoring
   const { startMeasure, endMeasure } = usePerformanceMetrics({
     name: 'SupplierMap',
@@ -103,6 +93,9 @@ export function SupplierMap({
 
   // Memoized filtering for performance
   const filteredSuppliers = React.useMemo(() => {
+    if (!suppliers || suppliers.length === 0) {
+      return [];
+    }
     const filtered = suppliers.filter(supplier => {
       if (filterByRole && supplier.role !== filterByRole) return false;
       if (filterByDiscipline && supplier.discipline !== filterByDiscipline) return false;
@@ -148,6 +141,17 @@ export function SupplierMap({
         return 'bg-gray-100 text-gray-800';
     }
   }, []);
+
+  // Early return for empty suppliers - after all hooks
+  if (!suppliers || suppliers.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-muted-foreground">
+          No suppliers assigned to this project yet.
+        </p>
+      </div>
+    );
+  }
 
   if (filteredSuppliers.length === 0) {
     return (

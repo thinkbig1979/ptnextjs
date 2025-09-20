@@ -1,6 +1,5 @@
 import * as React from "react";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Search, Settings } from "lucide-react";
+import { Search, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/ui/logo";
 import Image from "next/image";

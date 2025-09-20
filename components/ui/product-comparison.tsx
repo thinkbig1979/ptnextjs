@@ -11,17 +11,13 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { GitCompare, X, Plus } from "lucide-react";
 import { Product } from "@/lib/types";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { toast } from "sonner";
 
-interface ProductComparisonProps {
-  products: Product[];
-  trigger?: React.ReactNode;
-}
 
 interface ComparisonContextType {
   comparedProducts: Product[];
@@ -151,14 +147,6 @@ export function ComparisonFloatingButton() {
 }
 
 function ProductComparisonTable({ products }: { products: Product[] }) {
-  if (products.length === 0) {
-    return (
-      <div className="text-center py-8">
-        <p className="text-muted-foreground">No products selected for comparison</p>
-      </div>
-    );
-  }
-
   // Extract all unique specification keys
   const allSpecKeys = React.useMemo(() => {
     const keys = new Set<string>();
@@ -172,6 +160,14 @@ function ProductComparisonTable({ products }: { products: Product[] }) {
     });
     return Array.from(keys);
   }, [products]);
+
+  if (products.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-muted-foreground">No products selected for comparison</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -213,7 +209,7 @@ function ProductComparisonTable({ products }: { products: Product[] }) {
           {products[0]?.features?.map((feature, index) => (
             <div key={feature.id || index} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="font-medium">{feature.title}</div>
-              {products.map((product, pIndex) => (
+              {products.map((product) => (
                 <div key={`${product.id}-${index}`} className="text-sm text-muted-foreground">
                   {product.features?.[index]?.description || "—"}
                 </div>

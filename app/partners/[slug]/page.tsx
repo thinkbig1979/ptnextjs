@@ -20,7 +20,7 @@ import { tinaCMSDataService } from "@/lib/tinacms-data-service";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { notFound } from "next/navigation";
 import PartnerDetailClient from "./_components/partner-detail-client";
-import { VendorService, CompanyInfo } from "@/lib/types";
+import { CompanyInfo } from "@/lib/types";
 
 // Force static generation for optimal SEO and performance
 export const dynamic = 'force-static';
