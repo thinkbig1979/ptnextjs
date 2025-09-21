@@ -90,13 +90,18 @@ export function TwoPillarHero({
             </p>
           </div>
 
-          {/* Two Pillars Section */}
-          <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto mt-16">
+          {/* Our Two Pillars Section */}
+          <div className="mt-16">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-cormorant font-bold text-center mb-12 text-accent">
+              Our Two Pillars
+            </h2>
+            <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
             {/* Left Pillar */}
             <PillarSection pillar={leftPillar} icon={<Search className="w-8 h-8 text-accent" />} />
 
             {/* Right Pillar */}
             <PillarSection pillar={rightPillar} icon={<Settings className="w-8 h-8 text-accent" />} />
+            </div>
           </div>
         </div>
       </div>
