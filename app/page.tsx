@@ -63,7 +63,6 @@ export default async function HomePage() {
         leftPillar={leftPillarData}
         rightPillar={rightPillarData}
         heroImage="/heroimagePT-min.png"
-        logo="/Paul-Thames-logo-PNG-white.png"
       />
       <CallPaulSection />
       <FeaturedPartnersSection featuredPartners={featuredPartners} />
