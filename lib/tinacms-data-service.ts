@@ -241,7 +241,10 @@ class TinaCMSDataService {
     
     // If it starts with '/media/', it's already correct for public access
     if (mediaPath.startsWith('/media/')) return mediaPath
-    
+
+    // If it starts with '/' but not '/media/', it's already a valid public URL
+    if (mediaPath.startsWith('/') && !mediaPath.startsWith('/media/')) return mediaPath
+
     // If it starts with '/public/media/', remove the '/public' prefix
     if (mediaPath.startsWith('/public/media/')) return mediaPath.replace('/public', '')
     
@@ -444,6 +447,7 @@ class TinaCMSDataService {
       image: this.transformMediaPath(tinaMember.image),
       email: tinaMember.email,
       linkedin: tinaMember.linkedin,
+      order: tinaMember.order || 999, // Default to high number for unsorted members
     }
   }
 
@@ -914,7 +918,7 @@ class TinaCMSDataService {
         })
       )
 
-      return members
+      return members.sort((a, b) => (a.order || 999) - (b.order || 999))
     })
   }
 

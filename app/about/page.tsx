@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Grid, Compass, Anchor, Settings, Box, Users } from "lucide-react";
-import { AboutClient } from "./_components/about-client";
 import { tinaCMSDataService } from "@/lib/tinacms-data-service";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { Button } from "@/components/ui/button";
@@ -164,9 +163,9 @@ export default async function AboutPage() {
                           src={member?.image}
                           alt={member?.name || 'Team member'}
                           fallbackType="team"
-                          aspectRatio="square"
-                          fill
-                          className="object-cover"
+                          width={80}
+                          height={80}
+                          className="object-cover w-full h-full"
                           sizes="80px"
                           iconSize="md"
                         />
@@ -176,11 +175,10 @@ export default async function AboutPage() {
                         {member?.role}
                       </CardDescription>
                     </CardHeader>
-                    <CardContent className="text-center space-y-4">
+                    <CardContent className="text-center">
                       <p className="text-sm text-muted-foreground font-poppins-light">
                         {member?.bio}
                       </p>
-                      <AboutClient member={member} />
                     </CardContent>
                   </Card>
                 </div>

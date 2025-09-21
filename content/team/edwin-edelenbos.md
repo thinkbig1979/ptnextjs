@@ -1,8 +1,8 @@
 ---
 name: Edwin Edelenbos
-role: Cofounder & CTO
-image: /media/team/headshots/headshot Edwin Edelenbos.png
-email: edwin.edelenbos@paulthames.com
+role: Technical Founder / CTO
+image: /edwin.png
+email: edwin@paulthames.com
+bio: Edwin serves as the Technical Founder and CTO of Paul Thames, bringing deep technical expertise and leadership to drive innovation in superyacht technology solutions.
+order: 2
 ---
-
-yadda yadda

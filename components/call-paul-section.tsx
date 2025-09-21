@@ -11,10 +11,10 @@ export function CallPaulSection({ className }: CallPaulSectionProps) {
     <section className={cn("py-16 px-6 bg-secondary/50 text-center", className)}>
       <div className="max-w-4xl mx-auto space-y-8">
         <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed">
-          The first thing you should always do when embarking on a new-build or refit project...
+          Getting ready for a yacht new-build or refit project?
         </p>
         <h2 className="text-4xl md:text-5xl font-cormorant font-extrabold text-accent">
-          CALL PAUL!
+          Time to Call Paul!
         </h2>
         <Button
           size="lg"
