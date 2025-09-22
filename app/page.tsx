@@ -17,25 +17,9 @@ export default async function HomePage() {
   // Define the two-pillar data structure with exact pt2 content
   const leftPillarData = {
     title: "Discovery Platform",
-    subtitle: "A searchable platform allowing stakeholders to discover the right tech and solutions.",
-    description: "A searchable platform allowing stakeholders to discover the right tech and solutions.",
-    founders: [
-      {
-        name: "Roel",
-        role: "Sales & Business Development",
-        image: "/roel.png"
-      },
-      {
-        name: "Nigel",
-        role: "Relationships & Events",
-        image: "/nigel.jpg"
-      },
-      {
-        name: "Thijs",
-        role: "Marketing Strategy & Digital",
-        image: "/thijs.png"
-      }
-    ],
+    subtitle: "Enabling the industry to explore innovative tech products, services, and proven suppliers. Fast and transparent.",
+    description: "Enabling the industry to explore innovative tech products, services, and proven suppliers. Fast and transparent.",
+    founders: [],
     ctaText: "Learn More",
     ctaUrl: "/discovery-platform"
   };
@@ -44,13 +28,7 @@ export default async function HomePage() {
     title: "Expertise & Bespoke Solutions",
     subtitle: "Senior technical leadership, scoped discovery, and access to our curated PT Collective.",
     description: "Senior technical leadership, scoped discovery, and access to our curated PT Collective.",
-    founders: [
-      {
-        name: "Edwin",
-        role: "Technical Founder / CTO",
-        image: "/edwin.png"
-      }
-    ],
+    founders: [],
     ctaText: "Learn More",
     ctaUrl: "/bespoke-solutions"
   };

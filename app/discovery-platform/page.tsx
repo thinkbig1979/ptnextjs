@@ -123,44 +123,7 @@ export default function DiscoveryPlatformPage() {
           </p>
         </div>
 
-        {/* Discovery Platform Navigation */}
-        <div className="mb-20">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-cormorant font-bold mb-4 text-accent">
-              Explore Our Discovery Platform
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-poppins-light">
-              Navigate through our comprehensive platform to find exactly what you need for your yacht technology project.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {discoveryNavigation.map((item, index) => (
-              <Card key={index} className="hover-lift group">
-                <CardHeader>
-                  <div className="flex items-center space-x-4">
-                    <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center group-hover:bg-accent group-hover:text-white transition-colors">
-                      <item.icon className="w-8 h-8 text-accent group-hover:text-white" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-xl font-cormorant">{item.title}</CardTitle>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <CardDescription className="font-poppins-light">
-                    {item.description}
-                  </CardDescription>
-                  <Button asChild className="w-full bg-accent hover:bg-accent/90 text-white">
-                    <Link href={item.href}>Explore {item.title}</Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-
-        {/* Team Leadership */}
+        {/* Team Leadership - Moved to top */}
         <div className="mb-20">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-cormorant font-bold mb-4 text-accent">
@@ -243,21 +206,40 @@ export default function DiscoveryPlatformPage() {
           </div>
         </div>
 
-        {/* Call to Action */}
-        <div className="text-center">
-          <div className="bg-accent/5 rounded-2xl p-12 border border-accent/20">
-            <h2 className="text-3xl md:text-4xl font-cormorant font-bold mb-6 text-accent">Ready to Discover?</h2>
-            <p className="text-xl mb-8 max-w-2xl mx-auto text-muted-foreground font-poppins-light">
-              Start exploring our platform to find the perfect technology solutions for your yacht project.
+        {/* Discovery Platform Navigation - Moved to bottom */}
+        <div className="mb-20">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-cormorant font-bold mb-4 text-accent">
+              Explore Our Discovery Platform
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-poppins-light">
+              Navigate through our comprehensive platform to find exactly what you need for your yacht technology project.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" asChild className="bg-accent hover:bg-accent/90 text-white font-bold px-10 py-4 rounded-full">
-                <Link href="/partners">Browse Partners</Link>
-              </Button>
-              <Button size="lg" variant="outline" asChild className="border-accent text-accent hover:bg-accent hover:text-white font-bold px-10 py-4 rounded-full">
-                <a href="mailto:info@paulthames.com?subject=Discovery Platform Inquiry">Contact Our Team</a>
-              </Button>
-            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {discoveryNavigation.map((item, index) => (
+              <Card key={index} className="hover-lift group">
+                <CardHeader>
+                  <div className="flex items-center space-x-4">
+                    <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center group-hover:bg-accent group-hover:text-white transition-colors">
+                      <item.icon className="w-8 h-8 text-accent group-hover:text-white" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-xl font-cormorant">{item.title}</CardTitle>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <CardDescription className="font-poppins-light">
+                    {item.description}
+                  </CardDescription>
+                  <Button asChild className="w-full bg-accent hover:bg-accent/90 text-white">
+                    <Link href={item.href}>Explore {item.title}</Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </div>
