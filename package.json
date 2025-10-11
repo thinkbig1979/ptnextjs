@@ -18,7 +18,10 @@
     "tina:setup": "tinacms init",
     "dev:clean": "./scripts/kill-dev-servers.sh && npm run dev",
     "stop:dev": "./scripts/kill-dev-servers.sh",
-    "build:netlify": "NEXT_OUTPUT_MODE=export npm run build"
+    "build:netlify": "NEXT_OUTPUT_MODE=export npm run build",
+    "hooks:test-write": "node .agent-os/hooks/runner.js write-hook",
+    "hooks:test-edit": "node .agent-os/hooks/runner.js edit-hook",
+    "hooks:performance": "node .agent-os/hooks/performance-monitor.js"
   },
   "keywords": [
     "nextjs",

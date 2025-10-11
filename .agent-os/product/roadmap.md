@@ -152,13 +152,14 @@ The following features have been successfully implemented and are currently live
 - **Content Management** - Streamlined CMS workflow for ongoing platform maintenance
 - **Quality Assurance** - Comprehensive testing framework ensuring reliability
 
-## Phase 2: Self-Service Vendor Platform - **READY TO BEGIN**
+## Phase 2: CMS Migration & Self-Service Vendor Platform - **NEXT MAJOR MILESTONE**
 
-**Goal:** Launch self-service vendor onboarding with profile management capabilities
-**Success Criteria:** 50+ self-service vendor registrations, automated profile creation workflow
-**Dependencies:** User authentication, database integration, email services
-**Estimated Timeline:** 6-8 weeks
-**Priority:** HIGH - Immediate next phase leveraging completed foundation
+**Goal:** Migrate from TinaCMS to Payload CMS and launch vendor self-enrollment with profile management
+**Success Criteria:** Complete CMS migration, 50+ self-service vendor registrations, vendor profile editing capability
+**Key Technical Milestone:** TinaCMS → Payload CMS migration enabling vendor self-service
+**Dependencies:** Payload CMS setup, PostgreSQL database, user authentication, email services
+**Estimated Timeline:** 8-10 weeks (4 weeks migration + 4-6 weeks self-service features)
+**Priority:** HIGHEST - Critical platform evolution enabling vendor self-management
 
 ### Phase 2 Foundation Assets (Completed in Phase 1)
 
@@ -174,10 +175,37 @@ The following features have been successfully implemented and are currently live
 - Automated content validation for vendor-generated profile data
 - Performance-optimized data access patterns supporting increased volume
 
-### Planned Features
+### Phase 2A: CMS Migration Foundation (Weeks 1-4)
+
+- [ ] **Payload CMS Installation & Configuration** - Set up Payload CMS with PostgreSQL backend `L`
+  - Install and configure Payload CMS with Next.js 14
+  - Set up PostgreSQL database for content and user data
+  - Configure Payload admin interface and authentication
+  - Establish development and production environments
+
+- [ ] **Content Schema Migration** - Port TinaCMS schema to Payload CMS collections `XL`
+  - Migrate vendors collection with all enhanced profile fields
+  - Migrate products collection with relationships to vendors
+  - Migrate categories, tags, blog posts, team members
+  - Migrate yacht profiles and all complex relationship fields
+  - Preserve all existing content relationships and data integrity
+
+- [ ] **Data Migration Execution** - Convert existing markdown content to Payload database `L`
+  - Extract all content from markdown files (19+ vendors, 37+ products, etc.)
+  - Transform and import into Payload CMS database
+  - Verify data integrity and relationship preservation
+  - Maintain rollback capability during migration
+
+- [ ] **Frontend Integration Updates** - Update data service layer for Payload CMS API `M`
+  - Replace TinaCMSDataService with PayloadDataService
+  - Update all API calls to use Payload REST/GraphQL endpoints
+  - Maintain caching strategy with Payload integration
+  - Ensure backward compatibility with existing components
+
+### Phase 2B: Vendor Self-Service Features (Weeks 5-10)
 
 - [ ] **Vendor Registration System** - Self-service signup with email verification `L`
-  - Integration with enhanced profile template system from Phase 1
+  - Integration with Payload CMS authentication
   - Automated profile creation using existing component architecture
   - Email verification workflow with professional onboarding sequence
 
@@ -213,10 +241,16 @@ The following features have been successfully implemented and are currently live
 
 ### Technical Dependencies
 
-**Required New Infrastructure:**
-- **User Authentication System** (NextAuth.js or Clerk)
-- **Database Integration** (PostgreSQL/MongoDB) for user accounts and session management
+**Phase 2A Requirements (CMS Migration):**
+- **Payload CMS** - Headless CMS with built-in authentication
+- **PostgreSQL Database** - Primary database for content and user data
+- **Database Hosting** - Production-ready PostgreSQL hosting (e.g., Supabase, Railway, Render)
+- **Migration Tools** - Scripts for markdown-to-database content migration
+
+**Phase 2B Requirements (Self-Service):**
+- **Payload Authentication** - Built-in user authentication and role management
 - **Email Service Integration** (SendGrid/Resend) for automated communications
+- **File Upload System** - Payload media management for vendor-uploaded content
 
 **Existing Foundation Assets:**
 - **Component Library** - 25+ professional components ready for vendor dashboard integration
@@ -241,13 +275,19 @@ The following features have been successfully implemented and are currently live
 - **Average 5 Vendor Inquiries** per week through platform
 - **85% Vendor Satisfaction** with onboarding experience
 
-## Phase 3: Premium Services & Monetization
+## Phase 3: Enhanced Discovery & Premium Services
 
-**Goal:** Launch tiered subscription model with enhanced profile features and marketing services
-**Success Criteria:** $10K MRR from subscription services, 80% free-to-paid conversion funnel
-**Dependencies:** Payment processing, CRM integration, advanced analytics
+**Goal:** Implement location-based vendor discovery and launch tiered subscription model
+**Success Criteria:** Smart vendor-product matching, $10K MRR from subscription services
+**Dependencies:** Payment processing, CRM integration, geolocation services
 
 ### Features
+
+- [ ] **Location-Based Vendor Discovery** - Regional service provider matching by product category `L`
+  - Geographic vendor profiles with service regions
+  - Smart matching: product discovery → regional vendor suggestions
+  - Filter vendors by location and product category relationships
+  - No hard-coded product-vendor links, intelligent category-based matching
 
 - [ ] **Subscription Management** - Stripe integration for tier upgrades and billing `L`
 - [ ] **Tier 2 Enhanced Profiles** - Detailed capabilities, certifications, case studies `M`

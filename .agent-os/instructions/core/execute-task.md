@@ -2,7 +2,7 @@
 description: Rules to execute a task and its sub-tasks using Agent OS
 globs:
 alwaysApply: false
-version: 1.0
+version: 2.0
 encoding: UTF-8
 ---
 
@@ -10,7 +10,34 @@ encoding: UTF-8
 
 ## Overview
 
-Execute a specific task along with its sub-tasks systematically following a TDD development workflow.
+Execute a specific task along with its sub-tasks using intelligent orchestration with specialized subagents working in parallel.
+
+<execution_routing>
+  **AUTOMATIC ROUTING**: This file automatically routes to orchestrated parallel execution.
+
+  **PRIMARY WORKFLOW**:
+  ✅ Use @.agent-os/instructions/core/execute-task-orchestrated.md
+
+  **BENEFITS**:
+  - 60-80% faster task completion through parallel processing
+  - Intelligent context optimization and distribution
+  - Specialized agent coordination (testing, implementation, integration, quality, security, documentation)
+  - Advanced error handling and recovery mechanisms
+  - Comprehensive quality assurance and validation
+
+  **ACTION REQUIRED**:
+  IMMEDIATELY PROCEED to execute-task-orchestrated.md and follow those instructions.
+  DO NOT use the legacy sequential workflow below unless orchestrated execution fails.
+</execution_routing>
+
+## ⚠️ Legacy Sequential Execution (Fallback Only)
+
+**WARNING**: The following sequential workflow should ONLY be used if:
+- Orchestrated execution encounters a blocking technical issue
+- The task-orchestrator agent is unavailable
+- Explicitly requested by the user
+
+For normal operation, use execute-task-orchestrated.md as specified above.
 
 <pre_flight_check>
   EXECUTE: @.agent-os/instructions/meta/pre-flight.md
@@ -23,23 +50,40 @@ Execute a specific task along with its sub-tasks systematically following a TDD 
 
 ### Step 1: Task Understanding
 
-Read and analyze the given parent task and all its sub-tasks from tasks.md to gain complete understanding of what needs to be built.
+Read the master tasks.md for overview, then load the detailed task file for comprehensive implementation requirements.
 
 <task_analysis>
-  <read_from_tasks_md>
-    - Parent task description
-    - All sub-task descriptions
-    - Task dependencies
-    - Expected outcomes
-  </read_from_tasks_md>
+  <read_from_master_tasks_md>
+    - Parent task ID and title
+    - Task overview and phase
+    - Dependencies list
+    - Time estimate
+  </read_from_master_tasks_md>
+
+  <read_from_task_detail_file>
+    - File location: tasks/task-[TASK_ID].md
+    - Detailed task description and specifics
+    - Complete acceptance criteria
+    - Testing requirements and evidence needed
+    - Quality gates and validation requirements
+    - Implementation notes and context
+  </read_from_task_detail_file>
 </task_analysis>
 
 <instructions>
-  ACTION: Read the specific parent task and all its sub-tasks
+  ACTION: Read master tasks.md for task identification
+  LOCATE: Task detail file path from tasks.md link
+  LOAD: Complete task details from tasks/task-[TASK_ID].md
   ANALYZE: Full scope of implementation required
-  UNDERSTAND: Dependencies and expected deliverables
-  NOTE: Test requirements for each sub-task
+  UNDERSTAND: Dependencies, acceptance criteria, and deliverables
+  NOTE: All testing requirements, evidence needed, and quality gates
 </instructions>
+
+<context_efficiency>
+  BENEFIT: Only load detailed requirements for current task
+  SKIP: Verbose details of other tasks not being executed
+  OPTIMIZE: Minimal context consumption for task execution
+</context_efficiency>
 
 </step>
 
@@ -47,11 +91,11 @@ Read and analyze the given parent task and all its sub-tasks from tasks.md to ga
 
 ### Step 2: Technical Specification Review
 
-Search and extract relevant sections from technical-spec.md to understand the technical implementation approach for this task.
+Search and extract relevant sections from sub-specs/technical-spec.md to understand the technical implementation approach for this task.
 
 <selective_reading>
   <search_technical_spec>
-    FIND sections in technical-spec.md related to:
+    FIND sections in sub-specs/technical-spec.md related to:
     - Current task functionality
     - Implementation approach for this feature
     - Integration requirements
@@ -60,10 +104,12 @@ Search and extract relevant sections from technical-spec.md to understand the te
 </selective_reading>
 
 <instructions>
-  ACTION: Search technical-spec.md for task-relevant sections
+  ACTION: Search sub-specs/technical-spec.md for task-relevant sections
   EXTRACT: Only implementation details for current task
   SKIP: Unrelated technical specifications
   FOCUS: Technical approach for this specific feature
+  OPTIONAL: Review sub-specs/implementation-guide.md for development workflow
+  OPTIONAL: Review sub-specs/integration-requirements.md for integration details
 </instructions>
 
 </step>
@@ -228,30 +274,45 @@ Use the test-runner subagent to run and verify only the tests specific to this p
 
 <step number="7" name="task_status_updates">
 
-### Step 7: Mark this task and sub-tasks complete
+### Step 7: Mark this task complete in both master and detail files
 
-IMPORTANT: In the tasks.md file, mark this task and its sub-tasks complete by updating each task checkbox to [x].
+IMPORTANT: Update task status in both the master tasks.md and the individual task detail file.
+
+<update_locations>
+  <master_tasks_md>
+    - Update checkbox: - [ ] → - [x]
+    - Keep task ID, title, and link to detail file
+    - Maintain lightweight format
+  </master_tasks_md>
+
+  <task_detail_file>
+    - Update status in metadata: **Status**: [ ] Not Started → **Status**: [x] Complete
+    - Add completion notes if needed
+    - Preserve all task details for reference
+  </task_detail_file>
+</update_locations>
 
 <update_format>
-  <completed>- [x] Task description</completed>
-  <incomplete>- [ ] Task description</incomplete>
+  <completed>- [x] Task description → [details](tasks/task-ID.md)</completed>
+  <incomplete>- [ ] Task description → [details](tasks/task-ID.md)</incomplete>
   <blocked>
-    - [ ] Task description
+    - [ ] Task description → [details](tasks/task-ID.md)
     ⚠️ Blocking issue: [DESCRIPTION]
   </blocked>
 </update_format>
 
 <blocking_criteria>
   <attempts>maximum 3 different approaches</attempts>
-  <action>document blocking issue</action>
+  <action>document blocking issue in both files</action>
   <emoji>⚠️</emoji>
 </blocking_criteria>
 
 <instructions>
-  ACTION: Update tasks.md after each task completion
-  MARK: [x] for completed items immediately
-  DOCUMENT: Blocking issues with ⚠️ emoji
+  ACTION: Update both tasks.md and tasks/task-[ID].md after completion
+  MARK: [x] for completed items in both locations
+  DOCUMENT: Blocking issues with ⚠️ emoji in both files
   LIMIT: 3 attempts before marking as blocked
+  MAINTAIN: Lightweight format in master, full details in task file
 </instructions>
 
 </step>

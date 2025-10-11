@@ -3,7 +3,7 @@
 ## Core Architecture
 
 - **application_framework**: Next.js 14.2.5 with App Router
-- **database_system**: TinaCMS 2.2.5 (Git-based CMS with markdown files)
+- **database_system**: TinaCMS 2.2.5 (Git-based CMS with markdown files) - **Planned Migration to Payload CMS**
 - **javascript_framework**: React 18.2.0 with TypeScript 5.2.2
 - **import_strategy**: node (ES modules with Next.js)
 - **css_framework**: Tailwind CSS 3.3.3
@@ -28,11 +28,20 @@
 - **Data Layer**: TinaCMSDataService with 5-minute caching
 
 ### Content Management
-- **CMS**: TinaCMS for visual content editing
-- **Content Storage**: Markdown files in `/content` directory
+- **CMS**: TinaCMS for visual content editing (**Migration to Payload CMS planned**)
+- **Content Storage**: Markdown files in `/content` directory (will migrate to database-backed)
 - **Schema Definition**: TypeScript interfaces with TinaCMS config
 - **Media Handling**: Static assets with path transformation
 - **Content Validation**: Built-in validation for reference integrity
+
+#### Planned CMS Migration
+- **Target CMS**: Payload CMS 3+ (headless CMS with database backend)
+- **Development Database**: SQLite (simple setup, file-based)
+- **Production Database**: PostgreSQL (scalability, performance)
+- **Migration Strategy**: Use Payload CMS migration functions for schema portability between SQLite and PostgreSQL
+- **Key Driver**: Enable vendor self-enrollment and profile management
+- **Migration Scope**: Convert markdown-based content to database-backed system
+- **Additional Capabilities**: User authentication, role-based permissions, API endpoints
 
 ### Build and Deployment
 - **Build Process**: Static site generation (SSG)
@@ -52,12 +61,19 @@
 
 ## Planned Technology Additions
 
-### Backend Services (Future)
-- **Authentication**: NextAuth.js or Clerk
-- **Database**: PostgreSQL or MongoDB for user data
-- **Payment Processing**: Stripe for subscription management
-- **Email Services**: SendGrid or Resend for notifications
+### Immediate Next Phase (CMS Migration & Vendor Self-Service)
+- **CMS**: Payload CMS 3+ with database backend
+- **Authentication**: Built-in Payload CMS 3 authentication system
+- **Database (Development)**: SQLite for local development (simple, file-based)
+- **Database (Production)**: PostgreSQL for production (scalable, performant)
+- **Schema Migrations**: Payload CMS migration functions for database portability
+- **Email Services**: SendGrid or Resend for vendor notifications
+- **File Storage**: Payload CMS media management or cloud storage
+
+### Future Backend Services
+- **Payment Processing**: Stripe for subscription management (post-vendor enrollment)
 - **Analytics**: PostHog or Google Analytics 4
+- **Advanced Search**: Algolia or integrated PostgreSQL full-text search
 
 ### Platform Integration (Future)
 - **API Layer**: Next.js API routes for vendor management
