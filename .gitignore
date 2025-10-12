@@ -44,3 +44,15 @@ admin/
 # TinaCMS generated files
 tina/__generated__/
 .tina/__generated__/
+
+# Payload CMS SQLite Database
+data/
+payload.db
+*.db
+*.db-shm
+*.db-wal
+
+# Payload CMS Generated Files
+payload-types.ts
+generated-schema.graphql
+migrations/

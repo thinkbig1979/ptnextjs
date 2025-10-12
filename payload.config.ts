@@ -1,0 +1,116 @@
+import { buildConfig } from 'payload';
+import { sqliteAdapter } from '@payloadcms/db-sqlite';
+import { postgresAdapter } from '@payloadcms/db-postgres';
+import { lexicalEditor } from '@payloadcms/richtext-lexical';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Import collection schemas
+import Users from './payload/collections/Users';
+import Vendors from './payload/collections/Vendors';
+import Products from './payload/collections/Products';
+import Categories from './payload/collections/Categories';
+import BlogPosts from './payload/collections/BlogPosts';
+import TeamMembers from './payload/collections/TeamMembers';
+import CompanyInfo from './payload/collections/CompanyInfo';
+
+const filename = fileURLToPath(import.meta.url);
+const dirname = path.dirname(filename);
+
+export default buildConfig({
+  // Server URL configuration
+  serverURL: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
+
+  // Admin user configuration
+  admin: {
+    user: 'users',
+    meta: {
+      titleSuffix: '- Marine Technology Platform',
+      favicon: '/favicon.ico',
+      ogImage: '/og-image.jpg',
+    },
+  },
+
+  // Database adapter configuration
+  // SQLite for development (zero-configuration, file-based)
+  // PostgreSQL for production (scalable, production-ready)
+  db: process.env.NODE_ENV === 'production'
+    ? postgresAdapter({
+        pool: {
+          connectionString: process.env.DATABASE_URL,
+          max: 20, // Maximum connection pool size
+        },
+        migrationDir: path.resolve(dirname, 'migrations'),
+      })
+    : sqliteAdapter({
+        client: {
+          url: process.env.DATABASE_URL || 'file:./data/payload.db',
+        },
+        migrationDir: path.resolve(dirname, 'migrations'),
+        push: true, // Auto-push schema changes to create tables
+      }),
+
+  // Rich Text Editor configuration
+  editor: lexicalEditor({}),
+
+  // Collections registration
+  collections: [
+    Users,
+    Vendors,
+    Products,
+    Categories,
+    BlogPosts,
+    TeamMembers,
+    CompanyInfo,
+  ],
+
+  // TypeScript configuration
+  typescript: {
+    outputFile: path.resolve(dirname, 'payload-types.ts'),
+  },
+
+  // GraphQL configuration (optional)
+  graphQL: {
+    schemaOutputFile: path.resolve(dirname, 'generated-schema.graphql'),
+  },
+
+  // CORS configuration for API routes
+  cors: [
+    'http://localhost:3000',
+    'http://localhost:3001',
+    process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
+  ].filter(Boolean),
+
+  // CSRF protection
+  csrf: [
+    'http://localhost:3000',
+    'http://localhost:3001',
+    process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
+  ].filter(Boolean),
+
+  // Secret key for JWT authentication
+  secret: process.env.PAYLOAD_SECRET || 'your-secret-key-here-minimum-32-characters',
+
+  // Upload configuration (local filesystem storage)
+  upload: {
+    limits: {
+      fileSize: 5000000, // 5MB max file size
+    },
+  },
+
+  // Rate limiting for security
+  rateLimit: {
+    max: 100, // 100 requests per window
+    window: 15 * 60 * 1000, // 15 minutes
+    trustProxy: true, // Trust X-Forwarded-For header
+  },
+
+  // Localization (future enhancement)
+  localization: false,
+
+  // Telemetry (can disable for privacy)
+  telemetry: false,
+
+  // Debug mode (only in development)
+  debug: process.env.NODE_ENV === 'development',
+});
