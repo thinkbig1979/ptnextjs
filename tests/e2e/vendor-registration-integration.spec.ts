@@ -20,7 +20,7 @@ test.describe('Vendor Registration Integration', () => {
 
   test('should complete full registration flow', async ({ page }) => {
     // Navigate to registration page
-    await page.goto('http://localhost:3000/vendor/register');
+    await page.goto('http://localhost:3000/vendor/register/');
 
     // Wait for form to load
     await expect(page.locator('h1')).toContainText('Vendor Registration');
@@ -34,7 +34,7 @@ test.describe('Vendor Registration Integration', () => {
     await page.getByPlaceholder('Enter strong password').fill('SecurePass123!@#');
     await page.getByPlaceholder('Re-enter password').fill('SecurePass123!@#');
     await page.getByPlaceholder('Tell us about your company...').fill('Test vendor company description');
-    await page.getByRole('checkbox', { name: 'Agree to terms and conditions' }).check();
+    await page.getByRole('checkbox', { name: 'Agree to terms and conditions' }).click();
 
     // Intercept API call to verify request payload
     const apiResponsePromise = page.waitForResponse(
@@ -87,7 +87,7 @@ test.describe('Vendor Registration Integration', () => {
   });
 
   test('should show validation errors for invalid data', async ({ page }) => {
-    await page.goto('http://localhost:3000/vendor/register');
+    await page.goto('http://localhost:3000/vendor/register/');
 
     // Try to submit empty form
     await page.click('button[type="submit"]');
@@ -103,7 +103,7 @@ test.describe('Vendor Registration Integration', () => {
   test('should handle duplicate email error', async ({ page }) => {
     const duplicateEmail = 'existing@example.com';
 
-    await page.goto('http://localhost:3000/vendor/register');
+    await page.goto('http://localhost:3000/vendor/register/');
 
     // Fill form with duplicate email
     await page.getByPlaceholder('vendor@example.com').fill(duplicateEmail);
@@ -112,7 +112,7 @@ test.describe('Vendor Registration Integration', () => {
     await page.getByPlaceholder('+1 (555) 123-4567').fill('+1-555-9999');
     await page.getByPlaceholder('Enter strong password').fill('SecurePass123!@#');
     await page.getByPlaceholder('Re-enter password').fill('SecurePass123!@#');
-    await page.getByRole('checkbox', { name: 'Agree to terms and conditions' }).check();
+    await page.getByRole('checkbox', { name: 'Agree to terms and conditions' }).click();
 
     // Intercept API call
     const apiResponsePromise = page.waitForResponse(
@@ -132,7 +132,7 @@ test.describe('Vendor Registration Integration', () => {
   });
 
   test('should disable submit button during submission', async ({ page }) => {
-    await page.goto('http://localhost:3000/vendor/register');
+    await page.goto('http://localhost:3000/vendor/register/');
 
     // Fill minimal form
     await page.getByPlaceholder('vendor@example.com').fill(`test-${Date.now()}@example.com`);
@@ -141,7 +141,7 @@ test.describe('Vendor Registration Integration', () => {
     await page.getByPlaceholder('+1 (555) 123-4567').fill('+1-555-0000');
     await page.getByPlaceholder('Enter strong password').fill('SecurePass123!@#');
     await page.getByPlaceholder('Re-enter password').fill('SecurePass123!@#');
-    await page.getByRole('checkbox', { name: 'Agree to terms and conditions' }).check();
+    await page.getByRole('checkbox', { name: 'Agree to terms and conditions' }).click();
 
     // Click submit
     const submitButton = page.locator('button[type="submit"]');

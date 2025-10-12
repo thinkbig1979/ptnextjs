@@ -11,12 +11,12 @@ export const vendorUpdateSchema = z.object({
   companyName: z
     .string()
     .min(2, 'Company name must be at least 2 characters')
-    .max(255, 'Company name must not exceed 255 characters')
+    .max(100, 'Company name must not exceed 100 characters')
     .optional(),
 
   description: z
     .string()
-    .max(5000, 'Description must not exceed 5000 characters')
+    .max(500, 'Description must not exceed 500 characters')
     .optional(),
 
   logo: z
@@ -64,14 +64,8 @@ export const vendorUpdateSchema = z.object({
     .or(z.literal('')),
 
   certifications: z
-    .array(
-      z.object({
-        certification: z
-          .string()
-          .min(1, 'Certification name is required')
-          .max(255, 'Certification name must not exceed 255 characters'),
-      })
-    )
+    .string()
+    .max(1000, 'Certifications must not exceed 1000 characters')
     .optional(),
 });
 

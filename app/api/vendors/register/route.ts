@@ -14,6 +14,10 @@ const vendorRegistrationSchema = z.object({
     .string()
     .email('Invalid email format')
     .max(255, 'Email must not exceed 255 characters'),
+  contactName: z
+    .string()
+    .max(255, 'Contact name must not exceed 255 characters')
+    .optional(),
   contactPhone: z
     .string()
     .optional()
@@ -21,6 +25,15 @@ const vendorRegistrationSchema = z.object({
       (val) => !val || /^[\d\s\-\+\(\)]+$/.test(val),
       'Invalid phone number format'
     ),
+  website: z
+    .string()
+    .url('Invalid website URL')
+    .optional()
+    .or(z.literal('')),
+  description: z
+    .string()
+    .max(500, 'Description must not exceed 500 characters')
+    .optional(),
   password: z.string().min(12, 'Password must be at least 12 characters'),
 });
 
@@ -134,7 +147,34 @@ export async function POST(request: NextRequest): Promise<NextResponse<SuccessRe
             },
           },
         },
-        { status: 400 }
+        { status: 409 }
+      );
+    }
+
+    // Check for duplicate company name
+    const existingVendors = await payload.find({
+      collection: 'vendors',
+      where: {
+        companyName: {
+          equals: data.companyName,
+        },
+      },
+      limit: 1,
+    });
+
+    if (existingVendors.docs.length > 0) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: 'COMPANY_EXISTS',
+            message: 'A company with this name already exists',
+            fields: {
+              companyName: 'Company name already exists',
+            },
+          },
+        },
+        { status: 409 }
       );
     }
 
@@ -172,7 +212,10 @@ export async function POST(request: NextRequest): Promise<NextResponse<SuccessRe
           companyName: data.companyName,
           slug,
           contactEmail: data.contactEmail,
+          contactName: data.contactName || '',
           contactPhone: data.contactPhone || '',
+          website: data.website || '',
+          description: data.description || '',
           tier: 'free',
           published: false,
           featured: false,
