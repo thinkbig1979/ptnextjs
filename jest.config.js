@@ -23,7 +23,7 @@ const customJestConfig = {
     '<rootDir>/node_modules/',
   ],
   transformIgnorePatterns: [
-    'node_modules/(?!(@react-three/fiber|react-pdf|react-player|three|@react-three/drei)/)'
+    'node_modules/(?!(@react-three/fiber|react-pdf|react-player|three|@react-three/drei|@payloadcms)/)'
   ],
   testTimeout: 15000,
   maxWorkers: 2,
