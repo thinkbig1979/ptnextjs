@@ -1,0 +1,76 @@
+/**
+ * VendorDashboard Component Test Template
+ */
+
+import { renderWithAuth, renderWithTier } from '@/__tests__/setup/react-testing-library.config';
+import { screen } from '@testing-library/react';
+import { mockTier2Vendor, mockFreeTierVendor } from '@/__tests__/fixtures/vendors';
+
+// import { VendorDashboard } from '@/components/vendor/VendorDashboard';
+
+describe('VendorDashboard', () => {
+  it('renders dashboard layout with vendor information', () => {
+    // renderWithAuth(<VendorDashboard />, { user: mockTier2Vendor });
+
+    expect(screen.getByText(mockTier2Vendor.companyName)).toBeInTheDocument();
+    expect(screen.getByText(mockTier2Vendor.email)).toBeInTheDocument();
+  });
+
+  it('displays tier badge', () => {
+    // renderWithTier(<VendorDashboard />, 'tier2');
+
+    expect(screen.getByText(/tier 2/i)).toBeInTheDocument();
+  });
+
+  it('shows product management link for tier2 vendors', () => {
+    // renderWithTier(<VendorDashboard />, 'tier2');
+
+    expect(screen.getByRole('link', { name: /product management/i })).toBeInTheDocument();
+  });
+
+  it('hides product management link for free tier vendors', () => {
+    // renderWithTier(<VendorDashboard />, 'free');
+
+    expect(screen.queryByRole('link', { name: /product management/i })).not.toBeInTheDocument();
+  });
+
+  it('displays navigation menu', () => {
+    // renderWithAuth(<VendorDashboard />);
+
+    expect(screen.getByRole('navigation')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /profile/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /settings/i })).toBeInTheDocument();
+  });
+
+  it('shows logout button', () => {
+    // renderWithAuth(<VendorDashboard />);
+
+    expect(screen.getByRole('button', { name: /logout/i })).toBeInTheDocument();
+  });
+
+  it('handles logout action', async () => {
+    const mockLogout = jest.fn();
+    // renderWithAuth(<VendorDashboard />);
+
+    await userEvent.click(screen.getByRole('button', { name: /logout/i }));
+
+    await waitFor(() => {
+      expect(mockLogout).toHaveBeenCalled();
+    });
+  });
+
+  it('displays pending approval message for pending vendors', () => {
+    // renderWithAuth(<VendorDashboard />, { user: { ...mockFreeTierVendor, approvalStatus: 'pending' } });
+
+    expect(screen.getByText(/pending approval/i)).toBeInTheDocument();
+  });
+
+  it('redirects to login if not authenticated', () => {
+    const mockPush = jest.fn();
+    jest.spyOn(require('next/navigation'), 'useRouter').mockReturnValue({ push: mockPush });
+
+    // renderWithProviders(<VendorDashboard />); // Not authenticated
+
+    expect(mockPush).toHaveBeenCalledWith('/vendors/login');
+  });
+});

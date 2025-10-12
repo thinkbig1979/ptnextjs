@@ -83,10 +83,16 @@ export function createMockAuthenticatedRequest(
   });
 
   if (useCookie) {
-    // @ts-ignore - Mocking cookies
-    request.cookies = {
-      get: (name: string) => (name === 'access_token' ? { value: token } : undefined),
-    };
+    // Use Object.defineProperty to mock cookies (read-only property)
+    Object.defineProperty(request, 'cookies', {
+      value: {
+        get: (name: string) => (name === 'access_token' ? { value: token } : undefined),
+        getAll: () => [{ name: 'access_token', value: token }],
+        has: (name: string) => name === 'access_token',
+      },
+      writable: false,
+      configurable: true,
+    });
   }
 
   return request;

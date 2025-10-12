@@ -1,6 +1,7 @@
 /**
  * Integration tests for POST /api/auth/login endpoint
  * Tests the full authentication flow including JWT generation and cookie setting
+ * @jest-environment node
  */
 
 import { NextRequest } from 'next/server';
@@ -137,7 +138,7 @@ describe('POST /api/auth/login - Integration Tests', () => {
       expect(accessTokenCookie).toBeDefined();
       expect(accessTokenCookie).toContain('test-access-token');
       expect(accessTokenCookie).toContain('HttpOnly');
-      expect(accessTokenCookie).toContain('SameSite=Strict');
+      expect(accessTokenCookie).toContain('SameSite=strict');
       expect(accessTokenCookie).toContain('Path=/');
     });
 

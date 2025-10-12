@@ -82,10 +82,11 @@ describe('JWT Utilities', () => {
       expect(refreshTokenParts.length).toBe(3);
     });
 
-    it('should generate different tokens for same payload (due to timestamps)', () => {
+    it('should generate different tokens for same payload (due to timestamps)', async () => {
       // Act
       const tokens1 = generateTokens(MOCK_ADMIN_JWT_PAYLOAD);
       // Wait a bit to ensure different iat timestamps
+      await new Promise(resolve => setTimeout(resolve, 1100));
       const tokens2 = generateTokens(MOCK_ADMIN_JWT_PAYLOAD);
 
       // Assert
@@ -201,9 +202,12 @@ describe('JWT Utilities', () => {
   });
 
   describe('refreshAccessToken()', () => {
-    it('should generate new access token from valid refresh token', () => {
+    it('should generate new access token from valid refresh token', async () => {
       // Arrange
       const tokens = generateTokens(MOCK_ADMIN_JWT_PAYLOAD);
+
+      // Wait to ensure different iat timestamp
+      await new Promise(resolve => setTimeout(resolve, 1100));
 
       // Act
       const newAccessToken = refreshAccessToken(tokens.refreshToken);

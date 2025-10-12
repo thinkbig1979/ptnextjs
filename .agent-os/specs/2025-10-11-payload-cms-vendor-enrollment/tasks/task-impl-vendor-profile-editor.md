@@ -6,7 +6,7 @@
 - **Agent**: frontend-react-specialist
 - **Estimated Time**: 40-50 minutes
 - **Dependencies**: [impl-vendor-dashboard]
-- **Status**: [ ] Not Started
+- **Status**: [x] COMPLETE
 
 ## Task Description
 Create VendorProfileEditor component with tier-gated field groups using TierGate component. Free tier can edit basic fields, tier1+ can edit enhanced profile, tier2 can manage products (future).
@@ -24,16 +24,16 @@ Create VendorProfileEditor component with tier-gated field groups using TierGate
 - **Flow**: Load current profile → Edit fields → Save → API call PUT /api/vendors/{id} → Success (toast + refresh) or Error (toast)
 
 ## Acceptance Criteria
-- [ ] VendorProfileEditor component created with all field groups
-- [ ] TierGate component wraps tier-restricted fields
-- [ ] Free tier sees only basic fields
-- [ ] Tier 1+ sees enhanced profile fields
-- [ ] Tier 2 sees products link (not editable fields)
-- [ ] Form pre-populates with current vendor data
-- [ ] Save button triggers API call
-- [ ] Success: Toast notification + data refresh
-- [ ] Error: Toast notification with error message
-- [ ] Loading state during save operation
+- [x] VendorProfileEditor component created with all field groups
+- [x] TierGate component wraps tier-restricted fields
+- [x] Free tier sees only basic fields
+- [x] Tier 1+ sees enhanced profile fields
+- [x] Tier 2 sees products link (not editable fields)
+- [x] Form pre-populates with current vendor data
+- [x] Save button triggers API call
+- [x] Success: Toast notification + data refresh
+- [x] Error: Toast notification with error message
+- [x] Loading state during save operation
 
 ## Testing Requirements
 - Unit tests: TierGate rendering logic, form field visibility based on tier

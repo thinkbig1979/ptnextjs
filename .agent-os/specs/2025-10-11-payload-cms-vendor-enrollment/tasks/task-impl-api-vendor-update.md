@@ -6,7 +6,7 @@
 - **Agent**: backend-nodejs-specialist
 - **Estimated Time**: 30-35 minutes
 - **Dependencies**: [impl-auth-system]
-- **Status**: [ ] Not Started
+- **Status**: [x] Complete
 
 ## Task Description
 Implement PUT /api/vendors/{id} endpoint for vendor profile updates with tier-based field restrictions enforced at API level.
@@ -22,14 +22,14 @@ Implement PUT /api/vendors/{id} endpoint for vendor profile updates with tier-ba
 - **Logic**: Authenticate → Verify ownership → Validate tier restrictions → Filter fields → Update vendor → Return updated data
 
 ## Acceptance Criteria
-- [ ] API route accessible at PUT /api/vendors/{id}
-- [ ] JWT authentication required
-- [ ] Ownership verified (vendor ID matches token)
-- [ ] Tier restrictions enforced for field access
-- [ ] Free tier vendor cannot update tier1+ fields (403 error)
-- [ ] Admin can update any vendor
-- [ ] Input validation with Zod
-- [ ] Success response returns updated vendor
+- [x] API route accessible at PUT /api/vendors/{id}
+- [x] JWT authentication required
+- [x] Ownership verified (vendor ID matches token)
+- [x] Tier restrictions enforced for field access
+- [x] Free tier vendor cannot update tier1+ fields (403 error)
+- [x] Admin can update any vendor
+- [x] Input validation with Zod
+- [x] Success response returns updated vendor
 
 ## Testing Requirements
 - Integration tests: Vendor updates own profile (200), vendor updates tier-restricted field (403), vendor updates other profile (403), admin updates any profile (200)

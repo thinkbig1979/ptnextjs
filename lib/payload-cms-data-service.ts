@@ -78,9 +78,9 @@ class PayloadCMSDataService {
 
   private transformPayloadVendor(doc: any): Vendor {
     return {
-      id: doc.id.toString(),
-      slug: doc.slug,
-      name: doc.name,
+      id: doc.id ? doc.id.toString() : '',
+      slug: doc.slug || '',
+      name: doc.companyName || doc.name || '',
       category: doc.category?.name || '',
       description: doc.description || '',
       logo: this.transformMediaPath(doc.logo || ''),
@@ -108,13 +108,13 @@ class PayloadCMSDataService {
     const mainImage = doc.images?.find((img: any) => img.isMain) || doc.images?.[0];
 
     return {
-      id: doc.id.toString(),
-      slug: doc.slug,
-      name: doc.name,
+      id: doc.id ? doc.id.toString() : '',
+      slug: doc.slug || '',
+      name: doc.name || '',
       vendorId: vendor?.id?.toString() || '',
-      vendorName: vendor?.name || '',
+      vendorName: vendor?.companyName || vendor?.name || '',
       partnerId: vendor?.id?.toString() || '',
-      partnerName: vendor?.name || '',
+      partnerName: vendor?.companyName || vendor?.name || '',
       category: doc.categories?.[0]?.name || '',
       description: doc.description || '',
       image: this.transformMediaPath(mainImage?.url || ''),
@@ -500,10 +500,81 @@ class PayloadCMSDataService {
     return posts.map(post => post.slug).filter(Boolean) as string[];
   }
 
+  // Enhanced vendor profile methods (for Platform Vision features)
+  async getVendorCertifications(vendorId: string): Promise<any[]> {
+    return this.getCached(`vendor-certifications:${vendorId}`, async () => {
+      const vendor = await this.getVendorById(vendorId);
+      return vendor?.certifications || [];
+    });
+  }
+
+  async getVendorAwards(vendorId: string): Promise<any[]> {
+    return this.getCached(`vendor-awards:${vendorId}`, async () => {
+      const vendor = await this.getVendorById(vendorId);
+      return vendor?.awards || [];
+    });
+  }
+
+  async getVendorSocialProof(vendorId: string): Promise<any> {
+    return this.getCached(`vendor-social-proof:${vendorId}`, async () => {
+      const vendor = await this.getVendorById(vendorId);
+      return vendor?.socialProof || {};
+    });
+  }
+
+  async getEnhancedVendorProfile(vendorId: string): Promise<any> {
+    return this.getCached(`enhanced-vendor:${vendorId}`, async () => {
+      const vendor = await this.getVendorById(vendorId);
+      if (!vendor) return null;
+
+      return {
+        id: vendor.id,
+        name: vendor.name,
+        slug: vendor.slug,
+        certifications: vendor.certifications || [],
+        awards: vendor.awards || [],
+        socialProof: vendor.socialProof || {},
+        videoUrl: vendor.videoIntroduction?.videoUrl,
+        caseStudies: vendor.caseStudies || [],
+        innovationHighlights: vendor.innovationHighlights || [],
+        teamMembers: vendor.teamMembers || [],
+        yachtProjects: vendor.yachtProjects || [],
+      };
+    });
+  }
+
+  async preloadEnhancedVendorData(vendorId: string): Promise<void> {
+    // Preload all enhanced vendor data in parallel
+    await Promise.all([
+      this.getVendorCertifications(vendorId),
+      this.getVendorAwards(vendorId),
+      this.getVendorSocialProof(vendorId),
+      this.getEnhancedVendorProfile(vendorId),
+    ]);
+  }
+
   // Cache management
   clearCache(): void {
     this.cache.clear();
     console.log('🗑️ Payload CMS cache cleared');
+  }
+
+  clearVendorCache(vendorId?: string): void {
+    if (vendorId) {
+      // Clear specific vendor cache
+      const keysToDelete = Array.from(this.cache.keys()).filter((key) =>
+        (key.includes(`vendor-`) || key.includes(`enhanced-vendor:`)) && key.includes(vendorId)
+      );
+      keysToDelete.forEach((key) => this.cache.delete(key));
+      this.cache.delete(`vendors`);
+      this.cache.delete(`partners`);
+    } else {
+      // Clear all vendor-related cache
+      const keysToDelete = Array.from(this.cache.keys()).filter((key) =>
+        key.includes('vendor') || key.includes('partner')
+      );
+      keysToDelete.forEach((key) => this.cache.delete(key));
+    }
   }
 
   getCacheStats(): { hits: number; misses: number; size: number } {
@@ -512,6 +583,102 @@ class PayloadCMSDataService {
       misses: 0,
       size: this.cache.size,
     };
+  }
+
+  getCacheInfo(): Array<{ key: string; age: number; accessCount: number }> {
+    const now = Date.now();
+    return Array.from(this.cache.entries()).map(([key, entry]) => ({
+      key,
+      age: now - entry.timestamp,
+      accessCount: entry.accessCount,
+    }));
+  }
+
+  getCacheStatistics(): { totalKeys: number; cacheSize: number; hitRatio?: number } {
+    return {
+      totalKeys: this.cache.size,
+      cacheSize: this.cache.size,
+      hitRatio: undefined, // Could be implemented with hit/miss tracking
+    };
+  }
+
+  // Validation methods for build-time checks
+  async validateCMSContent(): Promise<{ isValid: boolean; errors: string[] }> {
+    const errors: string[] = [];
+
+    try {
+      console.log('🔍 Validating Payload CMS content...');
+
+      // Validate required data exists
+      const [vendors, products, categories] = await Promise.all([
+        this.getAllVendors(),
+        this.getAllProducts(),
+        this.getCategories(),
+      ]);
+
+      if (vendors.length === 0) {
+        errors.push('No vendors found in Payload CMS content');
+      }
+
+      if (products.length === 0) {
+        errors.push('No products found in Payload CMS content');
+      }
+
+      if (categories.length === 0) {
+        errors.push('No categories found in Payload CMS content');
+      }
+
+      // Validate vendor-product relationships
+      const vendorIds = new Set(vendors.map((v) => v.id));
+      const orphanedProducts = products.filter(
+        (p) =>
+          (p.vendorId && !vendorIds.has(p.vendorId)) ||
+          (p.partnerId && !vendorIds.has(p.partnerId))
+      );
+
+      if (orphanedProducts.length > 0) {
+        errors.push(`${orphanedProducts.length} products have invalid vendor/partner references`);
+      }
+
+      // Validate slugs are unique
+      const vendorSlugs = vendors.map((v) => v.slug).filter(Boolean);
+      const duplicateVendorSlugs = vendorSlugs.filter(
+        (slug, index) => vendorSlugs.indexOf(slug) !== index
+      );
+
+      if (duplicateVendorSlugs.length > 0) {
+        errors.push(`Duplicate vendor slugs found: ${duplicateVendorSlugs.join(', ')}`);
+      }
+
+      const productSlugs = products.map((p) => p.slug).filter(Boolean);
+      const duplicateProductSlugs = productSlugs.filter(
+        (slug, index) => productSlugs.indexOf(slug) !== index
+      );
+
+      if (duplicateProductSlugs.length > 0) {
+        errors.push(`Duplicate product slugs found: ${duplicateProductSlugs.join(', ')}`);
+      }
+
+      console.log(
+        `✅ Payload CMS validation complete: ${errors.length === 0 ? 'PASSED' : 'FAILED'}`
+      );
+
+      if (errors.length > 0) {
+        console.error('❌ Payload CMS validation errors:', errors);
+      }
+
+      return {
+        isValid: errors.length === 0,
+        errors,
+      };
+    } catch (error) {
+      const errorMessage = `Failed to validate Payload CMS content: ${error instanceof Error ? error.message : 'Unknown error'}`;
+      console.error('❌ Payload CMS validation failed:', errorMessage);
+      return {
+        isValid: false,
+        errors: [errorMessage],
+      };
+    }
   }
 }
 
