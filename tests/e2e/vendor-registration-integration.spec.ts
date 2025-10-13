@@ -41,8 +41,10 @@ test.describe('Vendor Registration Integration', () => {
       response => response.url().includes('/api/vendors/register') && response.request().method() === 'POST'
     );
 
-    // Submit form
-    await page.click('button[type="submit"]');
+    // Submit form using the submit button (wait for it to be enabled)
+    const submitButton = page.locator('button[type="submit"]');
+    await submitButton.waitFor({ state: 'visible' });
+    await submitButton.click();
 
     // Verify API call was made
     const apiResponse = await apiResponsePromise;
