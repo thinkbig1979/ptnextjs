@@ -341,11 +341,14 @@ export function VisualDemo({
             }
           }}
         >
+        {/* @ts-expect-error - React Three Fiber JSX elements */}
         <ambientLight intensity={0.4} />
+        {/* @ts-expect-error - React Three Fiber JSX elements */}
         <pointLight position={[10, 10, 10]} />
 
         {/* Sample 3D object - in production this would load actual models */}
         <Box args={[2, 1, 1]} position={[0, 0, 0]}>
+          {/* @ts-expect-error - React Three Fiber JSX elements */}
           <meshStandardMaterial color="#2563eb" />
         </Box>
 

@@ -14,7 +14,7 @@ interface UseLazyLoadingOptions {
 }
 
 interface UseLazyLoadingReturn {
-  ref: React.RefObject<HTMLElement>
+  ref: React.RefObject<HTMLElement | null>
   isVisible: boolean
   wasVisible: boolean
 }
@@ -80,7 +80,7 @@ interface UseProgressiveImageOptions {
 }
 
 interface UseProgressiveImageReturn {
-  ref: React.RefObject<HTMLElement>
+  ref: React.RefObject<HTMLElement | null>
   imageSrc: string | null
   isLoaded: boolean
   isVisible: boolean
