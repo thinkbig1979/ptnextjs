@@ -10,15 +10,16 @@ export const dynamic = 'force-static';
 export const revalidate = false;
 
 interface PartnersPageProps {
-  searchParams?: {
+  searchParams?: Promise<{
     category?: string;
     search?: string;
     partner?: string;
-  };
+  }>;
 }
 
 export default async function PartnersPage({ searchParams }: PartnersPageProps) {
-  console.log('🏗️  Rendering Partners page (static generation) with searchParams:', searchParams);
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  console.log('🏗️  Rendering Partners page (static generation) with searchParams:', resolvedSearchParams);
   
   // Fetch all vendors data at build time for static generation (partners are a subset)
   const [vendors, products, categories] = await Promise.all([

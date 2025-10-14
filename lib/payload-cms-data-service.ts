@@ -151,7 +151,7 @@ class PayloadCMSDataService {
       tags: doc.tags?.map((tag: any) => tag.tag) || [],
       image: this.transformMediaPath(doc.featuredImage || ''),
       featured: doc.published || false,
-      readTime: 5,
+      readTime: '5 min',
     };
   }
 

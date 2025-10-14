@@ -51,7 +51,7 @@ interface SuccessResponse {
 interface ErrorResponse {
   success: false;
   error: {
-    code: 'VALIDATION_ERROR' | 'DUPLICATE_EMAIL' | 'SERVER_ERROR';
+    code: 'VALIDATION_ERROR' | 'DUPLICATE_EMAIL' | 'COMPANY_EXISTS' | 'SERVER_ERROR';
     message: string;
     fields?: Record<string, string>;
   };

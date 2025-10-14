@@ -52,8 +52,8 @@ export const hasTierAccess = (minTier: 'free' | 'tier1' | 'tier2'): Access => {
 
     if (!vendor.docs[0]) return false;
 
-    const tier = vendor.docs[0].tier;
-    const tierLevels = { free: 0, tier1: 1, tier2: 2 };
+    const tier = vendor.docs[0].tier as 'free' | 'tier1' | 'tier2';
+    const tierLevels: Record<'free' | 'tier1' | 'tier2', number> = { free: 0, tier1: 1, tier2: 2 };
 
     return tierLevels[tier] >= tierLevels[minTier];
   };
@@ -70,8 +70,8 @@ export const canAccessTierField = (requiredTier: 'free' | 'tier1' | 'tier2'): Ac
     if (user.role !== 'vendor') return false;
 
     // Check vendor's tier
-    const tier = data?.tier || 'free';
-    const tierLevels = { free: 0, tier1: 1, tier2: 2 };
+    const tier = (data?.tier || 'free') as 'free' | 'tier1' | 'tier2';
+    const tierLevels: Record<'free' | 'tier1' | 'tier2', number> = { free: 0, tier1: 1, tier2: 2 };
 
     return tierLevels[tier] >= tierLevels[requiredTier];
   };

@@ -55,7 +55,6 @@ const TeamMembers: CollectionConfig = {
     {
       name: 'email',
       type: 'email',
-      maxLength: 255,
       admin: {
         description: 'Contact email address',
       },

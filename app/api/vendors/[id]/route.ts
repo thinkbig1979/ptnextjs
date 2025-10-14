@@ -6,9 +6,9 @@ import { safeValidateVendorUpdate } from '@/lib/validation/vendor-update-schema'
 import { filterFieldsByTier, type VendorTier } from '@/lib/utils/tier-validator';
 
 interface RouteContext {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 interface SuccessResponse {
@@ -47,7 +47,8 @@ export async function PATCH(
   context: RouteContext
 ): Promise<NextResponse<SuccessResponse | ErrorResponse>> {
   try {
-    const vendorId = context.params.id;
+    const resolvedParams = await context.params;
+    const vendorId = resolvedParams.id;
 
     // Extract user from request (set by auth middleware or extracted from token)
     // Note: In a production setup, this route would be protected by auth middleware

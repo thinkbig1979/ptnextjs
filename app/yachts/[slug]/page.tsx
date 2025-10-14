@@ -20,9 +20,10 @@ export async function generateStaticParams() {
   }
 }
 
-export default async function YachtDetailPage({ params }: { params: { slug: string } }) {
+export default async function YachtDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   try {
-    const yacht = await tinaCMSDataService.getYachtBySlug(params.slug);
+    const resolvedParams = await params;
+    const yacht = await tinaCMSDataService.getYachtBySlug(resolvedParams.slug);
 
     if (!yacht) {
       notFound();

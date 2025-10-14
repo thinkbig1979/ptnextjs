@@ -185,6 +185,7 @@ const Products: CollectionConfig = {
         description: 'Make product visible to public',
       },
       access: {
+        // @ts-expect-error - Payload CMS 3.x canary types may have incompatibilities with field-level access
         update: isAdmin, // Only admins can publish products
       },
     },

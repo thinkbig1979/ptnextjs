@@ -97,7 +97,6 @@ const CompanyInfo: CollectionConfig = {
       name: 'email',
       type: 'email',
       required: true,
-      maxLength: 255,
       admin: {
         description: 'Main contact email',
       },

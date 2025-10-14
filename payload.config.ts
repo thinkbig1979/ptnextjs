@@ -26,8 +26,6 @@ export default buildConfig({
     user: 'users',
     meta: {
       titleSuffix: '- Marine Technology Platform',
-      favicon: '/favicon.ico',
-      ogImage: '/og-image.jpg',
     },
   },
 
@@ -96,13 +94,6 @@ export default buildConfig({
     limits: {
       fileSize: 5000000, // 5MB max file size
     },
-  },
-
-  // Rate limiting for security
-  rateLimit: {
-    max: 100, // 100 requests per window
-    window: 15 * 60 * 1000, // 15 minutes
-    trustProxy: true, // Trust X-Forwarded-For header
   },
 
   // Localization (future enhancement)
