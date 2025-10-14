@@ -3,6 +3,9 @@ const path = require('path');
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   distDir: process.env.NEXT_DIST_DIR || '.next',
+  // NOTE: Payload CMS requires server-side rendering
+  // Static export is incompatible with Payload CMS
+  // Remove or comment out NEXT_OUTPUT_MODE in .env when using Payload CMS
   output: process.env.NEXT_OUTPUT_MODE,
   eslint: {
     ignoreDuringBuilds: true,

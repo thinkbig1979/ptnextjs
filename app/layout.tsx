@@ -8,6 +8,7 @@ import { Footer } from "@/components/footer";
 import { Toaster } from "@/components/ui/sonner";
 import { TinaProvider } from "@/components/tina-provider";
 import { tinaCMSDataService } from "@/lib/tinacms-data-service";
+import { AuthProvider } from "@/lib/context/AuthContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -116,23 +117,25 @@ export default async function RootLayout({
         />
       </head>
       <body className={inter.className} suppressHydrationWarning>
-        <TinaProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem={true}
-            disableTransitionOnChange={false}
-          >
-            <div className="min-h-screen flex flex-col">
-              <Navigation />
-              <main className="flex-1">
-                {children}
-              </main>
-              <Footer companyInfo={companyInfo} />
-            </div>
-            <Toaster />
-          </ThemeProvider>
-        </TinaProvider>
+        <AuthProvider>
+          <TinaProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem={true}
+              disableTransitionOnChange={false}
+            >
+              <div className="min-h-screen flex flex-col">
+                <Navigation />
+                <main className="flex-1">
+                  {children}
+                </main>
+                <Footer companyInfo={companyInfo} />
+              </div>
+              <Toaster />
+            </ThemeProvider>
+          </TinaProvider>
+        </AuthProvider>
       </body>
     </html>
   );

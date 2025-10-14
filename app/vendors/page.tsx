@@ -36,15 +36,16 @@ export const metadata: Metadata = {
 };
 
 interface VendorsPageProps {
-  searchParams?: {
+  searchParams?: Promise<{
     category?: string;
     search?: string;
     partner?: string;
-  };
+  }>;
 }
 
 export default async function VendorsPage({ searchParams }: VendorsPageProps) {
-  console.log('🏗️  Rendering Vendors page (static generation) with searchParams:', searchParams);
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  console.log('🏗️  Rendering Vendors page (static generation) with searchParams:', resolvedSearchParams);
   
   // Fetch all data at build time for static generation
   const [vendors, products, categories] = await Promise.all([

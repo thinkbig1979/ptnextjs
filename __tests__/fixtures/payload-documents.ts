@@ -1,0 +1,313 @@
+/**
+ * Mock Payload CMS Documents for Testing
+ * These fixtures simulate the structure of documents returned by Payload Local API
+ */
+
+export const mockVendorDocs = {
+  docs: [
+    {
+      id: '1',
+      slug: 'test-vendor-1',
+      name: 'Test Vendor 1',
+      companyName: 'Test Vendor 1',
+      description: 'Test vendor description 1',
+      logo: '/media/logos/test-vendor-1.png',
+      image: '/media/images/test-vendor-1.jpg',
+      website: 'https://testvendor1.com',
+      contactEmail: 'contact@testvendor1.com',
+      contactPhone: '+1234567890',
+      founded: 2010,
+      location: 'Test Location 1',
+      featured: true,
+      published: true,
+      tier: 'tier2',
+      certifications: [
+        { certification: 'ISO 9001' },
+        { certification: 'CE Certified' }
+      ],
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-15T00:00:00.000Z',
+    },
+    {
+      id: '2',
+      slug: 'test-vendor-2',
+      name: 'Test Vendor 2',
+      companyName: 'Test Vendor 2',
+      description: 'Test vendor description 2',
+      logo: '/media/logos/test-vendor-2.png',
+      image: '/media/images/test-vendor-2.jpg',
+      website: 'https://testvendor2.com',
+      contactEmail: 'contact@testvendor2.com',
+      contactPhone: '+0987654321',
+      founded: 2015,
+      location: 'Test Location 2',
+      featured: false,
+      published: true,
+      tier: 'tier1',
+      certifications: [],
+      createdAt: '2024-02-01T00:00:00.000Z',
+      updatedAt: '2024-02-15T00:00:00.000Z',
+    },
+  ],
+  totalDocs: 2,
+  limit: 1000,
+  totalPages: 1,
+  page: 1,
+  pagingCounter: 1,
+  hasPrevPage: false,
+  hasNextPage: false,
+};
+
+export const mockProductDocs = {
+  docs: [
+    {
+      id: '1',
+      slug: 'test-product-1',
+      name: 'Test Product 1',
+      description: '<p>Test product description 1</p>',
+      shortDescription: 'Short description 1',
+      price: '$10,000',
+      published: true,
+      vendor: {
+        id: '1',
+        slug: 'test-vendor-1',
+        name: 'Test Vendor 1',
+        companyName: 'Test Vendor 1',
+        description: 'Test vendor description 1',
+        logo: '/media/logos/test-vendor-1.png',
+        contactEmail: 'contact@testvendor1.com',
+        tier: 'tier2',
+        featured: true,
+        published: true,
+      },
+      categories: [
+        {
+          id: '1',
+          name: 'Navigation',
+          slug: 'navigation',
+          description: 'Navigation equipment',
+        }
+      ],
+      images: [
+        {
+          url: '/media/products/test-product-1-main.jpg',
+          altText: 'Test Product 1 Main Image',
+          isMain: true,
+          caption: 'Main product image',
+        },
+        {
+          url: '/media/products/test-product-1-alt.jpg',
+          altText: 'Test Product 1 Alt Image',
+          isMain: false,
+          caption: 'Alternative view',
+        },
+      ],
+      specifications: [
+        { label: 'Weight', value: '5 kg' },
+        { label: 'Dimensions', value: '30x20x10 cm' },
+      ],
+      createdAt: '2024-01-10T00:00:00.000Z',
+      updatedAt: '2024-01-20T00:00:00.000Z',
+    },
+    {
+      id: '2',
+      slug: 'test-product-2',
+      name: 'Test Product 2',
+      description: '<p>Test product description 2</p>',
+      shortDescription: 'Short description 2',
+      published: true,
+      vendor: {
+        id: '2',
+        slug: 'test-vendor-2',
+        name: 'Test Vendor 2',
+        companyName: 'Test Vendor 2',
+        description: 'Test vendor description 2',
+        logo: '/media/logos/test-vendor-2.png',
+        contactEmail: 'contact@testvendor2.com',
+        tier: 'tier1',
+        featured: false,
+        published: true,
+      },
+      categories: [
+        {
+          id: '2',
+          name: 'Communication',
+          slug: 'communication',
+          description: 'Communication systems',
+        }
+      ],
+      images: [
+        {
+          url: '/media/products/test-product-2.jpg',
+          altText: 'Test Product 2 Image',
+          isMain: true,
+        },
+      ],
+      specifications: [],
+      createdAt: '2024-02-10T00:00:00.000Z',
+      updatedAt: '2024-02-20T00:00:00.000Z',
+    },
+  ],
+  totalDocs: 2,
+  limit: 1000,
+  totalPages: 1,
+  page: 1,
+  pagingCounter: 1,
+  hasPrevPage: false,
+  hasNextPage: false,
+};
+
+export const mockCategoryDocs = {
+  docs: [
+    {
+      id: '1',
+      name: 'Navigation',
+      slug: 'navigation',
+      description: 'Navigation equipment and systems',
+      icon: 'compass',
+      color: '#0066cc',
+      order: 1,
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
+    },
+    {
+      id: '2',
+      name: 'Communication',
+      slug: 'communication',
+      description: 'Communication systems',
+      icon: 'radio',
+      color: '#00cc66',
+      order: 2,
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
+    },
+  ],
+  totalDocs: 2,
+  limit: 1000,
+  totalPages: 1,
+  page: 1,
+  pagingCounter: 1,
+  hasPrevPage: false,
+  hasNextPage: false,
+};
+
+export const mockBlogPostDocs = {
+  docs: [
+    {
+      id: '1',
+      slug: 'test-blog-post-1',
+      title: 'Test Blog Post 1',
+      excerpt: 'Test blog post excerpt 1',
+      content: '<p>Test blog post content 1</p>',
+      published: true,
+      publishedAt: '2024-01-15T00:00:00.000Z',
+      featuredImage: '/media/blog/test-post-1.jpg',
+      author: {
+        id: '1',
+        email: 'author@example.com',
+        name: 'Test Author',
+      },
+      categories: [
+        {
+          id: '1',
+          name: 'Industry News',
+          slug: 'industry-news',
+        }
+      ],
+      tags: [
+        { tag: 'technology' },
+        { tag: 'innovation' },
+      ],
+      createdAt: '2024-01-15T00:00:00.000Z',
+      updatedAt: '2024-01-15T00:00:00.000Z',
+    },
+    {
+      id: '2',
+      slug: 'test-blog-post-2',
+      title: 'Test Blog Post 2',
+      excerpt: 'Test blog post excerpt 2',
+      content: '<p>Test blog post content 2</p>',
+      published: true,
+      publishedAt: '2024-02-15T00:00:00.000Z',
+      featuredImage: '/media/blog/test-post-2.jpg',
+      author: {
+        id: '1',
+        email: 'author@example.com',
+        name: 'Test Author',
+      },
+      categories: [],
+      tags: [],
+      createdAt: '2024-02-15T00:00:00.000Z',
+      updatedAt: '2024-02-15T00:00:00.000Z',
+    },
+  ],
+  totalDocs: 2,
+  limit: 1000,
+  totalPages: 1,
+  page: 1,
+  pagingCounter: 1,
+  hasPrevPage: false,
+  hasNextPage: false,
+};
+
+export const mockTeamMemberDocs = {
+  docs: [
+    {
+      id: '1',
+      name: 'John Doe',
+      role: 'CEO',
+      bio: 'Test bio for John Doe',
+      image: '/media/team/john-doe.jpg',
+      email: 'john.doe@example.com',
+      linkedin: 'https://linkedin.com/in/johndoe',
+      order: 1,
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
+    },
+    {
+      id: '2',
+      name: 'Jane Smith',
+      role: 'CTO',
+      bio: 'Test bio for Jane Smith',
+      image: '/media/team/jane-smith.jpg',
+      email: 'jane.smith@example.com',
+      linkedin: 'https://linkedin.com/in/janesmith',
+      order: 2,
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
+    },
+  ],
+  totalDocs: 2,
+  limit: 1000,
+  totalPages: 1,
+  page: 1,
+  pagingCounter: 1,
+  hasPrevPage: false,
+  hasNextPage: false,
+};
+
+export const mockCompanyInfoDocs = {
+  docs: [
+    {
+      id: '1',
+      name: 'Test Company',
+      tagline: 'Test company tagline',
+      description: 'Test company description',
+      founded: 2000,
+      location: 'Test City, Test Country',
+      address: '123 Test Street',
+      phone: '+1234567890',
+      email: 'info@testcompany.com',
+      story: 'Test company story',
+      createdAt: '2024-01-01T00:00:00.000Z',
+      updatedAt: '2024-01-01T00:00:00.000Z',
+    },
+  ],
+  totalDocs: 1,
+  limit: 1,
+  totalPages: 1,
+  page: 1,
+  pagingCounter: 1,
+  hasPrevPage: false,
+  hasNextPage: false,
+};

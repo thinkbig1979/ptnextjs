@@ -1,0 +1,76 @@
+/**
+ * VendorProfileEditor Component Test Template
+ * Tests tier-based restrictions and profile editing
+ */
+
+import { renderWithTier } from '@/__tests__/setup/react-testing-library.config';
+import { screen } from '@testing-library/react';
+import { fillAndSubmitForm } from '@/__tests__/utils/user-interaction-helpers';
+
+// import { VendorProfileEditor } from '@/components/vendor/VendorProfileEditor';
+
+describe('VendorProfileEditor', () => {
+  describe('Tier Restrictions', () => {
+    it('allows free tier users to edit basic fields', () => {
+      // renderWithTier(<VendorProfileEditor />, 'free');
+
+      expect(screen.getByLabelText(/company name/i)).toBeEnabled();
+      expect(screen.getByLabelText(/description/i)).toBeEnabled();
+    });
+
+    it('restricts tier1 fields for free tier users', () => {
+      // renderWithTier(<VendorProfileEditor />, 'free');
+
+      expect(screen.getByLabelText(/certifications/i)).toBeDisabled();
+      expect(screen.getByText(/upgrade to tier 1/i)).toBeInTheDocument();
+    });
+
+    it('allows tier2 users to edit all fields', () => {
+      // renderWithTier(<VendorProfileEditor />, 'tier2');
+
+      expect(screen.getByLabelText(/certifications/i)).toBeEnabled();
+      expect(screen.getByLabelText(/case studies/i)).toBeEnabled();
+    });
+  });
+
+  describe('Profile Update', () => {
+    it('saves profile successfully', async () => {
+      // renderWithTier(<VendorProfileEditor />, 'tier2');
+
+      await fillAndSubmitForm({
+        'Company Name': 'Updated Company',
+        Description: 'Updated description',
+      }, 'Save');
+
+      await waitFor(() => {
+        expect(screen.getByText(/profile updated successfully/i)).toBeInTheDocument();
+      });
+    });
+
+    it('handles validation errors', async () => {
+      // renderWithTier(<VendorProfileEditor />, 'tier2');
+
+      await fillAndSubmitForm({
+        Website: 'invalid-url',
+      }, 'Save');
+
+      await expectToHaveError('Website', 'Invalid URL format');
+    });
+
+    it('handles tier restriction errors', async () => {
+      server.use(
+        http.put('/api/vendors/:id', () => {
+          return HttpResponse.json(
+            { error: 'Upgrade to Tier 1 required', code: 'TIER_RESTRICTION' },
+            { status: 403 }
+          );
+        })
+      );
+
+      // renderWithTier(<VendorProfileEditor />, 'free');
+
+      // Attempt to edit restricted field (should fail)
+      await expectToBeVisible('Upgrade to Tier 1 required');
+    });
+  });
+});
