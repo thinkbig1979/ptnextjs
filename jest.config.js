@@ -13,6 +13,7 @@ const customJestConfig = {
     '^payload$': '<rootDir>/__mocks__/payload.js',
     '^@payloadcms/db-sqlite$': '<rootDir>/__mocks__/@payloadcms/db-sqlite.js',
     '^@payloadcms/drizzle$': '<rootDir>/__mocks__/@payloadcms/drizzle.js',
+    '^@payloadcms/richtext-lexical$': '<rootDir>/__mocks__/@payloadcms/richtext-lexical.js',
   },
   testEnvironment: 'jsdom',
   collectCoverageFrom: [

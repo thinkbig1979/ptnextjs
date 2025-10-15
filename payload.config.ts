@@ -13,6 +13,8 @@ import Categories from './payload/collections/Categories';
 import BlogPosts from './payload/collections/BlogPosts';
 import TeamMembers from './payload/collections/TeamMembers';
 import CompanyInfo from './payload/collections/CompanyInfo';
+import Tags from './payload/collections/Tags';
+import Yachts from './payload/collections/Yachts';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -60,6 +62,8 @@ export default buildConfig({
     BlogPosts,
     TeamMembers,
     CompanyInfo,
+    Tags,
+    Yachts,
   ],
 
   // TypeScript configuration
