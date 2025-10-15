@@ -12,6 +12,7 @@ const customJestConfig = {
     '^marked$': '<rootDir>/__mocks__/marked.js',
     '^payload$': '<rootDir>/__mocks__/payload.js',
     '^@payloadcms/db-sqlite$': '<rootDir>/__mocks__/@payloadcms/db-sqlite.js',
+    '^@payloadcms/db-postgres$': '<rootDir>/__mocks__/@payloadcms/db-postgres.js',
     '^@payloadcms/drizzle$': '<rootDir>/__mocks__/@payloadcms/drizzle.js',
     '^@payloadcms/richtext-lexical$': '<rootDir>/__mocks__/@payloadcms/richtext-lexical.js',
   },

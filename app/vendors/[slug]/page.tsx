@@ -183,12 +183,14 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
               {/* Company Logo and Name Header */}
               <div className="flex items-center space-x-6 mb-6">
                 {vendor.logo && (
-                  <div className="flex-shrink-0 w-20 h-20 flex items-center justify-center p-2">
-                    <img
+                  <div className="flex-shrink-0 w-20 h-20 flex items-center justify-center p-2 relative">
+                    <OptimizedImage
                       src={vendor.logo}
                       alt={`${vendor.name} logo`}
-                      className="max-w-full max-h-full object-contain"
-                      style={{ maxWidth: '64px', maxHeight: '64px' }}
+                      width={64}
+                      height={64}
+                      className="object-contain"
+                      fallbackType="partner"
                     />
                   </div>
                 )}

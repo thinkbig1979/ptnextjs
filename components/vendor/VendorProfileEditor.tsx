@@ -112,7 +112,7 @@ export interface VendorProfileEditorProps {
 export function VendorProfileEditor({ initialData }: VendorProfileEditorProps) {
   const router = useRouter();
   const { toast } = useToast();
-  const { user, tier, refreshUser } = useAuth();
+  const { tier, refreshUser } = useAuth();
   const [isLoading, setIsLoading] = useState(!initialData);
   const [isSaving, setIsSaving] = useState(false);
   const [vendorData, setVendorData] = useState<any>(initialData);

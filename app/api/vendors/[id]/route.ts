@@ -14,7 +14,7 @@ interface RouteContext {
 interface SuccessResponse {
   success: true;
   data: {
-    vendor: any;
+    vendor: Record<string, unknown>;
     message: string;
   };
 }
@@ -183,7 +183,7 @@ export async function PATCH(
     const vendorTier: VendorTier = vendor.tier || 'free';
 
     // Filter fields based on tier restrictions
-    let filteredData: Record<string, any>;
+    let filteredData: Record<string, unknown>;
     try {
       filteredData = filterFieldsByTier(updateData, vendorTier, isAdmin);
     } catch (error) {
