@@ -18,31 +18,6 @@ Generate product docs for new projects: mission, tech-stack and roadmap files fo
 
 <process_flow>
 
-<step number="0" name="detect_or_set_agent_os_root">
-
-### Step 0: Detect or Set Agent OS Root Directory
-
-Determine where to create the .agent-os directory, checking for existing installations in monorepo environments.
-
-<detection_logic>
-  SEARCH for existing .agent-os directory:
-    1. Check current working directory for .agent-os/
-    2. If not found, walk up parent directories to check for existing .agent-os/
-    3. Store the result
-
-  IF existing .agent-os found in parent directory:
-    SET AGENT_OS_ROOT = directory containing the existing .agent-os
-    INFORM user: "Found existing .agent-os at {AGENT_OS_ROOT}/.agent-os/
-                 Product files will be created there."
-  ELSE:
-    SET AGENT_OS_ROOT = current working directory
-    INFORM user: "Creating new .agent-os installation in current directory."
-
-  USE AGENT_OS_ROOT as the base path for ALL subsequent file operations
-</detection_logic>
-
-</step>
-
 <step number="1" subagent="context-fetcher" name="gather_user_input">
 
 ### Step 1: Gather User Input
@@ -73,10 +48,10 @@ Use the context-fetcher subagent to collect all required inputs from the user in
 
 ### Step 2: Create Documentation Structure
 
-Use the file-creator subagent to create the following file_structure at {AGENT_OS_ROOT} with validation for write permissions and protection against overwriting existing files:
+Use the file-creator subagent to create the following file_structure with validation for write permissions and protection against overwriting existing files:
 
 <file_structure>
-  {AGENT_OS_ROOT}/.agent-os/
+  .agent-os/
   └── product/
       ├── mission.md          # Product vision and purpose
       ├── mission-lite.md     # Condensed mission for AI context
@@ -90,7 +65,7 @@ Use the file-creator subagent to create the following file_structure at {AGENT_O
 
 ### Step 3: Create mission.md
 
-Use the file-creator subagent to create the file: {AGENT_OS_ROOT}/.agent-os/product/mission.md and use the following template:
+Use the file-creator subagent to create the file: .agent-os/product/mission.md and use the following template:
 
 <file_template>
   <header>
@@ -202,7 +177,7 @@ Use the file-creator subagent to create the file: {AGENT_OS_ROOT}/.agent-os/prod
 
 ### Step 4: Create tech-stack.md
 
-Use the file-creator subagent to create the file: {AGENT_OS_ROOT}/.agent-os/product/tech-stack.md and use the following template:
+Use the file-creator subagent to create the file: .agent-os/product/tech-stack.md and use the following template:
 
 <file_template>
   <header>
@@ -262,7 +237,7 @@ Use the file-creator subagent to create the file: {AGENT_OS_ROOT}/.agent-os/prod
 
 ### Step 5: Create mission-lite.md
 
-Use the file-creator subagent to create the file: {AGENT_OS_ROOT}/.agent-os/product/mission-lite.md for the purpose of establishing a condensed mission for efficient AI context usage.
+Use the file-creator subagent to create the file: .agent-os/product/mission-lite.md for the purpose of establishing a condensed mission for efficient AI context usage.
 
 Use the following template:
 
@@ -302,7 +277,7 @@ Use the following template:
 
 ### Step 6: Create roadmap.md
 
-Use the file-creator subagent to create the following file: {AGENT_OS_ROOT}/.agent-os/product/roadmap.md using the following template:
+Use the file-creator subagent to create the following file: .agent-os/product/roadmap.md using the following template:
 
 <file_template>
   <header>

@@ -1,0 +1,3 @@
+# Spec Summary (Lite)
+
+Complete migration of all TinaCMS content schema to Payload CMS with full feature parity, replacing markdown-based content management with database-backed CMS. Migrate ALL vendor/product fields (certifications, awards, case studies, comparison metrics, visual demos), create missing collections (Yachts, Blog, Team, Company, Categories, Tags), migrate all existing content from markdown to database, and update entire frontend to use Payload CMS exclusively. Goal: Zero functionality loss, complete data preservation, and full application running on Payload CMS instead of TinaCMS.
