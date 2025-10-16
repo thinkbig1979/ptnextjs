@@ -110,10 +110,11 @@ const Vendors: CollectionConfig = {
     },
     {
       name: 'logo',
-      type: 'text',
-      maxLength: 500,
+      type: 'upload',
+      relationTo: 'media',
+      required: false,
       admin: {
-        description: 'Logo URL (visible to all tiers)',
+        description: 'Company logo (visible to all tiers)',
       },
     },
     {

@@ -663,6 +663,7 @@ const Products: CollectionConfig = {
             {
               name: 'certificationLevel',
               type: 'select',
+              dbName: 'cert_level',
               options: [
                 { label: 'Certified', value: 'certified' },
                 { label: 'Compatible', value: 'compatible' },

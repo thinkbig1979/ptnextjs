@@ -105,10 +105,11 @@ const CompanyInfo: CollectionConfig = {
     // Branding
     {
       name: 'logo',
-      type: 'text',
-      maxLength: 500,
+      type: 'upload',
+      relationTo: 'media',
+      required: false,
       admin: {
-        description: 'Company logo URL',
+        description: 'Company logo',
       },
     },
 
@@ -173,10 +174,11 @@ const CompanyInfo: CollectionConfig = {
         },
         {
           name: 'ogImage',
-          type: 'text',
-          maxLength: 500,
+          type: 'upload',
+          relationTo: 'media',
+          required: false,
           admin: {
-            description: 'Open Graph image URL for social sharing',
+            description: 'Open Graph image for social sharing',
           },
         },
       ],
