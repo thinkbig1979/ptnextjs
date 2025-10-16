@@ -21,7 +21,10 @@
     "build:netlify": "NEXT_OUTPUT_MODE=export npm run build",
     "hooks:test-write": "node .agent-os/hooks/runner.js write-hook",
     "hooks:test-edit": "node .agent-os/hooks/runner.js edit-hook",
-    "hooks:performance": "node .agent-os/hooks/performance-monitor.js"
+    "hooks:performance": "node .agent-os/hooks/performance-monitor.js",
+    "migrate": "tsx scripts/migrate-to-payload.ts",
+    "migrate:dry-run": "tsx scripts/migrate-to-payload.ts --dry-run",
+    "migrate:verbose": "tsx scripts/migrate-to-payload.ts --verbose"
   },
   "keywords": [
     "nextjs",
@@ -48,6 +51,7 @@
     "@types/react-dom": "^19.0.2",
     "@typescript-eslint/eslint-plugin": "7.0.0",
     "@typescript-eslint/parser": "7.0.0",
+    "commander": "^14.0.1",
     "eslint": "^8.57.1",
     "eslint-config-next": "14.2.5",
     "eslint-plugin-prettier": "5.1.3",
