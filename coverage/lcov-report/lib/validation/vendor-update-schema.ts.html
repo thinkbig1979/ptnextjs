@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">87.5% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>7/8</span>
+                <span class='fraction'>0/8</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>2/2</span>
+                <span class='fraction'>0/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>3/3</span>
+                <span class='fraction'>0/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>7/7</span>
+                <span class='fraction'>0/7</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -153,7 +153,7 @@
 <a name='L88'></a><a href='#L88'>88</a>
 <a name='L89'></a><a href='#L89'>89</a>
 <a name='L90'></a><a href='#L90'>90</a>
-<a name='L91'></a><a href='#L91'>91</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L91'></a><a href='#L91'>91</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -161,7 +161,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -192,7 +192,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">28x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -233,17 +233,17 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">26x</span>
-<span class="cline-any cline-yes">26x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { z } from 'zod';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { z } from <span class="cstat-no" title="statement not covered" >'zod';</span>
 &nbsp;
 /**
  * Validation schema for vendor profile update requests
@@ -251,7 +251,7 @@
  * All fields are optional (PATCH semantics - partial updates)
  * Field-level validation matches Payload Vendors collection constraints
  */
-export const <span class="cstat-no" title="statement not covered" >vendorUpdateSchema = z</span>.object({
+export const <span class="cstat-no" title="statement not covered" >vendorUpdateSchema = <span class="cstat-no" title="statement not covered" >z</span>.object({</span>
   // Basic Information (Free tier)
   companyName: z
     .string()
@@ -282,7 +282,7 @@ export const <span class="cstat-no" title="statement not covered" >vendorUpdateS
     .max(50, 'Phone number must not exceed 50 characters')
     .optional()
     .refine(
-      (val) =&gt; !val || /^[\d\s\-\+\(\)]+$/.test(val),
+<span class="fstat-no" title="function not covered" >      (v</span>al) =&gt; <span class="cstat-no" title="statement not covered" >!val || /^[\d\s\-\+\(\)]+$/.test(val),</span>
       'Invalid phone number format'
     ),
 &nbsp;
@@ -323,15 +323,15 @@ export type VendorUpdateRequest = z.infer&lt;typeof vendorUpdateSchema&gt;;
  * @returns Parsed and validated data
  * @throws ZodError if validation fails
  */
-export function validateVendorUpdate(data: unknown): VendorUpdateRequest {
-  return vendorUpdateSchema.parse(data);
+export function <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >validateVendorUpdate(d</span></span>ata: unknown): VendorUpdateRequest {
+<span class="cstat-no" title="statement not covered" >  return vendorUpdateSchema.parse(data);</span>
 }
 &nbsp;
 /**
  * Safe validation that returns success/error result
  */
-export function safeValidateVendorUpdate(data: unknown) {
-  return vendorUpdateSchema.safeParse(data);
+export function <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >safeValidateVendorUpdate(d</span></span>ata: unknown) {
+<span class="cstat-no" title="statement not covered" >  return vendorUpdateSchema.safeParse(data);</span>
 }
 &nbsp;</pre></td></tr></table></pre>
 
@@ -340,7 +340,7 @@ export function safeValidateVendorUpdate(data: unknown) {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-13T08:10:34.238Z
+                at 2025-10-15T19:49:39.396Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

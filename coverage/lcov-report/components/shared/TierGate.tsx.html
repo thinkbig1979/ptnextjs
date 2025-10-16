@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">47.05% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>8/17</span>
+                <span class='fraction'>0/17</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">20% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>2/10</span>
+                <span class='fraction'>0/10</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">50% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/2</span>
+                <span class='fraction'>0/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">47.05% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>8/17</span>
+                <span class='fraction'>0/17</span>
             </div>
         
             
@@ -186,12 +186,12 @@
 <a name='L121'></a><a href='#L121'>121</a>
 <a name='L122'></a><a href='#L122'>122</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -240,14 +240,14 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -307,12 +307,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">'use client';
 &nbsp;
-import React, { ReactNode } from 'react';
-import { useAuth } from '@/lib/context/AuthContext';
-import { hasTierAccess, type VendorTier } from '@/lib/utils/tier-validator';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Lock, ArrowUpCircle } from 'lucide-react';
+import React, { ReactNode } from <span class="cstat-no" title="statement not covered" >'react';</span>
+import { useAuth } from <span class="cstat-no" title="statement not covered" >'@/lib/context/AuthContext';</span>
+import { hasTierAccess, type VendorTier } from <span class="cstat-no" title="statement not covered" >'@/lib/utils/tier-validator';</span>
+import { Alert, AlertDescription, AlertTitle } from <span class="cstat-no" title="statement not covered" >'@/components/ui/alert';</span>
+import { Badge } from <span class="cstat-no" title="statement not covered" >'@/components/ui/badge';</span>
+import { Lock, ArrowUpCircle } from <span class="cstat-no" title="statement not covered" >'lucide-react';</span>
 &nbsp;
 export interface TierGateProps {
   /**
@@ -361,14 +361,14 @@ export interface TierGateProps {
  * &lt;/TierGate&gt;
  * ```
  */
-export function TierGate({
+export function <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >TierGate({</span></span>
   requiredTier,
   children,
   fallback,
-  className = '',
-  showUpgradeMessage = true,
+  className = <span class="branch-0 cbranch-no" title="branch not covered" >'',</span>
+  showUpgradeMessage = <span class="branch-0 cbranch-no" title="branch not covered" >true,</span>
 }: TierGateProps) {
-  const { tier, role } = useAuth();
+  const { tier, role } = <span class="cstat-no" title="statement not covered" >useAuth();</span>
 &nbsp;
   // Determine if user has access
   const currentTier = (<span class="cstat-no" title="statement not covered" >tier || 'free') as VendorTier;</span>
@@ -433,7 +433,7 @@ export function TierGate({
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-13T08:10:34.238Z
+                at 2025-10-15T19:49:39.396Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

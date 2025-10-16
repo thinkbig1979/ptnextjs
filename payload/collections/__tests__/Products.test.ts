@@ -3,12 +3,22 @@
  *
  * Tests coverage:
  * - Schema validation (10 tests)
- * - Hook tests (6 tests)
- * - Access control (10 tests)
- * - Data validation (15 tests)
- * - Relationship tests (8 tests)
+ * - Hook tests (7 tests)
+ * - Access control (9 tests)
+ * - Data validation (23 tests)
+ * - Relationship tests (3 tests)
+ * - Configuration (3 tests)
  *
- * Total: 49 test cases
+ * Total: 55 test cases
+ *
+ * Enhanced fields coverage:
+ * - Comparison metrics ✓
+ * - Integration compatibility (with conditional API docs) ✓
+ * - Owner reviews with rating constraints ✓
+ * - Visual demo content (360°, 3D, hotspots, video, AR) ✓
+ * - Technical documentation ✓
+ * - Warranty & support ✓
+ * - Services, action buttons, badges, SEO ✓
  */
 
 import Products from '../Products';
@@ -108,6 +118,7 @@ const createMockPayload = () => {
           tags: data.tags || undefined,
           features: data.features || undefined,
           benefits: data.benefits || undefined,
+          services: data.services || undefined,
           price: data.price || undefined,
           pricing: data.pricing || undefined,
           actionButtons: data.actionButtons || undefined,
@@ -1005,6 +1016,532 @@ describe('Products Collection', () => {
       });
 
       expect(product.comparisonMetrics[0].category).toBe('environmental');
+    });
+  });
+
+  describe('Data Validation - Integration Compatibility', () => {
+    it('should accept integrationCompatibility group with all fields', async () => {
+      const vendor = await createTestVendor(payload, 'tier2');
+
+      const product = await payload.create({
+        collection: 'products',
+        data: {
+          ...basicProductData(vendor.id),
+          integrationCompatibility: {
+            supportedProtocols: [
+              { protocol: 'NMEA 2000', version: '2.0', notes: 'Full support' },
+              { protocol: 'Modbus TCP', version: '1.0' },
+            ],
+            integrationPartners: [
+              { partner: 'Garmin', integrationType: 'Native', certificationLevel: 'certified' },
+            ],
+            apiAvailable: true,
+            apiDocumentationUrl: 'https://example.com/api-docs',
+            sdkLanguages: [{ language: 'JavaScript' }, { language: 'Python' }],
+          },
+        },
+        user: vendor.user,
+      });
+
+      expect(product.integrationCompatibility.supportedProtocols).toHaveLength(2);
+      expect(product.integrationCompatibility.integrationPartners).toHaveLength(1);
+      expect(product.integrationCompatibility.apiAvailable).toBe(true);
+      expect(product.integrationCompatibility.apiDocumentationUrl).toBe('https://example.com/api-docs');
+      expect(product.integrationCompatibility.sdkLanguages).toHaveLength(2);
+    });
+
+    it('should accept integrationCompatibility without API docs when apiAvailable is false', async () => {
+      const vendor = await createTestVendor(payload, 'tier2');
+
+      const product = await payload.create({
+        collection: 'products',
+        data: {
+          ...basicProductData(vendor.id),
+          integrationCompatibility: {
+            apiAvailable: false,
+          },
+        },
+        user: vendor.user,
+      });
+
+      expect(product.integrationCompatibility.apiAvailable).toBe(false);
+      expect(product.integrationCompatibility.apiDocumentationUrl).toBeUndefined();
+    });
+  });
+
+  describe('Data Validation - Visual Demo Content', () => {
+    it('should accept visualDemoContent with 360° images', async () => {
+      const vendor = await createTestVendor(payload, 'tier2');
+
+      const product = await payload.create({
+        collection: 'products',
+        data: {
+          ...basicProductData(vendor.id),
+          visualDemoContent: {
+            images360: [
+              { image: 'media_123', angle: 0, label: 'Front view' },
+              { image: 'media_124', angle: 90, label: 'Side view' },
+              { image: 'media_125', angle: 180, label: 'Back view' },
+            ],
+          },
+        },
+        user: vendor.user,
+      });
+
+      expect(product.visualDemoContent.images360).toHaveLength(3);
+      expect(product.visualDemoContent.images360[0].angle).toBe(0);
+      expect(product.visualDemoContent.images360[1].angle).toBe(90);
+    });
+
+    it('should accept visualDemoContent with 3D model', async () => {
+      const vendor = await createTestVendor(payload, 'tier2');
+
+      const product = await payload.create({
+        collection: 'products',
+        data: {
+          ...basicProductData(vendor.id),
+          visualDemoContent: {
+            model3d: {
+              modelUrl: 'https://example.com/model.glb',
+              thumbnailImage: 'media_thumb',
+              allowDownload: true,
+            },
+          },
+        },
+        user: vendor.user,
+      });
+
+      expect(product.visualDemoContent.model3d.modelUrl).toBe('https://example.com/model.glb');
+      expect(product.visualDemoContent.model3d.allowDownload).toBe(true);
+    });
+
+    it('should accept visualDemoContent with interactive hotspots (nested structure)', async () => {
+      const vendor = await createTestVendor(payload, 'tier2');
+
+      const product = await payload.create({
+        collection: 'products',
+        data: {
+          ...basicProductData(vendor.id),
+          visualDemoContent: {
+            interactiveHotspots: [
+              {
+                image: 'media_base',
+                hotspots: [
+                  {
+                    x: 25,
+                    y: 50,
+                    title: 'Control Panel',
+                    description: 'Advanced control interface',
+                    featureImage: 'media_feature1',
+                  },
+                  {
+                    x: 75,
+                    y: 30,
+                    title: 'Display',
+                    description: 'High-resolution touchscreen',
+                  },
+                ],
+              },
+            ],
+          },
+        },
+        user: vendor.user,
+      });
+
+      expect(product.visualDemoContent.interactiveHotspots).toHaveLength(1);
+      expect(product.visualDemoContent.interactiveHotspots[0].hotspots).toHaveLength(2);
+      expect(product.visualDemoContent.interactiveHotspots[0].hotspots[0].x).toBe(25);
+      expect(product.visualDemoContent.interactiveHotspots[0].hotspots[0].y).toBe(50);
+      expect(product.visualDemoContent.interactiveHotspots[0].hotspots[0].title).toBe('Control Panel');
+    });
+
+    it('should accept visualDemoContent with video walkthrough and chapters', async () => {
+      const vendor = await createTestVendor(payload, 'tier2');
+
+      const product = await payload.create({
+        collection: 'products',
+        data: {
+          ...basicProductData(vendor.id),
+          visualDemoContent: {
+            videoWalkthrough: {
+              videoUrl: 'https://youtube.com/watch?v=test123',
+              thumbnail: 'media_video_thumb',
+              duration: 180,
+              chapters: [
+                { timestamp: 0, title: 'Introduction' },
+                { timestamp: 30, title: 'Features Overview' },
+                { timestamp: 90, title: 'Installation Guide' },
+              ],
+            },
+          },
+        },
+        user: vendor.user,
+      });
+
+      expect(product.visualDemoContent.videoWalkthrough.duration).toBe(180);
+      expect(product.visualDemoContent.videoWalkthrough.chapters).toHaveLength(3);
+      expect(product.visualDemoContent.videoWalkthrough.chapters[0].title).toBe('Introduction');
+    });
+
+    it('should accept visualDemoContent with AR preview for iOS and Android', async () => {
+      const vendor = await createTestVendor(payload, 'tier2');
+
+      const product = await payload.create({
+        collection: 'products',
+        data: {
+          ...basicProductData(vendor.id),
+          visualDemoContent: {
+            augmentedRealityPreview: {
+              arModelUrl: 'https://example.com/model.usdz',
+              glbModelUrl: 'https://example.com/model.glb',
+              scaleReference: '1:1 real-world scale',
+            },
+          },
+        },
+        user: vendor.user,
+      });
+
+      expect(product.visualDemoContent.augmentedRealityPreview.arModelUrl).toBe('https://example.com/model.usdz');
+      expect(product.visualDemoContent.augmentedRealityPreview.glbModelUrl).toBe('https://example.com/model.glb');
+      expect(product.visualDemoContent.augmentedRealityPreview.scaleReference).toBe('1:1 real-world scale');
+    });
+
+    it('should accept empty visualDemoContent group', async () => {
+      const vendor = await createTestVendor(payload, 'tier2');
+
+      const product = await payload.create({
+        collection: 'products',
+        data: {
+          ...basicProductData(vendor.id),
+          visualDemoContent: {},
+        },
+        user: vendor.user,
+      });
+
+      expect(product.visualDemoContent).toEqual({});
+    });
+  });
+
+  describe('Data Validation - Technical Documentation', () => {
+    it('should accept technicalDocumentation array with all fields', async () => {
+      const vendor = await createTestVendor(payload, 'tier2');
+
+      const product = await payload.create({
+        collection: 'products',
+        data: {
+          ...basicProductData(vendor.id),
+          technicalDocumentation: [
+            {
+              title: 'User Manual',
+              type: 'manual',
+              fileUrl: 'https://example.com/manual.pdf',
+              language: 'en',
+              version: '1.0',
+            },
+            {
+              title: 'Technical Specification',
+              type: 'spec',
+              fileUrl: 'https://example.com/spec.pdf',
+              language: 'en',
+              version: '2.0',
+            },
+            {
+              title: 'Installation Guide',
+              type: 'installation',
+              fileUrl: 'https://example.com/installation.pdf',
+            },
+          ],
+        },
+        user: vendor.user,
+      });
+
+      expect(product.technicalDocumentation).toHaveLength(3);
+      expect(product.technicalDocumentation[0].type).toBe('manual');
+      expect(product.technicalDocumentation[1].type).toBe('spec');
+      expect(product.technicalDocumentation[2].type).toBe('installation');
+    });
+
+    it('should accept technicalDocumentation with minimal fields', async () => {
+      const vendor = await createTestVendor(payload, 'tier2');
+
+      const product = await payload.create({
+        collection: 'products',
+        data: {
+          ...basicProductData(vendor.id),
+          technicalDocumentation: [
+            {
+              title: 'Quick Start Guide',
+              type: 'manual',
+            },
+          ],
+        },
+        user: vendor.user,
+      });
+
+      expect(product.technicalDocumentation).toHaveLength(1);
+      expect(product.technicalDocumentation[0].title).toBe('Quick Start Guide');
+    });
+  });
+
+  describe('Data Validation - Warranty & Support', () => {
+    it('should accept warrantySupport group with all fields', async () => {
+      const vendor = await createTestVendor(payload, 'tier2');
+
+      const product = await payload.create({
+        collection: 'products',
+        data: {
+          ...basicProductData(vendor.id),
+          warrantySupport: {
+            warrantyYears: 3,
+            warrantyDetails: 'Comprehensive 3-year warranty covering all parts and labor',
+            extendedWarrantyAvailable: true,
+            supportChannels: [
+              { channel: 'Email' },
+              { channel: 'Phone' },
+              { channel: '24/7 Chat' },
+            ],
+            supportResponseTime: '24 hours',
+          },
+        },
+        user: vendor.user,
+      });
+
+      expect(product.warrantySupport.warrantyYears).toBe(3);
+      expect(product.warrantySupport.extendedWarrantyAvailable).toBe(true);
+      expect(product.warrantySupport.supportChannels).toHaveLength(3);
+      expect(product.warrantySupport.supportResponseTime).toBe('24 hours');
+    });
+
+    it('should accept warrantySupport with minimal fields', async () => {
+      const vendor = await createTestVendor(payload, 'tier2');
+
+      const product = await payload.create({
+        collection: 'products',
+        data: {
+          ...basicProductData(vendor.id),
+          warrantySupport: {
+            warrantyYears: 1,
+          },
+        },
+        user: vendor.user,
+      });
+
+      expect(product.warrantySupport.warrantyYears).toBe(1);
+    });
+  });
+
+  describe('Data Validation - Additional Enhanced Fields', () => {
+    it('should accept services array', async () => {
+      const vendor = await createTestVendor(payload, 'tier2');
+
+      const product = await payload.create({
+        collection: 'products',
+        data: {
+          ...basicProductData(vendor.id),
+          services: [
+            {
+              title: 'Professional Installation',
+              description: 'Expert installation by certified technicians',
+              icon: 'wrench',
+              order: 0,
+            },
+            {
+              title: '24/7 Support',
+              description: 'Round-the-clock technical support',
+              icon: 'headset',
+              order: 1,
+            },
+          ],
+        },
+        user: vendor.user,
+      });
+
+      expect(product.services).toHaveLength(2);
+      expect(product.services[0].title).toBe('Professional Installation');
+    });
+
+    it('should accept actionButtons array', async () => {
+      const vendor = await createTestVendor(payload, 'tier2');
+
+      const product = await payload.create({
+        collection: 'products',
+        data: {
+          ...basicProductData(vendor.id),
+          actionButtons: [
+            {
+              label: 'Contact for Quote',
+              type: 'primary',
+              action: 'quote',
+              icon: 'mail',
+              order: 0,
+            },
+            {
+              label: 'Download Brochure',
+              type: 'secondary',
+              action: 'download',
+              actionData: 'https://example.com/brochure.pdf',
+              icon: 'download',
+              order: 1,
+            },
+          ],
+        },
+        user: vendor.user,
+      });
+
+      expect(product.actionButtons).toHaveLength(2);
+      expect(product.actionButtons[0].action).toBe('quote');
+      expect(product.actionButtons[1].action).toBe('download');
+      expect(product.actionButtons[1].actionData).toBe('https://example.com/brochure.pdf');
+    });
+
+    it('should accept badges array', async () => {
+      const vendor = await createTestVendor(payload, 'tier2');
+
+      const product = await payload.create({
+        collection: 'products',
+        data: {
+          ...basicProductData(vendor.id),
+          badges: [
+            { label: 'ISO 9001', type: 'success', icon: 'award', order: 0 },
+            { label: 'Marine Certified', type: 'info', icon: 'shield', order: 1 },
+          ],
+        },
+        user: vendor.user,
+      });
+
+      expect(product.badges).toHaveLength(2);
+      expect(product.badges[0].label).toBe('ISO 9001');
+      expect(product.badges[1].label).toBe('Marine Certified');
+    });
+
+    it('should accept seo group', async () => {
+      const vendor = await createTestVendor(payload, 'tier2');
+
+      const product = await payload.create({
+        collection: 'products',
+        data: {
+          ...basicProductData(vendor.id),
+          seo: {
+            metaTitle: 'Best Marine Navigation System',
+            metaDescription: 'Advanced navigation system for superyachts',
+            keywords: 'navigation, marine, superyacht, GPS',
+            ogImage: 'https://example.com/og-image.jpg',
+          },
+        },
+        user: vendor.user,
+      });
+
+      expect(product.seo.metaTitle).toBe('Best Marine Navigation System');
+      expect(product.seo.keywords).toBe('navigation, marine, superyacht, GPS');
+    });
+  });
+
+  describe('Access Control - Vendor Restrictions', () => {
+    it('should block vendor from updating other vendors products', async () => {
+      const vendor1 = await createTestVendor(payload, 'tier2');
+      const vendor2 = await createTestVendor(payload, 'tier2');
+
+      const product2 = await payload.create({
+        collection: 'products',
+        data: basicProductData(vendor2.id),
+        user: vendor2.user,
+      });
+
+      await expect(
+        payload.update({
+          collection: 'products',
+          id: product2.id,
+          data: { name: 'Hacked Product' },
+          user: vendor1.user,
+        })
+      ).rejects.toThrow(/access denied/i);
+    });
+
+    it('should block vendor from deleting other vendors products', async () => {
+      const vendor1 = await createTestVendor(payload, 'tier2');
+      const vendor2 = await createTestVendor(payload, 'tier2');
+
+      const product2 = await payload.create({
+        collection: 'products',
+        data: basicProductData(vendor2.id),
+        user: vendor2.user,
+      });
+
+      await expect(
+        payload.delete({
+          collection: 'products',
+          id: product2.id,
+          user: vendor1.user,
+        })
+      ).rejects.toThrow(/access denied/i);
+    });
+
+    it('should block unauthenticated users from creating products', async () => {
+      const vendor = await createTestVendor(payload, 'tier2');
+
+      await expect(
+        payload.create({
+          collection: 'products',
+          data: basicProductData(vendor.id),
+          user: null,
+        })
+      ).rejects.toThrow(/access denied/i);
+    });
+  });
+
+  describe('Data Validation - Multiple Enhanced Fields Together', () => {
+    it('should accept product with all enhanced fields populated', async () => {
+      const vendor = await createTestVendor(payload, 'tier2');
+      const yacht = {
+        id: `yacht_${Date.now()}_${Math.random()}`,
+        name: 'M/Y Complete',
+        slug: `complete-yacht-${Date.now()}`,
+        description: generateMockRichText(),
+      };
+      payload._addTestData('yachts', yacht);
+
+      const product = await payload.create({
+        collection: 'products',
+        data: {
+          ...basicProductData(vendor.id),
+          features: [{ title: 'Feature 1', description: 'Desc 1', order: 0 }],
+          benefits: [{ benefit: 'Benefit 1', order: 0 }],
+          comparisonMetrics: [
+            { metricName: 'Power', value: '200W', numericValue: 200, unit: 'W', category: 'power' },
+          ],
+          integrationCompatibility: {
+            supportedProtocols: [{ protocol: 'NMEA 2000' }],
+            apiAvailable: true,
+            apiDocumentationUrl: 'https://example.com/api',
+          },
+          ownerReviews: [
+            {
+              reviewerName: 'Captain Test',
+              reviewerRole: 'Captain',
+              yacht: yacht.id,
+              overallRating: 5,
+              reviewText: generateMockRichText(),
+              reviewDate: new Date().toISOString(),
+            },
+          ],
+          visualDemoContent: {
+            images360: [{ image: 'media_1', angle: 0 }],
+            model3d: { modelUrl: 'https://example.com/model.glb' },
+          },
+          technicalDocumentation: [{ title: 'Manual', type: 'manual' }],
+          warrantySupport: { warrantyYears: 3 },
+        },
+        user: vendor.user,
+      });
+
+      expect(product.features).toHaveLength(1);
+      expect(product.benefits).toHaveLength(1);
+      expect(product.comparisonMetrics).toHaveLength(1);
+      expect(product.integrationCompatibility.apiAvailable).toBe(true);
+      expect(product.ownerReviews).toHaveLength(1);
+      expect(product.visualDemoContent.images360).toHaveLength(1);
+      expect(product.technicalDocumentation).toHaveLength(1);
+      expect(product.warrantySupport.warrantyYears).toBe(3);
     });
   });
 
