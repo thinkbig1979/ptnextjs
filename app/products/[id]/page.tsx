@@ -20,7 +20,7 @@ import {
   Eye
 } from "lucide-react";
 import Link from "next/link";
-import { tinaCMSDataService } from "@/lib/tinacms-data-service";
+import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { notFound, redirect } from "next/navigation";
 import ProductDetailClient from "./_components/product-detail-client";
@@ -40,7 +40,7 @@ export const revalidate = false;
 export async function generateStaticParams() {
   try {
     console.log('🏗️  Generating static params for product pages...');
-    const products = await tinaCMSDataService.getAllProducts();
+    const products = await payloadCMSDataService.getAllProducts();
     console.log(`📋 Found ${products.length} products for static generation`);
     
     // Generate params for both IDs and slugs for backward compatibility
@@ -80,11 +80,11 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   }
 
   // Try to find product by slug first, then by ID
-  let product = await tinaCMSDataService.getProductBySlug(id);
-  
+  let product = await payloadCMSDataService.getProductBySlug(id);
+
   if (!product) {
     // Try to find by ID if not found by slug
-    product = await tinaCMSDataService.getProductById(id);
+    product = await payloadCMSDataService.getProductById(id);
     
     // If found by ID and has a slug, redirect to slug-based URL for SEO
     if (product && product.slug && product.slug !== id) {
@@ -100,7 +100,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   console.log(`✅ Loading product: ${product.name}`);
 
   // Find the partner information
-  const partner = product.partnerId ? await tinaCMSDataService.getPartnerById(product.partnerId) : null;
+  const partner = product.partnerId ? await payloadCMSDataService.getPartnerById(product.partnerId) : null;
   if (partner) {
     console.log(`🤝 Partner found: ${partner.name}`);
   }

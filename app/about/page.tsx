@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Grid, Compass, Anchor, Settings, Box, Users } from "lucide-react";
-import { tinaCMSDataService } from "@/lib/tinacms-data-service";
+import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { Button } from "@/components/ui/button";
 
@@ -30,7 +30,7 @@ const valuePropositions = [
 
 export default async function AboutPage() {
   // Fetch data at build time
-  const teamMembers = await tinaCMSDataService.getTeamMembers();
+  const teamMembers = await payloadCMSDataService.getTeamMembers();
 
   return (
     <div className="min-h-screen py-12">

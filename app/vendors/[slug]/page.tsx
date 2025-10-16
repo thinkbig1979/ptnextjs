@@ -16,7 +16,7 @@ import {
   Lightbulb
 } from "lucide-react";
 import Link from "next/link";
-import { tinaCMSDataService } from "@/lib/tinacms-data-service";
+import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { notFound } from "next/navigation";
 import VendorDetailClient from "./_components/vendor-detail-client";
@@ -31,7 +31,7 @@ export const revalidate = false;
 export async function generateStaticParams() {
   try {
     console.log('🏗️  Generating static params for vendor pages...');
-    const vendors = await tinaCMSDataService.getAllVendors();
+    const vendors = await payloadCMSDataService.getAllVendors();
     console.log(`📋 Found ${vendors.length} vendors for static generation`);
     
     const params = vendors
@@ -55,7 +55,7 @@ export async function generateStaticParams() {
 // Generate metadata for each vendor page
 export async function generateMetadata({ params }: VendorDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const vendor = await tinaCMSDataService.getVendorBySlug(slug);
+  const vendor = await payloadCMSDataService.getVendorBySlug(slug);
 
   if (!vendor) {
     return {
@@ -109,8 +109,8 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
   }
 
   // Find the vendor by slug using static data service
-  const vendor = await tinaCMSDataService.getVendorBySlug(slug);
-  
+  const vendor = await payloadCMSDataService.getVendorBySlug(slug);
+
   if (!vendor) {
     console.warn(`⚠️  Vendor not found for slug: ${slug}`);
     notFound();
@@ -120,8 +120,8 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
 
   // Find products from this vendor and get company info for mission
   const [vendorProducts, companyInfo] = await Promise.all([
-    tinaCMSDataService.getProductsByVendor(vendor.id),
-    tinaCMSDataService.getCompanyInfo()
+    payloadCMSDataService.getProductsByVendor(vendor.id),
+    payloadCMSDataService.getCompanyInfo()
   ]);
   console.log(`📦 Found ${vendorProducts.length} products for vendor: ${vendor.name}`);
 

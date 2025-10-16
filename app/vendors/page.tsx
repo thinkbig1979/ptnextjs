@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Suspense } from "react";
 import { VendorsClient } from "@/app/components/vendors-client";
-import { tinaCMSDataService } from "@/lib/tinacms-data-service";
+import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
 import { Metadata } from "next";
 
 // Force static generation for optimal SEO and performance
@@ -49,9 +49,9 @@ export default async function VendorsPage({ searchParams }: VendorsPageProps) {
   
   // Fetch all data at build time for static generation
   const [vendors, products, categories] = await Promise.all([
-    tinaCMSDataService.getAllVendors(),
-    tinaCMSDataService.getAllProducts(),
-    tinaCMSDataService.getCategories()
+    payloadCMSDataService.getAllVendors(),
+    payloadCMSDataService.getAllProducts(),
+    payloadCMSDataService.getCategories()
   ]);
   
   const categoryNames = categories.map(cat => cat.name);

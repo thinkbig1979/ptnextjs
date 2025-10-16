@@ -4,13 +4,13 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { OptimizedImage } from '@/components/ui/optimized-image';
-import tinaCMSDataService from '@/lib/tinacms-data-service';
+import { payloadCMSDataService } from '@/lib/payload-cms-data-service';
 import { YachtTimelineEvent, YachtCustomization } from '@/lib/types';
 
 // Required for static export
 export async function generateStaticParams() {
   try {
-    const yachts = await tinaCMSDataService.getAllYachts();
+    const yachts = await payloadCMSDataService.getYachts();
     return yachts.map((yacht) => ({
       slug: yacht.slug,
     }));
@@ -23,14 +23,14 @@ export async function generateStaticParams() {
 export default async function YachtDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   try {
     const resolvedParams = await params;
-    const yacht = await tinaCMSDataService.getYachtBySlug(resolvedParams.slug);
+    const yacht = await payloadCMSDataService.getYachtBySlug(resolvedParams.slug);
 
     if (!yacht) {
       notFound();
     }
 
-    const allVendors = await tinaCMSDataService.getVendors();
-    const allProducts = await tinaCMSDataService.getProducts();
+    const allVendors = await payloadCMSDataService.getAllVendors();
+    const allProducts = await payloadCMSDataService.getAllProducts();
 
     return (
       <div className="container mx-auto px-4 py-8">

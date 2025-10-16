@@ -4,7 +4,7 @@ import * as React from "react";
 import { Suspense } from "react";
 import { ProductsClient } from "@/app/components/products-client";
 import { ComparisonProvider } from "@/components/ui/product-comparison";
-import { tinaCMSDataService } from "@/lib/tinacms-data-service";
+import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
 
 // Force static generation for optimal SEO and performance
 export const dynamic = 'force-static';
@@ -25,9 +25,9 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   
   // Fetch all data at build time for static generation
   const [products, categories, vendors] = await Promise.all([
-    tinaCMSDataService.getAllProducts(),
-    tinaCMSDataService.getCategories(),
-    tinaCMSDataService.getAllVendors()
+    payloadCMSDataService.getAllProducts(),
+    payloadCMSDataService.getCategories(),
+    payloadCMSDataService.getAllVendors()
   ]);
   
   const categoryNames = categories.map(cat => cat.name);

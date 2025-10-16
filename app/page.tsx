@@ -5,13 +5,13 @@ import { FeaturedPartnersSection } from "@/components/featured-partners-section"
 import { ServicesOverviewSection } from "@/components/services-overview-section";
 import { FeaturedBlogSection } from "@/components/featured-blog-section";
 import { CTASection } from "@/components/cta-section";
-import { tinaCMSDataService } from "@/lib/tinacms-data-service";
+import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
 
 export default async function HomePage() {
   const [companyInfo, featuredPartners, featuredPosts] = await Promise.all([
-    tinaCMSDataService.getCompanyInfo(),
-    tinaCMSDataService.getFeaturedPartners(), // Optimized method for compound filtering
-    tinaCMSDataService.getBlogPosts({ featured: true })
+    payloadCMSDataService.getCompanyInfo(),
+    payloadCMSDataService.getFeaturedPartners(), // Optimized method for compound filtering
+    payloadCMSDataService.getBlogPosts({ featured: true })
   ]);
 
   // Define the two-pillar data structure with exact pt2 content

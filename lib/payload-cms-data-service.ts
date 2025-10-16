@@ -5,28 +5,20 @@
 
 import { getPayload } from 'payload';
 import config from '@/payload.config';
-import type { Vendor, Partner, Product, BlogPost, TeamMember } from './types';
-
-interface Category {
-  id: string;
-  name: string;
-  slug: string;
-  description: string;
-  icon: string;
-  color: string;
-}
-
-interface CompanyInfo {
-  name: string;
-  tagline: string;
-  description: string;
-  founded: number;
-  location: string;
-  address: string;
-  phone: string;
-  email: string;
-  story: string;
-}
+import type {
+  Vendor,
+  Partner,
+  Product,
+  BlogPost,
+  TeamMember,
+  Yacht,
+  Category,
+  Tag,
+  CompanyInfo,
+  VendorSocialProof,
+  OwnerReview,
+  VisualDemoContent,
+} from './types';
 
 interface CacheEntry<T> {
   data: T;
@@ -76,7 +68,188 @@ class PayloadCMSDataService {
     return `/media/${mediaPath.replace(/^\/+/, '')}`;
   }
 
+  /**
+   * Transforms Lexical rich text format to HTML string
+   * Handles the conversion of Payload's Lexical editor format to displayable HTML
+   */
+  private transformLexicalToHtml(lexicalData: any): string {
+    if (!lexicalData) return '';
+
+    // If it's already a string, return it
+    if (typeof lexicalData === 'string') return lexicalData;
+
+    // If it has a root node (Lexical document structure)
+    if (lexicalData.root && lexicalData.root.children) {
+      return this.lexicalNodeToHtml(lexicalData.root.children);
+    }
+
+    // Fallback to string conversion
+    return String(lexicalData);
+  }
+
+  /**
+   * Recursively converts Lexical nodes to HTML
+   */
+  private lexicalNodeToHtml(nodes: any[]): string {
+    if (!Array.isArray(nodes)) return '';
+
+    return nodes.map(node => {
+      if (!node || !node.type) return '';
+
+      switch (node.type) {
+        case 'paragraph':
+          const pChildren = node.children ? this.lexicalNodeToHtml(node.children) : '';
+          return `<p>${pChildren}</p>`;
+
+        case 'heading':
+          const hChildren = node.children ? this.lexicalNodeToHtml(node.children) : '';
+          const tag = node.tag || 'h2';
+          return `<${tag}>${hChildren}</${tag}>`;
+
+        case 'text':
+          let text = node.text || '';
+          // Apply formatting
+          if (node.format) {
+            if (node.format & 1) text = `<strong>${text}</strong>`; // Bold
+            if (node.format & 2) text = `<em>${text}</em>`; // Italic
+            if (node.format & 8) text = `<s>${text}</s>`; // Strikethrough
+            if (node.format & 16) text = `<code>${text}</code>`; // Code
+          }
+          return text;
+
+        case 'link':
+          const linkChildren = node.children ? this.lexicalNodeToHtml(node.children) : '';
+          return `<a href="${node.url || ''}"${node.target ? ` target="${node.target}"` : ''}>${linkChildren}</a>`;
+
+        case 'list':
+          const listTag = node.listType === 'number' || node.tag === 'ol' ? 'ol' : 'ul';
+          const listChildren = node.children ? this.lexicalNodeToHtml(node.children) : '';
+          return `<${listTag}>${listChildren}</${listTag}>`;
+
+        case 'listitem':
+          const itemChildren = node.children ? this.lexicalNodeToHtml(node.children) : '';
+          return `<li>${itemChildren}</li>`;
+
+        case 'quote':
+          const quoteChildren = node.children ? this.lexicalNodeToHtml(node.children) : '';
+          return `<blockquote>${quoteChildren}</blockquote>`;
+
+        case 'code':
+          const codeText = node.children ? node.children.map((c: any) => c.text || '').join('') : '';
+          return `<pre><code${node.language ? ` class="language-${node.language}"` : ''}>${codeText}</code></pre>`;
+
+        case 'horizontalrule':
+          return '<hr />';
+
+        default:
+          // For unknown node types, try to render children
+          if (node.children) {
+            return this.lexicalNodeToHtml(node.children);
+          }
+          return '';
+      }
+    }).join('');
+  }
+
   private transformPayloadVendor(doc: any): Vendor {
+    // ============================================================================
+    // SECTION 1: CERTIFICATIONS ARRAY - Transform logo media paths
+    // ============================================================================
+    const certifications = doc.certifications?.map((cert: any) => ({
+      name: cert.name || '',
+      issuer: cert.issuer || '',
+      issuedDate: cert.year ? `${cert.year}` : undefined,
+      expiryDate: cert.expiryDate || undefined,
+      credentialId: cert.certificateNumber || undefined,
+      credentialUrl: cert.verificationUrl || undefined,
+      logo: cert.logo?.url ? this.transformMediaPath(cert.logo.url) : undefined,
+    })) || [];
+
+    // ============================================================================
+    // SECTION 2: AWARDS ARRAY - Transform image media paths
+    // ============================================================================
+    const awards = doc.awards?.map((award: any) => ({
+      awardName: award.title || '',
+      issuingOrganization: award.organization || '',
+      year: award.year || 0,
+      category: award.category || undefined,
+      description: award.description || undefined,
+      image: award.image?.url ? this.transformMediaPath(award.image.url) : undefined,
+    })) || [];
+
+    // ============================================================================
+    // SECTION 3: SOCIAL PROOF GROUP - Preserve all numeric fields
+    // ============================================================================
+    const socialProof: VendorSocialProof | undefined = doc.totalProjects || doc.clientSatisfactionScore || doc.repeatClientPercentage ? {
+      projectsCompleted: doc.totalProjects || undefined,
+      yearsInBusiness: doc.yearsInBusiness || undefined,
+      followers: doc.linkedinFollowers || doc.instagramFollowers || undefined,
+      customerList: undefined, // Not in Payload schema
+    } : undefined;
+
+    // ============================================================================
+    // SECTION 4: VIDEO INTRO GROUP - Transform thumbnail media path
+    // ============================================================================
+    const videoIntroduction = doc.videoUrl ? {
+      videoUrl: doc.videoUrl || '',
+      duration: doc.videoDuration || undefined,
+      thumbnail: doc.videoThumbnail?.url ? this.transformMediaPath(doc.videoThumbnail.url) : undefined,
+      transcript: undefined, // Not in Payload schema
+    } : undefined;
+
+    // ============================================================================
+    // SECTION 5: CASE STUDIES ARRAY - Transform Lexical content, resolve yacht relationships, transform thumbnails
+    // ============================================================================
+    const caseStudies = doc.caseStudies?.map((cs: any) => ({
+      title: cs.title || '',
+      client: cs.yachtName || undefined,
+      yacht: cs.yacht?.id?.toString() || undefined,
+      industry: undefined, // Not in Payload schema
+      challenge: this.transformLexicalToHtml(cs.challenge),
+      solution: this.transformLexicalToHtml(cs.solution),
+      results: this.transformLexicalToHtml(cs.results),
+      metrics: undefined, // Not in Payload schema
+      thumbnail: cs.images?.[0]?.image?.url ? this.transformMediaPath(cs.images[0].image.url) : undefined,
+      pdfUrl: undefined, // Not in Payload schema
+      publishedDate: cs.projectDate || undefined,
+    })) || [];
+
+    // ============================================================================
+    // SECTION 6: INNOVATIONS ARRAY - Transform Lexical description, transform image
+    // ============================================================================
+    const innovationHighlights = doc.innovationHighlights?.map((innovation: any) => ({
+      title: innovation.title || '',
+      category: undefined, // Not in Payload schema
+      description: this.transformLexicalToHtml(innovation.description),
+      launchDate: innovation.year ? `${innovation.year}` : undefined,
+      patentInfo: innovation.patentNumber || undefined,
+      image: innovation.image?.url ? this.transformMediaPath(innovation.image.url) : undefined,
+      productLinks: innovation.benefits?.map((b: any) => b.benefit) || [],
+    })) || [];
+
+    // ============================================================================
+    // SECTION 7: TEAM MEMBERS ARRAY - Transform photo media path
+    // ============================================================================
+    const teamMembers = doc.teamMembers?.map((member: any) => ({
+      name: member.name || '',
+      role: member.role || '',
+      bio: member.bio || undefined,
+      expertise: undefined, // Not in Payload schema
+      photo: member.photo?.url ? this.transformMediaPath(member.photo.url) : undefined,
+      linkedinUrl: member.linkedinUrl || undefined,
+    })) || [];
+
+    // ============================================================================
+    // SECTION 8: YACHT PROJECTS ARRAY - Resolve yacht relationships, transform image
+    // ============================================================================
+    const yachtProjects = doc.yachtProjects?.map((project: any) => ({
+      yacht: project.yacht?.id?.toString() || undefined,
+      roleDescription: project.role || '',
+      yearCompleted: project.completionDate ? new Date(project.completionDate).getFullYear() : undefined,
+      image: project.image?.url ? this.transformMediaPath(project.image.url) : undefined,
+      projectHighlights: project.systemsInstalled?.map((s: any) => s.system) || [],
+    })) || [];
+
     return {
       id: doc.id ? doc.id.toString() : '',
       slug: doc.slug || '',
@@ -92,20 +265,100 @@ class PayloadCMSDataService {
       featured: doc.featured || false,
       partner: doc.partner !== undefined ? doc.partner : true,
       services: doc.services || [],
-      certifications: doc.certifications || [],
-      awards: doc.awards || [],
-      socialProof: doc.socialProof,
-      videoIntroduction: doc.videoIntroduction,
-      caseStudies: doc.caseStudies || [],
-      innovationHighlights: doc.innovationHighlights || [],
-      teamMembers: doc.teamMembers || [],
-      yachtProjects: doc.yachtProjects || [],
+      certifications,
+      awards,
+      socialProof,
+      videoIntroduction,
+      caseStudies,
+      innovationHighlights,
+      teamMembers,
+      yachtProjects,
     };
   }
 
   private transformPayloadProduct(doc: any): Product {
     const vendor = doc.vendor;
     const mainImage = doc.images?.find((img: any) => img.isMain) || doc.images?.[0];
+
+    // ============================================================================
+    // SECTION 1: COMPARISON METRICS - Convert array to nested object structure
+    // ============================================================================
+    const comparisonMetrics: { [category: string]: { [key: string]: string | number | boolean } } = {};
+    doc.comparisonMetrics?.forEach((metric: any) => {
+      const category = metric.category || 'general';
+      if (!comparisonMetrics[category]) {
+        comparisonMetrics[category] = {};
+      }
+      comparisonMetrics[category][metric.metricName || 'unknown'] = metric.numericValue || metric.value || '';
+    });
+
+    // ============================================================================
+    // SECTION 2: INTEGRATION COMPATIBILITY - Extract supported protocols as string array
+    // ============================================================================
+    const integrationCompatibility = doc.integrationCompatibility?.supportedProtocols?.map((proto: any) => proto.protocol) || [];
+
+    // ============================================================================
+    // SECTION 3: OWNER REVIEWS ARRAY - Transform Lexical reviewText, resolve yacht relationships
+    // ============================================================================
+    const ownerReviews: OwnerReview[] = doc.ownerReviews?.map((review: any) => ({
+      id: review.id?.toString() || `review-${Date.now()}`,
+      productId: doc.id?.toString() || '',
+      ownerName: review.reviewerName || '',
+      yachtName: review.yachtName || undefined,
+      yachtLength: undefined, // Not in Payload schema
+      rating: review.overallRating || 0,
+      title: review.reviewText ? this.transformLexicalToHtml(review.reviewText).substring(0, 100) : '',
+      review: this.transformLexicalToHtml(review.reviewText),
+      pros: review.pros?.map((p: any) => p.pro) || undefined,
+      cons: review.cons?.map((c: any) => c.con) || undefined,
+      installationDate: undefined, // Not in Payload schema
+      verified: review.verified || false,
+      helpful: undefined, // Not in Payload schema
+      images: undefined, // Not in Payload schema
+      useCase: undefined, // Not in Payload schema
+      flagged: false,
+      vendorResponse: undefined, // Not in Payload schema
+    })) || [];
+
+    // ============================================================================
+    // SECTION 4: VISUAL DEMO CONTENT - Transform to VisualDemoContent type
+    // ============================================================================
+    const visualDemo: VisualDemoContent | undefined = doc.visualDemoContent?.model3d?.modelUrl ? {
+      type: '3d-model' as const,
+      title: doc.name || '',
+      description: doc.shortDescription || undefined,
+      imageUrl: doc.visualDemoContent.model3d.thumbnailImage?.url
+        ? this.transformMediaPath(doc.visualDemoContent.model3d.thumbnailImage.url)
+        : undefined,
+      modelUrl: doc.visualDemoContent.model3d.modelUrl || undefined,
+      videoUrl: doc.visualDemoContent.videoWalkthrough?.videoUrl || undefined,
+      hotspots: doc.visualDemoContent.interactiveHotspots?.flatMap((hotspotGroup: any) =>
+        hotspotGroup.hotspots?.map((hotspot: any) => ({
+          position: { x: hotspot.x || 0, y: hotspot.y || 0 },
+          title: hotspot.title || '',
+          description: hotspot.description || undefined,
+          action: 'info' as const,
+        })) || []
+      ) || undefined,
+      animations: undefined, // Not in Payload schema
+      cameraPositions: undefined, // Not in Payload schema
+      materials: undefined, // Not in Payload schema
+    } : doc.visualDemoContent?.videoWalkthrough?.videoUrl ? {
+      type: 'video' as const,
+      title: doc.name || '',
+      description: doc.shortDescription || undefined,
+      videoUrl: doc.visualDemoContent.videoWalkthrough.videoUrl || undefined,
+      imageUrl: doc.visualDemoContent.videoWalkthrough.thumbnail?.url
+        ? this.transformMediaPath(doc.visualDemoContent.videoWalkthrough.thumbnail.url)
+        : undefined,
+    } : doc.visualDemoContent?.images360?.length > 0 ? {
+      type: '360-image' as const,
+      title: doc.name || '',
+      description: doc.shortDescription || undefined,
+      imageUrl: doc.visualDemoContent.images360[0]?.image?.url
+        ? this.transformMediaPath(doc.visualDemoContent.images360[0].image.url)
+        : undefined,
+    } : undefined;
 
     return {
       id: doc.id ? doc.id.toString() : '',
@@ -124,15 +377,23 @@ class PayloadCMSDataService {
         altText: img.altText || '',
         isMain: img.isMain || false,
       })) || [],
-      features: [],
+      features: doc.features?.map((feature: any) => ({
+        id: feature.id || `feature-${Date.now()}`,
+        title: feature.title || '',
+        description: feature.description || undefined,
+        icon: feature.icon || undefined,
+        order: feature.order || undefined,
+      })) || [],
       price: doc.price,
       tags: [],
-      comparisonMetrics: {},
+      comparisonMetrics,
       specifications: doc.specifications?.map((spec: any) => ({
         label: spec.label,
         value: spec.value,
       })) || [],
-      integrationCompatibility: [],
+      integrationCompatibility,
+      ownerReviews,
+      visualDemo,
       vendor: vendor ? this.transformPayloadVendor(vendor) : undefined,
       partner: vendor ? this.transformPayloadVendor(vendor) : undefined,
     };
@@ -165,6 +426,222 @@ class PayloadCMSDataService {
       email: doc.email || '',
       linkedin: doc.linkedin || '',
       order: doc.order || 999,
+    };
+  }
+
+  private transformCategory(doc: any): Category {
+    return {
+      id: doc.id.toString(),
+      name: doc.name,
+      slug: doc.slug,
+      description: doc.description || '',
+      icon: doc.icon || '',
+      color: doc.color || '#0066cc',
+      order: doc.order,
+      createdAt: doc.createdAt,
+      updatedAt: doc.updatedAt,
+      publishedAt: doc.publishedAt || doc.createdAt,
+    };
+  }
+
+  private transformTag(doc: any): Tag {
+    return {
+      id: doc.id.toString(),
+      name: doc.name,
+      slug: doc.slug,
+      description: doc.description || '',
+      color: doc.color || '#0066cc',
+      usage_count: doc.usageCount || 0,
+      createdAt: doc.createdAt,
+      updatedAt: doc.updatedAt,
+      publishedAt: doc.publishedAt || doc.createdAt,
+    };
+  }
+
+  private transformYacht(doc: any): Yacht {
+    // Transform Lexical description to HTML
+    const description = this.transformLexicalToHtml(doc.description);
+
+    // Transform heroImage (media relationship)
+    const heroImage = doc.heroImage?.url ? this.transformMediaPath(doc.heroImage.url) : undefined;
+
+    // Transform gallery images
+    const gallery = doc.gallery?.map((item: any) => {
+      if (item.image?.url) {
+        return this.transformMediaPath(item.image.url);
+      }
+      return null;
+    }).filter(Boolean) || [];
+
+    // Transform timeline events
+    const timeline = doc.timeline?.map((event: any) => ({
+      date: event.date,
+      event: event.title || event.event || '',
+      description: event.description || '',
+      category: event.category || 'milestone',
+      location: undefined, // Not in Payload schema
+      images: event.image?.url ? [this.transformMediaPath(event.image.url)] : [],
+    })) || [];
+
+    // Transform supplier map with vendor and product relationships
+    const supplierMap = doc.supplierMap?.map((supplier: any) => {
+      const vendor = supplier.vendor;
+      const vendorData = vendor ? {
+        id: vendor.id?.toString() || '',
+        name: vendor.companyName || vendor.name || '',
+        slug: vendor.slug || '',
+        logo: vendor.logo?.url ? this.transformMediaPath(vendor.logo.url) : undefined,
+      } : null;
+
+      const products = supplier.products?.map((product: any) => ({
+        id: product.id?.toString() || '',
+        name: product.name || '',
+        slug: product.slug || '',
+        image: product.images?.[0]?.url ? this.transformMediaPath(product.images[0].url) : undefined,
+      })) || [];
+
+      return {
+        vendorId: vendor?.id?.toString() || '',
+        vendorName: vendor?.companyName || vendor?.name || '',
+        discipline: supplier.systemCategory || '',
+        systems: products.map((p: any) => p.name),
+        role: 'primary' as const,
+        projectPhase: undefined,
+      };
+    }) || [];
+
+    // Transform sustainability metrics (flat fields in Payload -> grouped in frontend)
+    const sustainabilityScore = (doc.co2EmissionsTonsPerYear || doc.energyEfficiencyRating || doc.hybridPropulsion ||
+      doc.solarPanelCapacityKw || doc.batteryStorageKwh || doc.sustainabilityFeatures || doc.greenCertifications) ? {
+      co2Emissions: doc.co2EmissionsTonsPerYear,
+      energyEfficiency: undefined, // Would need to calculate from rating
+      wasteManagement: undefined,
+      waterConservation: undefined,
+      materialSustainability: undefined,
+      overallScore: undefined,
+      certifications: doc.greenCertifications?.map((c: any) => c.certification) || [],
+    } : undefined;
+
+    // Transform maintenance history with vendor resolution
+    const maintenanceHistory = doc.maintenanceHistory?.map((record: any) => {
+      const vendor = record.vendor;
+      return {
+        date: record.date,
+        type: record.type || 'routine',
+        system: '', // Not in Payload schema
+        description: record.description || '',
+        vendor: vendor ? vendor.companyName || vendor.name : undefined,
+        cost: record.cost,
+        nextService: undefined, // Not in Payload schema
+        status: 'completed' as const,
+      };
+    }) || [];
+
+    return {
+      id: doc.id.toString(),
+      name: doc.name,
+      slug: doc.slug,
+      description,
+
+      // Images
+      image: heroImage,
+      images: gallery,
+
+      // Specifications (Payload uses different field names)
+      length: doc.lengthMeters,
+      beam: doc.beamMeters,
+      draft: doc.draftMeters,
+      displacement: doc.tonnage,
+      builder: doc.builder,
+      designer: undefined, // Not in Payload schema
+      launchYear: doc.launchYear,
+      deliveryYear: doc.deliveryDate ? new Date(doc.deliveryDate).getFullYear() : undefined,
+      homePort: undefined, // Not in Payload schema
+      flag: doc.flagState,
+      classification: doc.classification,
+
+      // Performance (not in Payload schema)
+      cruisingSpeed: undefined,
+      maxSpeed: undefined,
+      range: undefined,
+
+      // Capacity (not in Payload schema)
+      guests: undefined,
+      crew: undefined,
+
+      // Metadata
+      featured: doc.featured || false,
+      createdAt: doc.createdAt,
+      updatedAt: doc.updatedAt,
+
+      // Yacht-specific content
+      timeline,
+      supplierMap,
+      sustainabilityScore,
+      customizations: undefined, // Not in Payload schema
+      maintenanceHistory,
+
+      // Relations
+      category: doc.categories?.[0]?.name || undefined,
+      tags: doc.tags?.map((tag: any) => tag.name) || [],
+
+      // Computed fields
+      imageUrl: heroImage,
+      mainImage: heroImage,
+    };
+  }
+
+  private transformCompany(doc: any): CompanyInfo {
+    // Transform Lexical story to HTML
+    const story = this.transformLexicalToHtml(doc.story);
+
+    // Transform logo media path
+    const logo = this.transformMediaPath(doc.logo || '');
+
+    // Transform social media (group field in Payload)
+    const social_media = doc.socialMedia ? {
+      id: 'social-media',
+      facebook: doc.socialMedia.facebook || undefined,
+      twitter: doc.socialMedia.twitter || undefined,
+      linkedin: doc.socialMedia.linkedin || undefined,
+      instagram: doc.socialMedia.instagram || undefined,
+      youtube: doc.socialMedia.youtube || undefined,
+    } : undefined;
+
+    // Transform SEO (group field in Payload)
+    const seo = doc.seo ? {
+      id: 'seo',
+      meta_title: doc.seo.metaTitle || undefined,
+      meta_description: doc.seo.metaDescription || undefined,
+      keywords: doc.seo.keywords || undefined,
+      og_image: doc.seo.ogImage ? {
+        id: doc.seo.ogImage,
+        name: '',
+        url: this.transformMediaPath(doc.seo.ogImage),
+      } : undefined,
+      canonical_url: undefined,
+      no_index: undefined,
+    } : undefined;
+
+    return {
+      id: doc.id?.toString(),
+      name: doc.name,
+      tagline: doc.tagline || '',
+      description: doc.description || '',
+      founded: doc.founded || 0,
+      location: doc.location || '',
+      address: doc.address || '',
+      phone: doc.phone || '',
+      email: doc.email || '',
+      story,
+      mission: doc.mission || undefined,
+      logo,
+      createdAt: doc.createdAt,
+      updatedAt: doc.updatedAt,
+      publishedAt: doc.publishedAt || doc.createdAt,
+      social_media,
+      seo,
+      logoUrl: logo, // Computed field
     };
   }
 
@@ -325,26 +802,96 @@ class PayloadCMSDataService {
 
   // Categories
   async getCategories(): Promise<Category[]> {
-    return this.getCached('categories', async () => {
+    return this.getCached('categories:all', async () => {
       const payload = await getPayload({ config });
       const result = await payload.find({
         collection: 'categories',
         limit: 1000,
+        depth: 1,
       });
 
-      return result.docs.map(doc => ({
-        id: doc.id.toString(),
-        name: doc.name,
-        slug: doc.slug,
-        description: doc.description || '',
-        icon: doc.icon || '',
-        color: doc.color || '#0066cc',
-      }));
+      return result.docs.map(doc => this.transformCategory(doc));
+    });
+  }
+
+  async getCategoryBySlug(slug: string): Promise<Category | null> {
+    return this.getCached(`category:${slug}`, async () => {
+      try {
+        const payload = await getPayload({ config });
+        const result = await payload.find({
+          collection: 'categories',
+          where: { slug: { equals: slug } },
+          limit: 1,
+          depth: 1,
+        });
+
+        return result.docs[0] ? this.transformCategory(result.docs[0]) : null;
+      } catch (error) {
+        console.error(`Error fetching category by slug ${slug}:`, error);
+        return null;
+      }
     });
   }
 
   async getBlogCategories(): Promise<Category[]> {
     return this.getCategories();
+  }
+
+  // Tags
+  async getTags(): Promise<Tag[]> {
+    return this.getCached('tags:all', async () => {
+      try {
+        const payload = await getPayload({ config });
+        const result = await payload.find({
+          collection: 'tags',
+          limit: 1000,
+          depth: 1,
+        });
+
+        return result.docs.map(doc => this.transformTag(doc));
+      } catch (error) {
+        console.error('Error fetching tags:', error);
+        return [];
+      }
+    });
+  }
+
+  async getTagBySlug(slug: string): Promise<Tag | null> {
+    return this.getCached(`tag:${slug}`, async () => {
+      try {
+        const payload = await getPayload({ config });
+        const result = await payload.find({
+          collection: 'tags',
+          where: { slug: { equals: slug } },
+          limit: 1,
+          depth: 1,
+        });
+
+        return result.docs[0] ? this.transformTag(result.docs[0]) : null;
+      } catch (error) {
+        console.error(`Error fetching tag by slug ${slug}:`, error);
+        return null;
+      }
+    });
+  }
+
+  async getPopularTags(limit: number = 10): Promise<Tag[]> {
+    return this.getCached(`tags:popular:${limit}`, async () => {
+      try {
+        const payload = await getPayload({ config });
+        const result = await payload.find({
+          collection: 'tags',
+          limit: limit,
+          depth: 1,
+          sort: '-usageCount', // Sort by usageCount descending
+        });
+
+        return result.docs.map(doc => this.transformTag(doc));
+      } catch (error) {
+        console.error('Error fetching popular tags:', error);
+        return [];
+      }
+    });
   }
 
   // Blog Posts
@@ -407,30 +954,27 @@ class PayloadCMSDataService {
   }
 
   // Company Info
-  async getCompanyInfo(): Promise<CompanyInfo> {
-    return this.getCached('company-info', async () => {
-      const payload = await getPayload({ config });
-      const result = await payload.find({
-        collection: 'company-info',
-        limit: 1,
-      });
+  async getCompanyInfo(): Promise<CompanyInfo | null> {
+    return this.getCached('company:info', async () => {
+      try {
+        const payload = await getPayload({ config });
+        const result = await payload.find({
+          collection: 'company-info',
+          limit: 1,
+          depth: 1,
+        });
 
-      const doc = result.docs[0];
-      if (!doc) {
-        throw new Error('Company info not found');
+        const doc = result.docs[0];
+        if (!doc) {
+          console.warn('Company info not found in Payload CMS');
+          return null;
+        }
+
+        return this.transformCompany(doc);
+      } catch (error) {
+        console.error('Error fetching company info:', error);
+        return null;
       }
-
-      return {
-        name: doc.name,
-        tagline: doc.tagline || '',
-        description: doc.description || '',
-        founded: doc.founded,
-        location: doc.location || '',
-        address: doc.address || '',
-        phone: doc.phone || '',
-        email: doc.email,
-        story: doc.story || '',
-      };
     });
   }
 
@@ -477,6 +1021,71 @@ class PayloadCMSDataService {
         post.title.toLowerCase().includes(searchLower) ||
         post.excerpt.toLowerCase().includes(searchLower)
     );
+  }
+
+  // Yachts
+  async getYachts(): Promise<Yacht[]> {
+    return this.getCached('yachts:all', async () => {
+      const payload = await getPayload({ config });
+      const result = await payload.find({
+        collection: 'yachts',
+        depth: 2, // Resolve vendor and product relationships in supplierMap
+        limit: 1000,
+        sort: '-launchYear', // Newest first
+      });
+
+      return result.docs.map(doc => this.transformYacht(doc));
+    });
+  }
+
+  async getYachtBySlug(slug: string): Promise<Yacht | null> {
+    return this.getCached(`yacht:${slug}`, async () => {
+      const payload = await getPayload({ config });
+      const result = await payload.find({
+        collection: 'yachts',
+        where: { slug: { equals: slug } },
+        depth: 2,
+        limit: 1,
+      });
+
+      return result.docs[0] ? this.transformYacht(result.docs[0]) : null;
+    });
+  }
+
+  async getFeaturedYachts(): Promise<Yacht[]> {
+    return this.getCached('yachts:featured', async () => {
+      const payload = await getPayload({ config });
+      const result = await payload.find({
+        collection: 'yachts',
+        where: { featured: { equals: true } },
+        depth: 2,
+        limit: 100,
+        sort: '-launchYear',
+      });
+
+      return result.docs.map(doc => this.transformYacht(doc));
+    });
+  }
+
+  async getYachtsByVendor(vendorSlug: string): Promise<Yacht[]> {
+    return this.getCached(`yachts:vendor:${vendorSlug}`, async () => {
+      // First get vendor ID from slug
+      const vendor = await this.getVendorBySlug(vendorSlug);
+      if (!vendor) return [];
+
+      const payload = await getPayload({ config });
+      const result = await payload.find({
+        collection: 'yachts',
+        where: {
+          'supplierMap.vendor': { equals: vendor.id }
+        },
+        depth: 2,
+        limit: 1000,
+        sort: '-launchYear',
+      });
+
+      return result.docs.map(doc => this.transformYacht(doc));
+    });
   }
 
   // Utility methods for static generation
