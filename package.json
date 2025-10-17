@@ -24,7 +24,11 @@
     "hooks:performance": "node .agent-os/hooks/performance-monitor.js",
     "migrate": "tsx scripts/migrate-to-payload.ts",
     "migrate:dry-run": "tsx scripts/migrate-to-payload.ts --dry-run",
-    "migrate:verbose": "tsx scripts/migrate-to-payload.ts --verbose"
+    "migrate:verbose": "tsx scripts/migrate-to-payload.ts --verbose",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:migration": "playwright test tests/e2e/migration.spec.ts"
   },
   "keywords": [
     "nextjs",

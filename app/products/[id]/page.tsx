@@ -176,22 +176,23 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                 {product.name}
               </h1>
               
-              <p className="text-xl text-muted-foreground mb-6 font-poppins-light leading-relaxed">
+              <p className="text-xl text-muted-foreground mb-6 font-poppins-light leading-relaxed" data-testid="product-description">
                 {product.description}
               </p>
 
               {/* Partner Info */}
               {partner && (
-                <div className="flex items-center space-x-3 p-4 bg-muted/50 rounded-lg">
+                <div className="flex items-center space-x-3 p-4 bg-muted/50 rounded-lg" data-testid="product-vendor">
                   <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center">
                     <Building2 className="w-6 h-6 text-accent" />
                   </div>
                   <div>
                     <div className="font-medium">
                       Manufactured by{" "}
-                      <Link 
+                      <Link
                         href={`/partners/${partner.slug}`}
                         className="text-accent hover:text-accent/80 transition-colors underline underline-offset-4 decoration-2"
+                        data-testid="product-vendor-link"
                       >
                         {partner.name}
                       </Link>
@@ -367,7 +368,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                 </TabsContent>
 
                 <TabsContent value="performance" className="space-y-6 mt-6">
-                  <div>
+                  <div data-testid="comparison-metrics">
                     <h3 className="text-xl font-cormorant font-bold mb-4">Performance Metrics</h3>
                     {product.performanceMetrics && product.performanceMetrics.length > 0 ? (
                       <PerformanceMetrics
@@ -408,7 +409,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                 </TabsContent>
 
                 <TabsContent value="reviews" className="space-y-6 mt-6">
-                  <div>
+                  <div data-testid="owner-reviews">
                     <h3 className="text-xl font-cormorant font-bold mb-4">Owner Reviews</h3>
                     {product.ownerReviews && product.ownerReviews.length > 0 ? (
                       <OwnerReviews

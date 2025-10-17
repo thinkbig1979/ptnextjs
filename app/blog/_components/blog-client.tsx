@@ -79,14 +79,16 @@ export function BlogClient({ blogPosts, categories }: BlogClientProps) {
         animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
         transition={{ duration: 0.6, delay: 0.3 }}
       >
-        <SearchFilter
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          categories={categories}
-          selectedCategory={selectedCategory}
-          onCategoryChange={setSelectedCategory}
-          placeholder="Search articles by title, content, or tags..."
-        />
+        <div data-testid="blog-category-filter">
+          <SearchFilter
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            categories={categories}
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
+            placeholder="Search articles by title, content, or tags..."
+          />
+        </div>
       </motion.div>
 
       {/* Results Summary */}
@@ -111,7 +113,7 @@ export function BlogClient({ blogPosts, categories }: BlogClientProps) {
             animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
             transition={{ duration: 0.6, delay: 0.1 * index }}
           >
-            <Card className="h-full hover-lift cursor-pointer group overflow-hidden">
+            <Card className="h-full hover-lift cursor-pointer group overflow-hidden" data-testid="blog-post-card">
               <Link href={`/blog/${post?.slug}`} className="block h-full">
                 {/* Blog Post Image */}
                 <div className="relative h-48 overflow-hidden">

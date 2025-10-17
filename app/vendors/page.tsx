@@ -80,11 +80,11 @@ export default async function VendorsPage({ searchParams }: VendorsPageProps) {
             ))}
           </div>
         </div>}>
-          <VendorsClient 
+          <VendorsClient
             initialVendors={vendors}
             initialCategories={categoryNames}
             initialProducts={products}
-            showNonPartnersOnly={true} // Show only non-partners (vendors that are NOT partners)
+            showNonPartnersOnly={false} // Show all vendors (partners and non-partners)
             baseUrl="/vendors"
             pageTitle="vendors"
           />

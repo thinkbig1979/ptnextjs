@@ -14,7 +14,7 @@ interface FeaturedPartnersSectionProps {
 export function FeaturedPartnersSection({ featuredPartners }: FeaturedPartnersSectionProps) {
 
   return (
-    <section className="py-20 bg-secondary/30">
+    <section className="py-20 bg-secondary/30" data-testid="featured-vendors">
       <div className="container max-w-screen-xl">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-cormorant font-bold mb-4">

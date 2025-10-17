@@ -48,7 +48,7 @@ fallbackType="company"
               />
             </div>
             <h1 className="text-4xl font-bold mb-4">{yacht.name}</h1>
-            <p className="text-lg text-muted-foreground mb-6">{yacht.description}</p>
+            <p className="text-lg text-muted-foreground mb-6" data-testid="yacht-description">{yacht.description}</p>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {yacht.length && (
@@ -181,7 +181,7 @@ fallbackType="company"
 
           {/* Timeline */}
           {yacht.timeline && yacht.timeline.length > 0 && (
-            <Card className="mb-8">
+            <Card className="mb-8" data-testid="yacht-timeline">
               <CardHeader>
                 <CardTitle>Project Timeline</CardTitle>
               </CardHeader>
@@ -258,7 +258,7 @@ fallbackType="company"
             }, {});
 
             return (
-              <Card className="mb-8">
+              <Card className="mb-8" data-testid="supplier-map">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-accent/10 rounded-full flex items-center justify-center">
@@ -421,7 +421,7 @@ fallbackType="company"
 
           {/* Sustainability Information */}
           {yacht.sustainabilityScore && (
-            <Card className="mb-8">
+            <Card className="mb-8" data-testid="sustainability">
               <CardHeader>
                 <CardTitle>Sustainability Metrics</CardTitle>
               </CardHeader>

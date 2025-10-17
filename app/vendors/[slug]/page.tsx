@@ -201,7 +201,7 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
                 </div>
               </div>
               
-              <p className="text-xl text-muted-foreground mb-6 font-poppins-light leading-relaxed">
+              <p className="text-xl text-muted-foreground mb-6 font-poppins-light leading-relaxed" data-testid="vendor-description">
                 {vendor.description}
               </p>
 
@@ -298,7 +298,7 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
 
             {/* Certifications */}
             {vendor.certifications && vendor.certifications.length > 0 && (
-              <div className="mb-8">
+              <div className="mb-8" data-testid="certifications">
                 <h2 className="text-2xl font-cormorant font-bold mb-4">Certifications & Compliance</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {vendor.certifications.map((cert, index) => (
@@ -329,7 +329,7 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
 
             {/* Awards Section */}
             {vendor.awards && vendor.awards.length > 0 && (
-              <div className="mb-8">
+              <div className="mb-8" data-testid="awards">
                 <h2 className="text-2xl font-cormorant font-bold mb-4">Awards & Recognition</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {vendor.awards.map((award, index) => (
@@ -421,7 +421,7 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
 
             {/* Products */}
             {vendorProducts.length > 0 && (
-              <div className="mb-8">
+              <div className="mb-8" data-testid="vendor-products">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-2xl font-cormorant font-bold">Featured Products</h2>
                   <Button asChild variant="outline">
