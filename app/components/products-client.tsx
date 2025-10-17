@@ -37,7 +37,7 @@ export function ProductsClient({ initialProducts, initialCategories, initialVend
   const [currentPage, setCurrentPage] = React.useState(1);
   const [selectedPartner, setSelectedPartner] = React.useState(urlParams.partner);
   const [vendorView, setVendorView] = React.useState<"partners" | "all">(
-    searchParams?.get('view') === 'partners' ? 'partners' : 'all'
+    searchParams?.get('view') === 'all' ? 'all' : 'partners'
   );
   
 
@@ -53,7 +53,7 @@ export function ProductsClient({ initialProducts, initialCategories, initialVend
     setSearchQuery(params.search);
     setSelectedCategory(params.category);
     setSelectedPartner(params.partner);
-    setVendorView(searchParams?.get('view') === 'partners' ? 'partners' : 'all');
+    setVendorView(searchParams?.get('view') === 'all' ? 'all' : 'partners');
   }, [searchParams]);
 
   // Navigation functions
@@ -82,7 +82,7 @@ export function ProductsClient({ initialProducts, initialCategories, initialVend
     // Apply search filter
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(product => 
+      filtered = filtered.filter(product =>
         product?.name?.toLowerCase().includes(query) ||
         product?.description?.toLowerCase().includes(query) ||
         product?.tags?.some((tag: string) => tag.toLowerCase().includes(query)) ||
@@ -105,6 +105,11 @@ export function ProductsClient({ initialProducts, initialCategories, initialVend
     // Apply vendor view filter (partners only vs all vendors)
     if (vendorView === "partners") {
       filtered = filtered.filter(product => {
+        // First check if product has vendor object with partner flag
+        if (product?.vendor?.partner === true) {
+          return true;
+        }
+        // Fallback to lookup table if vendor object not populated
         const vendorId = product?.vendorId || product?.partnerId;
         if (!vendorId) return false;
         const vendor = vendorLookup[vendorId];
@@ -157,9 +162,9 @@ export function ProductsClient({ initialProducts, initialCategories, initialVend
     // Update or remove view parameter
     if (params.view !== undefined) {
       if (params.view === 'all') {
-        current.set('view', params.view);
+        current.set('view', 'all');
       } else {
-        current.delete('view'); // Default to partners view
+        current.delete('view'); // Default is partners, no URL param needed
       }
     }
 
