@@ -40,13 +40,13 @@ export function SearchFilter({
       <div className="flex items-center gap-2">
         <Filter className="h-4 w-4 text-accent" />
         <Select value={selectedCategory} onValueChange={onCategoryChange}>
-          <SelectTrigger className="w-[200px]">
+          <SelectTrigger className="w-[200px]" data-testid="category-filter">
             <SelectValue placeholder="All Categories" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Categories</SelectItem>
+            <SelectItem value="all" data-testid="category-option">All Categories</SelectItem>
             {categories.map((category) => (
-              <SelectItem key={category} value={category}>
+              <SelectItem key={category} value={category} data-testid="category-option">
                 {category}
               </SelectItem>
             ))}

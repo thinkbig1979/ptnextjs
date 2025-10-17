@@ -37,7 +37,7 @@ export function VendorCard({
       animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
       transition={{ duration: 0.6, delay: 0.1 * animationIndex }}
     >
-      <Card className={`h-full hover-lift cursor-pointer group flex flex-col ${isHighlighted ? 'ring-2 ring-accent shadow-lg' : ''}`}>
+      <Card className={`h-full hover-lift cursor-pointer group flex flex-col ${isHighlighted ? 'ring-2 ring-accent shadow-lg' : ''}`} data-testid="vendor-card">
         {/* Company Logo */}
         <Link
           href={`${baseUrl}/${vendor?.slug}`}

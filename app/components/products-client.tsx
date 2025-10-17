@@ -37,7 +37,7 @@ export function ProductsClient({ initialProducts, initialCategories, initialVend
   const [currentPage, setCurrentPage] = React.useState(1);
   const [selectedPartner, setSelectedPartner] = React.useState(urlParams.partner);
   const [vendorView, setVendorView] = React.useState<"partners" | "all">(
-    searchParams?.get('view') === 'all' ? 'all' : 'partners'
+    searchParams?.get('view') === 'partners' ? 'partners' : 'all'
   );
   
 
@@ -53,7 +53,7 @@ export function ProductsClient({ initialProducts, initialCategories, initialVend
     setSearchQuery(params.search);
     setSelectedCategory(params.category);
     setSelectedPartner(params.partner);
-    setVendorView(searchParams?.get('view') === 'all' ? 'all' : 'partners');
+    setVendorView(searchParams?.get('view') === 'partners' ? 'partners' : 'all');
   }, [searchParams]);
 
   // Navigation functions
@@ -257,6 +257,7 @@ export function ProductsClient({ initialProducts, initialCategories, initialVend
                 const url = product?.slug ? `/products/${product.slug}` : `/products/${product.id}`;
                 router.push(url);
               }}
+              data-testid="product-card"
             >
               {/* Product Image */}
               <Link

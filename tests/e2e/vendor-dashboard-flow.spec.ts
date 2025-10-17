@@ -13,7 +13,7 @@
  * This test uses the real database and API endpoints.
  */
 
-import { test, expect } from '@playwright/test';
+import { test, expect, type Response } from '@playwright/test';
 import path from 'path';
 
 test.describe('Vendor Dashboard and Profile Edit Flow', () => {
@@ -39,7 +39,7 @@ test.describe('Vendor Dashboard and Profile Edit Flow', () => {
     await page.getByRole('checkbox', { name: 'Agree to terms and conditions' }).click();
 
     const apiResponsePromise = page.waitForResponse(
-      response => response.url().includes('/api/vendors/register') && response.status() === 201
+      (response: Response) => response.url().includes('/api/vendors/register') && response.status() === 201
     );
 
     await page.click('button[type="submit"]');
@@ -52,7 +52,7 @@ test.describe('Vendor Dashboard and Profile Edit Flow', () => {
 
     // Step 2: Approve vendor via API (simulating admin approval)
     // NOTE: In production, this would be done through Payload admin UI
-    const approvalResult = await page.evaluate(async ({ email }) => {
+    const approvalResult = await page.evaluate(async ({ email }: { email: string }) => {
       // Manually approve by updating user status via direct database access
       // This simulates what an admin would do in the Payload admin UI
       return { approved: true, email };

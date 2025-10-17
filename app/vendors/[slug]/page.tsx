@@ -16,7 +16,7 @@ import {
   Lightbulb
 } from "lucide-react";
 import Link from "next/link";
-import { tinaCMSDataService } from "@/lib/tinacms-data-service";
+import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { notFound } from "next/navigation";
 import VendorDetailClient from "./_components/vendor-detail-client";
@@ -31,7 +31,7 @@ export const revalidate = false;
 export async function generateStaticParams() {
   try {
     console.log('🏗️  Generating static params for vendor pages...');
-    const vendors = await tinaCMSDataService.getAllVendors();
+    const vendors = await payloadCMSDataService.getAllVendors();
     console.log(`📋 Found ${vendors.length} vendors for static generation`);
     
     const params = vendors
@@ -55,7 +55,7 @@ export async function generateStaticParams() {
 // Generate metadata for each vendor page
 export async function generateMetadata({ params }: VendorDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const vendor = await tinaCMSDataService.getVendorBySlug(slug);
+  const vendor = await payloadCMSDataService.getVendorBySlug(slug);
 
   if (!vendor) {
     return {
@@ -109,8 +109,8 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
   }
 
   // Find the vendor by slug using static data service
-  const vendor = await tinaCMSDataService.getVendorBySlug(slug);
-  
+  const vendor = await payloadCMSDataService.getVendorBySlug(slug);
+
   if (!vendor) {
     console.warn(`⚠️  Vendor not found for slug: ${slug}`);
     notFound();
@@ -120,8 +120,8 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
 
   // Find products from this vendor and get company info for mission
   const [vendorProducts, companyInfo] = await Promise.all([
-    tinaCMSDataService.getProductsByVendor(vendor.id),
-    tinaCMSDataService.getCompanyInfo()
+    payloadCMSDataService.getProductsByVendor(vendor.id),
+    payloadCMSDataService.getCompanyInfo()
   ]);
   console.log(`📦 Found ${vendorProducts.length} products for vendor: ${vendor.name}`);
 
@@ -183,12 +183,14 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
               {/* Company Logo and Name Header */}
               <div className="flex items-center space-x-6 mb-6">
                 {vendor.logo && (
-                  <div className="flex-shrink-0 w-20 h-20 flex items-center justify-center p-2">
-                    <img
+                  <div className="flex-shrink-0 w-20 h-20 flex items-center justify-center p-2 relative">
+                    <OptimizedImage
                       src={vendor.logo}
                       alt={`${vendor.name} logo`}
-                      className="max-w-full max-h-full object-contain"
-                      style={{ maxWidth: '64px', maxHeight: '64px' }}
+                      width={64}
+                      height={64}
+                      className="object-contain"
+                      fallbackType="partner"
                     />
                   </div>
                 )}
@@ -199,7 +201,7 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
                 </div>
               </div>
               
-              <p className="text-xl text-muted-foreground mb-6 font-poppins-light leading-relaxed">
+              <p className="text-xl text-muted-foreground mb-6 font-poppins-light leading-relaxed" data-testid="vendor-description">
                 {vendor.description}
               </p>
 
@@ -296,7 +298,7 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
 
             {/* Certifications */}
             {vendor.certifications && vendor.certifications.length > 0 && (
-              <div className="mb-8">
+              <div className="mb-8" data-testid="certifications">
                 <h2 className="text-2xl font-cormorant font-bold mb-4">Certifications & Compliance</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {vendor.certifications.map((cert, index) => (
@@ -327,7 +329,7 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
 
             {/* Awards Section */}
             {vendor.awards && vendor.awards.length > 0 && (
-              <div className="mb-8">
+              <div className="mb-8" data-testid="awards">
                 <h2 className="text-2xl font-cormorant font-bold mb-4">Awards & Recognition</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {vendor.awards.map((award, index) => (
@@ -419,7 +421,7 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
 
             {/* Products */}
             {vendorProducts.length > 0 && (
-              <div className="mb-8">
+              <div className="mb-8" data-testid="vendor-products">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-2xl font-cormorant font-bold">Featured Products</h2>
                   <Button asChild variant="outline">

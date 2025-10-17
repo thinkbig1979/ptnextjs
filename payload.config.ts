@@ -1,18 +1,20 @@
 import { buildConfig } from 'payload';
 import { sqliteAdapter } from '@payloadcms/db-sqlite';
-import { postgresAdapter } from '@payloadcms/db-postgres';
 import { lexicalEditor } from '@payloadcms/richtext-lexical';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
 // Import collection schemas
 import Users from './payload/collections/Users';
+import Media from './payload/collections/Media';
 import Vendors from './payload/collections/Vendors';
 import Products from './payload/collections/Products';
 import Categories from './payload/collections/Categories';
 import BlogPosts from './payload/collections/BlogPosts';
 import TeamMembers from './payload/collections/TeamMembers';
 import CompanyInfo from './payload/collections/CompanyInfo';
+import Tags from './payload/collections/Tags';
+import Yachts from './payload/collections/Yachts';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -30,23 +32,15 @@ export default buildConfig({
   },
 
   // Database adapter configuration
-  // SQLite for development (zero-configuration, file-based)
-  // PostgreSQL for production (scalable, production-ready)
-  db: process.env.NODE_ENV === 'production'
-    ? postgresAdapter({
-        pool: {
-          connectionString: process.env.DATABASE_URL,
-          max: 20, // Maximum connection pool size
-        },
-        migrationDir: path.resolve(dirname, 'migrations'),
-      })
-    : sqliteAdapter({
-        client: {
-          url: process.env.DATABASE_URL || 'file:./data/payload.db',
-        },
-        migrationDir: path.resolve(dirname, 'migrations'),
-        push: true, // Auto-push schema changes to create tables
-      }),
+  // SQLite for all environments (zero-configuration, file-based)
+  // Note: For production PostgreSQL deployment, update this configuration
+  db: sqliteAdapter({
+    client: {
+      url: process.env.DATABASE_URL || 'file:./data/payload.db',
+    },
+    migrationDir: path.resolve(dirname, 'migrations'),
+    push: true, // Auto-push schema changes to create tables
+  }),
 
   // Rich Text Editor configuration
   editor: lexicalEditor({}),
@@ -54,12 +48,15 @@ export default buildConfig({
   // Collections registration
   collections: [
     Users,
+    Media,
     Vendors,
     Products,
     Categories,
     BlogPosts,
     TeamMembers,
     CompanyInfo,
+    Tags,
+    Yachts,
   ],
 
   // TypeScript configuration

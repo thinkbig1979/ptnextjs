@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>10/10</span>
+                <span class='fraction'>0/10</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">94.44% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>17/18</span>
+                <span class='fraction'>0/18</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>2/2</span>
+                <span class='fraction'>0/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>10/10</span>
+                <span class='fraction'>0/10</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -253,12 +253,12 @@
 <a name='L188'></a><a href='#L188'>188</a>
 <a name='L189'></a><a href='#L189'>189</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -266,12 +266,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">11x</span>
-<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -399,7 +399,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -441,12 +441,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">"use client";
 &nbsp;
-import * as React from "react";
-import Link from "next/link";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
-import { ProgressiveImage } from "@/components/ui/progressive-image";
+import * as React from <span class="cstat-no" title="statement not covered" >"react";</span>
+import Link from <span class="cstat-no" title="statement not covered" >"next/link";</span>
+import { Card, CardContent, CardHeader } from <span class="cstat-no" title="statement not covered" >"@/components/ui/card";</span>
+import { Badge } from <span class="cstat-no" title="statement not covered" >"@/components/ui/badge";</span>
+import { cn } from <span class="cstat-no" title="statement not covered" >"@/lib/utils";</span>
+import { ProgressiveImage } from <span class="cstat-no" title="statement not covered" >"@/components/ui/progressive-image";</span>
 import type { Yacht } from "@/lib/types";
 &nbsp;
 interface YachtCardProps {
@@ -454,12 +454,12 @@ interface YachtCardProps {
   className?: string;
 }
 &nbsp;
-export function YachtCard({
+export function <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >YachtCard({</span></span>
   yacht,
   className
 }: YachtCardProps) {
-  const mainImage = yacht.image || yacht.images?.[0];
-  const href = `/yachts/${yacht.slug}`;
+  const mainImage = <span class="cstat-no" title="statement not covered" >yacht.image || yacht.images?.[0];</span>
+  const href = <span class="cstat-no" title="statement not covered" >`/yachts/${yacht.slug}`;</span>
 &nbsp;
   return (
     &lt;Card
@@ -472,7 +472,7 @@ export function YachtCard({
       &lt;Link href={href} className="block"&gt;
         &lt;div className="aspect-[4/3] relative overflow-hidden rounded-t-lg"&gt;
           {mainImage ? (
-            &lt;ProgressiveImage
+<span class="branch-0 cbranch-no" title="branch not covered" >            &lt;ProgressiveImage</span>
               src={mainImage}
               alt={yacht.name}
               fill
@@ -506,7 +506,7 @@ export function YachtCard({
             &lt;/div&gt;
           )}
 &nbsp;
-          {yacht.featured &amp;&amp; (
+          {<span class="branch-0 cbranch-no" title="branch not covered" >yacht.featured </span>&amp;&amp; (
             &lt;div className="absolute top-3 right-3"&gt;
               &lt;Badge variant="secondary" className="bg-accent text-accent-foreground"&gt;
                 Featured
@@ -522,10 +522,10 @@ export function YachtCard({
             &lt;/h3&gt;
 &nbsp;
             &lt;div className="flex items-center gap-3 text-sm text-muted-foreground font-poppins-light"&gt;
-              {yacht.builder &amp;&amp; (
+              {<span class="branch-0 cbranch-no" title="branch not covered" >yacht.builder </span>&amp;&amp; (
                 &lt;span&gt;{yacht.builder}&lt;/span&gt;
               )}
-              {yacht.launchYear &amp;&amp; (
+              {<span class="branch-0 cbranch-no" title="branch not covered" >yacht.launchYear </span>&amp;&amp; (
                 &lt;span&gt;• {yacht.launchYear}&lt;/span&gt;
               )}
             &lt;/div&gt;
@@ -564,7 +564,7 @@ export function YachtCard({
             {/* Additional Info */}
             &lt;div className="flex items-center justify-between"&gt;
               &lt;div className="flex gap-2"&gt;
-                {yacht.sustainabilityScore?.overallScore &amp;&amp; (
+                {<span class="branch-0 cbranch-no" title="branch not covered" >yacht.sustainabilityScore?.overallScore &amp;&amp; (</span>
                   &lt;div className="flex items-center gap-1"&gt;
                     &lt;div className="w-3 h-3 rounded-full bg-green-500"&gt;&lt;/div&gt;
                     &lt;span className="text-xs font-poppins-medium text-muted-foreground"&gt;
@@ -576,7 +576,7 @@ export function YachtCard({
                   &lt;div className="flex items-center gap-1"&gt;
                     &lt;div className="w-3 h-3 rounded-full bg-blue-500"&gt;&lt;/div&gt;
                     &lt;span className="text-xs font-poppins-medium text-muted-foreground"&gt;
-                      {yacht.supplierCount} supplier{yacht.supplierCount !== 1 ? <span class="branch-0 cbranch-no" title="branch not covered" >'s' : '</span>'}
+                      {yacht.supplierCount} supplier{yacht.supplierCount !== 1 ? 's' : ''}
                     &lt;/span&gt;
                   &lt;/div&gt;
                 )}
@@ -586,8 +586,8 @@ export function YachtCard({
             {/* Tags */}
             {yacht.tags &amp;&amp; yacht.tags.length &gt; 0 &amp;&amp; (
               &lt;div className="flex flex-wrap gap-1"&gt;
-                {yacht.tags.slice(0, 3).map((tag, index) =&gt; (
-                  &lt;Badge
+                {yacht.tags.slice(0, 3).map(<span class="fstat-no" title="function not covered" >(t</span>ag, index) =&gt; (
+<span class="cstat-no" title="statement not covered" >                  &lt;Badge</span>
                     key={index}
                     variant="outline"
                     className="text-xs px-2 py-1"
@@ -595,7 +595,7 @@ export function YachtCard({
                     {tag}
                   &lt;/Badge&gt;
                 ))}
-                {yacht.tags.length &gt; 3 &amp;&amp; (
+                {<span class="branch-0 cbranch-no" title="branch not covered" >yacht.tags.length &gt; 3 &amp;&amp; (</span>
                   &lt;Badge
                     variant="outline"
                     className="text-xs px-2 py-1"
@@ -634,7 +634,7 @@ export function YachtCard({
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-13T08:10:34.238Z
+                at 2025-10-15T19:49:39.396Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

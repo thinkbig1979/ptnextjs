@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
 /**
  * POST /api/auth/logout
  *
  * Clears authentication cookies
  */
-export async function POST(request: NextRequest) {
+export async function POST() {
   const response = NextResponse.json({
     message: 'Logout successful',
   });

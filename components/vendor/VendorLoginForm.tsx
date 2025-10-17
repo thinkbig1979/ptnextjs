@@ -186,7 +186,7 @@ export function VendorLoginForm() {
 
         {/* Register Link */}
         <div className="text-center text-sm">
-          <span className="text-gray-600">Don't have an account? </span>
+          <span className="text-gray-600">Don&apos;t have an account? </span>
           <Link
             href="/vendor/register"
             className="font-medium text-blue-600 hover:text-blue-500"

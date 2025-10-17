@@ -12,7 +12,7 @@
  * This test validates the TierGate component and API-level tier restrictions.
  */
 
-import { test, expect } from '@playwright/test';
+import { test, expect, type Response } from '@playwright/test';
 import path from 'path';
 
 test.describe('Tier-Based Access Control', () => {
@@ -37,7 +37,7 @@ test.describe('Tier-Based Access Control', () => {
     await page.getByRole('checkbox', { name: 'Agree to terms and conditions' }).click();
 
     const apiResponsePromise = page.waitForResponse(
-      response => response.url().includes('/api/vendors/register') && response.status() === 201
+      (response: Response) => response.url().includes('/api/vendors/register') && response.status() === 201
     );
 
     await page.click('button[type="submit"]');
@@ -63,7 +63,7 @@ test.describe('Tier-Based Access Control', () => {
     await page.getByPlaceholder('Enter your password').fill(testPassword);
 
     const loginResponsePromise = page.waitForResponse(
-      response => response.url().includes('/api/auth/login')
+      (response: Response) => response.url().includes('/api/auth/login')
     );
 
     await page.getByRole('button', { name: 'Login' }).click();

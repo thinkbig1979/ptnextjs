@@ -94,7 +94,7 @@ export default function VendorDashboard() {
             <div className="flex items-center gap-3">
               <Clock className="h-5 w-5 text-yellow-600" aria-hidden="true" />
               <p className="text-sm text-yellow-800">
-                Your account is <strong>pending approval</strong>. You'll receive an email once an
+                Your account is <strong>pending approval</strong>. You&apos;ll receive an email once an
                 admin reviews your application.
               </p>
             </div>
@@ -180,7 +180,7 @@ export default function VendorDashboard() {
             {tier === 'tier1' && (
               <div className="pt-4 border-t border-gray-200">
                 <p className="text-sm text-gray-600 mb-3">
-                  You're on Tier 1. Upgrade to Tier 2 for advanced product management.
+                  You&apos;re on Tier 1. Upgrade to Tier 2 for advanced product management.
                 </p>
                 <Button variant="outline" size="sm" className="w-full">
                   Upgrade to Tier 2

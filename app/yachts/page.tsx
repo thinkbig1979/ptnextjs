@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { YachtCard } from '@/components/yacht-profiles/YachtCard';
-import tinaCMSDataService from '@/lib/tinacms-data-service';
+import { payloadCMSDataService } from '@/lib/payload-cms-data-service';
 
 export const metadata: Metadata = {
   title: 'Yacht Profiles | Marine Technology Platform',
@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 };
 
 export default async function YachtsPage() {
-  const yachts = await tinaCMSDataService.getAllYachts();
+  const yachts = await payloadCMSDataService.getYachts();
 
   return (
     <div className="container mx-auto px-4 py-8">

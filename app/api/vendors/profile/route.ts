@@ -90,7 +90,7 @@ export async function PATCH(request: NextRequest) {
     const currentTier = vendors.docs[0].tier;
 
     // Build update data (only allow certain fields)
-    const updateData: any = {};
+    const updateData: Record<string, unknown> = {};
 
     // Always allowed fields
     if (body.description !== undefined) updateData.description = body.description;

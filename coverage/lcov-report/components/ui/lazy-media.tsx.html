@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">18.18% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>10/55</span>
+                <span class='fraction'>0/55</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">18.51% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>10/54</span>
+                <span class='fraction'>0/54</span>
             </div>
         
             
@@ -442,11 +442,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -461,7 +461,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -551,7 +551,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -601,7 +601,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -656,7 +656,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -731,7 +731,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -814,11 +814,11 @@
 &nbsp;
 "use client";
 &nbsp;
-import * as React from "react";
-import { cn } from "@/lib/utils";
-import { useLazyLoading, usePerformanceMetrics } from "@/lib/hooks/use-lazy-loading";
-import { ProgressiveImage } from "./progressive-image";
-import { Play, Image as ImageIcon, FileText } from "lucide-react";
+import * as React from <span class="cstat-no" title="statement not covered" >"react";</span>
+import { cn } from <span class="cstat-no" title="statement not covered" >"@/lib/utils";</span>
+import { useLazyLoading, usePerformanceMetrics } from <span class="cstat-no" title="statement not covered" >"@/lib/hooks/use-lazy-loading";</span>
+import { ProgressiveImage } from <span class="cstat-no" title="statement not covered" >"./progressive-image";</span>
+import { Play, Image as ImageIcon, FileText } from <span class="cstat-no" title="statement not covered" >"lucide-react";</span>
 &nbsp;
 interface LazyMediaProps {
   children: React.ReactNode;
@@ -833,7 +833,7 @@ interface LazyMediaProps {
 /**
  * Generic Lazy Loading Wrapper
  */
-export function <span class="fstat-no" title="function not covered" >LazyMedia({</span>
+export function <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >LazyMedia({</span></span>
   children,
   fallback,
   threshold = <span class="branch-0 cbranch-no" title="branch not covered" >0.1,</span>
@@ -923,7 +923,7 @@ interface LazyVideoProps {
   preload?: 'none' | 'metadata' | 'auto';
 }
 &nbsp;
-export function <span class="fstat-no" title="function not covered" >LazyVideo({</span>
+export function <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >LazyVideo({</span></span>
   src,
   poster,
   className,
@@ -973,7 +973,7 @@ interface LazyIframeProps {
   allowFullScreen?: boolean;
 }
 &nbsp;
-export function <span class="fstat-no" title="function not covered" >LazyIframe({</span>
+export function <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >LazyIframe({</span></span>
   src,
   title,
   className,
@@ -1028,7 +1028,7 @@ interface LazyImageGridProps {
   onImageClick?: (index: number) =&gt; void;
 }
 &nbsp;
-export function <span class="fstat-no" title="function not covered" >LazyImageGrid({</span>
+export function <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >LazyImageGrid({</span></span>
   images,
   columns = <span class="branch-0 cbranch-no" title="branch not covered" >3,</span>
   gap = <span class="branch-0 cbranch-no" title="branch not covered" >4,</span>
@@ -1103,7 +1103,7 @@ interface VirtualizedMediaListProps {
   overscan?: number;
 }
 &nbsp;
-export function <span class="fstat-no" title="function not covered" >VirtualizedMediaList({</span>
+export function <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >VirtualizedMediaList({</span></span>
   items,
   itemHeight,
   containerHeight,
@@ -1186,7 +1186,7 @@ export function <span class="fstat-no" title="function not covered" >Virtualized
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-13T08:10:34.238Z
+                at 2025-10-15T19:49:39.396Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

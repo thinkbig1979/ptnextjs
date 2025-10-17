@@ -8,12 +8,12 @@ import { Calendar, User, Clock, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { formatDate } from "@/lib/utils";
 import { BlogClient } from "./_components/blog-client";
-import { tinaCMSDataService } from "@/lib/tinacms-data-service";
+import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
 
 export default async function BlogPage() {
   // Fetch data at build time
-  const blogPosts = await tinaCMSDataService.getAllBlogPosts();
-  const categories = await tinaCMSDataService.getBlogCategories();
+  const blogPosts = await payloadCMSDataService.getAllBlogPosts();
+  const categories = await payloadCMSDataService.getBlogCategories();
   const blogCategories = categories.map(cat => cat.name);
   
   const featuredPost = blogPosts.find(post => post?.featured);

@@ -7,7 +7,7 @@ import Link from "next/link";
 import { formatDate } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import BlogPostClient from "./_components/blog-post-client";
-import { tinaCMSDataService } from "@/lib/tinacms-data-service";
+import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 
 // Force static generation for optimal SEO and performance
@@ -19,7 +19,7 @@ export const revalidate = false;
 export async function generateStaticParams() {
   try {
     console.log('🏗️  Generating static params for blog post pages...');
-    const blogPostSlugs = await tinaCMSDataService.getBlogPostSlugs();
+    const blogPostSlugs = await payloadCMSDataService.getBlogPostSlugs();
     console.log(`📋 Found ${blogPostSlugs.length} blog posts for static generation`);
     
     const params = blogPostSlugs.map((slug) => ({ slug }));
@@ -42,8 +42,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
 
   // Find the blog post by slug using static data service
-  const post = await tinaCMSDataService.getBlogPostBySlug(slug);
-  
+  const post = await payloadCMSDataService.getBlogPostBySlug(slug);
+
   if (!post) {
     console.warn(`⚠️  Blog post not found for slug: ${slug}`);
     notFound();
@@ -52,7 +52,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   console.log(`✅ Loading blog post: ${post.title}`);
 
   // Get related posts (simplified version for static generation)
-  const allBlogPosts = await tinaCMSDataService.getAllBlogPosts();
+  const allBlogPosts = await payloadCMSDataService.getAllBlogPosts();
   const relatedPosts = allBlogPosts
     .filter(p => p.id !== post.id && p.category === post.category)
     .slice(0, 3);
