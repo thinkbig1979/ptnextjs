@@ -1014,6 +1014,19 @@ const Vendors: CollectionConfig = {
 
     // Metadata
     {
+      name: 'partner',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        position: 'sidebar',
+        description: 'Mark as featured partner (distinct from regular vendor)',
+      },
+      access: {
+        // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
+        update: isAdmin, // Only admins can mark as partner
+      },
+    },
+    {
       name: 'featured',
       type: 'checkbox',
       defaultValue: false,

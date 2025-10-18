@@ -1,7 +1,6 @@
-
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
@@ -26,16 +25,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
+export default async function SiteLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // Static site generation - always use TinaCMS data
-  
   // Fetch company info at build time for footer
   const companyInfo = await tinaCMSDataService.getCompanyInfo();
-  
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -56,19 +53,19 @@ export default async function RootLayout({
                 try {
                   // Enhanced Firefox mobile theme detection
                   function detectTheme() {
-                    const isFirefoxMobile = /Firefox.*Mobile/.test(navigator.userAgent) || 
+                    const isFirefoxMobile = /Firefox.*Mobile/.test(navigator.userAgent) ||
                                            (/Firefox/.test(navigator.userAgent) && /Android/.test(navigator.userAgent));
-                    
+
                     // Get stored preference
                     const stored = localStorage.getItem('theme-preference');
                     if (stored && stored !== 'system') return stored;
-                    
+
                     // System theme detection with Firefox mobile fallbacks
                     if (window.matchMedia) {
                       if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
                         return 'dark';
                       }
-                      
+
                       // Firefox mobile specific fallbacks
                       if (isFirefoxMobile) {
                         // Try alternative detection methods
@@ -77,37 +74,37 @@ export default async function RootLayout({
                           testEl.style.display = 'none';
                           testEl.style.colorScheme = 'dark light';
                           document.documentElement.appendChild(testEl);
-                          
+
                           const computed = getComputedStyle(testEl);
                           const isDark = computed.colorScheme && computed.colorScheme.includes('dark');
-                          
+
                           document.documentElement.removeChild(testEl);
-                          
+
                           if (isDark) return 'dark';
-                          
+
                           // Time-based heuristic as last resort
                           const hour = new Date().getHours();
                           if (hour < 6 || hour > 20) return 'dark';
-                          
+
                         } catch (e) {
                           console.debug('Early theme detection failed:', e);
                         }
                       }
                     }
-                    
+
                     return 'light';
                   }
-                  
+
                   const theme = detectTheme();
                   if (theme === 'dark') {
                     document.documentElement.classList.add('dark');
                   } else {
                     document.documentElement.classList.remove('dark');
                   }
-                  
+
                   // Add a data attribute for debugging
                   document.documentElement.setAttribute('data-initial-theme', theme);
-                  
+
                 } catch (e) {
                   console.debug('Theme initialization failed:', e);
                 }
