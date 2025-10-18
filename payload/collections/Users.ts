@@ -15,9 +15,20 @@ const Users: CollectionConfig = {
     group: 'User Management',
   },
   access: {
-    // Admins can CRUD all users
-    // Vendors can only read their own user record
-    create: ({ req: { user } }) => user?.role === 'admin',
+    // Allow first user creation (when no users exist)
+    // After that, only admins can create users
+    create: async ({ req: { user, payload } }) => {
+      // Allow creation if no users exist (first user)
+      if (!user) {
+        const existingUsers = await payload.find({
+          collection: 'users',
+          limit: 1,
+        });
+        return existingUsers.docs.length === 0;
+      }
+      // Otherwise, only admins can create users
+      return user.role === 'admin';
+    },
     read: ({ req: { user } }) => {
       if (!user) return false;
       if (user.role === 'admin') return true;
