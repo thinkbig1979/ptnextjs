@@ -1,0 +1,3 @@
+# Spec Summary (Lite)
+
+Implement location-based vendor discovery with intelligent geographic matching and complete subscription tier management system with enhanced premium profile features for Tier 2 and Tier 3 vendors. Users can filter vendors by geographic region with interactive service area maps and intelligent product-to-vendor matching via categories. Vendors can view tier comparisons, submit upgrade requests for admin approval (no payment processing yet), and unlock premium features including certifications, case studies, media galleries, team profiles, product catalogs, and analytics dashboards based on their tier level.

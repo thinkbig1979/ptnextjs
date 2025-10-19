@@ -320,11 +320,13 @@ The following features have been successfully implemented and are currently live
 
 ## Phase 3: Enhanced Discovery & Premium Services
 
-**Goal:** Implement location-based vendor discovery and launch tiered subscription model
-**Success Criteria:** Smart vendor-product matching, $10K MRR from subscription services
-**Dependencies:** Payment processing, CRM integration, geolocation services
+**Goal:** Implement location-based vendor discovery and complete tiered subscription functionality
+**Success Criteria:** Smart vendor-product matching, functional tier upgrade system, enhanced premium features
+**Dependencies:** Geolocation services (payment integration deferred to Phase 3B)
+**Start Date:** TBD
+**Status:** 🎯 NEXT PRIORITY - Ready to begin
 
-### Features
+### Phase 3A: Core Features (Immediate Priority)
 
 - [ ] **Location-Based Vendor Discovery** - Regional service provider matching by product category `L`
   - Geographic vendor profiles with service regions
@@ -332,13 +334,64 @@ The following features have been successfully implemented and are currently live
   - Filter vendors by location and product category relationships
   - No hard-coded product-vendor links, intelligent category-based matching
 
-- [ ] **Subscription Management** - Stripe integration for tier upgrades and billing `L`
-- [ ] **Tier 2 Enhanced Profiles** - Detailed capabilities, certifications, case studies `M`
-- [ ] **Tier 3 Product Catalogs** - Comprehensive product specifications and pricing `L`
+- [ ] **Subscription Tier Management (Functionality-First)** - Complete tier upgrade workflow without payment `L`
+  - [ ] **Tier Selection Interface** - UI for viewing and selecting subscription tiers `S`
+    - Tier comparison cards with feature breakdowns
+    - Clear pricing display (preparation for future payment integration)
+    - Upgrade/downgrade request workflow
+
+  - [ ] **Tier Upgrade Request System** - Admin-approved tier changes `M`
+    - Vendor-initiated upgrade requests
+    - Admin approval queue for tier changes
+    - Automated tier assignment after approval
+    - Email notifications for tier change requests/approvals
+
+  - [ ] **Enhanced Tier Gates** - Refined feature access control per tier `S`
+    - Granular feature gating throughout vendor dashboard
+    - Clear messaging about tier requirements
+    - Tier upgrade CTAs at feature restriction points
+
+  - [ ] **Admin Tier Management** - Admin tools for manual tier assignment `S`
+    - Bulk tier assignment capabilities
+    - Tier change history and audit log
+    - Override capabilities for special cases
+
+- [ ] **Tier 2 Enhanced Profile Features** - Detailed capabilities, certifications, case studies `M`
+  - Advanced certification display with verification badges
+  - Case study showcase with project highlights
+  - Enhanced media galleries (video, 3D models)
+  - Team member profiles with expertise areas
+  - Service region mapping with geographic coverage
+
+- [ ] **Tier 3 Premium Profile Features** - Comprehensive product catalogs and analytics `L`
+  - Full product catalog with specifications and pricing
+  - Performance metrics and ROI tracking
+  - Lead inquiry analytics and management
+  - Featured placement in search results
+  - Priority support badge and contact options
+
+### Phase 3B: Payment Integration & Monetization (Future)
+
+- [ ] **Stripe Payment Integration** - Payment processing for tier upgrades `L`
+  - Stripe Checkout integration
+  - Subscription billing management
+  - Invoice generation and payment history
+  - Automated tier assignment after successful payment
+  - **Status**: DEFERRED - Functionality-first approach in Phase 3A
+
+### Phase 3C: Advanced Features (Future)
+
 - [ ] **On-Platform Promotion Tools** - Featured listings and promotional placements `L`
+  - **Status**: DEFERRED - Post-subscription launch
+
 - [ ] **Advanced Lead Management** - CRM integration and lead scoring `XL`
+  - **Status**: DEFERRED - Post-subscription launch
+
 - [ ] **Marketing Campaign Tools** - Email marketing and content promotion services `L`
+  - **Status**: DEFERRED - Post-subscription launch
+
 - [ ] **Vendor Success Metrics** - ROI tracking and performance reporting `M`
+  - **Status**: DEFERRED - Post-subscription launch
 
 ### Foundation Assets from Phase 1
 
@@ -347,11 +400,23 @@ The following features have been successfully implemented and are currently live
 - **Professional Presentation Templates** supporting subscription tier differentiation
 - **Performance Analytics** infrastructure supporting ROI tracking and reporting
 
-### Dependencies
+### Technical Dependencies
 
-- Payment processing system (Stripe)
-- CRM integration (HubSpot/Salesforce)
-- Advanced analytics platform
+**Phase 3A Requirements (Immediate):**
+- ✅ **Existing Tier System** - Foundation from Phase 2 (free, tier1, tier2)
+- ✅ **Admin Approval Workflow** - Pattern established in Phase 2
+- ✅ **TierGate Component** - Frontend enforcement ready for enhancement
+- 🔄 **Geolocation Services** - For location-based vendor discovery
+- 🔄 **Enhanced Profile Schema** - Extended vendor fields for tier-specific features
+
+**Phase 3B Requirements (Deferred):**
+- ⏳ **Payment Processing** (Stripe) - For automated tier upgrades
+- ⏳ **Subscription Billing** - Recurring payment management
+
+**Phase 3C Requirements (Deferred):**
+- ⏳ **CRM Integration** (HubSpot/Salesforce) - Advanced lead management
+- ⏳ **Advanced Analytics Platform** - Comprehensive vendor success metrics
+- ⏳ **Email Marketing Service** - Campaign management tools
 
 ## Phase 4: Market Intelligence & Exclusive Deals
 
