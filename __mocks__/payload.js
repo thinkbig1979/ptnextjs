@@ -6,5 +6,6 @@
 module.exports = {
   spawn: jest.fn(),
   getPayload: jest.fn(),
+  buildConfig: jest.fn((config) => config), // Pass through config
   // Add other payload exports as needed
 };
