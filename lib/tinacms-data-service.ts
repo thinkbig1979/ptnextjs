@@ -7,7 +7,7 @@ import * as fs from 'fs/promises'
 import * as path from 'path'
 import matter from 'gray-matter'
 import { marked } from 'marked'
-import { Vendor, Partner, Product, BlogPost, TeamMember, Yacht, YachtTimelineEvent, YachtSupplierRole, YachtSustainabilityMetrics, YachtCustomization, YachtMaintenanceRecord } from './types'
+import { Vendor, Partner, Product, BlogPost, TeamMember, Yacht, YachtTimelineEvent, YachtSupplierRole, YachtSustainabilityMetrics, YachtCustomization, YachtMaintenanceRecord, VendorLocation } from './types'
 
 interface Category {
   id: string
@@ -275,7 +275,7 @@ class TinaCMSDataService {
       image: this.transformMediaPath(tinaVendor.image),
       website: tinaVendor.website,
       founded: tinaVendor.founded,
-      location: tinaVendor.location,
+      location: this.transformVendorLocation(tinaVendor.location),
       tags: [], // Will be resolved later
       featured: tinaVendor.featured || false,
       partner: tinaVendor.partner !== undefined ? tinaVendor.partner : true, // Default to true for existing records
@@ -360,6 +360,67 @@ class TinaCMSDataService {
         };
       }).filter(Boolean) || [],
     }
+  }
+
+  /**
+   * Transforms and validates vendor location data
+   * Handles both legacy string locations and new structured location objects
+   * @param location - Raw location data from Payload CMS (string or object)
+   * @returns Normalized VendorLocation object or undefined
+   */
+  private transformVendorLocation(
+    location: any
+  ): VendorLocation | string | undefined {
+    // Handle undefined/null
+    if (!location) {
+      return undefined;
+    }
+
+    // Handle legacy string location (backward compatibility)
+    if (typeof location === 'string') {
+      return location;
+    }
+
+    // Handle structured location object
+    if (typeof location === 'object') {
+      const hasCoordinates =
+        typeof location.latitude === 'number' &&
+        typeof location.longitude === 'number';
+
+      // Validate coordinates if present
+      if (hasCoordinates) {
+        const isValid =
+          location.latitude >= -90 &&
+          location.latitude <= 90 &&
+          location.longitude >= -180 &&
+          location.longitude <= 180;
+
+        if (!isValid) {
+          console.warn(
+            `Invalid coordinates for vendor location: lat=${location.latitude}, lng=${location.longitude}`
+          );
+          // Return location without coordinates to prevent map errors
+          return {
+            address: location.address,
+            city: location.city,
+            country: location.country,
+          };
+        }
+      }
+
+      // Return normalized location object
+      return {
+        address: location.address || undefined,
+        latitude: location.latitude || undefined,
+        longitude: location.longitude || undefined,
+        city: location.city || undefined,
+        country: location.country || undefined,
+      };
+    }
+
+    // Fallback for unexpected types
+    console.warn(`Unexpected location type: ${typeof location}`);
+    return undefined;
   }
 
   // Legacy method for backward compatibility - simplified to eliminate duplication

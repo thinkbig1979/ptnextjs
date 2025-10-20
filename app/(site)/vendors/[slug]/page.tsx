@@ -2,12 +2,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { 
-  ArrowLeft, 
-  Building2, 
-  Package, 
-  MapPin, 
-  Calendar, 
+import {
+  ArrowLeft,
+  Building2,
+  Package,
+  MapPin,
+  Calendar,
   Star,
   Users,
   Award,
@@ -21,6 +21,9 @@ import { OptimizedImage } from "@/components/ui/optimized-image";
 import { notFound } from "next/navigation";
 import VendorDetailClient from "./_components/vendor-detail-client";
 import { Metadata } from "next";
+import { formatVendorLocation } from "@/lib/utils/location";
+import { isVendorLocationObject } from "@/lib/utils/type-guards";
+import { VendorLocationSection } from "./_components/vendor-location-section";
 
 // Force static generation for optimal SEO and performance
 export const dynamic = 'force-static';
@@ -211,10 +214,12 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
                   <Calendar className="w-4 h-4" />
                   <span>Founded {vendor.founded}</span>
                 </div>
-                <div className="flex items-center space-x-1">
-                  <MapPin className="w-4 h-4" />
-                  <span>{vendor.location}</span>
-                </div>
+                {formatVendorLocation(vendor.location) && (
+                  <div className="flex items-center space-x-1">
+                    <MapPin className="w-4 h-4" />
+                    <span>{formatVendorLocation(vendor.location)}</span>
+                  </div>
+                )}
                 <div className="flex items-center space-x-1">
                   <Package className="w-4 h-4" />
                   <span>{vendorProducts.length} Products</span>
@@ -525,10 +530,12 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
                         <span className="text-muted-foreground">Founded:</span>
                         <span>{vendor.founded}</span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Location:</span>
-                        <span>{vendor.location}</span>
-                      </div>
+                      {formatVendorLocation(vendor.location) && (
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Location:</span>
+                          <span>{formatVendorLocation(vendor.location)}</span>
+                        </div>
+                      )}
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Products:</span>
                         <span>{vendorProducts.length}</span>
@@ -560,6 +567,15 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
                 </CardContent>
               </Card>
             </div>
+
+            {/* Location Map and Info */}
+            {vendor.location && isVendorLocationObject(vendor.location) &&
+             vendor.location.latitude !== undefined && vendor.location.longitude !== undefined && (
+              <VendorLocationSection
+                vendorName={vendor.name}
+                location={vendor.location}
+              />
+            )}
           </div>
         </div>
       </div>

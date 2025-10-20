@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Suspense } from "react";
-import { ProductsClient } from "@/app/components/products-client";
+import { ProductsClient } from "@/app/(site)/components/products-client";
 import { ComparisonProvider } from "@/components/ui/product-comparison";
 import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
 

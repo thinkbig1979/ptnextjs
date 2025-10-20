@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Suspense } from "react";
-import { VendorsClient } from "@/app/components/vendors-client";
+import { VendorsClient } from "@/app/(site)/components/vendors-client";
 import { tinaCMSDataService } from "@/lib/tinacms-data-service";
 
 // Force static generation for optimal SEO and performance

@@ -1012,6 +1012,67 @@ const Vendors: CollectionConfig = {
       ],
     },
 
+    // Location Information
+    {
+      name: 'location',
+      type: 'group',
+      label: 'Location Information',
+      admin: {
+        description: 'Geographic location for map display and location-based search. Use geocode.maps.co to find coordinates from addresses.',
+      },
+      fields: [
+        {
+          name: 'address',
+          type: 'text',
+          label: 'Full Address',
+          admin: {
+            placeholder: 'e.g., 123 Harbor View Drive, Fort Lauderdale, FL 33316',
+            description: 'Complete mailing address (displayed publicly)',
+          },
+        },
+        {
+          name: 'latitude',
+          type: 'number',
+          label: 'Latitude',
+          min: -90,
+          max: 90,
+          admin: {
+            step: 0.000001,
+            placeholder: 'e.g., 26.122439',
+            description: 'Latitude coordinate (-90 to 90). Visit https://geocode.maps.co to convert addresses to coordinates.',
+          },
+        },
+        {
+          name: 'longitude',
+          type: 'number',
+          label: 'Longitude',
+          min: -180,
+          max: 180,
+          admin: {
+            step: 0.000001,
+            placeholder: 'e.g., -80.137314',
+            description: 'Longitude coordinate (-180 to 180). Visit https://geocode.maps.co to convert addresses to coordinates.',
+          },
+        },
+        {
+          name: 'city',
+          type: 'text',
+          label: 'City',
+          admin: {
+            placeholder: 'e.g., Fort Lauderdale',
+          },
+        },
+        {
+          name: 'country',
+          type: 'text',
+          label: 'Country',
+          admin: {
+            placeholder: 'e.g., United States',
+          },
+        },
+      ],
+    },
+
     // Metadata
     {
       name: 'partner',
@@ -1058,7 +1119,8 @@ const Vendors: CollectionConfig = {
     beforeChange: [
       // Validate tier restrictions
       async ({ req, data, operation }) => {
-        if (operation === 'update' && req.user?.role !== 'admin') {
+        // Allow updates from scripts (no user context) or from admin users
+        if (operation === 'update' && req.user && req.user.role !== 'admin') {
           const tier = data.tier || 'free';
 
           // Check if vendor is trying to update tier1+ fields without permission

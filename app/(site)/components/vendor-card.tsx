@@ -9,9 +9,10 @@ import { Building2, MapPin, Calendar, Package, ArrowRight, Award, Shield, Users,
 import Link from "next/link";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { Vendor, Product } from "@/lib/types";
+import { formatVendorLocation } from "@/lib/utils/location";
 
 interface VendorCardProps {
-  vendor: Vendor;
+  vendor: Vendor & { distance?: number };
   vendorProducts: Product[];
   isHighlighted?: boolean;
   animationIndex?: number;
@@ -107,11 +108,23 @@ export function VendorCard({
                 <Calendar className="w-3 h-3" />
                 <span>Est. {vendor?.founded}</span>
               </div>
-              <div className="flex items-center space-x-1">
-                <MapPin className="w-3 h-3" />
-                <span>{vendor?.location}</span>
-              </div>
+              {formatVendorLocation(vendor?.location) && (
+                <div className="flex items-center space-x-1">
+                  <MapPin className="w-3 h-3" />
+                  <span>{formatVendorLocation(vendor?.location)}</span>
+                </div>
+              )}
             </div>
+
+            {/* Distance Badge (shown when location filtering is active) */}
+            {vendor?.distance !== undefined && (
+              <div className="flex items-center space-x-1 text-sm">
+                <Badge variant="secondary" className="bg-blue-100 text-blue-800" data-testid="vendor-distance">
+                  <MapPin className="w-3 h-3 mr-1" />
+                  {vendor.distance.toFixed(1)} miles away
+                </Badge>
+              </div>
+            )}
 
             {/* Products Count */}
             {vendorProducts.length > 0 && (

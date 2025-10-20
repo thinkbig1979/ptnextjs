@@ -21,6 +21,7 @@ import { OptimizedImage } from "@/components/ui/optimized-image";
 import { notFound } from "next/navigation";
 import PartnerDetailClient from "./_components/partner-detail-client";
 import { CompanyInfo } from "@/lib/types";
+import { formatVendorLocation } from "@/lib/utils/location";
 
 // Force static generation for optimal SEO and performance
 export const dynamic = 'force-static';
@@ -152,10 +153,12 @@ export default async function PartnerDetailPage({ params }: PartnerDetailPagePro
                   <Calendar className="w-4 h-4" />
                   <span>Founded {partner.founded}</span>
                 </div>
-                <div className="flex items-center space-x-1">
-                  <MapPin className="w-4 h-4" />
-                  <span>{partner.location}</span>
-                </div>
+                {formatVendorLocation(partner.location) && (
+                  <div className="flex items-center space-x-1">
+                    <MapPin className="w-4 h-4" />
+                    <span>{formatVendorLocation(partner.location)}</span>
+                  </div>
+                )}
                 <div className="flex items-center space-x-1">
                   <Package className="w-4 h-4" />
                   <span>{partnerProducts.length} Products</span>
@@ -335,10 +338,12 @@ export default async function PartnerDetailPage({ params }: PartnerDetailPagePro
                         <span className="text-muted-foreground">Founded:</span>
                         <span>{partner.founded}</span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Location:</span>
-                        <span>{partner.location}</span>
-                      </div>
+                      {formatVendorLocation(partner.location) && (
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Location:</span>
+                          <span>{formatVendorLocation(partner.location)}</span>
+                        </div>
+                      )}
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Products:</span>
                         <span>{partnerProducts.length}</span>

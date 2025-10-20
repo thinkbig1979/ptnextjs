@@ -7,8 +7,10 @@ import { useInView } from "react-intersection-observer";
 import { SearchFilter } from "@/components/search-filter";
 import { Pagination } from "@/components/pagination";
 import { parseFilterParams } from "@/lib/utils";
-import { VendorCard } from "@/app/components/vendor-card";
-import { Vendor, Product } from "@/lib/types";
+import { VendorCard } from "./vendor-card";
+import { Vendor, Product, VendorCoordinates } from "@/lib/types";
+import { LocationSearchFilter } from "@/components/LocationSearchFilter";
+import { useLocationFilter, VendorWithDistance } from "@/hooks/useLocationFilter";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -41,6 +43,10 @@ export function VendorsClient({
   const [currentPage, setCurrentPage] = React.useState(1);
   const [highlightedVendor, setHighlightedVendor] = React.useState(urlParams.partner);
 
+  // Location filter state
+  const [userLocation, setUserLocation] = React.useState<VendorCoordinates | null>(null);
+  const [maxDistance, setMaxDistance] = React.useState(100);
+
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
@@ -71,9 +77,19 @@ export function VendorsClient({
     setCurrentPage(1);
   }, []);
 
+  // Apply location filter first (this adds distance data and filters by proximity)
+  const {
+    filteredVendors: locationFilteredVendors,
+    vendorsWithCoordinates,
+    isFiltering: isLocationFiltering
+  } = useLocationFilter(initialVendors, userLocation, maxDistance);
+
+  // Use location-filtered vendors if location search is active, otherwise use all vendors
+  const baseVendorsForFiltering = isLocationFiltering ? locationFilteredVendors : initialVendors;
+
   // Filter vendors based on search, category, and partner status
   const filteredVendors = React.useMemo(() => {
-    let filtered = initialVendors;
+    let filtered: VendorWithDistance[] = baseVendorsForFiltering;
 
     // Apply partner filter if showPartnersOnly is true
     if (showPartnersOnly) {
@@ -88,7 +104,7 @@ export function VendorsClient({
     // Apply search filter
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(vendor => 
+      filtered = filtered.filter(vendor =>
         vendor?.name?.toLowerCase().includes(query) ||
         vendor?.description?.toLowerCase().includes(query) ||
         vendor?.tags?.some((tag: string) => tag.toLowerCase().includes(query))
@@ -109,7 +125,7 @@ export function VendorsClient({
     }
 
     return filtered;
-  }, [initialVendors, searchQuery, selectedCategory, highlightedVendor, showPartnersOnly, showNonPartnersOnly]);
+  }, [baseVendorsForFiltering, searchQuery, selectedCategory, highlightedVendor, showPartnersOnly, showNonPartnersOnly]);
 
   // Paginate results
   const totalPages = Math.ceil(filteredVendors.length / ITEMS_PER_PAGE);
@@ -166,6 +182,19 @@ export function VendorsClient({
     updateUrlParams({ category });
   }, [updateUrlParams]);
 
+  // Location search handlers
+  const handleLocationSearch = React.useCallback((location: VendorCoordinates, distance: number) => {
+    setUserLocation(location);
+    setMaxDistance(distance);
+    setCurrentPage(1);
+  }, []);
+
+  const handleLocationReset = React.useCallback(() => {
+    setUserLocation(null);
+    setMaxDistance(100);
+    setCurrentPage(1);
+  }, []);
+
   // Reset page when filters change
   React.useEffect(() => {
     setCurrentPage(1);
@@ -173,6 +202,26 @@ export function VendorsClient({
 
   return (
     <>
+      {/* Location Search Filter */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+        transition={{ duration: 0.6, delay: 0.1 }}
+        className="mb-6"
+      >
+        <LocationSearchFilter
+          onSearch={handleLocationSearch}
+          onReset={handleLocationReset}
+          resultCount={filteredVendors.length}
+          totalCount={initialVendors.length}
+        />
+        {isLocationFiltering && vendorsWithCoordinates > 0 && (
+          <div className="mt-4 text-sm text-muted-foreground font-poppins-light">
+            Showing vendors within {maxDistance} miles • {vendorsWithCoordinates} vendors have location data
+          </div>
+        )}
+      </motion.div>
+
       {/* Search and Filter */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
