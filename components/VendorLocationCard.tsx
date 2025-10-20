@@ -10,7 +10,7 @@ interface VendorLocationCardProps {
   name: string;
   /** Location data (can be string for legacy or VendorLocation object) */
   location?: VendorLocation | string;
-  /** Optional distance from user location (in miles) */
+  /** Optional distance from user location (in km) */
   distance?: number;
   /** Optional className for styling */
   className?: string;
@@ -101,7 +101,7 @@ export function VendorLocationCard({
           <div data-testid="vendor-distance" className="flex items-center gap-2">
             <Navigation className="w-4 h-4 text-blue-600" />
             <p className="text-sm text-gray-600">
-              <span className="font-semibold">{distance.toFixed(1)} miles</span> away
+              <span className="font-semibold">{distance.toFixed(1)} km</span> away
             </p>
           </div>
         )}

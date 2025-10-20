@@ -31,7 +31,7 @@ export default function VendorDashboardLayout({ children }: VendorDashboardLayou
           variant="outline"
           size="icon"
           aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
-          className="bg-white shadow-lg"
+          className="bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-white shadow-lg"
         >
           {isMobileMenuOpen ? (
             <X className="h-5 w-5" aria-hidden="true" />
@@ -55,14 +55,14 @@ export default function VendorDashboardLayout({ children }: VendorDashboardLayou
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
+          className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-30 md:hidden"
           onClick={toggleMobileMenu}
           aria-hidden="true"
         />
       )}
 
       {/* Main Content Area */}
-      <main className="flex-1 overflow-y-auto bg-gray-50 md:ml-0">
+      <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-slate-900 md:ml-0">
         <div className="container mx-auto px-4 py-8 md:px-8 md:py-12 mt-16 md:mt-0">
           {children}
         </div>

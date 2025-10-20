@@ -21,13 +21,22 @@ const dirname = path.dirname(filename);
 
 export default buildConfig({
   // Server URL configuration
-  serverURL: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
+  // In development, use the actual port Next.js is running on
+  // In production, use NEXT_PUBLIC_SERVER_URL environment variable
+  serverURL: process.env.NEXT_PUBLIC_SERVER_URL ||
+    (process.env.NODE_ENV === 'development'
+      ? `http://localhost:${process.env.PORT || 3000}`
+      : 'http://localhost:3000'),
 
   // Admin user configuration
   admin: {
     user: 'users',
     meta: {
       titleSuffix: '- Marine Technology Platform',
+    },
+    components: {
+      // Add custom logout button to the admin panel navigation
+      afterNavLinks: ['@/payload/components/LogoutButton#LogoutButton'],
     },
   },
 

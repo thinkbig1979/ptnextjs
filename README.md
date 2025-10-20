@@ -1,12 +1,13 @@
 # Paul Thames Superyacht Technology
 
-A modern, high-performance Next.js application powered by TinaCMS for content management and static site generation.
+A modern, high-performance Next.js application powered by Payload CMS with dual authentication systems for admin management and vendor self-service.
 
 ## Overview
 
-This is a fully static superyacht technology showcase website featuring:
-- **Static Site Generation**: Pre-built pages for optimal performance
-- **TinaCMS Integration**: Git-based content management 
+This is a superyacht technology platform featuring:
+- **Payload CMS**: Full-featured headless CMS with admin panel
+- **Dual Authentication**: Separate systems for admin and vendor portals
+- **Vendor Self-Service**: Registration, approval workflow, and profile management
 - **Premium Design**: Modern UI with smooth animations
 - **SEO Optimized**: Server-side rendering with meta tags
 - **Mobile Responsive**: Tailored for all device sizes
@@ -25,17 +26,9 @@ npm install
 npm run dev
 ```
 - App runs on http://localhost:3000 (or next available port)
-- Uses TinaCMS for content management
-- Static content editing by modifying files in `content/` directory
-
-**Development with TinaCMS Admin Interface:**
-```bash
-npm run dev:tinacms
-```
-- App runs on http://localhost:3001 (or next available port)  
-- TinaCMS admin interface available at `/admin`
-- Live content editing with visual interface
-- GraphQL API available at http://localhost:4001/graphql
+- Payload CMS admin panel available at `/admin`
+- Vendor portal available at `/vendor/*`
+- Payload REST API available at `/api/*` (protected by Payload auth)
 
 ### 3. Production Build
 ```bash
@@ -43,34 +36,131 @@ npm run build
 npm start
 ```
 
+## Architecture
+
+### Dual Authentication System
+
+This application implements **two separate authentication systems** that work in harmony:
+
+#### 1. Payload CMS Authentication (Admin Portal)
+- **Purpose**: Admin management and content editing
+- **Route**: `/admin` (Payload CMS admin panel)
+- **Cookie**: `payload-token`
+- **API Endpoints**: `/api/vendors/*`, `/api/products/*`, etc. (Payload REST API)
+- **Users**: Admin users with full access to all collections
+- **Access Control**: Defined in `payload/collections/*.ts` files
+
+#### 2. Custom JWT Authentication (Vendor Portal)
+- **Purpose**: Vendor self-service registration and profile management
+- **Routes**: `/vendor/*` (custom vendor portal UI)
+- **Cookie**: `access_token`
+- **API Endpoints**: `/api/portal/vendors/*` (custom API routes)
+- **Users**: Vendor users with tier-based access restrictions
+- **Access Control**: Implemented in custom route handlers
+
+### API Namespace Architecture
+
+To prevent route conflicts between the two authentication systems, APIs are organized as follows:
+
+```
+/api/
+├── admin/                    # Admin-only custom endpoints
+│   └── vendors/
+│       ├── pending/         # Get pending vendor approvals
+│       └── [id]/
+│           ├── approve/     # Approve vendor
+│           └── reject/      # Reject vendor
+│
+├── portal/                  # Vendor portal custom endpoints
+│   └── vendors/
+│       ├── register/        # Vendor self-registration
+│       ├── profile/         # Get/update current vendor profile
+│       └── [id]/            # Update specific vendor (with auth checks)
+│
+├── auth/                    # Custom authentication endpoints
+│   ├── login/              # Custom JWT login
+│   ├── logout/             # Custom JWT logout
+│   ├── refresh/            # Token refresh
+│   └── me/                 # Get current user
+│
+└── vendors/*                # Payload REST API (for admin panel)
+    products/*               # Managed by Payload CMS
+    categories/*             # Uses payload-token authentication
+    ...
+```
+
+### How It Works Together
+
+1. **Admin Workflow**:
+   - Admin logs into `/admin` using Payload's login
+   - Session stored in `payload-token` cookie
+   - Admin panel makes requests to `/api/vendors/*` (Payload REST API)
+   - Full CRUD access to all collections via Payload's built-in REST API
+
+2. **Vendor Workflow**:
+   - Vendor registers at `/vendor/register`
+   - Request sent to `/api/portal/vendors/register` (custom API)
+   - Admin approves via `/admin` → `/api/admin/vendors/[id]/approve`
+   - Approved vendor logs in at `/vendor/login`
+   - Session stored in `access_token` cookie
+   - Vendor portal makes requests to `/api/portal/vendors/*` (custom API)
+   - Tier-based access restrictions enforced in custom route handlers
+
+3. **Why This Architecture?**:
+   - **Separation of Concerns**: Admin and vendor interfaces are completely independent
+   - **Security**: Two auth systems prevent token confusion or privilege escalation
+   - **Flexibility**: Custom vendor portal has different UX than admin panel
+   - **Scalability**: Each system can be modified independently
+
+### Authentication Tokens
+
+| System | Cookie Name | Expiration | Usage |
+|--------|-------------|------------|-------|
+| Payload CMS | `payload-token` | 1 hour | Admin panel operations |
+| Custom Auth | `access_token` | 1 hour | Vendor portal operations |
+| Custom Auth | `refresh_token` | 7 days | Token refresh |
+
 ## Content Management
 
-### TinaCMS Integration
-- **Content Storage**: Git-based content in `content/` directory
-- **Schema Configuration**: Defined in `tina/config.ts`
-- **Admin Interface**: Available at `/admin` when TinaCMS Cloud is configured
-- **Local Development**: Content can be edited directly in markdown files
+### Payload CMS Collections
+- **Database**: SQLite (local) or PostgreSQL (production)
+- **Schema Configuration**: Defined in `payload/collections/*.ts`
+- **Admin Interface**: Available at `/admin` (Payload CMS admin panel)
+- **Access Control**: Role-based permissions (admin/vendor) with tier restrictions
 
-### Content Structure
+### Collection Structure
 ```
-content/
-├── partners/          # Partner companies
-├── products/          # Product catalog
-├── categories/        # Product categories
-├── tags/             # Product tags
-└── blog/             # Blog posts and categories
+payload/collections/
+├── Users.ts           # Admin and vendor users
+├── Vendors.ts         # Vendor profiles (with tier-based fields)
+├── Products.ts        # Product catalog
+├── Categories.ts      # Product categories
+├── BlogPosts.ts       # Blog posts
+├── TeamMembers.ts     # Team member profiles
+├── CompanyInfo.ts     # Company information
+├── Tags.ts            # Content tags
+├── Yachts.ts          # Yacht database
+└── Media.ts           # Media/file uploads
 ```
 
 ## Available Scripts
 
 ### Development
-- `npm run dev` - Start development server with hot reload
-- `npm run dev:tinacms` - Start with TinaCMS development server
+- `npm run dev` - Start development server with Payload CMS
+- `npm run dev:clean` - Clean up dev servers and start fresh
+- `npm run stop:dev` - Stop all running dev servers
 
 ### Build & Deploy
-- `npm run build` - Build optimized static site
+- `npm run build` - Build application for production
 - `npm start` - Serve production build locally
-- `npm run validate-tinacms` - Validate TinaCMS content structure
+
+### Database & Migration
+- `npm run migrate` - Run Payload CMS to database migration
+- `npm run migrate:dry-run` - Preview migration without executing
+
+### Testing
+- `npm run test:e2e` - Run Playwright end-to-end tests
+- `npm run test:e2e:ui` - Run Playwright tests in UI mode
 
 ### Maintenance
 - `npm run lint` - Run ESLint code quality checks
@@ -79,78 +169,128 @@ content/
 ## Tech Stack
 
 ### Core Technologies
-- **Next.js 14** - React framework with App Router
+- **Next.js 15** - React framework with App Router
 - **TypeScript** - Type-safe JavaScript
-- **TinaCMS** - Git-based headless CMS
+- **Payload CMS 3.x** - Full-featured headless CMS
+- **SQLite/PostgreSQL** - Database backend
 - **Tailwind CSS** - Utility-first CSS framework
 - **shadcn/ui** - High-quality React components
+- **React Hook Form** - Form validation and management
+- **Zod** - TypeScript-first schema validation
 
 ### Key Features
-- **Static Site Generation**: All pages pre-built for maximum performance
-- **Image Optimization**: Automatic WebP conversion and responsive images
+- **Dual Authentication**: Separate admin and vendor auth systems
+- **Tier-Based Access**: Free, Tier 1, and Tier 2 vendor subscriptions
+- **Vendor Approval Workflow**: Registration → Admin Review → Approval/Rejection
+- **Image Optimization**: Automatic optimization with Next.js Image
 - **SEO Optimization**: Meta tags, structured data, and sitemap generation
-- **Performance**: Lazy loading, code splitting, and caching strategies
+- **Performance**: Server-side rendering, lazy loading, and code splitting
 - **Accessibility**: WCAG compliant with proper ARIA labels
 
 ## Project Structure
 
 ```
-app/                   # Next.js App Router pages
-├── components/        # Reusable React components
-├── globals.css       # Global styles
-└── layout.tsx        # Root layout
+app/
+├── (payload)/           # Payload CMS routes
+│   ├── admin/          # Payload admin panel
+│   └── api/
+│       └── [...slug]/  # Payload REST API catch-all
+├── (site)/             # Public-facing site
+│   ├── vendor/        # Vendor portal
+│   │   ├── register/  # Vendor registration
+│   │   ├── login/     # Vendor login
+│   │   └── dashboard/ # Vendor dashboard
+│   ├── vendors/       # Public vendor directory
+│   └── ...
+├── admin/              # Custom admin pages
+│   └── vendors/
+│       └── pending/   # Vendor approval queue
+└── api/
+    ├── admin/         # Admin-only custom endpoints
+    ├── portal/        # Vendor portal custom endpoints
+    │   └── vendors/   # Vendor self-service API
+    └── auth/          # Custom authentication endpoints
 
-components/           # Shared UI components
-├── ui/              # shadcn/ui components
-└── ...              # Custom components
+components/
+├── ui/                # shadcn/ui components
+├── vendor/            # Vendor portal components
+├── admin/             # Admin-specific components
+└── shared/            # Shared components
 
-content/             # TinaCMS content files
-├── partners/        # Partner markdown files
-├── products/        # Product markdown files
-└── ...
+payload/
+├── collections/       # Payload CMS collection schemas
+│   ├── Users.ts      # User collection with role-based access
+│   ├── Vendors.ts    # Vendor profiles with tier restrictions
+│   ├── Products.ts   # Product catalog
+│   └── ...
+├── access/           # Access control functions
+│   └── rbac.ts      # Role-based access control helpers
+└── fields/           # Reusable field configurations
 
-lib/                 # Utility functions and services
-├── tinacms-data-service.ts  # TinaCMS data fetching
-├── static-data-service.ts   # Data service wrapper
-├── types.ts                 # TypeScript definitions
-└── utils.ts                # Helper functions
+lib/
+├── services/         # Business logic services
+│   └── auth-service.ts  # Custom JWT authentication
+├── middleware/       # Request middleware
+├── validation/       # Zod validation schemas
+└── utils/           # Helper functions
 
-tina/                # TinaCMS configuration
-└── config.ts        # Schema and field definitions
+data/
+└── payload.db       # SQLite database (local dev)
 
 public/              # Static assets
-├── media/          # Content images and files
-└── ...
+└── media/          # Uploaded files
 ```
 
 ## Deployment
 
-### Static Hosting (Recommended)
-Deploy to any static hosting provider:
-- **Vercel**: Automatic deployments from Git
-- **Netlify**: Git-based continuous deployment
-- **AWS S3 + CloudFront**: Cost-effective static hosting
-- **GitHub Pages**: Free hosting for public repositories
+### Server Hosting (Required for Payload CMS)
+Since Payload CMS requires server-side capabilities, deploy to platforms that support Node.js:
+- **Vercel**: Automatic deployments from Git with serverless functions
+- **Netlify**: Git-based deployment with serverless functions
+- **Railway**: Easy Node.js deployment with PostgreSQL
+- **Render**: Managed Node.js hosting
+- **DigitalOcean App Platform**: Container-based deployment
+
+### Database Configuration
+For production, use PostgreSQL instead of SQLite:
+1. Set up PostgreSQL database
+2. Update `payload.config.ts` to use `@payloadcms/db-postgres`
+3. Configure `DATABASE_URL` environment variable
 
 ### Build Output
 The `npm run build` command generates:
-- Static HTML files for all pages
+- Server-side rendered pages
 - Optimized JavaScript bundles
-- Compressed CSS and assets
-- SEO-friendly meta tags and sitemaps
+- Payload CMS admin panel
+- REST API endpoints
 
-## Content Editing
+## User Management
 
-### Local Development
-1. Edit markdown files directly in the `content/` directory
-2. Changes are automatically reflected in development
-3. Commit changes to Git for deployment
+### Admin Users
+1. **First Admin Creation**:
+   - First user registered automatically gets admin role
+   - Access admin panel at `/admin`
+   - Full CRUD access to all collections
 
-### TinaCMS Cloud (Optional)
-1. Set up TinaCMS Cloud account
-2. Configure environment variables
-3. Access visual editor at `/admin`
-4. Changes are committed directly to Git
+2. **Additional Admins**:
+   - Created by existing admins via `/admin/collections/users`
+   - Set role to "admin" and status to "approved"
+
+### Vendor Users
+1. **Self-Registration**:
+   - Vendors register at `/vendor/register`
+   - Account created with "pending" status
+   - Email notification sent to admin
+
+2. **Admin Approval**:
+   - Admin reviews at `/admin/vendors/pending`
+   - Can approve or reject with reason
+   - Approved vendors can log in at `/vendor/login`
+
+3. **Tier Assignment**:
+   - Free (default): Basic profile
+   - Tier 1: Enhanced profile with certifications
+   - Tier 2: Full features including products (coming soon)
 
 ## Performance
 
@@ -169,21 +309,73 @@ The `npm run build` command generates:
 
 ## Environment Variables
 
-For TinaCMS Cloud integration:
+Required environment variables:
+
 ```bash
-# TinaCMS Cloud Configuration
-NEXT_PUBLIC_TINA_CLIENT_ID=your_client_id
-TINA_TOKEN=your_token
-NEXT_PUBLIC_TINA_BRANCH=main
+# Payload CMS Configuration
+PAYLOAD_SECRET=your-secret-key-minimum-32-characters
+DATABASE_URL=file:./data/payload.db  # SQLite (local)
+# DATABASE_URL=postgresql://user:pass@host:5432/db  # PostgreSQL (production)
+
+# Server Configuration
+NEXT_PUBLIC_SERVER_URL=http://localhost:3000
+PORT=3000
+
+# JWT Secret for Custom Authentication
+JWT_SECRET=your-jwt-secret-key-minimum-32-characters
+
+# Optional: Build Configuration
+# NEXT_OUTPUT_MODE=export  # DO NOT use with Payload CMS
 ```
+
+### Security Notes
+- Never commit secrets to Git
+- Use different secrets for development and production
+- Rotate secrets periodically
+- Use `.env.local` for local development (not tracked by Git)
+
+## Troubleshooting
+
+### Common Issues
+
+#### 401 Unauthorized When Editing in Admin Panel
+**Symptom**: Getting 401 errors when trying to update vendors in `/admin/collections/vendors`
+
+**Cause**: Custom API routes at `/api/vendors/*` were intercepting Payload's REST API requests
+
+**Solution**: Custom vendor portal routes moved to `/api/portal/vendors/*` to prevent conflicts. Admin panel now correctly uses Payload's REST API at `/api/vendors/*`.
+
+#### Authentication Token Confusion
+**Symptom**: Users logged into one system (admin/vendor) but not recognized in the other
+
+**Expected Behavior**: This is intentional! The two authentication systems are independent:
+- Admin panel uses `payload-token` cookie
+- Vendor portal uses `access_token` cookie
+
+To switch between systems, you must log in to each separately.
+
+#### Port Already in Use
+**Symptom**: Dev server fails to start on port 3000
+
+**Solution**:
+```bash
+npm run stop:dev  # Kill existing dev servers
+npm run dev       # Start fresh
+```
+
+#### Database Locked (SQLite)
+**Symptom**: "Database is locked" errors during development
+
+**Solution**: SQLite doesn't handle concurrent writes well. Use PostgreSQL for production or ensure only one dev server is running.
 
 ## Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Ensure tests pass: `npm run build`
-5. Submit a pull request
+4. Ensure tests pass: `npm run type-check && npm run lint`
+5. Test both admin and vendor portals
+6. Submit a pull request
 
 ## License
 

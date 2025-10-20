@@ -86,7 +86,7 @@ type ProfileFormData = z.infer<typeof profileSchema>;
 export interface VendorProfileEditorProps {
   /**
    * Optional vendor data to pre-populate form
-   * If not provided, will fetch from /api/vendors/profile
+   * If not provided, will fetch from /api/portal/vendors/profile
    */
   initialData?: any;
 }
@@ -145,7 +145,7 @@ export function VendorProfileEditor({ initialData }: VendorProfileEditorProps) {
     async function fetchProfile() {
       try {
         setIsLoading(true);
-        const response = await fetch('/api/vendors/profile', {
+        const response = await fetch('/api/portal/vendors/profile', {
           method: 'GET',
           credentials: 'include',
         });
@@ -243,7 +243,7 @@ export function VendorProfileEditor({ initialData }: VendorProfileEditorProps) {
         return;
       }
 
-      const response = await fetch(`/api/vendors/${vendorId}`, {
+      const response = await fetch(`/api/portal/vendors/${vendorId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

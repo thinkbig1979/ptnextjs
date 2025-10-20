@@ -64,14 +64,14 @@ export function VendorNavigation({ className }: VendorNavigationProps) {
     <nav
       role="navigation"
       aria-label="Vendor dashboard navigation"
-      className={`flex flex-col h-full bg-white border-r border-gray-200 ${className || ''}`}
+      className={`flex flex-col h-full bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-slate-800 ${className || ''}`}
     >
       {/* Sidebar Header */}
       <div className="p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-2">Vendor Portal</h2>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Vendor Portal</h2>
         {user && tier && (
           <div className="flex flex-col gap-2">
-            <p className="text-sm text-gray-600 truncate">{user.email}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 truncate">{user.email}</p>
             <SubscriptionTierBadge tier={tier} />
           </div>
         )}
@@ -98,8 +98,8 @@ export function VendorNavigation({ className }: VendorNavigationProps) {
                   transition-colors duration-150
                   ${
                     isActive
-                      ? 'bg-blue-50 text-blue-700'
-                      : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                      ? 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 hover:text-gray-900 dark:hover:text-white'
                   }
                 `}
               >

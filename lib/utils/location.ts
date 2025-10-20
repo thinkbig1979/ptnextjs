@@ -82,19 +82,19 @@ function degreesToRadians(degrees: number): number {
  *
  * @param coord1 - First coordinate (origin)
  * @param coord2 - Second coordinate (destination)
- * @param unit - Unit of measurement ('km' or 'miles'), defaults to 'miles'
+ * @param unit - Unit of measurement ('km' or 'miles'), defaults to 'km'
  * @returns Distance between the two coordinates in the specified unit, rounded to 2 decimal places
  * @throws Error if coordinates are invalid
  *
  * @example
  * const monaco = { latitude: 43.7384, longitude: 7.4246 };
  * const paris = { latitude: 48.8566, longitude: 2.3522 };
- * const distance = calculateDistance(monaco, paris); // ~428 miles
+ * const distance = calculateDistance(monaco, paris); // ~688 km
  */
 export function calculateDistance(
   coord1: VendorCoordinates,
   coord2: VendorCoordinates,
-  unit: 'km' | 'miles' = 'miles'
+  unit: 'km' | 'miles' = 'km'
 ): number {
   // Validate coordinates
   validateCoordinate(coord1.latitude, coord1.longitude);
@@ -128,20 +128,20 @@ export function calculateDistance(
  *
  * @param origin - Reference coordinate (user location)
  * @param target - Coordinate to check (vendor location)
- * @param maxDistance - Maximum distance in miles
- * @param unit - Unit of measurement ('km' or 'miles'), defaults to 'miles'
+ * @param maxDistance - Maximum distance in km
+ * @param unit - Unit of measurement ('km' or 'miles'), defaults to 'km'
  * @returns true if target is within maxDistance from origin, false otherwise
  *
  * @example
  * const userLocation = { latitude: 43.7384, longitude: 7.4246 };
  * const vendorLocation = { latitude: 43.7500, longitude: 7.4300 };
- * const isNearby = isWithinDistance(userLocation, vendorLocation, 50); // true
+ * const isNearby = isWithinDistance(userLocation, vendorLocation, 80); // true
  */
 export function isWithinDistance(
   origin: VendorCoordinates,
   target: VendorCoordinates,
   maxDistance: number,
-  unit: 'km' | 'miles' = 'miles'
+  unit: 'km' | 'miles' = 'km'
 ): boolean {
   try {
     const distance = calculateDistance(origin, target, unit);
@@ -156,14 +156,14 @@ export function isWithinDistance(
 /**
  * Formats a distance value for display
  *
- * @param distance - Distance in miles
+ * @param distance - Distance in km
  * @param decimals - Number of decimal places (default: 1)
  * @returns Formatted distance string with unit
  *
  * @example
- * formatDistance(42.567, 1) // "42.6 miles"
- * formatDistance(0.75, 2) // "0.75 miles"
+ * formatDistance(68.5, 1) // "68.5 km"
+ * formatDistance(1.2, 2) // "1.20 km"
  */
 export function formatDistance(distance: number, decimals: number = 1): string {
-  return `${distance.toFixed(decimals)} miles`;
+  return `${distance.toFixed(decimals)} km`;
 }

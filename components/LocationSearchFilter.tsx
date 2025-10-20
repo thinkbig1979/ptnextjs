@@ -25,7 +25,7 @@ export function LocationSearchFilter({
   className = '',
 }: LocationSearchFilterProps) {
   const [locationInput, setLocationInput] = useState('');
-  const [distance, setDistance] = useState<number>(100); // Default 100 miles
+  const [distance, setDistance] = useState<number>(160); // Default 160 km
   const [error, setError] = useState<string | null>(null);
   const [isSearchActive, setIsSearchActive] = useState(false);
 
@@ -73,7 +73,7 @@ export function LocationSearchFilter({
 
   const handleReset = () => {
     setLocationInput('');
-    setDistance(100);
+    setDistance(160);
     setError(null);
     setIsSearchActive(false);
     onReset();
@@ -90,14 +90,14 @@ export function LocationSearchFilter({
     if (!isSearchActive || resultCount === undefined) return null;
 
     if (resultCount === 0) {
-      return `No vendors found within ${distance} miles`;
+      return `No vendors found within ${distance} km`;
     }
 
     if (totalCount !== undefined) {
-      return `Showing ${resultCount} of ${totalCount} vendors within ${distance} miles`;
+      return `Showing ${resultCount} of ${totalCount} vendors within ${distance} km`;
     }
 
-    return `${resultCount} vendors found within ${distance} miles`;
+    return `${resultCount} vendors found within ${distance} km`;
   };
 
   const resultMessage = getResultMessage();
@@ -141,22 +141,22 @@ export function LocationSearchFilter({
               Distance Radius
             </Label>
             <span className="text-sm font-medium" data-testid="distance-value">
-              {distance} miles
+              {distance} km
             </span>
           </div>
           <Slider
             id="distance-slider"
-            min={10}
-            max={500}
-            step={10}
+            min={16}
+            max={800}
+            step={16}
             value={[distance]}
             onValueChange={(value) => setDistance(value[0])}
             data-testid="distance-slider"
             className="w-full"
           />
           <div className="flex justify-between text-xs text-gray-500">
-            <span>10 miles</span>
-            <span>500 miles</span>
+            <span>16 km</span>
+            <span>800 km</span>
           </div>
         </div>
 

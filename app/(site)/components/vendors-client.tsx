@@ -217,7 +217,7 @@ export function VendorsClient({
         />
         {isLocationFiltering && vendorsWithCoordinates > 0 && (
           <div className="mt-4 text-sm text-muted-foreground font-poppins-light">
-            Showing vendors within {maxDistance} miles • {vendorsWithCoordinates} vendors have location data
+            Showing vendors within {maxDistance} km • {vendorsWithCoordinates} vendors have location data
           </div>
         )}
       </motion.div>

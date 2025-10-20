@@ -9,6 +9,7 @@ export interface JWTPayload {
   email: string;
   role: 'admin' | 'vendor';
   tier?: 'free' | 'tier1' | 'tier2';
+  status?: 'pending' | 'approved' | 'rejected' | 'suspended';
 }
 
 export interface TokenPair {

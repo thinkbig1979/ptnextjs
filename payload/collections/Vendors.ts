@@ -1031,6 +1031,15 @@ const Vendors: CollectionConfig = {
           },
         },
         {
+          name: 'geocodingButton',
+          type: 'ui',
+          admin: {
+            components: {
+              Field: '@/payload/fields/GeocodingButton#GeocodingButton',
+            },
+          },
+        },
+        {
           name: 'latitude',
           type: 'number',
           label: 'Latitude',

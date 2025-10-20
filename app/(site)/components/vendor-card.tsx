@@ -121,7 +121,7 @@ export function VendorCard({
               <div className="flex items-center space-x-1 text-sm">
                 <Badge variant="secondary" className="bg-blue-100 text-blue-800" data-testid="vendor-distance">
                   <MapPin className="w-3 h-3 mr-1" />
-                  {vendor.distance.toFixed(1)} miles away
+                  {vendor.distance.toFixed(1)} km away
                 </Badge>
               </div>
             )}

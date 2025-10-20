@@ -69,7 +69,9 @@ const nextConfig = {
   },
   
   // Static export configuration
-  trailingSlash: true,
+  // DISABLED: trailingSlash causes 308 redirects on Payload CMS API routes
+  // which triggers CORS errors in the admin panel
+  trailingSlash: false,
   generateBuildId: async () => {
     // Use timestamp for cache busting in static builds
     return process.env.NODE_ENV === 'production' 
