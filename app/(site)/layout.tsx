@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { TinaProvider } from "@/components/tina-provider";
 import { tinaCMSDataService } from "@/lib/tinacms-data-service";
 import { AuthProvider } from "@/lib/context/AuthContext";
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -41,6 +42,7 @@ export default async function SiteLayout({
         <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000029" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="stylesheet" href="/leaflet/leaflet.css" />
         <script
           dangerouslySetInnerHTML={{
             __html: `window.__USE_TINACMS__ = true;`,

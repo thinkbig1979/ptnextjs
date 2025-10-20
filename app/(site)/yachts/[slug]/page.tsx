@@ -6,6 +6,7 @@ import { Separator } from '@/components/ui/separator';
 import { OptimizedImage } from '@/components/ui/optimized-image';
 import { payloadCMSDataService } from '@/lib/payload-cms-data-service';
 import { YachtTimelineEvent, YachtCustomization } from '@/lib/types';
+import { formatVendorLocation } from '@/lib/utils/location';
 
 // Required for static export
 export async function generateStaticParams() {
@@ -317,9 +318,9 @@ fallbackType="company"
                                           <span className="text-foreground">{supplier.vendorName}</span>
                                         )}
                                       </h4>
-                                      {vendor?.location && (
+                                      {formatVendorLocation(vendor?.location) && (
                                         <p className="text-sm text-muted-foreground font-poppins-light">
-                                          📍 {vendor.location}
+                                          📍 {formatVendorLocation(vendor?.location)}
                                         </p>
                                       )}
                                     </div>

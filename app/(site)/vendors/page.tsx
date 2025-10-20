@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Suspense } from "react";
-import { VendorsClient } from "@/app/components/vendors-client";
+import { VendorsClient } from "@/app/(site)/components/vendors-client";
 import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
 import { Metadata } from "next";
 

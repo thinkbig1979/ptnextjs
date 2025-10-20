@@ -150,7 +150,7 @@ export function VendorRegistrationForm() {
     try {
       setIsSubmitting(true);
 
-      const response = await fetch('/api/vendors/register', {
+      const response = await fetch('/api/portal/vendors/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -195,8 +195,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<SuccessRe
         collection: 'users',
         data: {
           email: data.contactEmail,
-          password: hashedPassword, // Payload will handle this via auth hooks
-          hash: hashedPassword, // Store hash directly for custom auth
+          password: data.password, // Payload will hash this automatically
           role: 'vendor',
           status: 'pending',
         },

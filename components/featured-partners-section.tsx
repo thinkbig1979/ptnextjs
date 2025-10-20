@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Building2 } from "lucide-react";
 import Link from "next/link";
+import { formatVendorLocation } from "@/lib/utils/location";
 
 interface FeaturedPartnersSectionProps {
   featuredPartners: any[];
@@ -53,7 +54,7 @@ export function FeaturedPartnersSection({ featuredPartners }: FeaturedPartnersSe
                   </div>
                   <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
                     <span>Est. {partner?.founded}</span>
-                    <span>{partner?.location}</span>
+                    <span>{formatVendorLocation(partner?.location)}</span>
                   </div>
                   <div className="flex items-center text-accent text-sm font-medium group-hover:text-accent/80 transition-colors">
                     <span>Learn more</span>

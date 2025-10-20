@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { authService } from '@/lib/services/auth-service';
+import { getPayload } from 'payload';
+import config from '@/payload.config';
 
 /**
  * GET /api/auth/me
  *
  * Returns current authenticated user from JWT token in httpOnly cookie
+ * Also fetches fresh approval status from database to ensure it's up-to-date
  */
 export async function GET(request: NextRequest) {
   try {
@@ -20,6 +23,23 @@ export async function GET(request: NextRequest) {
 
     // Validate token and get user data
     const user = authService.validateToken(token);
+
+    // Fetch fresh approval status from database
+    try {
+      const payload = await getPayload({ config });
+      const userDoc = await payload.findByID({
+        collection: 'users',
+        id: user.id,
+      });
+
+      // Update status from database if user is a vendor
+      if (userDoc && user.role === 'vendor') {
+        user.status = (userDoc.status as any) || 'pending';
+      }
+    } catch (dbError) {
+      // If database fetch fails, continue with JWT status
+      console.warn('[Auth] Failed to fetch fresh user status from database:', dbError);
+    }
 
     return NextResponse.json({
       user,

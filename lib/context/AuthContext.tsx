@@ -14,6 +14,7 @@ interface AuthContextState {
   error: string | null;
   role: 'admin' | 'vendor' | null;
   tier: 'free' | 'tier1' | 'tier2' | null;
+  status: 'pending' | 'approved' | 'rejected' | 'suspended' | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
@@ -164,12 +165,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [checkAuth]);
 
   /**
-   * Setup automatic token refresh
+   * Setup automatic token refresh and status sync
    * Refresh token every 50 minutes (tokens expire in 1 hour)
+   * Sync user status every 5 minutes to catch approval status changes
    */
   useEffect(() => {
     if (!user) return;
 
+    // Token refresh interval (50 minutes)
     const refreshInterval = setInterval(async () => {
       try {
         const response = await fetch('/api/auth/refresh', {
@@ -187,8 +190,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
     }, 50 * 60 * 1000); // 50 minutes
 
-    return () => clearInterval(refreshInterval);
-  }, [user, logout]);
+    // Status sync interval (5 minutes) - Syncs user status to catch approval changes
+    const statusSyncInterval = setInterval(async () => {
+      try {
+        await refreshUser();
+      } catch (err) {
+        console.debug('Status sync failed:', err);
+        // Don't logout on status sync failure, just log it
+      }
+    }, 5 * 60 * 1000); // 5 minutes
+
+    return () => {
+      clearInterval(refreshInterval);
+      clearInterval(statusSyncInterval);
+    };
+  }, [user, logout, refreshUser]);
 
   const value: AuthContextState = {
     user,
@@ -197,6 +213,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     error,
     role: user?.role || null,
     tier: user?.tier || null,
+    status: user?.status || null,
     login,
     logout,
     refreshUser,

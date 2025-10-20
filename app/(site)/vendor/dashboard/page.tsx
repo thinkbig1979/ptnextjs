@@ -32,7 +32,7 @@ import {
  */
 export default function VendorDashboard() {
   const router = useRouter();
-  const { user, isAuthenticated, isLoading, tier } = useAuth();
+  const { user, isAuthenticated, isLoading, tier, status } = useAuth();
 
   /**
    * Route Guard: Redirect to login if not authenticated
@@ -65,10 +65,9 @@ export default function VendorDashboard() {
   }
 
   /**
-   * Mock approval status (in real app, this would come from user object)
-   * For now, assume 'approved' for tier1/tier2, 'pending' for free tier
+   * Get real approval status from user authentication context
    */
-  const approvalStatus = tier === 'free' ? 'pending' : 'approved';
+  const approvalStatus = status || 'pending';
 
   /**
    * Mock profile completion (in real app, calculate from user profile data)
@@ -79,21 +78,21 @@ export default function VendorDashboard() {
     <div className="space-y-8">
       {/* Welcome Header */}
       <header>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
           Welcome, {user.email.split('@')[0]}
         </h1>
-        <p className="text-gray-600">
+        <p className="text-gray-600 dark:text-gray-400">
           Manage your vendor profile, products, and account settings.
         </p>
       </header>
 
       {/* Pending Approval Banner */}
       {approvalStatus === 'pending' && (
-        <Card className="border-yellow-200 bg-yellow-50">
+        <Card className="border-yellow-200 dark:border-yellow-900 bg-yellow-50 dark:bg-yellow-950">
           <CardContent className="py-4">
             <div className="flex items-center gap-3">
-              <Clock className="h-5 w-5 text-yellow-600" aria-hidden="true" />
-              <p className="text-sm text-yellow-800">
+              <Clock className="h-5 w-5 text-yellow-600 dark:text-yellow-400" aria-hidden="true" />
+              <p className="text-sm text-yellow-800 dark:text-yellow-200">
                 Your account is <strong>pending approval</strong>. You&apos;ll receive an email once an
                 admin reviews your application.
               </p>
@@ -247,30 +246,30 @@ export default function VendorDashboard() {
         <CardContent>
           <ul className="space-y-3">
             <li className="flex items-start gap-3">
-              <CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5" aria-hidden="true" />
+              <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-500 mt-0.5" aria-hidden="true" />
               <div>
-                <p className="font-medium text-gray-900">Complete your profile</p>
-                <p className="text-sm text-gray-600">
+                <p className="font-medium text-gray-900 dark:text-white">Complete your profile</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   Add company information, logo, and contact details
                 </p>
               </div>
             </li>
             {tier === 'tier2' && (
               <li className="flex items-start gap-3">
-                <CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5" aria-hidden="true" />
+                <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-500 mt-0.5" aria-hidden="true" />
                 <div>
-                  <p className="font-medium text-gray-900">Add your products</p>
-                  <p className="text-sm text-gray-600">
+                  <p className="font-medium text-gray-900 dark:text-white">Add your products</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
                     Showcase your products to potential customers
                   </p>
                 </div>
               </li>
             )}
             <li className="flex items-start gap-3">
-              <CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5" aria-hidden="true" />
+              <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-500 mt-0.5" aria-hidden="true" />
               <div>
-                <p className="font-medium text-gray-900">Configure notifications</p>
-                <p className="text-sm text-gray-600">
+                <p className="font-medium text-gray-900 dark:text-white">Configure notifications</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   Manage your email preferences and alerts
                 </p>
               </div>

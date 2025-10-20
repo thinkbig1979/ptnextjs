@@ -40,16 +40,34 @@ class AuthService {
         throw new Error('Invalid credentials');
       }
 
-      // Verify password
-      const isPasswordValid = await this.comparePassword(password, user.hash || '');
-
-      if (!isPasswordValid) {
+      // Verify password using Payload's login (which handles password verification)
+      try {
+        await payload.login({
+          collection: 'users',
+          data: {
+            email,
+            password,
+          },
+        });
+      } catch (error) {
         throw new Error('Invalid credentials');
       }
 
-      // Check if user is active
-      if (user.status !== 'active' && user.role === 'vendor') {
-        throw new Error('Account pending approval');
+      // Check if vendor account is approved
+      if (user.role === 'vendor') {
+        if (user.status === 'pending') {
+          throw new Error('Account pending approval');
+        }
+        if (user.status === 'rejected') {
+          throw new Error('Account has been rejected');
+        }
+        if (user.status === 'suspended') {
+          throw new Error('Account has been suspended');
+        }
+        // Only 'approved' vendors can log in
+        if (user.status !== 'approved') {
+          throw new Error('Account not approved');
+        }
       }
 
       // Get vendor tier if user is a vendor
@@ -73,6 +91,7 @@ class AuthService {
         email: user.email,
         role: user.role,
         tier,
+        status: user.status,
       };
 
       const tokens = generateTokens(jwtPayload);

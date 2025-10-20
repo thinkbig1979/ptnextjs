@@ -15,6 +15,7 @@ import { parseFilterParams } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { Partner, Product } from "@/lib/types";
+import { formatVendorLocation } from "@/lib/utils/location";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -259,10 +260,12 @@ export function PartnersClient({ initialPartners, initialCategories, initialProd
                         <Calendar className="w-3 h-3" />
                         <span>Est. {partner?.founded}</span>
                       </div>
-                      <div className="flex items-center space-x-1">
-                        <MapPin className="w-3 h-3" />
-                        <span>{partner?.location}</span>
-                      </div>
+                      {formatVendorLocation(partner?.location) && (
+                        <div className="flex items-center space-x-1">
+                          <MapPin className="w-3 h-3" />
+                          <span>{formatVendorLocation(partner?.location)}</span>
+                        </div>
+                      )}
                     </div>
 
                     {/* Products Count */}

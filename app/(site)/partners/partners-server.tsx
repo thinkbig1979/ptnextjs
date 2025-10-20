@@ -5,6 +5,7 @@ import { Building2, MapPin, Calendar, ExternalLink, Package, ArrowRight } from "
 import Link from "next/link";
 import { tinaCMSDataService } from "@/lib/tinacms-data-service";
 import { Product } from "@/lib/types";
+import { formatVendorLocation } from "@/lib/utils/location";
 
 interface PartnersServerProps {
   searchParams?: {
@@ -124,10 +125,12 @@ export async function PartnersServer({ searchParams }: PartnersServerProps) {
                       <Calendar className="w-3 h-3" />
                       <span>Est. {partner.founded}</span>
                     </div>
-                    <div className="flex items-center space-x-1">
-                      <MapPin className="w-3 h-3" />
-                      <span>{partner.location}</span>
-                    </div>
+                    {formatVendorLocation(partner.location) && (
+                      <div className="flex items-center space-x-1">
+                        <MapPin className="w-3 h-3" />
+                        <span>{formatVendorLocation(partner.location)}</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Products Count */}

@@ -176,6 +176,27 @@ export interface VendorYachtProject {
   description?: string;
 }
 
+/**
+ * Geographic coordinates for vendor location
+ * Uses WGS84 coordinate system (standard for GPS/maps)
+ */
+export interface VendorCoordinates {
+  latitude: number;   // -90 to 90
+  longitude: number;  // -180 to 180
+}
+
+/**
+ * Complete vendor location information
+ * All fields optional for backward compatibility
+ */
+export interface VendorLocation {
+  address?: string;       // Full mailing address
+  latitude?: number;      // Geographic latitude
+  longitude?: number;     // Geographic longitude
+  city?: string;          // City name
+  country?: string;       // Country name
+}
+
 export interface Vendor {
   id: string;
   slug?: string;
@@ -185,7 +206,7 @@ export interface Vendor {
   image?: string; // TinaCMS uses direct string paths
   website?: string;
   founded?: number;
-  location?: string;
+  location?: VendorLocation | string; // Union type for backward compatibility (legacy string or new object)
   featured?: boolean;
   partner?: boolean; // New field: indicates if vendor is also a strategic partner
   createdAt?: string;
