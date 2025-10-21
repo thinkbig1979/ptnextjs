@@ -58,7 +58,7 @@ export function ProductsClient({ initialProducts, initialCategories, initialVend
 
   // Navigation functions
   const navigateToPartner = React.useCallback((partnerName: string) => {
-    const url = `/partners?partner=${encodeURIComponent(partnerName)}`;
+    const url = `/vendors?partner=${encodeURIComponent(partnerName)}`;
     router.push(url);
   }, [router]);
 

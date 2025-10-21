@@ -3,27 +3,32 @@
 import * as React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
-import { tinaCMSDataService } from "@/lib/tinacms-data-service";
+import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
 
 export default async function ContactPage() {
   // Fetch company info at build time
-  const companyInfo = await tinaCMSDataService.getCompanyInfo();
-  
+  const companyInfo = await payloadCMSDataService.getCompanyInfo();
+
+  // Provide default values if companyInfo is null
+  const address = companyInfo?.address || "Amsterdam, Netherlands";
+  const phone = companyInfo?.phone || "+31 20 555 0123";
+  const email = companyInfo?.email || "info@paulthames.com";
+
   const contactInfo = [
     {
       icon: MapPin,
       title: "Address",
-      details: [companyInfo.address],
+      details: [address],
     },
     {
       icon: Phone,
       title: "Phone",
-      details: [companyInfo.phone],
+      details: [phone],
     },
     {
       icon: Mail,
       title: "Email",
-      details: [companyInfo.email],
+      details: [email],
     },
     {
       icon: Clock,

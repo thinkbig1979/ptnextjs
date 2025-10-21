@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Package, Building2, ArrowRight, Star } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { tinaCMSDataService } from "@/lib/tinacms-data-service";
-import { Partner } from "@/lib/types";
+import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
+import { Vendor } from "@/lib/types";
 
 interface ProductsServerProps {
   searchParams?: {
@@ -17,15 +17,15 @@ interface ProductsServerProps {
 
 export async function ProductsServer({ searchParams }: ProductsServerProps) {
   console.log('🏗️  Loading products data for server-side rendering...');
-  
+
   // Get all data at build time
-  const [allProducts, allPartners, categories] = await Promise.all([
-    tinaCMSDataService.getAllProducts(),
-    tinaCMSDataService.getAllPartners(),
-    tinaCMSDataService.getCategories()
+  const [allProducts, allVendors, categories] = await Promise.all([
+    payloadCMSDataService.getAllProducts(),
+    payloadCMSDataService.getAllVendors(),
+    payloadCMSDataService.getCategories()
   ]);
 
-  console.log(`📋 Loaded ${allProducts.length} products, ${allPartners.length} partners, ${categories.length} categories`);
+  console.log(`📋 Loaded ${allProducts.length} products, ${allVendors.length} vendors, ${categories.length} categories`);
 
   // Apply server-side filtering based on searchParams
   let filteredProducts = allProducts;
@@ -52,10 +52,10 @@ export async function ProductsServer({ searchParams }: ProductsServerProps) {
     );
   }
 
-  // Create a map of partners for quick lookup
-  const partnersMap = new Map<string, Partner>();
-  allPartners.forEach(partner => {
-    partnersMap.set(partner.id, partner);
+  // Create a map of vendors for quick lookup
+  const vendorsMap = new Map<string, Vendor>();
+  allVendors.forEach(vendor => {
+    vendorsMap.set(vendor.id, vendor);
   });
 
   return (
@@ -71,7 +71,8 @@ export async function ProductsServer({ searchParams }: ProductsServerProps) {
       {/* Products Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {filteredProducts.map((product) => {
-          const partner = product.partnerId ? partnersMap.get(product.partnerId) : undefined;
+          const vendorId = product.vendorId || product.partnerId;
+          const vendor = vendorId ? vendorsMap.get(vendorId) : undefined;
           
           return (
             <Card 
@@ -150,23 +151,23 @@ export async function ProductsServer({ searchParams }: ProductsServerProps) {
 
                   {/* Action Buttons */}
                   <div className="flex flex-col gap-2">
-                    {partner && (
-                      <Button 
-                        variant="default" 
-                        size="sm" 
+                    {vendor && (
+                      <Button
+                        variant="default"
+                        size="sm"
                         className="w-full group bg-accent hover:bg-accent/90"
                         asChild
                       >
-                        <Link href={`/partners/${partner.slug}`}>
-                          Go to Partner
+                        <Link href={`/vendors/${vendor.slug}`}>
+                          Go to Vendor
                           <Building2 className="ml-2 h-3 w-3 group-hover:translate-x-1 transition-transform" />
                         </Link>
                       </Button>
                     )}
-                    
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
+
+                    <Button
+                      variant="outline"
+                      size="sm"
                       className="w-full group"
                       asChild
                     >

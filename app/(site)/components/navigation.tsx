@@ -14,7 +14,6 @@ import { Menu } from "lucide-react";
 
 const navigationItems = [
   { href: "/", label: "Home" },
-  { href: "/partners", label: "Partners" },
   { href: "/vendors", label: "Vendors" },
   { href: "/products", label: "Products & Services" },
   { href: "/blog", label: "Blog" },

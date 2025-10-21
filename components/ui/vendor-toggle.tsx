@@ -9,9 +9,17 @@ export interface VendorToggleProps {
   value: "partners" | "all";
   onValueChange: (value: "partners" | "all") => void;
   isLoading?: boolean;
+  partnersLabel?: string;
+  allLabel?: string;
 }
 
-export function VendorToggle({ value, onValueChange, isLoading = false }: VendorToggleProps) {
+export function VendorToggle({
+  value,
+  onValueChange,
+  isLoading = false,
+  partnersLabel = "Partner Products",
+  allLabel = "All Vendors"
+}: VendorToggleProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -19,18 +27,18 @@ export function VendorToggle({ value, onValueChange, isLoading = false }: Vendor
       transition={{ duration: 0.3 }}
       className="flex items-center justify-center space-x-4 p-6 rounded-lg bg-card border-2 border-accent/20 shadow-lg"
     >
-      <Label 
-        htmlFor="vendor-toggle" 
+      <Label
+        htmlFor="vendor-toggle"
         className={`font-poppins-semibold text-sm transition-colors cursor-pointer px-3 py-2 rounded-md ${
-          value === "partners" 
-            ? "text-accent-foreground bg-accent shadow-sm" 
+          value === "partners"
+            ? "text-accent-foreground bg-accent shadow-sm"
             : "text-muted-foreground hover:text-foreground hover:bg-accent/10"
         }`}
         onClick={() => onValueChange("partners")}
       >
-        Partner Products
+        {partnersLabel}
       </Label>
-      
+
       <Switch
         id="vendor-toggle"
         checked={value === "all"}
@@ -38,19 +46,19 @@ export function VendorToggle({ value, onValueChange, isLoading = false }: Vendor
         disabled={isLoading}
         className="data-[state=checked]:bg-accent data-[state=unchecked]:bg-muted-foreground/30 scale-110 border-2 border-accent/30"
       />
-      
-      <Label 
-        htmlFor="vendor-toggle" 
+
+      <Label
+        htmlFor="vendor-toggle"
         className={`font-poppins-semibold text-sm transition-colors cursor-pointer px-3 py-2 rounded-md ${
-          value === "all" 
-            ? "text-accent-foreground bg-accent shadow-sm" 
+          value === "all"
+            ? "text-accent-foreground bg-accent shadow-sm"
             : "text-muted-foreground hover:text-foreground hover:bg-accent/10"
         }`}
         onClick={() => onValueChange("all")}
       >
-        All Vendors
+        {allLabel}
       </Label>
-      
+
       {isLoading && (
         <div className="ml-2">
           <div className="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin" />

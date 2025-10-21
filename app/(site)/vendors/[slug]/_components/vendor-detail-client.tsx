@@ -4,11 +4,10 @@ import * as React from "react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { Button } from "@/components/ui/button";
-import { 
+import {
   Phone,
   Mail,
-  ExternalLink,
-  Globe
+  ExternalLink
 } from "lucide-react";
 import type { Vendor } from "@/lib/types";
 
@@ -31,10 +30,6 @@ export default function VendorDetailClient({ vendor }: VendorDetailClientProps) 
     alert(`Opening contact form for ${vendor?.name}. You will be redirected to send a message.`);
   };
 
-  const handleFindDealer = () => {
-    alert(`Finding local dealers for ${vendor?.name}. Dealer locator will open shortly.`);
-  };
-
   return (
     <motion.div
       ref={ref}
@@ -47,12 +42,12 @@ export default function VendorDetailClient({ vendor }: VendorDetailClientProps) 
         <Phone className="w-4 h-4 mr-2" />
         Call Vendor
       </Button>
-      
+
       <Button variant="outline" className="w-full" onClick={handleSendMessage}>
         <Mail className="w-4 h-4 mr-2" />
         Send Message
       </Button>
-      
+
       {vendor.website && (
         <Button variant="outline" className="w-full" asChild>
           <a href={vendor.website} target="_blank" rel="noopener noreferrer">
@@ -61,11 +56,6 @@ export default function VendorDetailClient({ vendor }: VendorDetailClientProps) 
           </a>
         </Button>
       )}
-      
-      <Button variant="outline" className="w-full" onClick={handleFindDealer}>
-        <Globe className="w-4 h-4 mr-2" />
-        Find Local Dealer
-      </Button>
     </motion.div>
   );
 }

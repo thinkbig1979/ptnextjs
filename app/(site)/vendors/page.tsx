@@ -40,6 +40,7 @@ interface VendorsPageProps {
     category?: string;
     search?: string;
     partner?: string;
+    view?: "partners" | "all";
   }>;
 }
 
@@ -84,7 +85,6 @@ export default async function VendorsPage({ searchParams }: VendorsPageProps) {
             initialVendors={vendors}
             initialCategories={categoryNames}
             initialProducts={products}
-            showNonPartnersOnly={false} // Show all vendors (partners and non-partners)
             baseUrl="/vendors"
             pageTitle="vendors"
           />

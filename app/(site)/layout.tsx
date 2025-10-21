@@ -5,8 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Navigation } from "@/components/navigation";
 import { Footer } from "@/components/footer";
 import { Toaster } from "@/components/ui/sonner";
-import { TinaProvider } from "@/components/tina-provider";
-import { tinaCMSDataService } from "@/lib/tinacms-data-service";
+import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
 import { AuthProvider } from "@/lib/context/AuthContext";
 import Script from "next/script";
 
@@ -32,7 +31,7 @@ export default async function SiteLayout({
   children: React.ReactNode;
 }) {
   // Fetch company info at build time for footer
-  const companyInfo = await tinaCMSDataService.getCompanyInfo();
+  const companyInfo = await payloadCMSDataService.getCompanyInfo();
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -43,11 +42,6 @@ export default async function SiteLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="stylesheet" href="/leaflet/leaflet.css" />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `window.__USE_TINACMS__ = true;`,
-          }}
-        />
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -117,23 +111,21 @@ export default async function SiteLayout({
       </head>
       <body className={inter.className} suppressHydrationWarning>
         <AuthProvider>
-          <TinaProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem={true}
-              disableTransitionOnChange={false}
-            >
-              <div className="min-h-screen flex flex-col">
-                <Navigation />
-                <main className="flex-1">
-                  {children}
-                </main>
-                <Footer companyInfo={companyInfo} />
-              </div>
-              <Toaster />
-            </ThemeProvider>
-          </TinaProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem={true}
+            disableTransitionOnChange={false}
+          >
+            <div className="min-h-screen flex flex-col">
+              <Navigation />
+              <main className="flex-1">
+                {children}
+              </main>
+              <Footer companyInfo={companyInfo} />
+            </div>
+            <Toaster />
+          </ThemeProvider>
         </AuthProvider>
       </body>
     </html>

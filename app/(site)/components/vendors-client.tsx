@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { SearchFilter } from "@/components/search-filter";
 import { Pagination } from "@/components/pagination";
+import { VendorToggle } from "@/components/ui/vendor-toggle";
 import { parseFilterParams } from "@/lib/utils";
 import { VendorCard } from "./vendor-card";
 import { Vendor, Product, VendorCoordinates } from "@/lib/types";
@@ -42,6 +43,9 @@ export function VendorsClient({
   const [selectedCategory, setSelectedCategory] = React.useState(urlParams.category);
   const [currentPage, setCurrentPage] = React.useState(1);
   const [highlightedVendor, setHighlightedVendor] = React.useState(urlParams.partner);
+  const [vendorView, setVendorView] = React.useState<"partners" | "all">(
+    searchParams?.get('view') === 'all' ? 'all' : 'partners'
+  );
 
   // Location filter state
   const [userLocation, setUserLocation] = React.useState<VendorCoordinates | null>(null);
@@ -58,6 +62,7 @@ export function VendorsClient({
     setSearchQuery(params.search);
     setSelectedCategory(params.category);
     setHighlightedVendor(params.partner);
+    setVendorView(searchParams?.get('view') === 'all' ? 'all' : 'partners');
   }, [searchParams]);
 
   // Navigation functions
@@ -91,12 +96,18 @@ export function VendorsClient({
   const filteredVendors = React.useMemo(() => {
     let filtered: VendorWithDistance[] = baseVendorsForFiltering;
 
-    // Apply partner filter if showPartnersOnly is true
+    // Apply partner filter based on vendorView toggle
+    if (vendorView === "partners") {
+      filtered = filtered.filter(vendor => vendor.partner === true);
+    }
+    // For "all" view, no partner filtering needed - show all vendors
+
+    // Apply partner filter if showPartnersOnly is true (legacy support)
     if (showPartnersOnly) {
       filtered = filtered.filter(vendor => vendor.partner === true);
     }
 
-    // Apply non-partner filter if showNonPartnersOnly is true
+    // Apply non-partner filter if showNonPartnersOnly is true (legacy support)
     if (showNonPartnersOnly) {
       filtered = filtered.filter(vendor => vendor.partner !== true);
     }
@@ -125,7 +136,7 @@ export function VendorsClient({
     }
 
     return filtered;
-  }, [baseVendorsForFiltering, searchQuery, selectedCategory, highlightedVendor, showPartnersOnly, showNonPartnersOnly]);
+  }, [baseVendorsForFiltering, searchQuery, selectedCategory, highlightedVendor, showPartnersOnly, showNonPartnersOnly, vendorView]);
 
   // Paginate results
   const totalPages = Math.ceil(filteredVendors.length / ITEMS_PER_PAGE);
@@ -135,9 +146,9 @@ export function VendorsClient({
   );
 
   // Function to update URL parameters
-  const updateUrlParams = React.useCallback((params: { search?: string; category?: string; partner?: string }) => {
+  const updateUrlParams = React.useCallback((params: { search?: string; category?: string; partner?: string; view?: "partners" | "all" }) => {
     const current = new URLSearchParams(Array.from((searchParams || new URLSearchParams()).entries()));
-    
+
     // Update or remove search parameter
     if (params.search !== undefined) {
       if (params.search) {
@@ -146,7 +157,7 @@ export function VendorsClient({
         current.delete('search');
       }
     }
-    
+
     // Update or remove category parameter
     if (params.category !== undefined) {
       if (params.category && params.category !== 'all') {
@@ -155,7 +166,7 @@ export function VendorsClient({
         current.delete('category');
       }
     }
-    
+
     // Update or remove partner parameter
     if (params.partner !== undefined) {
       if (params.partner) {
@@ -165,9 +176,18 @@ export function VendorsClient({
       }
     }
 
+    // Update or remove view parameter
+    if (params.view !== undefined) {
+      if (params.view === 'all') {
+        current.set('view', 'all');
+      } else {
+        current.delete('view'); // Default is partners, no URL param needed
+      }
+    }
+
     const search = current.toString();
     const query = search ? `?${search}` : '';
-    
+
     router.push(`${window.location.pathname}${query}`, { scroll: false });
   }, [router, searchParams]);
 
@@ -180,6 +200,11 @@ export function VendorsClient({
   const handleCategoryChange = React.useCallback((category: string) => {
     setSelectedCategory(category);
     updateUrlParams({ category });
+  }, [updateUrlParams]);
+
+  const handleVendorViewChange = React.useCallback((view: "partners" | "all") => {
+    setVendorView(view);
+    updateUrlParams({ view });
   }, [updateUrlParams]);
 
   // Location search handlers
@@ -198,7 +223,7 @@ export function VendorsClient({
   // Reset page when filters change
   React.useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, selectedCategory]);
+  }, [searchQuery, selectedCategory, vendorView]);
 
   return (
     <>
@@ -238,6 +263,21 @@ export function VendorsClient({
         />
       </motion.div>
 
+      {/* Vendor Toggle */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+        transition={{ duration: 0.6, delay: 0.3 }}
+        className="mb-8"
+      >
+        <VendorToggle
+          value={vendorView}
+          onValueChange={handleVendorViewChange}
+          partnersLabel="Partners"
+          allLabel="All Vendors"
+        />
+      </motion.div>
+
       {/* Results Summary */}
       <motion.div
         ref={ref}
@@ -248,6 +288,7 @@ export function VendorsClient({
       >
         <p className="text-muted-foreground font-poppins-light">
           Showing {paginatedVendors.length} of {filteredVendors.length} {pageTitle}
+          {vendorView === "partners" ? " (partners only)" : " (all vendors)"}
           {selectedCategory !== "all" && ` in ${selectedCategory}`}
         </p>
       </motion.div>
