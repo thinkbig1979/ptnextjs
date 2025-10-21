@@ -191,7 +191,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                     <div className="font-medium">
                       Manufactured by{" "}
                       <Link
-                        href={`/partners/${partner.slug}`}
+                        href={`/vendors/${partner.slug}`}
                         className="text-accent hover:text-accent/80 transition-colors underline underline-offset-4 decoration-2"
                         data-testid="product-vendor-link"
                       >
@@ -509,7 +509,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                     <div>
                       <h4 className="font-medium mb-2">About the Manufacturer</h4>
                       <div className="border rounded-lg p-3 bg-card hover:bg-muted/50 transition-colors">
-                        <Link href={`/partners/${partner.slug}`} className="block">
+                        <Link href={`/vendors/${partner.slug}`} className="block">
                           <div className="flex items-start space-x-3">
                             <div className="text-left flex-1">
                               <div className="font-medium text-foreground mb-1 word-wrap break-words hyphens-auto">
