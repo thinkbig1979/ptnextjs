@@ -50,7 +50,7 @@ export function HeroSection({ companyInfo }: HeroSectionProps) {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button asChild size="lg" variant="accent" className="group">
-              <Link href="/partners">
+              <Link href="/vendors">
                 Explore Partners
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Link>

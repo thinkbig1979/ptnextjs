@@ -65,7 +65,7 @@ const discoveryNavigation = [
   {
     title: "Partners",
     description: "Explore our network of vetted technology partners and their capabilities",
-    href: "/partners",
+    href: "/vendors",
     icon: Users,
   },
   {
