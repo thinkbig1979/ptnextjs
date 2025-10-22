@@ -64,10 +64,10 @@ export function VendorCard({
                 <Badge variant="default" className="bg-accent">Featured</Badge>
               )}
               {isHighlighted && (
-                <Badge variant="default" className="bg-green-500">Highlighted</Badge>
+                <Badge variant="default" className="bg-accent/90">Highlighted</Badge>
               )}
               {vendor?.partner && (
-                <Badge variant="default" className="bg-blue-500">Partner</Badge>
+                <Badge variant="default" className="bg-primary">Partner</Badge>
               )}
             </div>
             <Badge 
@@ -119,7 +119,7 @@ export function VendorCard({
             {/* Distance Badge (shown when location filtering is active) */}
             {vendor?.distance !== undefined && (
               <div className="flex items-center space-x-1 text-sm">
-                <Badge variant="secondary" className="bg-blue-100 text-blue-800" data-testid="vendor-distance">
+                <Badge variant="secondary" className="bg-accent/10 text-accent" data-testid="vendor-distance">
                   <MapPin className="w-3 h-3 mr-1" />
                   {vendor.distance.toFixed(1)} km away
                 </Badge>

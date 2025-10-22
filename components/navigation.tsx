@@ -29,7 +29,6 @@ const navigationItems: NavigationItem[] = [
     href: "/discovery-platform",
     label: "Discovery Platform",
     submenu: [
-      { href: "/partners", label: "Partners" },
       { href: "/vendors", label: "Vendors" },
       { href: "/products", label: "Products & Services" },
       { href: "/yachts", label: "Yachts" },

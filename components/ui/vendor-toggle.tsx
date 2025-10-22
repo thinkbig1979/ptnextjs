@@ -28,7 +28,6 @@ export function VendorToggle({
       className="flex items-center justify-center space-x-4 p-6 rounded-lg bg-card border-2 border-accent/20 shadow-lg"
     >
       <Label
-        htmlFor="vendor-toggle"
         className={`font-poppins-semibold text-sm transition-colors cursor-pointer px-3 py-2 rounded-md ${
           value === "partners"
             ? "text-accent-foreground bg-accent shadow-sm"
@@ -48,7 +47,6 @@ export function VendorToggle({
       />
 
       <Label
-        htmlFor="vendor-toggle"
         className={`font-poppins-semibold text-sm transition-colors cursor-pointer px-3 py-2 rounded-md ${
           value === "all"
             ? "text-accent-foreground bg-accent shadow-sm"

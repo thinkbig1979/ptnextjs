@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
   ArrowLeft,
+  ArrowRight,
   Building2,
   Package,
   MapPin,
@@ -438,42 +439,53 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {vendorProducts.slice(0, 4).map((product) => (
-                    <Card key={product.id} className="hover-lift cursor-pointer group overflow-hidden flex flex-col">
-                      <Link href={`/products/${product.slug || product.id}`}>
-                        {/* Product Image */}
-                        <div className="aspect-video relative overflow-hidden">
-                          <OptimizedImage
-                            src={product.mainImage?.url || product.image}
-                            alt={product.mainImage?.altText || product.name}
-                            fallbackType="product"
-                            fill
-                            className="object-cover group-hover:scale-105 transition-transform duration-300"
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                          />
+                    <Card key={product.id} className="hover-lift group overflow-hidden flex flex-col">
+                      {/* Product Image */}
+                      <Link href={`/products/${product.slug || product.id}`} className="aspect-video relative overflow-hidden block">
+                        <OptimizedImage
+                          src={product.mainImage?.url || product.image}
+                          alt={product.mainImage?.altText || product.name}
+                          fallbackType="product"
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                        />
+                      </Link>
+
+                      <CardHeader>
+                        <div className="flex items-center space-x-2 mb-2">
+                          <Badge variant="outline" className="text-xs">{product.category}</Badge>
                         </div>
-                        
-                        <CardHeader>
-                          <div className="flex items-center space-x-2 mb-2">
-                            <Badge variant="outline" className="text-xs">{product.category}</Badge>
-                          </div>
-                          <CardTitle className="text-lg group-hover:text-accent transition-colors line-clamp-2">
+                        <Link href={`/products/${product.slug || product.id}`}>
+                          <CardTitle className="text-lg group-hover:text-accent transition-colors line-clamp-2 hover:text-accent cursor-pointer">
                             {product.name}
                           </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <p className="text-sm text-muted-foreground line-clamp-2">
-                            {product.description}
-                          </p>
-                          {product.features && product.features.length > 0 && (
-                            <div className="mt-3">
-                              <div className="flex items-center space-x-1 text-xs text-muted-foreground">
-                                <Star className="w-3 h-3" />
-                                <span>{product.features[0].title}</span>
-                              </div>
+                        </Link>
+                      </CardHeader>
+                      <CardContent className="flex-grow flex flex-col">
+                        <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                          {product.description}
+                        </p>
+                        {product.features && product.features.length > 0 && (
+                          <div className="mb-4">
+                            <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+                              <Star className="w-3 h-3" />
+                              <span>{product.features[0].title}</span>
                             </div>
-                          )}
-                        </CardContent>
-                      </Link>
+                          </div>
+                        )}
+                        <Button
+                          asChild
+                          variant="outline"
+                          size="sm"
+                          className="w-full group mt-auto"
+                        >
+                          <Link href={`/products/${product.slug || product.id}`}>
+                            Learn More
+                            <ArrowRight className="ml-2 h-3 w-3 group-hover:translate-x-1 transition-transform" />
+                          </Link>
+                        </Button>
+                      </CardContent>
                     </Card>
                   ))}
                 </div>

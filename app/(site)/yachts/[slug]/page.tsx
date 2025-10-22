@@ -49,7 +49,11 @@ fallbackType="company"
               />
             </div>
             <h1 className="text-4xl font-bold mb-4">{yacht.name}</h1>
-            <p className="text-lg text-muted-foreground mb-6" data-testid="yacht-description">{yacht.description}</p>
+            <div
+              className="text-lg text-muted-foreground mb-6"
+              data-testid="yacht-description"
+              dangerouslySetInnerHTML={{ __html: yacht.description }}
+            />
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {yacht.length && (

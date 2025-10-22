@@ -93,12 +93,11 @@ export function YachtCard({
 
         <CardContent className="pt-0">
           <div className="space-y-4">
-            <p
+            <div
               className="text-sm text-muted-foreground line-clamp-2 leading-relaxed font-poppins-light"
               data-testid="yacht-description"
-            >
-              {yacht.description}
-            </p>
+              dangerouslySetInnerHTML={{ __html: yacht.description }}
+            />
 
             {/* Yacht Specifications */}
             <div className="grid grid-cols-2 gap-3 py-3 border-t border-border/50">
@@ -125,7 +124,7 @@ export function YachtCard({
               <div className="flex gap-2">
                 {yacht.sustainabilityScore?.overallScore && (
                   <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-accent/80"></div>
                     <span className="text-xs font-poppins-medium text-muted-foreground">
                       {yacht.sustainabilityScore.overallScore} sustainability
                     </span>
@@ -133,7 +132,7 @@ export function YachtCard({
                 )}
                 {yacht.supplierCount && yacht.supplierCount > 0 && (
                   <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-primary/70"></div>
                     <span className="text-xs font-poppins-medium text-muted-foreground">
                       {yacht.supplierCount} supplier{yacht.supplierCount !== 1 ? 's' : ''}
                     </span>

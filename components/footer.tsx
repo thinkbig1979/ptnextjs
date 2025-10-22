@@ -26,8 +26,8 @@ export function Footer({ companyInfo }: FooterProps) {
           <div className="space-y-4">
             <h3 className="font-poppins-medium text-sm font-semibold">Quick Links</h3>
             <div className="space-y-2">
-              <Link href="/partners" className="block font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors">
-                Partners
+              <Link href="/vendors" className="block font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors">
+                Vendors
               </Link>
               <Link href="/products" className="block font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors">
                 Products & Services

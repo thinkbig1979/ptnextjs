@@ -16,17 +16,17 @@ export function SubscriptionTierBadge({ tier, className }: SubscriptionTierBadge
     free: {
       label: 'Free Tier',
       variant: 'secondary' as const,
-      className: 'bg-gray-100 text-gray-800 hover:bg-gray-200',
+      className: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
     },
     tier1: {
       label: 'Tier 1',
       variant: 'default' as const,
-      className: 'bg-blue-100 text-blue-800 hover:bg-blue-200',
+      className: 'bg-primary/20 text-primary hover:bg-primary/30',
     },
     tier2: {
       label: 'Tier 2',
       variant: 'default' as const,
-      className: 'bg-purple-100 text-purple-800 hover:bg-purple-200',
+      className: 'bg-accent text-accent-foreground hover:bg-accent/90',
     },
   };
 

@@ -28,7 +28,7 @@ export function FeaturedPartnersSection({ featuredPartners }: FeaturedPartnersSe
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {featuredPartners.map((partner, _index) => (
-            <Link key={partner?.id} href={`/partners/${partner?.slug}`} className="block h-full">
+            <Link key={partner?.id} href={`/vendors/${partner?.slug}`} className="block h-full">
               <Card className="h-full hover-lift cursor-pointer group">
                 <CardHeader>
                   <div className="flex items-center space-x-3 mb-3">
@@ -68,8 +68,8 @@ export function FeaturedPartnersSection({ featuredPartners }: FeaturedPartnersSe
 
         <div className="text-center mt-12">
           <Button asChild size="lg" variant="accent" className="group">
-            <Link href="/partners">
-              View All Partners
+            <Link href="/vendors">
+              View All Vendors
               <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </Button>

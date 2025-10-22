@@ -163,22 +163,22 @@ export function LocationSearchFilter({
         {/* Error Message */}
         {error && (
           <div
-            className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-md"
+            className="flex items-start gap-2 p-3 bg-destructive/10 border border-destructive/30 rounded-md"
             data-testid="error-message"
             role="alert"
           >
-            <AlertCircle className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
-            <p className="text-sm text-red-800">{error}</p>
+            <AlertCircle className="w-4 h-4 text-destructive mt-0.5 flex-shrink-0" />
+            <p className="text-sm text-destructive">{error}</p>
           </div>
         )}
 
         {/* Result Count */}
         {resultMessage && (
           <div
-            className="p-3 bg-blue-50 border border-blue-200 rounded-md"
+            className="p-3 bg-accent/10 border border-accent/30 rounded-md"
             data-testid="result-count"
           >
-            <p className="text-sm text-blue-800">{resultMessage}</p>
+            <p className="text-sm text-accent-foreground">{resultMessage}</p>
           </div>
         )}
 
