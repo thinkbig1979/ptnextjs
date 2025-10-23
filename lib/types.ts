@@ -197,6 +197,81 @@ export interface VendorLocation {
   country?: string;       // Country name
 }
 
+// ============================================================
+// Geocoding Types (Photon API Integration)
+// ============================================================
+
+/**
+ * Photon API GeoJSON feature representing a geocoded location
+ * @see https://photon.komoot.io/
+ */
+export interface PhotonFeature {
+  type: 'Feature';
+  geometry: {
+    type: 'Point';
+    coordinates: [number, number]; // [longitude, latitude] - Note: Photon uses [lon, lat] order
+  };
+  properties: {
+    osm_id: number;
+    osm_type: string;
+    name: string;
+    country?: string;
+    countrycode?: string;
+    state?: string;
+    city?: string;
+    postcode?: string;
+    type: string; // city, town, village, etc.
+    extent?: number[];
+    osm_key?: string;
+    osm_value?: string;
+  };
+}
+
+/**
+ * Photon API response structure (GeoJSON FeatureCollection)
+ * @see https://photon.komoot.io/
+ */
+export interface PhotonResponse {
+  type: 'FeatureCollection';
+  features: PhotonFeature[];
+}
+
+/**
+ * Query parameters for the /api/geocode endpoint
+ */
+export interface GeocodeQueryParams {
+  /** Location search query */
+  q: string;
+  /** Maximum number of results to return (default: 5) */
+  limit?: number;
+  /** Language code for results (default: 'en') */
+  lang?: string;
+}
+
+/**
+ * Successful response from /api/geocode endpoint
+ * Returns Photon API features directly
+ */
+export interface GeocodeSuccessResponse {
+  success: true;
+  results: PhotonFeature[];
+}
+
+/**
+ * Error response from /api/geocode endpoint
+ */
+export interface GeocodeErrorResponse {
+  success: false;
+  error: string;
+  code: 'RATE_LIMIT' | 'INVALID_QUERY' | 'SERVICE_ERROR' | 'NETWORK_ERROR' | 'SERVICE_UNAVAILABLE';
+  retryAfter?: number;
+}
+
+/**
+ * Union type for all possible /api/geocode responses
+ */
+export type GeocodeResponse = GeocodeSuccessResponse | GeocodeErrorResponse;
+
 export interface Vendor {
   id: string;
   slug?: string;

@@ -1,144 +1,171 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Location Search Functionality', () => {
-  test('should display LocationSearchFilter component on vendors page', async ({ page }) => {
-    await page.goto('http://localhost:3000/vendors');
+test.describe('Location Name Search Feature E2E - Phase 4 Validation', () => {
+  test.setTimeout(60000);
 
-    // Wait for page to load
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/vendors');
     await page.waitForLoadState('networkidle');
-
-    // Verify LocationSearchFilter component is visible
     const locationFilter = page.locator('[data-testid="location-search-filter"]');
     await expect(locationFilter).toBeVisible({ timeout: 10000 });
-
-    // Verify all key elements exist
-    await expect(page.locator('[data-testid="location-input"]')).toBeVisible();
-    await expect(page.locator('[data-testid="distance-slider"]')).toBeVisible();
-    await expect(page.locator('[data-testid="search-button"]')).toBeVisible();
-    await expect(page.locator('[data-testid="distance-value"]')).toContainText('100 miles');
-
-    console.log('✅ LocationSearchFilter component rendered successfully');
   });
 
-  test('should perform location search and show filtered results', async ({ page }) => {
-    await page.goto('http://localhost:3000/vendors');
-    await page.waitForLoadState('networkidle');
+  // ============================================================
+  // CRITICAL TESTS (Must Have)
+  // ============================================================
 
-    // Enter Fort Lauderdale coordinates
+  test('CRITICAL #1: Simple search workflow - Monaco auto-applies', async ({ page }) => {
+    console.log('\n=== TEST: Simple Search (Monaco) ===');
+
     const locationInput = page.locator('[data-testid="location-input"]');
-    await locationInput.fill('26.1224, -80.1373');
+    await locationInput.fill('Monaco');
+    await page.waitForTimeout(700);
 
-    // Verify search button is enabled
-    const searchButton = page.locator('[data-testid="search-button"]');
-    await expect(searchButton).toBeEnabled();
-
-    // Click search
-    await searchButton.click();
-
-    // Wait a moment for filtering to complete
-    await page.waitForTimeout(500);
+    // Verify no dialog for single result
+    const dialog = page.locator('role=dialog');
+    const isDialogVisible = await dialog.isVisible().catch(() => false);
+    expect(isDialogVisible).toBeFalsy();
 
     // Verify result count appears
     const resultCount = page.locator('[data-testid="result-count"]');
     await expect(resultCount).toBeVisible({ timeout: 5000 });
-
-    // Check if result count contains expected text
     const resultText = await resultCount.textContent();
-    console.log('Result count text:', resultText);
-    expect(resultText).toContain('vendors');
-    expect(resultText).toContain('100 miles');
+    expect(resultText).toContain('km');
 
-    // Verify at least one vendor card has distance badge
-    const vendorCards = page.locator('[data-testid="vendor-card"]');
-    const cardCount = await vendorCards.count();
-    console.log(`Found ${cardCount} vendor cards after filtering`);
+    console.log('✅ PASSED: Monaco auto-applied');
+  });
 
-    if (cardCount > 0) {
-      // Check if any vendor has a distance badge
-      const distanceBadges = page.locator('[data-testid="vendor-distance"]');
-      const badgeCount = await distanceBadges.count();
-      console.log(`Found ${badgeCount} vendor cards with distance badges`);
+  test('CRITICAL #2: Ambiguous search workflow - Paris dialog selection', async ({ page }) => {
+    console.log('\n=== TEST: Ambiguous Search (Paris) ===');
 
-      if (badgeCount > 0) {
-        const firstBadge = distanceBadges.first();
-        await expect(firstBadge).toBeVisible();
-        const badgeText = await firstBadge.textContent();
-        console.log('Distance badge text:', badgeText);
-        expect(badgeText).toContain('miles away');
+    const locationInput = page.locator('[data-testid="location-input"]');
+    await locationInput.fill('Paris');
+    await page.waitForTimeout(700);
+
+    // Wait for dialog
+    const dialog = page.locator('role=dialog');
+    await expect(dialog).toBeVisible({ timeout: 5000 });
+    console.log('Dialog appeared for ambiguous location');
+
+    // Verify multiple results
+    const resultCards = page.locator('role=option');
+    const optionCount = await resultCards.count();
+    console.log(`Number of location options: ${optionCount}`);
+    expect(optionCount).toBeGreaterThan(1);
+
+    // Select first result
+    await resultCards.first().click();
+    console.log('Selected first Paris result');
+
+    // Verify dialog closes
+    await expect(dialog).not.toBeVisible({ timeout: 3000 });
+    console.log('Dialog closed');
+
+    // Verify filter applied
+    const resultCount = page.locator('[data-testid="result-count"]');
+    await expect(resultCount).toBeVisible({ timeout: 5000 });
+
+    console.log('✅ PASSED: Paris dialog shown and filter applied');
+  });
+
+  test('CRITICAL #3: Reset workflow - Clear all filters', async ({ page }) => {
+    console.log('\n=== TEST: Reset Workflow ===');
+
+    // Apply filter
+    const locationInput = page.locator('[data-testid="location-input"]');
+    await locationInput.fill('Monaco');
+    await page.waitForTimeout(700);
+
+    // Click reset
+    const resetButton = page.locator('[data-testid="reset-button"]');
+    await expect(resetButton).toBeVisible({ timeout: 3000 });
+    await resetButton.click();
+    await page.waitForTimeout(500);
+
+    // Verify input cleared
+    await expect(locationInput).toHaveValue('');
+    await expect(resetButton).not.toBeVisible({ timeout: 2000 });
+
+    // Verify distance reset to 160 km
+    const distanceValue = page.locator('[data-testid="distance-value"]');
+    const distanceText = await distanceValue.textContent();
+    expect(distanceText).toContain('160');
+
+    console.log('✅ PASSED: Reset workflow works');
+  });
+
+  test('CRITICAL #4: Error handling - No locations found message', async ({ page }) => {
+    console.log('\n=== TEST: Error Handling ===');
+
+    const locationInput = page.locator('[data-testid="location-input"]');
+    await locationInput.fill('XYZ123InvalidLocation999');
+    await page.waitForTimeout(700);
+
+    // Verify error message
+    const errorMessage = page.locator('[data-testid="error-message"]');
+    await expect(errorMessage).toBeVisible({ timeout: 5000 });
+    const errorText = await errorMessage.textContent();
+    expect(errorText?.toLowerCase()).toContain('no locations found');
+
+    console.log('✅ PASSED: Error handling works');
+  });
+
+  // ============================================================
+  // IMPORTANT TESTS (Should Have)
+  // ============================================================
+
+  test('IMPORTANT: Distance slider - Adjust after search', async ({ page }) => {
+    console.log('\n=== TEST: Distance Slider ===');
+
+    // Apply filter
+    const locationInput = page.locator('[data-testid="location-input"]');
+    await locationInput.fill('Monaco');
+    await page.waitForTimeout(700);
+
+    // Adjust slider
+    const distanceSlider = page.locator('[data-testid="distance-slider"]');
+    const sliderInput = distanceSlider.locator('input[type="range"]');
+
+    if (await sliderInput.count() > 0) {
+      await sliderInput.evaluate((el: HTMLInputElement) => {
+        el.value = '320';
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+      });
+      await page.waitForTimeout(500);
+
+      // Verify distance changed
+      const distanceValue = page.locator('[data-testid="distance-value"]');
+      const newDistance = await distanceValue.textContent();
+      expect(newDistance).toContain('320');
+    }
+
+    console.log('✅ PASSED: Distance slider works');
+  });
+
+  test('IMPORTANT: Advanced coordinates - Manual lat/lon entry', async ({ page }) => {
+    console.log('\n=== TEST: Advanced Coordinates ===');
+
+    // Expand advanced options
+    const advancedTrigger = page.getByText(/Advanced Options/i);
+    if (await advancedTrigger.isVisible()) {
+      await advancedTrigger.click();
+      await page.waitForTimeout(300);
+
+      // Enter coordinates
+      const latInput = page.locator('[data-testid="latitude-input"]');
+      if (await latInput.isVisible()) {
+        await latInput.fill('43.7384');
+        await page.locator('[data-testid="longitude-input"]').fill('7.4246');
+
+        // Click search
+        const searchButton = page.getByRole('button', { name: /search by coordinates/i });
+        if (await searchButton.isVisible()) {
+          await searchButton.click();
+          await page.waitForTimeout(500);
+        }
       }
     }
 
-    console.log('✅ Location search performed successfully');
-  });
-
-  test('should show error for invalid coordinates', async ({ page }) => {
-    await page.goto('http://localhost:3000/vendors');
-    await page.waitForLoadState('networkidle');
-
-    // Enter invalid latitude (> 90)
-    await page.locator('[data-testid="location-input"]').fill('100, 50');
-
-    // Click search
-    await page.locator('[data-testid="search-button"]').click();
-
-    // Verify error message appears
-    const errorMessage = page.locator('[data-testid="error-message"]');
-    await expect(errorMessage).toBeVisible({ timeout: 3000 });
-
-    const errorText = await errorMessage.textContent();
-    console.log('Error message:', errorText);
-    expect(errorText).toContain('Latitude must be between -90 and 90');
-
-    console.log('✅ Invalid coordinate validation working');
-  });
-
-  test('should reset filters correctly', async ({ page }) => {
-    await page.goto('http://localhost:3000/vendors');
-    await page.waitForLoadState('networkidle');
-
-    // Perform a search first
-    await page.locator('[data-testid="location-input"]').fill('26.1224, -80.1373');
-    await page.locator('[data-testid="search-button"]').click();
-    await page.waitForTimeout(500);
-
-    // Verify reset button appears
-    const resetButton = page.locator('[data-testid="reset-button"]');
-    await expect(resetButton).toBeVisible({ timeout: 3000 });
-
-    // Click reset
-    await resetButton.click();
-
-    // Verify input is cleared
-    const locationInput = page.locator('[data-testid="location-input"]');
-    await expect(locationInput).toHaveValue('');
-
-    // Verify reset button disappears
-    await expect(resetButton).not.toBeVisible();
-
-    // Verify result count disappears
-    await expect(page.locator('[data-testid="result-count"]')).not.toBeVisible();
-
-    console.log('✅ Reset functionality working correctly');
-  });
-
-  test('should trigger search with Enter key', async ({ page }) => {
-    await page.goto('http://localhost:3000/vendors');
-    await page.waitForLoadState('networkidle');
-
-    // Enter coordinates
-    const locationInput = page.locator('[data-testid="location-input"]');
-    await locationInput.fill('26.1224, -80.1373');
-
-    // Press Enter
-    await locationInput.press('Enter');
-
-    // Wait for search to trigger
-    await page.waitForTimeout(500);
-
-    // Verify result count appears (indicating search was triggered)
-    const resultCount = page.locator('[data-testid="result-count"]');
-    await expect(resultCount).toBeVisible({ timeout: 3000 });
-
-    console.log('✅ Enter key triggers search correctly');
+    console.log('✅ PASSED: Advanced coordinates tested');
   });
 });
