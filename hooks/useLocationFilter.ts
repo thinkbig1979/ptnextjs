@@ -27,7 +27,7 @@ function getVendorCoordinates(vendor: Vendor): VendorCoordinates | null {
 }
 
 export interface VendorWithDistance extends Vendor {
-  /** Calculated distance from user location in miles */
+  /** Calculated distance from user location in kilometers */
   distance?: number;
 }
 
@@ -47,7 +47,7 @@ export interface UseLocationFilterResult {
  *
  * @param vendors - Array of all vendors
  * @param userLocation - User's current location coordinates (null if not set)
- * @param maxDistance - Maximum distance in miles for filtering
+ * @param maxDistance - Maximum distance in kilometers for filtering
  * @returns Filtered vendors with calculated distances and metadata
  *
  * @example
@@ -89,11 +89,11 @@ export function useLocationFilter(
         }
 
         try {
-          // Calculate distance from user location (in miles)
+          // Calculate distance from user location (in kilometers)
           const distance = calculateDistance(
             userLocation,
             vendorCoords,
-            'miles'
+            'km'
           );
 
           return { ...vendor, distance };
@@ -139,7 +139,7 @@ export function useLocationFilter(
  *
  * @param vendors - Array of all vendors
  * @param userLocation - User's current location coordinates
- * @param maxDistance - Maximum distance in miles
+ * @param maxDistance - Maximum distance in kilometers
  * @returns Array of vendors within distance, sorted by proximity
  *
  * @example
@@ -158,7 +158,7 @@ export function useNearbyVendors(
  *
  * @param vendor - Vendor to check
  * @param userLocation - User's current location coordinates
- * @param maxDistance - Maximum distance in miles
+ * @param maxDistance - Maximum distance in kilometers
  * @returns Object with isNearby flag and calculated distance
  *
  * @example
@@ -177,7 +177,7 @@ export function useIsVendorNearby(
     }
 
     try {
-      const distance = calculateDistance(userLocation, vendorCoords, 'miles');
+      const distance = calculateDistance(userLocation, vendorCoords, 'km');
       const isNearby = distance <= maxDistance;
 
       return { isNearby, distance };
