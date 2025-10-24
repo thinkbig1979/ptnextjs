@@ -1012,13 +1012,153 @@ const Vendors: CollectionConfig = {
       ],
     },
 
-    // Location Information
+    // Locations Array (Multi-Location Support - Tier 2+)
+    {
+      name: 'locations',
+      type: 'array',
+      label: 'Locations',
+      admin: {
+        description: 'Company locations (Tier 2 vendors can have multiple locations). One location must be designated as Headquarters.',
+        condition: (data) => data.tier === 'tier2' || (data.locations && data.locations.length > 0),
+      },
+      access: {
+        read: () => true,
+        update: ({ req: { user }, data }) => {
+          if (!user) return false;
+          if (user.role === 'admin') return true;
+          // Vendors can update locations if they have tier2
+          return data?.tier === 'tier2';
+        },
+      },
+      fields: [
+        {
+          name: 'address',
+          type: 'text',
+          label: 'Full Address',
+          maxLength: 500,
+          admin: {
+            placeholder: 'e.g., 123 Harbor View Drive, Fort Lauderdale, FL 33316',
+            description: 'Complete mailing address (displayed publicly)',
+          },
+        },
+        {
+          name: 'geocodingButton',
+          type: 'ui',
+          admin: {
+            components: {
+              Field: '@/payload/fields/GeocodingButton#GeocodingButton',
+            },
+          },
+        },
+        {
+          name: 'latitude',
+          type: 'number',
+          label: 'Latitude',
+          min: -90,
+          max: 90,
+          admin: {
+            step: 0.000001,
+            placeholder: 'e.g., 26.122439',
+            description: 'Latitude coordinate (-90 to 90). Visit https://geocode.maps.co to convert addresses to coordinates.',
+          },
+        },
+        {
+          name: 'longitude',
+          type: 'number',
+          label: 'Longitude',
+          min: -180,
+          max: 180,
+          admin: {
+            step: 0.000001,
+            placeholder: 'e.g., -80.137314',
+            description: 'Longitude coordinate (-180 to 180). Visit https://geocode.maps.co to convert addresses to coordinates.',
+          },
+        },
+        {
+          name: 'city',
+          type: 'text',
+          label: 'City',
+          maxLength: 255,
+          admin: {
+            placeholder: 'e.g., Fort Lauderdale',
+          },
+        },
+        {
+          name: 'country',
+          type: 'text',
+          label: 'Country',
+          maxLength: 255,
+          admin: {
+            placeholder: 'e.g., United States',
+          },
+        },
+        {
+          name: 'isHQ',
+          type: 'checkbox',
+          label: 'Is Headquarters',
+          defaultValue: false,
+          admin: {
+            description: 'Designate this location as the company headquarters (exactly one location must be HQ)',
+          },
+        },
+      ],
+      validate: (value) => {
+        if (!value || value.length === 0) {
+          return true; // Empty array is valid
+        }
+
+        // Validate HQ uniqueness
+        const hqLocations = value.filter((loc: any) => loc.isHQ === true);
+
+        if (hqLocations.length === 0) {
+          const allExplicitlyFalse = value.every((loc: any) => loc.isHQ === false);
+          if (allExplicitlyFalse) {
+            return 'Exactly one location must be designated as Headquarters';
+          }
+        }
+
+        if (hqLocations.length > 1) {
+          return 'Only one location can be designated as Headquarters';
+        }
+
+        return true;
+      },
+      hooks: {
+        beforeChange: [
+          ({ value }) => {
+            if (!value || value.length === 0) {
+              return value;
+            }
+
+            // Auto-designate first location as HQ if no HQ exists
+            const hasHQ = value.some((loc: any) => loc.isHQ === true);
+
+            if (!hasHQ) {
+              const updated = [...value];
+              updated[0] = { ...updated[0], isHQ: true };
+
+              // Ensure all others are explicitly false
+              for (let i = 1; i < updated.length; i++) {
+                updated[i] = { ...updated[i], isHQ: false };
+              }
+
+              return updated;
+            }
+
+            return value;
+          },
+        ],
+      },
+    },
+
+    // Legacy Location Information (Kept for backward compatibility during migration)
     {
       name: 'location',
       type: 'group',
-      label: 'Location Information',
+      label: 'Location Information (Legacy - Use Locations Array Above)',
       admin: {
-        description: 'Geographic location for map display and location-based search. Use geocode.maps.co to find coordinates from addresses.',
+        description: 'DEPRECATED: This field will be migrated to locations array. Use the Locations array above for new data.',
+        condition: (data) => data.location && Object.keys(data.location).length > 0,
       },
       fields: [
         {
@@ -1148,6 +1288,13 @@ const Vendors: CollectionConfig = {
           if (restrictedFields.length > 0) {
             throw new Error(
               `Tier restricted: Fields ${restrictedFields.join(', ')} require Tier 1 or higher`
+            );
+          }
+
+          // Validate multiple locations restriction (tier2 only)
+          if (data.locations && data.locations.length > 1 && (tier === 'free' || tier === 'tier1')) {
+            throw new Error(
+              'Multiple locations require Tier 2 subscription'
             );
           }
         }

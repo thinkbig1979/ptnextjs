@@ -40,11 +40,11 @@ This tasks file provides a lightweight overview of all tasks. Individual task de
 
 | Task ID | Title | Agent | Time | Status | Details |
 |---------|-------|-------|------|--------|---------|
-| TEST-BACKEND-SCHEMA | Backend Schema Test Design | test-architect | 20-25 min | [ ] Not Started | @tasks/task-test-backend-schema.md |
-| IMPL-BACKEND-SCHEMA | Database Schema Implementation | backend-nodejs-specialist | 30-35 min | [ ] Not Started | @tasks/task-impl-backend-schema.md |
-| IMPL-BACKEND-MIGRATION | Data Migration Script | backend-nodejs-specialist | 25-30 min | [ ] Not Started | @tasks/task-impl-backend-migration.md |
-| IMPL-BACKEND-API | API Endpoint Implementation | backend-nodejs-specialist | 35-40 min | [ ] Not Started | @tasks/task-impl-backend-api.md |
-| TEST-BACKEND-INTEGRATION | Backend Integration Testing | test-architect | 25-30 min | [ ] Not Started | @tasks/task-test-backend-integration.md |
+| TEST-BACKEND-SCHEMA | Backend Schema Test Design | test-architect | 20-25 min | [x] Complete | @tasks/task-test-backend-schema.md |
+| IMPL-BACKEND-SCHEMA | Database Schema Implementation | backend-nodejs-specialist | 30-35 min | [x] Complete | @tasks/task-impl-backend-schema.md |
+| IMPL-BACKEND-MIGRATION | Data Migration Script | backend-nodejs-specialist | 25-30 min | [x] Complete | @tasks/task-impl-backend-migration.md |
+| IMPL-BACKEND-API | API Endpoint Implementation | backend-nodejs-specialist | 35-40 min | [x] Complete | @tasks/task-impl-backend-api.md |
+| TEST-BACKEND-INTEGRATION | Backend Integration Testing | test-architect | 25-30 min | [x] Complete | @tasks/task-test-backend-integration.md |
 
 **Phase Dependencies**: PRE-2 → All Phase 2 tasks
 
