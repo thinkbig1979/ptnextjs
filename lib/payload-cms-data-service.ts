@@ -18,6 +18,7 @@ import type {
   VendorSocialProof,
   OwnerReview,
   VisualDemoContent,
+  VendorLocation,
 } from './types';
 
 interface CacheEntry<T> {
@@ -250,6 +251,20 @@ class PayloadCMSDataService {
       projectHighlights: project.systemsInstalled?.map((s: any) => s.system) || [],
     })) || [];
 
+    // ============================================================================
+    // SECTION 8: LOCATION - Transform from flat fields to VendorLocation object
+    // ============================================================================
+    const location: string | VendorLocation =
+      doc.location_latitude !== undefined && doc.location_longitude !== undefined
+        ? {
+            address: doc.location_address || '',
+            city: doc.location_city || '',
+            country: doc.location_country || '',
+            latitude: doc.location_latitude,
+            longitude: doc.location_longitude,
+          }
+        : doc.location || '';
+
     return {
       id: doc.id ? doc.id.toString() : '',
       slug: doc.slug || '',
@@ -260,7 +275,7 @@ class PayloadCMSDataService {
       image: this.transformMediaPath(doc.image || ''),
       website: doc.website || '',
       founded: doc.founded,
-      location: doc.location || '',
+      location,
       tags: [],
       featured: doc.featured || false,
       partner: doc.partner !== undefined ? doc.partner : false,

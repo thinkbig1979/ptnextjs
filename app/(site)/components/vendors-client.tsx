@@ -44,7 +44,7 @@ export function VendorsClient({
   const [currentPage, setCurrentPage] = React.useState(1);
   const [highlightedVendor, setHighlightedVendor] = React.useState(urlParams.partner);
   const [vendorView, setVendorView] = React.useState<"partners" | "all">(
-    searchParams?.get('view') === 'all' ? 'all' : 'partners'
+    searchParams?.get('view') === 'partners' ? 'partners' : 'all'
   );
 
   // Location filter state
@@ -62,7 +62,7 @@ export function VendorsClient({
     setSearchQuery(params.search);
     setSelectedCategory(params.category);
     setHighlightedVendor(params.partner);
-    setVendorView(searchParams?.get('view') === 'all' ? 'all' : 'partners');
+    setVendorView(searchParams?.get('view') === 'partners' ? 'partners' : 'all');
   }, [searchParams]);
 
   // Navigation functions
@@ -178,10 +178,10 @@ export function VendorsClient({
 
     // Update or remove view parameter
     if (params.view !== undefined) {
-      if (params.view === 'all') {
-        current.set('view', 'all');
+      if (params.view === 'partners') {
+        current.set('view', 'partners');
       } else {
-        current.delete('view'); // Default is partners, no URL param needed
+        current.delete('view'); // Default is all, no URL param needed
       }
     }
 

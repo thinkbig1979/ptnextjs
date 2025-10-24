@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -10,7 +10,6 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { MapPin, Search, X, AlertCircle, Loader2, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { VendorCoordinates, PhotonFeature, GeocodeSuccessResponse } from '@/lib/types';
-import { LocationResultSelector } from '@/components/location-result-selector';
 
 interface LocationSearchFilterProps {
   onSearch: (userLocation: VendorCoordinates, distance: number) => void;
@@ -44,26 +43,91 @@ export function LocationSearchFilter({
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [selectedCoordinates, setSelectedCoordinates] = useState<VendorCoordinates | null>(null);
 
+  // Refs for focus management and click-outside detection
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [selectedResultIndex, setSelectedResultIndex] = useState<number>(-1);
+  const abortControllerRef = useRef<AbortController | null>(null);
+
   /**
-   * Debounced geocoding API call
-   * Waits 300ms after user stops typing before making API call
+   * Maintain focus in input when dropdown appears
    */
   useEffect(() => {
-    // Only search if location input has at least 2 characters
-    if (locationInput.trim().length < 2) {
+    // When results appear or change, ensure input stays focused
+    if (searchResults.length > 0 && document.activeElement !== inputRef.current) {
+      inputRef.current?.focus();
+    }
+  }, [searchResults.length]); // Only run when results count changes
+
+  /**
+   * Handle click outside to close dropdown
+   */
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setSearchResults([]);
+      }
+    };
+
+    if (searchResults.length > 0) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [searchResults]);
+
+  /**
+   * Debounced geocoding API call with abort support
+   * Waits 500ms (half second) after user stops typing before making API call
+   * Aborts in-flight requests if user continues typing
+   */
+  useEffect(() => {
+    // Only search if location input has at least 3 characters
+    if (locationInput.trim().length < 3) {
       setSearchResults([]);
+      setShowResultSelector(false);
+      setIsLoading(false);
+      // Cancel any in-flight request
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+        abortControllerRef.current = null;
+      }
       return;
     }
 
-    setIsLoading(true);
+    // Don't trigger geocoding if we already have coordinates selected
+    // This prevents re-searching after user selects a location from dropdown
+    if (selectedCoordinates) {
+      return;
+    }
+
+    // Cancel any existing request when user types
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+
+    // Clear error when user starts typing again
     setError(null);
 
-    // Debounce: Wait 300ms before making API call
+    // Debounce: Wait 500ms (half second) before making API call
     const debounceTimer = setTimeout(async () => {
+      // Show loading indicator
+      setIsLoading(true);
+
+      // Create new AbortController for this request
+      const abortController = new AbortController();
+      abortControllerRef.current = abortController;
+
       try {
         const response = await fetch(
-          `/api/geocode?q=${encodeURIComponent(locationInput.trim())}&limit=5`
+          `/api/geocode?q=${encodeURIComponent(locationInput.trim())}&limit=5`,
+          { signal: abortController.signal }
         );
+
+        // If request was aborted, don't process response
+        if (abortController.signal.aborted) {
+          return;
+        }
 
         if (!response.ok) {
           // Handle specific error codes
@@ -89,6 +153,11 @@ export function LocationSearchFilter({
 
         const data = (await response.json()) as GeocodeSuccessResponse;
 
+        // Check again if aborted (could have been aborted during JSON parsing)
+        if (abortController.signal.aborted) {
+          return;
+        }
+
         if (data.results.length === 0) {
           setError('No locations found. Please try a different search term.');
           setSearchResults([]);
@@ -97,35 +166,38 @@ export function LocationSearchFilter({
         }
 
         setSearchResults(data.results);
+        setSelectedResultIndex(-1); // Reset keyboard selection when new results arrive
 
-        // Handle single result: auto-apply
-        if (data.results.length === 1) {
-          const result = data.results[0];
-          const coords: VendorCoordinates = {
-            latitude: result.geometry.coordinates[1],
-            longitude: result.geometry.coordinates[0],
-          };
-          setSelectedCoordinates(coords);
-          setIsSearchActive(true);
-          onSearch(coords, distance);
-        } else {
-          // Multiple results: show selector dialog
-          setShowResultSelector(true);
+        // Store results but don't auto-open dialog or auto-apply
+        // User must select from the dropdown or press Enter
+        setIsLoading(false);
+        abortControllerRef.current = null;
+      } catch (err) {
+        // Ignore abort errors - these are expected when user continues typing
+        if ((err as Error).name === 'AbortError') {
+          return;
         }
 
-        setIsLoading(false);
-      } catch (err) {
         setError('Network error. Please check your connection and try again.');
         setSearchResults([]);
         setIsLoading(false);
+        abortControllerRef.current = null;
       }
-    }, 300);
+    }, 500);
 
-    return () => clearTimeout(debounceTimer);
-  }, [locationInput, distance, onSearch]);
+    return () => {
+      clearTimeout(debounceTimer);
+      // Abort any in-flight request when component unmounts or input changes
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+        abortControllerRef.current = null;
+      }
+    };
+  }, [locationInput, selectedCoordinates]);
 
   /**
-   * Handle location selection from result selector dialog
+   * Handle location selection from dropdown
+   * Immediately triggers the search when a location is selected
    */
   const handleLocationSelect = useCallback(
     (result: PhotonFeature) => {
@@ -134,10 +206,29 @@ export function LocationSearchFilter({
         longitude: result.geometry.coordinates[0],
       };
 
+      // Update input with selected location name
+      const displayName = [
+        result.properties.name,
+        result.properties.city,
+        result.properties.country
+      ]
+        .filter(Boolean)
+        .filter((value, idx, arr) => arr.indexOf(value) === idx)
+        .join(', ');
+
+      setLocationInput(displayName);
       setSelectedCoordinates(coords);
+      setSearchResults([]); // Close dropdown
       setShowResultSelector(false);
+
+      // Immediately trigger the search when user selects a location
       setIsSearchActive(true);
       onSearch(coords, distance);
+
+      // Refocus the input
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 0);
     },
     [distance, onSearch]
   );
@@ -226,29 +317,177 @@ export function LocationSearchFilter({
             <Label htmlFor="location-name-input">
               Location Name
             </Label>
-            <div className="relative">
+            <div className="flex gap-2">
+              <div className="relative flex-1" ref={dropdownRef}>
               <Input
+                ref={inputRef}
                 id="location-name-input"
                 type="text"
                 placeholder="Search for a location (e.g., Monaco, Paris)"
                 value={locationInput}
-                onChange={(e) => setLocationInput(e.target.value)}
-                disabled={isLoading}
+                onChange={(e) => {
+                  setLocationInput(e.target.value);
+                  // Clear selected coordinates when user modifies the input
+                  // This allows them to search for a new location
+                  if (selectedCoordinates) {
+                    setSelectedCoordinates(null);
+                  }
+                }}
+                onKeyDown={(e) => {
+                  // Arrow Down: Navigate down in results
+                  if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    if (searchResults.length > 0) {
+                      setSelectedResultIndex((prev) =>
+                        prev < searchResults.length - 1 ? prev + 1 : prev
+                      );
+                    }
+                  }
+                  // Arrow Up: Navigate up in results
+                  else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    if (searchResults.length > 0) {
+                      setSelectedResultIndex((prev) => prev > 0 ? prev - 1 : -1);
+                    }
+                  }
+                  // Enter key handling
+                  else if (e.key === 'Enter') {
+                    e.preventDefault();
+
+                    // If dropdown is open with a highlighted result, select it
+                    if (searchResults.length > 0 && selectedResultIndex >= 0) {
+                      handleLocationSelect(searchResults[selectedResultIndex]);
+                      setSelectedResultIndex(-1);
+                    }
+                    // If dropdown is open but no selection, select first result
+                    else if (searchResults.length > 0) {
+                      handleLocationSelect(searchResults[0]);
+                      setSelectedResultIndex(-1);
+                    }
+                    // If location is selected and dropdown is closed, trigger search
+                    else if (selectedCoordinates) {
+                      onSearch(selectedCoordinates, distance);
+                      setIsSearchActive(true);
+                    }
+                  }
+                  // Escape key closes dropdown and resets selection
+                  else if (e.key === 'Escape') {
+                    setSearchResults([]);
+                    setSelectedResultIndex(-1);
+                  }
+                }}
+                onBlur={(e) => {
+                  // Only blur if not clicking on a dropdown result
+                  const relatedTarget = e.relatedTarget as HTMLElement;
+                  if (relatedTarget && relatedTarget.closest('#location-results-list')) {
+                    // Clicking on dropdown, prevent blur
+                    return;
+                  }
+                }}
                 data-testid="location-input"
                 aria-describedby="location-name-help"
-                className={cn(
-                  "pr-10 transition-opacity duration-150",
-                  isLoading && "opacity-70"
-                )}
+                aria-autocomplete="list"
+                aria-controls={searchResults.length > 0 ? 'location-results-list' : undefined}
+                aria-expanded={searchResults.length > 0}
+                autoComplete="off"
+                className="pr-10"
               />
               {isLoading && (
-                <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                  <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                <div className="absolute right-3 top-1/2 -translate-y-1/2" aria-live="polite" aria-label="Searching for locations">
+                  <Loader2 className="w-4 h-4 animate-spin text-primary" />
                 </div>
               )}
+
+              {/* Inline dropdown results */}
+              {searchResults.length > 0 && !isLoading && (
+                <div
+                  id="location-results-list"
+                  role="listbox"
+                  className={cn(
+                    "absolute z-50 w-full mt-1 bg-background border border-border rounded-md shadow-lg",
+                    "max-h-[300px] overflow-y-auto"
+                  )}
+                  data-testid="location-results-dropdown"
+                >
+                  {searchResults.map((result, index) => {
+                    const displayName = [
+                      result.properties.name,
+                      result.properties.city,
+                      result.properties.state,
+                      result.properties.country
+                    ]
+                      .filter(Boolean)
+                      .filter((value, idx, arr) => arr.indexOf(value) === idx) // Remove duplicates
+                      .join(', ');
+
+                    return (
+                      <button
+                        key={result.properties.osm_id || index}
+                        type="button"
+                        role="option"
+                        aria-selected={selectedResultIndex === index}
+                        onMouseDown={(e) => {
+                          e.preventDefault(); // Prevent input blur
+                          handleLocationSelect(result);
+                          setSelectedResultIndex(-1);
+                        }}
+                        onMouseEnter={() => setSelectedResultIndex(index)}
+                        className={cn(
+                          "w-full px-4 py-3 text-left transition-colors",
+                          "border-b border-border last:border-b-0",
+                          "focus:outline-none",
+                          "cursor-pointer",
+                          selectedResultIndex === index
+                            ? "bg-accent"
+                            : "hover:bg-accent/50"
+                        )}
+                        data-testid={`location-result-${index}`}
+                      >
+                        <div className="flex items-start gap-2">
+                          <MapPin className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <div className="font-medium text-sm truncate">
+                              {displayName}
+                            </div>
+                            {result.properties.osm_type && (
+                              <div className="text-xs text-muted-foreground mt-0.5">
+                                {result.properties.osm_type}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+              </div>
+
+              {/* Search Button */}
+              <Button
+                type="button"
+                onClick={() => {
+                  if (selectedCoordinates) {
+                    // Re-trigger search with current coordinates
+                    onSearch(selectedCoordinates, distance);
+                    setIsSearchActive(true);
+                  }
+                }}
+                disabled={!selectedCoordinates || isLoading}
+                variant="default"
+                data-testid="search-location-button"
+                className={cn(
+                  "min-h-[44px] sm:min-h-[40px]",
+                  "shrink-0",
+                  "transition-all duration-150"
+                )}
+                aria-label="Search for vendors"
+              >
+                <Search className="w-4 h-4" />
+              </Button>
             </div>
-            <p id="location-name-help" className="text-xs text-gray-500">
-              Type at least 2 characters to search
+            <p id="location-name-help" className="text-sm text-gray-600 mt-2">
+              Type at least 3 characters to search. Results appear after half a second. Select a location to search automatically.
             </p>
           </div>
 
@@ -282,6 +521,9 @@ export function LocationSearchFilter({
               <span>16 km</span>
               <span>800 km</span>
             </div>
+            <p className="text-sm text-gray-600 mt-2">
+              💡 Adjust the slider after searching to instantly update results with a different radius.
+            </p>
           </div>
 
           {/* Error Message */}
@@ -355,6 +597,9 @@ export function LocationSearchFilter({
                   />
                 </div>
               </div>
+              <p className="text-sm text-gray-600">
+                Enter exact GPS coordinates if location search doesn't find your area.
+              </p>
               <Button
                 onClick={handleManualSearch}
                 disabled={!manualLatitude.trim() || !manualLongitude.trim()}
@@ -391,14 +636,6 @@ export function LocationSearchFilter({
           </div>
         </CardContent>
       </Card>
-
-      {/* Location Result Selector Dialog */}
-      <LocationResultSelector
-        results={searchResults}
-        open={showResultSelector}
-        onSelect={handleLocationSelect}
-        onCancel={() => setShowResultSelector(false)}
-      />
     </>
   );
 }
