@@ -7,13 +7,14 @@
  * - tier2: Unlimited locations + premium features
  */
 
-export type Tier = 'free' | 'tier1' | 'tier2';
-export type TierFeature = 'multipleLocations' | 'advancedAnalytics' | 'apiAccess' | 'customDomain';
+export type Tier = 'free' | 'tier1' | 'tier2' | 'tier3';
+export type TierFeature = 'multipleLocations' | 'advancedAnalytics' | 'apiAccess' | 'customDomain' | 'promotionPack' | 'editorialContent';
 
 export const TIER_HIERARCHY: Record<Tier, number> = {
   free: 0,
   tier1: 1,
   tier2: 2,
+  tier3: 3,
 };
 
 export const TIER_FEATURE_MAP: Record<TierFeature, number> = {
@@ -21,12 +22,15 @@ export const TIER_FEATURE_MAP: Record<TierFeature, number> = {
   advancedAnalytics: TIER_HIERARCHY.tier2,
   apiAccess: TIER_HIERARCHY.tier2,
   customDomain: TIER_HIERARCHY.tier2,
+  promotionPack: TIER_HIERARCHY.tier3,
+  editorialContent: TIER_HIERARCHY.tier3,
 };
 
 export const MAX_LOCATIONS_PER_TIER: Record<Tier, number> = {
   free: 1,
   tier1: 3,
-  tier2: 999,
+  tier2: 10,
+  tier3: 999,
 };
 
 export class TierService {
@@ -45,6 +49,7 @@ export class TierService {
   }
 
   static getTierFromLevel(level: number): Tier {
+    if (level >= TIER_HIERARCHY.tier3) return 'tier3';
     if (level >= TIER_HIERARCHY.tier2) return 'tier2';
     if (level >= TIER_HIERARCHY.tier1) return 'tier1';
     return 'free';
