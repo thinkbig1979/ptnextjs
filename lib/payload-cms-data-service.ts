@@ -696,6 +696,7 @@ class PayloadCMSDataService {
       const payload = await getPayload({ config });
       const result = await payload.find({
         collection: 'vendors',
+        where: { published: { equals: true } },
         limit: 1000,
         depth: 2,
       });
