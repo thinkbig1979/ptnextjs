@@ -127,13 +127,26 @@ export function VendorsClient({
       filtered = filtered.filter(vendor => vendor?.category === selectedCategory);
     }
 
-    // If a specific vendor is highlighted, prioritize it
-    if (highlightedVendor) {
-      const priorityVendor = filtered.find(v => v?.name === highlightedVendor);
-      if (priorityVendor) {
-        filtered = [priorityVendor, ...filtered.filter(v => v?.name !== highlightedVendor)];
+    // Sort vendors: Featured vendors first, then non-featured
+    // Within each group, maintain the existing order (including location distance if applicable)
+    filtered = filtered.sort((a, b) => {
+      // First priority: highlighted vendor (from URL parameter)
+      if (highlightedVendor) {
+        if (a?.name === highlightedVendor) return -1;
+        if (b?.name === highlightedVendor) return 1;
       }
-    }
+
+      // Second priority: featured status
+      const aFeatured = a?.featured === true ? 1 : 0;
+      const bFeatured = b?.featured === true ? 1 : 0;
+
+      if (aFeatured !== bFeatured) {
+        return bFeatured - aFeatured; // Featured vendors come first
+      }
+
+      // Third priority: maintain existing order (location distance, etc.)
+      return 0;
+    });
 
     return filtered;
   }, [baseVendorsForFiltering, searchQuery, selectedCategory, highlightedVendor, showPartnersOnly, showNonPartnersOnly, vendorView]);

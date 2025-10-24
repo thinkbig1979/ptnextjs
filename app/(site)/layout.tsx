@@ -7,7 +7,6 @@ import { Footer } from "@/components/footer";
 import { Toaster } from "@/components/ui/sonner";
 import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
 import { AuthProvider } from "@/lib/context/AuthContext";
-import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 

@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/10</span>
+                <span class='fraction'>10/10</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/10</span>
+                <span class='fraction'>10/10</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/2</span>
+                <span class='fraction'>2/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/9</span>
+                <span class='fraction'>9/9</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -172,12 +172,12 @@
 <a name='L107'></a><a href='#L107'>107</a>
 <a name='L108'></a><a href='#L108'>108</a>
 <a name='L109'></a><a href='#L109'>109</a>
-<a name='L110'></a><a href='#L110'>110</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<a name='L110'></a><a href='#L110'>110</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -194,12 +194,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -281,12 +281,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import * as React from <span class="cstat-no" title="statement not covered" >"react";</span>
-import { Card, CardContent } from <span class="cstat-no" title="statement not covered" >"@/components/ui/card";</span>
-import { Badge } from <span class="cstat-no" title="statement not covered" >"@/components/ui/badge";</span>
-import { CheckCircle, ExternalLink } from <span class="cstat-no" title="statement not covered" >"lucide-react";</span>
-import { cn } from <span class="cstat-no" title="statement not covered" >"@/lib/utils";</span>
-import Image from <span class="cstat-no" title="statement not covered" >"next/image";</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import * as React from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { CheckCircle, ExternalLink } from "lucide-react";
+import { cn } from "@/lib/utils";
+import Image from "next/image";
 &nbsp;
 interface Certification {
   name: string;
@@ -303,12 +303,12 @@ interface CertificationBadgeProps {
   className?: string;
 }
 &nbsp;
-export const <span class="cstat-no" title="statement not covered" >CertificationBadge = <span class="cstat-no" title="statement not covered" >R</span>eact.memo(function <span class="fstat-no" title="function not covered" >CertificationBadge({</span></span>
+export const CertificationBadge = React.memo(function CertificationBadge({
   certification,
   className,
 }: CertificationBadgeProps) {
-  const isExpired = <span class="cstat-no" title="statement not covered" >React.useMemo(<span class="fstat-no" title="function not covered" >() =&gt; {</span></span>
-<span class="cstat-no" title="statement not covered" >    return certification.validUntil &amp;&amp;</span>
+  const isExpired = React.useMemo(() =&gt; {
+    return certification.validUntil &amp;&amp;
       new Date(certification.validUntil) &lt; new Date();
   }, [certification.validUntil]);
 &nbsp;
@@ -324,7 +324,7 @@ export const <span class="cstat-no" title="statement not covered" >Certification
       &lt;CardContent className="p-4"&gt;
         &lt;div className="flex items-start gap-3"&gt;
           {/* Logo */}
-          {<span class="branch-0 cbranch-no" title="branch not covered" >certification.logoUrl </span>&amp;&amp; (
+          {certification.logoUrl &amp;&amp; (
             &lt;div className="flex-shrink-0"&gt;
               &lt;Image
                 src={certification.logoUrl}
@@ -349,7 +349,7 @@ export const <span class="cstat-no" title="statement not covered" >Certification
               &lt;/div&gt;
 &nbsp;
               {/* Verification Badge */}
-              {<span class="branch-0 cbranch-no" title="branch not covered" >certification.isVerified </span>&amp;&amp; (
+              {certification.isVerified &amp;&amp; (
                 &lt;Badge
                   data-testid="verified-badge"
                   variant="secondary"
@@ -362,7 +362,7 @@ export const <span class="cstat-no" title="statement not covered" >Certification
             &lt;/div&gt;
 &nbsp;
             {/* Validity Period */}
-            {<span class="branch-0 cbranch-no" title="branch not covered" >certification.validUntil </span>&amp;&amp; (
+            {certification.validUntil &amp;&amp; (
               &lt;p className={cn(
                 "text-xs mt-2",
                 isExpired
@@ -374,7 +374,7 @@ export const <span class="cstat-no" title="statement not covered" >Certification
             )}
 &nbsp;
             {/* Certificate Link */}
-            {<span class="branch-0 cbranch-no" title="branch not covered" >certification.certificateUrl </span>&amp;&amp; (
+            {certification.certificateUrl &amp;&amp; (
               &lt;a
                 href={certification.certificateUrl}
                 target="_blank"
@@ -397,7 +397,7 @@ export const <span class="cstat-no" title="statement not covered" >Certification
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-15T19:49:39.396Z
+                at 2025-10-24T11:57:00.220Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

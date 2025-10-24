@@ -10,12 +10,10 @@ import type { Payload } from 'payload';
 import {
   TransformResult,
   generateSlug,
-  parseDate,
   resolveReferences,
   transformMediaPath,
   extractNumericValue,
 } from './base';
-import { markdownToLexical } from './markdown-to-lexical';
 
 /**
  * TinaCMS yacht data structure

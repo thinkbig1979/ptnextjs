@@ -292,8 +292,8 @@ describe('useLocationFilter', () => {
 
       const distances = result.current.filteredVendors.map(v => v.distance);
 
-      // Verify sorted order: 0 (Monaco), 20 (Nice), 680 (Paris)
-      expect(distances).toEqual([0, 20, 680]);
+      // Verify sorted order: 0 (Monaco), 20 (Nice), 680 (Paris), 1000 (London - exactly at threshold)
+      expect(distances).toEqual([0, 20, 680, 1000]);
     });
 
     it('should mark filtering as active when user location is set', () => {
@@ -449,6 +449,376 @@ describe('useLocationFilter', () => {
     });
   });
 
+  describe('Multi-Location Support (New Feature)', () => {
+    describe('Legacy Single Location Format (Backward Compatibility)', () => {
+      it('should filter vendors with single location object (legacy)', () => {
+        const legacyVendors: Vendor[] = [
+          {
+            id: '1',
+            name: 'Monaco Vendor',
+            location: monacoCoords,
+            description: '',
+            category: [],
+            featured: false,
+            partner: false,
+          },
+        ];
+
+        mockCalculateDistance.mockReturnValue(0);
+
+        const { result } = renderHook(() =>
+          useLocationFilter(legacyVendors, monacoCoords, 50)
+        );
+
+        expect(result.current.filteredVendors).toHaveLength(1);
+        expect(result.current.filteredVendors[0].distance).toBe(0);
+      });
+    });
+
+    describe('New Multi-Location Format', () => {
+      it('should filter vendors with locations array (new format)', () => {
+        const multiLocationVendors: Vendor[] = [
+          {
+            id: '1',
+            name: 'Global Vendor',
+            tier: 'tier2',
+            locations: [
+              { ...monacoCoords, isHQ: true, address: 'HQ', city: 'Monaco', country: 'Monaco' },
+              { ...parisCoords, isHQ: false, address: 'Office', city: 'Paris', country: 'France' },
+            ],
+            description: '',
+            category: [],
+            featured: false,
+            partner: false,
+          },
+        ];
+
+        mockCalculateDistance.mockReturnValueOnce(0).mockReturnValueOnce(680);
+
+        const { result } = renderHook(() =>
+          useLocationFilter(multiLocationVendors, monacoCoords, 50)
+        );
+
+        expect(result.current.filteredVendors).toHaveLength(1);
+        expect(result.current.filteredVendors[0].matchedLocation?.city).toBe('Monaco');
+      });
+
+      it('should select closest location for tier 2+ vendors', () => {
+        const multiLocationVendors: Vendor[] = [
+          {
+            id: '1',
+            name: 'Global Vendor',
+            tier: 'tier2',
+            locations: [
+              { ...monacoCoords, isHQ: true, address: 'HQ', city: 'Monaco', country: 'Monaco' },
+              { ...parisCoords, isHQ: false, address: 'Office', city: 'Paris', country: 'France' },
+            ],
+            description: '',
+            category: [],
+            featured: false,
+            partner: false,
+          },
+        ];
+
+        // Mock distances: Monaco=680km, Paris=20km (Paris is closer)
+        mockCalculateDistance.mockReturnValueOnce(680).mockReturnValueOnce(20);
+
+        const { result } = renderHook(() =>
+          useLocationFilter(multiLocationVendors, parisCoords, 5000)
+        );
+
+        expect(result.current.filteredVendors).toHaveLength(1);
+        expect(result.current.filteredVendors[0].matchedLocation?.city).toBe('Paris');
+        expect(result.current.filteredVendors[0].distance).toBe(20);
+      });
+    });
+
+    describe('Tier-Based Location Filtering', () => {
+      it('should only consider HQ location for tier 1 vendors', () => {
+        const tier1Vendors: Vendor[] = [
+          {
+            id: '1',
+            name: 'Tier 1 Vendor',
+            tier: 'tier1',
+            locations: [
+              { ...monacoCoords, isHQ: true, address: 'HQ', city: 'Monaco', country: 'Monaco' },
+              { ...niceCoords, isHQ: false, address: 'Office', city: 'Nice', country: 'France' },
+            ],
+            description: '',
+            category: [],
+            featured: false,
+            partner: false,
+          },
+        ];
+
+        // User is near Nice office, but tier1 vendors only show HQ
+        // Monaco HQ is ~20km from Nice, so it should be included
+        mockCalculateDistance.mockReturnValue(20);
+
+        const { result} = renderHook(() =>
+          useLocationFilter(tier1Vendors, niceCoords, 50)
+        );
+
+        // Monaco HQ is within 50km, should be included (tier1 only considers HQ)
+        expect(result.current.filteredVendors).toHaveLength(1);
+        expect(result.current.filteredVendors[0].matchedLocation?.city).toBe('Monaco');
+      });
+
+      it('should only consider HQ location for free tier vendors', () => {
+        const freeTierVendors: Vendor[] = [
+          {
+            id: '1',
+            name: 'Free Tier Vendor',
+            tier: 'free',
+            locations: [
+              { ...monacoCoords, isHQ: true, address: 'HQ', city: 'Monaco', country: 'Monaco' },
+              { ...niceCoords, isHQ: false, address: 'Office', city: 'Nice', country: 'France' },
+            ],
+            description: '',
+            category: [],
+            featured: false,
+            partner: false,
+          },
+        ];
+
+        // Monaco HQ is ~20km from Nice
+        mockCalculateDistance.mockReturnValue(20);
+
+        const { result } = renderHook(() =>
+          useLocationFilter(freeTierVendors, niceCoords, 50)
+        );
+
+        // HQ is within 50km, should be included (free tier only considers HQ)
+        expect(result.current.filteredVendors).toHaveLength(1);
+        expect(result.current.filteredVendors[0].matchedLocation?.city).toBe('Monaco');
+      });
+
+      it('should consider all locations for tier 2 vendors', () => {
+        const tier2Vendors: Vendor[] = [
+          {
+            id: '1',
+            name: 'Tier 2 Vendor',
+            tier: 'tier2',
+            locations: [
+              { ...monacoCoords, isHQ: true, address: 'HQ', city: 'Monaco', country: 'Monaco' },
+              { ...niceCoords, isHQ: false, address: 'Office', city: 'Nice', country: 'France' },
+            ],
+            description: '',
+            category: [],
+            featured: false,
+            partner: false,
+          },
+        ];
+
+        // User near Nice office
+        mockCalculateDistance.mockReturnValueOnce(20).mockReturnValueOnce(0);
+
+        const { result } = renderHook(() =>
+          useLocationFilter(tier2Vendors, niceCoords, 50)
+        );
+
+        // Should match Nice office (tier2 sees all locations)
+        expect(result.current.filteredVendors).toHaveLength(1);
+        expect(result.current.filteredVendors[0].matchedLocation?.city).toBe('Nice');
+      });
+    });
+
+    describe('Edge Cases for Multi-Location', () => {
+      it('should exclude vendors with no locations', () => {
+        const noLocationVendors: Vendor[] = [
+          {
+            id: '1',
+            name: 'No Locations Vendor',
+            locations: [],
+            description: '',
+            category: [],
+            featured: false,
+            partner: false,
+          },
+        ];
+
+        const { result } = renderHook(() =>
+          useLocationFilter(noLocationVendors, monacoCoords, 50)
+        );
+
+        expect(result.current.filteredVendors).toHaveLength(0);
+      });
+
+      it('should exclude vendors with locations beyond range', () => {
+        const distantVendors: Vendor[] = [
+          {
+            id: '1',
+            name: 'Distant Vendor',
+            tier: 'tier2',
+            locations: [
+              { ...londonCoords, isHQ: true, address: 'HQ', city: 'London', country: 'UK' },
+            ],
+            description: '',
+            category: [],
+            featured: false,
+            partner: false,
+          },
+        ];
+
+        mockCalculateDistance.mockReturnValue(1000); // 1000km away
+
+        const { result } = renderHook(() =>
+          useLocationFilter(distantVendors, monacoCoords, 50)
+        );
+
+        expect(result.current.filteredVendors).toHaveLength(0);
+      });
+
+      it('should handle tier 2 vendor with HQ beyond range but office within range', () => {
+        const mixedDistanceVendors: Vendor[] = [
+          {
+            id: '1',
+            name: 'Mixed Distance Vendor',
+            tier: 'tier2',
+            locations: [
+              { ...londonCoords, isHQ: true, address: 'HQ', city: 'London', country: 'UK' },
+              { ...niceCoords, isHQ: false, address: 'Office', city: 'Nice', country: 'France' },
+            ],
+            description: '',
+            category: [],
+            featured: false,
+            partner: false,
+          },
+        ];
+
+        // London=1000km (out of range), Nice=20km (in range)
+        mockCalculateDistance.mockReturnValueOnce(1000).mockReturnValueOnce(20);
+
+        const { result } = renderHook(() =>
+          useLocationFilter(mixedDistanceVendors, monacoCoords, 50)
+        );
+
+        // Should match Nice office
+        expect(result.current.filteredVendors).toHaveLength(1);
+        expect(result.current.filteredVendors[0].matchedLocation?.city).toBe('Nice');
+      });
+
+      it('should handle vendors without tier field (default to free)', () => {
+        const noTierVendors: Vendor[] = [
+          {
+            id: '1',
+            name: 'No Tier Vendor',
+            locations: [
+              { ...monacoCoords, isHQ: true, address: 'HQ', city: 'Monaco', country: 'Monaco' },
+              { ...niceCoords, isHQ: false, address: 'Office', city: 'Nice', country: 'France' },
+            ],
+            description: '',
+            category: [],
+            featured: false,
+            partner: false,
+          },
+        ];
+
+        // Monaco HQ is ~20km from Nice
+        mockCalculateDistance.mockReturnValue(20);
+
+        const { result } = renderHook(() =>
+          useLocationFilter(noTierVendors, niceCoords, 50)
+        );
+
+        // Without tier, defaults to free tier (only HQ considered, which is within range)
+        expect(result.current.filteredVendors).toHaveLength(1);
+        expect(result.current.filteredVendors[0].matchedLocation?.city).toBe('Monaco');
+      });
+    });
+
+    describe('Matched Location Field', () => {
+      it('should populate matchedLocation for matched vendors', () => {
+        const vendors: Vendor[] = [
+          {
+            id: '1',
+            name: 'Test Vendor',
+            tier: 'tier2',
+            locations: [
+              { ...monacoCoords, isHQ: true, address: '123 Monaco St', city: 'Monaco', country: 'Monaco' },
+            ],
+            description: '',
+            category: [],
+            featured: false,
+            partner: false,
+          },
+        ];
+
+        mockCalculateDistance.mockReturnValue(5);
+
+        const { result } = renderHook(() =>
+          useLocationFilter(vendors, monacoCoords, 50)
+        );
+
+        expect(result.current.filteredVendors[0].matchedLocation).toBeDefined();
+        expect(result.current.filteredVendors[0].matchedLocation?.address).toBe('123 Monaco St');
+        expect(result.current.filteredVendors[0].matchedLocation?.city).toBe('Monaco');
+      });
+
+      it('should not populate matchedLocation for excluded vendors', () => {
+        const vendors: Vendor[] = [
+          {
+            id: '1',
+            name: 'Distant Vendor',
+            tier: 'tier2',
+            locations: [
+              { ...londonCoords, isHQ: true, address: 'HQ', city: 'London', country: 'UK' },
+            ],
+            description: '',
+            category: [],
+            featured: false,
+            partner: false,
+          },
+        ];
+
+        mockCalculateDistance.mockReturnValue(1000);
+
+        const { result } = renderHook(() =>
+          useLocationFilter(vendors, monacoCoords, 50)
+        );
+
+        expect(result.current.filteredVendors).toHaveLength(0);
+      });
+    });
+
+    describe('Backward Compatibility Verification', () => {
+      it('should work with mix of old and new format vendors', () => {
+        const mixedVendors: Vendor[] = [
+          {
+            id: '1',
+            name: 'Legacy Vendor',
+            location: monacoCoords,
+            description: '',
+            category: [],
+            featured: false,
+            partner: false,
+          },
+          {
+            id: '2',
+            name: 'New Vendor',
+            tier: 'tier2',
+            locations: [
+              { ...niceCoords, isHQ: true, address: 'HQ', city: 'Nice', country: 'France' },
+            ],
+            description: '',
+            category: [],
+            featured: false,
+            partner: false,
+          },
+        ];
+
+        mockCalculateDistance.mockReturnValue(20);
+
+        const { result } = renderHook(() =>
+          useLocationFilter(mixedVendors, monacoCoords, 50)
+        );
+
+        // Both vendors should be included
+        expect(result.current.filteredVendors).toHaveLength(2);
+      });
+    });
+  });
+
   describe('Performance and Memoization', () => {
     it('should memoize results with same inputs', () => {
       const { result, rerender } = renderHook(
@@ -490,19 +860,19 @@ describe('useLocationFilter', () => {
       );
 
       const firstResult = result.current;
+      const firstLength = firstResult.filteredVendors.length;
 
-      // Rerender with different distance
+      // Rerender with different distance (more restrictive)
       rerender({
         vendors,
         location: monacoCoords,
-        distance: 50,
+        distance: 10,
       });
 
-      // Results should be different
+      // Results should be different (referentially different object)
       expect(result.current).not.toBe(firstResult);
-      expect(result.current.filteredVendors.length).not.toBe(
-        firstResult.filteredVendors.length
-      );
+      // With distance of 10km, should only get Monaco (0km), not Nice (20km)
+      expect(result.current.filteredVendors.length).toBeLessThan(firstLength);
     });
   });
 });

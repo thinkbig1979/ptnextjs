@@ -7,6 +7,7 @@ import { calculateDistance } from '@/lib/utils/location';
 /**
  * Extracts coordinates from a vendor's location field
  * Handles both VendorLocation objects and legacy string locations
+ * @deprecated Use getVendorLocations for multi-location support
  */
 function getVendorCoordinates(vendor: Vendor): VendorCoordinates | null {
   if (!vendor.location) return null;
@@ -26,9 +27,51 @@ function getVendorCoordinates(vendor: Vendor): VendorCoordinates | null {
   return null;
 }
 
+/**
+ * Extracts all eligible locations for a vendor based on tier
+ * Supports both new locations[] array and legacy location object
+ * @param vendor - Vendor to get locations from
+ * @returns Array of eligible VendorLocation objects with coordinates
+ */
+function getVendorLocations(vendor: Vendor): VendorLocation[] {
+  // NEW: Handle locations array (multi-location support)
+  if (vendor.locations && vendor.locations.length > 0) {
+    const tier = vendor.tier || 'free';
+
+    // Tier-based filtering
+    const eligibleLocations = vendor.locations.filter(loc => {
+      // Must have valid coordinates
+      if (loc.latitude === undefined || loc.longitude === undefined) return false;
+
+      // Tier 0/1: Only HQ location
+      if (tier === 'free' || tier === 'tier1') {
+        return loc.isHQ === true;
+      }
+
+      // Tier 2+: All locations
+      return true;
+    });
+
+    return eligibleLocations;
+  }
+
+  // LEGACY: Handle single location object (backward compatibility)
+  if (vendor.location && typeof vendor.location !== 'string') {
+    const location = vendor.location as VendorLocation;
+    if (location.latitude !== undefined && location.longitude !== undefined) {
+      // Mark legacy location as HQ for consistency
+      return [{ ...location, isHQ: true }];
+    }
+  }
+
+  return [];
+}
+
 export interface VendorWithDistance extends Vendor {
   /** Calculated distance from user location in kilometers */
   distance?: number;
+  /** The specific location that matched the search (for multi-location vendors) */
+  matchedLocation?: VendorLocation;
 }
 
 export interface UseLocationFilterResult {
@@ -63,8 +106,8 @@ export function useLocationFilter(
   maxDistance: number
 ): UseLocationFilterResult {
   const result = useMemo(() => {
-    // Count vendors with/without coordinates
-    const vendorsWithCoordinates = vendors.filter(v => getVendorCoordinates(v) !== null).length;
+    // Count vendors with/without coordinates (using new multi-location aware function)
+    const vendorsWithCoordinates = vendors.filter(v => getVendorLocations(v).length > 0).length;
     const vendorsWithoutCoordinates = vendors.length - vendorsWithCoordinates;
 
     // If no user location set, return all vendors without filtering
@@ -77,43 +120,59 @@ export function useLocationFilter(
       };
     }
 
-    // Calculate distances and filter vendors
+    // Calculate distances and filter vendors (NEW: multi-location support)
     const vendorsWithDistances: VendorWithDistance[] = vendors
       .map(vendor => {
-        // Get vendor coordinates
-        const vendorCoords = getVendorCoordinates(vendor);
+        // Get all eligible vendor locations (tier-aware)
+        const eligibleLocations = getVendorLocations(vendor);
 
-        // Skip vendors without coordinates
-        if (!vendorCoords) {
-          return { ...vendor, distance: undefined };
+        // Skip vendors without any eligible locations
+        if (eligibleLocations.length === 0) {
+          return { ...vendor, distance: undefined, matchedLocation: undefined };
         }
 
         try {
-          // Calculate distance from user location (in kilometers)
-          const distance = calculateDistance(
-            userLocation,
-            vendorCoords,
-            'km'
-          );
+          // Calculate distance to ALL eligible locations
+          const locationsWithDistances = eligibleLocations.map(location => ({
+            location,
+            distance: calculateDistance(
+              userLocation,
+              {
+                latitude: location.latitude!,
+                longitude: location.longitude!,
+              },
+              'km'
+            ),
+          }));
 
-          return { ...vendor, distance };
+          // Find the closest location within maxDistance
+          const closestLocation = locationsWithDistances
+            .filter(({ distance }) => distance <= maxDistance)
+            .sort((a, b) => a.distance - b.distance)[0];
+
+          // If no location is within range, exclude this vendor
+          if (!closestLocation) {
+            return { ...vendor, distance: undefined, matchedLocation: undefined };
+          }
+
+          // Return vendor with distance to closest location
+          return {
+            ...vendor,
+            distance: closestLocation.distance,
+            matchedLocation: closestLocation.location,
+          };
         } catch (error) {
           // Log error but don't fail - just exclude this vendor
           console.warn(
             `Error calculating distance for vendor ${vendor.name}:`,
             error
           );
-          return { ...vendor, distance: undefined };
+          return { ...vendor, distance: undefined, matchedLocation: undefined };
         }
       })
       .filter(vendor => {
-        // Exclude vendors without coordinates when searching by location
-        if (vendor.distance === undefined) {
-          return false;
-        }
-
-        // Filter by distance
-        return vendor.distance <= maxDistance;
+        // Exclude vendors without coordinates or outside range
+        return vendor.distance !== undefined;
       })
       .sort((a, b) => {
         // Sort by distance (closest first)

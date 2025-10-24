@@ -83,6 +83,36 @@ The codebase maintains backward compatibility by providing both `Vendor` and `Pa
 **Static Generation Requirements:**
 All data must be available at build time. The data service validates content integrity during builds and will fail if references are broken or required content is missing.
 
+**Multi-Location Support:**
+The platform features comprehensive multi-location support for vendors with tier-based access control:
+- **Vendor Locations**: Vendors can manage multiple physical locations (offices, showrooms, service centers)
+- **Tier-Based Limits**: Location count restricted by vendor tier (Tier 1: 1 location, Tier 2: 5, Tier 3: 10, Tier 4: unlimited)
+- **Headquarters Designation**: Each vendor can designate one location as their headquarters
+- **Geocoding**: Automatic address-to-coordinate conversion via Photon API (OpenStreetMap)
+- **Map Visualization**: Interactive Leaflet maps display vendor locations on public profiles
+- **Location Search**: Public users can search vendors by location with radius filtering
+- **Dashboard Management**: Vendors manage locations via LocationsManagerCard in dashboard
+
+**Key Components:**
+- `components/dashboard/LocationsManagerCard.tsx` - Location CRUD interface for vendor dashboard
+- `components/dashboard/LocationFormFields.tsx` - Reusable form fields with geocoding
+- `components/vendors/LocationsDisplaySection.tsx` - Public-facing location display with map
+- `components/LocationSearchFilter.tsx` - Location-based vendor search with radius filtering
+- `hooks/useTierAccess.ts` - Tier-based feature access control
+- `lib/services/LocationService.ts` - Server-side location management and validation
+- `app/api/geocode/route.ts` - Geocoding API endpoint with rate limiting
+
+**Database Schema:**
+Vendor locations are stored in the `vendor_locations` table with these key fields:
+- `name`, `address`, `city`, `state`, `postalCode`, `country` - Location details
+- `latitude`, `longitude` - Geocoded coordinates
+- `isHQ` - Headquarters flag (only one per vendor)
+- `vendorId` - Foreign key to vendors collection
+
+**API Endpoints:**
+- `GET/POST/PUT/DELETE /api/portal/vendors/[id]` - Location management endpoints
+- `POST /api/geocode` - Address geocoding endpoint
+
 ## Development Guidelines
 
 ### Working with Content

@@ -67,6 +67,41 @@ export const vendorUpdateSchema = z.object({
     .string()
     .max(1000, 'Certifications must not exceed 1000 characters')
     .optional(),
+
+  // Multi-location support (Tier 2+)
+  locations: z
+    .array(
+      z.object({
+        id: z.string().optional(),
+        locationName: z.string().max(255, 'Location name must not exceed 255 characters').optional(),
+        address: z.string().max(500, 'Address must not exceed 500 characters').optional(),
+        city: z.string().max(255, 'City must not exceed 255 characters').optional(),
+        country: z.string().max(255, 'Country must not exceed 255 characters').optional(),
+        postalCode: z.string().max(20, 'Postal code must not exceed 20 characters').optional(),
+        latitude: z
+          .number()
+          .min(-90, 'Latitude must be between -90 and 90')
+          .max(90, 'Latitude must be between -90 and 90')
+          .optional(),
+        longitude: z
+          .number()
+          .min(-180, 'Longitude must be between -180 and 180')
+          .max(180, 'Longitude must be between -180 and 180')
+          .optional(),
+        isHQ: z.boolean().optional(),
+      })
+    )
+    .optional()
+    .refine(
+      (locations) => {
+        if (!locations || locations.length === 0) return true;
+        const hqCount = locations.filter((loc) => loc.isHQ === true).length;
+        return hqCount <= 1;
+      },
+      {
+        message: 'Only one location can be designated as Headquarters',
+      }
+    ),
 });
 
 export type VendorUpdateRequest = z.infer<typeof vendorUpdateSchema>;
