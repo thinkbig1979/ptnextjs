@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload';
 import { lexicalEditor } from '@payloadcms/richtext-lexical';
 import { isAdmin } from '../access/rbac';
+import { sanitizeUrlHook } from '../../lib/utils/url';
 
 const Vendors: CollectionConfig = {
   slug: 'vendors',
@@ -143,6 +144,9 @@ const Vendors: CollectionConfig = {
         description: 'Company website (Tier 1+ only)',
         condition: (data) => data.tier === 'tier1' || data.tier === 'tier2',
       },
+      hooks: {
+        beforeChange: [sanitizeUrlHook],
+      },
       access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
@@ -161,6 +165,9 @@ const Vendors: CollectionConfig = {
         description: 'LinkedIn profile URL (Tier 1+ only)',
         condition: (data) => data.tier === 'tier1' || data.tier === 'tier2',
       },
+      hooks: {
+        beforeChange: [sanitizeUrlHook],
+      },
       access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
@@ -177,6 +184,9 @@ const Vendors: CollectionConfig = {
       admin: {
         description: 'Twitter/X profile URL (Tier 1+ only)',
         condition: (data) => data.tier === 'tier1' || data.tier === 'tier2',
+      },
+      hooks: {
+        beforeChange: [sanitizeUrlHook],
       },
       access: {
         read: () => true,
@@ -258,6 +268,9 @@ const Vendors: CollectionConfig = {
           maxLength: 500,
           admin: {
             description: 'URL to verify certification',
+          },
+          hooks: {
+            beforeChange: [sanitizeUrlHook],
           },
         },
       ],
@@ -459,6 +472,9 @@ const Vendors: CollectionConfig = {
       admin: {
         description: 'Video introduction URL (Tier 1+ only)',
         condition: (data) => data.tier === 'tier1' || data.tier === 'tier2',
+      },
+      hooks: {
+        beforeChange: [sanitizeUrlHook],
       },
       access: {
         read: () => true,
@@ -804,6 +820,9 @@ const Vendors: CollectionConfig = {
           maxLength: 500,
           admin: {
             description: 'LinkedIn profile URL',
+          },
+          hooks: {
+            beforeChange: [sanitizeUrlHook],
           },
         },
         {

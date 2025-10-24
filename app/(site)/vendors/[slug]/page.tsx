@@ -29,6 +29,7 @@ import { formatVendorLocation } from "@/lib/utils/location";
 import { isVendorLocationObject } from "@/lib/utils/type-guards";
 import { VendorLocationSection } from "./_components/vendor-location-section";
 import { LocationsDisplaySection } from "@/components/vendors/LocationsDisplaySection";
+import { ensureUrlProtocol } from "@/lib/utils/url";
 
 // Force static generation for optimal SEO and performance
 export const dynamic = 'force-static';
@@ -274,7 +275,7 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
                         Watch our company introduction video to learn more about {vendor.name} and our innovative marine technology solutions.
                       </p>
                       <Button asChild className="mt-4">
-                        <a href={vendor.videoIntroduction.videoUrl} target="_blank" rel="noopener noreferrer">
+                        <a href={ensureUrlProtocol(vendor.videoIntroduction.videoUrl)} target="_blank" rel="noopener noreferrer">
                           Watch Video
                         </a>
                       </Button>
@@ -342,7 +343,7 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
                           )}
                           {cert.certificateUrl && (
                             <a
-                              href={cert.certificateUrl}
+                              href={ensureUrlProtocol(cert.certificateUrl)}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-primary hover:underline text-sm mt-2 inline-block"

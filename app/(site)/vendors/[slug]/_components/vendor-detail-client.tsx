@@ -9,6 +9,7 @@ import {
   Mail,
   ExternalLink
 } from "lucide-react";
+import { ensureUrlProtocol } from "@/lib/utils/url";
 import type { Vendor } from "@/lib/types";
 
 interface VendorDetailClientProps {
@@ -50,7 +51,7 @@ export default function VendorDetailClient({ vendor }: VendorDetailClientProps) 
 
       {vendor.website && (
         <Button variant="outline" className="w-full" asChild>
-          <a href={vendor.website} target="_blank" rel="noopener noreferrer">
+          <a href={ensureUrlProtocol(vendor.website)} target="_blank" rel="noopener noreferrer">
             <ExternalLink className="w-4 h-4 mr-2" />
             Visit Website
           </a>
