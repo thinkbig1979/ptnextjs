@@ -1,33 +1,47 @@
 /**
- * URL utility functions using Payload CMS's built-in URL sanitization
+ * URL utility functions for client and server components
+ *
+ * IMPORTANT: This file must work in both client and server contexts,
+ * so we cannot import Payload CMS modules here (they're server-only)
  */
-
-import { sanitizeUrl as payloadSanitizeUrl, validateUrl as payloadValidateUrl } from '@payloadcms/richtext-lexical';
 
 /**
  * Ensures a URL has a proper protocol (http:// or https://)
- * Uses Payload CMS's built-in sanitization
+ * Pure JavaScript implementation that works in both client and server
  *
  * @param url - The URL to sanitize
  * @returns Sanitized URL with protocol, or 'https://' if invalid
  *
  * @example
- * ensureUrlProtocol('google.com') // 'https://google.com' (auto-adds https)
+ * ensureUrlProtocol('google.com') // 'https://google.com'
  * ensureUrlProtocol('http://google.com') // 'http://google.com'
  * ensureUrlProtocol('https://google.com') // 'https://google.com'
  * ensureUrlProtocol('') // 'https://'
  */
 export function ensureUrlProtocol(url: string | null | undefined): string {
-  if (!url || typeof url !== 'string') {
+  if (!url || typeof url !== 'string' || url.trim().length === 0) {
     return 'https://';
   }
 
-  return payloadSanitizeUrl(url.trim());
+  const trimmed = url.trim();
+
+  // If URL already has a protocol, return as-is
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+    return trimmed;
+  }
+
+  // If URL starts with '//', add https:
+  if (trimmed.startsWith('//')) {
+    return `https:${trimmed}`;
+  }
+
+  // Otherwise, add https://
+  return `https://${trimmed}`;
 }
 
 /**
  * Validates if a URL is properly formatted
- * Uses Payload CMS's built-in validation
+ * Pure JavaScript implementation that works in both client and server
  *
  * @param url - The URL to validate
  * @returns true if valid, false otherwise
@@ -37,7 +51,12 @@ export function isValidUrl(url: string | null | undefined): boolean {
     return false;
   }
 
-  return payloadValidateUrl(url.trim());
+  try {
+    new URL(url.trim());
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 /**

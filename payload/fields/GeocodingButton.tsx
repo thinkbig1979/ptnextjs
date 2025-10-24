@@ -21,7 +21,7 @@ export const GeocodingButton: FieldClientComponent = ({ path }) => {
   const { dispatchFields } = useForm();
 
   // Get parent path (array row path) - remove the UI field name from path
-  const parentPath = path.split('.').slice(0, -1).join('.');
+  const parentPath = (path as string).split('.').slice(0, -1).join('.');
 
   // Get current address value from form state
   const addressField = useFormFields(([fields]) => fields[`${parentPath}.address`]);
