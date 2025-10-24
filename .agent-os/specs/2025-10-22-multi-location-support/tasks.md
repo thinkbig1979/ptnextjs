@@ -70,10 +70,10 @@ This tasks file provides a lightweight overview of all tasks. Individual task de
 | TEST-FRONTEND-UI | Frontend UI Test Design | test-architect | 20-25 min | [ ] Not Started | @tasks/task-test-frontend-ui.md |
 | IMPL-NAVIGATION | Navigation Integration | frontend-react-specialist | 15-20 min | [ ] Not Started | @tasks/task-impl-navigation.md |
 | IMPL-DASHBOARD-LOCATIONS | Dashboard Locations Manager | frontend-react-specialist | 30-35 min | [ ] Not Started | @tasks/task-impl-dashboard-locations.md |
-| IMPL-GEOCODING | Geocoding Integration | frontend-react-specialist | 20-25 min | [ ] Not Started | @tasks/task-impl-geocoding.md |
-| IMPL-MAP-COMPONENT | Map Component Implementation | frontend-react-specialist | 25-30 min | [ ] Not Started | @tasks/task-impl-map-component.md |
+| IMPL-GEOCODING | Geocoding Integration | frontend-react-specialist | 20-25 min | [x] Complete | @tasks/task-impl-geocoding.md |
+| IMPL-MAP-COMPONENT | Map Component Implementation | frontend-react-specialist | 25-30 min | [x] Complete | @tasks/task-impl-map-component.md |
 | IMPL-PUBLIC-PROFILE | Public Profile Locations Display | frontend-react-specialist | 25-30 min | [ ] Not Started | @tasks/task-impl-public-profile.md |
-| IMPL-TIER-GATING | Tier-Based Access Control | frontend-react-specialist | 20-25 min | [ ] Not Started | @tasks/task-impl-tier-gating.md |
+| IMPL-TIER-GATING | Tier-Based Access Control | frontend-react-specialist | 20-25 min | [x] Complete | @tasks/task-impl-tier-gating.md |
 | TEST-FRONTEND-INTEGRATION | Frontend Integration Testing | test-architect | 25-30 min | [ ] Not Started | @tasks/task-test-frontend-integration.md |
 
 **Phase Dependencies**:
