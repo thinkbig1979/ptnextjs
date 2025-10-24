@@ -20,9 +20,9 @@ This tasks file provides a lightweight overview of all tasks. Individual task de
 
 | Task ID | Title | Agent | Time | Status | Details |
 |---------|-------|-------|------|--------|---------|
-| PRE-1 | Pre-Execution Codebase Analysis | context-fetcher | 3-5 min | [ ] Not Started | @tasks/task-pre-1.md |
-| PRE-2 | Integration Strategy and Dependency Planning | context-fetcher | 3-5 min | [ ] Not Started | @tasks/task-pre-2.md |
-| PRE-3 | Update useLocationFilter Hook for Multi-Location | frontend-react-specialist | 10-15 min | [ ] Not Started | @tasks/task-pre-3-update-location-filter.md |
+| PRE-1 | Pre-Execution Codebase Analysis | context-fetcher | 3-5 min | [x] Complete | @tasks/task-pre-1.md |
+| PRE-2 | Integration Strategy and Dependency Planning | context-fetcher | 3-5 min | [x] Complete | @tasks/task-pre-2.md |
+| PRE-3 | Update useLocationFilter Hook for Multi-Location | frontend-react-specialist | 10-15 min | [x] Complete | @tasks/task-pre-3-update-location-filter.md |
 
 **Phase Dependencies**:
 - None (PRE-1 and PRE-2 are starting points)

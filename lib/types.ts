@@ -195,6 +195,7 @@ export interface VendorLocation {
   longitude?: number;     // Geographic longitude
   city?: string;          // City name
   country?: string;       // Country name
+  isHQ?: boolean;         // Whether this is the headquarters location (default: false)
 }
 
 // ============================================================
@@ -281,7 +282,9 @@ export interface Vendor {
   image?: string; // TinaCMS uses direct string paths
   website?: string;
   founded?: number;
-  location?: VendorLocation | string; // Union type for backward compatibility (legacy string or new object)
+  location?: VendorLocation | string; // Legacy single location (deprecated, use locations array)
+  locations?: VendorLocation[]; // New: Array of office locations (multi-location support)
+  tier?: 'free' | 'tier1' | 'tier2'; // Vendor subscription tier (affects multi-location access)
   featured?: boolean;
   partner?: boolean; // New field: indicates if vendor is also a strategic partner
   createdAt?: string;
