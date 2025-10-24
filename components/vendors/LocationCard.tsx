@@ -2,18 +2,20 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MapPin, Navigation } from 'lucide-react';
+import { MapPin, Navigation, Map } from 'lucide-react';
 import { VendorLocation } from '@/lib/types';
 
 export interface LocationCardProps {
   location: VendorLocation;
   isHQ?: boolean;
+  onShowOnMap?: (locationId: string) => void;
+  isFocused?: boolean;
 }
 
 /**
- * LocationCard - Display individual location details with "Get Directions" link
+ * LocationCard - Display individual location details with "Get Directions" and "Show on Map" buttons
  */
-export function LocationCard({ location, isHQ = false }: LocationCardProps) {
+export function LocationCard({ location, isHQ = false, onShowOnMap, isFocused = false }: LocationCardProps) {
   // Construct Google Maps directions URL
   const mapsUrl = location.latitude && location.longitude
     ? `https://www.google.com/maps?q=${location.latitude},${location.longitude}`
@@ -61,25 +63,42 @@ export function LocationCard({ location, isHQ = false }: LocationCardProps) {
           )}
         </div>
 
-        {/* Get Directions Button */}
-        {mapsUrl && (
-          <Button
-            asChild
-            variant="outline"
-            size="sm"
-            className="w-full group"
-          >
-            <a
-              href={mapsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center"
+        {/* Action Buttons */}
+        <div className="flex gap-2">
+          {/* Show on Map Button - only for non-HQ locations */}
+          {!isHQ && onShowOnMap && location.id && (
+            <Button
+              onClick={() => onShowOnMap(location.id!)}
+              variant={isFocused ? "default" : "outline"}
+              size="sm"
+              className="flex-1"
+              disabled={isFocused}
             >
-              <Navigation className="w-4 h-4 mr-2" />
-              Get Directions
-            </a>
-          </Button>
-        )}
+              <Map className="w-4 h-4 mr-2" />
+              {isFocused ? 'Viewing' : 'Show on Map'}
+            </Button>
+          )}
+
+          {/* Get Directions Button */}
+          {mapsUrl && (
+            <Button
+              asChild
+              variant="outline"
+              size="sm"
+              className={`group ${!isHQ && onShowOnMap ? 'flex-1' : 'w-full'}`}
+            >
+              <a
+                href={mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center"
+              >
+                <Navigation className="w-4 h-4 mr-2" />
+                Get Directions
+              </a>
+            </Button>
+          )}
+        </div>
       </CardContent>
     </Card>
   );

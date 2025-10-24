@@ -66,7 +66,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setUser(null);
       }
     } catch (err) {
-      console.error('Auth check failed:', err);
+      // Silently handle auth check failures (expected on public pages)
+      // No logging needed - this is normal behavior for unauthenticated users
       setUser(null);
     } finally {
       setIsLoading(false);

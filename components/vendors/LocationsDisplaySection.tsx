@@ -1,13 +1,31 @@
 'use client';
 
-import React, { useMemo } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import React, { useMemo, useState, useRef, useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { LocationCard } from './LocationCard';
 import { VendorLocation } from '@/lib/types';
-import { Globe } from 'lucide-react';
+import { Globe, Map as MapIcon } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
+
+/**
+ * MapController - Component to handle map view changes
+ * Must be used inside MapContainer
+ */
+function MapController({ center, zoom }: { center: [number, number]; zoom: number }) {
+  const map = useMap();
+
+  useEffect(() => {
+    map.setView(center, zoom, {
+      animate: true,
+      duration: 0.5,
+    });
+  }, [center, zoom, map]);
+
+  return null;
+}
 
 export interface LocationsDisplaySectionProps {
   locations: VendorLocation[];
@@ -31,6 +49,9 @@ export function LocationsDisplaySection({
   isLoading = false,
   error,
 }: LocationsDisplaySectionProps) {
+  // State for focused location (for "Show on Map" feature)
+  const [focusedLocationId, setFocusedLocationId] = useState<string | null>(null);
+
   // Validate coordinates
   const validLocations = useMemo(
     () =>
@@ -77,21 +98,34 @@ export function LocationsDisplaySection({
     [filteredLocations]
   );
 
-  // Calculate map center
+  // Find focused location if one is selected
+  const focusedLocation = useMemo(
+    () => focusedLocationId ? filteredLocations.find((loc) => loc.id === focusedLocationId) : null,
+    [focusedLocationId, filteredLocations]
+  );
+
+  // Calculate map center (use focused location if selected, otherwise HQ)
   const mapCenter: [number, number] = useMemo(() => {
-    if (hqLocation?.latitude && hqLocation?.longitude) {
-      return [hqLocation.latitude, hqLocation.longitude];
+    const targetLocation = focusedLocation || hqLocation;
+    if (targetLocation?.latitude && targetLocation?.longitude) {
+      return [targetLocation.latitude, targetLocation.longitude];
     }
     return [43.7384, 7.4246]; // Default: Monaco
-  }, [hqLocation]);
+  }, [focusedLocation, hqLocation]);
 
-  // Calculate appropriate zoom level based on location spread
+  // Calculate appropriate zoom level
   const mapZoom = useMemo(() => {
+    // If focusing on a specific location, zoom in closer
+    if (focusedLocationId) {
+      return 14;
+    }
+
+    // If only one location, use medium zoom
     if (filteredLocations.length <= 1) {
       return 12;
     }
 
-    // Calculate bounds
+    // Calculate bounds for multiple locations
     const lats = filteredLocations.map((loc) => loc.latitude!);
     const lngs = filteredLocations.map((loc) => loc.longitude!);
     const latDiff = Math.max(...lats) - Math.min(...lats);
@@ -104,7 +138,7 @@ export function LocationsDisplaySection({
     if (maxDiff > 10) return 8;
     if (maxDiff > 5) return 10;
     return 12;
-  }, [filteredLocations]);
+  }, [focusedLocationId, filteredLocations]);
 
   // Show loading state
   if (isLoading) {
@@ -145,7 +179,20 @@ export function LocationsDisplaySection({
   if (validLocations.length === 0) {
     return (
       <Card className="p-6">
-        <div className="text-center text-red-600">Invalid location data</div>
+        <div className="text-center text-red-600">
+          Location data is incomplete. Please ensure all locations have valid coordinates.
+        </div>
+      </Card>
+    );
+  }
+
+  // Final safety check - ensure filtered locations have valid coordinates
+  if (filteredLocations.length === 0 || !filteredLocations.every(loc => loc.latitude && loc.longitude)) {
+    return (
+      <Card className="p-6">
+        <div className="text-center text-red-600">
+          Location data is incomplete. Please ensure all locations have valid coordinates.
+        </div>
       </Card>
     );
   }
@@ -167,9 +214,23 @@ export function LocationsDisplaySection({
       )}
 
       {/* Map Section */}
-      <div className="rounded-lg overflow-hidden border border-gray-200">
+      <div className="rounded-lg overflow-hidden border border-gray-200 relative">
+        {/* Back to HQ Button - shown when viewing a non-HQ location */}
+        {focusedLocationId && hqLocation && focusedLocationId !== hqLocation.id && (
+          <Button
+            onClick={() => setFocusedLocationId(null)}
+            variant="secondary"
+            size="sm"
+            className="absolute top-4 right-4 z-[1000] shadow-lg"
+            title="Return to headquarters view"
+          >
+            <MapIcon className="h-4 w-4 mr-2" />
+            Show HQ
+          </Button>
+        )}
+
         <MapContainer
-          center={JSON.stringify(mapCenter) as any}
+          center={mapCenter}
           zoom={mapZoom}
           scrollWheelZoom={true}
           dragging={true}
@@ -178,6 +239,9 @@ export function LocationsDisplaySection({
           style={{ width: '100%' }}
           data-testid="map-container"
         >
+          {/* Map controller to handle view changes */}
+          <MapController center={mapCenter} zoom={mapZoom} />
+
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -219,6 +283,8 @@ export function LocationsDisplaySection({
             key={location.id || `location-${index}`}
             location={location}
             isHQ={location.isHQ || false}
+            onShowOnMap={setFocusedLocationId}
+            isFocused={focusedLocationId === location.id}
           />
         ))}
       </div>

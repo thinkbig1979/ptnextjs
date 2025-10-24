@@ -61,8 +61,20 @@ class PayloadCMSDataService {
     return data;
   }
 
-  private transformMediaPath(mediaPath: string): string {
+  private transformMediaPath(mediaPath: string | any): string {
     if (!mediaPath) return '';
+
+    // Handle case where mediaPath is an object (Payload media relationship)
+    if (typeof mediaPath === 'object') {
+      // Extract URL from media object
+      const url = mediaPath.url || mediaPath.filename || '';
+      if (!url) return '';
+      mediaPath = url;
+    }
+
+    // Now mediaPath should be a string
+    if (typeof mediaPath !== 'string') return '';
+
     if (mediaPath.startsWith('http')) return mediaPath;
     if (mediaPath.startsWith('/media/')) return mediaPath;
     if (mediaPath.startsWith('/')) return mediaPath;
@@ -252,7 +264,7 @@ class PayloadCMSDataService {
     })) || [];
 
     // ============================================================================
-    // SECTION 8: LOCATION - Transform from flat fields to VendorLocation object
+    // SECTION 8: LOCATION - Transform from flat fields to VendorLocation object (legacy)
     // ============================================================================
     const location: string | VendorLocation =
       doc.location_latitude !== undefined && doc.location_longitude !== undefined
@@ -265,6 +277,22 @@ class PayloadCMSDataService {
           }
         : doc.location || '';
 
+    // ============================================================================
+    // SECTION 9: LOCATIONS ARRAY - Multi-location support (Tier 2+)
+    // ============================================================================
+    const locations: VendorLocation[] | undefined = doc.locations?.map((loc: any) => ({
+      id: loc.id || undefined,
+      locationName: loc.locationName || undefined,
+      address: loc.address || '',
+      city: loc.city || '',
+      state: loc.state || undefined,
+      postalCode: loc.postalCode || undefined,
+      country: loc.country || '',
+      latitude: loc.latitude,
+      longitude: loc.longitude,
+      isHQ: loc.isHQ || false,
+    })) || undefined;
+
     return {
       id: doc.id ? doc.id.toString() : '',
       slug: doc.slug || '',
@@ -276,6 +304,8 @@ class PayloadCMSDataService {
       website: doc.website || '',
       founded: doc.founded,
       location,
+      locations,
+      tier: doc.tier || 'free',
       tags: [],
       featured: doc.featured || false,
       partner: doc.partner !== undefined ? doc.partner : false,
