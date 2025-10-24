@@ -178,9 +178,6 @@ export async function POST(request: NextRequest): Promise<NextResponse<SuccessRe
       );
     }
 
-    // Hash password
-    const hashedPassword = await authService.hashPassword(data.password);
-
     // Generate slug
     const slug = generateSlug(data.companyName);
 

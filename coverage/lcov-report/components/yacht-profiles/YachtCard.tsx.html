@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/10</span>
+                <span class='fraction'>10/10</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">94.44% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/18</span>
+                <span class='fraction'>17/18</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/2</span>
+                <span class='fraction'>2/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/10</span>
+                <span class='fraction'>10/10</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -250,15 +250,14 @@
 <a name='L185'></a><a href='#L185'>185</a>
 <a name='L186'></a><a href='#L186'>186</a>
 <a name='L187'></a><a href='#L187'>187</a>
-<a name='L188'></a><a href='#L188'>188</a>
-<a name='L189'></a><a href='#L189'>189</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L188'></a><a href='#L188'>188</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -266,12 +265,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">11x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">11x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -398,8 +397,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">20x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -441,12 +439,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">"use client";
 &nbsp;
-import * as React from <span class="cstat-no" title="statement not covered" >"react";</span>
-import Link from <span class="cstat-no" title="statement not covered" >"next/link";</span>
-import { Card, CardContent, CardHeader } from <span class="cstat-no" title="statement not covered" >"@/components/ui/card";</span>
-import { Badge } from <span class="cstat-no" title="statement not covered" >"@/components/ui/badge";</span>
-import { cn } from <span class="cstat-no" title="statement not covered" >"@/lib/utils";</span>
-import { ProgressiveImage } from <span class="cstat-no" title="statement not covered" >"@/components/ui/progressive-image";</span>
+import * as React from "react";
+import Link from "next/link";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+import { ProgressiveImage } from "@/components/ui/progressive-image";
 import type { Yacht } from "@/lib/types";
 &nbsp;
 interface YachtCardProps {
@@ -454,12 +452,12 @@ interface YachtCardProps {
   className?: string;
 }
 &nbsp;
-export function <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >YachtCard({</span></span>
+export function YachtCard({
   yacht,
   className
 }: YachtCardProps) {
-  const mainImage = <span class="cstat-no" title="statement not covered" >yacht.image || yacht.images?.[0];</span>
-  const href = <span class="cstat-no" title="statement not covered" >`/yachts/${yacht.slug}`;</span>
+  const mainImage = yacht.image || yacht.images?.[0];
+  const href = `/yachts/${yacht.slug}`;
 &nbsp;
   return (
     &lt;Card
@@ -472,7 +470,7 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
       &lt;Link href={href} className="block"&gt;
         &lt;div className="aspect-[4/3] relative overflow-hidden rounded-t-lg"&gt;
           {mainImage ? (
-<span class="branch-0 cbranch-no" title="branch not covered" >            &lt;ProgressiveImage</span>
+            &lt;ProgressiveImage
               src={mainImage}
               alt={yacht.name}
               fill
@@ -506,7 +504,7 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
             &lt;/div&gt;
           )}
 &nbsp;
-          {<span class="branch-0 cbranch-no" title="branch not covered" >yacht.featured </span>&amp;&amp; (
+          {yacht.featured &amp;&amp; (
             &lt;div className="absolute top-3 right-3"&gt;
               &lt;Badge variant="secondary" className="bg-accent text-accent-foreground"&gt;
                 Featured
@@ -522,10 +520,10 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
             &lt;/h3&gt;
 &nbsp;
             &lt;div className="flex items-center gap-3 text-sm text-muted-foreground font-poppins-light"&gt;
-              {<span class="branch-0 cbranch-no" title="branch not covered" >yacht.builder </span>&amp;&amp; (
+              {yacht.builder &amp;&amp; (
                 &lt;span&gt;{yacht.builder}&lt;/span&gt;
               )}
-              {<span class="branch-0 cbranch-no" title="branch not covered" >yacht.launchYear </span>&amp;&amp; (
+              {yacht.launchYear &amp;&amp; (
                 &lt;span&gt;• {yacht.launchYear}&lt;/span&gt;
               )}
             &lt;/div&gt;
@@ -534,12 +532,11 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
 &nbsp;
         &lt;CardContent className="pt-0"&gt;
           &lt;div className="space-y-4"&gt;
-            &lt;p
+            &lt;div
               className="text-sm text-muted-foreground line-clamp-2 leading-relaxed font-poppins-light"
               data-testid="yacht-description"
-            &gt;
-              {yacht.description}
-            &lt;/p&gt;
+              dangerouslySetInnerHTML={{ __html: yacht.description }}
+            /&gt;
 &nbsp;
             {/* Yacht Specifications */}
             &lt;div className="grid grid-cols-2 gap-3 py-3 border-t border-border/50"&gt;
@@ -564,9 +561,9 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
             {/* Additional Info */}
             &lt;div className="flex items-center justify-between"&gt;
               &lt;div className="flex gap-2"&gt;
-                {<span class="branch-0 cbranch-no" title="branch not covered" >yacht.sustainabilityScore?.overallScore &amp;&amp; (</span>
+                {yacht.sustainabilityScore?.overallScore &amp;&amp; (
                   &lt;div className="flex items-center gap-1"&gt;
-                    &lt;div className="w-3 h-3 rounded-full bg-green-500"&gt;&lt;/div&gt;
+                    &lt;div className="w-3 h-3 rounded-full bg-accent/80"&gt;&lt;/div&gt;
                     &lt;span className="text-xs font-poppins-medium text-muted-foreground"&gt;
                       {yacht.sustainabilityScore.overallScore} sustainability
                     &lt;/span&gt;
@@ -574,9 +571,9 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
                 )}
                 {yacht.supplierCount &amp;&amp; yacht.supplierCount &gt; 0 &amp;&amp; (
                   &lt;div className="flex items-center gap-1"&gt;
-                    &lt;div className="w-3 h-3 rounded-full bg-blue-500"&gt;&lt;/div&gt;
+                    &lt;div className="w-3 h-3 rounded-full bg-primary/70"&gt;&lt;/div&gt;
                     &lt;span className="text-xs font-poppins-medium text-muted-foreground"&gt;
-                      {yacht.supplierCount} supplier{yacht.supplierCount !== 1 ? 's' : ''}
+                      {yacht.supplierCount} supplier{yacht.supplierCount !== 1 ? <span class="branch-0 cbranch-no" title="branch not covered" >'s' : '</span>'}
                     &lt;/span&gt;
                   &lt;/div&gt;
                 )}
@@ -586,8 +583,8 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
             {/* Tags */}
             {yacht.tags &amp;&amp; yacht.tags.length &gt; 0 &amp;&amp; (
               &lt;div className="flex flex-wrap gap-1"&gt;
-                {yacht.tags.slice(0, 3).map(<span class="fstat-no" title="function not covered" >(t</span>ag, index) =&gt; (
-<span class="cstat-no" title="statement not covered" >                  &lt;Badge</span>
+                {yacht.tags.slice(0, 3).map((tag, index) =&gt; (
+                  &lt;Badge
                     key={index}
                     variant="outline"
                     className="text-xs px-2 py-1"
@@ -595,7 +592,7 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
                     {tag}
                   &lt;/Badge&gt;
                 ))}
-                {<span class="branch-0 cbranch-no" title="branch not covered" >yacht.tags.length &gt; 3 &amp;&amp; (</span>
+                {yacht.tags.length &gt; 3 &amp;&amp; (
                   &lt;Badge
                     variant="outline"
                     className="text-xs px-2 py-1"
@@ -634,7 +631,7 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-15T19:49:39.396Z
+                at 2025-10-24T11:57:00.220Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

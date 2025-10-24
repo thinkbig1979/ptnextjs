@@ -67,14 +67,14 @@ This tasks file provides a lightweight overview of all tasks. Individual task de
 
 | Task ID | Title | Agent | Time | Status | Details |
 |---------|-------|-------|------|--------|---------|
-| TEST-FRONTEND-UI | Frontend UI Test Design | test-architect | 20-25 min | [ ] Not Started | @tasks/task-test-frontend-ui.md |
-| IMPL-NAVIGATION | Navigation Integration | frontend-react-specialist | 15-20 min | [ ] Not Started | @tasks/task-impl-navigation.md |
-| IMPL-DASHBOARD-LOCATIONS | Dashboard Locations Manager | frontend-react-specialist | 30-35 min | [ ] Not Started | @tasks/task-impl-dashboard-locations.md |
+| TEST-FRONTEND-UI | Frontend UI Test Design | test-architect | 20-25 min | [x] Complete | @tasks/task-test-frontend-ui.md |
+| IMPL-NAVIGATION | Navigation Integration | frontend-react-specialist | 15-20 min | [x] Complete | @tasks/task-impl-navigation.md |
+| IMPL-DASHBOARD-LOCATIONS | Dashboard Locations Manager | frontend-react-specialist | 30-35 min | [x] Complete | @tasks/task-impl-dashboard-locations.md |
 | IMPL-GEOCODING | Geocoding Integration | frontend-react-specialist | 20-25 min | [x] Complete | @tasks/task-impl-geocoding.md |
 | IMPL-MAP-COMPONENT | Map Component Implementation | frontend-react-specialist | 25-30 min | [x] Complete | @tasks/task-impl-map-component.md |
-| IMPL-PUBLIC-PROFILE | Public Profile Locations Display | frontend-react-specialist | 25-30 min | [ ] Not Started | @tasks/task-impl-public-profile.md |
+| IMPL-PUBLIC-PROFILE | Public Profile Locations Display | frontend-react-specialist | 25-30 min | [x] Complete | @tasks/task-impl-public-profile.md |
 | IMPL-TIER-GATING | Tier-Based Access Control | frontend-react-specialist | 20-25 min | [x] Complete | @tasks/task-impl-tier-gating.md |
-| TEST-FRONTEND-INTEGRATION | Frontend Integration Testing | test-architect | 25-30 min | [ ] Not Started | @tasks/task-test-frontend-integration.md |
+| TEST-FRONTEND-INTEGRATION | Frontend Integration Testing | test-architect | 25-30 min | [x] Complete | @tasks/task-test-frontend-integration.md |
 
 **Phase Dependencies**:
 - PRE-2 → TEST-FRONTEND-UI, IMPL-NAVIGATION, IMPL-MAP-COMPONENT
@@ -104,9 +104,9 @@ This tasks file provides a lightweight overview of all tasks. Individual task de
 
 | Task ID | Title | Agent | Time | Status | Details |
 |---------|-------|------|--------|---------|
-| INTEG-API-CONTRACT | API Contract Validation | integration-coordinator | 20-25 min | [ ] Not Started | @tasks/task-integ-api-contract.md |
-| INTEG-FRONTEND-BACKEND | Frontend-Backend Integration | integration-coordinator | 25-30 min | [ ] Not Started | @tasks/task-integ-frontend-backend.md |
-| TEST-E2E-WORKFLOW | End-to-End Workflow Testing | test-architect | 30-35 min | [ ] Not Started | @tasks/task-test-e2e-workflow.md |
+| INTEG-API-CONTRACT | API Contract Validation | integration-coordinator | 20-25 min | [x] Complete | @tasks/task-integ-api-contract.md |
+| INTEG-FRONTEND-BACKEND | Frontend-Backend Integration | integration-coordinator | 25-30 min | [x] Complete | @tasks/task-integ-frontend-backend.md |
+| TEST-E2E-WORKFLOW | End-to-End Workflow Testing | test-architect | 30-35 min | [x] Complete | @tasks/task-test-e2e-workflow.md |
 
 **Phase Dependencies**:
 - TEST-BACKEND-INTEGRATION, TEST-FRONTEND-INTEGRATION → INTEG-API-CONTRACT
@@ -130,7 +130,7 @@ This tasks file provides a lightweight overview of all tasks. Individual task de
 
 | Task ID | Title | Agent | Time | Status | Details |
 |---------|-------|-------|------|--------|---------|
-| FINAL-VALIDATION | Final Quality Validation | quality-assurance | 30-35 min | [ ] Not Started | @tasks/task-final-validation.md |
+| FINAL-VALIDATION | Final Quality Validation | quality-assurance | 30-35 min | [x] Complete | @tasks/task-final-validation.md |
 
 **Phase Dependencies**: TEST-E2E-WORKFLOW → FINAL-VALIDATION
 

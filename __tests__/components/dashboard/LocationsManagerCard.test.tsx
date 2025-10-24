@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 import { LocationsManagerCard } from '@/components/dashboard/LocationsManagerCard';
 
 // Mock dependencies
-jest.mock('@/lib/hooks/useTierAccess', () => ({
+jest.mock('@/hooks/useTierAccess', () => ({
   useTierAccess: jest.fn()
 }));
 
@@ -15,7 +15,7 @@ jest.mock('@/components/ui/sonner', () => ({
   }
 }));
 
-const { useTierAccess } = require('@/lib/hooks/useTierAccess');
+const { useTierAccess } = require('@/hooks/useTierAccess');
 
 describe('LocationsManagerCard', () => {
   const mockVendor = {
@@ -100,7 +100,11 @@ describe('LocationsManagerCard', () => {
     it('shows HQ badge for headquarters location', () => {
       render(<LocationsManagerCard vendor={mockVendor} />);
 
-      expect(screen.getByText(/headquarters/i)).toBeInTheDocument();
+      // Check for HQ badge specifically (exact text match)
+      const hqBadges = screen.getAllByText(/headquarters/i);
+      expect(hqBadges.length).toBeGreaterThan(0);
+      // One should be the badge component
+      expect(hqBadges.some(el => el.classList.contains('inline-flex'))).toBe(true);
     });
 
     it('displays multiple locations correctly', () => {

@@ -22,6 +22,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { TierGate } from '@/components/shared/TierGate';
 import { Loader2, Save, Package } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { LocationsManagerCard } from '@/components/dashboard/LocationsManagerCard';
 
 /**
  * Profile update validation schema
@@ -329,6 +330,7 @@ export function VendorProfileEditor({ initialData }: VendorProfileEditorProps) {
   const certifications = form.watch('certifications');
 
   return (
+    <>
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         {/* Basic Information Section (Free Tier) */}
@@ -586,5 +588,26 @@ export function VendorProfileEditor({ initialData }: VendorProfileEditorProps) {
         </div>
       </form>
     </Form>
+
+    {/* Locations Manager Card - Separate from form */}
+    {vendorData && (
+      <div className="mt-6">
+        <LocationsManagerCard
+          vendor={{
+            id: vendorId || '',
+            name: vendorData.companyName || vendorData.name || '',
+            tier: tier || 'free',
+            locations: vendorData.locations || [],
+          }}
+          onUpdate={(updatedLocations) => {
+            setVendorData((prev: any) => ({
+              ...prev,
+              locations: updatedLocations,
+            }));
+          }}
+        />
+      </div>
+    )}
+  </>
   );
 }

@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/8</span>
+                <span class='fraction'>8/8</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/8</span>
+                <span class='fraction'>8/8</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/3</span>
+                <span class='fraction'>3/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/8</span>
+                <span class='fraction'>8/8</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -217,10 +217,10 @@
 <a name='L152'></a><a href='#L152'>152</a>
 <a name='L153'></a><a href='#L153'>153</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -228,11 +228,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">13x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">13x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -276,7 +276,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">34x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -337,7 +337,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">89x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -369,10 +369,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">"use client";
 &nbsp;
-import * as React from <span class="cstat-no" title="statement not covered" >"react";</span>
-import { Card, CardContent, CardHeader, CardTitle } from <span class="cstat-no" title="statement not covered" >"@/components/ui/card";</span>
-import { Badge } from <span class="cstat-no" title="statement not covered" >"@/components/ui/badge";</span>
-import { cn } from <span class="cstat-no" title="statement not covered" >"@/lib/utils";</span>
+import * as React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import type { VendorInnovationHighlight } from "@/lib/types";
 &nbsp;
 interface InnovationHighlightsProps {
@@ -380,11 +380,11 @@ interface InnovationHighlightsProps {
   className?: string;
 }
 &nbsp;
-export function <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >InnovationHighlights({</span></span>
+export function InnovationHighlights({
   innovations,
   className
 }: InnovationHighlightsProps) {
-<span class="cstat-no" title="statement not covered" >  if (!innovations || innovations.length === 0) {</span>
+  if (!innovations || innovations.length === 0) {
     return (
       &lt;div
         className={cn("text-center py-12", className)}
@@ -427,8 +427,8 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
         className={cn("grid gap-6 md:grid-cols-2 lg:grid-cols-3", className)}
         data-testid="innovation-highlights"
       &gt;
-        {innovations.map(<span class="fstat-no" title="function not covered" >(i</span>nnovation, index) =&gt; (
-<span class="cstat-no" title="statement not covered" >          &lt;Card</span>
+        {innovations.map((innovation, index) =&gt; (
+          &lt;Card
             key={index}
             className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-accent/50"
             data-testid="innovation-item"
@@ -465,13 +465,13 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
             &lt;/CardHeader&gt;
 &nbsp;
             &lt;CardContent className="space-y-4"&gt;
-              {<span class="branch-0 cbranch-no" title="branch not covered" >innovation.description </span>&amp;&amp; (
+              {innovation.description &amp;&amp; (
                 &lt;p className="text-muted-foreground leading-relaxed"&gt;
                   {innovation.description}
                 &lt;/p&gt;
               )}
 &nbsp;
-              {<span class="branch-0 cbranch-no" title="branch not covered" >innovation.uniqueApproach </span>&amp;&amp; (
+              {innovation.uniqueApproach &amp;&amp; (
                 &lt;div className="space-y-2"&gt;
                   &lt;h4 className="font-poppins-medium text-sm font-semibold text-accent"&gt;
                     Unique Approach
@@ -488,8 +488,8 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
                     Client Benefits
                   &lt;/h4&gt;
                   &lt;ul className="space-y-2"&gt;
-                    {innovation.benefitsToClients.map(<span class="fstat-no" title="function not covered" >(b</span>enefit, benefitIndex) =&gt; (
-<span class="cstat-no" title="statement not covered" >                      &lt;li</span>
+                    {innovation.benefitsToClients.map((benefit, benefitIndex) =&gt; (
+                      &lt;li
                         key={benefitIndex}
                         className="flex items-center gap-2 text-sm"
                         data-testid="benefit-item"
@@ -526,7 +526,7 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-15T19:49:39.396Z
+                at 2025-10-24T11:57:00.220Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

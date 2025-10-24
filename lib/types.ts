@@ -190,11 +190,14 @@ export interface VendorCoordinates {
  * All fields optional for backward compatibility
  */
 export interface VendorLocation {
+  id?: string;            // Unique location identifier
+  locationName?: string;  // Display name for this location (e.g., "Monaco Office", "Fort Lauderdale Branch")
   address?: string;       // Full mailing address
-  latitude?: number;      // Geographic latitude
-  longitude?: number;     // Geographic longitude
   city?: string;          // City name
   country?: string;       // Country name
+  postalCode?: string;    // Postal/ZIP code
+  latitude?: number;      // Geographic latitude
+  longitude?: number;     // Geographic longitude
   isHQ?: boolean;         // Whether this is the headquarters location (default: false)
 }
 
