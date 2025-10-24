@@ -287,20 +287,49 @@ export interface Vendor {
   founded?: number;
   location?: VendorLocation | string; // Legacy single location (deprecated, use locations array)
   locations?: VendorLocation[]; // New: Array of office locations (multi-location support)
-  tier?: 'free' | 'tier1' | 'tier2'; // Vendor subscription tier (affects multi-location access)
+  tier?: 'free' | 'tier1' | 'tier2' | 'tier3'; // Vendor subscription tier (affects multi-location access)
   featured?: boolean;
   partner?: boolean; // New field: indicates if vendor is also a strategic partner
   createdAt?: string;
   updatedAt?: string;
   publishedAt?: string;
-  
+
+  // Contact information
+  contactEmail?: string;
+  contactPhone?: string;
+
+  // Company details
+  foundedYear?: number; // Year company was founded (for years in business computation)
+  longDescription?: string; // Detailed company description
+  serviceAreas?: string[]; // Service areas/specializations
+  companyValues?: string[]; // Company values
+
+  // Social media
+  linkedinUrl?: string;
+  twitterUrl?: string;
+
+  // Social proof metrics (Tier 1+)
+  totalProjects?: number;
+  employeeCount?: number;
+  linkedinFollowers?: number;
+  instagramFollowers?: number;
+  clientSatisfactionScore?: number; // 0-100
+  repeatClientPercentage?: number; // 0-100
+
+  // Video introduction (Tier 1+)
+  videoUrl?: string;
+  videoThumbnail?: string;
+  videoDuration?: string;
+  videoTitle?: string;
+  videoDescription?: string;
+
   // TinaCMS simplified relations
   category?: string; // Resolved category name
   tags?: string[]; // Resolved tag names array
   products?: Product[];
   services?: VendorService[]; // Services offered by vendor
   seo?: SEO;
-  
+
   // New company-specific content
   mission?: string; // Company-specific mission statement
   statistics?: VendorStatistic[]; // Company statistics/metrics

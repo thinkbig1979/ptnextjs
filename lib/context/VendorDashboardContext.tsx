@@ -69,7 +69,7 @@ export function VendorDashboardProvider({
     }
   );
 
-  const vendor = localVendor || data;
+  const vendor = localVendor || data || null;
 
   // Compute years in business
   const yearsInBusiness = useMemo(

@@ -97,7 +97,7 @@ export class TierValidationService {
     // Check if field is accessible at this tier level
     for (const [tierKey, fields] of Object.entries(TIER_FIELD_ACCESS)) {
       const checkTierLevel = TIER_HIERARCHY[tierKey as Tier];
-      if (tierLevel >= checkTierLevel && fields.includes(fieldName as any)) {
+      if (tierLevel >= checkTierLevel && (fields as readonly string[]).includes(fieldName)) {
         return true;
       }
     }

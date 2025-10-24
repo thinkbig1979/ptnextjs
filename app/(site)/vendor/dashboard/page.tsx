@@ -3,9 +3,14 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/context/AuthContext';
+import { VendorDashboardProvider } from '@/lib/context/VendorDashboardContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { SubscriptionTierBadge } from '@/components/shared/SubscriptionTierBadge';
+import { DashboardHeader } from './components/DashboardHeader';
+import { DashboardSidebar } from './components/DashboardSidebar';
+import { DashboardSkeleton } from './components/DashboardSkeleton';
 import {
   CheckCircle2,
   Clock,
@@ -14,6 +19,8 @@ import {
   Package,
   HelpCircle,
   ArrowRight,
+  AlertCircle,
+  RefreshCw,
 } from 'lucide-react';
 
 /**
@@ -24,6 +31,10 @@ import {
  *
  * Features:
  * - Route protection (redirects to login if not authenticated)
+ * - VendorDashboardProvider integration for state management
+ * - DashboardHeader with breadcrumbs and action buttons
+ * - DashboardSidebar with tier info and quick actions
+ * - Loading and error states
  * - Displays vendor information and tier
  * - Shows profile completion status and approval status
  * - Tier-based UI (Products link only for tier2)
@@ -47,14 +58,7 @@ export default function VendorDashboard() {
    * Show loading state while checking authentication
    */
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading dashboard...</p>
-        </div>
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   /**
@@ -63,6 +67,9 @@ export default function VendorDashboard() {
   if (!isAuthenticated || !user) {
     return null;
   }
+
+  // Get vendor ID from user (vendors use their user ID)
+  const vendorId = user.role === 'vendor' ? user.id : undefined;
 
   /**
    * Get real approval status from user authentication context
@@ -74,17 +81,61 @@ export default function VendorDashboard() {
    */
   const profileCompletion = 75;
 
+  // Render dashboard content wrapped with VendorDashboardProvider
   return (
-    <div className="space-y-8">
-      {/* Welcome Header */}
-      <header>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-          Welcome, {user.email.split('@')[0]}
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Manage your vendor profile, products, and account settings.
-        </p>
-      </header>
+    <VendorDashboardProvider vendorId={vendorId}>
+      <DashboardContent
+        user={user}
+        tier={tier}
+        approvalStatus={approvalStatus}
+        profileCompletion={profileCompletion}
+        router={router}
+      />
+    </VendorDashboardProvider>
+  );
+}
+
+/**
+ * DashboardContent Component
+ *
+ * Inner component that has access to VendorDashboardContext
+ */
+function DashboardContent({
+  user,
+  tier,
+  approvalStatus,
+  profileCompletion,
+  router,
+}: {
+  user: any;
+  tier: any;
+  approvalStatus: string;
+  profileCompletion: number;
+  router: any;
+}) {
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Dashboard Header */}
+      <DashboardHeader
+        vendorSlug={user.slug}
+        title="Vendor Dashboard"
+        showActions={true}
+      />
+
+      {/* Main Dashboard Container */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Main Content Area */}
+          <div className="lg:col-span-3 space-y-8">
+            {/* Welcome Header */}
+            <header>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                Welcome, {user.email.split('@')[0]}
+              </h1>
+              <p className="text-gray-600 dark:text-gray-400">
+                Manage your vendor profile, products, and account settings.
+              </p>
+            </header>
 
       {/* Pending Approval Banner */}
       {approvalStatus === 'pending' && (
@@ -277,6 +328,14 @@ export default function VendorDashboard() {
           </ul>
         </CardContent>
       </Card>
-    </div>
+            </div>
+
+            {/* Sidebar - Desktop Only */}
+            <div className="hidden lg:block">
+              <DashboardSidebar tier={tier || 'free'} vendorName={user.email.split('@')[0]} />
+            </div>
+          </div>
+        </div>
+      </div>
   );
 }

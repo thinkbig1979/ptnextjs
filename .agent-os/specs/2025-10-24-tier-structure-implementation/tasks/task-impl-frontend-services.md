@@ -26,16 +26,18 @@ Read these files:
 
 ## Acceptance Criteria
 
-- [ ] Tier configuration constants match backend (4 tiers, location limits, features)
-- [ ] useVendorProfile(slug) hook fetches and caches vendor data via SWR
-- [ ] useFieldAccess(fieldName) hook returns boolean based on current tier
-- [ ] Zod schemas defined for BasicInfoForm
-- [ ] Zod schemas defined for BrandStoryForm
-- [ ] Zod schemas defined for all array managers (certifications, awards, etc.)
-- [ ] Client-side yearsInBusiness computation matches backend logic
-- [ ] API client functions typed with request/response interfaces
-- [ ] All utilities have TypeScript types
-- [ ] Unit tests for validation schemas and utilities
+- [x] Tier configuration constants match backend (4 tiers, location limits, features)
+- [x] useVendorProfile(slug) hook fetches and caches vendor data via SWR
+- [x] useFieldAccess(fieldName) hook returns boolean based on current tier
+- [x] Zod schemas defined for BasicInfoForm
+- [x] Zod schemas defined for BrandStoryForm
+- [x] Zod schemas defined for all array managers (certifications, awards, etc.)
+- [x] Client-side yearsInBusiness computation matches backend logic
+- [x] API client functions typed with request/response interfaces
+- [x] All utilities have TypeScript types
+- [x] Unit tests for validation schemas and utilities
+
+**Status**: ✅ COMPLETED (2025-10-24)
 
 ## Testing Requirements
 
