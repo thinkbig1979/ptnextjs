@@ -29,6 +29,7 @@ import { BrandStoryForm } from './BrandStoryForm';
 import { CertificationsAwardsManager } from './CertificationsAwardsManager';
 import { CaseStudiesManager } from './CaseStudiesManager';
 import { TeamMembersManager } from './TeamMembersManager';
+import { PromotionPackForm } from './PromotionPackForm';
 
 export interface ProfileEditTabsProps {
   vendor: Vendor;
@@ -121,7 +122,7 @@ export function ProfileEditTabs({ vendor, onSave }: ProfileEditTabsProps) {
       id: 'promotion',
       label: 'Promotion',
       minTier: 3,
-      component: PlaceholderComponent('Promotion Pack'),
+      component: <PromotionPackForm vendor={vendor} />,
       description: 'Promotion and marketing content',
     },
   ];
