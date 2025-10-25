@@ -25,28 +25,28 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/112</span>
+                <span class='fraction'>0/117</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/76</span>
+                <span class='fraction'>0/84</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/22</span>
+                <span class='fraction'>0/21</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/106</span>
+                <span class='fraction'>0/111</span>
             </div>
         
             
@@ -412,7 +412,20 @@
 <a name='L347'></a><a href='#L347'>347</a>
 <a name='L348'></a><a href='#L348'>348</a>
 <a name='L349'></a><a href='#L349'>349</a>
-<a name='L350'></a><a href='#L350'>350</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L350'></a><a href='#L350'>350</a>
+<a name='L351'></a><a href='#L351'>351</a>
+<a name='L352'></a><a href='#L352'>352</a>
+<a name='L353'></a><a href='#L353'>353</a>
+<a name='L354'></a><a href='#L354'>354</a>
+<a name='L355'></a><a href='#L355'>355</a>
+<a name='L356'></a><a href='#L356'>356</a>
+<a name='L357'></a><a href='#L357'>357</a>
+<a name='L358'></a><a href='#L358'>358</a>
+<a name='L359'></a><a href='#L359'>359</a>
+<a name='L360'></a><a href='#L360'>360</a>
+<a name='L361'></a><a href='#L361'>361</a>
+<a name='L362'></a><a href='#L362'>362</a>
+<a name='L363'></a><a href='#L363'>363</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -542,11 +555,24 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -890,13 +916,26 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
 <span class="cstat-no" title="statement not covered" >      filtered = filtered.filter(<span class="fstat-no" title="function not covered" >vendor =&gt; <span class="cstat-no" title="statement not covered" >v</span>endor?.category === selectedCategory);</span></span>
     }
 &nbsp;
-    // If a specific vendor is highlighted, prioritize it
-<span class="cstat-no" title="statement not covered" >    if (highlightedVendor) {</span>
-      const priorityVendor = <span class="cstat-no" title="statement not covered" >filtered.find(<span class="fstat-no" title="function not covered" >v =&gt; <span class="cstat-no" title="statement not covered" >v</span>?.name === highlightedVendor);</span></span>
-<span class="cstat-no" title="statement not covered" >      if (priorityVendor) {</span>
-<span class="cstat-no" title="statement not covered" >        filtered = [priorityVendor, ...filtered.filter(<span class="fstat-no" title="function not covered" >v =&gt; <span class="cstat-no" title="statement not covered" >v</span>?.name !== highlightedVendor)];</span></span>
+    // Sort vendors: Featured vendors first, then non-featured
+    // Within each group, maintain the existing order (including location distance if applicable)
+<span class="cstat-no" title="statement not covered" >    filtered = filtered.sort(<span class="fstat-no" title="function not covered" >(a</span>, b) =&gt; {</span>
+      // First priority: highlighted vendor (from URL parameter)
+<span class="cstat-no" title="statement not covered" >      if (highlightedVendor) {</span>
+<span class="cstat-no" title="statement not covered" >        if (a?.name === highlightedVendor) <span class="cstat-no" title="statement not covered" >return -1;</span></span>
+<span class="cstat-no" title="statement not covered" >        if (b?.name === highlightedVendor) <span class="cstat-no" title="statement not covered" >return 1;</span></span>
       }
-    }
+&nbsp;
+      // Second priority: featured status
+      const aFeatured = <span class="cstat-no" title="statement not covered" >a?.featured === true ? 1 : 0;</span>
+      const bFeatured = <span class="cstat-no" title="statement not covered" >b?.featured === true ? 1 : 0;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      if (aFeatured !== bFeatured) {</span>
+<span class="cstat-no" title="statement not covered" >        return bFeatured - aFeatured; /</span>/ Featured vendors come first
+      }
+&nbsp;
+      // Third priority: maintain existing order (location distance, etc.)
+<span class="cstat-no" title="statement not covered" >      return 0;</span>
+    });
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    return filtered;</span>
   }, [baseVendorsForFiltering, searchQuery, selectedCategory, highlightedVendor, showPartnersOnly, showNonPartnersOnly, vendorView]);
@@ -1117,7 +1156,7 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-24T11:57:00.220Z
+                at 2025-10-24T16:38:25.432Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

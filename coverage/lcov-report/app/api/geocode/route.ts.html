@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">11.86% </span>
+                <span class="strong">10.08% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>14/118</span>
+                <span class='fraction'>12/119</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">3.84% </span>
+                <span class="strong">3.75% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>3/78</span>
+                <span class='fraction'>3/80</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">9.09% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/11</span>
+                <span class='fraction'>0/11</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">11.96% </span>
+                <span class="strong">10.16% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>14/117</span>
+                <span class='fraction'>12/118</span>
             </div>
         
             
@@ -447,8 +447,11 @@
 <a name='L382'></a><a href='#L382'>382</a>
 <a name='L383'></a><a href='#L383'>383</a>
 <a name='L384'></a><a href='#L384'>384</a>
-<a name='L385'></a><a href='#L385'>385</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L385'></a><a href='#L385'>385</a>
+<a name='L386'></a><a href='#L386'>386</a>
+<a name='L387'></a><a href='#L387'>387</a>
+<a name='L388'></a><a href='#L388'>388</a>
+<a name='L389'></a><a href='#L389'>389</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -504,11 +507,16 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">60x</span>
-<span class="cline-any cline-yes">60x</span>
-<span class="cline-any cline-yes">60x</span>
-<span class="cline-any cline-yes">60x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -833,7 +841,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { NextRequest, NextResponse } from 'next/server';
 import {
-  PhotonFeature,
   PhotonResponse,
   GeocodeSuccessResponse,
   GeocodeErrorResponse,
@@ -887,12 +894,17 @@ let cleanupInterval: NodeJS.Timeout | null = null;
 let lastCleanupTime = 0;
 const CLEANUP_INTERVAL = 10000; // Clean up every 10 seconds
 &nbsp;
-// Export for testing purposes
-export function clearRateLimitForTesting(): void {
-  <span class="missing-if-branch" title="else path not taken" >E</span>if (process.env.NODE_ENV === 'test') {
-    rateLimitMap.clear();
-    lastCleanupTime = 0;
+// Helper for testing purposes (not exported as route export)
+function <span class="fstat-no" title="function not covered" >clearRateLimitForTesting(): void {</span>
+<span class="cstat-no" title="statement not covered" >  if (process.env.NODE_ENV === 'test') {</span>
+<span class="cstat-no" title="statement not covered" >    rateLimitMap.clear();</span>
+<span class="cstat-no" title="statement not covered" >    lastCleanupTime = 0;</span>
   }
+}
+&nbsp;
+// Only expose to testing via globalThis in test environment
+<span class="missing-if-branch" title="else path not taken" >E</span>if (process.env.NODE_ENV === 'test') {
+  (globalThis as any).__clearRateLimitForTesting = clearRateLimitForTesting;
 }
 &nbsp;
 function <span class="fstat-no" title="function not covered" >checkRateLimit(i</span>p: string): { allowed: boolean; resetTime?: number } {
@@ -1222,7 +1234,7 @@ export async function <span class="cstat-no" title="statement not covered" ><spa
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-24T11:57:00.220Z
+                at 2025-10-24T16:38:25.432Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

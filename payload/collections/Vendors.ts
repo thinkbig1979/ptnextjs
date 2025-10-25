@@ -54,6 +54,7 @@ const Vendors: CollectionConfig = {
         { label: 'Free - Basic Profile', value: 'free' },
         { label: 'Tier 1 - Enhanced Profile', value: 'tier1' },
         { label: 'Tier 2 - Full Product Management', value: 'tier2' },
+        { label: 'Tier 3 - Premium Promoted Profile', value: 'tier3' },
       ],
       defaultValue: 'free',
       required: true,
@@ -135,6 +136,26 @@ const Vendors: CollectionConfig = {
       },
     },
 
+    // Founded Year (Tier 1+ - for years in business computation)
+    {
+      name: 'foundedYear',
+      type: 'number',
+      min: 1800,
+      max: new Date().getFullYear(),
+      admin: {
+        description: 'Year company was founded (used to compute years in business) (Tier 1+ only)',
+        condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier) || data.tier === 'tier3',
+      },
+      access: {
+        read: () => true,
+        update: ({ req: { user }, data }) => {
+          if (!user) return false;
+          if (user.role === 'admin') return true;
+          return data?.tier === 'tier1' || data?.tier === 'tier2' || data?.tier === 'tier3';
+        },
+      },
+    },
+
     // Enhanced Profile Fields (Tier 1+)
     {
       name: 'website',
@@ -142,7 +163,7 @@ const Vendors: CollectionConfig = {
       maxLength: 500,
       admin: {
         description: 'Company website (Tier 1+ only)',
-        condition: (data) => data.tier === 'tier1' || data.tier === 'tier2',
+        condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
       },
       hooks: {
         beforeChange: [sanitizeUrlHook],
@@ -153,7 +174,7 @@ const Vendors: CollectionConfig = {
           if (!user) return false;
           if (user.role === 'admin') return true;
           // Vendors can only edit if they have tier1 or tier2
-          return data?.tier === 'tier1' || data?.tier === 'tier2';
+          return ['tier1', 'tier2', 'tier3'].includes(data?.tier);
         },
       },
     },
@@ -163,7 +184,7 @@ const Vendors: CollectionConfig = {
       maxLength: 500,
       admin: {
         description: 'LinkedIn profile URL (Tier 1+ only)',
-        condition: (data) => data.tier === 'tier1' || data.tier === 'tier2',
+        condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
       },
       hooks: {
         beforeChange: [sanitizeUrlHook],
@@ -173,7 +194,7 @@ const Vendors: CollectionConfig = {
         update: ({ req: { user }, data }) => {
           if (!user) return false;
           if (user.role === 'admin') return true;
-          return data?.tier === 'tier1' || data?.tier === 'tier2';
+          return ['tier1', 'tier2', 'tier3'].includes(data?.tier);
         },
       },
     },
@@ -183,7 +204,7 @@ const Vendors: CollectionConfig = {
       maxLength: 500,
       admin: {
         description: 'Twitter/X profile URL (Tier 1+ only)',
-        condition: (data) => data.tier === 'tier1' || data.tier === 'tier2',
+        condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
       },
       hooks: {
         beforeChange: [sanitizeUrlHook],
@@ -193,7 +214,7 @@ const Vendors: CollectionConfig = {
         update: ({ req: { user }, data }) => {
           if (!user) return false;
           if (user.role === 'admin') return true;
-          return data?.tier === 'tier1' || data?.tier === 'tier2';
+          return ['tier1', 'tier2', 'tier3'].includes(data?.tier);
         },
       },
     },
@@ -202,14 +223,14 @@ const Vendors: CollectionConfig = {
       type: 'array',
       admin: {
         description: 'Company certifications (Tier 1+ only)',
-        condition: (data) => data.tier === 'tier1' || data.tier === 'tier2',
+        condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
       },
       access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
           if (user.role === 'admin') return true;
-          return data?.tier === 'tier1' || data?.tier === 'tier2';
+          return ['tier1', 'tier2', 'tier3'].includes(data?.tier);
         },
       },
       fields: [
@@ -282,14 +303,14 @@ const Vendors: CollectionConfig = {
       type: 'array',
       admin: {
         description: 'Company awards and recognitions (Tier 1+ only)',
-        condition: (data) => data.tier === 'tier1' || data.tier === 'tier2',
+        condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
       },
       access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
           if (user.role === 'admin') return true;
-          return data?.tier === 'tier1' || data?.tier === 'tier2';
+          return ['tier1', 'tier2', 'tier3'].includes(data?.tier);
         },
       },
       fields: [
@@ -352,14 +373,14 @@ const Vendors: CollectionConfig = {
       type: 'number',
       admin: {
         description: 'Total number of completed projects (Tier 1+ only)',
-        condition: (data) => data.tier === 'tier1' || data.tier === 'tier2',
+        condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
       },
       access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
           if (user.role === 'admin') return true;
-          return data?.tier === 'tier1' || data?.tier === 'tier2';
+          return ['tier1', 'tier2', 'tier3'].includes(data?.tier);
         },
       },
     },
@@ -368,14 +389,14 @@ const Vendors: CollectionConfig = {
       type: 'number',
       admin: {
         description: 'Years in business (Tier 1+ only)',
-        condition: (data) => data.tier === 'tier1' || data.tier === 'tier2',
+        condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
       },
       access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
           if (user.role === 'admin') return true;
-          return data?.tier === 'tier1' || data?.tier === 'tier2';
+          return ['tier1', 'tier2', 'tier3'].includes(data?.tier);
         },
       },
     },
@@ -384,14 +405,14 @@ const Vendors: CollectionConfig = {
       type: 'number',
       admin: {
         description: 'Number of employees (Tier 1+ only)',
-        condition: (data) => data.tier === 'tier1' || data.tier === 'tier2',
+        condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
       },
       access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
           if (user.role === 'admin') return true;
-          return data?.tier === 'tier1' || data?.tier === 'tier2';
+          return ['tier1', 'tier2', 'tier3'].includes(data?.tier);
         },
       },
     },
@@ -400,14 +421,14 @@ const Vendors: CollectionConfig = {
       type: 'number',
       admin: {
         description: 'LinkedIn follower count (Tier 1+ only)',
-        condition: (data) => data.tier === 'tier1' || data.tier === 'tier2',
+        condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
       },
       access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
           if (user.role === 'admin') return true;
-          return data?.tier === 'tier1' || data?.tier === 'tier2';
+          return ['tier1', 'tier2', 'tier3'].includes(data?.tier);
         },
       },
     },
@@ -416,14 +437,14 @@ const Vendors: CollectionConfig = {
       type: 'number',
       admin: {
         description: 'Instagram follower count (Tier 1+ only)',
-        condition: (data) => data.tier === 'tier1' || data.tier === 'tier2',
+        condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
       },
       access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
           if (user.role === 'admin') return true;
-          return data?.tier === 'tier1' || data?.tier === 'tier2';
+          return ['tier1', 'tier2', 'tier3'].includes(data?.tier);
         },
       },
     },
@@ -434,14 +455,14 @@ const Vendors: CollectionConfig = {
       max: 10,
       admin: {
         description: 'Client satisfaction score (0-10) (Tier 1+ only)',
-        condition: (data) => data.tier === 'tier1' || data.tier === 'tier2',
+        condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
       },
       access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
           if (user.role === 'admin') return true;
-          return data?.tier === 'tier1' || data?.tier === 'tier2';
+          return ['tier1', 'tier2', 'tier3'].includes(data?.tier);
         },
       },
     },
@@ -452,14 +473,14 @@ const Vendors: CollectionConfig = {
       max: 100,
       admin: {
         description: 'Repeat client percentage (0-100) (Tier 1+ only)',
-        condition: (data) => data.tier === 'tier1' || data.tier === 'tier2',
+        condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
       },
       access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
           if (user.role === 'admin') return true;
-          return data?.tier === 'tier1' || data?.tier === 'tier2';
+          return ['tier1', 'tier2', 'tier3'].includes(data?.tier);
         },
       },
     },
@@ -471,7 +492,7 @@ const Vendors: CollectionConfig = {
       maxLength: 500,
       admin: {
         description: 'Video introduction URL (Tier 1+ only)',
-        condition: (data) => data.tier === 'tier1' || data.tier === 'tier2',
+        condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
       },
       hooks: {
         beforeChange: [sanitizeUrlHook],
@@ -481,7 +502,7 @@ const Vendors: CollectionConfig = {
         update: ({ req: { user }, data }) => {
           if (!user) return false;
           if (user.role === 'admin') return true;
-          return data?.tier === 'tier1' || data?.tier === 'tier2';
+          return ['tier1', 'tier2', 'tier3'].includes(data?.tier);
         },
       },
     },
@@ -491,14 +512,14 @@ const Vendors: CollectionConfig = {
       relationTo: 'media',
       admin: {
         description: 'Video thumbnail image (Tier 1+ only)',
-        condition: (data) => data.tier === 'tier1' || data.tier === 'tier2',
+        condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
       },
       access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
           if (user.role === 'admin') return true;
-          return data?.tier === 'tier1' || data?.tier === 'tier2';
+          return ['tier1', 'tier2', 'tier3'].includes(data?.tier);
         },
       },
     },
@@ -507,14 +528,14 @@ const Vendors: CollectionConfig = {
       type: 'number',
       admin: {
         description: 'Video duration in seconds (Tier 1+ only)',
-        condition: (data) => data.tier === 'tier1' || data.tier === 'tier2',
+        condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
       },
       access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
           if (user.role === 'admin') return true;
-          return data?.tier === 'tier1' || data?.tier === 'tier2';
+          return ['tier1', 'tier2', 'tier3'].includes(data?.tier);
         },
       },
     },
@@ -524,14 +545,14 @@ const Vendors: CollectionConfig = {
       maxLength: 255,
       admin: {
         description: 'Video title (Tier 1+ only)',
-        condition: (data) => data.tier === 'tier1' || data.tier === 'tier2',
+        condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
       },
       access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
           if (user.role === 'admin') return true;
-          return data?.tier === 'tier1' || data?.tier === 'tier2';
+          return ['tier1', 'tier2', 'tier3'].includes(data?.tier);
         },
       },
     },
@@ -541,14 +562,14 @@ const Vendors: CollectionConfig = {
       maxLength: 1000,
       admin: {
         description: 'Video description (Tier 1+ only)',
-        condition: (data) => data.tier === 'tier1' || data.tier === 'tier2',
+        condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
       },
       access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
           if (user.role === 'admin') return true;
-          return data?.tier === 'tier1' || data?.tier === 'tier2';
+          return ['tier1', 'tier2', 'tier3'].includes(data?.tier);
         },
       },
     },
@@ -559,14 +580,14 @@ const Vendors: CollectionConfig = {
       type: 'array',
       admin: {
         description: 'Project case studies (Tier 1+ only)',
-        condition: (data) => data.tier === 'tier1' || data.tier === 'tier2',
+        condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
       },
       access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
           if (user.role === 'admin') return true;
-          return data?.tier === 'tier1' || data?.tier === 'tier2';
+          return ['tier1', 'tier2', 'tier3'].includes(data?.tier);
         },
       },
       fields: [
@@ -690,14 +711,14 @@ const Vendors: CollectionConfig = {
       type: 'array',
       admin: {
         description: 'Innovation and technology highlights (Tier 1+ only)',
-        condition: (data) => data.tier === 'tier1' || data.tier === 'tier2',
+        condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
       },
       access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
           if (user.role === 'admin') return true;
-          return data?.tier === 'tier1' || data?.tier === 'tier2';
+          return ['tier1', 'tier2', 'tier3'].includes(data?.tier);
         },
       },
       fields: [
@@ -769,14 +790,14 @@ const Vendors: CollectionConfig = {
       type: 'array',
       admin: {
         description: 'Team members (Tier 1+ only)',
-        condition: (data) => data.tier === 'tier1' || data.tier === 'tier2',
+        condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
       },
       access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
           if (user.role === 'admin') return true;
-          return data?.tier === 'tier1' || data?.tier === 'tier2';
+          return ['tier1', 'tier2', 'tier3'].includes(data?.tier);
         },
       },
       fields: [
@@ -849,14 +870,14 @@ const Vendors: CollectionConfig = {
       type: 'array',
       admin: {
         description: 'Yacht project portfolio (Tier 1+ only)',
-        condition: (data) => data.tier === 'tier1' || data.tier === 'tier2',
+        condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
       },
       access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
           if (user.role === 'admin') return true;
-          return data?.tier === 'tier1' || data?.tier === 'tier2';
+          return ['tier1', 'tier2', 'tier3'].includes(data?.tier);
         },
       },
       fields: [
@@ -937,14 +958,14 @@ const Vendors: CollectionConfig = {
       editor: lexicalEditor({}),
       admin: {
         description: 'Extended company description with rich formatting (Tier 1+ only)',
-        condition: (data) => data.tier === 'tier1' || data.tier === 'tier2',
+        condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
       },
       access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
           if (user.role === 'admin') return true;
-          return data?.tier === 'tier1' || data?.tier === 'tier2';
+          return ['tier1', 'tier2', 'tier3'].includes(data?.tier);
         },
       },
     },
@@ -955,14 +976,14 @@ const Vendors: CollectionConfig = {
       type: 'array',
       admin: {
         description: 'Service areas (Tier 1+ only)',
-        condition: (data) => data.tier === 'tier1' || data.tier === 'tier2',
+        condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
       },
       access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
           if (user.role === 'admin') return true;
-          return data?.tier === 'tier1' || data?.tier === 'tier2';
+          return ['tier1', 'tier2', 'tier3'].includes(data?.tier);
         },
       },
       fields: [
@@ -1000,14 +1021,14 @@ const Vendors: CollectionConfig = {
       type: 'array',
       admin: {
         description: 'Company values and principles (Tier 1+ only)',
-        condition: (data) => data.tier === 'tier1' || data.tier === 'tier2',
+        condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
       },
       access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
           if (user.role === 'admin') return true;
-          return data?.tier === 'tier1' || data?.tier === 'tier2';
+          return ['tier1', 'tier2', 'tier3'].includes(data?.tier);
         },
       },
       fields: [
@@ -1241,6 +1262,240 @@ const Vendors: CollectionConfig = {
       ],
     },
 
+    // Tier 2+ Feature Flags
+    {
+      name: 'featuredInCategory',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        position: 'sidebar',
+        description: 'Feature this vendor in category listings (Tier 2+)',
+        condition: (data) => ['tier2', 'tier3'].includes(data.tier),
+      },
+      access: {
+        // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
+        update: isAdmin, // Only admins can set featured status
+      },
+    },
+    {
+      name: 'advancedAnalytics',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        position: 'sidebar',
+        description: 'Enable advanced analytics dashboard (Tier 2+)',
+        condition: (data) => ['tier2', 'tier3'].includes(data.tier),
+      },
+      access: {
+        // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
+        update: isAdmin,
+      },
+    },
+    {
+      name: 'apiAccess',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        position: 'sidebar',
+        description: 'Enable API integration access (Tier 2+)',
+        condition: (data) => ['tier2', 'tier3'].includes(data.tier),
+      },
+      access: {
+        // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
+        update: isAdmin,
+      },
+    },
+    {
+      name: 'customDomain',
+      type: 'text',
+      maxLength: 255,
+      admin: {
+        position: 'sidebar',
+        description: 'Custom domain for vendor profile (Tier 2+)',
+        condition: (data) => ['tier2', 'tier3'].includes(data.tier),
+      },
+      access: {
+        // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
+        update: isAdmin,
+      },
+    },
+
+    // Tier 3 Promotion Pack
+    {
+      name: 'promotionPack',
+      type: 'group',
+      admin: {
+        description: 'Premium promotion features (Tier 3 only)',
+        condition: (data) => data.tier === 'tier3',
+      },
+      fields: [
+        {
+          name: 'homepageBanner',
+          type: 'checkbox',
+          defaultValue: false,
+          admin: {
+            description: 'Display banner on homepage',
+          },
+          access: {
+            // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
+            update: isAdmin,
+          },
+        },
+        {
+          name: 'searchResultsPriority',
+          type: 'number',
+          min: 0,
+          max: 100,
+          defaultValue: 0,
+          admin: {
+            description: 'Search results priority (0-100, higher = more prominent)',
+          },
+          access: {
+            // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
+            update: isAdmin,
+          },
+        },
+        {
+          name: 'categoryTopPlacement',
+          type: 'checkbox',
+          defaultValue: false,
+          admin: {
+            description: 'Pin to top of category listings',
+          },
+          access: {
+            // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
+            update: isAdmin,
+          },
+        },
+        {
+          name: 'sponsoredContent',
+          type: 'checkbox',
+          defaultValue: false,
+          admin: {
+            description: 'Mark as sponsored content',
+          },
+          access: {
+            // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
+            update: isAdmin,
+          },
+        },
+        {
+          name: 'monthlyFeaturedArticle',
+          type: 'checkbox',
+          defaultValue: false,
+          admin: {
+            description: 'Include in monthly featured articles',
+          },
+          access: {
+            // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
+            update: isAdmin,
+          },
+        },
+        {
+          name: 'socialMediaShoutouts',
+          type: 'number',
+          min: 0,
+          defaultValue: 0,
+          admin: {
+            description: 'Number of monthly social media shoutouts',
+          },
+          access: {
+            // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
+            update: isAdmin,
+          },
+        },
+        {
+          name: 'emailNewsletterFeature',
+          type: 'checkbox',
+          defaultValue: false,
+          admin: {
+            description: 'Feature in email newsletters',
+          },
+          access: {
+            // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
+            update: isAdmin,
+          },
+        },
+      ],
+    },
+
+    // Tier 3 Editorial Content (Admin-Only)
+    {
+      name: 'editorialContent',
+      type: 'array',
+      admin: {
+        description: 'Platform-curated editorial content and feature articles (Tier 3, Admin-Only)',
+        condition: (data) => data.tier === 'tier3',
+      },
+      access: {
+        create: isAdmin,
+        read: () => true,
+        update: isAdmin,
+        delete: isAdmin,
+      },
+      fields: [
+        {
+          name: 'title',
+          type: 'text',
+          required: true,
+          maxLength: 255,
+          admin: {
+            description: 'Article title',
+          },
+        },
+        {
+          name: 'content',
+          type: 'richText',
+          editor: lexicalEditor({}),
+          required: true,
+          admin: {
+            description: 'Editorial content',
+          },
+        },
+        {
+          name: 'publishDate',
+          type: 'date',
+          required: true,
+          admin: {
+            description: 'Publication date',
+          },
+        },
+        {
+          name: 'author',
+          type: 'text',
+          required: true,
+          maxLength: 255,
+          admin: {
+            description: 'Author name',
+          },
+        },
+        {
+          name: 'featured',
+          type: 'checkbox',
+          defaultValue: false,
+          admin: {
+            description: 'Feature this article',
+          },
+        },
+        {
+          name: 'category',
+          type: 'text',
+          maxLength: 100,
+          admin: {
+            description: 'Article category',
+          },
+        },
+        {
+          name: 'image',
+          type: 'upload',
+          relationTo: 'media',
+          admin: {
+            description: 'Article hero image',
+          },
+        },
+      ],
+    },
+
     // Metadata
     {
       name: 'partner',
@@ -1294,14 +1549,14 @@ const Vendors: CollectionConfig = {
           // Check if vendor is trying to update tier1+ fields without permission
           const tier1Fields = [
             'website', 'linkedinUrl', 'twitterUrl', 'certifications', 'awards',
-            'totalProjects', 'yearsInBusiness', 'employeeCount', 'linkedinFollowers',
+            'totalProjects', 'foundedYear', 'yearsInBusiness', 'employeeCount', 'linkedinFollowers',
             'instagramFollowers', 'clientSatisfactionScore', 'repeatClientPercentage',
             'videoUrl', 'videoThumbnail', 'videoDuration', 'videoTitle', 'videoDescription',
             'caseStudies', 'innovationHighlights', 'teamMembers', 'yachtProjects',
             'longDescription', 'serviceAreas', 'companyValues'
           ];
           const restrictedFields = tier1Fields.filter((field) => {
-            return data[field] !== undefined && (tier !== 'tier1' && tier !== 'tier2');
+            return data[field] !== undefined && !['tier1', 'tier2', 'tier3'].includes(tier);
           });
 
           if (restrictedFields.length > 0) {
@@ -1310,10 +1565,34 @@ const Vendors: CollectionConfig = {
             );
           }
 
-          // Validate multiple locations restriction (tier2 only)
-          if (data.locations && data.locations.length > 1 && (tier === 'free' || tier === 'tier1')) {
+          // Validate tier2+ fields
+          const tier2Fields = ['featuredInCategory', 'advancedAnalytics', 'apiAccess', 'customDomain'];
+          const restrictedTier2Fields = tier2Fields.filter((field) => {
+            return data[field] !== undefined && !['tier2', 'tier3'].includes(tier);
+          });
+
+          if (restrictedTier2Fields.length > 0) {
             throw new Error(
-              'Multiple locations require Tier 2 subscription'
+              `Tier restricted: Fields ${restrictedTier2Fields.join(', ')} require Tier 2 or higher`
+            );
+          }
+
+          // Validate tier3 fields
+          const tier3Fields = ['promotionPack', 'editorialContent'];
+          const restrictedTier3Fields = tier3Fields.filter((field) => {
+            return data[field] !== undefined && tier !== 'tier3';
+          });
+
+          if (restrictedTier3Fields.length > 0) {
+            throw new Error(
+              `Tier restricted: Fields ${restrictedTier3Fields.join(', ')} require Tier 3`
+            );
+          }
+
+          // Validate multiple locations restriction (tier2+ only)
+          if (data.locations && data.locations.length > 1 && !['tier2', 'tier3'].includes(tier)) {
+            throw new Error(
+              'Multiple locations require Tier 2 or higher subscription'
             );
           }
         }
