@@ -30,9 +30,12 @@ export interface VendorDashboardContextValue {
 
 const VendorDashboardContext = createContext<VendorDashboardContextValue | undefined>(undefined);
 
-const fetcher = (url: string) => fetch(url).then((res) => {
+const fetcher = (url: string) => fetch(url).then(async (res) => {
   if (!res.ok) throw new Error('Failed to fetch vendor');
-  return res.json();
+  const json = await res.json();
+  console.log('[VendorDashboardContext] Fetcher received:', json);
+  // API returns { success: true, data: vendor }, extract the vendor data
+  return json.success ? json.data : json;
 });
 
 export interface VendorDashboardProviderProps {
@@ -57,8 +60,9 @@ export function VendorDashboardProvider({
   const [localVendor, setLocalVendor] = useState<Vendor | null>(initialData || null);
 
   // Fetch vendor data with SWR
+  // Use byUserId=true to look up vendor by user_id
   const { data, error, mutate, isLoading } = useSWR<Vendor>(
-    vendorId ? `/api/portal/vendors/${vendorId}` : null,
+    vendorId ? `/api/portal/vendors/${vendorId}?byUserId=true` : null,
     fetcher,
     {
       fallbackData: initialData,
@@ -92,7 +96,7 @@ export function VendorDashboardProvider({
    * Save vendor data to API
    */
   const saveVendor = useCallback(async () => {
-    if (!vendor || !vendorId) {
+    if (!vendor) {
       toast.error('No vendor data to save');
       return;
     }
@@ -100,7 +104,8 @@ export function VendorDashboardProvider({
     setIsSaving(true);
 
     try {
-      const response = await fetch(`/api/portal/vendors/${vendorId}`, {
+      // Use vendor.id for PUT (actual vendor ID, not user ID)
+      const response = await fetch(`/api/portal/vendors/${vendor.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -128,7 +133,7 @@ export function VendorDashboardProvider({
     } finally {
       setIsSaving(false);
     }
-  }, [vendor, vendorId, mutate]);
+  }, [vendor, mutate]);
 
   /**
    * Refresh vendor data from API

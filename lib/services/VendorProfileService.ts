@@ -94,6 +94,14 @@ export class VendorProfileService {
       id,
     });
 
+    console.log('[VendorProfileService] Raw vendor from Payload:', {
+      id: vendor.id,
+      tier: vendor.tier,
+      hasTierField: 'tier' in vendor,
+      tierType: typeof vendor.tier,
+      allKeys: Object.keys(vendor),
+    });
+
     // Authorization: Check ownership
     if (!isAdmin) {
       const vendorUserId =
@@ -108,6 +116,55 @@ export class VendorProfileService {
 
     // Enrich with computed fields
     const enriched = VendorComputedFieldsService.enrichVendorData(vendor);
+
+    console.log('[VendorProfileService] After enrichment:', {
+      id: enriched.id,
+      tier: enriched.tier,
+      hasTierField: 'tier' in enriched,
+    });
+
+    return enriched;
+  }
+
+  /**
+   * Get vendor by user ID for editing
+   * Used when user logs in and we need to find their vendor profile
+   */
+  static async getVendorByUserId(userId: string): Promise<any> {
+    const payload = await getPayload({ config });
+
+    // Find vendor by user_id
+    const result = await payload.find({
+      collection: 'vendors',
+      where: {
+        user: {
+          equals: userId,
+        },
+      },
+      limit: 1,
+    });
+
+    if (!result.docs || result.docs.length === 0) {
+      throw new Error(`Vendor not found for user ID: ${userId}`);
+    }
+
+    const vendor = result.docs[0];
+
+    console.log('[VendorProfileService.getVendorByUserId] Raw vendor from Payload:', {
+      id: vendor.id,
+      tier: vendor.tier,
+      hasTierField: 'tier' in vendor,
+      tierType: typeof vendor.tier,
+    });
+
+    // Enrich with computed fields
+    const enriched = VendorComputedFieldsService.enrichVendorData(vendor);
+
+    console.log('[VendorProfileService.getVendorByUserId] After enrichment:', {
+      id: enriched.id,
+      tier: enriched.tier,
+      hasTierField: 'tier' in enriched,
+    });
 
     return enriched;
   }

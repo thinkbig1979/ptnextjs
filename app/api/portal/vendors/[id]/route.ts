@@ -70,6 +70,9 @@ async function authenticateUser(request: NextRequest) {
  * Authorization:
  * - Vendor can only access their own profile
  * - Admin can access any vendor profile
+ *
+ * Query Parameters:
+ * - byUserId=true: Look up vendor by user_id instead of vendor id
  */
 export async function GET(
   request: NextRequest,
@@ -77,7 +80,9 @@ export async function GET(
 ): Promise<NextResponse<GetSuccessResponse | ErrorResponse>> {
   try {
     const resolvedParams = await context.params;
-    const vendorId = resolvedParams.id;
+    const id = resolvedParams.id;
+    const { searchParams } = new URL(request.url);
+    const byUserId = searchParams.get('byUserId') === 'true';
 
     // Authenticate user
     const user = await authenticateUser(request);
@@ -99,16 +104,27 @@ export async function GET(
 
     // Fetch vendor using VendorProfileService
     try {
-      const vendor = await VendorProfileService.getVendorForEdit(
-        vendorId,
-        user.id.toString(),
-        isAdmin
-      );
+      let vendor;
+
+      if (byUserId) {
+        // Look up vendor by user_id
+        vendor = await VendorProfileService.getVendorByUserId(id);
+      } else {
+        // Look up vendor by vendor id (default behavior)
+        vendor = await VendorProfileService.getVendorForEdit(
+          id,
+          user.id.toString(),
+          isAdmin
+        );
+      }
 
       // Log successful fetch
       console.log('[VendorGet] Vendor profile fetched:', {
-        vendorId,
+        id,
+        byUserId,
         userId: user.id,
+        vendorId: vendor.id,
+        tier: vendor.tier,
         timestamp: new Date().toISOString(),
       });
 

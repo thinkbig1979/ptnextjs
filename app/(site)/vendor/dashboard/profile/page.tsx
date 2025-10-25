@@ -3,7 +3,10 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/context/AuthContext';
-import { VendorProfileEditor } from '@/components/vendor/VendorProfileEditor';
+import { useVendorDashboard } from '@/lib/context/VendorDashboardContext';
+import { ProfileEditTabs } from '../components/ProfileEditTabs';
+import { Card, CardContent } from '@/components/ui/card';
+import { Loader2, AlertCircle } from 'lucide-react';
 
 /**
  * VendorProfilePage Component
@@ -12,37 +15,68 @@ import { VendorProfileEditor } from '@/components/vendor/VendorProfileEditor';
  *
  * Features:
  * - Route protection (redirects to login if not authenticated)
- * - Renders VendorProfileEditor component
- * - Loading state during authentication check
+ * - Renders ProfileEditTabs with tier-based access control
+ * - Integrates with VendorDashboardContext for state management
+ * - Loading state during authentication and data fetch
  */
 export default function VendorProfilePage() {
   const router = useRouter();
-  const { isAuthenticated, isLoading, role } = useAuth();
+  const { isAuthenticated, isLoading: authLoading, role } = useAuth();
+  const { vendor, isLoading: vendorLoading, error, saveVendor } = useVendorDashboard();
 
   /**
    * Route Guard: Redirect to login if not authenticated
    */
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
+    if (!authLoading && !isAuthenticated) {
       router.push('/vendor/login');
     }
 
     // Also check if user is a vendor (not admin)
-    if (!isLoading && isAuthenticated && role !== 'vendor') {
+    if (!authLoading && isAuthenticated && role !== 'vendor') {
       router.push('/vendor/dashboard');
     }
-  }, [isAuthenticated, isLoading, role, router]);
+  }, [isAuthenticated, authLoading, role, router]);
 
   /**
-   * Show loading state while checking authentication
+   * Show loading state while checking authentication or loading vendor data
    */
-  if (isLoading) {
+  if (authLoading || vendorLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 dark:border-blue-400 mx-auto mb-4" />
-          <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+          <Loader2 className="h-12 w-12 text-blue-600 dark:text-blue-400 mx-auto mb-4 animate-spin" />
+          <p className="text-gray-600 dark:text-gray-400">Loading profile...</p>
         </div>
+      </div>
+    );
+  }
+
+  /**
+   * Show error state if vendor data failed to load
+   */
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <Card className="max-w-md border-red-200 dark:border-red-800">
+          <CardContent className="pt-6">
+            <div className="text-center">
+              <AlertCircle className="h-12 w-12 text-red-600 dark:text-red-400 mx-auto mb-4" />
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                Failed to Load Profile
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">
+                {error.message || 'An error occurred while loading your profile.'}
+              </p>
+              <button
+                onClick={() => window.location.reload()}
+                className="text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                Try Again
+              </button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -50,7 +84,7 @@ export default function VendorProfilePage() {
   /**
    * Don't render if not authenticated (redirect will happen via useEffect)
    */
-  if (!isAuthenticated || role !== 'vendor') {
+  if (!isAuthenticated || role !== 'vendor' || !vendor) {
     return null;
   }
 
@@ -66,8 +100,8 @@ export default function VendorProfilePage() {
         </p>
       </header>
 
-      {/* Profile Editor */}
-      <VendorProfileEditor />
+      {/* Profile Edit Tabs */}
+      <ProfileEditTabs vendor={vendor} onSave={saveVendor} />
     </div>
   );
 }
