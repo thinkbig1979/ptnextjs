@@ -53,25 +53,25 @@
   - **Dependencies**: [test-backend-service]
   - **References**: ptnextjs-bbec
 
-- [ ] **test-backend-vendor-api** - Design Vendor API Endpoint Tests → [details](tasks/task-test-backend-vendor-api.md)
+- [x] **test-backend-vendor-api** - Design Vendor API Endpoint Tests → [details](tasks/task-test-backend-vendor-api.md)
   - **Agent**: test-architect
   - **Estimated Time**: 20-25 minutes
   - **Dependencies**: [impl-backend-service]
   - **References**: ptnextjs-0d99
 
-- [ ] **impl-backend-vendor-api** - Implement Vendor Portal API Endpoints → [details](tasks/task-impl-backend-vendor-api.md)
+- [x] **impl-backend-vendor-api** - Implement Vendor Portal API Endpoints → [details](tasks/task-impl-backend-vendor-api.md)
   - **Agent**: backend-nodejs-specialist
   - **Estimated Time**: 30-35 minutes
   - **Dependencies**: [test-backend-vendor-api]
   - **References**: ptnextjs-bbec
 
-- [ ] **test-backend-admin-api** - Design Admin API Endpoint Tests → [details](tasks/task-test-backend-admin-api.md)
+- [x] **test-backend-admin-api** - Design Admin API Endpoint Tests → [details](tasks/task-test-backend-admin-api.md)
   - **Agent**: test-architect
   - **Estimated Time**: 20-25 minutes
   - **Dependencies**: [impl-backend-vendor-api]
   - **References**: ptnextjs-0d99
 
-- [ ] **impl-backend-admin-api** - Implement Admin API Endpoints → [details](tasks/task-impl-backend-admin-api.md)
+- [x] **impl-backend-admin-api** - Implement Admin API Endpoints → [details](tasks/task-impl-backend-admin-api.md)
   - **Agent**: backend-nodejs-specialist
   - **Estimated Time**: 25-30 minutes
   - **Dependencies**: [test-backend-admin-api]
