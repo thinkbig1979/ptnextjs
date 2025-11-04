@@ -56,3 +56,4 @@ payload.db
 payload-types.ts
 generated-schema.graphql
 migrations/
+.env
