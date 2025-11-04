@@ -562,51 +562,142 @@ Use the file-creator subagent to create a lightweight master tasks.md file plus 
       - **Estimated Time**: 15-20 minutes
       - **Dependencies**: [test-backend-integration OR pre-2]
 
-    ### Component Library Setup and Navigation Tasks
+    ### 🎨 UX/UI Architecture Tasks (REQUIRED FIRST for Frontend Features)
 
-    - [ ] **setup-component-library** - Install and Configure UI Component Library → [details](tasks/task-setup-component-library.md)
+    ⚠️ **CRITICAL**: For any frontend feature, these architecture tasks MUST be completed BEFORE component implementation.
+    **Why**: Prevents catastrophic failure pattern of building components without navigation/routing (see @.agent-os/instructions/utilities/ux-ui-specification-checklist.md)
+
+    - [ ] **ux-validate-arch-spec** - Validate UX/UI Architecture Specification Completeness → [details](tasks/task-ux-validate-arch-spec.md)
+      - **Agent**: quality-assurance
+      - **Estimated Time**: 10-15 minutes
+      - **Dependencies**: [test-frontend-ui OR pre-2]
+
+      **Specifics**:
+      - Read @.agent-os/specs/{SPEC_NAME}/sub-specs/ux-ui-spec.md (if exists)
+      - Apply @.agent-os/instructions/utilities/ux-ui-specification-checklist.md
+      - Verify Phase 1 (Application Architecture) is COMPLETE:
+        * All routes explicitly defined (no "TBD")
+        * Navigation structure fully specified (no "if exists")
+        * Global layout integration specified
+        * User entry points identified
+        * User flows documented
+      - **IF incomplete**: BLOCK all frontend implementation tasks until fixed
+      - **IF complete**: Generate validation report, proceed to implementation
+
+      **Acceptance Criteria**:
+      - [ ] Phase 1 validation passes (all routes, navigation, layout specified)
+      - [ ] No "if exists", "TBD", or conditional language found for core features
+      - [ ] All user entry points explicitly documented
+      - [ ] User flows include step-by-step component and route specifications
+      - [ ] Validation report created documenting architecture completeness
+
+    - [ ] **impl-app-routes** - Implement Application Routes → [details](tasks/task-impl-app-routes.md)
       - **Agent**: frontend-[tech]-specialist
       - **Estimated Time**: 15-20 minutes
-      - **Dependencies**: [pre-2]
+      - **Dependencies**: [ux-validate-arch-spec]
 
-      {IF project_uses_component_library}
-        **Specifics**:
-        - Install {LIBRARY_NAME} components per tech stack
-        - Configure {CSS_FRAMEWORK} integration
-        - Set up theme/design tokens
-        - Install required components: {LIST_FROM_SPEC}
-      {ELSE}
-        **Specifics**:
-        - Create base UI primitive components (Button, Card, Input, etc.)
-        - Set up {CSS_APPROACH} system
-        - Define design tokens (colors, spacing, typography)
-        - Create component documentation
+      **Specifics** (from sub-specs/ux-ui-spec.md Phase 1.2 Route Structure):
+      - Create route definitions for: {LIST_ALL_ROUTES from spec}
+      - Configure route guards/authentication: {AUTH_REQUIREMENTS}
+      - Set up nested routing (if applicable): {PARENT_CHILD_ROUTES}
+      - Implement route parameters: {DYNAMIC_ROUTES}
+      - Create placeholder page components (to be filled in later phases)
+
+      **Acceptance Criteria**:
+      - [ ] All routes from spec are accessible by URL
+      - [ ] Route authentication/guards work correctly
+      - [ ] Nested routes render in correct parent layouts
+      - [ ] Dynamic route parameters are captured correctly
+      - [ ] Browser navigation (back/forward) works
+
+    - [ ] **impl-global-layout** - Implement Global Layout Shell → [details](tasks/task-impl-global-layout.md)
+      - **Agent**: frontend-[tech]-specialist
+      - **Estimated Time**: 25-30 minutes
+      - **Dependencies**: [impl-app-routes]
+
+      **Specifics** (from sub-specs/ux-ui-spec.md Phase 1.3 Global Layout Integration):
+      {IF layout_strategy === "NEW_LAYOUT"}
+        - Create layout components: {LIST_LAYOUT_COMPONENTS with file paths}
+        - Implement header: {HEIGHT, STICKY_BEHAVIOR, CONTENTS}
+        - Implement sidebar: {WIDTH, POSITION, NAVIGATION_ITEMS}
+        - Implement main content area: {MAX_WIDTH, PADDING, SCROLL}
+        - Apply responsive behavior: {MOBILE_BEHAVIOR}
+      {ELSIF layout_strategy === "EXTEND_EXISTING"}
+        - Modify existing layout at {EXISTING_LAYOUT_PATH}
+        - Make changes: {SPECIFIC_MODIFICATIONS}
+        - Create new layout components: {NEW_COMPONENTS}
+      {ELSIF layout_strategy === "USE_EXISTING"}
+        - Integrate feature with existing layout at {EXISTING_LAYOUT_PATH}
+        - No layout changes needed
       {ENDIF}
+
+      **Acceptance Criteria**:
+      - [ ] Global layout renders correctly on all pages
+      - [ ] Header/sidebar (if applicable) render with correct dimensions
+      - [ ] Main content area has correct max-width and padding
+      - [ ] Layout is responsive (desktop, tablet, mobile tested)
+      - [ ] Layout component files match specified paths
 
     - [ ] **impl-navigation-structure** - Implement Navigation Architecture → [details](tasks/task-impl-navigation-structure.md)
       - **Agent**: frontend-[tech]-specialist
       - **Estimated Time**: 25-30 minutes
-      - **Dependencies**: [setup-component-library]
+      - **Dependencies**: [impl-global-layout]
 
-      **Specifics** (from sub-specs/technical-spec.md Navigation Architecture section):
-      - Implement {NAV_PATTERN: Sidebar | TopBar | Hybrid}
-      - Create navigation components: {LIST_NAV_COMPONENTS}
-      - Add active route highlighting
-      - Implement mobile responsive menu
-      - Add breadcrumbs component
-      - Integrate with routing
+      **Specifics** (from sub-specs/ux-ui-spec.md Phase 1.4 Navigation Structure):
+      - Implement navigation type: {SIDEBAR | TOP_BAR | HYBRID}
+      - Create navigation component at {NAVIGATION_COMPONENT_PATH}
+      - Add navigation items: {LIST_NAV_ITEMS with labels, routes, icons, positions}
+      - Implement active state highlighting: {ROUTER_HOOK | MANUAL_STATE}
+      - Add mobile navigation: {HAMBURGER_DRAWER | BOTTOM_TABS}
+      - Implement breadcrumbs (if applicable): {AUTO_GENERATED | MANUAL}
+      - Add user menu: {LOCATION, TRIGGER, ITEMS}
+
+      **Acceptance Criteria**:
+      - [ ] All navigation items render with correct labels and icons
+      - [ ] Clicking navigation items navigates to correct routes
+      - [ ] Active route is visually highlighted
+      - [ ] Mobile navigation works (hamburger menu, drawer, etc.)
+      - [ ] Breadcrumbs show correct page hierarchy (if applicable)
+      - [ ] User menu renders and functions correctly
+      - [ ] Navigation matches specified file paths
+
+    ### Component Library Setup Tasks
+
+    - [ ] **setup-component-library** - Install and Configure UI Component Library → [details](tasks/task-setup-component-library.md)
+      - **Agent**: frontend-[tech]-specialist
+      - **Estimated Time**: 15-20 minutes
+      - **Dependencies**: [impl-navigation-structure]
+
+      {IF project_uses_component_library}
+        **Specifics** (from sub-specs/ux-ui-spec.md Phase 3.1 Component Library Strategy):
+        - Install {LIBRARY_NAME} version {VERSION}
+        - Configure {CSS_FRAMEWORK} integration
+        - Set up theme/design tokens
+        - Install required components: {LIST_FROM_SPEC}
+        - Configure library customization: {THEME_OVERRIDES, WRAPPER_COMPONENTS}
+      {ELSE}
+        **Specifics** (from sub-specs/ux-ui-spec.md Phase 3.1 Component Library Strategy):
+        - Create base UI primitive components per spec: {LIST_PRIMITIVES}
+        - Set up {CSS_APPROACH} system
+        - Define design tokens (colors, spacing, typography) per Phase 2.2 and 2.3
+        - Implement component states: default, hover, active, disabled, loading, error
+        - Create component documentation
+      {ENDIF}
+
+    ### Page Layout and Component Implementation Tasks
 
     - [ ] **impl-page-layouts** - Implement Page Layout Templates → [details](tasks/task-impl-page-layouts.md)
       - **Agent**: frontend-[tech]-specialist
       - **Estimated Time**: 25-30 minutes
-      - **Dependencies**: [impl-navigation-structure]
+      - **Dependencies**: [setup-component-library]
 
-      **Specifics** (from sub-specs/technical-spec.md Page Layout Architecture):
-      - Create layout components: {LIST_LAYOUT_COMPONENTS}
-      - Implement responsive grid system
-      - Add header, sidebar, main content areas
-      - Configure layout routing integration
-      - Test responsive behavior (mobile, tablet, desktop)
+      **Specifics** (from sub-specs/ux-ui-spec.md Phase 2.4 Page Layout Patterns):
+      - Implement layout pattern for each page: {Dashboard Grid | Form Centered | List + Detail | Master-Detail | Wizard}
+      - Create page layout components per spec: {LIST_LAYOUT_COMPONENTS with file paths}
+      - Apply container specifications: {RESPONSIVE_PADDING, MAX_WIDTH from Phase 2.1}
+      - Implement component hierarchy per spec
+      - Apply spacing system per Phase 2.2
+      - Test responsive behavior: desktop (≥1024px), tablet (768-1023px), mobile (<768px)
 
     - [ ] **impl-frontend-components** - Implement UI Components per Component Architecture → [details](tasks/task-impl-frontend-components.md)
       - **Agent**: frontend-[tech]-specialist
@@ -837,6 +928,92 @@ Use the file-creator subagent to create a lightweight master tasks.md file plus 
     - Ensure testability and validation
   </quality_enforcement>
 </intelligent_task_adaptation>
+
+</step>
+
+<step number="2.6" name="beads_issue_sync">
+
+### Step 2.6: Beads Issue Sync (Optional)
+
+Automatically sync generated tasks to Beads for distributed task tracking with persistent state across sessions.
+
+<beads_integration>
+  <config_check>
+    ACTION: Check if Beads integration is enabled
+
+    IF config.yml → beads.enabled = true:
+      PROCEED with Beads sync
+    ELSE:
+      SKIP this step
+      PROCEED to Step 3
+  </config_check>
+
+  <beads_initialization>
+    ACTION: Ensure Beads is initialized in project
+
+    IF .beads/ directory does NOT exist:
+      RUN: bd init --quiet
+      CONFIRM: "✅ Beads initialized in project"
+    ELSE:
+      CONFIRM: "✅ Beads already initialized"
+  </beads_initialization>
+
+  <automatic_sync>
+    ACTION: Run sync script to create Beads issues from tasks.md
+
+    EXECUTE:
+      ~/.agent-os/setup/sync-tasks-to-beads.sh [SPEC_FOLDER]
+
+    PROCESS:
+      - Reads tasks.md and tasks/*.md detail files
+      - Creates bd issue for each task with matching ID
+      - Maps dependencies from tasks.md to Beads "blocks" relationships
+      - Sets priority based on phase (Integration=0, Pre-execution=1, etc.)
+      - Adds labels: agent, phase, spec name
+      - Syncs to git via bd sync
+
+    OUTPUT:
+      📊 Beads Sync Summary:
+      - Created: [COUNT] tasks
+      - Skipped: [COUNT] tasks (already exist)
+      - Dependencies mapped: [COUNT]
+      - Priority assignments: P0=[COUNT], P1=[COUNT], P2=[COUNT]
+
+      🔍 Query Commands:
+      - bd ready → Show unblocked tasks
+      - bd list → Show all tasks
+      - bd dep tree <task-id> → Show dependency graph
+  </automatic_sync>
+
+  <bidirectional_sync>
+    IF config.yml → beads.bidirectional_sync = true:
+      NOTE: Tasks.md and Beads will stay in sync:
+      - Task completion in Beads → Update tasks.md checkbox
+      - Task creation in Beads → Add to tasks.md (manual or via script)
+      - Status changes sync automatically during execution
+  </bidirectional_sync>
+
+  <benefits_summary>
+    INFORM user of Beads benefits:
+
+    "✅ Tasks synced to Beads for:
+
+     🧠 Persistent Memory: Tasks survive context window and session boundaries
+     🔗 Dependency Resolution: Automatic 'bd ready' finds unblocked work
+     🌳 Visualization: 'bd dep tree' shows critical path
+     🔄 Cross-Session Resume: Continue exactly where you left off
+     🤝 Multi-Agent Safe: Git-backed JSONL with collision-resistant IDs
+
+     📚 Guide: ~/.agent-os/instructions/utilities/beads-integration-guide.md"
+  </benefits_summary>
+
+  <error_handling>
+    IF sync fails:
+      WARN: "⚠️  Beads sync failed (non-critical)"
+      LOG: Error details
+      CONTINUE: Tasks.md still available for markdown-only workflow
+  </error_handling>
+</beads_integration>
 
 </step>
 

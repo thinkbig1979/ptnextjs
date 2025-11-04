@@ -1,0 +1,419 @@
+# Agent OS Configuration v2.8.0
+# Clean configuration with sane defaults for compound engineering integration
+
+agent_os_version: 2.8.0
+
+# ================================================
+# AGENT MODE CONFIGURATION
+# ================================================
+multi_agent_mode: true
+multi_agent_tool: claude-code
+
+single_agent_mode: false
+single_agent_tool: generic
+
+# ================================================
+# PROJECT CONFIGURATION
+# ================================================
+project:
+  name: "agent-os-setup"
+  type: default
+
+# ================================================
+# CORE EXECUTION AGENTS
+# ================================================
+agents:
+  claude_code:
+    enabled: true
+  cursor:
+    enabled: false
+
+# ================================================
+# TASK FILE STRUCTURE (v2.1+)
+# ================================================
+task_file_structure:
+  enabled: true
+  format: "split" # "split" (master + detail files) or "monolithic" (legacy)
+  master_file: "tasks.md"
+  detail_directory: "tasks/"
+  context_optimization: true
+
+# ================================================
+# EXECUTION CONFIGURATION
+# ================================================
+execution:
+  orchestrated_mode: true
+  parallel_execution: true
+  context_optimization: true
+
+  error_handling:
+    enabled: true
+    automatic_recovery: true
+    escalation_threshold: 3
+    recovery_timeout: 300
+
+  performance_monitoring:
+    enabled: true
+    metrics_collection: true
+    baseline_comparison: true
+    efficiency_tracking: true
+
+# ================================================
+# SPECIALIST AGENTS
+# ================================================
+specialist_agents:
+  # Core orchestration
+  task_orchestrator:
+    enabled: true
+    context_window: 32768
+    priority: "critical"
+    model: inherit
+
+  # Development specialists
+  test_architect:
+    enabled: true
+    context_window: 16384
+    specialization: "test_design_and_implementation"
+    model: inherit
+
+  implementation_specialist:
+    enabled: true
+    context_window: 20480
+    specialization: "core_feature_implementation"
+    model: inherit
+
+  integration_coordinator:
+    enabled: true
+    context_window: 18432
+    specialization: "system_integration_and_apis"
+    model: inherit
+
+  quality_assurance:
+    enabled: true
+    context_window: 14336
+    specialization: "code_quality_and_standards"
+    model: inherit
+
+  security_auditor:
+    enabled: true
+    context_window: 12288
+    specialization: "security_analysis_and_hardening"
+    model: inherit
+
+  documentation_generator:
+    enabled: true
+    context_window: 10240
+    specialization: "technical_documentation"
+    model: inherit
+
+  # Frontend specialists
+  frontend_vue_specialist:
+    enabled: true
+    context_window: 20480
+    specialization: "vue_frontend_development"
+    model: inherit
+
+  frontend_react_specialist:
+    enabled: true
+    context_window: 20480
+    specialization: "react_frontend_development"
+    model: inherit
+
+  # Backend specialists
+  backend_nodejs_specialist:
+    enabled: true
+    context_window: 20480
+    specialization: "nodejs_backend_development"
+    model: inherit
+
+  # Compound Engineering - Review Agents
+  security_sentinel:
+    enabled: true
+    context_window: 16384
+    specialization: [security, vulnerability-scanning, owasp]
+    model: inherit
+
+  performance_oracle:
+    enabled: true
+    context_window: 12288
+    specialization: [performance, optimization]
+    model: inherit
+
+  architecture_strategist:
+    enabled: true
+    context_window: 16384
+    specialization: [architecture, design-patterns]
+    model: inherit
+
+  pattern_recognition_specialist:
+    enabled: true
+    context_window: 12288
+    specialization: [patterns, consistency]
+    model: inherit
+
+  code_simplicity_reviewer:
+    enabled: true
+    context_window: 8192
+    specialization: [complexity, simplicity]
+    model: inherit
+
+  data_integrity_guardian:
+    enabled: true
+    context_window: 12288
+    specialization: [data-validation, integrity]
+    model: inherit
+
+  # Compound Engineering - Research Agents
+  repo_research_analyst:
+    enabled: true
+    context_window: 16384
+    specialization: [research, codebase-analysis]
+    model: inherit
+
+  best_practices_researcher:
+    enabled: true
+    context_window: 12288
+    specialization: [research, best-practices]
+    model: inherit
+
+  framework_docs_researcher:
+    enabled: true
+    context_window: 12288
+    specialization: [research, documentation]
+    model: inherit
+
+  git_history_analyzer:
+    enabled: true
+    context_window: 12288
+    specialization: [git, history-analysis]
+    model: inherit
+
+# ================================================
+# COMPOUND ENGINEERING (v2.7+)
+# ================================================
+compound_engineering:
+  enabled: true
+
+  # All 15 transformative features
+  features:
+    - multi_agent_review          # 10 specialized review agents
+    - research_agents             # Codebase and best practice research
+    - interactive_triage          # Finding management workflow
+    - security_scanning           # Systematic security protocol
+    - ultra_thinking              # Multi-perspective analysis
+    - finding_synthesis           # Intelligent consolidation
+    - worktree_isolation          # Git worktree pattern
+    - language_standards          # Rails, Python, TypeScript patterns
+    - code_examples               # Real working examples in specs
+    - multi_level_planning        # Minimal/Standard/Comprehensive detail
+    - reference_collection        # Standardized reference format
+    - ai_development_notes        # AI-era development docs
+    - enhanced_work_command       # Improved task execution
+    - interactive_progress        # Real-time triage tracking
+    - compounding_philosophy      # Write code that compounds
+
+  # Multi-agent system configuration
+  multi_agent_system:
+    parallel_execution: true
+    max_concurrent_agents: 10
+    timeout_seconds: 120
+
+  # Triage workflow
+  triage:
+    enabled: true
+    state_directory: ".triage-state"
+    progress_tracking: true
+    time_estimation: true
+    pause_resume: true
+
+  # Security scanning
+  security:
+    enabled: true
+    block_on_p1: true  # P1 (CRITICAL) findings block task completion
+    owasp_top_10: true
+
+  # Worktree isolation
+  worktrees:
+    enabled: true
+    base_directory: ".agent-os/worktrees"
+    auto_cleanup: true
+
+# ================================================
+# QUALITY HOOKS (v2.2+)
+# ================================================
+quality_hooks:
+  enabled: true
+  mode: "balanced" # "strict" | "balanced" | "minimal"
+  fail_on_error: false
+  auto_fix: true
+
+  # Claude Code native integration
+  integration: "claude_code_native"
+  hook_script: ".claude/hooks/validate-file.js"
+  settings_file: ".claude/settings.json"
+
+  # Performance optimizations
+  performance:
+    parallel_execution: true
+    incremental_validation: true
+    smart_caching: true
+    cache_ttl: 1800 # 30 minutes
+
+  # Validators (see hooks/config.yml for detailed configuration)
+  validators:
+    - syntax_validator
+    - format_validator
+    - lint_validator
+    - import_validator
+    - type_validator
+    - security_validator
+    - test_generator
+
+# ================================================
+# PROJECT TYPES
+# ================================================
+project_types:
+  default:
+    instructions: ~/.agent-os/instructions
+    standards: ~/.agent-os/standards
+
+  # Example: Add custom project types here
+  # rails_api:
+  #   instructions: ~/.agent-os/project_types/rails_api/instructions
+  #   standards: ~/.agent-os/project_types/rails_api/standards
+
+  # nextjs_app:
+  #   instructions: ~/.agent-os/project_types/nextjs_app/instructions
+  #   standards: ~/.agent-os/project_types/nextjs_app/standards
+
+default_project_type: default
+
+# ================================================
+# DELIVERABLE VERIFICATION (v2.5+)
+# ================================================
+deliverable_verification:
+  enabled: true
+  strict_mode: true  # Block task completion if deliverables missing
+  verify_files: true
+  verify_tests: true
+  verify_acceptance_criteria: true
+  verify_integration: true
+
+# ================================================
+# TDD ENFORCEMENT (v2.8+)
+# ================================================
+tdd_enforcement:
+  enabled: true
+
+  # Enforcement level: strict | standard | relaxed
+  # - strict: Block implementation without passing tests (production)
+  # - standard: Warn but allow implementation (development)
+  # - relaxed: Log only, always allow (prototyping)
+  enforcement_level: standard
+
+  # Test-first workflow enforcement
+  test_first:
+    enabled: true
+    block_implementation: false  # Set true for strict enforcement
+    require_passing_tests: true
+    allow_refactoring: true
+
+  # Minimal implementation principle
+  minimal_implementation:
+    enabled: true
+    enforce_simplicity: true
+    check_complexity: true
+    max_lines_per_function: 50
+
+  # TDD cycle tracking (RED-GREEN-REFACTOR)
+  cycle_tracking:
+    enabled: true
+    state_directory: ".agent-os/tdd-state"
+    persist_history: true
+    track_metrics: true
+
+  # TDD workflow hooks
+  hooks:
+    enabled: true
+    pre_implementation: true  # Validate tests exist before implementation
+    post_test: true           # Validate tests pass after changes
+    pre_commit: false         # Optional: Validate before git commit
+
+  # Coverage targets
+  coverage_targets:
+    minimum: 85     # Required minimum coverage
+    target: 90      # Target coverage goal
+    threshold: 80   # Threshold for warnings
+
+# ================================================
+# BEADS ISSUE TRACKING (v2.8+)
+# ================================================
+beads:
+  enabled: true
+
+  # Integration mode
+  mode: "hybrid"  # "hybrid" (markdown + beads) or "beads_only"
+
+  # Automatic initialization
+  auto_init: true
+  init_on_project_start: true
+
+  # Sync behavior
+  auto_sync: true
+  sync_on_task_complete: true
+  sync_on_session_end: true
+
+  # Task creation
+  create_beads_from_tasks_md: true  # Auto-create bd issues from tasks.md
+  bidirectional_sync: true          # Keep tasks.md and beads in sync
+
+  # MCP integration (Claude Code)
+  mcp_server_enabled: true
+  mcp_preferred: true  # Use MCP functions over CLI when available
+
+  # ID strategy
+  id_format: "hash"  # "hash" (bd-a1b2) or "sequential" (bd-1, bd-2)
+
+  # Dependency mapping
+  auto_detect_dependencies: true
+  map_task_dependencies_to_beads: true
+
+  # Status mapping (Agent OS → Beads)
+  status_mapping:
+    pending: "open"
+    in_progress: "in_progress"
+    completed: "closed"
+    blocked: "blocked"
+
+  # Priority mapping (Agent OS phases → Beads priority 0-4)
+  priority_mapping:
+    phase_1_pre_execution: 1      # Important
+    phase_2_backend: 1            # Important
+    phase_3_frontend: 1           # Important
+    phase_4_integration: 0        # Critical path
+    phase_5_validation: 0         # Critical path
+    default: 2                    # Normal priority
+
+  # Type mapping
+  type_mapping:
+    test: "task"
+    implementation: "task"
+    integration: "task"
+    validation: "task"
+    bug: "bug"
+    enhancement: "enhancement"
+    default: "task"
+
+  # Worktree integration
+  worktree_compatibility: true
+  no_daemon_in_worktrees: true  # Prevents branch contamination
+
+  # Discovered work tracking
+  track_discovered_work: true
+  auto_link_discovered: true    # Auto-add "discovered-from" dependencies
+
+  # Stale task detection
+  stale_detection:
+    enabled: true
+    threshold_days: 30
+    warn_on_stale: true

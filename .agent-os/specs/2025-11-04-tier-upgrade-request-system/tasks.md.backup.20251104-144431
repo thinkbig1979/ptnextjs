@@ -1,0 +1,191 @@
+# Spec Tasks
+
+These are the tasks to be completed for the spec detailed in @.agent-os/specs/2025-11-04-tier-upgrade-request-system/spec.md
+
+> Created: 2025-11-04
+> Status: Ready for Implementation
+
+## Tasks
+
+### Phase 1: Database & Backend Foundation
+
+- [ ] **TASK-001**: Create `tier-upgrade-requests` collection in Payload CMS
+  - Define schema with fields: vendor (relationship), currentTier, requestedTier, status (enum), vendorNotes, adminNotes, requestDate, processedDate, processedBy
+  - Add proper indexes and validation rules
+  - Configure admin UI with custom list view
+  - **Dependencies**: None
+  - **Estimated Time**: 2 hours
+
+- [ ] **TASK-002**: Create TierUpgradeRequest TypeScript interface
+  - Add to `lib/types.ts` with full type safety
+  - Include status enum: 'pending' | 'approved' | 'rejected' | 'cancelled'
+  - Add helper types for request creation and updates
+  - **Dependencies**: TASK-001
+  - **Estimated Time**: 1 hour
+
+- [ ] **TASK-003**: Implement request submission API endpoint
+  - Create `POST /api/portal/vendors/tier-requests`
+  - Validate vendor authentication and tier request logic
+  - Prevent duplicate pending requests
+  - Return created request with status
+  - **Dependencies**: TASK-001, TASK-002
+  - **Estimated Time**: 3 hours
+
+- [ ] **TASK-004**: Implement vendor request history API endpoint
+  - Create `GET /api/portal/vendors/tier-requests`
+  - Return all requests for authenticated vendor
+  - Include sorting by date (newest first)
+  - **Dependencies**: TASK-002
+  - **Estimated Time**: 2 hours
+
+- [ ] **TASK-005**: Implement admin request processing API endpoint
+  - Create `PUT /api/admin/tier-requests/[id]`
+  - Handle approve/reject actions with admin notes
+  - Automatically update vendor tier on approval
+  - Set processedDate and processedBy fields
+  - Add proper error handling and rollback
+  - **Dependencies**: TASK-002
+  - **Estimated Time**: 4 hours
+
+- [ ] **TASK-006**: Implement admin request list API endpoint
+  - Create `GET /api/admin/tier-requests`
+  - Support filtering by status and date range
+  - Include vendor details in response (populate)
+  - Add pagination support
+  - **Dependencies**: TASK-002
+  - **Estimated Time**: 2 hours
+
+### Phase 2: Vendor Dashboard UI
+
+- [ ] **TASK-007**: Create subscription page layout
+  - Create `/app/vendor/dashboard/subscription/page.tsx`
+  - Add layout with sidebar navigation
+  - Implement loading and error states
+  - **Dependencies**: None
+  - **Estimated Time**: 2 hours
+
+- [ ] **TASK-008**: Build CurrentTierDisplay component
+  - Show current tier badge and features
+  - Display tier benefits with checkmarks
+  - Include tier duration/join date
+  - **Dependencies**: TASK-007
+  - **Estimated Time**: 3 hours
+
+- [ ] **TASK-009**: Build TierUpgradeOptions component
+  - Display available higher tiers in card grid
+  - Show feature comparisons for each tier
+  - Include "Request Upgrade" buttons
+  - Disable already-pending tier requests
+  - **Dependencies**: TASK-007
+  - **Estimated Time**: 4 hours
+
+- [ ] **TASK-010**: Build TierRequestForm component
+  - Modal form with tier selection confirmation
+  - Vendor notes textarea (optional)
+  - Validation and submission handling
+  - Success/error toast notifications
+  - **Dependencies**: TASK-003, TASK-009
+  - **Estimated Time**: 3 hours
+
+- [ ] **TASK-011**: Build RequestHistorySection component
+  - Table/list of past requests with status badges
+  - Show request date, requested tier, status, admin notes
+  - Highlight pending requests
+  - **Dependencies**: TASK-004, TASK-007
+  - **Estimated Time**: 3 hours
+
+- [ ] **TASK-012**: Update UpgradePromptCard component
+  - Replace mailto link with navigation to `/vendor/dashboard/subscription`
+  - Update button text to "View Subscription Options"
+  - Maintain existing styling and placement
+  - **Dependencies**: TASK-007
+  - **Estimated Time**: 1 hour
+
+- [ ] **TASK-013**: Update TierUpgradePrompt component
+  - Replace mailto link with navigation to subscription page
+  - Add dynamic routing with tier suggestion parameter
+  - Update call-to-action text
+  - **Dependencies**: TASK-007
+  - **Estimated Time**: 1 hour
+
+### Phase 3: Admin Dashboard UI
+
+- [ ] **TASK-014**: Configure Payload CMS admin UI for tier requests
+  - Customize list view with vendor name, tiers, status, date
+  - Add custom field components for better UX
+  - Configure default sorting (pending first, then by date)
+  - **Dependencies**: TASK-001
+  - **Estimated Time**: 2 hours
+
+- [ ] **TASK-015**: Add admin quick-action buttons (optional enhancement)
+  - Custom Payload UI components for approve/reject
+  - Inline actions in list view
+  - Confirmation dialogs
+  - **Dependencies**: TASK-014, TASK-005
+  - **Estimated Time**: 4 hours
+
+### Phase 4: Testing & Documentation
+
+- [ ] **TASK-016**: Write unit tests for API endpoints
+  - Test request submission validation
+  - Test duplicate request prevention
+  - Test approval/rejection logic
+  - Test tier update automation
+  - Mock Payload CMS and database calls
+  - **Dependencies**: TASK-003, TASK-004, TASK-005, TASK-006
+  - **Estimated Time**: 4 hours
+
+- [ ] **TASK-017**: Write E2E tests for vendor workflow
+  - Test full request submission flow
+  - Test request history display
+  - Test navigation from upgrade prompts
+  - Use Playwright with authenticated vendor session
+  - **Dependencies**: TASK-007 through TASK-013
+  - **Estimated Time**: 4 hours
+
+- [ ] **TASK-018**: Write E2E tests for admin workflow
+  - Test request queue viewing
+  - Test request approval process
+  - Test tier update verification
+  - Use Playwright with admin session
+  - **Dependencies**: TASK-014, TASK-015
+  - **Estimated Time**: 3 hours
+
+- [ ] **TASK-019**: Update project documentation
+  - Add subscription management to CLAUDE.md
+  - Document API endpoints in README
+  - Add admin workflow guide
+  - Update architecture overview with request flow
+  - **Dependencies**: All previous tasks
+  - **Estimated Time**: 2 hours
+
+### Phase 5: Phase 2 Prep (Downgrade Support - Future)
+
+- [ ] **TASK-020**: Design downgrade impact analysis system
+  - Define data retention logic for locations, products, etc.
+  - Create data migration strategy
+  - Document downgrade constraints
+  - **Dependencies**: Phase 1 complete
+  - **Estimated Time**: 4 hours (design only)
+
+---
+
+## Task Summary
+
+**Total Tasks**: 20
+**Phase 1 (Backend)**: 6 tasks, ~14 hours
+**Phase 2 (Vendor UI)**: 7 tasks, ~17 hours
+**Phase 3 (Admin UI)**: 2 tasks, ~6 hours
+**Phase 4 (Testing)**: 3 tasks, ~11 hours
+**Phase 5 (Future)**: 1 task, ~4 hours (design)
+
+**Total Estimated Time**: ~52 hours (MVP Phase 1-4 only)
+
+## Implementation Order
+
+1. Start with database and backend APIs (TASK-001 through TASK-006)
+2. Build vendor UI components (TASK-007 through TASK-013)
+3. Configure admin interface (TASK-014, optionally TASK-015)
+4. Write comprehensive tests (TASK-016 through TASK-018)
+5. Update documentation (TASK-019)
+6. Plan Phase 2 downgrade features (TASK-020)

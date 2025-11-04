@@ -1,0 +1,210 @@
+# Agent OS Quality Configuration Template
+# Copy to .agent-os/quality-config.yml and customize for your project
+
+quality_gates:
+  # Quality score thresholds (0.0 - 1.0)
+  thresholds:
+    min_completeness: 0.90          # All required files/sections present
+    min_technical_depth: 0.85       # Sufficient implementation detail
+    min_implementation_readiness: 0.90  # Clear, actionable specifications
+    min_test_coverage: 0.85         # Adequate testing requirements
+    min_documentation_quality: 0.80 # Clear, comprehensive documentation
+
+  # Quality factor weights (must sum to 1.0)
+  weights:
+    completeness: 0.25              # 25% - File/section completeness
+    technical_depth: 0.20           # 20% - Technical implementation detail
+    implementation_readiness: 0.25  # 25% - Implementation specificity
+    test_coverage: 0.15             # 15% - Testing coverage and quality
+    documentation_quality: 0.15    # 15% - Documentation clarity and completeness
+
+  # Validation settings
+  settings:
+    strict_mode: false              # Enforce higher thresholds (95%+ all categories)
+    enable_warnings: true           # Show warnings for near-threshold scores
+    fail_on_threshold_miss: false   # Fail validation if thresholds not met
+    show_detailed_breakdown: true   # Include detailed category analysis
+    generate_recommendations: true  # Provide actionable improvement suggestions
+
+  # Custom validation rules
+  custom_rules:
+    # Example: Require API documentation when API endpoints are present
+    - name: "require_api_documentation"
+      type: "specification"
+      condition: "has_api_endpoints"
+      requirement: "api-spec.md must exist"
+      priority: "high"
+
+    # Example: Require database schema when database changes are mentioned
+    - name: "require_database_schema"
+      type: "specification"
+      condition: "has_database_changes"
+      requirement: "database-schema.md must exist"
+      priority: "high"
+
+    # Example: Require test files for implementations
+    - name: "require_test_files"
+      type: "implementation"
+      condition: "has_source_code"
+      requirement: "test files must exist in tests/ or __tests__/ directory"
+      priority: "medium"
+
+    # Example: Require README for implementations
+    - name: "require_readme"
+      type: "implementation"
+      condition: "is_library_or_package"
+      requirement: "README.md must exist with usage examples"
+      priority: "medium"
+
+# Project-specific overrides
+project:
+  # Project type affects default expectations
+  type: "web_application"  # Options: web_application, library, api, mobile_app, desktop_app
+
+  # Technology stack affects validation criteria
+  tech_stack:
+    language: "javascript"    # Primary programming language
+    framework: "nextjs"       # Primary framework
+    database: "postgresql"   # Database technology
+    testing: "jest"          # Testing framework
+
+  # Custom file requirements based on project type
+  required_files:
+    specifications:
+      - "spec.md"
+      - "technical-spec.md"
+      - "implementation-guide.md"
+      - "testing-strategy.md"
+      - "integration-requirements.md"
+      - "quality-gates.md"
+      - "architecture-decisions.md"
+
+    # Conditional requirements
+    conditional_files:
+      api_project:
+        - "api-spec.md"
+        - "authentication-spec.md"
+      database_project:
+        - "database-schema.md"
+        - "migration-strategy.md"
+      frontend_project:
+        - "ui-design-spec.md"
+        - "accessibility-requirements.md"
+
+  # Quality thresholds by project phase
+  phase_thresholds:
+    prototype:
+      min_completeness: 0.70
+      min_technical_depth: 0.60
+      min_implementation_readiness: 0.70
+
+    development:
+      min_completeness: 0.85
+      min_technical_depth: 0.80
+      min_implementation_readiness: 0.85
+
+    production:
+      min_completeness: 0.95
+      min_technical_depth: 0.90
+      min_implementation_readiness: 0.95
+      min_test_coverage: 0.90
+      min_documentation_quality: 0.85
+
+# Validation behavior customization
+validation:
+  # File scanning patterns
+  include_patterns:
+    - "**/*.md"
+    - "**/*.js"
+    - "**/*.ts"
+    - "**/*.jsx"
+    - "**/*.tsx"
+    - "**/README*"
+    - "**/package.json"
+
+  # Exclusion patterns
+  exclude_patterns:
+    - "**/node_modules/**"
+    - "**/dist/**"
+    - "**/build/**"
+    - "**/.git/**"
+    - "**/coverage/**"
+
+  # Validation timeouts (in milliseconds)
+  timeouts:
+    file_scan: 30000      # 30 seconds for file scanning
+    content_analysis: 60000  # 60 seconds for content analysis
+    overall_validation: 300000  # 5 minutes total timeout
+
+# Reporting configuration
+reporting:
+  # Output formats
+  formats:
+    console: true         # Console output with colors and formatting
+    markdown: true        # Generate markdown report file
+    json: false          # Generate machine-readable JSON report
+    html: false          # Generate HTML report with charts
+
+  # Report detail levels
+  detail_level: "comprehensive"  # Options: summary, standard, comprehensive, verbose
+
+  # Report file naming
+  output_files:
+    markdown: "quality-report.md"
+    json: "quality-report.json"
+    html: "quality-report.html"
+
+  # Include sections in reports
+  include_sections:
+    executive_summary: true
+    detailed_breakdown: true
+    issue_analysis: true
+    recommendations: true
+    improvement_roadmap: true
+    appendix: false
+
+# Integration settings
+integrations:
+  # Git integration
+  git:
+    enabled: true
+    pre_commit_validation: false
+    post_commit_validation: false
+    branch_validation: true
+
+  # CI/CD integration
+  ci_cd:
+    enabled: false
+    fail_build_on_quality_gate: false
+    quality_gate_threshold: 0.80
+    generate_artifacts: true
+
+  # IDE integration
+  ide:
+    vscode_extension: false
+    real_time_validation: false
+    tooltip_recommendations: false
+
+# Advanced configuration
+advanced:
+  # Machine learning enhancements
+  ml_enhancements:
+    enabled: false
+    pattern_recognition: false
+    predictive_quality_scoring: false
+
+  # Performance optimization
+  performance:
+    parallel_validation: true
+    cache_analysis_results: true
+    incremental_validation: true
+
+  # Custom validators
+  custom_validators:
+    # Example custom validator plugin
+    # security_validator:
+    #   enabled: false
+    #   plugin_path: "./validators/security-validator.js"
+    #   config:
+    #     scan_dependencies: true
+    #     check_vulnerable_patterns: true

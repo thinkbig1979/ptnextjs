@@ -87,6 +87,242 @@ Every file creation and modification automatically triggers validation through C
 
 See `CLAUDE_CODE_HOOKS_INTEGRATION.md` for setup guide and `instructions/utilities/quality-hooks-guide.md` for comprehensive documentation.
 
+### Compound Engineering Integration (v2.7+)
+
+Agent OS v2.7+ introduces **Compound Engineering Philosophy** - a comprehensive set of 15 transformative features that ensure each unit of engineering work makes subsequent work easier, not harder:
+
+#### Multi-Agent System (10 Specialized Review Agents)
+
+**Deep Analysis Agents** for comprehensive code review:
+- `security-sentinel` - Security vulnerability detection and OWASP Top 10 analysis
+- `performance-oracle` - Performance optimization and bottleneck identification
+- `architecture-strategist` - Architectural pattern analysis and system design review
+- `pattern-recognition-specialist` - Code pattern detection and reusability opportunities
+- `code-simplicity-reviewer` - Complexity reduction and maintainability improvement
+- `data-integrity-guardian` - Data validation, consistency, and integrity checks
+
+**Research Agents** for context gathering:
+- `repo-research-analyst` - Codebase pattern analysis and existing implementations
+- `best-practices-researcher` - External best practice research and recommendations
+- `framework-docs-researcher` - Framework documentation and convention research
+- `git-history-analyzer` - Historical context and evolution analysis
+
+All agents output standardized findings with severity (P1/P2/P3), effort estimation, and actionable solutions.
+
+#### Interactive Triage Workflow
+
+Comprehensive finding management system with intelligent prioritization:
+- **One-by-one presentation** - Process findings individually with full context
+- **Progress tracking** - Real-time progress display ("Finding 5/12 - 40% complete")
+- **Time estimation** - Dynamic time remaining calculation based on actual processing speeds
+- **Pause/resume capability** - State persistence to `.triage-state/` for multi-session triage
+- **Structured todo generation** - Priority-based filenames (XXX-pending-p[1-3]-slug.md)
+- **Interactive decisions** - Yes (create todo), Next (skip), Custom text options
+
+Access via: `commands/triage.md` (1356 lines of comprehensive workflow)
+
+#### Systematic Security Scanning
+
+**6-Step Security Protocol** integrated into every task execution:
+1. Input validation analysis (injection attacks, XSS)
+2. SQL injection vulnerability detection
+3. Authentication/authorization flaw identification
+4. Data exposure risk assessment
+5. OWASP Top 10 compliance checking
+6. Security best practice verification
+
+**P1 (CRITICAL) findings block task completion** - mandatory security gate prevents shipping vulnerable code.
+
+Integration: Automatic scanning in `execute-task-orchestrated.md` Step 2.5
+
+#### Ultra-Thinking Deep Dive Protocol
+
+Multi-perspective analysis framework for comprehensive requirement gathering:
+- **Stakeholder perspectives** - Developer, Ops, User, Security, Business viewpoints
+- **Scenario exploration** - Edge cases, failure modes, scale considerations
+- **Multi-angle review** - Technical, Business, Risk, Team impact analysis
+
+Integrated into spec creation (Step 4.5) to ensure specifications consider all angles before development begins.
+
+#### Finding Synthesis & Prioritization
+
+Intelligent consolidation and ranking of multi-agent findings:
+- **Duplicate removal** - Smart clustering of similar findings across agents
+- **Severity assignment** - 🔴 P1 (Critical), 🟡 P2 (Important), 🔵 P3 (Nice-to-have)
+- **Effort estimation** - Small/Medium/Large based on complexity analysis
+- **ROI calculation** - Prioritize highest-impact, lowest-effort improvements
+- **Categorization** - Security, Performance, Architecture, Quality, Data Integrity, Patterns
+
+Outputs prioritized, actionable findings ready for triage workflow.
+
+#### Git Worktree Isolation Pattern
+
+**Isolated work environments** prevent context switching and file conflicts:
+- Worktrees created at `.agent-os/worktrees/[task-id]/`
+- Automatic branch creation and management
+- Metadata tracking in `.worktree-metadata`
+- Clean separation from main workspace
+- Scripts: `setup/create-worktree.sh` and `setup/cleanup-worktree.sh`
+
+Benefits: Parallel work on multiple tasks, test reviews without affecting main branch, easy cleanup.
+
+#### Language-Specific Quality Standards
+
+**5,773+ lines of comprehensive standards** across multiple languages:
+- **Backend**: `standards/backend/rails-patterns.md` (1308 lines)
+- **Backend**: `standards/backend/python-patterns.md` (2409 lines)
+- **Frontend**: `standards/frontend/typescript-patterns.md` (2056 lines)
+- **Additional**: API patterns, Database patterns, Styling patterns, HTML patterns
+
+Each standard includes framework-specific validation rules, security patterns, linting configuration, anti-pattern detection, and code style conventions.
+
+#### Code Examples in Specifications
+
+**Real, working examples** from actual codebase:
+- Actual code examples following established patterns
+- Mock filenames with realistic structure (todos)
+- ERD diagrams for model changes
+- Research agents provide formatted examples automatically
+- Reference format: `file_path:line_number` or `file.rb:42-58` for ranges
+
+Ensures specifications are immediately actionable with proven patterns.
+
+#### Multi-Level Planning Detail
+
+**Three specification detail levels** for different feature complexities:
+- **Minimal** - Simple features, quick development (basic structure only)
+- **Standard** - Typical features, moderate complexity (full sections)
+- **Comprehensive** - Complex features, architectural changes (includes ADRs, ultra-thinking)
+
+User selects detail level during spec creation (Step 2.5) - template automatically includes appropriate sections.
+
+#### Comprehensive Reference Collection
+
+**Standardized reference format** for traceability:
+- Internal: `src/models/user.rb:42` or `app/controllers/auth.ts:105-120`
+- External: Full URLs to documentation
+- Related: Issue/PR references (#123, PR #456)
+- Standards: `@.agent-os/standards/rails-patterns.md:250`
+
+All specifications, findings, and documentation use consistent reference format for easy navigation.
+
+#### AI-Era Development Considerations
+
+**Documentation for AI-assisted development**:
+- AI tools used documented in specs
+- Effective prompts captured for reuse
+- AI-generated code review requirements
+- Testing emphasis for rapid implementation
+- Context sections for AI agents
+
+Template section: `## AI Development Notes` in architecture-decisions-template.md
+
+#### Enhanced Work Command
+
+**Execute-task workflow improvements**:
+- Explicit "read plan document" capability for PRD/design doc execution
+- Automatic test execution after each task completion
+- Task detail files loaded from `tasks/` directory
+- Integration verification framework
+- Deliverable verification before completion
+
+All task orchestration includes automatic validation and testing.
+
+#### Interactive Finding Presentation
+
+**Real-time progress tracking during triage**:
+- Progress display: "📊 Triage Progress: 15/42 findings (36%)"
+- Time estimation: "⏱️ Estimated time remaining: ~27 minutes"
+- Rolling average calculation (last 10 findings)
+- Complexity adjustments (more P1s = longer estimates)
+- Fastest/slowest finding metrics
+
+Integrated into triage workflow for accurate planning.
+
+#### Compounding Engineering Philosophy
+
+**Core principle: Write code that compounds in value over time**
+
+Four key concepts integrated throughout Agent OS:
+1. **Reusability First** - Extract patterns, create composable components
+2. **Composability** - Build features from existing building blocks
+3. **Knowledge Capture** - Document patterns in CLAUDE.md, standards, examples
+4. **Systematic Improvement** - Each task should leave codebase easier to work with
+
+**Required in all workflows:**
+- Reusability analysis in specifications
+- Pattern documentation as task acceptance criteria
+- Code review agents check for reusability opportunities
+- Examples: shared UI components vs one-off implementations, extracted utilities vs duplicated logic
+
+Documented in: `standards/best-practices.md` - Compounding Engineering Philosophy section
+
+#### Beads Issue Tracking Integration (v2.8+)
+
+**Distributed, git-backed task tracking** for persistent agent memory across sessions:
+
+Agent OS v2.8+ integrates **Beads** - a lightweight issue tracker designed specifically for AI coding agents. Beads provides distributed memory through git-backed task tracking, eliminating context window amnesia.
+
+**Hybrid Architecture:**
+- **Markdown** (tasks.md, tasks/*.md) - Human-readable specifications, acceptance criteria, implementation details
+- **Beads** (.beads/issues.jsonl) - Execution state, dependency resolution, cross-session persistence
+
+**Key Benefits:**
+- **Persistent Memory** - Tasks survive context loss and session boundaries
+- **Automatic Dependency Resolution** - `bd ready` finds unblocked work instantly
+- **Discovered Work Tracking** - Issues found during implementation automatically linked with `discovered-from` dependencies
+- **Git-Based Distribution** - Multi-agent safe with collision-resistant hash IDs (bd-a1b2)
+- **Zero Context Cost** - SQLite cache (<100ms queries) + JSONL source of truth
+
+**Integration Points:**
+1. **Task Creation** (create-tasks.md Step 2.6) - Auto-sync markdown tasks to Beads
+2. **Task Execution** (execute-task-orchestrated.md Step 0.2) - Query ready work before orchestration
+3. **Task Completion** (execute-task-orchestrated.md Step 99) - Mark complete, sync to git, detect newly unblocked tasks
+4. **Worktree Compatibility** - No-daemon mode prevents branch contamination
+
+**Common Workflow:**
+```bash
+# Query unblocked tasks
+bd ready
+
+# Claim task
+bd update impl-comp1-core --status in_progress
+
+# (Execute task via Agent OS orchestration)
+
+# Complete task
+bd close impl-comp1-core --reason "All acceptance criteria met"
+
+# Sync to git (CRITICAL at session end)
+bd sync
+
+# Check for newly unblocked work
+bd ready
+```
+
+**MCP Integration:** When using Claude Code, prefer MCP function calls (`mcp__beads__ready()`) over CLI for structured return types and automatic workspace detection.
+
+**Configuration:** Beads integration controlled via `config.yml` → `beads.enabled: true` (default). Disable with `false` to use markdown-only workflow.
+
+**Documentation:** Complete guide at `instructions/utilities/beads-integration-guide.md`
+
+**Installation:** `~/.agent-os/setup/install-beads.sh` (automatically prompted during Agent OS installation)
+
+#### System Integration
+
+All 15 features work together as a **compounding development system**:
+
+**Spec Creation Pipeline:**
+Research agents → Ultra-thinking → Multi-level detail → Code examples → AI considerations → Standardized references
+
+**Quality Assurance Pipeline:**
+Multi-agent review → Security scanning → Finding synthesis → Interactive triage → Progress tracking → Language standards validation
+
+**Development Workflow:**
+Beads task query → Worktree isolation → Work command orchestration → Security gate → Compounding philosophy → Deliverable verification → Beads sync
+
+**Verification Status:** All 15 features verified operational (see `FEATURE_VERIFICATION_REPORT.md`). Beads integration added in v2.8+.
+
 ### Configuration Structure
 
 The repository follows this organizational pattern:
