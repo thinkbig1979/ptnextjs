@@ -969,6 +969,6 @@ For issues, questions, or feature requests related to the quality hooks system:
 
 ---
 
-**Agent OS Version**: 2.2.1
+**Agent OS Version**: 2.8.0
 **Hook System Version**: 1.0
-**Last Updated**: 2025-10-08
+**Last Updated**: 2025-11-04

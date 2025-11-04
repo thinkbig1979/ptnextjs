@@ -1,15 +1,16 @@
 {
-  "hooks": {
-    "PostToolUse": [
+  "toolUse": {
+    "postToolUseHooks": [
       {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/validate-file.js"
-          }
-        ]
+        "script": ".claude/hooks/validate-file.js",
+        "enabled": true,
+        "timeout": 30000
       }
     ]
+  },
+  "validation": {
+    "autoFix": true,
+    "failOnError": false,
+    "parallelExecution": true
   }
 }
