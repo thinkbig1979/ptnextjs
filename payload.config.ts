@@ -15,6 +15,7 @@ import TeamMembers from './payload/collections/TeamMembers';
 import CompanyInfo from './payload/collections/CompanyInfo';
 import Tags from './payload/collections/Tags';
 import Yachts from './payload/collections/Yachts';
+import TierUpgradeRequests from './payload/collections/TierUpgradeRequests';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -66,6 +67,7 @@ export default buildConfig({
     CompanyInfo,
     Tags,
     Yachts,
+    TierUpgradeRequests,
   ],
 
   // TypeScript configuration

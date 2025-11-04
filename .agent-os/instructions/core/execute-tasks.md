@@ -17,7 +17,7 @@ Execute tasks for a given spec following three distinct phases:
 
 **IMPORTANT**: All three phases MUST be completed. Do not stop after phase 2.
 
-**EXECUTION MODE**: Task execution in Step 4 automatically uses orchestrated parallel execution via the task-orchestrator agent for maximum efficiency and speed.
+**EXECUTION MODE**: Task execution in Step 4 uses systematic execution via the general-purpose agent for coordinated task completion.
 
 <pre_flight_check>
   EXECUTE: @.agent-os/instructions/meta/pre-flight.md
@@ -360,7 +360,7 @@ Use the git-workflow subagent to examine the repository state, manage open PRs, 
 
 **IMPORTANT**: This is a loop. Execute ALL assigned tasks before proceeding to Phase 3.
 
-**EXECUTION MODE**: Orchestrated parallel execution is used automatically. The execute-task.md file will route to execute-task-orchestrated.md which uses the task-orchestrator agent for maximum efficiency.
+**EXECUTION MODE**: Systematic task execution is used. The execute-task.md file provides structured execution guidance for coordinated task completion.
 
 Execute all assigned parent tasks and their subtasks using @.agent-os/instructions/core/execute-task.md instructions, continuing until all tasks are complete.
 

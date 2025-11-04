@@ -12,5 +12,18 @@
     "autoFix": true,
     "failOnError": false,
     "parallelExecution": true
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR\"/.agent-os/hooks/tdd-validator.sh \"$CLAUDE_HOOK_TOOL_PARAMETERS_file_path\""
+          }
+        ]
+      }
+    ]
   }
 }

@@ -391,6 +391,174 @@ export interface Partner extends Vendor {
   // All functionality is inherited from the Vendor interface
 }
 
+// ============================================================================
+// USER TYPES (for Payload CMS authentication)
+// ============================================================================
+
+/**
+ * User (from Payload CMS Users collection)
+ * Minimal type definition for user relationships
+ */
+export interface User {
+  id: string;
+  email: string;
+  role: 'admin' | 'vendor' | 'user';
+  vendorId?: string; // For vendor users
+  name?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+// ============================================================================
+// TIER UPGRADE REQUEST TYPES
+// ============================================================================
+
+/**
+ * Tier Upgrade Request
+ * Represents a vendor's request to upgrade their subscription tier
+ */
+export interface TierUpgradeRequest {
+  id: string;
+  /** Vendor making the request - can be ID or populated object */
+  vendor: string | Vendor;
+  /** User who submitted the request - can be ID or populated object */
+  user: string | User;
+  /** Current tier at time of request (snapshot) */
+  currentTier: 'free' | 'tier1' | 'tier2' | 'tier3';
+  /** Requested tier (must be higher than current, cannot be 'free') */
+  requestedTier: 'tier1' | 'tier2' | 'tier3';
+  /** Request status */
+  status: 'pending' | 'approved' | 'rejected' | 'cancelled';
+  /** Optional business justification from vendor (max 500 characters) */
+  vendorNotes?: string;
+  /** Optional rejection reason from admin (max 1000 characters) */
+  rejectionReason?: string;
+  /** Admin who reviewed the request - can be ID or populated object */
+  reviewedBy?: string | User;
+  /** Timestamp when request was submitted (ISO 8601) */
+  requestedAt: string;
+  /** Timestamp when request was reviewed (ISO 8601) */
+  reviewedAt?: string;
+  /** Payload CMS auto timestamp */
+  createdAt: string;
+  /** Payload CMS auto timestamp */
+  updatedAt: string;
+}
+
+/**
+ * Payload for creating a tier upgrade request
+ * POST /api/portal/vendors/[id]/tier-upgrade-request
+ */
+export interface CreateTierUpgradeRequestPayload {
+  /** Requested tier (must be higher than current tier) */
+  requestedTier: 'tier1' | 'tier2' | 'tier3';
+  /** Optional business justification (recommended, max 500 characters) */
+  vendorNotes?: string;
+}
+
+/**
+ * Response for successful tier upgrade request creation
+ */
+export interface CreateTierUpgradeRequestResponse {
+  success: true;
+  data: TierUpgradeRequest;
+}
+
+/**
+ * Response for getting vendor's tier upgrade request
+ * GET /api/portal/vendors/[id]/tier-upgrade-request
+ */
+export interface GetTierUpgradeRequestResponse {
+  success: true;
+  /** null if no request found for vendor */
+  data: TierUpgradeRequest | null;
+}
+
+/**
+ * Response for deleting a tier upgrade request
+ * DELETE /api/portal/vendors/[id]/tier-upgrade-request/[requestId]
+ */
+export interface DeleteTierUpgradeRequestResponse {
+  success: true;
+  data: {
+    message: string;
+  };
+}
+
+/**
+ * Response for approving a tier upgrade request
+ * PUT /api/admin/tier-upgrade-requests/[id]/approve
+ */
+export interface ApproveTierUpgradeRequestResponse {
+  success: true;
+  data: {
+    /** Updated request with approved status */
+    request: TierUpgradeRequest;
+    /** Vendor with updated tier */
+    vendor: Vendor;
+  };
+}
+
+/**
+ * Payload for rejecting a tier upgrade request
+ * PUT /api/admin/tier-upgrade-requests/[id]/reject
+ */
+export interface RejectTierUpgradeRequestPayload {
+  /** Optional reason for rejection (max 1000 characters) */
+  rejectionReason?: string;
+}
+
+/**
+ * Response for rejecting a tier upgrade request
+ */
+export interface RejectTierUpgradeRequestResponse {
+  success: true;
+  data: TierUpgradeRequest;
+}
+
+/**
+ * Error response for tier upgrade request operations
+ */
+export interface TierUpgradeRequestError {
+  success: false;
+  error: {
+    /** Error code */
+    code: 'UNAUTHORIZED' | 'FORBIDDEN' | 'VALIDATION_ERROR' | 'NOT_FOUND' | 'DUPLICATE_REQUEST' | 'INVALID_STATUS' | 'SERVER_ERROR';
+    /** Human-readable error message */
+    message: string;
+    /** Field-specific validation errors */
+    fields?: Record<string, string>;
+    /** Additional error context */
+    details?: string;
+  };
+}
+
+/**
+ * Validation result from service layer
+ */
+export interface TierUpgradeValidationResult {
+  /** Whether validation passed */
+  valid: boolean;
+  /** Error message if validation failed */
+  error?: string;
+}
+
+/**
+ * Query filters for listing tier upgrade requests
+ */
+export interface TierUpgradeRequestFilters {
+  /** Filter by vendor ID */
+  vendorId?: string;
+  /** Filter by request status */
+  status?: 'pending' | 'approved' | 'rejected' | 'cancelled';
+  /** Filter by requested tier */
+  requestedTier?: 'tier1' | 'tier2' | 'tier3';
+  /** Filter by requests created after this date (ISO 8601) */
+  fromDate?: string;
+  /** Filter by requests created before this date (ISO 8601) */
+  toDate?: string;
+}
+
 export interface ProductSpecification {
   label: string;
   value: string;

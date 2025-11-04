@@ -59,14 +59,21 @@ execution:
     efficiency_tracking: true
 
 # ================================================
-# SPECIALIST AGENTS
+# EXECUTION ROLES (Documentation Only)
 # ================================================
-specialist_agents:
-  # Core orchestration
-  task_orchestrator:
-    enabled: true
+# NOTE: These are conceptual execution roles that document workflow phases.
+# They are NOT callable Claude Code agents. Agent OS workflows use Claude Code's
+# general-purpose agent for execution, guided by these phase definitions.
+#
+# Available Claude Code Agents: general-purpose, Explore, Plan, (+ custom user agents)
+# These roles below serve as workflow phase documentation only.
+
+execution_roles:
+  # Core coordination role (not a callable agent)
+  task_coordinator:
+    description: "Coordinates task execution phases"
     context_window: 32768
-    priority: "critical"
+    focus: "Task planning and phase coordination"
     model: inherit
 
   # Development specialists
