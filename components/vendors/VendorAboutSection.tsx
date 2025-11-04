@@ -143,9 +143,18 @@ export function VendorAboutSection({ vendor }: VendorAboutSectionProps) {
           <h2 className="text-2xl font-cormorant font-bold mb-4">Service Areas</h2>
           <div className="space-y-3">
             {vendor.serviceAreas!.map((service, index) => (
-              <div key={index} className="flex items-center space-x-3">
-                <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                <span className="font-poppins-light">{service}</span>
+              <div key={index} className="flex items-start space-x-3">
+                <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                <div>
+                  <div className="font-medium">
+                    {typeof service === 'string' ? service : service.area}
+                  </div>
+                  {typeof service !== 'string' && service.description && (
+                    <div className="text-sm text-muted-foreground mt-1">
+                      {service.description}
+                    </div>
+                  )}
+                </div>
               </div>
             ))}
           </div>
@@ -157,11 +166,18 @@ export function VendorAboutSection({ vendor }: VendorAboutSectionProps) {
         <div>
           <h2 className="text-2xl font-cormorant font-bold mb-4">Our Values</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {vendor.companyValues!.map((value, index) => (
+            {vendor.companyValues!.map((val, index) => (
               <Card key={index} className="p-4">
-                <div className="flex items-center space-x-2">
-                  <CheckCircle className="w-5 h-5 text-accent flex-shrink-0" />
-                  <span className="font-medium">{value}</span>
+                <div className="flex items-start space-x-3">
+                  <CheckCircle className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
+                  <div>
+                    <div className="font-medium">
+                      {typeof val === 'string' ? val : val.value}
+                    </div>
+                    {typeof val !== 'string' && val.description && (
+                      <div className="text-sm text-muted-foreground mt-1">{val.description}</div>
+                    )}
+                  </div>
                 </div>
               </Card>
             ))}

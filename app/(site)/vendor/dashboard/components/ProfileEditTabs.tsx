@@ -33,7 +33,6 @@ import { PromotionPackForm } from './PromotionPackForm';
 
 export interface ProfileEditTabsProps {
   vendor: Vendor;
-  onSave?: (data: Partial<Vendor>) => Promise<void>;
 }
 
 interface TabDefinition {
@@ -55,8 +54,8 @@ interface TabDefinition {
  * - Tier 2: + Products (8 tabs)
  * - Tier 3: + Promotion (9 tabs)
  */
-export function ProfileEditTabs({ vendor, onSave }: ProfileEditTabsProps) {
-  const { activeTab, setActiveTab, isDirty, markDirty } = useVendorDashboard();
+export function ProfileEditTabs({ vendor }: ProfileEditTabsProps) {
+  const { activeTab, setActiveTab, isDirty, markDirty, updateVendor, saveVendor } = useVendorDashboard();
   const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
   const [pendingTab, setPendingTab] = useState<string | null>(null);
   const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
@@ -64,8 +63,62 @@ export function ProfileEditTabs({ vendor, onSave }: ProfileEditTabsProps) {
     featureName: string;
     requiredTier: Tier;
   } | null>(null);
+  const [isDesktop, setIsDesktop] = useState(true);
 
   const tierLevel = TierService.getTierLevel(vendor.tier);
+
+  /**
+   * Wrapper function for form submissions
+   * Updates vendor state and saves to backend
+   * Handles data transformation from form-specific types to Vendor type
+   */
+  const handleFormSave = async (data: any) => {
+    console.log('[ProfileEditTabs] handleFormSave called with:', data);
+
+    // Transform form data to Vendor shape if needed
+    // BasicInfoForm uses 'companyName' field, but Vendor uses 'name'
+    const vendorUpdates: Partial<Vendor> = {
+      ...data,
+      // Map companyName to name if present (BasicInfoForm compatibility)
+      ...(data.companyName && { name: data.companyName }),
+    };
+
+    // Remove form-specific fields that aren't in Vendor type
+    delete (vendorUpdates as any).companyName;
+
+    console.log('[ProfileEditTabs] Transformed vendor updates:', vendorUpdates);
+
+    // Merge updates with current vendor data to avoid stale closure issue
+    const updatedVendor = { ...vendor, ...vendorUpdates };
+    console.log('[ProfileEditTabs] Merged vendor data:', updatedVendor);
+
+    // Update local state
+    console.log('[ProfileEditTabs] Calling updateVendor');
+    updateVendor(vendorUpdates);
+
+    // Pass the updated vendor directly to avoid race condition
+    console.log('[ProfileEditTabs] Calling saveVendor with updated data');
+    try {
+      await saveVendor(updatedVendor);
+      console.log('[ProfileEditTabs] saveVendor completed successfully');
+    } catch (error) {
+      console.error('[ProfileEditTabs] saveVendor failed:', error);
+      throw error;
+    }
+  };
+
+  // Track viewport size to determine which UI to render
+  useEffect(() => {
+    // Initial check
+    setIsDesktop(window.innerWidth >= 640);
+
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 640);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Define all available tabs with tier requirements
   const allTabs: TabDefinition[] = [
@@ -122,7 +175,7 @@ export function ProfileEditTabs({ vendor, onSave }: ProfileEditTabsProps) {
       id: 'promotion',
       label: 'Promotion',
       minTier: 3,
-      component: <PromotionPackForm vendor={vendor} />,
+      component: () => <PromotionPackForm vendor={vendor} />,
       description: 'Promotion and marketing content',
     },
   ];
@@ -193,8 +246,8 @@ export function ProfileEditTabs({ vendor, onSave }: ProfileEditTabsProps) {
   return (
     <>
       <div className="w-full">
-        {/* Desktop Tabs */}
-        <div className="hidden sm:block">
+        {isDesktop ? (
+          // Desktop Tabs - SINGLE RENDER
           <Tabs value={activeTab} onValueChange={handleTabChange}>
             <TabsList className="w-full justify-start overflow-x-auto">
               {visibleTabs.map((tab) => (
@@ -216,53 +269,48 @@ export function ProfileEditTabs({ vendor, onSave }: ProfileEditTabsProps) {
             </TabsList>
 
             <div className="mt-6">
-              {visibleTabs.map((tab) => {
-                const TabComponent = tab.component;
-                return (
-                  <TabsContent key={tab.id} value={tab.id}>
-                    <TabComponent vendor={vendor} onSubmit={onSave} />
-                  </TabsContent>
-                );
-              })}
+              {CurrentTabComponent && (
+                <CurrentTabComponent vendor={vendor} onSubmit={handleFormSave} />
+              )}
             </div>
           </Tabs>
-        </div>
+        ) : (
+          // Mobile Dropdown - SINGLE RENDER
+          <>
+            <Select value={activeTab} onValueChange={handleTabChange}>
+              <SelectTrigger className="w-full mb-6">
+                <SelectValue placeholder="Select a section" />
+              </SelectTrigger>
+              <SelectContent>
+                {visibleTabs.map((tab) => (
+                  <SelectItem key={tab.id} value={tab.id}>
+                    {tab.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-        {/* Mobile Dropdown */}
-        <div className="sm:hidden">
-          <Select value={activeTab} onValueChange={handleTabChange}>
-            <SelectTrigger className="w-full mb-6">
-              <SelectValue placeholder="Select a section" />
-            </SelectTrigger>
-            <SelectContent>
-              {visibleTabs.map((tab) => (
-                <SelectItem key={tab.id} value={tab.id}>
-                  {tab.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          {/* Show locked tabs info */}
-          {lockedTabs.length > 0 && (
-            <div className="mb-6 p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800/50">
-              <div className="flex items-center gap-2 mb-2">
-                <Lock className="h-4 w-4 text-gray-500" />
-                <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Locked Sections ({lockedTabs.length})
+            {/* Show locked tabs info */}
+            {lockedTabs.length > 0 && (
+              <div className="mb-6 p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800/50">
+                <div className="flex items-center gap-2 mb-2">
+                  <Lock className="h-4 w-4 text-gray-500" />
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Locked Sections ({lockedTabs.length})
+                  </p>
+                </div>
+                <p className="text-xs text-gray-600 dark:text-gray-400">
+                  Upgrade to unlock: {lockedTabs.map((t) => t.label).join(', ')}
                 </p>
               </div>
-              <p className="text-xs text-gray-600 dark:text-gray-400">
-                Upgrade to unlock: {lockedTabs.map((t) => t.label).join(', ')}
-              </p>
-            </div>
-          )}
+            )}
 
-          {/* Mobile Tab Content */}
-          {CurrentTabComponent && (
-            <CurrentTabComponent vendor={vendor} onSubmit={onSave} />
-          )}
-        </div>
+            {/* Mobile Tab Content */}
+            {CurrentTabComponent && (
+              <CurrentTabComponent vendor={vendor} onSubmit={handleFormSave} />
+            )}
+          </>
+        )}
       </div>
 
       {/* Unsaved Changes Dialog */}

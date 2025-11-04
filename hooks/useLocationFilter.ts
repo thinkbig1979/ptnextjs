@@ -120,6 +120,8 @@ export function useLocationFilter(
       };
     }
 
+    console.log(`🎯 Searching from coordinates: lat=${userLocation.latitude}, lng=${userLocation.longitude}, radius=${maxDistance}km`);
+
     // Calculate distances and filter vendors (NEW: multi-location support)
     const vendorsWithDistances: VendorWithDistance[] = vendors
       .map(vendor => {
@@ -128,6 +130,7 @@ export function useLocationFilter(
 
         // Skip vendors without any eligible locations
         if (eligibleLocations.length === 0) {
+          console.log(`⚠️  ${vendor.name}: No eligible locations (tier: ${vendor.tier})`);
           return { ...vendor, distance: undefined, matchedLocation: undefined };
         }
 
@@ -145,6 +148,13 @@ export function useLocationFilter(
             ),
           }));
 
+          // Log distances for debugging
+          console.log(`📏 ${vendor.name} (tier: ${vendor.tier}):`,
+            locationsWithDistances.map(({ location, distance }) =>
+              `${location.city || 'Unknown'}: ${distance.toFixed(1)}km`
+            ).join(', ')
+          );
+
           // Find the closest location within maxDistance
           const closestLocation = locationsWithDistances
             .filter(({ distance }) => distance <= maxDistance)
@@ -152,8 +162,11 @@ export function useLocationFilter(
 
           // If no location is within range, exclude this vendor
           if (!closestLocation) {
+            console.log(`❌ ${vendor.name}: All locations outside ${maxDistance}km range`);
             return { ...vendor, distance: undefined, matchedLocation: undefined };
           }
+
+          console.log(`✅ ${vendor.name}: Matched at ${closestLocation.distance.toFixed(1)}km (${closestLocation.location.city})`);
 
           // Return vendor with distance to closest location
           return {

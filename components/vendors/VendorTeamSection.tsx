@@ -44,10 +44,10 @@ export function VendorTeamSection({ vendor }: VendorTeamSectionProps) {
           <Card key={index} className="p-4">
             <div className="flex flex-col items-center text-center space-y-3">
               {/* Photo */}
-              {member.photo && (
+              {member.image && (
                 <div className="w-24 h-24 relative rounded-full overflow-hidden">
                   <OptimizedImage
-                    src={member.photo}
+                    src={member.image}
                     alt={member.name}
                     fill
                     className="object-cover"
@@ -59,7 +59,7 @@ export function VendorTeamSection({ vendor }: VendorTeamSectionProps) {
               {/* Name and Position */}
               <div>
                 <h3 className="font-semibold text-lg">{member.name}</h3>
-                <p className="text-sm text-muted-foreground">{member.position}</p>
+                <p className="text-sm text-muted-foreground">{member.role}</p>
               </div>
 
               {/* Bio */}
@@ -67,25 +67,11 @@ export function VendorTeamSection({ vendor }: VendorTeamSectionProps) {
                 <p className="text-sm text-muted-foreground line-clamp-3">{member.bio}</p>
               )}
 
-              {/* Expertise */}
-              {member.expertise && member.expertise.length > 0 && (
-                <div className="flex flex-wrap gap-1 justify-center">
-                  {member.expertise.slice(0, 3).map((skill, idx) => (
-                    <span
-                      key={idx}
-                      className="text-xs bg-secondary text-secondary-foreground px-2 py-0.5 rounded"
-                    >
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-              )}
-
               {/* LinkedIn Link */}
-              {member.linkedinUrl && (
+              {member.linkedin && (
                 <div className="flex items-center justify-center pt-2">
                   <a
-                    href={member.linkedinUrl}
+                    href={member.linkedin}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-muted-foreground hover:text-primary transition-colors"

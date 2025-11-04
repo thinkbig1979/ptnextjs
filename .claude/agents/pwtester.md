@@ -2,7 +2,7 @@
 name: pwtester
 description: Specialized subagent for executing and verifying Playwright e2e tests, validating frontend behavior, and generating test reports
 model: haiku
-tools: mcp__acp__Bash, mcp__acp__Read, mcp__acp__BashOutput, mcp__acp__Write, Glob, Grep
+tools: mcp__acp__Bash, mcp__acp__Read, mcp__acp__BashOutput, mcp__acp__Write, Glob, Grep, mcp__beads__create_issue, mcp__beads__list_issues, mcp__beads__update_issue
 ---
 
 # Playwright Testing Specialist

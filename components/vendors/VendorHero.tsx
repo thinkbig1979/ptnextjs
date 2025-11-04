@@ -44,8 +44,8 @@ export function VendorHero({ vendor, productCount }: VendorHeroProps) {
             Partner
           </Badge>
         )}
-        {vendor.foundedYear && (
-          <YearsInBusinessDisplay foundedYear={vendor.foundedYear} variant="badge" />
+        {(vendor.foundedYear || vendor.founded) && (
+          <YearsInBusinessDisplay foundedYear={vendor.foundedYear || vendor.founded} variant="badge" />
         )}
       </div>
 
@@ -86,10 +86,13 @@ export function VendorHero({ vendor, productCount }: VendorHeroProps) {
             <span>{formatVendorLocation(vendor.location)}</span>
           </div>
         )}
-        <div className="flex items-center space-x-1">
-          <Package className="w-4 h-4" />
-          <span>{productCount} Products</span>
-        </div>
+        {/* Only show product count for Tier 2+ vendors */}
+        {vendor.tier && ['tier2', 'tier3'].includes(vendor.tier) && (
+          <div className="flex items-center space-x-1">
+            <Package className="w-4 h-4" />
+            <span>{productCount} Products</span>
+          </div>
+        )}
       </div>
     </div>
   );

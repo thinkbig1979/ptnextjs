@@ -34,7 +34,7 @@ test.describe('Manual Verification: Homepage & Vendor Pages', () => {
     }
 
     // Check for React errors
-    const consoleErrors = [];
+    const consoleErrors: any[] = [];
     page.on('console', msg => {
       if (msg.type() === 'error') {
         consoleErrors.push(msg.text());
@@ -52,7 +52,7 @@ test.describe('Manual Verification: Homepage & Vendor Pages', () => {
   });
 
   test('Test 2: Vendor Page with Location Data - Alfa Laval', async ({ page }) => {
-    const consoleErrors = [];
+    const consoleErrors: any[] = [];
     page.on('console', msg => {
       if (msg.type() === 'error') {
         consoleErrors.push(msg.text());
@@ -179,7 +179,7 @@ test.describe('Manual Verification: Homepage & Vendor Pages', () => {
     const errorLog = [];
 
     for (const vendor of vendors) {
-      const consoleErrors = [];
+      const consoleErrors: any[] = [];
       page.on('console', msg => {
         if (msg.type() === 'error') {
           consoleErrors.push(msg.text());

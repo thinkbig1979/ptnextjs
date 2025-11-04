@@ -6,7 +6,8 @@ import { Metadata } from "next";
 
 // Force static generation for optimal SEO and performance
 export const dynamic = 'force-static';
-export const revalidate = false;
+// ISR: Revalidate every 10s in dev, 5min in production
+export const revalidate = 300; // ISR: Revalidate every 5 minutes
 
 export const metadata: Metadata = {
   title: "Vendors | Paul Thames - Superyacht Technology Solutions",

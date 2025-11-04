@@ -1,0 +1,40 @@
+{
+  "products": [
+    {
+      "name": "Navigation System Pro",
+      "description": "Advanced navigation system for superyachts",
+      "category": "Navigation Systems",
+      "manufacturer": "NavTech",
+      "model": "NS-2000",
+      "price": 15000,
+      "published": true
+    },
+    {
+      "name": "Marine Communication Suite",
+      "description": "Complete communication solution for yachts",
+      "category": "Communication",
+      "manufacturer": "CommSys",
+      "model": "MCS-500",
+      "price": 8000,
+      "published": true
+    },
+    {
+      "name": "Entertainment System Elite",
+      "description": "High-end entertainment system with 4K displays",
+      "category": "Entertainment",
+      "manufacturer": "YachtMedia",
+      "model": "ESE-4000",
+      "price": 25000,
+      "published": true
+    },
+    {
+      "name": "Stabilization System Advanced",
+      "description": "Active stabilization system for smooth sailing",
+      "category": "Stabilization",
+      "manufacturer": "SeaStable",
+      "model": "SSA-1000",
+      "price": 50000,
+      "published": false
+    }
+  ]
+}

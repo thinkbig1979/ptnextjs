@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,8 +11,14 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Star, ThumbsUp, Search, MessageSquare, Verified, Flag, Calendar } from "lucide-react";
 import type { OwnerReview } from "@/lib/types";
+
+// Dynamically import HCaptcha to avoid SSR issues
+const HCaptcha = dynamic(() => import("@hcaptcha/react-hcaptcha"), {
+  ssr: false,
+});
 
 interface OwnerReviewsProps {
   reviews: OwnerReview[];
@@ -54,6 +61,7 @@ export function OwnerReviews({
   const [currentPage, setCurrentPage] = React.useState(1);
   const [selectedUseCase, setSelectedUseCase] = React.useState<string>('all');
   const [showSubmissionForm, setShowSubmissionForm] = React.useState(false);
+  const [captchaToken, setCaptchaToken] = React.useState<string | null>(null);
   const [newReview, setNewReview] = React.useState<Partial<OwnerReview>>({
     rating: 5,
     title: '',
@@ -142,23 +150,10 @@ export function OwnerReviews({
       count: reviews.filter(r => r.rating === i + 1).length
     }));
 
-    const yachtSizeDistribution = reviews.reduce((acc, r) => {
-      if (!r.yachtLength) return acc;
-      const length = parseInt(r.yachtLength);
-      let category = '50m+';
-      if (length < 30) category = '<30m';
-      else if (length < 40) category = '30-40m';
-      else if (length < 50) category = '40-50m';
-
-      acc[category] = (acc[category] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-
     return {
       avgRating: avgRating.toFixed(1),
       totalReviews: reviews.length,
       ratingDistribution,
-      yachtSizeDistribution
     };
   }, [reviews]);
 
@@ -186,14 +181,15 @@ export function OwnerReviews({
   };
 
   const handleSubmitReview = () => {
-    if (onSubmitReview && newReview.title && newReview.review && newReview.ownerName) {
+    if (onSubmitReview && newReview.title && newReview.review && newReview.ownerName && captchaToken) {
       onSubmitReview({
         ...newReview,
         id: Date.now().toString(),
         productId: 'current-product',
         helpful: 0,
-        verified: false
-      });
+        verified: false,
+        captchaToken, // Pass the captcha token
+      } as any);
       setNewReview({
         rating: 5,
         title: '',
@@ -202,8 +198,21 @@ export function OwnerReviews({
         yachtName: '',
         yachtLength: ''
       });
+      setCaptchaToken(null);
       setShowSubmissionForm(false);
     }
+  };
+
+  const handleCaptchaVerify = (token: string) => {
+    setCaptchaToken(token);
+  };
+
+  const handleCaptchaExpire = () => {
+    setCaptchaToken(null);
+  };
+
+  const handleCaptchaError = () => {
+    setCaptchaToken(null);
   };
 
   const getUseCaseLabel = (useCase: string) => {
@@ -217,24 +226,22 @@ export function OwnerReviews({
     }
   };
 
-  if (reviews.length === 0) {
-    return (
-      <Card className={cn("w-full", className)} data-testid="owner-reviews">
-        <CardContent className="p-6 text-center">
-          <MessageSquare className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-          <p className="text-muted-foreground mb-4">No reviews available for this product yet.</p>
-          {allowSubmission && (
-            <Button onClick={() => setShowSubmissionForm(true)}>
-              Write the First Review
-            </Button>
-          )}
-        </CardContent>
-      </Card>
-    );
-  }
-
   return (
-    <div className={cn("w-full space-y-6", className)} data-testid="owner-reviews">
+    <>
+      {reviews.length === 0 ? (
+        <Card className={cn("w-full", className)} data-testid="owner-reviews">
+          <CardContent className="p-6 text-center">
+            <MessageSquare className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <p className="text-muted-foreground mb-4">No reviews available for this product yet.</p>
+            {allowSubmission && (
+              <Button onClick={() => setShowSubmissionForm(true)}>
+                Write the First Review
+              </Button>
+            )}
+          </CardContent>
+        </Card>
+      ) : (
+        <div className={cn("w-full space-y-6", className)} data-testid="owner-reviews">
       {/* Header with Statistics */}
       <Card>
         <CardHeader>
@@ -262,20 +269,6 @@ export function OwnerReviews({
                   <span className="text-muted-foreground">({statistics.totalReviews} reviews)</span>
                 </div>
               </div>
-
-              {showYachtSizes && (
-                <div data-testid="yacht-size-distribution">
-                  <h3 className="font-medium mb-2">Yacht Size Distribution</h3>
-                  <div className="space-y-1">
-                    {Object.entries(statistics.yachtSizeDistribution).map(([size, count]) => (
-                      <div key={size} className="flex justify-between text-sm">
-                        <span>{size}</span>
-                        <span className="text-muted-foreground">{count}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
           </CardContent>
         )}
@@ -388,7 +381,7 @@ export function OwnerReviews({
                   </div>
 
                   {/* Pros and Cons */}
-                  {(review.pros?.length || review.cons?.length) && (
+                  {((review.pros && review.pros.length > 0) || (review.cons && review.cons.length > 0)) && (
                     <div className="grid gap-4 md:grid-cols-2">
                       {review.pros && review.pros.length > 0 && (
                         <div>
@@ -506,91 +499,112 @@ export function OwnerReviews({
           </div>
         </div>
       )}
+      </div>
+      )}
 
-      {/* Review Submission Form */}
-      {allowSubmission && showSubmissionForm && (
-        <Card data-testid="review-submission-form">
-          <CardHeader>
-            <CardTitle>Write a Review</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <label className="text-sm font-medium">Rating</label>
-              <div className="flex items-center space-x-2 mt-1">
-                {renderStars(newReview.rating || 5, 'md')}
-                <Select
-                  value={newReview.rating?.toString() || '5'}
-                  onValueChange={(value) => setNewReview(prev => ({ ...prev, rating: parseInt(value) }))}
-                >
-                  <SelectTrigger className="w-20">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {[1, 2, 3, 4, 5].map(rating => (
-                      <SelectItem key={rating} value={rating.toString()}>
-                        {rating}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+      {/* Review Submission Modal - Always render when allowSubmission is true */}
+      {allowSubmission && (
+        <Dialog open={showSubmissionForm} onOpenChange={setShowSubmissionForm}>
+          <DialogContent className="sm:max-w-[600px]" data-testid="review-submission-form">
+            <DialogHeader>
+              <DialogTitle>Write a Review</DialogTitle>
+            </DialogHeader>
 
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-4 py-4">
               <div>
-                <label className="text-sm font-medium">Your Name</label>
+                <label className="text-sm font-medium">Rating</label>
+                <div className="flex items-center space-x-2 mt-1">
+                  {renderStars(newReview.rating || 5, 'md')}
+                  <Select
+                    value={newReview.rating?.toString() || '5'}
+                    onValueChange={(value) => setNewReview(prev => ({ ...prev, rating: parseInt(value) }))}
+                  >
+                    <SelectTrigger className="w-20">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {[1, 2, 3, 4, 5].map(rating => (
+                        <SelectItem key={rating} value={rating.toString()}>
+                          {rating}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <div>
+                  <label className="text-sm font-medium">Your Name</label>
+                  <Input
+                    value={newReview.ownerName || ''}
+                    onChange={(e) => setNewReview(prev => ({ ...prev, ownerName: e.target.value }))}
+                    placeholder="Captain Smith"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Yacht Name (optional)</label>
+                  <Input
+                    value={newReview.yachtName || ''}
+                    onChange={(e) => setNewReview(prev => ({ ...prev, yachtName: e.target.value }))}
+                    placeholder="Ocean Dream"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium">Review Title</label>
                 <Input
-                  value={newReview.ownerName || ''}
-                  onChange={(e) => setNewReview(prev => ({ ...prev, ownerName: e.target.value }))}
-                  placeholder="Captain Smith"
+                  value={newReview.title || ''}
+                  onChange={(e) => setNewReview(prev => ({ ...prev, title: e.target.value }))}
+                  placeholder="Great navigation system"
                 />
               </div>
+
               <div>
-                <label className="text-sm font-medium">Yacht Name (optional)</label>
-                <Input
-                  value={newReview.yachtName || ''}
-                  onChange={(e) => setNewReview(prev => ({ ...prev, yachtName: e.target.value }))}
-                  placeholder="Ocean Dream"
+                <label className="text-sm font-medium">Review</label>
+                <Textarea
+                  value={newReview.review || ''}
+                  onChange={(e) => setNewReview(prev => ({ ...prev, review: e.target.value }))}
+                  placeholder="Share your experience with this product..."
+                  rows={4}
                 />
+              </div>
+
+              {/* hCaptcha */}
+              <div className="flex justify-center">
+                {process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY && (
+                  <HCaptcha
+                    sitekey={process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY}
+                    onVerify={handleCaptchaVerify}
+                    onExpire={handleCaptchaExpire}
+                    onError={handleCaptchaError}
+                  />
+                )}
               </div>
             </div>
 
-            <div>
-              <label className="text-sm font-medium">Review Title</label>
-              <Input
-                value={newReview.title || ''}
-                onChange={(e) => setNewReview(prev => ({ ...prev, title: e.target.value }))}
-                placeholder="Great navigation system"
-              />
-            </div>
-
-            <div>
-              <label className="text-sm font-medium">Review</label>
-              <Textarea
-                value={newReview.review || ''}
-                onChange={(e) => setNewReview(prev => ({ ...prev, review: e.target.value }))}
-                placeholder="Share your experience with this product..."
-                rows={4}
-              />
-            </div>
-
-            <div className="flex justify-end space-x-2">
+            <DialogFooter>
               <Button
                 variant="outline"
-                onClick={() => setShowSubmissionForm(false)}
+                onClick={() => {
+                  setShowSubmissionForm(false);
+                  setCaptchaToken(null);
+                }}
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleSubmitReview}
-                disabled={!newReview.title || !newReview.review || !newReview.ownerName}
+                disabled={!newReview.title || !newReview.review || !newReview.ownerName || !captchaToken}
+                data-testid="submit-review-final-button"
               >
                 Submit Review
               </Button>
-            </div>
-          </CardContent>
-        </Card>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       )}
-    </div>
+    </>
   );
 }

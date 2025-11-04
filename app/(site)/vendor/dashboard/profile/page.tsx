@@ -101,7 +101,7 @@ export default function VendorProfilePage() {
       </header>
 
       {/* Profile Edit Tabs */}
-      <ProfileEditTabs vendor={vendor} onSave={saveVendor} />
+      <ProfileEditTabs vendor={vendor} />
     </div>
   );
 }

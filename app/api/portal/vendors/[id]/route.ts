@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { getPayload } from 'payload';
 import config from '@/payload.config';
 import { getUserFromRequest } from '@/lib/middleware/auth-middleware';
@@ -125,6 +126,10 @@ export async function GET(
         userId: user.id,
         vendorId: vendor.id,
         tier: vendor.tier,
+        hasCompanyName: 'companyName' in vendor,
+        hasName: 'name' in vendor,
+        companyNameValue: vendor.companyName,
+        nameValue: vendor.name,
         timestamp: new Date().toISOString(),
       });
 
@@ -286,6 +291,27 @@ export async function PUT(
         updatedFields: Object.keys(updateData),
         timestamp: new Date().toISOString(),
       });
+
+      // Clear the PayloadCMS data service cache for this vendor
+      const { payloadCMSDataService } = await import('@/lib/payload-cms-data-service');
+      // Clear by both ID and slug to ensure all cache keys are invalidated
+      payloadCMSDataService.clearVendorCache(vendorId.toString());
+      if (updatedVendor.slug) {
+        payloadCMSDataService.clearVendorCache(updatedVendor.slug);
+      }
+      console.log('[VendorUpdate] Cleared data service cache for vendor:', vendorId, updatedVendor.slug);
+
+      // Revalidate the vendor's public profile page (ISR on-demand)
+      if (updatedVendor.slug) {
+        try {
+          revalidatePath(`/vendors/${updatedVendor.slug}`);
+          revalidatePath('/vendors'); // Also revalidate the vendors listing page
+          console.log('[VendorUpdate] Revalidated vendor pages:', `/vendors/${updatedVendor.slug}`, '/vendors');
+        } catch (revalidateError) {
+          console.error('[VendorUpdate] Failed to revalidate pages:', revalidateError);
+          // Don't fail the request if revalidation fails
+        }
+      }
 
       // Return updated vendor
       return NextResponse.json(
@@ -542,6 +568,27 @@ export async function PATCH(
       updatedFields: Object.keys(filteredData),
       timestamp: new Date().toISOString(),
     });
+
+    // Clear the PayloadCMS data service cache for this vendor
+    const { payloadCMSDataService } = await import('@/lib/payload-cms-data-service');
+    // Clear by both ID and slug to ensure all cache keys are invalidated
+    payloadCMSDataService.clearVendorCache(vendorId);
+    if (updatedVendor.slug) {
+      payloadCMSDataService.clearVendorCache(updatedVendor.slug);
+    }
+    console.log('[VendorUpdate] Cleared data service cache for vendor:', vendorId, updatedVendor.slug);
+
+    // Revalidate the vendor's public profile page (ISR on-demand)
+    if (updatedVendor.slug) {
+      try {
+        revalidatePath(`/vendors/${updatedVendor.slug}`);
+        revalidatePath('/vendors'); // Also revalidate the vendors listing page
+        console.log('[VendorUpdate] Revalidated vendor pages:', `/vendors/${updatedVendor.slug}`, '/vendors');
+      } catch (revalidateError) {
+        console.error('[VendorUpdate] Failed to revalidate pages:', revalidateError);
+        // Don't fail the request if revalidation fails
+      }
+    }
 
     // Return updated vendor
     return NextResponse.json(

@@ -73,21 +73,23 @@ export function LocationFormFields({
         }
         break;
       case 'latitude':
-        if (value === undefined || value === null || value === '') {
-          return 'Latitude is required';
-        }
-        const lat = Number(value);
-        if (isNaN(lat) || lat < -90 || lat > 90) {
-          return 'Latitude must be between -90 and 90';
+        // Latitude is optional - only validate range if provided
+        // (coordinates can be obtained via geocoding button)
+        if (value !== undefined && value !== null && value !== '') {
+          const lat = Number(value);
+          if (isNaN(lat) || lat < -90 || lat > 90) {
+            return 'Latitude must be between -90 and 90';
+          }
         }
         break;
       case 'longitude':
-        if (value === undefined || value === null || value === '') {
-          return 'Longitude is required';
-        }
-        const lng = Number(value);
-        if (isNaN(lng) || lng < -180 || lng > 180) {
-          return 'Longitude must be between -180 and 180';
+        // Longitude is optional - only validate range if provided
+        // (coordinates can be obtained via geocoding button)
+        if (value !== undefined && value !== null && value !== '') {
+          const lng = Number(value);
+          if (isNaN(lng) || lng < -180 || lng > 180) {
+            return 'Longitude must be between -180 and 180';
+          }
         }
         break;
     }

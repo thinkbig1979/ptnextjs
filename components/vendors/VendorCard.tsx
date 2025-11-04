@@ -36,18 +36,21 @@ export function VendorCard({
   featured = false,
   showTierBadge = true,
 }: VendorCardProps) {
-  const truncateDescription = (text: string, maxLength: number = 150) => {
+  const truncateDescription = (text: string | undefined, maxLength: number = 150) => {
+    if (!text) return '';
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength).trim() + '...';
   };
 
   const locationCount = vendor.locations?.length || 0;
-  const showYearsInBusiness = vendor.foundedYear && vendor.tier && vendor.tier !== 'free';
-  const showFeaturedStar = featured && vendor.tier === 'tier3';
+  const hqLocation = vendor.locations?.find(loc => loc.isHQ === true);
+  const hqCity = hqLocation?.city || null;
+  const showYearsInBusiness = (vendor.foundedYear || vendor.founded) && vendor.tier && vendor.tier !== 'free';
+  const showFeaturedStar = featured || vendor.featured; // Show star for all featured vendors
 
   return (
     <Link href={`/vendors/${vendor.slug}`} className="block">
-      <Card className="h-full transition-all duration-200 hover:shadow-lg hover:scale-[1.02] cursor-pointer">
+      <Card className="h-full min-h-[180px] transition-all duration-200 hover:shadow-lg hover:scale-[1.02] cursor-pointer" data-testid="vendor-card">
         <CardContent className="p-4">
           {/* Mobile: Vertical Layout */}
           <div className="flex flex-col sm:hidden space-y-4">
@@ -71,7 +74,10 @@ export function VendorCard({
               <div className="flex items-center justify-center gap-2 mb-2">
                 {showTierBadge && vendor.tier && <TierBadge tier={vendor.tier} size="sm" />}
                 {showFeaturedStar && (
-                  <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                  <Badge variant="secondary" className="bg-amber-100 text-amber-900 hover:bg-amber-200 dark:bg-amber-900 dark:text-amber-100 gap-1">
+                    <Star className="w-3 h-3 fill-amber-500 text-amber-500" />
+                    Featured
+                  </Badge>
                 )}
               </div>
 
@@ -87,13 +93,14 @@ export function VendorCard({
 
               {/* Metrics */}
               <div className="flex flex-col items-center gap-2">
-                {showYearsInBusiness && vendor.foundedYear && (
-                  <YearsInBusinessDisplay foundedYear={vendor.foundedYear} variant="badge" />
+                {showYearsInBusiness && (vendor.foundedYear || vendor.founded) && (
+                  <YearsInBusinessDisplay foundedYear={vendor.foundedYear || vendor.founded} variant="badge" />
                 )}
-                {locationCount > 0 && (
+                {hqCity && (
                   <Badge variant="outline" className="text-xs">
                     <MapPin className="w-3 h-3 mr-1" />
-                    {locationCount} {locationCount === 1 ? 'Location' : 'Locations'}
+                    {hqCity}
+                    {locationCount > 1 && ` +${locationCount - 1}`}
                   </Badge>
                 )}
               </div>
@@ -118,11 +125,14 @@ export function VendorCard({
 
             {/* Content */}
             <div className="flex-1 min-w-0">
-              {/* Tier Badge and Featured Star */}
+              {/* Tier Badge and Featured Badge */}
               <div className="flex items-center gap-2 mb-2">
                 {showTierBadge && vendor.tier && <TierBadge tier={vendor.tier} size="sm" />}
                 {showFeaturedStar && (
-                  <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                  <Badge variant="secondary" className="bg-amber-100 text-amber-900 hover:bg-amber-200 dark:bg-amber-900 dark:text-amber-100 gap-1">
+                    <Star className="w-3 h-3 fill-amber-500 text-amber-500" />
+                    Featured
+                  </Badge>
                 )}
               </div>
 
@@ -138,13 +148,14 @@ export function VendorCard({
 
               {/* Metrics */}
               <div className="flex items-center gap-2 flex-wrap">
-                {showYearsInBusiness && vendor.foundedYear && (
-                  <YearsInBusinessDisplay foundedYear={vendor.foundedYear} variant="badge" />
+                {showYearsInBusiness && (vendor.foundedYear || vendor.founded) && (
+                  <YearsInBusinessDisplay foundedYear={vendor.foundedYear || vendor.founded} variant="badge" />
                 )}
-                {locationCount > 0 && (
+                {hqCity && (
                   <Badge variant="outline" className="text-xs">
                     <MapPin className="w-3 h-3 mr-1" />
-                    {locationCount} {locationCount === 1 ? 'Location' : 'Locations'}
+                    {hqCity}
+                    {locationCount > 1 && ` +${locationCount - 1}`}
                   </Badge>
                 )}
               </div>

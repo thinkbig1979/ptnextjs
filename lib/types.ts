@@ -34,6 +34,19 @@ export interface Feature {
   order?: number;
 }
 
+export interface ServiceArea {
+  id: string;
+  area: string;
+  description?: string;
+  icon?: string;
+}
+
+export interface CompanyValue {
+  id: string;
+  value: string;
+  description?: string;
+}
+
 export interface SEO {
   id: string;
   meta_title?: string;
@@ -143,12 +156,12 @@ export interface VendorVideoIntroduction {
 
 export interface VendorCaseStudy {
   title: string;
-  slug: string;
+  slug?: string; // Auto-generated from title if not provided
   client?: string;
   challenge: string;
   solution: string;
   results?: string;
-  images?: string[];
+  images?: string[] | null;
   technologies?: string[];
 }
 
@@ -166,6 +179,20 @@ export interface VendorTeamMember {
   photo?: string;
   linkedinUrl?: string;
   expertise?: string[];
+}
+
+export interface VendorPromotionPack {
+  featuredPlacement?: boolean;
+  editorialCoverage?: boolean;
+  searchHighlight?: boolean;
+}
+
+export interface VendorEditorialContent {
+  title: string;
+  excerpt: string;
+  content: string;
+  publishedAt?: string;
+  images?: string[];
 }
 
 export interface VendorYachtProject {
@@ -301,8 +328,8 @@ export interface Vendor {
   // Company details
   foundedYear?: number; // Year company was founded (for years in business computation)
   longDescription?: string; // Detailed company description
-  serviceAreas?: string[]; // Service areas/specializations
-  companyValues?: string[]; // Company values
+  serviceAreas?: ServiceArea[]; // Service areas/specializations
+  companyValues?: CompanyValue[]; // Company values
 
   // Social media
   linkedinUrl?: string;
@@ -342,8 +369,14 @@ export interface Vendor {
   videoIntroduction?: VendorVideoIntroduction;
   caseStudies?: VendorCaseStudy[];
   innovationHighlights?: VendorInnovationHighlight[];
-  teamMembers?: VendorTeamMember[];
+  teamMembers?: TeamMember[];
   yachtProjects?: VendorYachtProject[];
+  promotionPack?: VendorPromotionPack;
+  editorialContent?: VendorEditorialContent[];
+  companyName?: string;
+
+  // Reviews
+  vendorReviews?: VendorReview[];
 
   // Computed/backward compatibility fields
   categoryName?: string; // Alias for category
@@ -474,6 +507,39 @@ export interface OwnerReview {
   images?: string[];
   useCase?: 'commercial_charter' | 'private_use' | 'racing' | 'expedition' | 'day_sailing';
   flagged?: boolean;
+  vendorResponse?: {
+    message: string;
+    respondedAt: string;
+    respondedBy: string;
+  };
+}
+
+export interface VendorReview {
+  id: string;
+  vendorId: string;
+  reviewerName: string;
+  reviewerRole: string;
+  yachtName?: string;
+  projectType?: string;
+  overallRating: number;
+  title?: string;
+  reviewText?: string;
+  review?: string; // For API compatibility
+  pros?: { pro: string }[] | string[];
+  cons?: { con: string }[] | string[];
+  reviewDate?: string;
+  verified?: boolean;
+  helpful?: number;
+  images?: string[];
+  featured?: boolean;
+  flagged?: boolean;
+  ratings?: {
+    quality?: number;
+    communication?: number;
+    timeliness?: number;
+    professionalism?: number;
+    valueForMoney?: number;
+  };
   vendorResponse?: {
     message: string;
     respondedAt: string;

@@ -51,14 +51,6 @@ export function PromotionPackForm({ vendor, onSubmit, isAdmin = false }: Promoti
         currentTier={vendor.tier || 'free'}
         requiredTier="tier3"
         featureName="Promotion Pack"
-        benefits={[
-          'Featured placement on homepage and category pages',
-          'Platform-curated editorial coverage in insights section',
-          'Highlighted search results with premium badges',
-          'Exclusive promotional opportunities',
-          'Priority visibility in vendor listings',
-          'Custom marketing campaigns'
-        ]}
       />
     );
   }
@@ -241,29 +233,29 @@ export function PromotionPackForm({ vendor, onSubmit, isAdmin = false }: Promoti
             <div className="space-y-4">
               {editorialContent.map((article, index) => (
                 <div
-                  key={article.id || index}
+                  key={index}
                   className="p-4 rounded-lg border bg-card space-y-3"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
                       <h4 className="font-semibold text-base mb-2">{article.title}</h4>
-                      {article.summary && (
+                      {article.excerpt && (
                         <p className="text-sm text-muted-foreground mb-3">
-                          {article.summary}
+                          {article.excerpt}
                         </p>
                       )}
                       <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                        {article.publishDate && (
+                        {article.publishedAt && (
                           <div className="flex items-center gap-1">
                             <Calendar className="h-3 w-3" />
-                            {new Date(article.publishDate).toLocaleDateString('en-US', {
+                            {new Date(article.publishedAt).toLocaleDateString('en-US', {
                               year: 'numeric',
                               month: 'long',
                               day: 'numeric'
                             })}
                           </div>
                         )}
-                        {article.image && (
+                        {article.images?.[0] && (
                           <div className="flex items-center gap-1">
                             <ImageIcon className="h-3 w-3" />
                             Featured Image
@@ -271,10 +263,10 @@ export function PromotionPackForm({ vendor, onSubmit, isAdmin = false }: Promoti
                         )}
                       </div>
                     </div>
-                    {article.image && (
+                    {article.images?.[0] && (
                       <div className="flex-shrink-0 w-24 h-24 rounded overflow-hidden bg-muted">
                         <img
-                          src={article.image}
+                          src={article.images?.[0]}
                           alt={article.title}
                           className="w-full h-full object-cover"
                         />

@@ -4,7 +4,7 @@
  * Enforces tier restrictions for vendor profile updates
  */
 
-export type VendorTier = 'free' | 'tier1' | 'tier2';
+export type VendorTier = 'free' | 'tier1' | 'tier2' | 'tier3';
 
 /**
  * Tier-based field access mapping
@@ -21,6 +21,7 @@ const TIER_FIELDS: Record<VendorTier, string[]> = {
     'linkedinUrl',
     'twitterUrl',
     'certifications',
+    'foundedYear', // Tier 1+ for years in business computation
   ],
   tier2: [
     'companyName',
@@ -32,7 +33,21 @@ const TIER_FIELDS: Record<VendorTier, string[]> = {
     'linkedinUrl',
     'twitterUrl',
     'certifications',
+    'foundedYear', // Tier 1+ for years in business computation
     // Tier2 would include products in future, but that's a relationship field
+  ],
+  tier3: [
+    'companyName',
+    'description',
+    'logo',
+    'contactEmail',
+    'contactPhone',
+    'website',
+    'linkedinUrl',
+    'twitterUrl',
+    'certifications',
+    'foundedYear',
+    // Tier3+ unlocks advanced features like case studies, team members, extended portfolio
   ],
 };
 
@@ -111,6 +126,7 @@ export function getTierLevel(tier: VendorTier): number {
     free: 0,
     tier1: 1,
     tier2: 2,
+    tier3: 3,
   };
   return tierLevels[tier] || 0;
 }

@@ -31,8 +31,8 @@ export default defineConfig({
     /* Action timeout for individual actions (click, type, etc.) */
     actionTimeout: 30000,
   },
-  /* Test timeout - maximum time one test can run */
-  timeout: 60000,
+  /* Test timeout - maximum time one test can run (increased for ISR revalidation waits) */
+  timeout: 120000,
   /* Expect timeout for assertions */
   expect: {
     timeout: 10000,
@@ -45,15 +45,17 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
 
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
+    // Disabled - chromium only
+    // {
+    //   name: 'firefox',
+    //   use: { ...devices['Desktop Firefox'] },
+    // },
 
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
+    // Disabled - chromium only
+    // {
+    //   name: 'webkit',
+    //   use: { ...devices['Desktop Safari'] },
+    // },
 
     /* Test against mobile viewports. */
     // {

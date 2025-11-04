@@ -1,7 +1,7 @@
 ---
 name: test-runner
 description: Use proactively to run tests and analyze failures for the current task. Returns detailed failure analysis without making fixes.
-tools: Bash, Read, Grep, Glob
+tools: Bash, Read, Grep, Glob, mcp__beads__create_issue, mcp__beads__list_issues, mcp__beads__update_issue
 color: yellow
 ---
 

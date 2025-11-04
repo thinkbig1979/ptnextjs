@@ -184,6 +184,14 @@ export class VendorProfileService {
   ): Promise<any> {
     const { userId, isAdmin, validateTier = true } = options;
 
+    // Log what's being sent
+    console.log('[VendorProfileService.update] Input data:', {
+      id,
+      hasFoundedYear: 'foundedYear' in data,
+      foundedYearValue: data.foundedYear,
+      updatingFields: Object.keys(data),
+    });
+
     const payload = await getPayload({ config });
 
     // Fetch existing vendor
@@ -238,6 +246,14 @@ export class VendorProfileService {
       collection: 'vendors',
       id,
       data,
+    });
+
+    // Log what Payload returned
+    console.log('[VendorProfileService.update] Payload response:', {
+      id: updatedVendor.id,
+      hasFoundedYear: 'foundedYear' in updatedVendor,
+      foundedYearValue: updatedVendor.foundedYear,
+      tier: updatedVendor.tier,
     });
 
     // Enrich with computed fields

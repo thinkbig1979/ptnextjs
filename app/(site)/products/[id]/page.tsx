@@ -8,13 +8,11 @@ import {
   ArrowLeft,
   Building2,
   Package,
-  Star,
   CheckCircle,
   Zap,
   Shield,
   Wrench,
   ExternalLink,
-  BarChart3,
   Settings,
   MessageSquare,
   Eye
@@ -24,18 +22,19 @@ import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { notFound, redirect } from "next/navigation";
 import { formatVendorLocation } from "@/lib/utils/location";
+import { extractDescriptionText, getDescriptionPreview } from "@/lib/utils/lexical-helpers";
 import ProductDetailClient from "./_components/product-detail-client";
+import ProductReviewsClient from "./_components/product-reviews-client";
 import {
   IntegrationNotes,
-  PerformanceMetrics,
-  OwnerReviews,
   VisualDemo
 } from "@/components/product-comparison";
 
 // Force static generation for optimal SEO and performance
 export const dynamic = 'force-static';
 export const dynamicParams = true;
-export const revalidate = false;
+// ISR: Revalidate every 10s in dev, 5min in production
+export const revalidate = 300; // ISR: Revalidate every 5 minutes
 
 // Generate static params for all products at build time
 export async function generateStaticParams() {
@@ -178,7 +177,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
               </h1>
               
               <p className="text-xl text-muted-foreground mb-6 font-poppins-light leading-relaxed" data-testid="product-description">
-                {product.description}
+                {extractDescriptionText(product.description)}
               </p>
 
               {/* Partner Info */}
@@ -251,7 +250,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {product.features.map((feature, index) => (
                     <div key={feature?.id || index} className="flex items-start space-x-3 p-4 bg-card rounded-lg border">
-                      <Star className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
                       <span className="font-poppins-light">
                         {typeof feature === 'string' ? feature : (feature?.title || 'Feature')}
                       </span>
@@ -319,7 +318,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                         </CardHeader>
                         <CardContent>
                           <p className="text-sm text-muted-foreground text-center">
-                            {service.description}
+                            {getDescriptionPreview(service.description, 200)}
                           </p>
                         </CardContent>
                       </Card>
@@ -330,16 +329,8 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
             {/* Product Enhancement Sections */}
             <div className="mb-8">
-              <Tabs defaultValue="overview" className="w-full">
-                <TabsList className="grid w-full grid-cols-5">
-                  <TabsTrigger value="overview" className="flex items-center space-x-2">
-                    <Star className="h-4 w-4" />
-                    <span className="hidden sm:inline">Overview</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="performance" className="flex items-center space-x-2">
-                    <BarChart3 className="h-4 w-4" />
-                    <span className="hidden sm:inline">Performance</span>
-                  </TabsTrigger>
+              <Tabs defaultValue="integration" className="w-full">
+                <TabsList className="grid w-full grid-cols-3">
                   <TabsTrigger value="integration" className="flex items-center space-x-2">
                     <Settings className="h-4 w-4" />
                     <span className="hidden sm:inline">Integration</span>
@@ -353,47 +344,6 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                     <span className="hidden sm:inline">Demo</span>
                   </TabsTrigger>
                 </TabsList>
-
-                <TabsContent value="overview" className="space-y-6 mt-6">
-                  <div>
-                    <h3 className="text-xl font-cormorant font-bold mb-4">Product Overview</h3>
-                    <Card>
-                      <CardContent className="p-6">
-                        <p className="text-muted-foreground leading-relaxed">
-                          Get comprehensive insights into this product&apos;s capabilities, specifications, and real-world performance.
-                          Explore detailed comparisons, integration possibilities, and feedback from actual users.
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="performance" className="space-y-6 mt-6">
-                  <div data-testid="comparison-metrics">
-                    <h3 className="text-xl font-cormorant font-bold mb-4">Performance Metrics</h3>
-                    {product.performanceMetrics && product.performanceMetrics.length > 0 ? (
-                      <PerformanceMetrics
-                        metrics={product.performanceMetrics}
-                        product={product}
-                        visualizationType="table"
-                        showTrends
-                        showBenchmarks
-                        enablePdfDownload
-                        showTolerances
-                        sortable
-                      />
-                    ) : (
-                      <Card>
-                        <CardContent className="p-6 text-center">
-                          <BarChart3 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                          <p className="text-muted-foreground">
-                            Performance metrics will be available soon. Contact our technical team for detailed specifications.
-                          </p>
-                        </CardContent>
-                      </Card>
-                    )}
-                  </div>
-                </TabsContent>
 
                 <TabsContent value="integration" className="space-y-6 mt-6">
                   <div>
@@ -412,29 +362,10 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                 <TabsContent value="reviews" className="space-y-6 mt-6">
                   <div data-testid="owner-reviews">
                     <h3 className="text-xl font-cormorant font-bold mb-4">Owner Reviews</h3>
-                    {product.ownerReviews && product.ownerReviews.length > 0 ? (
-                      <OwnerReviews
-                        reviews={product.ownerReviews}
-                        showStatistics
-                        searchable
-                        showInstallationDates
-                        showYachtSizes
-                        groupByUseCase
-                        allowSubmission
-                      />
-                    ) : (
-                      <Card>
-                        <CardContent className="p-6 text-center">
-                          <MessageSquare className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                          <p className="text-muted-foreground mb-4">
-                            No reviews available yet. Be the first to share your experience with this product.
-                          </p>
-                          <Button variant="outline">
-                            Write a Review
-                          </Button>
-                        </CardContent>
-                      </Card>
-                    )}
+                    <ProductReviewsClient
+                      product={product}
+                      initialReviews={product.ownerReviews || []}
+                    />
                   </div>
                 </TabsContent>
 
@@ -516,9 +447,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                                 {partner.name}
                               </div>
                               <div className="text-sm text-muted-foreground leading-relaxed word-wrap break-words hyphens-auto">
-                                {partner.description && partner.description.length > 120 
-                                  ? `${partner.description.substring(0, 120)}...` 
-                                  : partner.description || 'Partner description coming soon.'}
+                                {getDescriptionPreview(partner.description, 120) || 'Partner description coming soon.'}
                               </div>
                               <div className="flex items-center text-accent text-sm mt-2">
                                 <span className="mr-1">Learn more</span>

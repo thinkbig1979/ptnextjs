@@ -40,8 +40,8 @@ test.describe('Brand Story Tier Access Fix Verification', () => {
     let hasUpgradePrompt = false;
 
     for (let i = 0; i < dialogCount; i++) {
-      const text = await upgradeDialog.nth(i).textContent().catch(() => '');
-      if (text.includes('Upgrade') || text.includes('Unlock') || text.includes('tier')) {
+      const text: string | null = await upgradeDialog.nth(i).textContent().catch(() => '');
+      if (text && (text.includes('Upgrade') || text.includes('Unlock') || text.includes('tier'))) {
         hasUpgradePrompt = true;
         console.error(`✗ Found upgrade prompt: "${text.substring(0, 100)}..."`);
       }

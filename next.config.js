@@ -38,6 +38,9 @@ const nextConfig = {
   // Transpile packages that have ESM issues with Next.js 15
   transpilePackages: ['clsx', 'tailwind-merge', 'class-variance-authority'],
 
+  // External packages that should not be bundled (server-side only)
+  serverExternalPackages: ['payload', '@payloadcms/db-sqlite', '@payloadcms/db-postgres'],
+
   // Webpack configuration
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
     // Bundle analyzer for development

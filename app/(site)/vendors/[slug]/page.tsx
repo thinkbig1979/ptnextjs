@@ -9,7 +9,8 @@ import {
   Package,
   MapPin,
   Info,
-  Globe
+  Globe,
+  MessageSquare
 } from "lucide-react";
 import Link from "next/link";
 import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
@@ -27,11 +28,14 @@ import { VendorCertificationsSection } from "@/components/vendors/VendorCertific
 import { VendorCaseStudiesSection } from "@/components/vendors/VendorCaseStudiesSection";
 import { VendorTeamSection } from "@/components/vendors/VendorTeamSection";
 import { VendorProductsSection } from "@/components/vendors/VendorProductsSection";
+import VendorReviewsWrapper from "./_components/vendor-reviews-wrapper";
 
-// Force static generation for optimal SEO and performance
-export const dynamic = 'force-static';
+// Static generation with on-demand revalidation
+// 'auto' allows revalidatePath() to work (force-static blocks it)
+export const dynamic = 'auto';
 export const dynamicParams = true;
-export const revalidate = false;
+// ISR: Revalidate every 60s in production, on-demand in dev
+export const revalidate = 60;
 
 // Generate static params for all vendors at build time
 export async function generateStaticParams() {
@@ -142,6 +146,11 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
   }
 
   console.log(`✅ Loading vendor: ${vendor.name} (Tier: ${vendor.tier || 'free'})`);
+  console.log(`🔍 DEBUG foundedYear:`, {
+    hasFoundedYear: 'foundedYear' in vendor,
+    foundedYearValue: vendor.foundedYear,
+    vendorKeys: Object.keys(vendor).sort(),
+  });
 
   // Find products from this vendor
   const vendorProducts = await payloadCMSDataService.getProductsByVendor(vendor.id);
@@ -168,19 +177,26 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
 
             {/* Tabbed Content Interface */}
             <Tabs defaultValue="about" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="about" className="flex items-center space-x-2">
+              <TabsList className={`grid w-full ${vendor.tier && ['tier2', 'tier3'].includes(vendor.tier) ? 'grid-cols-4' : 'grid-cols-3'}`}>
+                <TabsTrigger value="about" aria-label="About" className="flex items-center space-x-2">
                   <Info className="h-4 w-4" />
                   <span className="hidden sm:inline">About</span>
                 </TabsTrigger>
-                <TabsTrigger value="locations" className="flex items-center space-x-2">
+                <TabsTrigger value="locations" aria-label="Locations" className="flex items-center space-x-2">
                   <Globe className="h-4 w-4" />
                   <span className="hidden sm:inline">Locations</span>
                 </TabsTrigger>
-                <TabsTrigger value="products" className="flex items-center space-x-2">
-                  <Package className="h-4 w-4" />
-                  <span className="hidden sm:inline">Products</span>
+                <TabsTrigger value="reviews" aria-label="Reviews" className="flex items-center space-x-2">
+                  <MessageSquare className="h-4 w-4" />
+                  <span className="hidden sm:inline">Reviews</span>
                 </TabsTrigger>
+                {/* Only show Products tab for Tier 2+ vendors */}
+                {vendor.tier && ['tier2', 'tier3'].includes(vendor.tier) && (
+                  <TabsTrigger value="products" aria-label="Products" className="flex items-center space-x-2">
+                    <Package className="h-4 w-4" />
+                    <span className="hidden sm:inline">Products</span>
+                  </TabsTrigger>
+                )}
               </TabsList>
 
               {/* About Tab - Shows tier-responsive content */}
@@ -205,14 +221,25 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
                 </div>
               </TabsContent>
 
-              {/* Products Tab - Tier 2+ only */}
-              <TabsContent value="products" className="space-y-6 mt-6">
-                <VendorProductsSection
-                  vendorName={vendor.name}
-                  vendorTier={vendor.tier}
-                  products={vendorProducts}
+              {/* Reviews Tab */}
+              <TabsContent value="reviews" className="space-y-6 mt-6">
+                <VendorReviewsWrapper
+                  vendorId={vendor.id}
+                  vendorSlug={vendor.slug || slug}
+                  vendorReviews={vendor.vendorReviews}
                 />
               </TabsContent>
+
+              {/* Products Tab - Tier 2+ only */}
+              {vendor.tier && ['tier2', 'tier3'].includes(vendor.tier) && (
+                <TabsContent value="products" className="space-y-6 mt-6">
+                  <VendorProductsSection
+                    vendorName={vendor.name}
+                    vendorTier={vendor.tier}
+                    products={vendorProducts}
+                  />
+                </TabsContent>
+              )}
             </Tabs>
           </div>
 
@@ -252,10 +279,13 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
                           <span>{formatVendorLocation(vendor.location)}</span>
                         </div>
                       )}
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Products:</span>
-                        <span>{vendorProducts.length}</span>
-                      </div>
+                      {/* Only show product count for Tier 2+ vendors */}
+                      {vendor.tier && ['tier2', 'tier3'].includes(vendor.tier) && (
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Products:</span>
+                          <span>{vendorProducts.length}</span>
+                        </div>
+                      )}
                       {vendor.partner && (
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Status:</span>

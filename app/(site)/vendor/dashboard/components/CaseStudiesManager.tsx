@@ -135,7 +135,7 @@ export function CaseStudiesManager({ vendor }: CaseStudiesManagerProps) {
     const updatedCaseStudies = caseStudies.filter((_, i) => i !== deletingIndex);
     setCaseStudies(updatedCaseStudies);
     updateVendor({ caseStudies: updatedCaseStudies });
-    markDirty();
+    markDirty(true);
     setDeleteDialogOpen(false);
     setDeletingIndex(null);
   };
@@ -165,7 +165,7 @@ export function CaseStudiesManager({ vendor }: CaseStudiesManagerProps) {
 
     setCaseStudies(updatedCaseStudies);
     updateVendor({ caseStudies: updatedCaseStudies });
-    markDirty();
+    markDirty(true);
     setModalOpen(false);
     reset(CASE_STUDY_DEFAULT_VALUES);
     setImageUrls([]);
@@ -178,7 +178,7 @@ export function CaseStudiesManager({ vendor }: CaseStudiesManagerProps) {
     );
     setCaseStudies(updatedCaseStudies);
     updateVendor({ caseStudies: updatedCaseStudies });
-    markDirty();
+    markDirty(true);
   };
 
   // Image management functions
@@ -222,10 +222,9 @@ export function CaseStudiesManager({ vendor }: CaseStudiesManagerProps) {
   if (!hasTierAccess) {
     return (
       <TierUpgradePrompt
-        currentTier={vendor.tier}
-        targetTier="tier1"
-        feature="Case Studies"
-        description="Showcase your successful projects with detailed case studies including challenges, solutions, results, and client testimonials."
+        currentTier={vendor.tier || 'free'}
+        requiredTier="tier1"
+        featureName="Case Studies"
       />
     );
   }

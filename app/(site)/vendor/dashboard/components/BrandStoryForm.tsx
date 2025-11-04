@@ -69,20 +69,46 @@ export function BrandStoryForm({ vendor, onSubmit }: BrandStoryFormProps) {
       videoDuration: vendor.videoDuration || '',
       videoTitle: vendor.videoTitle || '',
       videoDescription: vendor.videoDescription || '',
-      serviceAreas: vendor.serviceAreas || [],
-      companyValues: vendor.companyValues || [],
+      serviceAreas: (vendor.serviceAreas || []).map((area: any) => typeof area === 'string' ? area : area.area || area.value || ''),
+      companyValues: (vendor.companyValues || []).map((val: any) => typeof val === 'string' ? val : val.value || ''),
     },
   });
+  // TODO: Fix TypeScript issue with useFieldArray
+  // const { fields: serviceAreasFields, append: appendServiceArea, remove: removeServiceArea } = useFieldArray({
+  //   control,
+  //   name: 'serviceAreas',
+  // });
+  // const { fields: companyValuesFields, append: appendCompanyValue, remove: removeCompanyValue } = useFieldArray({
+  //   control,
+  //   name: 'companyValues',
+  // });
 
-  const { fields: serviceAreasFields, append: appendServiceArea, remove: removeServiceArea } = useFieldArray({
-    control,
-    name: 'serviceAreas',
-  });
+  // Temporary workaround - using state directly
+  const [serviceAreasFields, setServiceAreasFields] = useState<Array<{id: string, value: string}>>(
+    (vendor.serviceAreas || []).map((area: any, idx: number) => ({
+      id: `area-${idx}`,
+      value: typeof area === 'string' ? area : area.area || area.value || ''
+    }))
+  );
+  const [companyValuesFields, setCompanyValuesFields] = useState<Array<{id: string, value: string}>>(
+    (vendor.companyValues || []).map((value: any, idx: number) => ({
+      id: `value-${idx}`,
+      value: typeof value === 'string' ? value : value.value || ''
+    }))
+  );
 
-  const { fields: companyValuesFields, append: appendCompanyValue, remove: removeCompanyValue } = useFieldArray({
-    control,
-    name: 'companyValues',
-  });
+  const appendServiceArea = (value: string) => {
+    setServiceAreasFields([...serviceAreasFields, { id: `area-${Date.now()}`, value }]);
+  };
+  const removeServiceArea = (index: number) => {
+    setServiceAreasFields(serviceAreasFields.filter((_, i) => i !== index));
+  };
+  const appendCompanyValue = (value: string) => {
+    setCompanyValuesFields([...companyValuesFields, { id: `value-${Date.now()}`, value }]);
+  };
+  const removeCompanyValue = (index: number) => {
+    setCompanyValuesFields(companyValuesFields.filter((_, i) => i !== index));
+  };
 
   const foundedYear = watch('foundedYear');
   const longDescription = watch('longDescription');
@@ -120,8 +146,8 @@ export function BrandStoryForm({ vendor, onSubmit }: BrandStoryFormProps) {
         videoDuration: data.videoDuration || undefined,
         videoTitle: data.videoTitle || undefined,
         videoDescription: data.videoDescription || undefined,
-        serviceAreas: data.serviceAreas || undefined,
-        companyValues: data.companyValues || undefined,
+        serviceAreas: data.serviceAreas?.map((area: any) => typeof area === 'string' ? area : area.value || '') || undefined,
+        companyValues: data.companyValues?.map((val: any) => typeof val === 'string' ? val : val.value || '') || undefined,
       });
     }
 
@@ -133,19 +159,9 @@ export function BrandStoryForm({ vendor, onSubmit }: BrandStoryFormProps) {
   if (!hasAccess) {
     return (
       <TierUpgradePrompt
-        featureName="Brand Story"
+        currentTier={vendor.tier || 'free'}
         requiredTier="tier1"
-        benefits={[
-          'Share your company story and values',
-          'Display years in business',
-          'Showcase social proof metrics',
-          'Add video introduction',
-          'Highlight service areas',
-        ]}
-        onUpgrade={() => {
-          // TODO: Implement upgrade flow
-          console.log('Upgrade to Tier 1');
-        }}
+        featureName="Brand Story"
       />
     );
   }

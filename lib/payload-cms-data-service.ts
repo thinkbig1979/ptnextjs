@@ -5,6 +5,7 @@
 
 import { getPayload } from 'payload';
 import config from '@/payload.config';
+import { lexicalToPlainText, type LexicalDocument } from './transformers/markdown-to-lexical';
 import type {
   Vendor,
   Partner,
@@ -19,6 +20,8 @@ import type {
   OwnerReview,
   VisualDemoContent,
   VendorLocation,
+  SystemRequirements,
+  SystemCompatibility,
 } from './types';
 
 interface CacheEntry<T> {
@@ -94,6 +97,28 @@ class PayloadCMSDataService {
     // If it has a root node (Lexical document structure)
     if (lexicalData.root && lexicalData.root.children) {
       return this.lexicalNodeToHtml(lexicalData.root.children);
+    }
+
+    // Fallback to string conversion
+    return String(lexicalData);
+  }
+
+  /**
+   * Transforms Lexical rich text format to plain text string
+   * Extracts only the text content without HTML tags
+   */
+  private transformLexicalToPlainText(lexicalData: any): string {
+    if (!lexicalData) return '';
+
+    // If it's already a string, return it
+    if (typeof lexicalData === 'string') {
+      // Strip any HTML tags if present
+      return lexicalData.replace(/<[^>]*>/g, '').trim();
+    }
+
+    // If it has a root node (Lexical document structure)
+    if (lexicalData.root && lexicalData.root.children) {
+      return lexicalToPlainText(lexicalData as LexicalDocument);
     }
 
     // Fallback to string conversion
@@ -293,6 +318,31 @@ class PayloadCMSDataService {
       isHQ: loc.isHQ || false,
     })) || undefined;
 
+    // ============================================================================
+    // SECTION 10: VENDOR REVIEWS ARRAY - Transform review data
+    // ============================================================================
+    const vendorReviews = doc.vendorReviews?.map((review: any) => ({
+      id: review.id || '',
+      reviewerName: review.reviewerName || '',
+      reviewerRole: review.reviewerRole || '',
+      yachtName: review.yachtName,
+      projectType: review.projectType,
+      overallRating: review.overallRating || 0,
+      ratings: {
+        quality: review.ratings?.quality,
+        communication: review.ratings?.communication,
+        timeliness: review.ratings?.timeliness,
+        professionalism: review.ratings?.professionalism,
+        valueForMoney: review.ratings?.valueForMoney,
+      },
+      reviewText: review.reviewText,
+      reviewDate: review.reviewDate,
+      verified: review.verified || false,
+      featured: review.featured || false,
+      pros: review.pros || [],
+      cons: review.cons || [],
+    })) || [];
+
     return {
       id: doc.id ? doc.id.toString() : '',
       slug: doc.slug || '',
@@ -303,13 +353,30 @@ class PayloadCMSDataService {
       image: this.transformMediaPath(doc.image || ''),
       website: doc.website || '',
       founded: doc.founded,
+      foundedYear: doc.foundedYear || doc.founded, // Fallback to founded for backward compatibility
       location,
       locations,
       tier: doc.tier || 'free',
-      tags: [],
+      tags: doc.tags?.map((tag: any) => tag.name || tag) || [],
       featured: doc.featured || false,
       partner: doc.partner !== undefined ? doc.partner : false,
       services: doc.services || [],
+      contactEmail: doc.contactEmail,
+      contactPhone: doc.contactPhone,
+      longDescription: this.transformLexicalToHtml(doc.longDescription),
+      serviceAreas: doc.serviceAreas || [],
+      companyValues: doc.companyValues || [],
+      totalProjects: doc.totalProjects,
+      employeeCount: doc.employeeCount,
+      linkedinFollowers: doc.linkedinFollowers,
+      instagramFollowers: doc.instagramFollowers,
+      clientSatisfactionScore: doc.clientSatisfactionScore,
+      repeatClientPercentage: doc.repeatClientPercentage,
+      videoUrl: doc.videoUrl,
+      videoThumbnail: doc.videoThumbnail?.url ? this.transformMediaPath(doc.videoThumbnail.url) : undefined,
+      videoDuration: doc.videoDuration,
+      videoTitle: doc.videoTitle,
+      videoDescription: doc.videoDescription,
       certifications,
       awards,
       socialProof,
@@ -318,6 +385,7 @@ class PayloadCMSDataService {
       innovationHighlights,
       teamMembers,
       yachtProjects,
+      vendorReviews,
     };
   }
 
@@ -343,6 +411,29 @@ class PayloadCMSDataService {
     const integrationCompatibility = doc.integrationCompatibility?.supportedProtocols?.map((proto: any) => proto.protocol) || [];
 
     // ============================================================================
+    // SECTION 2A: SYSTEM REQUIREMENTS - Transform system requirements object
+    // ============================================================================
+    const systemRequirements: SystemRequirements | undefined = doc.integrationCompatibility?.systemRequirements ? {
+      powerSupply: doc.integrationCompatibility.systemRequirements.powerSupply || undefined,
+      mounting: doc.integrationCompatibility.systemRequirements.mounting || undefined,
+      operatingTemp: doc.integrationCompatibility.systemRequirements.operatingTemp || undefined,
+      certification: doc.integrationCompatibility.systemRequirements.certification || undefined,
+      ipRating: doc.integrationCompatibility.systemRequirements.ipRating || undefined,
+    } : undefined;
+
+    // ============================================================================
+    // SECTION 2B: COMPATIBILITY MATRIX - Transform compatibility matrix array
+    // ============================================================================
+    const compatibilityMatrix: SystemCompatibility[] = doc.integrationCompatibility?.compatibilityMatrix?.map((item: any) => ({
+      system: item.system || '',
+      compatibility: item.compatibility || 'none',
+      notes: item.notes || undefined,
+      requirements: item.requirements?.map((req: any) => req.requirement).filter(Boolean) || undefined,
+      complexity: item.complexity || undefined,
+      estimatedCost: item.estimatedCost || undefined,
+    })) || [];
+
+    // ============================================================================
     // SECTION 3: OWNER REVIEWS ARRAY - Transform Lexical reviewText, resolve yacht relationships
     // ============================================================================
     const ownerReviews: OwnerReview[] = doc.ownerReviews?.map((review: any) => ({
@@ -352,8 +443,8 @@ class PayloadCMSDataService {
       yachtName: review.yachtName || undefined,
       yachtLength: undefined, // Not in Payload schema
       rating: review.overallRating || 0,
-      title: review.reviewText ? this.transformLexicalToHtml(review.reviewText).substring(0, 100) : '',
-      review: this.transformLexicalToHtml(review.reviewText),
+      title: review.reviewText ? this.transformLexicalToPlainText(review.reviewText).substring(0, 100) : '',
+      review: this.transformLexicalToPlainText(review.reviewText),
       pros: review.pros?.map((p: any) => p.pro) || undefined,
       cons: review.cons?.map((c: any) => c.con) || undefined,
       installationDate: undefined, // Not in Payload schema
@@ -437,6 +528,8 @@ class PayloadCMSDataService {
         value: spec.value,
       })) || [],
       integrationCompatibility,
+      systemRequirements,
+      compatibilityMatrix,
       ownerReviews,
       visualDemo,
       vendor: vendor ? this.transformPayloadVendor(vendor) : undefined,
@@ -797,7 +890,16 @@ class PayloadCMSDataService {
         depth: 3,
       });
 
-      return result.docs.map(doc => this.transformPayloadProduct(doc));
+      const products = result.docs.map(doc => this.transformPayloadProduct(doc));
+      
+      // Filter out products from free tier or tier1 vendors
+      // Only show products from tier2+ vendors on the public products page
+      const filteredProducts = products.filter(product => {
+        const vendorTier = product.vendor?.tier;
+        return vendorTier && ['tier2', 'tier3'].includes(vendorTier);
+      });
+
+      return filteredProducts;
     });
   }
 
@@ -811,8 +913,10 @@ class PayloadCMSDataService {
 
     const targetId = params?.vendorId || params?.partnerId;
     if (targetId) {
+      // Convert targetId to string for comparison (handles both number and string inputs)
+      const targetIdStr = targetId.toString();
       filtered = filtered.filter(
-        product => product.vendorId === targetId || product.partnerId === targetId
+        product => product.vendorId === targetIdStr || product.partnerId === targetIdStr
       );
     }
 
@@ -1214,21 +1318,49 @@ class PayloadCMSDataService {
     console.log('🗑️ Payload CMS cache cleared');
   }
 
-  clearVendorCache(vendorId?: string): void {
-    if (vendorId) {
-      // Clear specific vendor cache
-      const keysToDelete = Array.from(this.cache.keys()).filter((key) =>
-        (key.includes(`vendor-`) || key.includes(`enhanced-vendor:`)) && key.includes(vendorId)
-      );
-      keysToDelete.forEach((key) => this.cache.delete(key));
-      this.cache.delete(`vendors`);
-      this.cache.delete(`partners`);
+  clearVendorCache(vendorIdOrSlug?: string): void {
+    if (vendorIdOrSlug) {
+      // Construct all possible cache keys for this vendor
+      const keysToDelete = [
+        // Direct lookups
+        `vendor:${vendorIdOrSlug}`,           // By slug
+        `vendor-id:${vendorIdOrSlug}`,        // By ID
+        `enhanced-vendor:${vendorIdOrSlug}`,  // Enhanced by either
+        
+        // Derived data caches
+        `vendor-certifications:${vendorIdOrSlug}`,
+        `vendor-awards:${vendorIdOrSlug}`,
+        `vendor-social-proof:${vendorIdOrSlug}`,
+        
+        // Related data caches
+        `yachts:vendor:${vendorIdOrSlug}`,
+        `products:vendor:${vendorIdOrSlug}`,
+      ];
+      
+      // Delete exact keys
+      let deletedCount = 0;
+      keysToDelete.forEach(key => {
+        if (this.cache.has(key)) {
+          this.cache.delete(key);
+          console.log(`[Cache] ✓ Deleted: ${key}`);
+          deletedCount++;
+        }
+      });
+      
+      // Always clear lists since vendor was modified
+      const listKeys = ['vendors', 'partners', 'featured-partners', 'products'];
+      listKeys.forEach(key => {
+        if (this.cache.has(key)) {
+          this.cache.delete(key);
+          deletedCount++;
+        }
+      });
+      
+      console.log(`[Cache] Cleared ${deletedCount} cache entries for vendor: ${vendorIdOrSlug}`);
     } else {
       // Clear all vendor-related cache
-      const keysToDelete = Array.from(this.cache.keys()).filter((key) =>
-        key.includes('vendor') || key.includes('partner')
-      );
-      keysToDelete.forEach((key) => this.cache.delete(key));
+      this.cache.clear();
+      console.log('[Cache] Cleared entire data service cache');
     }
   }
 

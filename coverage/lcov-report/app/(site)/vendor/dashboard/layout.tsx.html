@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/8</span>
+                <span class='fraction'>0/12</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/8</span>
+                <span class='fraction'>0/12</span>
             </div>
         
             
@@ -135,12 +135,24 @@
 <a name='L70'></a><a href='#L70'>70</a>
 <a name='L71'></a><a href='#L71'>71</a>
 <a name='L72'></a><a href='#L72'>72</a>
-<a name='L73'></a><a href='#L73'>73</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a>
+<a name='L82'></a><a href='#L82'>82</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -154,9 +166,15 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -209,7 +227,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">'use client';
 &nbsp;
-import React, { useState } from <span class="cstat-no" title="statement not covered" >'react';</span>
+import React, { useState, useEffect } from <span class="cstat-no" title="statement not covered" >'react';</span>
+import { useAuth } from <span class="cstat-no" title="statement not covered" >'@/lib/context/AuthContext';</span>
+import { VendorDashboardProvider } from <span class="cstat-no" title="statement not covered" >'@/lib/context/VendorDashboardContext';</span>
 import { VendorNavigation } from <span class="cstat-no" title="statement not covered" >'@/components/vendor/VendorNavigation';</span>
 import { Button } from <span class="cstat-no" title="statement not covered" >'@/components/ui/button';</span>
 import { Menu, X } from <span class="cstat-no" title="statement not covered" >'lucide-react';</span>
@@ -223,60 +243,67 @@ export interface VendorDashboardLayoutProps {
  *
  * Layout wrapper for vendor dashboard pages with responsive sidebar navigation.
  * Sidebar is fixed on desktop (&gt;=768px) and collapsible via hamburger menu on mobile.
+ * Wraps children with VendorDashboardProvider for state management.
  */
 export default function <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >VendorDashboardLayout({</span></span> children }: VendorDashboardLayoutProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = <span class="cstat-no" title="statement not covered" >useState(false);</span>
+  const { user } = <span class="cstat-no" title="statement not covered" >useAuth();</span>
 &nbsp;
   const toggleMobileMenu = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >() =&gt; {</span></span>
 <span class="cstat-no" title="statement not covered" >    setIsMobileMenuOpen(!isMobileMenuOpen);</span>
   };
 &nbsp;
+  // Get user ID from authenticated user (will be used to look up vendor by user_id)
+  const vendorId = <span class="cstat-no" title="statement not covered" >user?.id?.toString();</span>
+&nbsp;
   return (
-    &lt;div className="flex h-screen overflow-hidden"&gt;
-      {/* Mobile Menu Button - Only visible on mobile */}
-      &lt;div className="fixed top-4 left-4 z-50 md:hidden"&gt;
-        &lt;Button
-          onClick={toggleMobileMenu}
-          variant="outline"
-          size="icon"
-          aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
-          className="bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-white shadow-lg"
-        &gt;
-          {isMobileMenuOpen ? (
-<span class="branch-0 cbranch-no" title="branch not covered" >            &lt;X className="h-5 w-5" aria-hidden="true" /&gt;</span>
-          ) : (
-            &lt;Menu className="h-5 w-5" aria-hidden="true" /&gt;
-          )}
-        &lt;/Button&gt;
-      &lt;/div&gt;
-&nbsp;
-      {/* Sidebar - Fixed on desktop, overlay on mobile */}
-      &lt;aside
-        className={`
-          fixed md:static inset-y-0 left-0 z-40
-          w-64 transform transition-transform duration-300 ease-in-out
-          ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-        `}
-      &gt;
-        &lt;VendorNavigation className="h-full" /&gt;
-      &lt;/aside&gt;
-&nbsp;
-      {/* Mobile Menu Overlay */}
-      {<span class="branch-0 cbranch-no" title="branch not covered" >isMobileMenuOpen &amp;&amp; (</span>
-        &lt;div
-          className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-30 md:hidden"
-          onClick={toggleMobileMenu}
-          aria-hidden="true"
-        /&gt;
-      )}
-&nbsp;
-      {/* Main Content Area */}
-      &lt;main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-slate-900 md:ml-0"&gt;
-        &lt;div className="container mx-auto px-4 py-8 md:px-8 md:py-12 mt-16 md:mt-0"&gt;
-          {children}
+    &lt;VendorDashboardProvider vendorId={vendorId}&gt;
+      &lt;div className="flex h-screen overflow-hidden"&gt;
+        {/* Mobile Menu Button - Only visible on mobile */}
+        &lt;div className="fixed top-4 left-4 z-50 md:hidden"&gt;
+          &lt;Button
+            onClick={toggleMobileMenu}
+            variant="outline"
+            size="icon"
+            aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+            className="bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-white shadow-lg"
+          &gt;
+            {isMobileMenuOpen ? (
+<span class="branch-0 cbranch-no" title="branch not covered" >              &lt;X className="h-5 w-5" aria-hidden="true" /&gt;</span>
+            ) : (
+              &lt;Menu className="h-5 w-5" aria-hidden="true" /&gt;
+            )}
+          &lt;/Button&gt;
         &lt;/div&gt;
-      &lt;/main&gt;
-    &lt;/div&gt;
+&nbsp;
+        {/* Sidebar - Fixed on desktop, overlay on mobile */}
+        &lt;aside
+          className={`
+            fixed md:static inset-y-0 left-0 z-40
+            w-64 transform transition-transform duration-300 ease-in-out
+            ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+          `}
+        &gt;
+          &lt;VendorNavigation className="h-full" /&gt;
+        &lt;/aside&gt;
+&nbsp;
+        {/* Mobile Menu Overlay */}
+        {<span class="branch-0 cbranch-no" title="branch not covered" >isMobileMenuOpen &amp;&amp; (</span>
+          &lt;div
+            className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 z-30 md:hidden"
+            onClick={toggleMobileMenu}
+            aria-hidden="true"
+          /&gt;
+        )}
+&nbsp;
+        {/* Main Content Area */}
+        &lt;main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-slate-900 md:ml-0"&gt;
+          &lt;div className="container mx-auto px-4 py-8 md:px-8 md:py-12 mt-16 md:mt-0"&gt;
+            {children}
+          &lt;/div&gt;
+        &lt;/main&gt;
+      &lt;/div&gt;
+    &lt;/VendorDashboardProvider&gt;
   );
 }
 &nbsp;</pre></td></tr></table></pre>
@@ -286,7 +313,7 @@ export default function <span class="cstat-no" title="statement not covered" ><s
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-24T16:38:25.432Z
+                at 2025-10-26T08:03:02.390Z
             </div>
         <script src="../../../../prettify.js"></script>
         <script>

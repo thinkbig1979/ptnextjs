@@ -103,8 +103,9 @@ export async function POST(request: NextRequest): Promise<NextResponse<SuccessRe
     const data: VendorRegistrationRequest = validationResult.data;
 
     // Additional password strength validation (delegated to AuthService)
+    // Note: We only validate here, not hash. Payload CMS will hash the password when creating the user.
     try {
-      await authService.hashPassword(data.password);
+      authService.validatePasswordStrength(data.password);
     } catch (error) {
       return NextResponse.json(
         {

@@ -78,8 +78,8 @@ export function CaseStudyNavigation({
                     ? "bg-accent/10 border-accent shadow-sm"
                     : "hover:bg-muted/50 border-border"
                 )}
-                onClick={() => navigateToCase(caseStudy.slug)}
-                onKeyDown={(e) => handleKeyNavigation(e, caseStudy.slug)}
+                onClick={() => caseStudy.slug && navigateToCase(caseStudy.slug)}
+                onKeyDown={(e) => caseStudy.slug && handleKeyNavigation(e, caseStudy.slug)}
                 tabIndex={0}
                 role="button"
                 data-testid={`nav-item-${caseStudy.slug}`}
@@ -131,8 +131,8 @@ export function CaseStudyNavigation({
       <div className="flex flex-col lg:flex-row gap-3">
         <Button
           variant="outline"
-          onClick={() => previousCase && navigateToCase(previousCase.slug)}
-          onKeyDown={(e) => previousCase && handleKeyNavigation(e, previousCase.slug)}
+          onClick={() => previousCase?.slug && navigateToCase(previousCase.slug)}
+          onKeyDown={(e) => previousCase?.slug && handleKeyNavigation(e, previousCase.slug)}
           disabled={!previousCase}
           className="flex-1 justify-start"
         >
@@ -146,8 +146,8 @@ export function CaseStudyNavigation({
 
         <Button
           variant="outline"
-          onClick={() => nextCase && navigateToCase(nextCase.slug)}
-          onKeyDown={(e) => nextCase && handleKeyNavigation(e, nextCase.slug)}
+          onClick={() => nextCase?.slug && navigateToCase(nextCase.slug)}
+          onKeyDown={(e) => nextCase?.slug && handleKeyNavigation(e, nextCase.slug)}
           disabled={!nextCase}
           className="flex-1 justify-end"
         >

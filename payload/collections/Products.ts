@@ -714,6 +714,141 @@ const Products: CollectionConfig = {
             },
           ],
         },
+
+        // System Requirements
+        {
+          name: 'systemRequirements',
+          type: 'group',
+          label: 'System Requirements',
+          admin: {
+            description: 'Technical system requirements for installation and operation',
+          },
+          fields: [
+            {
+              name: 'powerSupply',
+              type: 'text',
+              maxLength: 200,
+              admin: {
+                description: 'Power supply requirements (e.g., "12V/24V DC, 50-100W")',
+              },
+            },
+            {
+              name: 'mounting',
+              type: 'text',
+              maxLength: 200,
+              admin: {
+                description: 'Mounting requirements (e.g., "Flush mount, DIN rail compatible")',
+              },
+            },
+            {
+              name: 'operatingTemp',
+              type: 'text',
+              maxLength: 100,
+              admin: {
+                description: 'Operating temperature range (e.g., "-20°C to +60°C")',
+              },
+            },
+            {
+              name: 'certification',
+              type: 'text',
+              maxLength: 200,
+              admin: {
+                description: 'Required certifications (e.g., "CE, FCC, IMO Compliant")',
+              },
+            },
+            {
+              name: 'ipRating',
+              type: 'text',
+              maxLength: 50,
+              admin: {
+                description: 'IP rating (e.g., "IP67 Marine Grade")',
+              },
+            },
+          ],
+        },
+
+        // Compatibility Matrix
+        {
+          name: 'compatibilityMatrix',
+          type: 'array',
+          label: 'Compatibility Matrix',
+          dbName: 'compat_matrix',
+          admin: {
+            description: 'Detailed compatibility information with other systems',
+          },
+          fields: [
+            {
+              name: 'system',
+              type: 'text',
+              required: true,
+              maxLength: 200,
+              admin: {
+                description: 'System/product name (e.g., "Garmin GPSMAP", "Raymarine Axiom")',
+              },
+            },
+            {
+              name: 'compatibility',
+              type: 'select',
+              required: true,
+              dbName: 'compat',
+              options: [
+                { label: 'Full Compatibility', value: 'full' },
+                { label: 'Partial Compatibility', value: 'partial' },
+                { label: 'Requires Adapter', value: 'adapter' },
+                { label: 'Not Compatible', value: 'none' },
+              ],
+              admin: {
+                description: 'Level of compatibility with this system',
+              },
+            },
+            {
+              name: 'notes',
+              type: 'textarea',
+              maxLength: 1000,
+              admin: {
+                description: 'Additional compatibility notes or details',
+              },
+            },
+            {
+              name: 'requirements',
+              type: 'array',
+              label: 'Requirements',
+              admin: {
+                description: 'List of requirements for this integration',
+              },
+              fields: [
+                {
+                  name: 'requirement',
+                  type: 'text',
+                  maxLength: 500,
+                  admin: {
+                    description: 'Specific requirement for this integration',
+                  },
+                },
+              ],
+            },
+            {
+              name: 'complexity',
+              type: 'select',
+              options: [
+                { label: 'Simple', value: 'simple' },
+                { label: 'Moderate', value: 'moderate' },
+                { label: 'Complex', value: 'complex' },
+              ],
+              admin: {
+                description: 'Integration complexity level',
+              },
+            },
+            {
+              name: 'estimatedCost',
+              type: 'text',
+              maxLength: 100,
+              admin: {
+                description: 'Estimated integration cost (e.g., "$500-$1000", "Contact for quote")',
+              },
+            },
+          ],
+        },
       ],
     },
 

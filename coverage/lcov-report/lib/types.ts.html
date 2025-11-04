@@ -808,7 +808,65 @@
 <a name='L743'></a><a href='#L743'>743</a>
 <a name='L744'></a><a href='#L744'>744</a>
 <a name='L745'></a><a href='#L745'>745</a>
-<a name='L746'></a><a href='#L746'>746</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L746'></a><a href='#L746'>746</a>
+<a name='L747'></a><a href='#L747'>747</a>
+<a name='L748'></a><a href='#L748'>748</a>
+<a name='L749'></a><a href='#L749'>749</a>
+<a name='L750'></a><a href='#L750'>750</a>
+<a name='L751'></a><a href='#L751'>751</a>
+<a name='L752'></a><a href='#L752'>752</a>
+<a name='L753'></a><a href='#L753'>753</a>
+<a name='L754'></a><a href='#L754'>754</a>
+<a name='L755'></a><a href='#L755'>755</a>
+<a name='L756'></a><a href='#L756'>756</a>
+<a name='L757'></a><a href='#L757'>757</a>
+<a name='L758'></a><a href='#L758'>758</a>
+<a name='L759'></a><a href='#L759'>759</a>
+<a name='L760'></a><a href='#L760'>760</a>
+<a name='L761'></a><a href='#L761'>761</a>
+<a name='L762'></a><a href='#L762'>762</a>
+<a name='L763'></a><a href='#L763'>763</a>
+<a name='L764'></a><a href='#L764'>764</a>
+<a name='L765'></a><a href='#L765'>765</a>
+<a name='L766'></a><a href='#L766'>766</a>
+<a name='L767'></a><a href='#L767'>767</a>
+<a name='L768'></a><a href='#L768'>768</a>
+<a name='L769'></a><a href='#L769'>769</a>
+<a name='L770'></a><a href='#L770'>770</a>
+<a name='L771'></a><a href='#L771'>771</a>
+<a name='L772'></a><a href='#L772'>772</a>
+<a name='L773'></a><a href='#L773'>773</a>
+<a name='L774'></a><a href='#L774'>774</a>
+<a name='L775'></a><a href='#L775'>775</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1842,20 +1900,49 @@ export interface Vendor {
   founded?: number;
   location?: VendorLocation | string; // Legacy single location (deprecated, use locations array)
   locations?: VendorLocation[]; // New: Array of office locations (multi-location support)
-  tier?: 'free' | 'tier1' | 'tier2'; // Vendor subscription tier (affects multi-location access)
+  tier?: 'free' | 'tier1' | 'tier2' | 'tier3'; // Vendor subscription tier (affects multi-location access)
   featured?: boolean;
   partner?: boolean; // New field: indicates if vendor is also a strategic partner
   createdAt?: string;
   updatedAt?: string;
   publishedAt?: string;
-  
+&nbsp;
+  // Contact information
+  contactEmail?: string;
+  contactPhone?: string;
+&nbsp;
+  // Company details
+  foundedYear?: number; // Year company was founded (for years in business computation)
+  longDescription?: string; // Detailed company description
+  serviceAreas?: string[]; // Service areas/specializations
+  companyValues?: string[]; // Company values
+&nbsp;
+  // Social media
+  linkedinUrl?: string;
+  twitterUrl?: string;
+&nbsp;
+  // Social proof metrics (Tier 1+)
+  totalProjects?: number;
+  employeeCount?: number;
+  linkedinFollowers?: number;
+  instagramFollowers?: number;
+  clientSatisfactionScore?: number; // 0-100
+  repeatClientPercentage?: number; // 0-100
+&nbsp;
+  // Video introduction (Tier 1+)
+  videoUrl?: string;
+  videoThumbnail?: string;
+  videoDuration?: string;
+  videoTitle?: string;
+  videoDescription?: string;
+&nbsp;
   // TinaCMS simplified relations
   category?: string; // Resolved category name
   tags?: string[]; // Resolved tag names array
   products?: Product[];
   services?: VendorService[]; // Services offered by vendor
   seo?: SEO;
-  
+&nbsp;
   // New company-specific content
   mission?: string; // Company-specific mission statement
   statistics?: VendorStatistic[]; // Company statistics/metrics
@@ -2305,7 +2392,7 @@ export type DateRange = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-24T16:38:25.432Z
+                at 2025-10-26T08:03:02.390Z
             </div>
         <script src="../prettify.js"></script>
         <script>

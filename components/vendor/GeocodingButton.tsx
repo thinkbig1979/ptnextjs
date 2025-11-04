@@ -1,11 +1,9 @@
 'use client';
-
 import React, { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Loader2, MapPin } from 'lucide-react';
 import { toast } from 'sonner';
 import GeocodingService from '@/lib/services/GeocodingService';
-
 export interface GeocodingButtonProps {
   address: string;
   onSuccess: (latitude: number, longitude: number) => void;
@@ -14,7 +12,6 @@ export interface GeocodingButtonProps {
   variant?: 'default' | 'outline' | 'secondary' | 'ghost';
   size?: 'default' | 'sm' | 'lg' | 'icon';
 }
-
 /**
  * GeocodingButton - Convert address to coordinates
  */
@@ -27,15 +24,12 @@ export function GeocodingButton({
   size = 'default',
 }: GeocodingButtonProps) {
   const [loading, setLoading] = useState(false);
-
   const handleGeocode = useCallback(async () => {
     if (!address || typeof address !== 'string') {
       toast.error('Please enter a valid address');
       return;
     }
-
     setLoading(true);
-
     try {
       const result = await GeocodingService.geocode(address);
       onSuccess(result.latitude, result.longitude);
@@ -51,15 +45,19 @@ export function GeocodingButton({
       setLoading(false);
     }
   }, [address, onSuccess, onError]);
-
+  const isDisabled = loading || !address?.trim();
+  const buttonTitle = isDisabled
+    ? 'Please enter an address to geocode'
+    : 'Click to find coordinates for the address';
   return (
     <Button
       onClick={handleGeocode}
-      disabled={loading || !address}
+      disabled={isDisabled}
       variant={variant}
       size={size}
       className={className}
-      title="Click to find coordinates for the address"
+      title={buttonTitle}
+      data-testid="geocoding-button"
     >
       {loading ? (
         <>
@@ -75,5 +73,4 @@ export function GeocodingButton({
     </Button>
   );
 }
-
 export default GeocodingButton;

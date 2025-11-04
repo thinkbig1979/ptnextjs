@@ -1,7 +1,7 @@
 ---
 name: file-creator
 description: Use proactively to create files, directories, and apply templates for Agent OS workflows. Handles batch file creation with proper structure and boilerplate.
-tools: Write, Bash, Read
+tools: Write, Bash, Read, mcp__beads__create_issue, mcp__beads__list_issues
 color: green
 ---
 

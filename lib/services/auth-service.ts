@@ -181,7 +181,7 @@ class AuthService {
   /**
    * Validate password strength according to OWASP guidelines
    */
-  private validatePasswordStrength(password: string): void {
+  validatePasswordStrength(password: string): void {
     if (password.length < 12) {
       throw new Error('Password must be at least 12 characters long');
     }

@@ -1,7 +1,7 @@
 ---
 name: context-fetcher
 description: Use proactively to retrieve and extract relevant information from Agent OS documentation files. Checks if content is already in context before returning.
-tools: Read, Grep, Glob
+tools: Read, Grep, Glob, mcp__beads__list_issues, mcp__beads__get_ready_work
 color: blue
 ---
 

@@ -160,7 +160,7 @@ export function TeamMembersManager({ vendor }: TeamMembersManagerProps) {
     const updatedMembers = teamMembers.filter((_, i) => i !== deletingIndex);
     setTeamMembers(updatedMembers);
     updateVendor({ teamMembers: updatedMembers });
-    markDirty();
+    markDirty(true);
 
     setDeleteDialogOpen(false);
     setDeletingIndex(null);
@@ -214,7 +214,7 @@ export function TeamMembersManager({ vendor }: TeamMembersManagerProps) {
 
     setTeamMembers(updatedMembers);
     updateVendor({ teamMembers: updatedMembers });
-    markDirty();
+    markDirty(true);
     setModalOpen(false);
     reset(TEAM_MEMBER_DEFAULT_VALUES);
 
@@ -255,7 +255,7 @@ export function TeamMembersManager({ vendor }: TeamMembersManagerProps) {
   const handleDragEnd = async () => {
     setDraggedIndex(null);
     updateVendor({ teamMembers });
-    markDirty();
+    markDirty(true);
 
     // Auto-save
     setIsSaving(true);
@@ -270,10 +270,9 @@ export function TeamMembersManager({ vendor }: TeamMembersManagerProps) {
   if (!hasTierAccess) {
     return (
       <TierUpgradePrompt
-        requiredTier={1}
-        currentTier={vendor.tier}
+        currentTier={vendor.tier || 'free'}
+        requiredTier="tier1"
         featureName="Team Members"
-        description="Showcase your team members with photos, bios, and LinkedIn profiles. Build trust with potential clients by highlighting your expert team."
       />
     );
   }

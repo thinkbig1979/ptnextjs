@@ -1,7 +1,7 @@
 ---
 name: project-manager
 description: Use proactively to check task completeness and update task and roadmap tracking docs.
-tools: Read, Grep, Glob, Write, Bash
+tools: Read, Grep, Glob, Write, Bash, mcp__beads__create_issue, mcp__beads__list_issues, mcp__beads__update_issue, mcp__beads__close_issue, mcp__beads__get_ready_work, mcp__beads__add_dependency, mcp__beads__remove_dependency
 color: cyan
 ---
 

@@ -9,8 +9,7 @@ const Vendors: CollectionConfig = {
     useAsTitle: 'companyName',
     defaultColumns: ['companyName', 'tier', 'published', 'featured', 'createdAt'],
     group: 'Content',
-  },
-  access: {
+  },  access: {
     // Admins can CRUD all vendors
     // Vendors can only read/update their own vendor profile
     create: isAdmin,
@@ -39,8 +38,7 @@ const Vendors: CollectionConfig = {
       admin: {
         position: 'sidebar',
         description: 'Associated user account',
-      },
-      access: {
+      },      access: {
         // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
         update: isAdmin, // Only admins can change user relationship
       },
@@ -61,8 +59,7 @@ const Vendors: CollectionConfig = {
       admin: {
         position: 'sidebar',
         description: 'Subscription tier determines available features',
-      },
-      access: {
+      },      access: {
         // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
         update: isAdmin, // Only admins can change tier
       },
@@ -136,6 +133,26 @@ const Vendors: CollectionConfig = {
       },
     },
 
+    // Category and Tags (Available to all tiers)
+    {
+      name: 'category',
+      type: 'relationship',
+      relationTo: 'categories',
+      hasMany: false,
+      admin: {
+        description: 'Primary business category (e.g., Navigation, Communication, etc.)',
+      },
+    },
+    {
+      name: 'tags',
+      type: 'relationship',
+      relationTo: 'tags',
+      hasMany: true,
+      admin: {
+        description: 'Additional tags for this vendor',
+      },
+    },
+
     // Founded Year (Tier 1+ - for years in business computation)
     {
       name: 'foundedYear',
@@ -145,8 +162,7 @@ const Vendors: CollectionConfig = {
       admin: {
         description: 'Year company was founded (used to compute years in business) (Tier 1+ only)',
         condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier) || data.tier === 'tier3',
-      },
-      access: {
+      },      access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
@@ -167,8 +183,7 @@ const Vendors: CollectionConfig = {
       },
       hooks: {
         beforeChange: [sanitizeUrlHook],
-      },
-      access: {
+      },      access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
@@ -188,8 +203,7 @@ const Vendors: CollectionConfig = {
       },
       hooks: {
         beforeChange: [sanitizeUrlHook],
-      },
-      access: {
+      },      access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
@@ -208,8 +222,7 @@ const Vendors: CollectionConfig = {
       },
       hooks: {
         beforeChange: [sanitizeUrlHook],
-      },
-      access: {
+      },      access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
@@ -224,8 +237,7 @@ const Vendors: CollectionConfig = {
       admin: {
         description: 'Company certifications (Tier 1+ only)',
         condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
-      },
-      access: {
+      },      access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
@@ -304,8 +316,7 @@ const Vendors: CollectionConfig = {
       admin: {
         description: 'Company awards and recognitions (Tier 1+ only)',
         condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
-      },
-      access: {
+      },      access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
@@ -374,8 +385,7 @@ const Vendors: CollectionConfig = {
       admin: {
         description: 'Total number of completed projects (Tier 1+ only)',
         condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
-      },
-      access: {
+      },      access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
@@ -390,8 +400,7 @@ const Vendors: CollectionConfig = {
       admin: {
         description: 'Years in business (Tier 1+ only)',
         condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
-      },
-      access: {
+      },      access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
@@ -406,8 +415,7 @@ const Vendors: CollectionConfig = {
       admin: {
         description: 'Number of employees (Tier 1+ only)',
         condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
-      },
-      access: {
+      },      access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
@@ -422,8 +430,7 @@ const Vendors: CollectionConfig = {
       admin: {
         description: 'LinkedIn follower count (Tier 1+ only)',
         condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
-      },
-      access: {
+      },      access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
@@ -438,8 +445,7 @@ const Vendors: CollectionConfig = {
       admin: {
         description: 'Instagram follower count (Tier 1+ only)',
         condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
-      },
-      access: {
+      },      access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
@@ -456,8 +462,7 @@ const Vendors: CollectionConfig = {
       admin: {
         description: 'Client satisfaction score (0-10) (Tier 1+ only)',
         condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
-      },
-      access: {
+      },      access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
@@ -474,8 +479,7 @@ const Vendors: CollectionConfig = {
       admin: {
         description: 'Repeat client percentage (0-100) (Tier 1+ only)',
         condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
-      },
-      access: {
+      },      access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
@@ -496,8 +500,7 @@ const Vendors: CollectionConfig = {
       },
       hooks: {
         beforeChange: [sanitizeUrlHook],
-      },
-      access: {
+      },      access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
@@ -513,8 +516,7 @@ const Vendors: CollectionConfig = {
       admin: {
         description: 'Video thumbnail image (Tier 1+ only)',
         condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
-      },
-      access: {
+      },      access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
@@ -529,8 +531,7 @@ const Vendors: CollectionConfig = {
       admin: {
         description: 'Video duration in seconds (Tier 1+ only)',
         condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
-      },
-      access: {
+      },      access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
@@ -546,8 +547,7 @@ const Vendors: CollectionConfig = {
       admin: {
         description: 'Video title (Tier 1+ only)',
         condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
-      },
-      access: {
+      },      access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
@@ -563,8 +563,7 @@ const Vendors: CollectionConfig = {
       admin: {
         description: 'Video description (Tier 1+ only)',
         condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
-      },
-      access: {
+      },      access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
@@ -581,8 +580,7 @@ const Vendors: CollectionConfig = {
       admin: {
         description: 'Project case studies (Tier 1+ only)',
         condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
-      },
-      access: {
+      },      access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
@@ -712,8 +710,7 @@ const Vendors: CollectionConfig = {
       admin: {
         description: 'Innovation and technology highlights (Tier 1+ only)',
         condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
-      },
-      access: {
+      },      access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
@@ -791,8 +788,7 @@ const Vendors: CollectionConfig = {
       admin: {
         description: 'Team members (Tier 1+ only)',
         condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
-      },
-      access: {
+      },      access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
@@ -871,8 +867,7 @@ const Vendors: CollectionConfig = {
       admin: {
         description: 'Yacht project portfolio (Tier 1+ only)',
         condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
-      },
-      access: {
+      },      access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
@@ -959,8 +954,7 @@ const Vendors: CollectionConfig = {
       admin: {
         description: 'Extended company description with rich formatting (Tier 1+ only)',
         condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
-      },
-      access: {
+      },      access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
@@ -977,8 +971,7 @@ const Vendors: CollectionConfig = {
       admin: {
         description: 'Service areas (Tier 1+ only)',
         condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
-      },
-      access: {
+      },      access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
@@ -1022,8 +1015,7 @@ const Vendors: CollectionConfig = {
       admin: {
         description: 'Company values and principles (Tier 1+ only)',
         condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
-      },
-      access: {
+      },      access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
@@ -1060,8 +1052,7 @@ const Vendors: CollectionConfig = {
       admin: {
         description: 'Company locations (Tier 2 vendors can have multiple locations). One location must be designated as Headquarters.',
         condition: (data) => data.tier === 'tier2' || (data.locations && data.locations.length > 0),
-      },
-      access: {
+      },      access: {
         read: () => true,
         update: ({ req: { user }, data }) => {
           if (!user) return false;
@@ -1271,8 +1262,7 @@ const Vendors: CollectionConfig = {
         position: 'sidebar',
         description: 'Feature this vendor in category listings (Tier 2+)',
         condition: (data) => ['tier2', 'tier3'].includes(data.tier),
-      },
-      access: {
+      },      access: {
         // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
         update: isAdmin, // Only admins can set featured status
       },
@@ -1285,8 +1275,7 @@ const Vendors: CollectionConfig = {
         position: 'sidebar',
         description: 'Enable advanced analytics dashboard (Tier 2+)',
         condition: (data) => ['tier2', 'tier3'].includes(data.tier),
-      },
-      access: {
+      },      access: {
         // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
         update: isAdmin,
       },
@@ -1299,8 +1288,7 @@ const Vendors: CollectionConfig = {
         position: 'sidebar',
         description: 'Enable API integration access (Tier 2+)',
         condition: (data) => ['tier2', 'tier3'].includes(data.tier),
-      },
-      access: {
+      },      access: {
         // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
         update: isAdmin,
       },
@@ -1313,8 +1301,7 @@ const Vendors: CollectionConfig = {
         position: 'sidebar',
         description: 'Custom domain for vendor profile (Tier 2+)',
         condition: (data) => ['tier2', 'tier3'].includes(data.tier),
-      },
-      access: {
+      },      access: {
         // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
         update: isAdmin,
       },
@@ -1335,8 +1322,7 @@ const Vendors: CollectionConfig = {
           defaultValue: false,
           admin: {
             description: 'Display banner on homepage',
-          },
-          access: {
+          },          access: {
             // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
             update: isAdmin,
           },
@@ -1349,8 +1335,7 @@ const Vendors: CollectionConfig = {
           defaultValue: 0,
           admin: {
             description: 'Search results priority (0-100, higher = more prominent)',
-          },
-          access: {
+          },          access: {
             // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
             update: isAdmin,
           },
@@ -1361,8 +1346,7 @@ const Vendors: CollectionConfig = {
           defaultValue: false,
           admin: {
             description: 'Pin to top of category listings',
-          },
-          access: {
+          },          access: {
             // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
             update: isAdmin,
           },
@@ -1373,8 +1357,7 @@ const Vendors: CollectionConfig = {
           defaultValue: false,
           admin: {
             description: 'Mark as sponsored content',
-          },
-          access: {
+          },          access: {
             // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
             update: isAdmin,
           },
@@ -1385,8 +1368,7 @@ const Vendors: CollectionConfig = {
           defaultValue: false,
           admin: {
             description: 'Include in monthly featured articles',
-          },
-          access: {
+          },          access: {
             // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
             update: isAdmin,
           },
@@ -1398,8 +1380,7 @@ const Vendors: CollectionConfig = {
           defaultValue: 0,
           admin: {
             description: 'Number of monthly social media shoutouts',
-          },
-          access: {
+          },          access: {
             // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
             update: isAdmin,
           },
@@ -1410,8 +1391,7 @@ const Vendors: CollectionConfig = {
           defaultValue: false,
           admin: {
             description: 'Feature in email newsletters',
-          },
-          access: {
+          },          access: {
             // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
             update: isAdmin,
           },
@@ -1428,8 +1408,10 @@ const Vendors: CollectionConfig = {
         condition: (data) => data.tier === 'tier3',
       },
       access: {
+        // @ts-expect-error - Payload CMS 3.x type mismatch between Access and FieldAccess<any, any>
         create: isAdmin,
         read: () => true,
+        // @ts-expect-error - Payload CMS 3.x type mismatch between Access and FieldAccess<any, any>
         update: isAdmin,
         delete: isAdmin,
       },
@@ -1504,8 +1486,7 @@ const Vendors: CollectionConfig = {
       admin: {
         position: 'sidebar',
         description: 'Mark as featured partner (distinct from regular vendor)',
-      },
-      access: {
+      },      access: {
         // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
         update: isAdmin, // Only admins can mark as partner
       },
@@ -1517,8 +1498,7 @@ const Vendors: CollectionConfig = {
       admin: {
         position: 'sidebar',
         description: 'Feature this vendor on homepage',
-      },
-      access: {
+      },      access: {
         // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
         update: isAdmin, // Only admins can feature vendors
       },
@@ -1530,11 +1510,186 @@ const Vendors: CollectionConfig = {
       admin: {
         position: 'sidebar',
         description: 'Make vendor profile public',
-      },
-      access: {
+      },      access: {
         // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
         update: isAdmin, // Only admins can publish vendors
       },
+    },
+
+    // ============================================================================
+    // VENDOR REVIEWS & TESTIMONIALS
+    // ============================================================================
+    {
+      name: 'vendorReviews',
+      type: 'array',
+      label: 'Vendor Reviews & Testimonials',
+      admin: {
+        description: 'Reviews from clients who have worked with this vendor',
+      },
+      fields: [
+        {
+          name: 'reviewerName',
+          type: 'text',
+          required: true,
+          maxLength: 200,
+          admin: {
+            description: 'Name of the reviewer',
+          },
+        },
+        {
+          name: 'reviewerRole',
+          type: 'text',
+          required: true,
+          maxLength: 100,
+          admin: {
+            description: 'e.g., "Yacht Owner", "Captain", "Project Manager"',
+          },
+        },
+        {
+          name: 'yachtName',
+          type: 'text',
+          maxLength: 200,
+          admin: {
+            description: 'Name of yacht (if applicable)',
+          },
+        },
+        {
+          name: 'projectType',
+          type: 'text',
+          maxLength: 200,
+          admin: {
+            description: 'Type of project/service provided',
+          },
+        },
+        {
+          name: 'overallRating',
+          type: 'number',
+          required: true,
+          min: 1,
+          max: 5,
+          admin: {
+            description: 'Overall rating out of 5',
+          },
+        },
+        {
+          name: 'ratings',
+          type: 'group',
+          label: 'Detailed Ratings',
+          admin: {
+            description: 'Breakdown of ratings by category',
+          },
+          fields: [
+            {
+              name: 'quality',
+              type: 'number',
+              min: 1,
+              max: 5,
+              admin: {
+                description: 'Quality of work rating (1-5)',
+              },
+            },
+            {
+              name: 'communication',
+              type: 'number',
+              min: 1,
+              max: 5,
+              admin: {
+                description: 'Communication rating (1-5)',
+              },
+            },
+            {
+              name: 'timeliness',
+              type: 'number',
+              min: 1,
+              max: 5,
+              admin: {
+                description: 'Timeliness rating (1-5)',
+              },
+            },
+            {
+              name: 'professionalism',
+              type: 'number',
+              min: 1,
+              max: 5,
+              admin: {
+                description: 'Professionalism rating (1-5)',
+              },
+            },
+            {
+              name: 'valueForMoney',
+              type: 'number',
+              min: 1,
+              max: 5,
+              admin: {
+                description: 'Value for money rating (1-5)',
+              },
+            },
+          ],
+        },
+        {
+          name: 'reviewText',
+          type: 'richText',
+          required: true,
+          editor: lexicalEditor({}),
+          admin: {
+            description: 'Detailed review text',
+          },
+        },
+        {
+          name: 'pros',
+          type: 'array',
+          label: 'Pros',
+          admin: {
+            description: 'List of positive aspects',
+          },
+          fields: [
+            {
+              name: 'pro',
+              type: 'text',
+              maxLength: 500,
+            },
+          ],
+        },
+        {
+          name: 'cons',
+          type: 'array',
+          label: 'Cons',
+          admin: {
+            description: 'List of negative aspects',
+          },
+          fields: [
+            {
+              name: 'con',
+              type: 'text',
+              maxLength: 500,
+            },
+          ],
+        },
+        {
+          name: 'reviewDate',
+          type: 'date',
+          required: true,
+          admin: {
+            description: 'Date review was written',
+          },
+        },
+        {
+          name: 'verified',
+          type: 'checkbox',
+          defaultValue: false,
+          admin: {
+            description: 'Verified client',
+          },
+        },
+        {
+          name: 'featured',
+          type: 'checkbox',
+          defaultValue: false,
+          admin: {
+            description: 'Feature this review prominently',
+          },
+        },
+      ],
     },
   ],
   timestamps: true,

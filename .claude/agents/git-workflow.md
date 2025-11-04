@@ -1,7 +1,7 @@
 ---
 name: git-workflow
 description: Use proactively to handle git operations, branch management, commits, and PR creation for Agent OS workflows
-tools: Bash, Read, Grep
+tools: Bash, Read, Grep, mcp__beads__list_issues, mcp__beads__update_issue, mcp__beads__close_issue, mcp__beads__get_ready_work
 color: orange
 ---
 

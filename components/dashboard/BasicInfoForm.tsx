@@ -32,25 +32,45 @@ export interface BasicInfoFormProps {
  * - Contact Phone
  */
 export function BasicInfoForm({ vendor, onSubmit }: BasicInfoFormProps) {
-  const { updateVendor, markDirty } = useVendorDashboard();
+  const { updateVendor, saveVendor, markDirty, isSaving } = useVendorDashboard();
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isDirty, isSubmitting },
+    formState: { errors, isDirty, isSubmitting, isValid },
     watch,
     reset,
+    trigger,
   } = useForm<BasicInfoFormData>({
     resolver: zodResolver(basicInfoSchema),
+    mode: 'onChange', // Validate on change to expose errors immediately
     defaultValues: {
       companyName: vendor.name || '',
       slug: vendor.slug || '',
       description: vendor.description || '',
-      logo: vendor.logo || '',
+      logo: vendor.logo || undefined, // undefined for optional fields to skip validation
       contactEmail: vendor.contactEmail || '',
-      contactPhone: vendor.contactPhone || '',
+      contactPhone: vendor.contactPhone || undefined, // undefined for optional fields
     },
   });
+
+  // DEBUG: Log validation state
+  useEffect(() => {
+    console.log('[BasicInfoForm] Validation State:', {
+      isDirty,
+      isValid,
+      isSubmitting,
+      errors: Object.keys(errors).length > 0 ? errors : 'none',
+      formValues: {
+        companyName: watch('companyName'),
+        slug: watch('slug'),
+        description: watch('description'),
+        logo: watch('logo'),
+        contactEmail: watch('contactEmail'),
+        contactPhone: watch('contactPhone'),
+      },
+    });
+  }, [isDirty, isValid, isSubmitting, errors, watch]);
 
   const description = watch('description');
   const descriptionLength = description?.length || 0;
@@ -60,10 +80,48 @@ export function BasicInfoForm({ vendor, onSubmit }: BasicInfoFormProps) {
     markDirty(isDirty);
   }, [isDirty, markDirty]);
 
+  /**
+   * CRITICAL FIX: Reset form when vendor data changes
+   *
+   * This ensures that React Hook Form's isDirty detection works correctly
+   * when the vendor prop updates (e.g., from async context updates).
+   * Without this, the form's baseline doesn't match the actual vendor data,
+   * causing isDirty to incorrectly report false even when fields are modified.
+   */
+  useEffect(() => {
+    reset({
+      companyName: vendor.name || '',
+      slug: vendor.slug || '',
+      description: vendor.description || '',
+      logo: vendor.logo || undefined, // undefined for optional fields
+      contactEmail: vendor.contactEmail || '',
+      contactPhone: vendor.contactPhone || undefined, // undefined for optional fields
+    });
+    // Clear dirty flag when vendor resets
+    markDirty(false);
+  }, [
+    vendor.id,
+    vendor.name,
+    vendor.slug,
+    vendor.description,
+    vendor.logo,
+    vendor.contactEmail,
+    vendor.contactPhone,
+    reset,
+    markDirty,
+  ]);
+
   const handleFormSubmit = async (data: BasicInfoFormData) => {
+    console.log('[BasicInfoForm] handleFormSubmit called with:', data);
+    console.log('[BasicInfoForm] onSubmit prop exists:', !!onSubmit);
+    console.log('[BasicInfoForm] form state - isDirty:', isDirty, 'errors:', errors);
+
     if (onSubmit) {
+      console.log('[BasicInfoForm] Calling onSubmit callback');
       await onSubmit(data);
+      console.log('[BasicInfoForm] onSubmit completed');
     } else {
+      console.log('[BasicInfoForm] Using fallback - updateVendor + saveVendor');
       // Update vendor in context
       updateVendor({
         name: data.companyName,
@@ -73,14 +131,23 @@ export function BasicInfoForm({ vendor, onSubmit }: BasicInfoFormProps) {
         contactEmail: data.contactEmail,
         contactPhone: data.contactPhone || undefined,
       });
+
+      // Save to backend
+      await saveVendor();
     }
 
+    console.log('[BasicInfoForm] Resetting form');
     // Reset form dirty state
     reset(data);
   };
 
+  const handleFormError = (errors: any) => {
+    console.error('[BasicInfoForm] Validation failed!', errors);
+    console.error('[BasicInfoForm] Detailed errors:', JSON.stringify(errors, null, 2));
+  };
+
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)}>
+    <form onSubmit={handleSubmit(handleFormSubmit, handleFormError)}>
       <Card>
         <CardHeader>
           <CardTitle>Basic Information</CardTitle>
@@ -211,10 +278,10 @@ export function BasicInfoForm({ vendor, onSubmit }: BasicInfoFormProps) {
         <CardFooter>
           <Button
             type="submit"
-            disabled={!isDirty || isSubmitting}
+            disabled={!isDirty || isSubmitting || isSaving}
             className="w-full sm:w-auto"
           >
-            {isSubmitting ? (
+            {(isSubmitting || isSaving) ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Saving...

@@ -13,7 +13,8 @@ import { OptimizedImage } from "@/components/ui/optimized-image";
 // Force static generation for optimal SEO and performance
 export const dynamic = 'force-static';
 export const dynamicParams = true;
-export const revalidate = false;
+// ISR: Revalidate every 10s in dev, 1hr in production
+export const revalidate = 3600; // ISR: Revalidate every hour in production
 
 // Generate static params for all blog posts
 export async function generateStaticParams() {

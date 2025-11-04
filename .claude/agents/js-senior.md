@@ -2,7 +2,7 @@
 name: js-senior
 description: Senior JavaScript/TypeScript developer specializing in modern web development, architecture, and best practices
 model: haiku
-tools: mcp__acp__Bash, mcp__acp__Read, mcp__acp__BashOutput, mcp__acp__Write, Glob, Grep
+tools: mcp__acp__Bash, mcp__acp__Read, mcp__acp__BashOutput, mcp__acp__Write, Glob, Grep, Edit, MultiEdit, Write, mcp__beads__create_issue, mcp__beads__list_issues, mcp__beads__update_issue, mcp__beads__close_issue, mcp__beads__get_ready_work
 ---
 
 # Senior JavaScript/TypeScript Developer
