@@ -7,7 +7,7 @@ import { Separator } from '@/components/ui/separator';
 import { useRouter } from 'next/navigation';
 import { TierBadge } from '@/components/vendors/TierBadge';
 import { UpgradePromptCard } from '@/components/dashboard/UpgradePromptCard';
-import { HelpCircle, FileText, Mail, ExternalLink } from 'lucide-react';
+import { HelpCircle, FileText, Mail } from 'lucide-react';
 import { Tier } from '@/lib/services/TierService';
 
 export interface DashboardSidebarProps {
@@ -66,10 +66,9 @@ export function DashboardSidebar({ tier, vendorName }: DashboardSidebarProps) {
                   variant="outline"
                   size="sm"
                   className="w-full"
-                  onClick={() => window.open('/pricing', '_blank')}
+                  onClick={() => router.push('/vendor/dashboard/subscription')}
                 >
-                  View Pricing
-                  <ExternalLink className="ml-2 h-3 w-3" aria-hidden="true" />
+                  View Subscription Options
                 </Button>
               </div>
             </>

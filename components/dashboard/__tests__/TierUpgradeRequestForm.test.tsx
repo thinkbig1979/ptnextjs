@@ -47,8 +47,23 @@ const { toast } = require('@/components/ui/sonner');
 async function selectTier(user: ReturnType<typeof userEvent.setup>, tierLabel: string) {
   const trigger = screen.getByRole('combobox');
   await user.click(trigger);
-  const option = await screen.findByRole('option', { name: new RegExp(tierLabel, 'i') });
-  await user.click(option);
+  // shadcn Select renders options in a portal - there will be multiple matches:
+  // 1. Hidden <option> element (for form submission)
+  // 2. Visible <span> in the portal
+  // We need to get all matches and click the visible one (not aria-hidden)
+  const options = await screen.findAllByText(
+    tierLabel,
+    {},
+    { timeout: 5000 }
+  );
+  // Find the visible option (not inside aria-hidden select element)
+  const visibleOption = options.find(
+    (el) => !el.closest('select[aria-hidden="true"]')
+  );
+  if (!visibleOption) {
+    throw new Error(`Could not find visible option for "${tierLabel}"`);
+  }
+  await user.click(visibleOption);
 }
 
 describe('TierUpgradeRequestForm', () => {
@@ -248,15 +263,16 @@ describe('TierUpgradeRequestForm', () => {
         />
       );
 
-      // Select tier (simplified - actual implementation would use shadcn Select)
-      // This test assumes the form allows submission with just tier selection
+      // Select tier first - this is required
+      await selectTier(user, 'Tier 1');
+
       const submitButton = screen.getByRole('button', { name: /submit request/i });
       await user.click(submitButton);
 
       // Verify no validation error for missing notes (since it's optional)
       await waitFor(() => {
         expect(screen.queryByText(/notes.*required/i)).not.toBeInTheDocument();
-      });
+      }, { timeout: 3000 });
     });
 
     it('accepts notes with exactly 20 characters', async () => {
@@ -269,12 +285,13 @@ describe('TierUpgradeRequestForm', () => {
       );
 
       const notesTextarea = screen.getByLabelText(/vendor notes/i);
-      await user.type(notesTextarea, 'Need more features now'); // Exactly 20 chars
+      await user.clear(notesTextarea); // Always clear first
+      await user.type(notesTextarea, 'Need more features!!'); // Exactly 20 chars
       await user.tab();
 
       await waitFor(() => {
         expect(screen.queryByText(/at least 20 characters/i)).not.toBeInTheDocument();
-      });
+      }, { timeout: 3000 });
     });
 
     it('accepts notes with exactly 500 characters', async () => {
@@ -287,13 +304,14 @@ describe('TierUpgradeRequestForm', () => {
       );
 
       const notesTextarea = screen.getByLabelText(/vendor notes/i);
+      await user.clear(notesTextarea); // Always clear first
       const maxText = 'x'.repeat(500);
       await user.type(notesTextarea, maxText);
       await user.tab();
 
       await waitFor(() => {
         expect(screen.queryByText(/cannot exceed 500 characters/i)).not.toBeInTheDocument();
-      });
+      }, { timeout: 3000 });
     });
   });
 

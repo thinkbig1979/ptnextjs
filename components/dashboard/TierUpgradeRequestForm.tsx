@@ -85,6 +85,7 @@ export function TierUpgradeRequestForm({
 
   const form = useForm<TierUpgradeRequestFormData>({
     resolver: zodResolver(tierUpgradeRequestSchema),
+    mode: 'onBlur', // Enable validation on blur for real-time feedback
     defaultValues: {
       requestedTier: undefined,
       vendorNotes: '',
