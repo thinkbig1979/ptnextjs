@@ -27,26 +27,13 @@ import {
 } from '@/components/ui/alert-dialog';
 import { ArrowRight, Calendar, User } from 'lucide-react';
 
+import { TierUpgradeRequest } from '@/lib/types';
+
 export interface UpgradeRequestStatusCardProps {
   request: TierUpgradeRequest;
+  vendorId: string;
   onCancel?: (requestId: string) => Promise<void>;
   showActions?: boolean;
-}
-
-export interface TierUpgradeRequest {
-  id: string;
-  vendorId: string;
-  currentTier: string;
-  requestedTier: string;
-  status: 'pending' | 'approved' | 'rejected' | 'cancelled';
-  vendorNotes?: string;
-  rejectionReason?: string;
-  requestedAt: string;
-  reviewedAt?: string;
-  reviewedBy?: {
-    id: string;
-    name: string;
-  };
 }
 
 // Tier display labels
@@ -90,6 +77,7 @@ function getStatusBadgeProps(status: string) {
 
 export function UpgradeRequestStatusCard({
   request,
+  vendorId,
   onCancel,
   showActions = false,
 }: UpgradeRequestStatusCardProps) {
@@ -100,7 +88,7 @@ export function UpgradeRequestStatusCard({
       setIsCancelling(true);
 
       const response = await fetch(
-        `/api/portal/vendors/${request.vendorId}/tier-upgrade-request/${request.id}`,
+        `/api/portal/vendors/${vendorId}/tier-upgrade-request/${request.id}`,
         { method: 'DELETE' }
       );
 

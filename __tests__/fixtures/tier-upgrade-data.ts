@@ -10,8 +10,8 @@ import { TierUpgradeRequest } from '@/lib/types';
 // Mock tier upgrade requests in different states
 export const mockPendingRequest: TierUpgradeRequest = {
   id: 'req-pending-1',
-  vendorId: 'vendor-free-1',
-  userId: 'user-1',
+  vendor: 'vendor-free-1',
+  user: 'user-1',
   currentTier: 'free',
   requestedTier: 'tier1',
   status: 'pending',
@@ -21,28 +21,32 @@ export const mockPendingRequest: TierUpgradeRequest = {
   updatedAt: '2024-01-15T10:30:00Z',
 };
 
+// For backward compatibility with tests that expect vendorId
+export const mockPendingRequestLegacy = {
+  ...mockPendingRequest,
+  vendorId: 'vendor-free-1',
+  userId: 'user-1',
+};
+
 export const mockApprovedRequest: TierUpgradeRequest = {
   id: 'req-approved-1',
-  vendorId: 'vendor-tier1-1',
-  userId: 'user-2',
+  vendor: 'vendor-tier1-1',
+  user: 'user-2',
   currentTier: 'tier1',
   requestedTier: 'tier2',
   status: 'approved',
   vendorNotes: 'Expanding our operations to include multiple locations and need advanced features.',
   requestedAt: '2024-01-10T09:00:00Z',
   reviewedAt: '2024-01-11T14:30:00Z',
-  reviewedBy: {
-    id: 'admin-1',
-    name: 'Admin User',
-  },
+  reviewedBy: 'admin-1',
   createdAt: '2024-01-10T09:00:00Z',
   updatedAt: '2024-01-11T14:30:00Z',
 };
 
 export const mockRejectedRequest: TierUpgradeRequest = {
   id: 'req-rejected-1',
-  vendorId: 'vendor-tier1-1',
-  userId: 'user-3',
+  vendor: 'vendor-tier1-1',
+  user: 'user-3',
   currentTier: 'tier1',
   requestedTier: 'tier3',
   status: 'rejected',
@@ -50,18 +54,15 @@ export const mockRejectedRequest: TierUpgradeRequest = {
   rejectionReason: 'Please provide more details about your business needs and why you require enterprise-level features. We recommend starting with Tier 2 first to ensure the features align with your requirements.',
   requestedAt: '2024-01-08T11:00:00Z',
   reviewedAt: '2024-01-09T16:45:00Z',
-  reviewedBy: {
-    id: 'admin-1',
-    name: 'Admin User',
-  },
+  reviewedBy: 'admin-1',
   createdAt: '2024-01-08T11:00:00Z',
   updatedAt: '2024-01-09T16:45:00Z',
 };
 
 export const mockCancelledRequest: TierUpgradeRequest = {
   id: 'req-cancelled-1',
-  vendorId: 'vendor-free-1',
-  userId: 'user-4',
+  vendor: 'vendor-free-1',
+  user: 'user-4',
   currentTier: 'free',
   requestedTier: 'tier2',
   status: 'cancelled',

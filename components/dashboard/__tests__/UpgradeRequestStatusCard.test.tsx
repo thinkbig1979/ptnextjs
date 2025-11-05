@@ -45,7 +45,7 @@ describe('UpgradeRequestStatusCard', () => {
 
   describe('Status Badge Display', () => {
     it('renders pending status with yellow badge', () => {
-      render(<UpgradeRequestStatusCard request={mockPendingRequest} />);
+      render(<UpgradeRequestStatusCard request={mockPendingRequest} vendorId="vendor-1" />);
 
       const badge = screen.getByText(/pending/i);
       expect(badge).toBeInTheDocument();
@@ -53,7 +53,7 @@ describe('UpgradeRequestStatusCard', () => {
     });
 
     it('renders approved status with green badge', () => {
-      render(<UpgradeRequestStatusCard request={mockApprovedRequest} />);
+      render(<UpgradeRequestStatusCard request={mockApprovedRequest} vendorId="vendor-1" />);
 
       const badge = screen.getByText(/approved/i);
       expect(badge).toBeInTheDocument();
@@ -61,7 +61,7 @@ describe('UpgradeRequestStatusCard', () => {
     });
 
     it('renders rejected status with red badge', () => {
-      render(<UpgradeRequestStatusCard request={mockRejectedRequest} />);
+      render(<UpgradeRequestStatusCard request={mockRejectedRequest} vendorId="vendor-1" />);
 
       const badge = screen.getByText(/rejected/i);
       expect(badge).toBeInTheDocument();
@@ -69,7 +69,7 @@ describe('UpgradeRequestStatusCard', () => {
     });
 
     it('renders cancelled status with gray badge', () => {
-      render(<UpgradeRequestStatusCard request={mockCancelledRequest} />);
+      render(<UpgradeRequestStatusCard request={mockCancelledRequest} vendorId="vendor-1" />);
 
       const badge = screen.getByText(/cancelled/i);
       expect(badge).toBeInTheDocument();
@@ -79,33 +79,33 @@ describe('UpgradeRequestStatusCard', () => {
 
   describe('Request Information Display', () => {
     it('displays current and requested tier information', () => {
-      render(<UpgradeRequestStatusCard request={mockPendingRequest} />);
+      render(<UpgradeRequestStatusCard request={mockPendingRequest} vendorId="vendor-1" />);
 
       expect(screen.getByText(/free/i)).toBeInTheDocument();
       expect(screen.getByText(/tier 1/i)).toBeInTheDocument();
     });
 
     it('displays vendor notes when provided', () => {
-      render(<UpgradeRequestStatusCard request={mockPendingRequest} />);
+      render(<UpgradeRequestStatusCard request={mockPendingRequest} vendorId="vendor-1" />);
 
       expect(screen.getByText(/We need to list more products/i)).toBeInTheDocument();
     });
 
     it('displays formatted request date', () => {
-      render(<UpgradeRequestStatusCard request={mockPendingRequest} />);
+      render(<UpgradeRequestStatusCard request={mockPendingRequest} vendorId="vendor-1" />);
 
       // Should format as readable date (e.g., "Jan 15, 2024")
       expect(screen.getByText(/jan.*15.*2024/i)).toBeInTheDocument();
     });
 
     it('displays reviewer information for reviewed requests', () => {
-      render(<UpgradeRequestStatusCard request={mockApprovedRequest} />);
+      render(<UpgradeRequestStatusCard request={mockApprovedRequest} vendorId="vendor-1" />);
 
       expect(screen.getByText(/admin user/i)).toBeInTheDocument();
     });
 
     it('displays rejection reason when status is rejected', () => {
-      render(<UpgradeRequestStatusCard request={mockRejectedRequest} />);
+      render(<UpgradeRequestStatusCard request={mockRejectedRequest} vendorId="vendor-1" />);
 
       expect(
         screen.getByText(/Please provide more details about your business needs/i)
@@ -113,7 +113,7 @@ describe('UpgradeRequestStatusCard', () => {
     });
 
     it('does not display rejection reason for non-rejected statuses', () => {
-      render(<UpgradeRequestStatusCard request={mockPendingRequest} />);
+      render(<UpgradeRequestStatusCard request={mockPendingRequest} vendorId="vendor-1" />);
 
       expect(screen.queryByText(/rejection/i)).not.toBeInTheDocument();
     });
@@ -123,6 +123,7 @@ describe('UpgradeRequestStatusCard', () => {
     it('shows cancel button for pending requests when showActions is true', () => {
       render(
         <UpgradeRequestStatusCard
+          vendorId="vendor-1"
           request={mockPendingRequest}
           showActions={true}
         />
@@ -134,6 +135,7 @@ describe('UpgradeRequestStatusCard', () => {
     it('does not show cancel button for approved requests', () => {
       render(
         <UpgradeRequestStatusCard
+          vendorId="vendor-1"
           request={mockApprovedRequest}
           showActions={true}
         />
@@ -145,6 +147,7 @@ describe('UpgradeRequestStatusCard', () => {
     it('does not show cancel button for rejected requests', () => {
       render(
         <UpgradeRequestStatusCard
+          vendorId="vendor-1"
           request={mockRejectedRequest}
           showActions={true}
         />
@@ -156,6 +159,7 @@ describe('UpgradeRequestStatusCard', () => {
     it('does not show cancel button when showActions is false', () => {
       render(
         <UpgradeRequestStatusCard
+          vendorId="vendor-1"
           request={mockPendingRequest}
           showActions={false}
         />
@@ -168,6 +172,7 @@ describe('UpgradeRequestStatusCard', () => {
       const user = userEvent.setup();
       render(
         <UpgradeRequestStatusCard
+          vendorId="vendor-1"
           request={mockPendingRequest}
           showActions={true}
         />
@@ -193,6 +198,7 @@ describe('UpgradeRequestStatusCard', () => {
 
       render(
         <UpgradeRequestStatusCard
+          vendorId="vendor-1"
           request={mockPendingRequest}
           showActions={true}
           onCancel={onCancel}
@@ -209,7 +215,7 @@ describe('UpgradeRequestStatusCard', () => {
 
       await waitFor(() => {
         expect(global.fetch).toHaveBeenCalledWith(
-          `/api/portal/vendors/${mockPendingRequest.vendorId}/tier-upgrade-request/${mockPendingRequest.id}`,
+          `/api/portal/vendors/vendor-1/tier-upgrade-request/${mockPendingRequest.id}`,
           expect.objectContaining({
             method: 'DELETE',
           })
@@ -230,6 +236,7 @@ describe('UpgradeRequestStatusCard', () => {
 
       render(
         <UpgradeRequestStatusCard
+          vendorId="vendor-1"
           request={mockPendingRequest}
           showActions={true}
           onCancel={onCancel}
@@ -259,6 +266,7 @@ describe('UpgradeRequestStatusCard', () => {
 
       render(
         <UpgradeRequestStatusCard
+          vendorId="vendor-1"
           request={mockPendingRequest}
           showActions={true}
         />
@@ -286,6 +294,7 @@ describe('UpgradeRequestStatusCard', () => {
 
       render(
         <UpgradeRequestStatusCard
+          vendorId="vendor-1"
           request={mockPendingRequest}
           showActions={true}
         />
@@ -307,7 +316,7 @@ describe('UpgradeRequestStatusCard', () => {
 
   describe('Accessibility', () => {
     it('has proper semantic structure', () => {
-      render(<UpgradeRequestStatusCard request={mockPendingRequest} />);
+      render(<UpgradeRequestStatusCard request={mockPendingRequest} vendorId="vendor-1" />);
 
       // Card should be rendered
       expect(screen.getByRole('heading', { level: 3 })).toBeInTheDocument();
@@ -316,6 +325,7 @@ describe('UpgradeRequestStatusCard', () => {
     it('has descriptive button labels', () => {
       render(
         <UpgradeRequestStatusCard
+          vendorId="vendor-1"
           request={mockPendingRequest}
           showActions={true}
         />
@@ -333,7 +343,7 @@ describe('UpgradeRequestStatusCard', () => {
         vendorNotes: undefined,
       };
 
-      render(<UpgradeRequestStatusCard request={requestWithoutNotes} />);
+      render(<UpgradeRequestStatusCard request={requestWithoutNotes} vendorId="vendor-1" />);
 
       // Should not display notes section
       expect(screen.queryByText(/We need to list/i)).not.toBeInTheDocument();
@@ -345,7 +355,7 @@ describe('UpgradeRequestStatusCard', () => {
         reviewedBy: undefined,
       };
 
-      render(<UpgradeRequestStatusCard request={requestWithoutReviewer} />);
+      render(<UpgradeRequestStatusCard request={requestWithoutReviewer} vendorId="vendor-1" />);
 
       // Should still render the card
       expect(screen.getByText(/approved/i)).toBeInTheDocument();

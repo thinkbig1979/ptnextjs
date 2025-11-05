@@ -187,7 +187,7 @@ export default function SubscriptionPage() {
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-4">
-            <SubscriptionTierBadge tier={vendor.tier} size="lg" />
+            <SubscriptionTierBadge tier={vendor.tier as 'free' | 'tier1' | 'tier2'} size="lg" />
             <div>
               <p className="text-sm text-muted-foreground">
                 You are currently on the <span className="font-medium text-foreground">{vendor.tier}</span> tier
@@ -213,6 +213,7 @@ export default function SubscriptionPage() {
         {upgradeRequest ? (
           <UpgradeRequestStatusCard
             request={upgradeRequest}
+            vendorId={vendor.id}
             onCancel={handleRequestCancel}
             showActions={true}
           />

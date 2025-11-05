@@ -37,7 +37,6 @@ create-public-role.js
 
 # TinaCMS
 .tina/
-admin/
 .env.local
 .env.production.local
 
