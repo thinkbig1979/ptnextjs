@@ -1,24 +1,50 @@
-# CLAUDE.md
+# CLAUDE.md - Paul Thames Superyacht Technology
 
-**Note**: This project uses [bd (beads)](https://github.com/steveyegge/beads) for issue tracking. Use `bd` commands instead of markdown TODOs. See AGENTS.md for workflow details.
+**Note**: This project uses [Agent OS Framework](.agent-os/CLAUDE.md) for development automation and [bd (beads)](https://github.com/steveyegge/beads) for issue tracking. See [AGENTS.md](AGENTS.md) for workflow details.
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## Quick Start
 
-## Essential Commands
+### Prerequisites
+- Node.js 18+ and npm
+- SQLite development tools (optional)
 
-### Development
+### First-Time Setup
+```bash
+# Clone and install
+git clone [repo]
+cd ptnextjs
+npm install
+
+# Initial setup (Agent OS handles framework initialization)
+npm run migrate:dry-run  # Preview content migration
+npm run migrate          # Run migration if needed
+npm run dev              # Start development
+
+# Access points
+# Frontend: http://localhost:3000
+# CMS Admin: http://localhost:3000/admin
+```
+
+### Verify Setup
+```bash
+npm run type-check  # TypeScript validation
+npm run lint         # Code quality
+npm run build        # Build verification
+```
+
+## Project-Specific Commands
+
+### Development Workflow
 - `npm run dev` - Start Next.js development server
 - `npm run dev:clean` - Clean up any existing dev servers and start fresh
 - `npm run stop:dev` - Stop all running dev servers (cleans up background processes)
 - `npm run build` - Build the static site for production
 - `npm run start` - Serve production build locally
-- `npm run lint` - Run ESLint code quality checks
-- `npm run type-check` - Run TypeScript type checking
 
-### Testing
-- `npm run test` - Run Jest unit tests
+### Testing (Integrates with Agent OS TDD Guard)
+- `npm run test` - Run Jest unit tests (Agent OS enforces test-first)
 - `npm run test:watch` - Run tests in watch mode
-- `npm run test:coverage` - Generate test coverage report
+- `npm run test:coverage` - Generate coverage report (Agent OS tracks metrics)
 - `npm run test:e2e` - Run Playwright end-to-end tests
 - `npm run test:e2e:ui` - Run Playwright tests with UI
 
@@ -26,14 +52,39 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run build:netlify` - Build static site for Netlify deployment (with export mode)
 - `npm run build:analyze` - Build with bundle size analysis
 
-### Migration (Legacy)
-- `npm run migrate` - Migrate content from TinaCMS to Payload CMS
+### Migration & Content
+- `npm run migrate` - Content migration from TinaCMS to Payload CMS
 - `npm run migrate:dry-run` - Preview migration without making changes
 - `npm run migrate:verbose` - Run migration with detailed logging
 
-## Architecture Overview
+## Agent OS Integration
 
-This is a **static superyacht technology showcase website** built with Next.js 14 (App Router) and powered by Payload CMS for content management.
+### TDD Guard System
+This project leverages Agent OS TDD enforcement:
+- **Current Level**: Standard (warns but allows implementation)
+- **Configuration**: `.agent-os/config.yml`
+- **Test-First Workflow**: Automatically enforced by Agent OS
+- **Coverage Targets**: 85% minimum (tracked by Agent OS)
+
+### Quality Automation
+- **Pre-commit hooks**: Automatic linting and formatting
+- **Multi-agent reviews**: Security, performance, architecture validation
+- **Content validation**: Integrated into build process
+- **Performance monitoring**: Real-time Agent OS metrics
+
+### Issue Management
+- **Primary**: Use `bd` commands for issue tracking
+- **Auto-sync**: Issues sync with Agent OS task management
+- **Dependency mapping**: Automatic dependency detection
+
+## Project Architecture
+
+### Technology Stack
+- **Frontend**: Next.js 14 (App Router) + TypeScript
+- **Backend**: Payload CMS with SQLite (dev) / PostgreSQL (prod)
+- **UI**: shadcn/ui components + Tailwind CSS
+- **Testing**: Jest + Playwright (Agent OS integrated)
+- **Static Generation**: All pages pre-built at build time
 
 ### Core Architecture Patterns
 
@@ -115,12 +166,67 @@ Vendor locations are stored in the `vendor_locations` table with these key field
 - `GET/POST/PUT/DELETE /api/portal/vendors/[id]` - Location management endpoints
 - `POST /api/geocode` - Address geocoding endpoint
 
+### Tier Upgrade Request System
+
+The platform provides a workflow for vendors to request subscription tier upgrades with admin approval:
+- **Vendor Request Submission**: Vendors can submit tier upgrade requests via their dashboard
+- **Admin Review & Approval**: Admins review and approve/reject requests through admin panel
+- **Automatic Tier Promotion**: Vendor tier is automatically updated upon approval
+- **Single Pending Request**: Only one pending request per vendor enforced
+- **Complete Audit Trail**: Tracks reviewer, timestamps, and rejection reasons
+
+**Key Components:**
+- `components/dashboard/TierUpgradeRequestForm.tsx` - Vendor request submission form with validation
+- `components/dashboard/UpgradeRequestStatusCard.tsx` - Display request status and details
+- `components/TierComparisonTable.tsx` - Side-by-side tier feature comparison
+- `components/admin/AdminTierRequestQueue.tsx` - Admin review interface with approve/reject actions
+- `lib/services/TierUpgradeRequestService.ts` - Business logic and data access layer
+
+**Database Schema:**
+Tier upgrade requests are stored in the `tier_upgrade_requests` collection with these key fields:
+- `vendor`, `user` - Relationships to vendor and submitting user
+- `currentTier`, `requestedTier` - Tier snapshot and requested upgrade
+- `status` - pending, approved, rejected, or cancelled
+- `vendorNotes` - Business justification from vendor (optional, max 500 chars)
+- `rejectionReason` - Admin explanation for rejection (max 1000 chars)
+- `reviewedBy`, `reviewedAt` - Admin review audit trail
+- `requestedAt`, `createdAt`, `updatedAt` - Timestamps
+
+**API Endpoints (Vendor Portal):**
+- `POST /api/portal/vendors/[id]/tier-upgrade-request` - Submit upgrade request
+- `GET /api/portal/vendors/[id]/tier-upgrade-request` - Get current/pending request status
+- `DELETE /api/portal/vendors/[id]/tier-upgrade-request/[requestId]` - Cancel pending request
+
+**API Endpoints (Admin):**
+- `GET /api/admin/tier-upgrade-requests` - List all requests with filtering (status, vendor, tier)
+- `PUT /api/admin/tier-upgrade-requests/[id]/approve` - Approve request and upgrade vendor
+- `PUT /api/admin/tier-upgrade-requests/[id]/reject` - Reject request with reason
+
+**Admin Interface:**
+- Route: `/admin/tier-requests/pending` - Manage pending tier upgrade requests
+- Features: Filter by status, approve/reject with dialog, view request history
+
+**Validation Rules:**
+- Requested tier must be higher than current tier (no downgrades)
+- Vendor notes: 20-500 characters if provided
+- Rejection reason: required, 10-1000 characters
+- Only one pending request per vendor allowed
+- Only pending requests can be cancelled by vendor
+
 ## Development Guidelines
 
 ### Working with Content
 - Content is managed through Payload CMS admin interface at `/admin`
 - All content is stored in SQLite database for development
 - Use the data service methods to access content in your application code
+
+### Feature Development with Agent OS
+1. **Create Issue**: `bd create "Add new feature"`
+2. **Plan**: Agent OS multi-agent system analyzes requirements
+3. **TDD Cycle**: Write tests first (Agent OS enforces)
+4. **Implementation**: Agent OS provides real-time validation
+5. **Review**: Automatic multi-agent code reviews
+6. **Integration**: Automated testing and validation
 
 ### Adding New Content Types
 1. Define collection schema in `payload.config.ts`
@@ -150,21 +256,84 @@ Run validation during development to catch issues early.
 - Trailing slashes are enforced
 - Legacy URL redirects are configured in `next.config.js`
 
-## Key Files to Understand
+## Testing & Quality Assurance
 
-- `lib/payload-cms-data-service.ts` - Core data access layer and business logic
+### Agent OS TDD Workflow
+```bash
+# Agent OS automatically handles these:
+npm run test              # Unit tests with TDD validation
+npm run test:e2e           # E2E tests
+npm run build              # Build with content validation
+```
+
+### Quality Gates (Agent OS Enforced)
+- **TypeScript compliance**: Automatic type checking
+- **Code quality**: ESLint + Agent OS quality agents
+- **Security**: Agent OS security sentinel scans
+- **Performance**: Agent OS performance oracle analysis
+
+### Pre-Commit Checklist (Agent OS)
+Agent OS automatically validates:
+- [ ] Tests pass (TDD guard)
+- [ ] Type checking passes
+- [ ] Code quality standards
+- [ ] Security scan results
+- [ ] Build succeeds
+- [ ] Content integrity validated
+
+## Deployment & Production
+
+### Build Process
+```bash
+npm run build:netlify      # Static export for Netlify
+npm run build:analyze      # Bundle size analysis
+```
+
+### Production Considerations
+- All pages are statically exported for maximum performance
+- Database migration to PostgreSQL for production environments
+- Environment-specific configurations
+- Content validation during build process
+
+## Troubleshooting (Project-Specific)
+
+### Common Issues
+```bash
+# Agent OS handles framework issues automatically
+# Focus on project-specific problems:
+
+npm run stop:dev           # Clean development restart
+npm run migrate:verbose    # Debug content migration
+npm run build              # Verify static generation
+```
+
+### Content Management
+- Access CMS at `/admin` for content issues
+- Use Payload CMS admin interface
+- Validate content integrity during build
+
+### Development Server Issues
+```bash
+npm run stop:dev          # Clean server restart
+npm run dev:clean         # Fresh start
+```
+
+## Key Files (Project-Specific)
+
+- `lib/payload-cms-data-service.ts` - Core data access layer
 - `payload.config.ts` - Content schema and field definitions
-- `app/layout.tsx` - Root layout with theme provider and global styles
-- `lib/types.ts` - Complete TypeScript definitions
-- `next.config.js` - Build configuration and URL redirects
+- `app/layout.tsx` - Root layout with theme provider
+- `lib/types.ts` - TypeScript definitions
+- `.agent-os/config.yml` - Agent OS configuration
 
-## Testing and Validation
+## References
 
-Always run these checks before committing:
-1. `npm run type-check` - Ensure TypeScript compliance
-2. `npm run lint` - Code quality validation
-3. `npm run build` - Verify static build succeeds
-4. `npm run test` - Run unit tests
-5. `npm run test:e2e` - Run end-to-end tests (when applicable)
+### Framework Documentation
+- [Agent OS Framework](.agent-os/CLAUDE.md) - Meta-framework capabilities
+- [AGENTS.md](AGENTS.md) - Agent-specific workflows
+- [Agent OS Commands](.agent-os/commands/) - Framework commands
 
-The build process includes automatic content validation that will fail if CMS content has integrity issues.
+### Project Documentation
+- [Payload CMS Documentation](https://payloadcms.com/docs)
+- [Next.js App Router](https://nextjs.org/docs/app)
+- [shadcn/ui Components](https://ui.shadcn.com)

@@ -1,0 +1,103 @@
+/**
+ * Admin API - Tier Upgrade Requests Management
+ *
+ * GET /api/admin/tier-upgrade-requests - List all tier upgrade requests with filtering
+ *
+ * Authentication: Required (admin role)
+ * Authorization: Admin only
+ * Security: Rate limited to 10 requests per minute per IP
+ */
+
+import { NextRequest, NextResponse } from 'next/server';
+import { getPayload } from 'payload';
+import config from '@/payload.config';
+import * as TierUpgradeRequestService from '@/lib/services/TierUpgradeRequestService';
+import type { RequestStatus } from '@/lib/services/TierUpgradeRequestService';
+import { rateLimit } from '@/lib/middleware/rateLimit';
+
+/**
+ * Authenticate admin user
+ */
+async function authenticateAdmin(request: NextRequest) {
+  const payload = await getPayload({ config });
+
+  // Get user from cookie
+  const token = request.cookies.get('payload-token')?.value;
+
+  if (!token) {
+    return { error: 'UNAUTHORIZED', status: 401, message: 'Authentication required' };
+  }
+
+  try {
+    // Verify token and get user
+    const { user } = await payload.auth({ headers: request.headers });
+
+    if (!user) {
+      return { error: 'UNAUTHORIZED', status: 401, message: 'Invalid authentication token' };
+    }
+
+    // Check admin role
+    if (user.role !== 'admin') {
+      return { error: 'FORBIDDEN', status: 403, message: 'Admin access required' };
+    }
+
+    return { user };
+  } catch (error) {
+    console.error('Authentication error:', error);
+    return { error: 'UNAUTHORIZED', status: 401, message: 'Authentication failed' };
+  }
+}
+
+/**
+ * GET - List tier upgrade requests with filtering and pagination
+ */
+export async function GET(request: NextRequest) {
+  return rateLimit(request, async () => {
+    try {
+      const auth = await authenticateAdmin(request);
+
+      if ('error' in auth) {
+        return NextResponse.json(
+          { success: false, error: auth.error, message: auth.message },
+          { status: auth.status }
+        );
+      }
+
+      // Parse query parameters
+      const searchParams = request.nextUrl.searchParams;
+      const status = searchParams.get('status') as RequestStatus | null;
+      const vendorId = searchParams.get('vendorId');
+      const page = parseInt(searchParams.get('page') || '1', 10);
+      const limit = Math.min(parseInt(searchParams.get('limit') || '20', 10), 100);
+      const sortBy = searchParams.get('sortBy') || 'requestedAt';
+      const sortOrder = (searchParams.get('sortOrder') || 'desc') as 'asc' | 'desc';
+
+      // Build filters
+      const filters: any = {
+        page,
+        limit,
+        sortBy,
+        sortOrder,
+      };
+
+      if (status) {
+        filters.status = status;
+      }
+
+      if (vendorId) {
+        filters.vendorId = vendorId;
+      }
+
+      // Get requests
+      const result = await TierUpgradeRequestService.listRequests(filters);
+
+      return NextResponse.json({ success: true, data: result });
+    } catch (error) {
+      console.error('Error listing tier upgrade requests:', error);
+      return NextResponse.json(
+        { success: false, error: 'INTERNAL_ERROR', message: 'Failed to list requests' },
+        { status: 500 }
+      );
+    }
+  });
+}

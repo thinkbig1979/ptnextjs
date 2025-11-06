@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -74,15 +75,6 @@ export function UpgradePromptCard({
 }: UpgradePromptCardProps) {
   const benefitsList = benefits || DEFAULT_BENEFITS[targetTier] || [];
 
-  const handleContactSales = () => {
-    if (onContactSales) {
-      onContactSales();
-    } else {
-      // Default behavior: mailto
-      window.location.href = 'mailto:sales@example.com?subject=Upgrade%20Inquiry';
-    }
-  };
-
   const content = (
     <>
       <CardHeader>
@@ -119,9 +111,11 @@ export function UpgradePromptCard({
       )}
 
       <CardFooter className="flex flex-col sm:flex-row gap-3">
-        <Button onClick={handleContactSales} className="w-full sm:w-auto" size="lg">
-          Contact Sales
-          <ArrowRight className="ml-2 h-4 w-4" />
+        <Button asChild className="w-full sm:w-auto" size="lg">
+          <Link href="/vendor/dashboard/subscription">
+            View Subscription Options
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Link>
         </Button>
         <Button variant="outline" className="w-full sm:w-auto" size="lg" asChild>
           <a href="/pricing" target="_blank">

@@ -1,0 +1,255 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - link "Paul Thames" [ref=e5] [cursor=pointer]:
+          - /url: /
+          - img "Paul Thames" [ref=e7] [cursor=pointer]
+        - navigation [ref=e8]:
+          - link "Home" [ref=e10] [cursor=pointer]:
+            - /url: /
+          - link "About" [ref=e12] [cursor=pointer]:
+            - /url: /about
+          - button "Discovery Platform" [ref=e14] [cursor=pointer]:
+            - text: Discovery Platform
+            - img [ref=e15] [cursor=pointer]
+          - link "Bespoke Solutions" [ref=e18] [cursor=pointer]:
+            - /url: /bespoke-solutions
+          - link "Blog" [ref=e20] [cursor=pointer]:
+            - /url: /blog
+          - link "Contact" [ref=e22] [cursor=pointer]:
+            - /url: /contact
+        - button "Using system theme (currently light), click to switch to light theme" [ref=e24] [cursor=pointer]:
+          - generic [ref=e25] [cursor=pointer]:
+            - img [ref=e26] [cursor=pointer]
+            - img [ref=e28] [cursor=pointer]
+          - generic [ref=e34] [cursor=pointer]: Using system theme (currently light), click to switch to light theme
+    - main [ref=e35]:
+      - generic [ref=e36]:
+        - complementary [ref=e37]:
+          - navigation "Vendor dashboard navigation" [ref=e38]:
+            - generic [ref=e39]:
+              - heading "Vendor Portal" [level=2] [ref=e40]
+              - generic [ref=e41]:
+                - paragraph [ref=e42]: cancel-request-1762411792674@test.example.com
+                - generic [ref=e43]: Free Tier
+            - generic [ref=e44]:
+              - link "Dashboard" [ref=e45] [cursor=pointer]:
+                - /url: /vendor/dashboard
+                - img [ref=e46] [cursor=pointer]
+                - generic [ref=e51] [cursor=pointer]: Dashboard
+              - link "Profile" [ref=e52] [cursor=pointer]:
+                - /url: /vendor/dashboard/profile
+                - img [ref=e53] [cursor=pointer]
+                - generic [ref=e56] [cursor=pointer]: Profile
+              - link "Subscription" [ref=e57] [cursor=pointer]:
+                - /url: /vendor/dashboard/subscription
+                - img [ref=e58] [cursor=pointer]
+                - generic [ref=e60] [cursor=pointer]: Subscription
+              - link "Settings" [ref=e61] [cursor=pointer]:
+                - /url: /vendor/dashboard/settings
+                - img [ref=e62] [cursor=pointer]
+                - generic [ref=e65] [cursor=pointer]: Settings
+            - button "Logout" [ref=e67] [cursor=pointer]:
+              - img [ref=e68] [cursor=pointer]
+              - text: Logout
+        - main [ref=e71]:
+          - generic [ref=e73]:
+            - generic [ref=e76]:
+              - generic [ref=e77]:
+                - navigation "breadcrumb" [ref=e78]:
+                  - list [ref=e79]:
+                    - listitem [ref=e80]:
+                      - link "Home" [ref=e81] [cursor=pointer]:
+                        - /url: /
+                    - listitem [ref=e82]:
+                      - img [ref=e83]
+                    - listitem [ref=e85]:
+                      - link "Vendor Dashboard" [disabled] [ref=e86]
+                - heading "Vendor Dashboard" [level=1] [ref=e87]
+              - generic [ref=e88]:
+                - button "Save changes" [disabled]:
+                  - img
+                  - text: Save Changes
+            - generic [ref=e90]:
+              - generic [ref=e91]:
+                - generic [ref=e92]:
+                  - heading "Welcome, cancel-request-1762411792674" [level=1] [ref=e93]
+                  - paragraph [ref=e94]: Manage your vendor profile, products, and account settings.
+                - generic [ref=e97]:
+                  - img [ref=e98]
+                  - paragraph [ref=e101]:
+                    - text: Your account is
+                    - strong [ref=e102]: pending approval
+                    - text: . You'll receive an email once an admin reviews your application.
+                - generic [ref=e103]:
+                  - generic [ref=e104]:
+                    - generic [ref=e105]:
+                      - heading "Profile Status" [level=3] [ref=e106]:
+                        - img [ref=e107]
+                        - text: Profile Status
+                      - paragraph [ref=e110]: Your account information
+                    - generic [ref=e111]:
+                      - generic [ref=e112]:
+                        - generic [ref=e113]:
+                          - generic [ref=e114]: Profile Completion
+                          - generic [ref=e115]: 75%
+                        - progressbar "Profile completion percentage" [ref=e117]
+                      - generic [ref=e119]:
+                        - generic [ref=e120]: Approval Status
+                        - generic [ref=e121]:
+                          - img [ref=e122]
+                          - text: Pending
+                  - generic [ref=e125]:
+                    - generic [ref=e126]:
+                      - heading "Subscription Tier" [level=3] [ref=e127]
+                      - paragraph [ref=e128]: Your current subscription level
+                    - generic [ref=e129]:
+                      - generic [ref=e130]:
+                        - generic [ref=e131]: Current Tier
+                        - generic [ref=e132]: Free Tier
+                      - generic [ref=e133]:
+                        - paragraph [ref=e134]: Upgrade to unlock premium features like product management.
+                        - button "View Upgrade Options" [ref=e135] [cursor=pointer]: View Upgrade Options
+                  - generic [ref=e137]:
+                    - generic [ref=e138]:
+                      - heading "Quick Actions" [level=3] [ref=e139]
+                      - paragraph [ref=e140]: Common tasks and settings
+                    - generic [ref=e141]:
+                      - button "Edit Profile" [ref=e142] [cursor=pointer]:
+                        - img [ref=e143] [cursor=pointer]
+                        - text: Edit Profile
+                      - button "Contact Support" [ref=e146] [cursor=pointer]: Contact Support
+                - generic [ref=e149]:
+                  - generic [ref=e150]:
+                    - heading "Getting Started" [level=3] [ref=e151]
+                    - paragraph [ref=e152]: Complete these steps to make the most of your vendor account
+                  - list [ref=e154]:
+                    - listitem [ref=e155]:
+                      - img [ref=e156]
+                      - generic [ref=e159]:
+                        - paragraph [ref=e160]: Complete your profile
+                        - paragraph [ref=e161]: Add company information, logo, and contact details
+                    - listitem [ref=e162]:
+                      - img [ref=e163]
+                      - generic [ref=e166]:
+                        - paragraph [ref=e167]: Configure notifications
+                        - paragraph [ref=e168]: Manage your email preferences and alerts
+              - complementary [ref=e170]:
+                - generic [ref=e171]:
+                  - generic [ref=e172]:
+                    - heading "Subscription Tier" [level=3] [ref=e173]
+                    - paragraph [ref=e174]: Your current plan level
+                  - generic [ref=e175]:
+                    - generic [ref=e176]:
+                      - generic [ref=e177]: Current Tier
+                      - generic [ref=e178]:
+                        - img [ref=e179]
+                        - generic [ref=e181]: Free
+                    - generic [ref=e182]:
+                      - paragraph [ref=e183]: Upgrade to unlock more features and grow your business.
+                      - button "View Subscription Options" [ref=e184] [cursor=pointer]
+                - generic [ref=e185]:
+                  - generic [ref=e186]:
+                    - generic [ref=e187]:
+                      - generic [ref=e188]:
+                        - img [ref=e189]
+                        - heading "Unlock Premium Features" [level=3] [ref=e192]
+                      - generic [ref=e193]: Tier 1 Feature
+                    - paragraph [ref=e194]: Upgrade from Free to Tier 1 to access this feature and more.
+                  - generic [ref=e196]:
+                    - paragraph [ref=e197]: "What you'll get with Tier 1:"
+                    - list [ref=e198]:
+                      - listitem [ref=e199]:
+                        - img [ref=e200]
+                        - generic [ref=e202]: Enhanced brand storytelling
+                      - listitem [ref=e203]:
+                        - img [ref=e204]
+                        - generic [ref=e206]: Certifications & awards showcase
+                      - listitem [ref=e207]:
+                        - img [ref=e208]
+                        - generic [ref=e210]: Case studies with testimonials
+                      - listitem [ref=e211]:
+                        - img [ref=e212]
+                        - generic [ref=e214]: Team member profiles
+                      - listitem [ref=e215]:
+                        - img [ref=e216]
+                        - generic [ref=e218]: Video introductions
+                      - listitem [ref=e219]:
+                        - img [ref=e220]
+                        - generic [ref=e222]: Up to 3 office locations
+                  - generic [ref=e223]:
+                    - link "View Subscription Options" [ref=e224] [cursor=pointer]:
+                      - /url: /vendor/dashboard/subscription
+                      - text: View Subscription Options
+                      - img [ref=e225] [cursor=pointer]
+                    - link "View Pricing" [ref=e227] [cursor=pointer]:
+                      - /url: /pricing
+                - generic [ref=e228]:
+                  - generic [ref=e229]:
+                    - heading "Quick Actions" [level=3] [ref=e230]
+                    - paragraph [ref=e231]: Common tasks and tools
+                  - generic [ref=e232]:
+                    - button "Edit Profile" [ref=e233] [cursor=pointer]:
+                      - img [ref=e234] [cursor=pointer]
+                      - text: Edit Profile
+                    - button "Contact Support" [ref=e237] [cursor=pointer]: Contact Support
+                    - button "Help Center" [ref=e240] [cursor=pointer]:
+                      - img [ref=e241] [cursor=pointer]
+                      - text: Help Center
+                - generic [ref=e244]:
+                  - generic [ref=e245]:
+                    - heading "Resources" [level=3] [ref=e246]
+                    - paragraph [ref=e247]: Documentation and guides
+                  - generic [ref=e248]:
+                    - link "Getting Started Guide" [ref=e249] [cursor=pointer]:
+                      - /url: /docs/getting-started
+                    - link "Feature Documentation" [ref=e250] [cursor=pointer]:
+                      - /url: /docs/features
+                    - link "Best Practices" [ref=e251] [cursor=pointer]:
+                      - /url: /docs/best-practices
+    - contentinfo [ref=e252]:
+      - generic [ref=e253]:
+        - generic [ref=e254]:
+          - generic [ref=e255]:
+            - generic [ref=e256]:
+              - img [ref=e257]
+              - generic [ref=e260]: Paul Thames
+            - paragraph [ref=e261]: Excellence in superyacht technology solutions
+          - generic [ref=e262]:
+            - heading "Quick Links" [level=3] [ref=e263]
+            - generic [ref=e264]:
+              - link "Vendors" [ref=e265] [cursor=pointer]:
+                - /url: /vendors
+              - link "Products & Services" [ref=e266] [cursor=pointer]:
+                - /url: /products
+              - link "About Us" [ref=e267] [cursor=pointer]:
+                - /url: /about
+          - generic [ref=e268]:
+            - heading "Contact" [level=3] [ref=e269]
+            - generic [ref=e270]:
+              - generic [ref=e271] [cursor=pointer]:
+                - img [ref=e272] [cursor=pointer]
+                - generic [ref=e275] [cursor=pointer]: contact@paulthames.com
+              - generic [ref=e276] [cursor=pointer]:
+                - img [ref=e277] [cursor=pointer]
+                - generic [ref=e279] [cursor=pointer]: +31 20 123 4567
+              - generic [ref=e280]:
+                - img [ref=e281]
+                - generic [ref=e284]: Amsterdam, Netherlands
+          - generic [ref=e285]:
+            - heading "Resources" [level=3] [ref=e286]
+            - generic [ref=e287]:
+              - link "Blog" [ref=e288] [cursor=pointer]:
+                - /url: /blog
+              - link "Contact Us" [ref=e289] [cursor=pointer]:
+                - /url: /contact
+        - paragraph [ref=e291]: © 2025 Paul Thames. All rights reserved.
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e297] [cursor=pointer]:
+    - img [ref=e298] [cursor=pointer]
+  - alert [ref=e301]: Paul Thames - Superyacht Technology Excellence
+```

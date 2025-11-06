@@ -12,6 +12,7 @@ import {
   User,
   Package,
   Settings,
+  CreditCard,
   LogOut,
 } from 'lucide-react';
 
@@ -47,6 +48,12 @@ export function VendorNavigation({ className }: VendorNavigationProps) {
       label: 'Products',
       icon: Package,
       visible: tier === 'tier2', // Only visible for tier2 vendors
+    },
+    {
+      href: '/vendor/dashboard/subscription',
+      label: 'Subscription',
+      icon: CreditCard,
+      visible: true,
     },
     {
       href: '/vendor/dashboard/settings',

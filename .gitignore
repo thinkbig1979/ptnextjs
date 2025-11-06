@@ -37,7 +37,6 @@ create-public-role.js
 
 # TinaCMS
 .tina/
-admin/
 .env.local
 .env.production.local
 
@@ -56,3 +55,4 @@ payload.db
 payload-types.ts
 generated-schema.graphql
 migrations/
+.env

@@ -38,7 +38,7 @@ Agent OS v2.0 introduces **Orchestrated Parallel Task Execution**, providing:
 - **Context optimization** for maximum efficiency and relevance
 - **🆕 Deliverable Verification (v2.5+)**: Mandatory verification of all files and deliverables before task completion
 
-The orchestrated system uses a master `task-orchestrator` that coordinates multiple specialist agents working in parallel, each with optimized context windows and focused responsibilities. See `ORCHESTRATED_EXECUTION_GUIDE.md` for detailed documentation.
+The execution system uses Claude Code's agent framework to coordinate task execution systematically, with optimized context and focused responsibilities for each task phase.
 
 ### Deliverable Verification Framework (v2.5+)
 

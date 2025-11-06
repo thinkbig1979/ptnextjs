@@ -1,9 +1,9 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import { seedVendors } from '../helpers/seed-api-helpers';
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
 
-async function loginAsVendor(page, email: string, password: string) {
+async function loginAsVendor(page: Page, email: string, password: string) {
   await page.goto(`${BASE_URL}/vendor/login/`);
   await page.getByPlaceholder('vendor@example.com').fill(email);
   await page.getByPlaceholder(/password/i).fill(password);

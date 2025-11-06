@@ -1,0 +1,484 @@
+/**
+ * TierUpgradeRequestService - Business logic for tier upgrade request management
+ *
+ * Provides:
+ * - Validation logic for tier upgrade requests
+ * - CRUD operations (create, read, update)
+ * - Status changes (approve, reject, cancel)
+ * - Atomic operations (vendor tier + request status updates)
+ *
+ * Used by:
+ * - Payload collection beforeChange hooks
+ * - Vendor portal API endpoints
+ * - Admin API endpoints
+ *
+ * Security Enhancements:
+ * - Minimum length validation for vendorNotes (20 chars when provided)
+ * - Maximum length validation for vendorNotes (500 chars)
+ * - Maximum length validation for rejectionReason (1000 chars)
+ */
+
+import { getPayload } from 'payload';
+import config from '@/payload.config';
+import type { Tier } from '@/lib/constants/tierConfig';
+
+export type RequestStatus = 'pending' | 'approved' | 'rejected' | 'cancelled';
+
+interface TierUpgradeRequestData {
+  vendor?: string | null;
+  user?: string | null;
+  currentTier?: string;
+  requestedTier?: string;
+  status?: string;
+  vendorNotes?: string;
+  rejectionReason?: string;
+  reviewedBy?: string | null;
+  requestedAt?: string;
+  reviewedAt?: string;
+}
+
+interface ValidationResult {
+  valid: boolean;
+  errors: string[];
+}
+
+interface UniqueCheckResult {
+  allowed: boolean;
+  error?: string;
+}
+
+interface VendorData {
+  id: string;
+  tier: Tier;
+}
+
+interface CreateUpgradeRequestPayload {
+  vendorId: string;
+  userId: string;
+  requestedTier: Tier;
+  vendorNotes?: string;
+}
+
+interface TierUpgradeRequest {
+  id: string;
+  vendor: string;
+  user: string;
+  currentTier: Tier;
+  requestedTier: Tier;
+  status: RequestStatus;
+  vendorNotes?: string;
+  rejectionReason?: string;
+  reviewedBy?: { id: string; name: string };
+  requestedAt: string;
+  reviewedAt?: string;
+}
+
+interface ListRequestsFilters {
+  status?: RequestStatus;
+  vendorId?: string;
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+}
+
+interface ListRequestsResult {
+  requests: TierUpgradeRequest[];
+  totalCount: number;
+  page: number;
+  totalPages: number;
+}
+
+const TIER_ORDER: Record<string, number> = {
+  free: 0,
+  tier1: 1,
+  tier2: 2,
+  tier3: 3,
+};
+
+const VALID_CURRENT_TIERS = ['free', 'tier1', 'tier2', 'tier3'];
+const VALID_REQUESTED_TIERS = ['tier1', 'tier2', 'tier3']; // Cannot request 'free'
+const VALID_STATUSES = ['pending', 'approved', 'rejected', 'cancelled'];
+
+/**
+ * Validates a tier upgrade request against all schema rules
+ */
+export function validateTierUpgradeRequest(request: TierUpgradeRequestData): ValidationResult {
+  const errors: string[] = [];
+
+  // Required field validation
+  if (request.vendor === null) {
+    errors.push('Vendor relationship is required');
+  } else if (!request.vendor) {
+    errors.push('Vendor ID is required');
+  }
+
+  if (request.user === null) {
+    errors.push('User relationship is required');
+  } else if (!request.user) {
+    errors.push('User ID is required');
+  }
+
+  if (!request.requestedTier) {
+    errors.push('Requested tier is required');
+  }
+
+  // Tier value validation
+  if (request.currentTier && !VALID_CURRENT_TIERS.includes(request.currentTier)) {
+    errors.push('Invalid current tier value');
+  }
+
+  // Status validation
+  if (request.status && !VALID_STATUSES.includes(request.status)) {
+    errors.push('Invalid status value');
+  }
+
+  // Check for 'free' tier request first (special case)
+  if (request.requestedTier === 'free') {
+    errors.push('Cannot request free tier (downgrades not supported)');
+  }
+
+  // Now check if requested tier is valid (only if not 'free')
+  if (request.requestedTier && request.requestedTier !== 'free') {
+    if (!VALID_REQUESTED_TIERS.includes(request.requestedTier)) {
+      errors.push('Invalid requested tier value');
+    }
+  }
+
+  // Tier upgrade validation (requested > current)
+  // Always check this for proper tier comparison validation
+  if (request.requestedTier && request.currentTier) {
+    // Check if both tiers are in the tier order (includes 'free')
+    const requestedLevel = TIER_ORDER[request.requestedTier];
+    const currentLevel = TIER_ORDER[request.currentTier];
+
+    if (requestedLevel !== undefined && currentLevel !== undefined) {
+      if (requestedLevel <= currentLevel) {
+        errors.push('Requested tier must be higher than current tier');
+      }
+    }
+  }
+
+  // Vendor notes validation (minimum and maximum length) - SECURITY ENHANCEMENT
+  if (request.vendorNotes) {
+    const trimmedNotes = request.vendorNotes.trim();
+    if (trimmedNotes.length > 0 && trimmedNotes.length < 20) {
+      errors.push('Vendor notes must be at least 20 characters when provided');
+    }
+    if (request.vendorNotes.length > 500) {
+      errors.push('Vendor notes must not exceed 500 characters');
+    }
+  }
+
+  // Rejection reason character limit
+  if (request.rejectionReason && request.rejectionReason.length > 1000) {
+    errors.push('Rejection reason must not exceed 1000 characters');
+  }
+
+  return {
+    valid: errors.length === 0,
+    errors,
+  };
+}
+
+/**
+ * Checks if vendor already has a pending tier upgrade request
+ */
+export async function checkUniquePendingRequest(
+  vendorId: string,
+  existingRequests: Array<{ vendor: string; status: string }>
+): Promise<UniqueCheckResult> {
+  // Check for any pending requests for this vendor
+  const hasPendingRequest = existingRequests.some(
+    (req) => req.vendor === vendorId && req.status === 'pending'
+  );
+
+  if (hasPendingRequest) {
+    return {
+      allowed: false,
+      error: 'Vendor already has a pending tier upgrade request',
+    };
+  }
+
+  return {
+    allowed: true,
+  };
+}
+
+/**
+ * Auto-populates currentTier from vendor data
+ */
+export async function autoPopulateCurrentTier(
+  requestData: TierUpgradeRequestData,
+  vendorData: VendorData
+): Promise<TierUpgradeRequestData> {
+  // If currentTier is explicitly set, respect it
+  if (requestData.currentTier) {
+    return requestData;
+  }
+
+  // Otherwise, populate from vendor
+  return {
+    ...requestData,
+    currentTier: vendorData.tier,
+  };
+}
+
+/**
+ * Creates a new tier upgrade request
+ */
+export async function createUpgradeRequest(
+  payload: CreateUpgradeRequestPayload
+): Promise<TierUpgradeRequest> {
+  const payloadClient = await getPayload({ config });
+
+  // Get vendor to populate current tier
+  const vendor = await payloadClient.findByID({
+    collection: 'vendors',
+    id: payload.vendorId,
+  });
+
+  if (!vendor) {
+    throw new Error('Vendor not found');
+  }
+
+  // Check for existing pending request
+  const existingPending = await payloadClient.find({
+    collection: 'tier_upgrade_requests',
+    where: {
+      vendor: { equals: payload.vendorId },
+      status: { equals: 'pending' },
+    },
+    limit: 1,
+  });
+
+  if (existingPending.docs.length > 0) {
+    throw new Error('Vendor already has a pending tier upgrade request');
+  }
+
+  // Create the request
+  const newRequest = await payloadClient.create({
+    collection: 'tier_upgrade_requests',
+    data: {
+      vendor: payload.vendorId,
+      user: payload.userId,
+      currentTier: vendor.tier as Tier,
+      requestedTier: payload.requestedTier,
+      status: 'pending',
+      vendorNotes: payload.vendorNotes,
+      requestedAt: new Date().toISOString(),
+    },
+  });
+
+  return newRequest as unknown as TierUpgradeRequest;
+}
+
+/**
+ * Gets the pending tier upgrade request for a vendor
+ */
+export async function getPendingRequest(vendorId: string): Promise<TierUpgradeRequest | null> {
+  const payloadClient = await getPayload({ config });
+
+  const result = await payloadClient.find({
+    collection: 'tier_upgrade_requests',
+    where: {
+      vendor: { equals: vendorId },
+      status: { equals: 'pending' },
+    },
+    limit: 1,
+  });
+
+  return result.docs.length > 0 ? (result.docs[0] as unknown as TierUpgradeRequest) : null;
+}
+
+/**
+ * Gets the most recent tier upgrade request for a vendor (any status)
+ */
+export async function getMostRecentRequest(vendorId: string): Promise<TierUpgradeRequest | null> {
+  const payloadClient = await getPayload({ config });
+
+  const result = await payloadClient.find({
+    collection: 'tier_upgrade_requests',
+    where: {
+      vendor: { equals: vendorId },
+    },
+    sort: '-requestedAt',
+    limit: 1,
+  });
+
+  return result.docs.length > 0 ? (result.docs[0] as unknown as TierUpgradeRequest) : null;
+}
+
+/**
+ * Cancels a pending tier upgrade request
+ */
+export async function cancelRequest(
+  requestId: string,
+  vendorId: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const payloadClient = await getPayload({ config });
+
+    // Get the request first to verify it exists and belongs to vendor
+    const request = await payloadClient.findByID({
+      collection: 'tier_upgrade_requests',
+      id: requestId,
+    });
+
+    if (!request) {
+      return { success: false, error: 'Request not found' };
+    }
+
+    if (request.vendor !== vendorId) {
+      return { success: false, error: 'Request does not belong to vendor' };
+    }
+
+    if (request.status !== 'pending') {
+      return { success: false, error: 'Can only cancel pending requests' };
+    }
+
+    // Update status to cancelled
+    await payloadClient.update({
+      collection: 'tier_upgrade_requests',
+      id: requestId,
+      data: {
+        status: 'cancelled',
+      },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error cancelling tier upgrade request:', error);
+    return { success: false, error: 'Internal error' };
+  }
+}
+
+/**
+ * Lists tier upgrade requests with filtering and pagination (admin only)
+ */
+export async function listRequests(filters: ListRequestsFilters): Promise<ListRequestsResult> {
+  const payloadClient = await getPayload({ config });
+
+  const page = filters.page || 1;
+  const limit = filters.limit || 20;
+
+  // Build where clause
+  const where: any = {};
+  if (filters.status) {
+    where.status = { equals: filters.status };
+  }
+  if (filters.vendorId) {
+    where.vendor = { equals: filters.vendorId };
+  }
+
+  const result = await payloadClient.find({
+    collection: 'tier_upgrade_requests',
+    where,
+    page,
+    limit,
+    sort: filters.sortOrder === 'asc' ? filters.sortBy : `-${filters.sortBy || 'requestedAt'}`,
+  });
+
+  return {
+    requests: result.docs as unknown as TierUpgradeRequest[],
+    totalCount: result.totalDocs,
+    page: result.page || 1,
+    totalPages: result.totalPages,
+  };
+}
+
+/**
+ * Approves a tier upgrade request and atomically updates vendor tier
+ */
+export async function approveRequest(
+  requestId: string,
+  adminUserId: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const payloadClient = await getPayload({ config });
+
+    // Get the request
+    const request = await payloadClient.findByID({
+      collection: 'tier_upgrade_requests',
+      id: requestId,
+    });
+
+    if (!request) {
+      return { success: false, error: 'Request not found' };
+    }
+
+    if (request.status !== 'pending') {
+      return { success: false, error: 'Can only approve pending requests' };
+    }
+
+    // Update vendor tier (atomic operation)
+    await payloadClient.update({
+      collection: 'vendors',
+      id: request.vendor as string,
+      data: {
+        tier: request.requestedTier,
+        updatedAt: new Date().toISOString(),
+      },
+    });
+
+    // Update request status
+    await payloadClient.update({
+      collection: 'tier_upgrade_requests',
+      id: requestId,
+      data: {
+        status: 'approved',
+        reviewedBy: adminUserId,
+        reviewedAt: new Date().toISOString(),
+      },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error approving tier upgrade request:', error);
+    return { success: false, error: 'Internal error' };
+  }
+}
+
+/**
+ * Rejects a tier upgrade request with a reason
+ */
+export async function rejectRequest(
+  requestId: string,
+  adminUserId: string,
+  rejectionReason: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const payloadClient = await getPayload({ config });
+
+    // Get the request
+    const request = await payloadClient.findByID({
+      collection: 'tier_upgrade_requests',
+      id: requestId,
+    });
+
+    if (!request) {
+      return { success: false, error: 'Request not found' };
+    }
+
+    if (request.status !== 'pending') {
+      return { success: false, error: 'Can only reject pending requests' };
+    }
+
+    // Update request status
+    await payloadClient.update({
+      collection: 'tier_upgrade_requests',
+      id: requestId,
+      data: {
+        status: 'rejected',
+        reviewedBy: adminUserId,
+        reviewedAt: new Date().toISOString(),
+        rejectionReason,
+      },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error rejecting tier upgrade request:', error);
+    return { success: false, error: 'Internal error' };
+  }
+}
