@@ -92,7 +92,7 @@ export default function AdminTierRequestQueue() {
       setIsLoading(true);
       setError(null);
 
-      const response = await fetch('/api/admin/tier-requests?status=pending', {
+      const response = await fetch('/api/admin/tier-upgrade-requests?status=pending', {
         method: 'GET',
         credentials: 'include',
       });
@@ -143,15 +143,12 @@ export default function AdminTierRequestQueue() {
     try {
       setActionLoading(selectedRequest.id);
 
-      const response = await fetch(`/api/admin/tier-requests/${selectedRequest.id}`, {
+      const response = await fetch(`/api/admin/tier-upgrade-requests/${selectedRequest.id}/approve`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         credentials: 'include',
-        body: JSON.stringify({
-          action: 'approve',
-        }),
       });
 
       if (!response.ok) {
@@ -206,14 +203,13 @@ export default function AdminTierRequestQueue() {
     try {
       setActionLoading(selectedRequest.id);
 
-      const response = await fetch(`/api/admin/tier-requests/${selectedRequest.id}`, {
+      const response = await fetch(`/api/admin/tier-upgrade-requests/${selectedRequest.id}/reject`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         credentials: 'include',
         body: JSON.stringify({
-          action: 'reject',
           rejectionReason,
         }),
       });

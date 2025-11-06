@@ -200,7 +200,7 @@ export default function SubscriptionPage() {
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-4">
-            <SubscriptionTierBadge tier={vendor.tier as 'free' | 'tier1' | 'tier2'} size="lg" />
+            <SubscriptionTierBadge tier={vendor.tier as 'free' | 'tier1' | 'tier2'} className="text-lg px-4 py-2" />
             <div>
               <p className="text-sm text-muted-foreground">
                 You are currently on the <span className="font-medium text-foreground">{vendor.tier}</span> tier

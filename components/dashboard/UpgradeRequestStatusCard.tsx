@@ -171,7 +171,9 @@ export function UpgradeRequestStatusCard({
             <Separator />
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <User className="h-4 w-4" />
-              <span>Reviewed by {request.reviewedBy.name}</span>
+              <span>
+                Reviewed by {typeof request.reviewedBy === 'string' ? request.reviewedBy : request.reviewedBy.name}
+              </span>
               {request.reviewedAt && (
                 <span className="text-xs">
                   on {format(new Date(request.reviewedAt), 'MMM dd, yyyy')}
