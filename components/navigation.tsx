@@ -33,6 +33,7 @@ const navigationItems: NavigationItem[] = [
       { href: "/products", label: "Products & Services" },
       { href: "/yachts", label: "Yachts" },
       { href: "/info-for-vendors", label: "Info For Vendors" },
+      { href: "/vendor/login", label: "Vendor Login" },
     ]
   },
   { href: "/bespoke-solutions", label: "Bespoke Solutions" },

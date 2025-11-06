@@ -155,9 +155,9 @@ export function VendorLoginForm() {
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
                     {showPassword ? (
-                      <EyeOff className="h-4 w-4 text-gray-400" />
+                      <EyeOff className="h-4 w-4 text-muted-foreground" />
                     ) : (
-                      <Eye className="h-4 w-4 text-gray-400" />
+                      <Eye className="h-4 w-4 text-muted-foreground" />
                     )}
                   </button>
                 </div>
@@ -186,10 +186,10 @@ export function VendorLoginForm() {
 
         {/* Register Link */}
         <div className="text-center text-sm">
-          <span className="text-gray-600">Don&apos;t have an account? </span>
+          <span className="text-muted-foreground">Don&apos;t have an account? </span>
           <Link
             href="/vendor/register"
-            className="font-medium text-blue-600 hover:text-blue-500"
+            className="font-medium text-accent hover:text-accent/80 underline"
           >
             Register here
           </Link>
