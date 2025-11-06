@@ -91,15 +91,7 @@ export async function GET(request: NextRequest) {
       // Get requests
       const result = await TierUpgradeRequestService.listRequests(filters);
 
-      // PERFORMANCE OPTIMIZATION: Add caching to reduce redundant requests
-    return NextResponse.json(
-      { success: true, data: result },
-      {
-        headers: {
-          'Cache-Control': 'private, max-age=60', // Cache for 1 minute
-        },
-      }
-    );
+      return NextResponse.json({ success: true, data: result });
     } catch (error) {
       console.error('Error listing tier upgrade requests:', error);
       return NextResponse.json(

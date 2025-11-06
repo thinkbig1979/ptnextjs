@@ -5,12 +5,14 @@
  *
  * Authentication: Required (admin role)
  * Authorization: Admin only
+ * Security: Rate limited to 10 requests per minute per IP
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getPayload } from 'payload';
 import config from '@/payload.config';
 import * as TierUpgradeRequestService from '@/lib/services/TierUpgradeRequestService';
+import { rateLimit } from '@/lib/middleware/rateLimit';
 
 /**
  * Authenticate admin user
@@ -50,52 +52,55 @@ async function authenticateAdmin(request: NextRequest) {
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  try {
-    const auth = await authenticateAdmin(request);
+  return rateLimit(request, async () => {
+    try {
+      const auth = await authenticateAdmin(request);
 
-    if ('error' in auth) {
-      return NextResponse.json(
-        { success: false, error: auth.error, message: auth.message },
-        { status: auth.status }
+      if ('error' in auth) {
+        return NextResponse.json(
+          { success: false, error: auth.error, message: auth.message },
+          { status: auth.status }
+        );
+      }
+
+      const { user } = auth;
+      const { id } = await params;
+
+      // Approve the request
+      const result = await TierUpgradeRequestService.approveRequest(
+        id,
+        String(user.id)
       );
-    }
 
-    const { user } = auth;
+      if (!result.success) {
+        const statusCode = result.error === 'Request not found' ? 404 :
+                          result.error === 'Can only approve pending requests' ? 400 : 500;
 
-    // Approve the request
-    const result = await TierUpgradeRequestService.approveRequest(
-      params.id,
-      user.id
-    );
-
-    if (!result.success) {
-      const statusCode = result.error === 'Request not found' ? 404 :
-                        result.error === 'Can only approve pending requests' ? 400 : 500;
+        return NextResponse.json(
+          {
+            success: false,
+            error: result.error?.toUpperCase().replace(/ /g, '_') || 'APPROVE_FAILED',
+            message: result.error || 'Failed to approve request',
+          },
+          { status: statusCode }
+        );
+      }
 
       return NextResponse.json(
         {
-          success: false,
-          error: result.error?.toUpperCase().replace(/ /g, '_') || 'APPROVE_FAILED',
-          message: result.error || 'Failed to approve request',
+          success: true,
+          message: 'Tier upgrade request approved and vendor tier updated successfully',
         },
-        { status: statusCode }
+        { status: 200 }
+      );
+    } catch (error) {
+      console.error('Error approving tier upgrade request:', error);
+      return NextResponse.json(
+        { success: false, error: 'INTERNAL_ERROR', message: 'Failed to approve request' },
+        { status: 500 }
       );
     }
-
-    return NextResponse.json(
-      {
-        success: true,
-        message: 'Tier upgrade request approved and vendor tier updated successfully',
-      },
-      { status: 200 }
-    );
-  } catch (error) {
-    console.error('Error approving tier upgrade request:', error);
-    return NextResponse.json(
-      { success: false, error: 'INTERNAL_ERROR', message: 'Failed to approve request' },
-      { status: 500 }
-    );
-  }
+  });
 }

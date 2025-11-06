@@ -5,12 +5,14 @@
  *
  * Authentication: Required (vendor role)
  * Authorization: Vendors can only cancel their own requests
+ * Security: Rate limited to 10 requests per minute per IP
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getPayload } from 'payload';
 import config from '@/payload.config';
 import * as TierUpgradeRequestService from '@/lib/services/TierUpgradeRequestService';
+import { rateLimit } from '@/lib/middleware/rateLimit';
 
 /**
  * Authenticate and authorize vendor access
@@ -60,48 +62,51 @@ async function authenticateVendor(request: NextRequest, vendorId: string) {
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string; requestId: string } }
+  { params }: { params: Promise<{ id: string; requestId: string }> }
 ) {
-  try {
-    const auth = await authenticateVendor(request, params.id);
+  return rateLimit(request, async () => {
+    try {
+      const { id, requestId } = await params;
+      const auth = await authenticateVendor(request, id);
 
-    if ('error' in auth) {
+      if ('error' in auth) {
+        return NextResponse.json(
+          { success: false, error: auth.error, message: auth.message },
+          { status: auth.status }
+        );
+      }
+
+      // Cancel the request
+      const result = await TierUpgradeRequestService.cancelRequest(
+        requestId,
+        id
+      );
+
+      if (!result.success) {
+        const statusCode = result.error === 'Request not found' ? 404 :
+                          result.error === 'Request does not belong to vendor' ? 403 :
+                          result.error === 'Can only cancel pending requests' ? 400 : 500;
+
+        return NextResponse.json(
+          {
+            success: false,
+            error: result.error?.toUpperCase().replace(/ /g, '_') || 'CANCEL_FAILED',
+            message: result.error || 'Failed to cancel request',
+          },
+          { status: statusCode }
+        );
+      }
+
       return NextResponse.json(
-        { success: false, error: auth.error, message: auth.message },
-        { status: auth.status }
+        { success: true, message: 'Request cancelled successfully' },
+        { status: 200 }
+      );
+    } catch (error) {
+      console.error('Error cancelling tier upgrade request:', error);
+      return NextResponse.json(
+        { success: false, error: 'INTERNAL_ERROR', message: 'Failed to cancel request' },
+        { status: 500 }
       );
     }
-
-    // Cancel the request
-    const result = await TierUpgradeRequestService.cancelRequest(
-      params.requestId,
-      params.id
-    );
-
-    if (!result.success) {
-      const statusCode = result.error === 'Request not found' ? 404 :
-                        result.error === 'Request does not belong to vendor' ? 403 :
-                        result.error === 'Can only cancel pending requests' ? 400 : 500;
-
-      return NextResponse.json(
-        {
-          success: false,
-          error: result.error?.toUpperCase().replace(/ /g, '_') || 'CANCEL_FAILED',
-          message: result.error || 'Failed to cancel request',
-        },
-        { status: statusCode }
-      );
-    }
-
-    return NextResponse.json(
-      { success: true, message: 'Request cancelled successfully' },
-      { status: 200 }
-    );
-  } catch (error) {
-    console.error('Error cancelling tier upgrade request:', error);
-    return NextResponse.json(
-      { success: false, error: 'INTERNAL_ERROR', message: 'Failed to cancel request' },
-      { status: 500 }
-    );
-  }
+  });
 }

@@ -6,12 +6,14 @@
  *
  * Authentication: Required (vendor role)
  * Authorization: Vendors can only access their own requests
+ * Security: Rate limited to 10 requests per minute per IP
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getPayload } from 'payload';
 import config from '@/payload.config';
 import * as TierUpgradeRequestService from '@/lib/services/TierUpgradeRequestService';
+import { rateLimit } from '@/lib/middleware/rateLimit';
 
 /**
  * Authenticate and authorize vendor access
@@ -61,104 +63,109 @@ async function authenticateVendor(request: NextRequest, vendorId: string) {
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  try {
-    const auth = await authenticateVendor(request, params.id);
+  return rateLimit(request, async () => {
+    try {
+      const { id } = await params;
+      const auth = await authenticateVendor(request, id);
 
-    if ('error' in auth) {
-      return NextResponse.json(
-        { success: false, error: auth.error, message: auth.message },
-        { status: auth.status }
-      );
-    }
+      if ('error' in auth) {
+        return NextResponse.json(
+          { success: false, error: auth.error, message: auth.message },
+          { status: auth.status }
+        );
+      }
 
-    const { user, vendor } = auth;
-    const body = await request.json();
+      const { user, vendor } = auth;
+      const body = await request.json();
 
-    // Validate request body
-    if (!body.requestedTier) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'VALIDATION_ERROR',
-          message: 'Requested tier is required',
-        },
-        { status: 400 }
-      );
-    }
-
-    // Validate tier upgrade
-    const validation = TierUpgradeRequestService.validateTierUpgradeRequest({
-      vendor: params.id,
-      user: user.id,
-      currentTier: vendor.tier,
-      requestedTier: body.requestedTier,
-      vendorNotes: body.vendorNotes,
-      status: 'pending',
-    });
-
-    if (!validation.valid) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'VALIDATION_ERROR',
-          message: validation.errors.join(', '),
-          details: validation.errors.map(error => ({ issue: error })),
-        },
-        { status: 400 }
-      );
-    }
-
-    // Check for duplicate pending request
-    const existingRequest = await TierUpgradeRequestService.getPendingRequest(params.id);
-
-    if (existingRequest) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'DUPLICATE_REQUEST',
-          message: 'You already have a pending upgrade request',
-          existingRequest: {
-            id: existingRequest.id,
-            requestedTier: existingRequest.requestedTier,
-            requestedAt: existingRequest.requestedAt,
+      // Validate request body
+      if (!body.requestedTier) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'VALIDATION_ERROR',
+            message: 'Requested tier is required',
           },
-        },
-        { status: 409 }
+          { status: 400 }
+        );
+      }
+
+      // Validate tier upgrade
+      const validation = TierUpgradeRequestService.validateTierUpgradeRequest({
+        vendor: id,
+        user: String(user.id),
+        currentTier: vendor.tier,
+        requestedTier: body.requestedTier,
+        vendorNotes: body.vendorNotes,
+        status: 'pending',
+      });
+
+      if (!validation.valid) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'VALIDATION_ERROR',
+            message: validation.errors.join(', '),
+            details: validation.errors.map(error => ({ issue: error })),
+          },
+          { status: 400 }
+        );
+      }
+
+      // Check for duplicate pending request
+      const existingRequest = await TierUpgradeRequestService.getPendingRequest(id);
+
+      if (existingRequest) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'DUPLICATE_REQUEST',
+            message: 'You already have a pending upgrade request',
+            existingRequest: {
+              id: existingRequest.id,
+              requestedTier: existingRequest.requestedTier,
+              requestedAt: existingRequest.requestedAt,
+            },
+          },
+          { status: 409 }
+        );
+      }
+
+      // Create the request
+      const newRequest = await TierUpgradeRequestService.createUpgradeRequest({
+        vendorId: id,
+        userId: String(user.id),
+        requestedTier: body.requestedTier,
+        vendorNotes: body.vendorNotes,
+      });
+
+      return NextResponse.json(
+        { success: true, data: newRequest },
+        { status: 201 }
+      );
+    } catch (error) {
+      console.error('Error creating tier upgrade request:', error);
+      return NextResponse.json(
+        { success: false, error: 'INTERNAL_ERROR', message: 'Failed to create request' },
+        { status: 500 }
       );
     }
-
-    // Create the request
-    const newRequest = await TierUpgradeRequestService.createUpgradeRequest({
-      vendorId: params.id,
-      userId: user.id,
-      requestedTier: body.requestedTier,
-      vendorNotes: body.vendorNotes,
-    });
-
-    return NextResponse.json(
-      { success: true, data: newRequest },
-      { status: 201 }
-    );
-  } catch (error) {
-    console.error('Error creating tier upgrade request:', error);
-    return NextResponse.json(
-      { success: false, error: 'INTERNAL_ERROR', message: 'Failed to create request' },
-      { status: 500 }
-    );
-  }
+  });
 }
 
 /**
  * GET - Get pending or most recent tier upgrade request
+ * Note: GET requests are not rate-limited as aggressively since they're read-only
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const auth = await authenticateVendor(request, params.id);
+    const { id } = await params;
+    const auth = await authenticateVendor(request, id);
 
     if ('error' in auth) {
       return NextResponse.json(
@@ -168,8 +175,8 @@ export async function GET(
     }
 
     // Get pending request first, fall back to most recent
-    const tierRequest = await TierUpgradeRequestService.getPendingRequest(params.id)
-      ?? await TierUpgradeRequestService.getMostRecentRequest(params.id);
+    const tierRequest = await TierUpgradeRequestService.getPendingRequest(id)
+      ?? await TierUpgradeRequestService.getMostRecentRequest(id);
 
     return NextResponse.json({ success: true, data: tierRequest });
   } catch (error) {
