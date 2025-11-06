@@ -1,0 +1,107 @@
+version: '3.8'
+
+# Docker Compose Configuration for Next.js + Payload CMS
+# Deployment model: Single application container with SQLite database
+# Network: External 'proxy' network for reverse proxy integration
+
+services:
+  # ============================================
+  # Application Service
+  # Next.js + Payload CMS with SQLite database
+  # ============================================
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ptnextjs-app
+    restart: always
+
+    # Port configuration
+    # Exposed to proxy network only (not published to host)
+    expose:
+      - "3000"
+
+    # Environment variables
+    # Load from .env.production file
+    env_file:
+      - .env.production
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      # SQLite database path (volume mounted)
+      - DATABASE_URL=file:///data/payload.db
+      # Server URL (configured via reverse proxy)
+      - NEXT_PUBLIC_SERVER_URL=${NEXT_PUBLIC_SERVER_URL:-http://localhost:3000}
+
+    # Volume mounts for data persistence
+    volumes:
+      # SQLite database persistence
+      - payload-db:/data
+      # Media uploads persistence
+      - media-uploads:/app/media
+
+    # Network configuration
+    networks:
+      - proxy
+
+    # Health check configuration
+    # Checks /api/health endpoint every 30 seconds
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 30s
+      retries: 3
+
+    # Resource limits
+    # 1GB memory, 1 CPU core
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+    # Logging configuration
+    # JSON file driver with 10MB rotation
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+        compress: "true"
+
+    # Labels for reverse proxy integration (Traefik example)
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ptnextjs.rule=Host(`${DOMAIN:-ptnextjs.local}`)"
+      - "traefik.http.routers.ptnextjs.entrypoints=websecure"
+      - "traefik.http.routers.ptnextjs.tls=true"
+      - "traefik.http.routers.ptnextjs.tls.certresolver=letsencrypt"
+      - "traefik.http.services.ptnextjs.loadbalancer.server.port=3000"
+
+# ============================================
+# Volumes
+# Persistent storage for database and media
+# ============================================
+volumes:
+  # SQLite database persistence
+  payload-db:
+    driver: local
+    name: ptnextjs-payload-db
+
+  # Media uploads persistence
+  media-uploads:
+    driver: local
+    name: ptnextjs-media-uploads
+
+# ============================================
+# Networks
+# External proxy network for reverse proxy
+# ============================================
+networks:
+  proxy:
+    external: true
+    name: proxy
