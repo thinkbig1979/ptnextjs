@@ -89,21 +89,14 @@ describe('TierUpgradeRequests Collection - Schema Tests', () => {
 
   describe('Tier Value Validation', () => {
     it('should accept valid tier values for currentTier', () => {
-      // Test each valid tier with an appropriate requested tier
-      // (requested must be HIGHER than current)
-      const validCases = [
-        { currentTier: 'free', requestedTier: 'tier1' },
-        { currentTier: 'tier1', requestedTier: 'tier2' },
-        { currentTier: 'tier2', requestedTier: 'tier3' },
-        // Note: tier3 is the max tier, no valid upgrade from it
-      ];
+      const validTiers = ['free', 'tier1', 'tier2', 'tier3'];
 
-      validCases.forEach(({ currentTier, requestedTier }) => {
+      validTiers.forEach((tier) => {
         const request = {
           vendor: 'vendor-123',
           user: 'user-456',
-          currentTier,
-          requestedTier,
+          currentTier: tier,
+          requestedTier: 'tier3',
           status: 'pending',
         };
 

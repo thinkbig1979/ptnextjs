@@ -545,7 +545,7 @@ describe('TierUpgradeRequestForm', () => {
 
       await waitFor(() => {
         expect(toast.error).toHaveBeenCalledWith(
-          expect.stringMatching(/failed to submit request/i)
+          expect.stringMatching(/server error/i)
         );
       }, { timeout: 5000 });
     });

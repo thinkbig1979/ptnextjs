@@ -38,7 +38,7 @@ export const mockApprovedRequest: TierUpgradeRequest = {
   vendorNotes: 'Expanding our operations to include multiple locations and need advanced features.',
   requestedAt: '2024-01-10T09:00:00Z',
   reviewedAt: '2024-01-11T14:30:00Z',
-  reviewedBy: 'admin-1',
+  reviewedBy: { id: 'admin-1', name: 'Admin User' } as any,
   createdAt: '2024-01-10T09:00:00Z',
   updatedAt: '2024-01-11T14:30:00Z',
 };
@@ -54,7 +54,7 @@ export const mockRejectedRequest: TierUpgradeRequest = {
   rejectionReason: 'Please provide more details about your business needs and why you require enterprise-level features. We recommend starting with Tier 2 first to ensure the features align with your requirements.',
   requestedAt: '2024-01-08T11:00:00Z',
   reviewedAt: '2024-01-09T16:45:00Z',
-  reviewedBy: 'admin-1',
+  reviewedBy: { id: 'admin-1', name: 'Admin User' } as any,
   createdAt: '2024-01-08T11:00:00Z',
   updatedAt: '2024-01-09T16:45:00Z',
 };
