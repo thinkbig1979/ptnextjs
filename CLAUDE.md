@@ -166,6 +166,53 @@ Vendor locations are stored in the `vendor_locations` table with these key field
 - `GET/POST/PUT/DELETE /api/portal/vendors/[id]` - Location management endpoints
 - `POST /api/geocode` - Address geocoding endpoint
 
+### Tier Upgrade Request System
+
+The platform provides a workflow for vendors to request subscription tier upgrades with admin approval:
+- **Vendor Request Submission**: Vendors can submit tier upgrade requests via their dashboard
+- **Admin Review & Approval**: Admins review and approve/reject requests through admin panel
+- **Automatic Tier Promotion**: Vendor tier is automatically updated upon approval
+- **Single Pending Request**: Only one pending request per vendor enforced
+- **Complete Audit Trail**: Tracks reviewer, timestamps, and rejection reasons
+
+**Key Components:**
+- `components/dashboard/TierUpgradeRequestForm.tsx` - Vendor request submission form with validation
+- `components/dashboard/UpgradeRequestStatusCard.tsx` - Display request status and details
+- `components/TierComparisonTable.tsx` - Side-by-side tier feature comparison
+- `components/admin/AdminTierRequestQueue.tsx` - Admin review interface with approve/reject actions
+- `lib/services/TierUpgradeRequestService.ts` - Business logic and data access layer
+
+**Database Schema:**
+Tier upgrade requests are stored in the `tier_upgrade_requests` collection with these key fields:
+- `vendor`, `user` - Relationships to vendor and submitting user
+- `currentTier`, `requestedTier` - Tier snapshot and requested upgrade
+- `status` - pending, approved, rejected, or cancelled
+- `vendorNotes` - Business justification from vendor (optional, max 500 chars)
+- `rejectionReason` - Admin explanation for rejection (max 1000 chars)
+- `reviewedBy`, `reviewedAt` - Admin review audit trail
+- `requestedAt`, `createdAt`, `updatedAt` - Timestamps
+
+**API Endpoints (Vendor Portal):**
+- `POST /api/portal/vendors/[id]/tier-upgrade-request` - Submit upgrade request
+- `GET /api/portal/vendors/[id]/tier-upgrade-request` - Get current/pending request status
+- `DELETE /api/portal/vendors/[id]/tier-upgrade-request/[requestId]` - Cancel pending request
+
+**API Endpoints (Admin):**
+- `GET /api/admin/tier-upgrade-requests` - List all requests with filtering (status, vendor, tier)
+- `PUT /api/admin/tier-upgrade-requests/[id]/approve` - Approve request and upgrade vendor
+- `PUT /api/admin/tier-upgrade-requests/[id]/reject` - Reject request with reason
+
+**Admin Interface:**
+- Route: `/admin/tier-requests/pending` - Manage pending tier upgrade requests
+- Features: Filter by status, approve/reject with dialog, view request history
+
+**Validation Rules:**
+- Requested tier must be higher than current tier (no downgrades)
+- Vendor notes: 20-500 characters if provided
+- Rejection reason: required, 10-1000 characters
+- Only one pending request per vendor allowed
+- Only pending requests can be cancelled by vendor
+
 ## Development Guidelines
 
 ### Working with Content
