@@ -93,7 +93,25 @@ export function UpgradeRequestStatusCard({
       );
 
       if (!response.ok) {
-        throw new Error('Failed to cancel request');
+        const result = await response.json().catch(() => ({}));
+        if (response.status === 401) {
+          toast.error('Your session has expired. Please log in again.');
+          setTimeout(() => { window.location.href = '/vendor/login'; }, 1500);
+          return;
+        } else if (response.status === 403) {
+          toast.error('You do not have permission to perform this action.');
+          setTimeout(() => { window.location.href = '/vendor/dashboard'; }, 1500);
+          return;
+        } else if (response.status === 400) {
+          toast.error(result.message || 'Invalid request. The upgrade request may no longer be pending.');
+        } else if (response.status === 404) {
+          toast.error('Upgrade request not found.');
+        } else if (response.status === 500) {
+          toast.error('Server error. Please try again later.');
+        } else {
+          toast.error('Failed to cancel request. Please try again.');
+        }
+        return;
       }
 
       toast.success('Request cancelled successfully');

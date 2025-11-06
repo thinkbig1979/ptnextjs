@@ -61,19 +61,32 @@ export default function SubscriptionPage() {
 
         const response = await fetch(`/api/portal/vendors/${vendor.id}/tier-upgrade-request`);
 
-        if (response.ok) {
-          const data = await response.json();
-          // Only set request if it's pending (don't show old approved/rejected requests)
-          if (data.success && data.data?.status === 'pending') {
-            setUpgradeRequest(data.data);
-          } else {
+        if (!response.ok) {
+          if (response.status === 401) {
+            router.push('/vendor/login');
+            return;
+          } else if (response.status === 403) {
+            router.push('/vendor/dashboard');
+            return;
+          } else if (response.status === 404) {
+            // 404 means no pending request, which is fine
             setUpgradeRequest(null);
-          }
-        } else {
-          // 404 means no pending request, which is fine
-          if (response.status !== 404) {
+            return;
+          } else if (response.status === 500) {
+            setRequestError('Server error. Please try again later.');
+            return;
+          } else {
             setRequestError('Failed to load upgrade request');
+            return;
           }
+        }
+
+        const data = await response.json();
+        // Only set request if it's pending (don't show old approved/rejected requests)
+        if (data.success && data.data?.status === 'pending') {
+          setUpgradeRequest(data.data);
+        } else {
+          setUpgradeRequest(null);
         }
       } catch (err) {
         console.error('Failed to fetch upgrade request:', err);
@@ -86,7 +99,7 @@ export default function SubscriptionPage() {
     if (vendor?.id && !vendorLoading) {
       fetchUpgradeRequest();
     }
-  }, [vendor?.id, vendorLoading]);
+  }, [vendor?.id, vendorLoading, router]);
 
   /**
    * Handle successful request submission - refresh data

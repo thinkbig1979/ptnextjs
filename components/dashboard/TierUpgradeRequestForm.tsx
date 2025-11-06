@@ -124,10 +124,20 @@ export function TierUpgradeRequestForm({
 
       if (!response.ok) {
         // Handle specific error cases
-        if (response.status === 409) {
+        if (response.status === 401) {
+          toast.error('Your session has expired. Please log in again.');
+          setTimeout(() => { window.location.href = '/vendor/login'; }, 1500);
+          return;
+        } else if (response.status === 403) {
+          toast.error('You do not have permission to perform this action.');
+          setTimeout(() => { window.location.href = '/vendor/dashboard'; }, 1500);
+          return;
+        } else if (response.status === 409) {
           toast.error('You already have a pending upgrade request');
         } else if (response.status === 400) {
           toast.error(result.message || 'Please fix the errors in the form');
+        } else if (response.status === 500) {
+          toast.error('Server error. Please try again later.');
         } else {
           toast.error('Failed to submit request. Please try again.');
         }
