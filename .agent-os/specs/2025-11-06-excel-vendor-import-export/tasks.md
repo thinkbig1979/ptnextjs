@@ -19,12 +19,12 @@ Architecture: Full-stack (Backend + Frontend + Integration)
 | PRE-1 | Codebase Analysis & Pattern Discovery | context-fetcher | 2h | None | ✅ COMPLETED | [task-pre-1.md](tasks/task-pre-1.md) |
 | PRE-2 | Integration Strategy Document | integration-coordinator | 3h | PRE-1 | ✅ COMPLETED | [task-pre-2.md](tasks/task-pre-2.md) |
 
-## Phase 2: Backend Implementation (0/14 tasks)
+## Phase 2: Backend Implementation (1/14 tasks)
 
 | ID | Task | Agent | Time | Dependencies | Status | Details |
 |----|------|-------|------|--------------|--------|---------|
-| BE-1 | Install exceljs Dependency | backend-nodejs-specialist | 0.5h | PRE-2 | 📋 Ready | [task-be-1.md](tasks/task-be-1.md) |
-| BE-2 | Create Field Mapping Configuration | backend-nodejs-specialist | 2h | BE-1 | 🔒 Blocked | [task-be-2.md](tasks/task-be-2.md) |
+| BE-1 | Install exceljs Dependency | backend-nodejs-specialist | 0.5h | PRE-2 | ✅ COMPLETED | [task-be-1.md](tasks/task-be-1.md) |
+| BE-2 | Create Field Mapping Configuration | backend-nodejs-specialist | 2h | BE-1 | 📋 Ready | [task-be-2.md](tasks/task-be-2.md) |
 | BE-3 | Create ExcelTemplateService | backend-nodejs-specialist | 4h | BE-2 | 🔒 Blocked | [task-be-3.md](tasks/task-be-3.md) |
 | BE-4 | Create ExcelParserService | backend-nodejs-specialist | 5h | BE-2 | 🔒 Blocked | [task-be-4.md](tasks/task-be-4.md) |
 | BE-5 | Create ExcelExportService | backend-nodejs-specialist | 4h | BE-2 | 🔒 Blocked | [task-be-5.md](tasks/task-be-5.md) |
