@@ -177,11 +177,11 @@ export function LocationFormFields({
   );
 
   return (
-    <div className="space-y-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+    <div className="space-y-4 p-4 border border-border dark:border-border rounded-lg">
       {/* Location Name */}
       <div className="space-y-2">
         <Label htmlFor={`locationName-${location.id || 'new'}`}>
-          Location Name <span className="text-gray-500 text-xs">(optional)</span>
+          Location Name <span className="text-muted-foreground text-xs">(optional)</span>
         </Label>
         <Input
           id={`locationName-${location.id || 'new'}`}
@@ -262,7 +262,7 @@ export function LocationFormFields({
       {/* Postal Code */}
       <div className="space-y-2">
         <Label htmlFor={`postalCode-${location.id || 'new'}`}>
-          Postal Code <span className="text-gray-500 text-xs">(optional)</span>
+          Postal Code <span className="text-muted-foreground text-xs">(optional)</span>
         </Label>
         <Input
           id={`postalCode-${location.id || 'new'}`}
@@ -332,7 +332,7 @@ export function LocationFormFields({
       </div>
 
       {/* HQ Radio Button and Delete Button */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-2 border-t border-gray-200 dark:border-gray-700">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-2 border-t border-border dark:border-border">
         <div className="flex items-center space-x-2">
           <input
             id={`isHQ-${location.id || 'new'}`}
@@ -340,7 +340,7 @@ export function LocationFormFields({
             checked={isHQ}
             onChange={handleHQChange}
             disabled={!canEdit}
-            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+            className="h-4 w-4 text-accent focus:ring-accent border-border"
             aria-label="Headquarters"
           />
           <Label

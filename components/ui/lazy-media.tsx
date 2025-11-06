@@ -86,12 +86,12 @@ function MediaPlaceholder({ type = 'image' }: { type?: 'image' | 'video' | 'docu
     >
       <div className="text-center">
         <div
-          className="w-16 h-16 mx-auto mb-4 bg-gray-300 rounded-full flex items-center justify-center"
+          className="w-16 h-16 mx-auto mb-4 bg-border rounded-full flex items-center justify-center"
           aria-hidden="true"
         >
-          <Icon className="w-6 h-6 text-gray-500" />
+          <Icon className="w-6 h-6 text-muted-foreground" />
         </div>
-        <p className="text-gray-500 text-sm" id="loading-message">
+        <p className="text-muted-foreground text-sm" id="loading-message">
           {message}
         </p>
         <span className="sr-only">Loading {type} content</span>
@@ -251,7 +251,7 @@ export function LazyImageGrid({
         >
           <button
             className={cn(
-              "relative overflow-hidden rounded-lg cursor-pointer group w-full h-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
+              "relative overflow-hidden rounded-lg cursor-pointer group w-full h-full focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2",
               imageClassName
             )}
             onClick={() => onImageClick?.(index)}

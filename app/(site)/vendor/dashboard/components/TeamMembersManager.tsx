@@ -367,7 +367,7 @@ export function TeamMembersManager({ vendor }: TeamMembersManagerProps) {
                               href={member.linkedin}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-blue-600 hover:text-blue-800"
+                              className="text-accent hover:text-accent"
                             >
                               <Linkedin className="h-4 w-4" />
                             </a>
@@ -507,7 +507,7 @@ export function TeamMembersManager({ vendor }: TeamMembersManagerProps) {
             {/* LinkedIn URL */}
             <div className="space-y-2">
               <Label htmlFor="linkedin" className="flex items-center gap-2">
-                <Linkedin className="h-4 w-4 text-blue-600" />
+                <Linkedin className="h-4 w-4 text-accent" />
                 LinkedIn Profile URL
               </Label>
               <Input
@@ -523,7 +523,7 @@ export function TeamMembersManager({ vendor }: TeamMembersManagerProps) {
                   href={watchedLinkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-blue-600 hover:underline inline-flex items-center gap-1"
+                  className="text-sm text-accent hover:underline inline-flex items-center gap-1"
                 >
                   <Linkedin className="h-3 w-3" />
                   View LinkedIn Profile

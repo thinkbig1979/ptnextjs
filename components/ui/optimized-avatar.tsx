@@ -85,7 +85,7 @@ export function OptimizedAvatar({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-full bg-gray-100",
+        "relative overflow-hidden rounded-full bg-muted",
         sizeClasses[size],
         className
       )}
@@ -104,7 +104,7 @@ export function OptimizedAvatar({
         sizes={`${size === "sm" ? "32px" : size === "md" ? "48px" : size === "lg" ? "64px" : "96px"}`}
       />
       {!isLoaded && (
-        <div className="absolute inset-0 bg-gray-200 animate-pulse rounded-full" />
+        <div className="absolute inset-0 bg-border animate-pulse rounded-full" />
       )}
     </div>
   );
@@ -163,7 +163,7 @@ export function AvatarGroup({
       {remainingCount > 0 && (
         <div
           className={cn(
-            "flex items-center justify-center rounded-full bg-gray-200 text-gray-600 font-medium ring-2 ring-white",
+            "flex items-center justify-center rounded-full bg-border text-muted-foreground font-medium ring-2 ring-white",
             sizeClasses[size],
             overlapClass[size]
           )}

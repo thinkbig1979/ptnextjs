@@ -319,8 +319,8 @@ export function VendorProfileEditor({ initialData }: VendorProfileEditorProps) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin text-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading profile data...</p>
+          <Loader2 className="h-12 w-12 animate-spin text-accent mx-auto mb-4" />
+          <p className="text-muted-foreground">Loading profile data...</p>
         </div>
       </div>
     );
@@ -544,7 +544,7 @@ export function VendorProfileEditor({ initialData }: VendorProfileEditorProps) {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-gray-600 mb-4">
+              <p className="text-sm text-muted-foreground mb-4">
                 Products are managed separately from your profile.
               </p>
               <Button

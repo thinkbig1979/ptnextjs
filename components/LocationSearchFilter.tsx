@@ -486,7 +486,7 @@ export function LocationSearchFilter({
                 <Search className="w-4 h-4" />
               </Button>
             </div>
-            <p id="location-name-help" className="text-sm text-gray-600 mt-2">
+            <p id="location-name-help" className="text-sm text-muted-foreground mt-2">
               Type at least 3 characters to search. Results appear after half a second. Select a location to search automatically.
             </p>
           </div>
@@ -517,11 +517,11 @@ export function LocationSearchFilter({
               data-testid="distance-slider"
               className="w-full"
             />
-            <div className="flex justify-between text-xs text-gray-500">
+            <div className="flex justify-between text-xs text-muted-foreground">
               <span>16 km</span>
               <span>800 km</span>
             </div>
-            <p className="text-sm text-gray-600 mt-2">
+            <p className="text-sm text-muted-foreground mt-2">
               💡 Adjust the slider after searching to instantly update results with a different radius.
             </p>
           </div>
@@ -597,7 +597,7 @@ export function LocationSearchFilter({
                   />
                 </div>
               </div>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 Enter exact GPS coordinates if location search doesn't find your area.
               </p>
               <Button

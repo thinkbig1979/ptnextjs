@@ -14,8 +14,8 @@ export function CTASection({ companyInfo }: CTASectionProps) {
     <section className="py-20 bg-accent text-accent-foreground relative overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full bg-white blur-3xl"></div>
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 rounded-full bg-white blur-3xl"></div>
+        <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full bg-card blur-3xl"></div>
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 rounded-full bg-card blur-3xl"></div>
       </div>
 
       <div className="container max-w-screen-xl relative z-10">

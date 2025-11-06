@@ -207,14 +207,14 @@ export function LocationsDisplaySection({
       {/* Upgrade Message */}
       {showUpgradeMessage && (
         <Card className="p-4 bg-blue-50 border-blue-200">
-          <p className="text-sm text-blue-800">
+          <p className="text-sm text-accent">
             Upgrade to see all locations. Currently showing headquarters only.
           </p>
         </Card>
       )}
 
       {/* Map Section */}
-      <div className="rounded-lg overflow-hidden border border-gray-200 relative">
+      <div className="rounded-lg overflow-hidden border border-border relative">
         {/* Back to HQ Button - shown when viewing a non-HQ location */}
         {focusedLocationId && hqLocation && focusedLocationId !== hqLocation.id && (
           <Button

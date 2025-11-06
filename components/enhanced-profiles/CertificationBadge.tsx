@@ -57,10 +57,10 @@ export const CertificationBadge = React.memo(function CertificationBadge({
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
               <div>
-                <h3 className="font-semibold text-sm text-gray-900 dark:text-gray-100">
+                <h3 className="font-semibold text-sm text-foreground dark:text-gray-100">
                   {certification.name}
                 </h3>
-                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                <p className="text-xs text-muted-foreground dark:text-muted-foreground mt-1">
                   {certification.issuer}
                 </p>
               </div>
@@ -84,7 +84,7 @@ export const CertificationBadge = React.memo(function CertificationBadge({
                 "text-xs mt-2",
                 isExpired
                   ? "text-red-600 dark:text-red-400"
-                  : "text-gray-600 dark:text-gray-400"
+                  : "text-muted-foreground dark:text-muted-foreground"
               )}>
                 Valid until {new Date(certification.validUntil).toLocaleDateString()}
               </p>
@@ -96,7 +96,7 @@ export const CertificationBadge = React.memo(function CertificationBadge({
                 href={certification.certificateUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 mt-2 transition-colors"
+                className="inline-flex items-center gap-1 text-xs text-accent dark:text-accent hover:text-accent dark:hover:text-accent mt-2 transition-colors"
               >
                 <ExternalLink className="w-3 h-3" />
                 View Certificate

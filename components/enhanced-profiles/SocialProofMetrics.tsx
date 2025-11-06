@@ -65,8 +65,8 @@ const AnimatedCounter = React.memo(function AnimatedCounter({
 function MetricSkeleton() {
   return (
     <div className="animate-pulse">
-      <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
-      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
+      <div className="h-8 bg-border dark:bg-border rounded mb-2"></div>
+      <div className="h-4 bg-border dark:bg-border rounded w-20"></div>
     </div>
   );
 }
@@ -88,7 +88,7 @@ export const SocialProofMetrics = React.memo(function SocialProofMetrics({
       icon: Linkedin,
       testId: 'linkedin-icon',
       formatter: formatNumber,
-      color: 'text-blue-600'
+      color: 'text-accent'
     },
     {
       key: 'completedProjects',
@@ -188,7 +188,7 @@ export const SocialProofMetrics = React.memo(function SocialProofMetrics({
                   data-testid={item.testId}
                   className={cn("w-6 h-6 mb-2", item.color)}
                 />
-                <div className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">
+                <div className="text-2xl font-bold text-foreground dark:text-gray-100 mb-1">
                   {animated ? (
                     <AnimatedCounter
                       value={item.value!}
@@ -198,7 +198,7 @@ export const SocialProofMetrics = React.memo(function SocialProofMetrics({
                     item.formatter(item.value!)
                   )}
                 </div>
-                <div className="text-xs text-gray-600 dark:text-gray-400 leading-tight">
+                <div className="text-xs text-muted-foreground dark:text-muted-foreground leading-tight">
                   {item.label}
                 </div>
               </div>

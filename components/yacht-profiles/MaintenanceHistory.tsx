@@ -46,7 +46,7 @@ export function MaintenanceHistory({
   const getTypeBadgeClass = (type: string) => {
     switch (type) {
       case 'routine':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-accent/10 text-accent';
       case 'repair':
         return 'bg-red-100 text-red-800';
       case 'upgrade':
@@ -54,7 +54,7 @@ export function MaintenanceHistory({
       case 'inspection':
         return 'bg-yellow-100 text-yellow-800';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-muted text-gray-800';
     }
   };
 
@@ -63,11 +63,11 @@ export function MaintenanceHistory({
       case 'completed':
         return 'bg-green-100 text-green-800';
       case 'in-progress':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-accent/10 text-accent';
       case 'scheduled':
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-muted text-gray-800';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-muted text-gray-800';
     }
   };
 
@@ -114,10 +114,10 @@ export function MaintenanceHistory({
                 <p className="text-lg font-semibold text-green-600">Completed: {summary.completed}</p>
               </div>
               <div>
-                <p className="text-lg font-semibold text-blue-600">In Progress: {summary.inProgress}</p>
+                <p className="text-lg font-semibold text-accent">In Progress: {summary.inProgress}</p>
               </div>
               <div>
-                <p className="text-lg font-semibold text-gray-600">Scheduled: {summary.scheduled}</p>
+                <p className="text-lg font-semibold text-muted-foreground">Scheduled: {summary.scheduled}</p>
               </div>
             </div>
           </CardContent>

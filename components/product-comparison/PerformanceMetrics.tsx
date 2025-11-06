@@ -171,7 +171,7 @@ export function PerformanceMetrics({
       case 'down':
         return <TrendingDown className="h-4 w-4 text-red-600 dark:text-red-400" data-testid="trend-down" />;
       case 'stable':
-        return <Minus className="h-4 w-4 text-gray-600 dark:text-gray-400" data-testid="trend-stable" />;
+        return <Minus className="h-4 w-4 text-muted-foreground dark:text-muted-foreground" data-testid="trend-stable" />;
       default:
         return null;
     }

@@ -238,7 +238,7 @@ export function LocationsManagerCard({ vendor, onUpdate }: LocationsManagerCardP
         </CardHeader>
         <CardContent className="space-y-6">
           {locations.length === 0 ? (
-            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+            <div className="text-center py-8 text-muted-foreground dark:text-muted-foreground">
               <MapPin className="h-12 w-12 mx-auto mb-3 opacity-50" />
               <p>No locations added yet. Click "Add Location" to get started.</p>
             </div>
@@ -249,7 +249,7 @@ export function LocationsManagerCard({ vendor, onUpdate }: LocationsManagerCardP
                   {/* Location Header */}
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <h3 className="font-medium text-gray-900 dark:text-white">
+                      <h3 className="font-medium text-foreground dark:text-white">
                         {location.locationName || location.city || `Location ${index + 1}`}
                       </h3>
                       {location.isHQ && (
@@ -292,17 +292,17 @@ export function LocationsManagerCard({ vendor, onUpdate }: LocationsManagerCardP
                       canEdit={true}
                     />
                   ) : (
-                    <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg text-sm space-y-1">
+                    <div className="p-4 bg-muted dark:bg-muted rounded-lg text-sm space-y-1">
                       {location.address && (
-                        <p className="text-gray-700 dark:text-gray-300">{location.address}</p>
+                        <p className="text-foreground dark:text-muted-foreground">{location.address}</p>
                       )}
                       {(location.city || location.country) && (
-                        <p className="text-gray-600 dark:text-gray-400">
+                        <p className="text-muted-foreground dark:text-muted-foreground">
                           {[location.city, location.country].filter(Boolean).join(', ')}
                         </p>
                       )}
                       {location.latitude !== undefined && location.longitude !== undefined && (
-                        <p className="text-gray-500 dark:text-gray-500 text-xs">
+                        <p className="text-muted-foreground dark:text-muted-foreground text-xs">
                           {location.latitude.toFixed(4)}, {location.longitude.toFixed(4)}
                         </p>
                       )}
@@ -315,7 +315,7 @@ export function LocationsManagerCard({ vendor, onUpdate }: LocationsManagerCardP
 
           {/* Save Button */}
           {locations.length > 0 && (
-            <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+            <div className="pt-4 border-t border-border dark:border-border">
               <Button
                 onClick={handleSaveLocations}
                 disabled={isSaving || isLoading}

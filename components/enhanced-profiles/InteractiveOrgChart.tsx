@@ -78,8 +78,8 @@ export const InteractiveOrgChart = React.memo(function InteractiveOrgChart({
         data-testid="interactive-org-chart"
         className={cn("text-center py-8", className)}
       >
-        <Users className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-        <p className="text-gray-600 dark:text-gray-400">
+        <Users className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+        <p className="text-muted-foreground dark:text-muted-foreground">
           No team members to display.
         </p>
       </div>
@@ -134,7 +134,7 @@ export const InteractiveOrgChart = React.memo(function InteractiveOrgChart({
                 y2={`${level * 200}px`}
                 stroke="currentColor"
                 strokeWidth="2"
-                className="text-gray-300 dark:text-gray-600"
+                className="text-muted-foreground dark:text-muted-foreground"
                 initial={{ pathLength: 0, opacity: 0 }}
                 animate={{ pathLength: 1, opacity: 1 }}
                 transition={{
@@ -200,7 +200,7 @@ export const InteractiveOrgChart = React.memo(function InteractiveOrgChart({
                         <Card
                           data-testid={`member-${member.id}`}
                           className={cn(
-                            "cursor-pointer transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500",
+                            "cursor-pointer transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-accent",
                             compact ? "w-32" : "w-48",
                             hoveredMember === member.id && "ring-2 ring-blue-500 shadow-xl"
                           )}
@@ -231,20 +231,20 @@ export const InteractiveOrgChart = React.memo(function InteractiveOrgChart({
                           ) : (
                             <div
                               className={cn(
-                                "bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center",
+                                "bg-border dark:bg-border rounded-full flex items-center justify-center",
                                 compact ? "w-12 h-12" : "w-16 h-16"
                               )}
                             >
-                              <Users className={cn("text-gray-400", compact ? "w-6 h-6" : "w-8 h-8")} />
+                              <Users className={cn("text-muted-foreground", compact ? "w-6 h-6" : "w-8 h-8")} />
                             </div>
                           )}
                         </div>
 
                         {/* Member info */}
-                        <h3 className={cn("font-semibold text-gray-900 dark:text-gray-100 mb-1", compact ? "text-sm" : "text-base")}>
+                        <h3 className={cn("font-semibold text-foreground dark:text-gray-100 mb-1", compact ? "text-sm" : "text-base")}>
                           {member.name}
                         </h3>
-                        <p className={cn("text-gray-600 dark:text-gray-400 mb-2", compact ? "text-xs" : "text-sm")}>
+                        <p className={cn("text-muted-foreground dark:text-muted-foreground mb-2", compact ? "text-xs" : "text-sm")}>
                           {member.title}
                         </p>
                         <Badge variant="outline" className={compact ? "text-xs" : "text-sm"}>
@@ -257,7 +257,7 @@ export const InteractiveOrgChart = React.memo(function InteractiveOrgChart({
                             href={member.linkedinUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 mt-2 text-xs transition-colors"
+                            className="inline-flex items-center gap-1 text-accent dark:text-accent hover:text-accent dark:hover:text-accent mt-2 text-xs transition-colors"
                             onClick={(e) => e.stopPropagation()}
                           >
                             <Linkedin className="w-3 h-3" />
@@ -307,15 +307,15 @@ export const InteractiveOrgChart = React.memo(function InteractiveOrgChart({
                     className="rounded-full object-cover"
                   />
                 ) : (
-                  <div className="w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center">
-                    <Users className="w-10 h-10 text-gray-400" />
+                  <div className="w-20 h-20 bg-border dark:bg-border rounded-full flex items-center justify-center">
+                    <Users className="w-10 h-10 text-muted-foreground" />
                   </div>
                 )}
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  <h3 className="text-lg font-semibold text-foreground dark:text-gray-100">
                     {selectedMember.name}
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-400">
+                  <p className="text-muted-foreground dark:text-muted-foreground">
                     {selectedMember.title}
                   </p>
                   <Badge variant="outline" className="mt-1">
@@ -327,8 +327,8 @@ export const InteractiveOrgChart = React.memo(function InteractiveOrgChart({
               {/* Bio */}
               {selectedMember.bio && (
                 <div id="member-description">
-                  <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-2">About</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <h4 className="font-medium text-foreground dark:text-gray-100 mb-2">About</h4>
+                  <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                     {selectedMember.bio}
                   </p>
                 </div>

@@ -166,7 +166,7 @@ export function OwnerReviews({
             key={i}
             className={cn(
               starSize,
-              i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
+              i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'
             )}
           />
         ))}
@@ -433,14 +433,14 @@ export function OwnerReviews({
                   {showVendorResponses && review.vendorResponse && (
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4" data-testid={`vendor-response-${review.id}`}>
                       <div className="flex items-center space-x-2 mb-2">
-                        <Badge variant="outline" className="text-blue-700">
+                        <Badge variant="outline" className="text-accent">
                           {review.vendorResponse.respondedBy}
                         </Badge>
-                        <span className="text-xs text-blue-600">
+                        <span className="text-xs text-accent">
                           {formatDate(review.vendorResponse.respondedAt)}
                         </span>
                       </div>
-                      <p className="text-sm text-blue-800">{review.vendorResponse.message}</p>
+                      <p className="text-sm text-accent">{review.vendorResponse.message}</p>
                     </div>
                   )}
 

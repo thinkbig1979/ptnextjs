@@ -67,11 +67,11 @@ export function IntegrationNotes({
       case 'partial':
         return 'bg-yellow-100 text-yellow-800 border-yellow-200';
       case 'adapter':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return 'bg-accent/10 text-accent border-blue-200';
       case 'none':
         return 'bg-red-100 text-red-800 border-red-200';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-muted text-gray-800 border-border';
     }
   };
 
@@ -84,7 +84,7 @@ export function IntegrationNotes({
       case 'complex':
         return 'bg-red-100 text-red-800';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-muted text-gray-800';
     }
   };
 
@@ -299,7 +299,7 @@ export function IntegrationNotes({
                 <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200" data-testid="compatibility-partial">
                   Partial - Limited features
                 </Badge>
-                <Badge className="bg-blue-100 text-blue-800 border-blue-200" data-testid="compatibility-adapter">
+                <Badge className="bg-accent/10 text-accent border-blue-200" data-testid="compatibility-adapter">
                   Adapter - Additional hardware needed
                 </Badge>
                 <Badge className="bg-red-100 text-red-800 border-red-200" data-testid="compatibility-none">

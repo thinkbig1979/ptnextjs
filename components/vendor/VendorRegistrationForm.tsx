@@ -364,7 +364,7 @@ export function VendorRegistrationForm() {
                   className="ml-2 inline-flex items-center"
                   title="Password must contain at least 12 characters, including uppercase, lowercase, number, and special character"
                 >
-                  <Info className="h-4 w-4 text-gray-400" />
+                  <Info className="h-4 w-4 text-muted-foreground" />
                 </button>
               </FormLabel>
               <FormControl>
@@ -382,9 +382,9 @@ export function VendorRegistrationForm() {
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
                     {showPassword ? (
-                      <EyeOff className="h-4 w-4 text-gray-400" />
+                      <EyeOff className="h-4 w-4 text-muted-foreground" />
                     ) : (
-                      <Eye className="h-4 w-4 text-gray-400" />
+                      <Eye className="h-4 w-4 text-muted-foreground" />
                     )}
                   </button>
                 </div>
@@ -427,9 +427,9 @@ export function VendorRegistrationForm() {
                     aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
                   >
                     {showConfirmPassword ? (
-                      <EyeOff className="h-4 w-4 text-gray-400" />
+                      <EyeOff className="h-4 w-4 text-muted-foreground" />
                     ) : (
-                      <Eye className="h-4 w-4 text-gray-400" />
+                      <Eye className="h-4 w-4 text-muted-foreground" />
                     )}
                   </button>
                 </div>

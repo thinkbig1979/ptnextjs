@@ -146,13 +146,13 @@ export const TIER_FEATURES: Record<Tier, TierFeature[]> = {
  */
 export const TIER_COLORS: Record<Tier, { bg: string; text: string; border: string }> = {
   free: {
-    bg: 'bg-gray-100',
+    bg: 'bg-muted',
     text: 'text-gray-800',
-    border: 'border-gray-300',
+    border: 'border-border',
   },
   tier1: {
-    bg: 'bg-blue-100',
-    text: 'text-blue-800',
+    bg: 'bg-accent/10',
+    text: 'text-accent',
     border: 'border-blue-300',
   },
   tier2: {

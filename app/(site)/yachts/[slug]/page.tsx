@@ -439,7 +439,7 @@ fallbackType="company"
                     <p className="text-sm text-muted-foreground">Overall Score</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-blue-600">
+                    <p className="text-2xl font-bold text-accent">
                       {yacht.sustainabilityScore.energyEfficiency || 'N/A'}
                     </p>
                     <p className="text-sm text-muted-foreground">Energy Efficiency (kWh/nm)</p>

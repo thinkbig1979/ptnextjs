@@ -46,7 +46,7 @@ export function DashboardError({
       : 'An unexpected error occurred while loading your dashboard.';
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-muted dark:bg-gray-900 flex items-center justify-center p-4">
       <Card className="max-w-lg w-full">
         <CardContent className="pt-6">
           <Alert variant="destructive">
@@ -66,7 +66,7 @@ export function DashboardError({
             </div>
           )}
 
-          <div className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+          <div className="mt-6 text-center text-sm text-muted-foreground dark:text-muted-foreground">
             <p>If this problem persists, please contact support.</p>
           </div>
         </CardContent>

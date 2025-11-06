@@ -49,7 +49,7 @@ export function DashboardSidebar({ tier, vendorName }: DashboardSidebarProps) {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            <span className="text-sm font-medium text-foreground dark:text-muted-foreground">
               Current Tier
             </span>
             <TierBadge tier={normalizedTier} size="md" />
@@ -59,7 +59,7 @@ export function DashboardSidebar({ tier, vendorName }: DashboardSidebarProps) {
             <>
               <Separator />
               <div className="pt-2">
-                <p className="text-xs text-gray-600 dark:text-gray-400 mb-3">
+                <p className="text-xs text-muted-foreground dark:text-muted-foreground mb-3">
                   Upgrade to unlock more features and grow your business.
                 </p>
                 <Button
@@ -140,7 +140,7 @@ export function DashboardSidebar({ tier, vendorName }: DashboardSidebarProps) {
             href="/docs/getting-started"
             target="_blank"
             rel="noopener noreferrer"
-            className="block text-sm text-blue-600 dark:text-blue-400 hover:underline"
+            className="block text-sm text-accent dark:text-accent hover:underline"
           >
             Getting Started Guide
           </a>
@@ -148,7 +148,7 @@ export function DashboardSidebar({ tier, vendorName }: DashboardSidebarProps) {
             href="/docs/features"
             target="_blank"
             rel="noopener noreferrer"
-            className="block text-sm text-blue-600 dark:text-blue-400 hover:underline"
+            className="block text-sm text-accent dark:text-accent hover:underline"
           >
             Feature Documentation
           </a>
@@ -156,7 +156,7 @@ export function DashboardSidebar({ tier, vendorName }: DashboardSidebarProps) {
             href="/docs/best-practices"
             target="_blank"
             rel="noopener noreferrer"
-            className="block text-sm text-blue-600 dark:text-blue-400 hover:underline"
+            className="block text-sm text-accent dark:text-accent hover:underline"
           >
             Best Practices
           </a>

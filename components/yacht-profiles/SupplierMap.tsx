@@ -132,13 +132,13 @@ export function SupplierMap({
   const getRoleBadgeClass = React.useCallback((role: string) => {
     switch (role) {
       case 'primary':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-accent/10 text-accent';
       case 'subcontractor':
         return 'bg-green-100 text-green-800';
       case 'consultant':
         return 'bg-purple-100 text-purple-800';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-muted text-gray-800';
     }
   }, []);
 
@@ -199,7 +199,7 @@ export function SupplierMap({
               <Link
                 key={`${supplier.vendorId}-${index}`}
                 href={`/vendors/${supplier.vendorId}`}
-                className="block p-3 rounded-lg border hover:bg-gray-50 transition-colors"
+                className="block p-3 rounded-lg border hover:bg-muted transition-colors"
               >
                 <div className="flex items-center justify-between">
                   <span className="font-medium">{supplier.vendorName}</span>

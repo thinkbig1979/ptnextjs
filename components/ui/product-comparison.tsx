@@ -305,7 +305,7 @@ function ProductComparisonTable({ products }: { products: Product[] }) {
                   <td className={`py-3 px-4 font-medium sticky left-0 z-10 ${index === 0 ? 'bg-blue-50 dark:bg-blue-950/30' : 'bg-background'}`}>
                     <div className="border-r border-border pr-4">
                       {index === 0 && (
-                        <div className="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wide mb-1">
+                        <div className="text-xs font-semibold text-accent dark:text-accent uppercase tracking-wide mb-1">
                           {formatCategoryName(category)}
                         </div>
                       )}

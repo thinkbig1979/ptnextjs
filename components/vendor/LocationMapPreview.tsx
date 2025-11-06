@@ -93,10 +93,10 @@ export function LocationMapPreview({
         </CardHeader>
         <CardContent>
           <div
-            className="bg-gray-100 rounded-lg flex items-center justify-center"
+            className="bg-muted rounded-lg flex items-center justify-center"
             style={{ height: `${height}px` }}
           >
-            <span className="text-gray-500">Map loading...</span>
+            <span className="text-muted-foreground">Map loading...</span>
           </div>
         </CardContent>
       </Card>
@@ -112,10 +112,10 @@ export function LocationMapPreview({
         </CardHeader>
         <CardContent>
           <div
-            className="bg-gray-50 rounded-lg flex items-center justify-center"
+            className="bg-muted rounded-lg flex items-center justify-center"
             style={{ height: `${height}px` }}
           >
-            <span className="text-gray-500">No locations to display</span>
+            <span className="text-muted-foreground">No locations to display</span>
           </div>
         </CardContent>
       </Card>
@@ -131,7 +131,7 @@ export function LocationMapPreview({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="rounded-lg overflow-hidden border border-gray-200">
+        <div className="rounded-lg overflow-hidden border border-border">
           <MapContainer
             center={mapCenter}
             zoom={DEFAULT_ZOOM}
@@ -165,7 +165,7 @@ export function LocationMapPreview({
               >
                 <Popup>
                   <div className="text-sm">
-                    <p className="font-bold text-blue-600">{location.address || 'Office Location'}</p>
+                    <p className="font-bold text-accent">{location.address || 'Office Location'}</p>
                     {location.city && <p>{location.city}</p>}
                     {location.country && <p>{location.country}</p>}
                   </div>

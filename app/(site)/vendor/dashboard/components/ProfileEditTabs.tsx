@@ -292,14 +292,14 @@ export function ProfileEditTabs({ vendor }: ProfileEditTabsProps) {
 
             {/* Show locked tabs info */}
             {lockedTabs.length > 0 && (
-              <div className="mb-6 p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800/50">
+              <div className="mb-6 p-4 border border-border dark:border-border rounded-lg bg-muted dark:bg-muted/50">
                 <div className="flex items-center gap-2 mb-2">
-                  <Lock className="h-4 w-4 text-gray-500" />
-                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <Lock className="h-4 w-4 text-muted-foreground" />
+                  <p className="text-sm font-medium text-foreground dark:text-muted-foreground">
                     Locked Sections ({lockedTabs.length})
                   </p>
                 </div>
-                <p className="text-xs text-gray-600 dark:text-gray-400">
+                <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                   Upgrade to unlock: {lockedTabs.map((t) => t.label).join(', ')}
                 </p>
               </div>
@@ -362,8 +362,8 @@ export function ProfileEditTabs({ vendor }: ProfileEditTabsProps) {
 function PlaceholderComponent(title: string) {
   return function Placeholder() {
     return (
-      <div className="p-8 border border-dashed border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800/50 text-center">
-        <p className="text-gray-600 dark:text-gray-400 text-sm">
+      <div className="p-8 border border-dashed border-border dark:border-border rounded-lg bg-muted dark:bg-muted/50 text-center">
+        <p className="text-muted-foreground dark:text-muted-foreground text-sm">
           {title} form component coming soon
         </p>
       </div>

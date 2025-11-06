@@ -135,8 +135,8 @@ export default function SubscriptionPage() {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
-          <Loader2 className="h-12 w-12 text-blue-600 dark:text-blue-400 mx-auto mb-4 animate-spin" />
-          <p className="text-gray-600 dark:text-gray-400">Loading subscription information...</p>
+          <Loader2 className="h-12 w-12 text-accent dark:text-accent mx-auto mb-4 animate-spin" />
+          <p className="text-muted-foreground dark:text-muted-foreground">Loading subscription information...</p>
         </div>
       </div>
     );
@@ -152,15 +152,15 @@ export default function SubscriptionPage() {
           <CardContent className="pt-6">
             <div className="text-center">
               <AlertCircle className="h-12 w-12 text-red-600 dark:text-red-400 mx-auto mb-4" />
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+              <h2 className="text-xl font-semibold text-foreground dark:text-white mb-2">
                 Failed to Load Subscription
               </h2>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
+              <p className="text-muted-foreground dark:text-muted-foreground mb-4">
                 {error.message || 'An error occurred while loading your subscription information.'}
               </p>
               <button
                 onClick={() => window.location.reload()}
-                className="text-blue-600 dark:text-blue-400 hover:underline"
+                className="text-accent dark:text-accent hover:underline"
               >
                 Try Again
               </button>
@@ -182,10 +182,10 @@ export default function SubscriptionPage() {
     <div className="space-y-6">
       {/* Page Header */}
       <header>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+        <h1 className="text-3xl font-bold text-foreground dark:text-white mb-2">
           Subscription & Tier Management
         </h1>
-        <p className="text-gray-600 dark:text-gray-400">
+        <p className="text-muted-foreground dark:text-muted-foreground">
           Manage your subscription tier and unlock additional features
         </p>
       </header>
@@ -212,7 +212,7 @@ export default function SubscriptionPage() {
 
       {/* Tier Comparison Table */}
       <div>
-        <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
+        <h2 className="text-2xl font-semibold text-foreground dark:text-white mb-4">
           Feature Comparison
         </h2>
         <TierComparisonTable currentTier={vendor.tier} />
@@ -220,7 +220,7 @@ export default function SubscriptionPage() {
 
       {/* Upgrade Request Form or Status */}
       <div>
-        <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
+        <h2 className="text-2xl font-semibold text-foreground dark:text-white mb-4">
           {upgradeRequest ? 'Upgrade Request Status' : 'Request Tier Upgrade'}
         </h2>
         {upgradeRequest ? (

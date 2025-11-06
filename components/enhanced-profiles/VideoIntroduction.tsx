@@ -12,7 +12,7 @@ const ReactPlayer = dynamic(() => import("react-player"), {
   ssr: false,
   loading: () => (
     <div data-testid="video-loading" className="flex items-center justify-center h-64">
-      <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+      <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
     </div>
   ),
 });
@@ -162,10 +162,10 @@ export function VideoIntroduction({
             // Lazy loading placeholder
             <div className="flex items-center justify-center h-full bg-gradient-to-br from-gray-100 to-gray-200">
               <div className="text-center">
-                <div className="w-16 h-16 mx-auto mb-4 bg-gray-300 rounded-full flex items-center justify-center">
-                  <Play className="w-6 h-6 text-gray-500" />
+                <div className="w-16 h-16 mx-auto mb-4 bg-border rounded-full flex items-center justify-center">
+                  <Play className="w-6 h-6 text-muted-foreground" />
                 </div>
-                <p className="text-gray-500 text-sm">Video will load when visible</p>
+                <p className="text-muted-foreground text-sm">Video will load when visible</p>
               </div>
             </div>
           ) : (
@@ -185,7 +185,7 @@ export function VideoIntroduction({
                   data-testid="play-overlay"
                   onClick={handlePlayClick}
                   size="lg"
-                  className="rounded-full w-16 h-16 bg-white bg-opacity-90 hover:bg-opacity-100 text-black"
+                  className="rounded-full w-16 h-16 bg-card bg-opacity-90 hover:bg-opacity-100 text-black"
                 >
                   <Play className="w-6 h-6 ml-1" />
                 </Button>
@@ -206,7 +206,7 @@ export function VideoIntroduction({
                 data-testid="play-overlay"
                 onClick={handlePlayClick}
                 size="lg"
-                className="rounded-full w-16 h-16 bg-white bg-opacity-90 hover:bg-opacity-100 text-black"
+                className="rounded-full w-16 h-16 bg-card bg-opacity-90 hover:bg-opacity-100 text-black"
               >
                 <Play className="w-6 h-6 ml-1" />
               </Button>
@@ -248,10 +248,10 @@ export function VideoIntroduction({
 
         {/* Video info */}
         <div className="p-6">
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+          <h3 className="text-xl font-semibold text-foreground dark:text-gray-100 mb-2">
             {video.title}
           </h3>
-          <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+          <p className="text-muted-foreground dark:text-muted-foreground text-sm leading-relaxed">
             {video.description}
           </p>
         </div>

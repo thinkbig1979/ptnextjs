@@ -65,7 +65,7 @@ export function YearsInBusinessDisplay({
   }
 
   return (
-    <span className={`inline-flex items-center gap-1.5 text-sm text-gray-600 dark:text-gray-400 ${className}`}>
+    <span className={`inline-flex items-center gap-1.5 text-sm text-muted-foreground dark:text-muted-foreground ${className}`}>
       {content}
     </span>
   );

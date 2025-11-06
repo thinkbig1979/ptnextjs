@@ -65,7 +65,7 @@ const Canvas = dynamic(() => import("@react-three/fiber").then(mod => ({ default
   ssr: false,
   loading: () => (
     <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center" data-testid="loading-3d">
-      <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+      <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
     </div>
   ),
 });
@@ -81,7 +81,7 @@ const ReactPlayer = dynamic(() => import("react-player"), {
   ssr: false,
   loading: () => (
     <div data-testid="video-loading" className="flex items-center justify-center h-64">
-      <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+      <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
     </div>
   ),
 });
@@ -254,7 +254,7 @@ export function VisualDemo({
 
   const render360ImageViewer = () => (
     <div
-      className="relative w-full h-64 lg:h-96 bg-gray-100 rounded-lg overflow-hidden"
+      className="relative w-full h-64 lg:h-96 bg-muted rounded-lg overflow-hidden"
       data-testid="360-viewer"
       role="img"
       aria-label={`360° view of ${activeContent.title}`}
@@ -385,7 +385,7 @@ export function VisualDemo({
                 key={position.name}
                 size="sm"
                 variant="ghost"
-                className="text-white hover:bg-white/20"
+                className="text-white hover:bg-card/20"
                 data-testid={`camera-position-${position.name.toLowerCase().replace(/\s+/g, '-')}`}
               >
                 {position.name}
@@ -415,7 +415,7 @@ export function VisualDemo({
               <div className="text-center">
                 <AlertCircle className="h-16 w-16 mx-auto mb-4 text-red-400" />
                 <p className="font-medium">Video Player Error</p>
-                <p className="text-sm text-gray-300">Unable to load video player</p>
+                <p className="text-sm text-muted-foreground">Unable to load video player</p>
               </div>
             </div>
           }
@@ -442,7 +442,7 @@ export function VisualDemo({
           <div className="text-center">
             <Play className="h-16 w-16 mx-auto mb-4" />
             <p className="font-medium">{activeContent.title}</p>
-            <p className="text-sm text-gray-300">Video Demo</p>
+            <p className="text-sm text-muted-foreground">Video Demo</p>
             <p className="text-xs text-red-400 mt-2">No video URL provided</p>
           </div>
         </div>
@@ -542,7 +542,7 @@ export function VisualDemo({
                         size="sm"
                         variant="ghost"
                         onClick={() => setIsPlaying(!isPlaying)}
-                        className={isFullscreen ? "text-white hover:bg-white/20" : ""}
+                        className={isFullscreen ? "text-white hover:bg-card/20" : ""}
                       >
                         {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
                       </Button>
@@ -553,7 +553,7 @@ export function VisualDemo({
                         size="sm"
                         variant="ghost"
                         onClick={() => setIsMuted(!isMuted)}
-                        className={isFullscreen ? "text-white hover:bg-white/20" : ""}
+                        className={isFullscreen ? "text-white hover:bg-card/20" : ""}
                       >
                         {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
                       </Button>
@@ -564,7 +564,7 @@ export function VisualDemo({
                         size="sm"
                         variant="ghost"
                         onClick={() => setShowInfoPanel(!showInfoPanel)}
-                        className={isFullscreen ? "text-white hover:bg-white/20" : ""}
+                        className={isFullscreen ? "text-white hover:bg-card/20" : ""}
                       >
                         <Info className="h-4 w-4" />
                       </Button>
@@ -575,7 +575,7 @@ export function VisualDemo({
                         size="sm"
                         variant="ghost"
                         onClick={handleShare}
-                        className={isFullscreen ? "text-white hover:bg-white/20" : ""}
+                        className={isFullscreen ? "text-white hover:bg-card/20" : ""}
                         data-testid="share-demo-button"
                       >
                         <Share2 className="h-4 w-4" />
@@ -587,7 +587,7 @@ export function VisualDemo({
                         size="sm"
                         variant="ghost"
                         onClick={handleFullscreenToggle}
-                        className={isFullscreen ? "text-white hover:bg-white/20" : ""}
+                        className={isFullscreen ? "text-white hover:bg-card/20" : ""}
                         data-testid="fullscreen-toggle"
                       >
                         {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
@@ -617,7 +617,7 @@ export function VisualDemo({
                   <Loader2 className="h-4 w-4 animate-spin" />
                   <span className="text-sm">Loading: {loadingProgress}%</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                <div className="w-full bg-border rounded-full h-2 mt-2">
                   <div
                     className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                     style={{ width: `${loadingProgress}%` }}

@@ -33,8 +33,8 @@ export const AwardsSection = React.memo(function AwardsSection({ awards, classNa
         data-testid="awards-section"
         className={cn("text-center py-8", className)}
       >
-        <Award className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-        <p className="text-gray-600 dark:text-gray-400">
+        <Award className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+        <p className="text-muted-foreground dark:text-muted-foreground">
           No awards to display at this time.
         </p>
       </div>
@@ -48,7 +48,7 @@ export const AwardsSection = React.memo(function AwardsSection({ awards, classNa
     >
       <div className="flex items-center gap-3 mb-6">
         <Award className="w-6 h-6 text-yellow-600" />
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        <h2 className="text-2xl font-bold text-foreground dark:text-gray-100">
           Awards & Recognition
         </h2>
       </div>
@@ -89,10 +89,10 @@ export const AwardsSection = React.memo(function AwardsSection({ awards, classNa
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-4 mb-3">
                         <div>
-                          <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100">
+                          <h3 className="font-semibold text-lg text-foreground dark:text-gray-100">
                             {award.title}
                           </h3>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                          <p className="text-sm text-muted-foreground dark:text-muted-foreground mt-1">
                             {award.organization}
                           </p>
                         </div>
@@ -100,7 +100,7 @@ export const AwardsSection = React.memo(function AwardsSection({ awards, classNa
                         <div className="flex flex-col items-end gap-2">
                           <div
                             data-testid="award-year"
-                            className="flex items-center gap-1 text-sm font-medium text-gray-700 dark:text-gray-300"
+                            className="flex items-center gap-1 text-sm font-medium text-foreground dark:text-muted-foreground"
                           >
                             <Calendar className="w-4 h-4" />
                             {award.year}
@@ -111,7 +111,7 @@ export const AwardsSection = React.memo(function AwardsSection({ awards, classNa
                         </div>
                       </div>
 
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                      <p className="text-sm text-muted-foreground dark:text-muted-foreground mb-4">
                         {award.description}
                       </p>
 
@@ -121,7 +121,7 @@ export const AwardsSection = React.memo(function AwardsSection({ awards, classNa
                           href={award.certificateUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
+                          className="inline-flex items-center gap-1 text-sm text-accent dark:text-accent hover:text-accent dark:hover:text-accent transition-colors"
                         >
                           <ExternalLink className="w-4 h-4" />
                           View Certificate

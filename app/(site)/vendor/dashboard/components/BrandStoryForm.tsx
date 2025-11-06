@@ -294,7 +294,7 @@ export function BrandStoryForm({ vendor, onSubmit }: BrandStoryFormProps) {
             {errors.longDescription && (
               <p className="text-sm text-red-500">{errors.longDescription.message}</p>
             )}
-            <p className="text-sm text-gray-500 dark:text-gray-400 text-right">
+            <p className="text-sm text-muted-foreground dark:text-muted-foreground text-right">
               {longDescriptionLength} / 5000 characters
             </p>
           </CardContent>

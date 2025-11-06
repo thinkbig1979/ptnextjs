@@ -22,7 +22,7 @@ export function SustainabilityScore({
   className
 }: SustainabilityScoreProps) {
   const getScoreColor = (score?: number) => {
-    if (!score) return 'text-gray-400';
+    if (!score) return 'text-muted-foreground';
     if (score >= 80) return 'text-green-600';
     if (score >= 60) return 'text-yellow-600';
     return 'text-red-600';
@@ -33,13 +33,13 @@ export function SustainabilityScore({
       case 'excellent':
         return 'bg-green-100 text-green-800';
       case 'good':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-accent/10 text-accent';
       case 'fair':
         return 'bg-yellow-100 text-yellow-800';
       case 'poor':
         return 'bg-red-100 text-red-800';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-muted text-gray-800';
     }
   };
 
@@ -85,7 +85,7 @@ export function SustainabilityScore({
                 <span>Environmental Performance</span>
                 <span>{metrics.overallScore}%</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-border rounded-full h-2">
                 <div
                   className={cn(
                     "h-2 rounded-full transition-all duration-300",

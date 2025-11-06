@@ -180,9 +180,9 @@ export function BasicInfoForm({ vendor, onSubmit }: BasicInfoFormProps) {
               id="slug"
               {...register('slug')}
               disabled
-              className="bg-gray-100 dark:bg-gray-800 cursor-not-allowed"
+              className="bg-muted dark:bg-muted cursor-not-allowed"
             />
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-muted-foreground">
               Your profile will be available at: /vendors/{watch('slug')}
             </p>
             {errors.slug && (
@@ -208,7 +208,7 @@ export function BasicInfoForm({ vendor, onSubmit }: BasicInfoFormProps) {
                   <p className="text-sm text-red-500">{errors.description.message}</p>
                 )}
               </div>
-              <p className={`text-xs ${descriptionLength > 500 ? 'text-red-500' : 'text-gray-500'}`}>
+              <p className={`text-xs ${descriptionLength > 500 ? 'text-red-500' : 'text-muted-foreground'}`}>
                 {descriptionLength} / 500
               </p>
             </div>
@@ -228,8 +228,8 @@ export function BasicInfoForm({ vendor, onSubmit }: BasicInfoFormProps) {
               <p className="text-sm text-red-500">{errors.logo.message}</p>
             )}
             {watch('logo') && (
-              <div className="mt-2 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                <p className="text-xs text-gray-500 mb-2">Logo Preview:</p>
+              <div className="mt-2 p-4 bg-muted dark:bg-muted rounded-lg">
+                <p className="text-xs text-muted-foreground mb-2">Logo Preview:</p>
                 <img
                   src={watch('logo') || ''}
                   alt="Logo preview"

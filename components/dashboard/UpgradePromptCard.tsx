@@ -80,7 +80,7 @@ export function UpgradePromptCard({
       <CardHeader>
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-2">
-            <Lock className="h-5 w-5 text-gray-400" />
+            <Lock className="h-5 w-5 text-muted-foreground" />
             <CardTitle className="text-xl">Unlock {feature}</CardTitle>
           </div>
           <Badge variant="outline" className="bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300">
@@ -95,12 +95,12 @@ export function UpgradePromptCard({
       {benefitsList.length > 0 && (
         <CardContent>
           <div className="space-y-3">
-            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            <p className="text-sm font-medium text-foreground dark:text-muted-foreground">
               What you'll get with {TIER_LABELS[targetTier]}:
             </p>
             <ul className="space-y-2">
               {benefitsList.map((benefit, index) => (
-                <li key={index} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-400">
+                <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground dark:text-muted-foreground">
                   <Check className="h-4 w-4 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
                   <span>{benefit}</span>
                 </li>
@@ -127,7 +127,7 @@ export function UpgradePromptCard({
   );
 
   if (variant === 'inline') {
-    return <div className={`border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-6 ${className}`}>{content}</div>;
+    return <div className={`border-2 border-dashed border-border dark:border-border rounded-lg p-6 ${className}`}>{content}</div>;
   }
 
   return <Card className={className}>{content}</Card>;

@@ -52,7 +52,7 @@ export function VendorLocationCard({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-gray-500 italic">
+          <p className="text-sm text-muted-foreground italic">
             Location information not available
           </p>
         </CardContent>
@@ -99,8 +99,8 @@ export function VendorLocationCard({
         {/* Display Distance (if calculated) */}
         {distance !== undefined && (
           <div data-testid="vendor-distance" className="flex items-center gap-2">
-            <Navigation className="w-4 h-4 text-blue-600" />
-            <p className="text-sm text-gray-600">
+            <Navigation className="w-4 h-4 text-accent" />
+            <p className="text-sm text-muted-foreground">
               <span className="font-semibold">{distance.toFixed(1)} km</span> away
             </p>
           </div>
@@ -109,8 +109,8 @@ export function VendorLocationCard({
         {/* Display Full Address */}
         {address && (
           <div data-testid="vendor-address">
-            <p className="text-sm font-medium text-gray-700 mb-1">Address</p>
-            <address className="not-italic text-sm text-gray-600">
+            <p className="text-sm font-medium text-foreground mb-1">Address</p>
+            <address className="not-italic text-sm text-muted-foreground">
               {address}
             </address>
           </div>
@@ -119,8 +119,8 @@ export function VendorLocationCard({
         {/* Display Coordinates */}
         {latitude !== undefined && longitude !== undefined && (
           <div data-testid="vendor-coordinates">
-            <p className="text-sm font-medium text-gray-700 mb-1">Coordinates</p>
-            <p className="text-xs font-mono text-gray-500">
+            <p className="text-sm font-medium text-foreground mb-1">Coordinates</p>
+            <p className="text-xs font-mono text-muted-foreground">
               {latitude.toFixed(4)}, {longitude.toFixed(4)}
             </p>
           </div>

@@ -93,20 +93,20 @@ export function TierGate({
   return (
     <div className={className}>
       <Alert className="border-blue-200 dark:border-blue-900 bg-blue-50 dark:bg-blue-950">
-        <Lock className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+        <Lock className="h-4 w-4 text-accent dark:text-accent" />
         <AlertTitle className="text-blue-900 dark:text-blue-100 flex items-center gap-2">
           Premium Feature
-          <Badge variant="default" className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-800">
+          <Badge variant="default" className="bg-accent/10 dark:bg-accent/10 text-accent dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-800">
             {tierLabels[requiredTier]}
           </Badge>
         </AlertTitle>
-        <AlertDescription className="text-blue-800 dark:text-blue-200">
+        <AlertDescription className="text-accent dark:text-blue-200">
           <p className="mb-2">
             This feature requires <strong>{tierLabels[requiredTier]}</strong> or higher.
           </p>
           <button
             type="button"
-            className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline"
+            className="inline-flex items-center gap-1 text-sm font-medium text-accent dark:text-accent hover:text-accent dark:hover:text-accent underline"
             onClick={() => {
               // In a real app, this would navigate to upgrade page
               console.log('Navigate to upgrade page');

@@ -17,13 +17,13 @@ const TIER_CONFIG = {
     label: 'Free',
     variant: 'secondary' as const,
     icon: Circle,
-    className: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
+    className: 'bg-muted text-foreground dark:bg-muted dark:text-muted-foreground',
   },
   tier1: {
     label: 'Tier 1',
     variant: 'default' as const,
     icon: Star,
-    className: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
+    className: 'bg-accent/10 text-accent dark:bg-accent/10 dark:text-accent',
   },
   tier2: {
     label: 'Tier 2',

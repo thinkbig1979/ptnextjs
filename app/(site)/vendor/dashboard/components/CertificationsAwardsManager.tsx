@@ -307,7 +307,7 @@ export function CertificationsAwardsManager({ vendor }: CertificationsAwardsMana
 
           {/* List */}
           {certifications.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
+            <div className="text-center py-12 text-muted-foreground">
               <Medal className="h-12 w-12 mx-auto mb-3 opacity-50" />
               <p>No certifications added yet.</p>
               <p className="text-sm mt-1">Click "Add Certification" to get started.</p>
@@ -327,14 +327,14 @@ export function CertificationsAwardsManager({ vendor }: CertificationsAwardsMana
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex-1">
                           <h4 className="font-semibold text-lg">{cert.name}</h4>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1">
+                          <p className="text-sm text-muted-foreground dark:text-muted-foreground flex items-center gap-1">
                             <Building2 className="h-3 w-3" />
                             {cert.issuer}
                           </p>
                         </div>
                         {cert.logo && (
-                          <div className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded flex items-center justify-center flex-shrink-0 ml-2">
-                            <ImageIcon className="h-6 w-6 text-gray-400" />
+                          <div className="w-12 h-12 bg-muted dark:bg-muted rounded flex items-center justify-center flex-shrink-0 ml-2">
+                            <ImageIcon className="h-6 w-6 text-muted-foreground" />
                           </div>
                         )}
                       </div>
@@ -421,7 +421,7 @@ export function CertificationsAwardsManager({ vendor }: CertificationsAwardsMana
 
           {/* List */}
           {awards.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
+            <div className="text-center py-12 text-muted-foreground">
               <Award className="h-12 w-12 mx-auto mb-3 opacity-50" />
               <p>No awards added yet.</p>
               <p className="text-sm mt-1">Click "Add Award" to get started.</p>
@@ -442,7 +442,7 @@ export function CertificationsAwardsManager({ vendor }: CertificationsAwardsMana
                         <div className="flex-1">
                           <h4 className="font-semibold text-lg">{award.title}</h4>
                           {award.organization && (
-                            <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1">
+                            <p className="text-sm text-muted-foreground dark:text-muted-foreground flex items-center gap-1">
                               <Building2 className="h-3 w-3" />
                               {award.organization}
                             </p>
@@ -463,7 +463,7 @@ export function CertificationsAwardsManager({ vendor }: CertificationsAwardsMana
                       </div>
 
                       {award.description && (
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
+                        <p className="text-sm text-muted-foreground dark:text-muted-foreground mb-3 line-clamp-2">
                           {award.description}
                         </p>
                       )}
@@ -620,7 +620,7 @@ export function CertificationsAwardsManager({ vendor }: CertificationsAwardsMana
               {certForm.formState.errors.logo && (
                 <p className="text-sm text-red-500">{certForm.formState.errors.logo.message}</p>
               )}
-              <p className="text-xs text-gray-500">Upload your logo to an image host and paste the URL here.</p>
+              <p className="text-xs text-muted-foreground">Upload your logo to an image host and paste the URL here.</p>
             </div>
 
             <DialogFooter>
@@ -723,7 +723,7 @@ export function CertificationsAwardsManager({ vendor }: CertificationsAwardsMana
               {awardForm.formState.errors.description && (
                 <p className="text-sm text-red-500">{awardForm.formState.errors.description.message}</p>
               )}
-              <p className="text-xs text-gray-500">Max 1000 characters</p>
+              <p className="text-xs text-muted-foreground">Max 1000 characters</p>
             </div>
 
             <DialogFooter>

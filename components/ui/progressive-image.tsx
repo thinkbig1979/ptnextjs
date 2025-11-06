@@ -78,7 +78,7 @@ export function ProgressiveImage({
       <div
         ref={ref as React.RefObject<HTMLDivElement>}
         className={cn(
-          "flex items-center justify-center bg-gray-100 text-gray-400 rounded",
+          "flex items-center justify-center bg-muted text-muted-foreground rounded",
           fill ? "absolute inset-0" : "",
           className
         )}
@@ -87,8 +87,8 @@ export function ProgressiveImage({
         aria-label={alt}
       >
         <div className="text-center p-4">
-          <div className="w-8 h-8 mx-auto mb-2 bg-gray-300 rounded-full flex items-center justify-center">
-            <span className="text-gray-500 text-xs">?</span>
+          <div className="w-8 h-8 mx-auto mb-2 bg-border rounded-full flex items-center justify-center">
+            <span className="text-muted-foreground text-xs">?</span>
           </div>
           <span className="text-sm">Failed to load image</span>
         </div>
@@ -110,7 +110,7 @@ export function ProgressiveImage({
         aria-label={`Loading ${alt}`}
         aria-busy="true"
       >
-        <div className="w-8 h-8 bg-gray-300 rounded animate-pulse" />
+        <div className="w-8 h-8 bg-border rounded animate-pulse" />
         <span className="sr-only">Loading image: {alt}</span>
       </div>
     );
@@ -122,7 +122,7 @@ export function ProgressiveImage({
       <div
         ref={ref as React.RefObject<HTMLDivElement>}
         className={cn(
-          "bg-gray-200 animate-pulse flex items-center justify-center",
+          "bg-border animate-pulse flex items-center justify-center",
           fill ? "absolute inset-0" : "",
           className
         )}
@@ -130,7 +130,7 @@ export function ProgressiveImage({
         role="img"
         aria-label={`Loading ${alt}`}
       >
-        <div className="w-8 h-8 bg-gray-300 rounded-full animate-bounce" />
+        <div className="w-8 h-8 bg-border rounded-full animate-bounce" />
       </div>
     );
   }
@@ -235,8 +235,8 @@ export function ImageGallery({
             className="object-cover"
           />
           {showLoadingState && !loadedImages.has(index) && (
-            <div className="absolute inset-0 bg-gray-100 animate-pulse flex items-center justify-center">
-              <div className="w-6 h-6 bg-gray-300 rounded animate-pulse" />
+            <div className="absolute inset-0 bg-muted animate-pulse flex items-center justify-center">
+              <div className="w-6 h-6 bg-border rounded animate-pulse" />
             </div>
           )}
         </div>

@@ -32,7 +32,7 @@ export function TierUpgradePrompt({
     <Card className={`border-blue-200 dark:border-blue-800 ${className}`}>
       <CardHeader>
         <div className="flex items-center gap-3 mb-2">
-          <Lock className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+          <Lock className="h-6 w-6 text-accent dark:text-accent" />
           <CardTitle>Upgrade to Unlock</CardTitle>
         </div>
         <CardDescription>
@@ -41,19 +41,19 @@ export function TierUpgradePrompt({
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Feature: <span className="text-gray-900 dark:text-white">{featureName}</span>
+          <h3 className="text-sm font-medium text-foreground dark:text-muted-foreground mb-2">
+            Feature: <span className="text-foreground dark:text-white">{featureName}</span>
           </h3>
           <div className="flex items-center gap-3 text-sm">
             <div>
-              <span className="text-gray-600 dark:text-gray-400">Your tier:</span>{' '}
+              <span className="text-muted-foreground dark:text-muted-foreground">Your tier:</span>{' '}
               <Badge variant="outline" className="ml-1 capitalize">
                 {currentTier}
               </Badge>
             </div>
-            <span className="text-gray-400">→</span>
+            <span className="text-muted-foreground">→</span>
             <div>
-              <span className="text-gray-600 dark:text-gray-400">Required:</span>{' '}
+              <span className="text-muted-foreground dark:text-muted-foreground">Required:</span>{' '}
               <Badge variant="default" className="ml-1 capitalize bg-blue-600">
                 {requiredTier}
               </Badge>
@@ -68,7 +68,7 @@ export function TierUpgradePrompt({
               Upgrade to {requiredTier}
             </Button>
           </Link>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+          <p className="text-xs text-muted-foreground dark:text-muted-foreground mt-2">
             Unlock this feature and more with a higher tier subscription.
           </p>
         </div>

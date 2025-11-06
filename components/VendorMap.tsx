@@ -42,12 +42,12 @@ export function VendorMap({
   ) {
     return (
       <div
-        className={`flex items-center justify-center bg-gray-100 rounded-lg ${className}`}
+        className={`flex items-center justify-center bg-muted rounded-lg ${className}`}
         style={{ height }}
         data-testid="vendor-map-error"
       >
         <div className="text-center p-6">
-          <p className="text-gray-600 text-sm">
+          <p className="text-muted-foreground text-sm">
             Invalid coordinates: {latitude}, {longitude}
           </p>
         </div>
@@ -84,7 +84,7 @@ export function VendorMap({
           <Popup>
             <div className="vendor-map-popup">
               <h3 className="font-semibold text-sm mb-1">{name}</h3>
-              <p className="text-xs text-gray-600">
+              <p className="text-xs text-muted-foreground">
                 {latitude.toFixed(4)}, {longitude.toFixed(4)}
               </p>
             </div>

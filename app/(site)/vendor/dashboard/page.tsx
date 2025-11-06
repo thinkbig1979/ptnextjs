@@ -114,7 +114,7 @@ function DashboardContent({
   router: any;
 }) {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-muted dark:bg-gray-900">
       {/* Dashboard Header */}
       <DashboardHeader
         vendorSlug={user.slug}
@@ -129,10 +129,10 @@ function DashboardContent({
           <div className="lg:col-span-3 space-y-8">
             {/* Welcome Header */}
             <header>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+              <h1 className="text-3xl font-bold text-foreground dark:text-white mb-2">
                 Welcome, {user.email.split('@')[0]}
               </h1>
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-muted-foreground dark:text-muted-foreground">
                 Manage your vendor profile, products, and account settings.
               </p>
             </header>
@@ -166,10 +166,10 @@ function DashboardContent({
           <CardContent className="space-y-4">
             <div>
               <div className="flex justify-between items-center mb-2">
-                <span className="text-sm font-medium text-gray-700">Profile Completion</span>
-                <span className="text-sm font-semibold text-gray-900">{profileCompletion}%</span>
+                <span className="text-sm font-medium text-foreground">Profile Completion</span>
+                <span className="text-sm font-semibold text-foreground">{profileCompletion}%</span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-border rounded-full h-2">
                 <div
                   className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                   style={{ width: `${profileCompletion}%` }}
@@ -181,9 +181,9 @@ function DashboardContent({
                 />
               </div>
             </div>
-            <div className="pt-2 border-t border-gray-200">
+            <div className="pt-2 border-t border-border">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Approval Status</span>
+                <span className="text-sm text-muted-foreground">Approval Status</span>
                 {approvalStatus === 'approved' ? (
                   <span className="flex items-center gap-1 text-sm font-medium text-green-600">
                     <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
@@ -213,12 +213,12 @@ function DashboardContent({
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-gray-700">Current Tier</span>
+              <span className="text-sm font-medium text-foreground">Current Tier</span>
               {tier && <SubscriptionTierBadge tier={tier} />}
             </div>
             {tier === 'free' && (
-              <div className="pt-4 border-t border-gray-200">
-                <p className="text-sm text-gray-600 mb-3">
+              <div className="pt-4 border-t border-border">
+                <p className="text-sm text-muted-foreground mb-3">
                   Upgrade to unlock premium features like product management.
                 </p>
                 <Button variant="outline" size="sm" className="w-full">
@@ -228,8 +228,8 @@ function DashboardContent({
               </div>
             )}
             {tier === 'tier1' && (
-              <div className="pt-4 border-t border-gray-200">
-                <p className="text-sm text-gray-600 mb-3">
+              <div className="pt-4 border-t border-border">
+                <p className="text-sm text-muted-foreground mb-3">
                   You&apos;re on Tier 1. Upgrade to Tier 2 for advanced product management.
                 </p>
                 <Button variant="outline" size="sm" className="w-full">
@@ -239,7 +239,7 @@ function DashboardContent({
               </div>
             )}
             {tier === 'tier2' && (
-              <div className="pt-4 border-t border-gray-200">
+              <div className="pt-4 border-t border-border">
                 <p className="text-sm text-green-600 font-medium">
                   You have access to all premium features!
                 </p>
@@ -299,8 +299,8 @@ function DashboardContent({
             <li className="flex items-start gap-3">
               <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-500 mt-0.5" aria-hidden="true" />
               <div>
-                <p className="font-medium text-gray-900 dark:text-white">Complete your profile</p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="font-medium text-foreground dark:text-white">Complete your profile</p>
+                <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                   Add company information, logo, and contact details
                 </p>
               </div>
@@ -309,8 +309,8 @@ function DashboardContent({
               <li className="flex items-start gap-3">
                 <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-500 mt-0.5" aria-hidden="true" />
                 <div>
-                  <p className="font-medium text-gray-900 dark:text-white">Add your products</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="font-medium text-foreground dark:text-white">Add your products</p>
+                  <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                     Showcase your products to potential customers
                   </p>
                 </div>
@@ -319,8 +319,8 @@ function DashboardContent({
             <li className="flex items-start gap-3">
               <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-500 mt-0.5" aria-hidden="true" />
               <div>
-                <p className="font-medium text-gray-900 dark:text-white">Configure notifications</p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="font-medium text-foreground dark:text-white">Configure notifications</p>
+                <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                   Manage your email preferences and alerts
                 </p>
               </div>

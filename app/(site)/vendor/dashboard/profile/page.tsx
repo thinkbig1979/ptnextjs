@@ -45,8 +45,8 @@ export default function VendorProfilePage() {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
-          <Loader2 className="h-12 w-12 text-blue-600 dark:text-blue-400 mx-auto mb-4 animate-spin" />
-          <p className="text-gray-600 dark:text-gray-400">Loading profile...</p>
+          <Loader2 className="h-12 w-12 text-accent dark:text-accent mx-auto mb-4 animate-spin" />
+          <p className="text-muted-foreground dark:text-muted-foreground">Loading profile...</p>
         </div>
       </div>
     );
@@ -62,15 +62,15 @@ export default function VendorProfilePage() {
           <CardContent className="pt-6">
             <div className="text-center">
               <AlertCircle className="h-12 w-12 text-red-600 dark:text-red-400 mx-auto mb-4" />
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+              <h2 className="text-xl font-semibold text-foreground dark:text-white mb-2">
                 Failed to Load Profile
               </h2>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
+              <p className="text-muted-foreground dark:text-muted-foreground mb-4">
                 {error.message || 'An error occurred while loading your profile.'}
               </p>
               <button
                 onClick={() => window.location.reload()}
-                className="text-blue-600 dark:text-blue-400 hover:underline"
+                className="text-accent dark:text-accent hover:underline"
               >
                 Try Again
               </button>
@@ -92,10 +92,10 @@ export default function VendorProfilePage() {
     <div className="space-y-6">
       {/* Page Header */}
       <header>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+        <h1 className="text-3xl font-bold text-foreground dark:text-white mb-2">
           Edit Profile
         </h1>
-        <p className="text-gray-600 dark:text-gray-400">
+        <p className="text-muted-foreground dark:text-muted-foreground">
           Update your company information and profile details.
         </p>
       </header>
