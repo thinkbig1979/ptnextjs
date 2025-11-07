@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">66.66% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>10/15</span>
+                <span class='fraction'>0/15</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">35.71% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>5/14</span>
+                <span class='fraction'>0/14</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">57.14% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>4/7</span>
+                <span class='fraction'>0/7</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">66.66% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>8/12</span>
+                <span class='fraction'>0/12</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line medium'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -341,7 +341,7 @@
 <a name='L276'></a><a href='#L276'>276</a>
 <a name='L277'></a><a href='#L277'>277</a>
 <a name='L278'></a><a href='#L278'>278</a>
-<a name='L279'></a><a href='#L279'>279</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L279'></a><a href='#L279'>279</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -349,7 +349,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -385,7 +385,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -543,9 +543,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-yes">14x</span>
-<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -616,10 +616,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">12x</span>
-<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { z } from 'zod';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { z } from <span class="cstat-no" title="statement not covered" >'zod';</span>
 &nbsp;
 /**
  * Validation schema for vendor profile update requests
@@ -627,10 +627,10 @@
  * All fields are optional (PATCH semantics - partial updates)
  * Field-level validation matches Payload Vendors collection constraints
  */
-export const <span class="cstat-no" title="statement not covered" >vendorUpdateSchema = z</span>.object({
+export const <span class="cstat-no" title="statement not covered" >vendorUpdateSchema = <span class="cstat-no" title="statement not covered" >z</span>.object({</span>
   // Tier field (can be updated by vendor or admin)
   tier: z
-    .enum(['free', 'tier1', 'tier2', 'tier3', 'tier4'])
+    .enum(['free', 'tier1', 'tier2', 'tier3'])
     .optional(),
 &nbsp;
   // Basic Information (Free tier)
@@ -663,7 +663,7 @@ export const <span class="cstat-no" title="statement not covered" >vendorUpdateS
     .max(50, 'Phone number must not exceed 50 characters')
     .optional()
     .refine(
-      (val) =&gt; !val || <span class="branch-1 cbranch-no" title="branch not covered" >/^[\d\s\-\+\(\)]+$/.test(val),</span>
+<span class="fstat-no" title="function not covered" >      (v</span>al) =&gt; <span class="cstat-no" title="statement not covered" >!val || /^[\d\s\-\+\(\)]+$/.test(val),</span>
       'Invalid phone number format'
     ),
 &nbsp;
@@ -820,10 +820,10 @@ export const <span class="cstat-no" title="statement not covered" >vendorUpdateS
     )
     .optional()
     .refine(
-      (locations) =&gt; {
-        if (!locations || locations.length === 0) return true;
-        const hqCount = locations.filter((loc) =&gt; loc.isHQ === true).length;
-        return hqCount &lt;= 1;
+<span class="fstat-no" title="function not covered" >      (l</span>ocations) =&gt; {
+<span class="cstat-no" title="statement not covered" >        if (!locations || locations.length === 0) <span class="cstat-no" title="statement not covered" >return true;</span></span>
+        const hqCount = <span class="cstat-no" title="statement not covered" >locations.filter(<span class="fstat-no" title="function not covered" >(l</span>oc) =&gt; <span class="cstat-no" title="statement not covered" >loc.isHQ === true).l</span>ength;</span>
+<span class="cstat-no" title="statement not covered" >        return hqCount &lt;= 1;</span>
       },
       {
         message: 'Only one location can be designated as Headquarters',
@@ -894,8 +894,8 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
 /**
  * Safe validation that returns success/error result
  */
-export function safeValidateVendorUpdate(data: unknown) {
-  return vendorUpdateSchema.safeParse(data);
+export function <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >safeValidateVendorUpdate(d</span></span>ata: unknown) {
+<span class="cstat-no" title="statement not covered" >  return vendorUpdateSchema.safeParse(data);</span>
 }
 &nbsp;</pre></td></tr></table></pre>
 
@@ -904,7 +904,7 @@ export function safeValidateVendorUpdate(data: unknown) {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-26T08:03:02.390Z
+                at 2025-11-07T13:16:22.163Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

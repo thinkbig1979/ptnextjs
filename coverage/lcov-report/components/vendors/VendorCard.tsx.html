@@ -25,28 +25,28 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/20</span>
+                <span class='fraction'>0/25</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/30</span>
+                <span class='fraction'>0/41</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/3</span>
+                <span class='fraction'>0/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/18</span>
+                <span class='fraction'>0/21</span>
             </div>
         
             
@@ -265,7 +265,18 @@
 <a name='L200'></a><a href='#L200'>200</a>
 <a name='L201'></a><a href='#L201'>201</a>
 <a name='L202'></a><a href='#L202'>202</a>
-<a name='L203'></a><a href='#L203'>203</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L203'></a><a href='#L203'>203</a>
+<a name='L204'></a><a href='#L204'>204</a>
+<a name='L205'></a><a href='#L205'>205</a>
+<a name='L206'></a><a href='#L206'>206</a>
+<a name='L207'></a><a href='#L207'>207</a>
+<a name='L208'></a><a href='#L208'>208</a>
+<a name='L209'></a><a href='#L209'>209</a>
+<a name='L210'></a><a href='#L210'>210</a>
+<a name='L211'></a><a href='#L211'>211</a>
+<a name='L212'></a><a href='#L212'>212</a>
+<a name='L213'></a><a href='#L213'>213</a>
+<a name='L214'></a><a href='#L214'>214</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -306,11 +317,22 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -505,18 +527,21 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
   featured = <span class="branch-0 cbranch-no" title="branch not covered" >false,</span>
   showTierBadge = <span class="branch-0 cbranch-no" title="branch not covered" >true,</span>
 }: VendorCardProps) {
-  const truncateDescription = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(t</span>ext: string, maxLength: number = <span class="branch-0 cbranch-no" title="branch not covered" >150)</span> =&gt; {</span>
+  const truncateDescription = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(t</span>ext: string | undefined, maxLength: number = <span class="branch-0 cbranch-no" title="branch not covered" >150)</span> =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    if (!text) <span class="cstat-no" title="statement not covered" >return '';</span></span>
 <span class="cstat-no" title="statement not covered" >    if (text.length &lt;= maxLength) <span class="cstat-no" title="statement not covered" >return text;</span></span>
 <span class="cstat-no" title="statement not covered" >    return text.substring(0, maxLength).trim() + '...';</span>
   };
 &nbsp;
   const locationCount = <span class="cstat-no" title="statement not covered" >vendor.locations?.length || 0;</span>
-  const showYearsInBusiness = <span class="cstat-no" title="statement not covered" >vendor.foundedYear &amp;&amp; vendor.tier &amp;&amp; vendor.tier !== 'free';</span>
-  const showFeaturedStar = <span class="cstat-no" title="statement not covered" >featured &amp;&amp; vendor.tier === 'tier3';</span>
+  const hqLocation = <span class="cstat-no" title="statement not covered" >vendor.locations?.find(<span class="fstat-no" title="function not covered" >loc =&gt; <span class="cstat-no" title="statement not covered" >l</span>oc.isHQ === true);</span></span>
+  const hqCity = <span class="cstat-no" title="statement not covered" >hqLocation?.city || null;</span>
+  const showYearsInBusiness = <span class="cstat-no" title="statement not covered" >(vendor.foundedYear || vendor.founded) &amp;&amp; vendor.tier &amp;&amp; vendor.tier !== 'free';</span>
+  const showFeaturedStar = <span class="cstat-no" title="statement not covered" >featured || vendor.featured;</span> // Show star for all featured vendors
 &nbsp;
   return (
     &lt;Link href={`/vendors/${vendor.slug}`} className="block"&gt;
-      &lt;Card className="h-full transition-all duration-200 hover:shadow-lg hover:scale-[1.02] cursor-pointer"&gt;
+      &lt;Card className="h-full min-h-[180px] transition-all duration-200 hover:shadow-lg hover:scale-[1.02] cursor-pointer" data-testid="vendor-card"&gt;
         &lt;CardContent className="p-4"&gt;
           {/* Mobile: Vertical Layout */}
           &lt;div className="flex flex-col sm:hidden space-y-4"&gt;
@@ -540,7 +565,10 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
               &lt;div className="flex items-center justify-center gap-2 mb-2"&gt;
                 {showTierBadge &amp;&amp; vendor.tier &amp;&amp; &lt;TierBadge tier={vendor.tier} size="sm" /&gt;}
                 {<span class="branch-0 cbranch-no" title="branch not covered" >showFeaturedStar &amp;&amp; (</span>
-                  &lt;Star className="w-4 h-4 fill-amber-400 text-amber-400" /&gt;
+                  &lt;Badge variant="secondary" className="bg-amber-100 text-amber-900 hover:bg-amber-200 dark:bg-amber-900 dark:text-amber-100 gap-1"&gt;
+                    &lt;Star className="w-3 h-3 fill-amber-500 text-amber-500" /&gt;
+                    Featured
+                  &lt;/Badge&gt;
                 )}
               &lt;/div&gt;
 &nbsp;
@@ -556,13 +584,14 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
 &nbsp;
               {/* Metrics */}
               &lt;div className="flex flex-col items-center gap-2"&gt;
-                {showYearsInBusiness &amp;&amp; vendor.foundedYear &amp;&amp; (
-                  &lt;YearsInBusinessDisplay foundedYear={vendor.foundedYear} variant="badge" /&gt;
+                {showYearsInBusiness &amp;&amp; (vendor.foundedYear || vendor.founded) &amp;&amp; (
+                  &lt;YearsInBusinessDisplay foundedYear={vendor.foundedYear || vendor.founded} variant="badge" /&gt;
                 )}
-                {<span class="branch-0 cbranch-no" title="branch not covered" >locationCount &gt; 0 &amp;&amp; (</span>
+                {<span class="branch-0 cbranch-no" title="branch not covered" >hqCity &amp;&amp; (</span>
                   &lt;Badge variant="outline" className="text-xs"&gt;
                     &lt;MapPin className="w-3 h-3 mr-1" /&gt;
-                    {locationCount} {locationCount === 1 ? 'Location' : 'Locations'}
+                    {hqCity}
+                    {locationCount &gt; 1 &amp;&amp; ` +${locationCount - 1}`}
                   &lt;/Badge&gt;
                 )}
               &lt;/div&gt;
@@ -587,11 +616,14 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
 &nbsp;
             {/* Content */}
             &lt;div className="flex-1 min-w-0"&gt;
-              {/* Tier Badge and Featured Star */}
+              {/* Tier Badge and Featured Badge */}
               &lt;div className="flex items-center gap-2 mb-2"&gt;
                 {showTierBadge &amp;&amp; vendor.tier &amp;&amp; &lt;TierBadge tier={vendor.tier} size="sm" /&gt;}
                 {<span class="branch-0 cbranch-no" title="branch not covered" >showFeaturedStar &amp;&amp; (</span>
-                  &lt;Star className="w-4 h-4 fill-amber-400 text-amber-400" /&gt;
+                  &lt;Badge variant="secondary" className="bg-amber-100 text-amber-900 hover:bg-amber-200 dark:bg-amber-900 dark:text-amber-100 gap-1"&gt;
+                    &lt;Star className="w-3 h-3 fill-amber-500 text-amber-500" /&gt;
+                    Featured
+                  &lt;/Badge&gt;
                 )}
               &lt;/div&gt;
 &nbsp;
@@ -607,13 +639,14 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
 &nbsp;
               {/* Metrics */}
               &lt;div className="flex items-center gap-2 flex-wrap"&gt;
-                {showYearsInBusiness &amp;&amp; vendor.foundedYear &amp;&amp; (
-                  &lt;YearsInBusinessDisplay foundedYear={vendor.foundedYear} variant="badge" /&gt;
+                {showYearsInBusiness &amp;&amp; (vendor.foundedYear || vendor.founded) &amp;&amp; (
+                  &lt;YearsInBusinessDisplay foundedYear={vendor.foundedYear || vendor.founded} variant="badge" /&gt;
                 )}
-                {<span class="branch-0 cbranch-no" title="branch not covered" >locationCount &gt; 0 &amp;&amp; (</span>
+                {<span class="branch-0 cbranch-no" title="branch not covered" >hqCity &amp;&amp; (</span>
                   &lt;Badge variant="outline" className="text-xs"&gt;
                     &lt;MapPin className="w-3 h-3 mr-1" /&gt;
-                    {locationCount} {locationCount === 1 ? 'Location' : 'Locations'}
+                    {hqCity}
+                    {locationCount &gt; 1 &amp;&amp; ` +${locationCount - 1}`}
                   &lt;/Badge&gt;
                 )}
               &lt;/div&gt;
@@ -676,7 +709,7 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-26T08:03:02.390Z
+                at 2025-11-07T13:16:22.163Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

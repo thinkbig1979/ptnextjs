@@ -232,8 +232,7 @@
 <a name='L167'></a><a href='#L167'>167</a>
 <a name='L168'></a><a href='#L168'>168</a>
 <a name='L169'></a><a href='#L169'>169</a>
-<a name='L170'></a><a href='#L170'>170</a>
-<a name='L171'></a><a href='#L171'>171</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L170'></a><a href='#L170'>170</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -302,7 +301,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -412,7 +410,7 @@ import { Separator } from <span class="cstat-no" title="statement not covered" >
 import { useRouter } from <span class="cstat-no" title="statement not covered" >'next/navigation';</span>
 import { TierBadge } from <span class="cstat-no" title="statement not covered" >'@/components/vendors/TierBadge';</span>
 import { UpgradePromptCard } from <span class="cstat-no" title="statement not covered" >'@/components/dashboard/UpgradePromptCard';</span>
-import { HelpCircle, FileText, Mail, ExternalLink } from <span class="cstat-no" title="statement not covered" >'lucide-react';</span>
+import { HelpCircle, FileText, Mail } from <span class="cstat-no" title="statement not covered" >'lucide-react';</span>
 import { Tier } from '@/lib/services/TierService';
 &nbsp;
 export interface DashboardSidebarProps {
@@ -454,7 +452,7 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
         &lt;/CardHeader&gt;
         &lt;CardContent className="space-y-4"&gt;
           &lt;div className="flex items-center justify-between"&gt;
-            &lt;span className="text-sm font-medium text-gray-700 dark:text-gray-300"&gt;
+            &lt;span className="text-sm font-medium text-foreground dark:text-muted-foreground"&gt;
               Current Tier
             &lt;/span&gt;
             &lt;TierBadge tier={normalizedTier} size="md" /&gt;
@@ -464,17 +462,16 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
             &lt;&gt;
               &lt;Separator /&gt;
               &lt;div className="pt-2"&gt;
-                &lt;p className="text-xs text-gray-600 dark:text-gray-400 mb-3"&gt;
+                &lt;p className="text-xs text-muted-foreground dark:text-muted-foreground mb-3"&gt;
                   Upgrade to unlock more features and grow your business.
                 &lt;/p&gt;
                 &lt;Button
                   variant="outline"
                   size="sm"
                   className="w-full"
-                  onClick={<span class="fstat-no" title="function not covered" >() =&gt; <span class="cstat-no" title="statement not covered" >w</span>indow.open('/pricing', '_blank')}</span>
+                  onClick={<span class="fstat-no" title="function not covered" >() =&gt; <span class="cstat-no" title="statement not covered" >r</span>outer.push('/vendor/dashboard/subscription')}</span>
                 &gt;
-                  View Pricing
-                  &lt;ExternalLink className="ml-2 h-3 w-3" aria-hidden="true" /&gt;
+                  View Subscription Options
                 &lt;/Button&gt;
               &lt;/div&gt;
             &lt;/&gt;
@@ -546,7 +543,7 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
             href="/docs/getting-started"
             target="_blank"
             rel="noopener noreferrer"
-            className="block text-sm text-blue-600 dark:text-blue-400 hover:underline"
+            className="block text-sm text-accent dark:text-accent hover:underline"
           &gt;
             Getting Started Guide
           &lt;/a&gt;
@@ -554,7 +551,7 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
             href="/docs/features"
             target="_blank"
             rel="noopener noreferrer"
-            className="block text-sm text-blue-600 dark:text-blue-400 hover:underline"
+            className="block text-sm text-accent dark:text-accent hover:underline"
           &gt;
             Feature Documentation
           &lt;/a&gt;
@@ -562,7 +559,7 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
             href="/docs/best-practices"
             target="_blank"
             rel="noopener noreferrer"
-            className="block text-sm text-blue-600 dark:text-blue-400 hover:underline"
+            className="block text-sm text-accent dark:text-accent hover:underline"
           &gt;
             Best Practices
           &lt;/a&gt;
@@ -580,7 +577,7 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-26T08:03:02.390Z
+                at 2025-11-07T13:16:22.163Z
             </div>
         <script src="../../../../../prettify.js"></script>
         <script>

@@ -192,7 +192,21 @@
 <a name='L127'></a><a href='#L127'>127</a>
 <a name='L128'></a><a href='#L128'>128</a>
 <a name='L129'></a><a href='#L129'>129</a>
-<a name='L130'></a><a href='#L130'>130</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L130'></a><a href='#L130'>130</a>
+<a name='L131'></a><a href='#L131'>131</a>
+<a name='L132'></a><a href='#L132'>132</a>
+<a name='L133'></a><a href='#L133'>133</a>
+<a name='L134'></a><a href='#L134'>134</a>
+<a name='L135'></a><a href='#L135'>135</a>
+<a name='L136'></a><a href='#L136'>136</a>
+<a name='L137'></a><a href='#L137'>137</a>
+<a name='L138'></a><a href='#L138'>138</a>
+<a name='L139'></a><a href='#L139'>139</a>
+<a name='L140'></a><a href='#L140'>140</a>
+<a name='L141'></a><a href='#L141'>141</a>
+<a name='L142'></a><a href='#L142'>142</a>
+<a name='L143'></a><a href='#L143'>143</a>
+<a name='L144'></a><a href='#L144'>144</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -207,6 +221,24 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -219,11 +251,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -335,7 +363,9 @@ import {
   User,
   Package,
   Settings,
+  CreditCard,
   LogOut,
+  Database,
 } from <span class="cstat-no" title="statement not covered" >'lucide-react';</span>
 &nbsp;
 export interface VendorNavigationProps {
@@ -366,10 +396,22 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
       visible: true,
     },
     {
+      href: '/vendor/dashboard/data-management',
+      label: 'Data Management',
+      icon: Database,
+      visible: true,
+    },
+    {
       href: '/vendor/dashboard/products',
       label: 'Products',
       icon: Package,
       visible: tier === 'tier2', // Only visible for tier2 vendors
+    },
+    {
+      href: '/vendor/dashboard/subscription',
+      label: 'Subscription',
+      icon: CreditCard,
+      visible: true,
     },
     {
       href: '/vendor/dashboard/settings',
@@ -387,14 +429,14 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
     &lt;nav
       role="navigation"
       aria-label="Vendor dashboard navigation"
-      className={`flex flex-col h-full bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-slate-800 ${className || ''}`}
+      className={`flex flex-col h-full bg-card dark:bg-slate-900 border-r border-border dark:border-slate-800 ${className || ''}`}
     &gt;
       {/* Sidebar Header */}
       &lt;div className="p-6"&gt;
-        &lt;h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2"&gt;Vendor Portal&lt;/h2&gt;
+        &lt;h2 className="text-lg font-semibold text-foreground dark:text-white mb-2"&gt;Vendor Portal&lt;/h2&gt;
         {user &amp;&amp; tier &amp;&amp; (
           &lt;div className="flex flex-col gap-2"&gt;
-            &lt;p className="text-sm text-gray-600 dark:text-gray-400 truncate"&gt;{user.email}&lt;/p&gt;
+            &lt;p className="text-sm text-muted-foreground dark:text-muted-foreground truncate"&gt;{user.email}&lt;/p&gt;
             &lt;SubscriptionTierBadge tier={tier} /&gt;
           &lt;/div&gt;
         )}
@@ -421,8 +463,8 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
                   transition-colors duration-150
                   ${
                     isActive
-                      ? 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 hover:text-gray-900 dark:hover:text-white'
+                      ? 'bg-blue-50 dark:bg-blue-950 text-accent dark:text-accent'
+                      : 'text-foreground dark:text-muted-foreground hover:bg-muted dark:hover:bg-slate-800 hover:text-foreground dark:hover:text-white'
                   }
                 `}
               &gt;
@@ -457,7 +499,7 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-26T08:03:02.390Z
+                at 2025-11-07T13:16:22.163Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

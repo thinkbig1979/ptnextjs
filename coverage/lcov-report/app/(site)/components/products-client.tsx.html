@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/109</span>
+                <span class='fraction'>0/110</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/106</span>
+                <span class='fraction'>0/107</span>
             </div>
         
             
@@ -477,7 +477,8 @@
 <a name='L412'></a><a href='#L412'>412</a>
 <a name='L413'></a><a href='#L413'>413</a>
 <a name='L414'></a><a href='#L414'>414</a>
-<a name='L415'></a><a href='#L415'>415</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L415'></a><a href='#L415'>415</a>
+<a name='L416'></a><a href='#L416'>416</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -496,6 +497,7 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -910,6 +912,7 @@ import { parseFilterParams } from <span class="cstat-no" title="statement not co
 import { OptimizedImage } from <span class="cstat-no" title="statement not covered" >"@/components/ui/optimized-image";</span>
 import { CompareButton, ComparisonFloatingButton } from <span class="cstat-no" title="statement not covered" >"@/components/ui/product-comparison";</span>
 import { Product, Vendor, Feature } from "@/lib/types";
+import { getDescriptionPreview } from <span class="cstat-no" title="statement not covered" >"@/lib/utils/lexical-helpers";</span>
 &nbsp;
 const ITEMS_PER_PAGE = <span class="cstat-no" title="statement not covered" >12;</span>
 &nbsp;
@@ -930,7 +933,7 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
   const [currentPage, setCurrentPage] = <span class="cstat-no" title="statement not covered" >React.useState(1);</span>
   const [selectedPartner, setSelectedPartner] = <span class="cstat-no" title="statement not covered" >React.useState(urlParams.partner);</span>
   const [vendorView, setVendorView] = <span class="cstat-no" title="statement not covered" >React.useState&lt;"partners" | "all"&gt;(</span>
-    searchParams?.get('view') === 'all' ? 'all' : 'partners'
+    searchParams?.get('view') === 'partners' ? 'partners' : 'all'
   );
   
 &nbsp;
@@ -946,7 +949,7 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
 <span class="cstat-no" title="statement not covered" >    setSearchQuery(params.search);</span>
 <span class="cstat-no" title="statement not covered" >    setSelectedCategory(params.category);</span>
 <span class="cstat-no" title="statement not covered" >    setSelectedPartner(params.partner);</span>
-<span class="cstat-no" title="statement not covered" >    setVendorView(searchParams?.get('view') === 'all' ? 'all' : 'partners');</span>
+<span class="cstat-no" title="statement not covered" >    setVendorView(searchParams?.get('view') === 'partners' ? 'partners' : 'all');</span>
   }, [searchParams]);
 &nbsp;
   // Navigation functions
@@ -1054,10 +1057,10 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
     
     // Update or remove view parameter
 <span class="cstat-no" title="statement not covered" >    if (params.view !== undefined) {</span>
-<span class="cstat-no" title="statement not covered" >      if (params.view === 'all') {</span>
-<span class="cstat-no" title="statement not covered" >        current.set('view', 'all');</span>
+<span class="cstat-no" title="statement not covered" >      if (params.view === 'partners') {</span>
+<span class="cstat-no" title="statement not covered" >        current.set('view', 'partners');</span>
       } else {
-<span class="cstat-no" title="statement not covered" >        current.delete('view'); /</span>/ Default is partners, no URL param needed
+<span class="cstat-no" title="statement not covered" >        current.delete('view'); /</span>/ Default is all, no URL param needed
       }
     }
 &nbsp;
@@ -1198,7 +1201,7 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
                   {product?.name}
                 &lt;/CardTitle&gt;
                 &lt;CardDescription className="line-clamp-2"&gt;
-                  {product?.description}
+                  {getDescriptionPreview(product?.description, 120)}
                 &lt;/CardDescription&gt;
               &lt;/CardHeader&gt;
               &lt;CardContent&gt;
@@ -1312,7 +1315,7 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-26T08:03:02.390Z
+                at 2025-11-07T13:16:22.163Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

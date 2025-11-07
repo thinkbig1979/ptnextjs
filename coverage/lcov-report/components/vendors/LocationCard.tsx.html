@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">81.81% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>9/11</span>
+                <span class='fraction'>0/11</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">76.92% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>20/26</span>
+                <span class='fraction'>0/26</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">50% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/2</span>
+                <span class='fraction'>0/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">90% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>9/10</span>
+                <span class='fraction'>0/10</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -170,11 +170,11 @@
 <a name='L105'></a><a href='#L105'>105</a>
 <a name='L106'></a><a href='#L106'>106</a>
 <a name='L107'></a><a href='#L107'>107</a>
-<a name='L108'></a><a href='#L108'>108</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
+<a name='L108'></a><a href='#L108'>108</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -187,14 +187,14 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">98x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">98x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">98x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -276,12 +276,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { MapPin, Navigation, Map } from 'lucide-react';
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React from <span class="cstat-no" title="statement not covered" >'react';</span>
+import { Card, CardContent, CardHeader, CardTitle } from <span class="cstat-no" title="statement not covered" >'@/components/ui/card';</span>
+import { Badge } from <span class="cstat-no" title="statement not covered" >'@/components/ui/badge';</span>
+import { Button } from <span class="cstat-no" title="statement not covered" >'@/components/ui/button';</span>
+import { MapPin, Navigation, Map } from <span class="cstat-no" title="statement not covered" >'lucide-react';</span>
 import { VendorLocation } from '@/lib/types';
 &nbsp;
 export interface LocationCardProps {
@@ -294,14 +294,14 @@ export interface LocationCardProps {
 /**
  * LocationCard - Display individual location details with "Get Directions" and "Show on Map" buttons
  */
-export function LocationCard({ location, isHQ = false, onShowOnMap, isFocused = false }: LocationCardProps) {
+export function <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >LocationCard({</span></span> location, isHQ = <span class="branch-0 cbranch-no" title="branch not covered" >false,</span> onShowOnMap, isFocused = <span class="branch-0 cbranch-no" title="branch not covered" >false </span>}: LocationCardProps) {
   // Construct Google Maps directions URL
-  const mapsUrl = location.latitude &amp;&amp; location.longitude
+  const mapsUrl = <span class="cstat-no" title="statement not covered" >location.latitude &amp;&amp; location.longitude</span>
     ? `https://www.google.com/maps?q=${location.latitude},${location.longitude}`
-    : <span class="branch-1 cbranch-no" title="branch not covered" >undefined;</span>
+    : undefined;
 &nbsp;
   // Build display address
-  const addressParts = [
+  const addressParts = <span class="cstat-no" title="statement not covered" >[</span>
     location.address,
     location.city,
     location.country
@@ -315,11 +315,11 @@ export function LocationCard({ location, isHQ = false, onShowOnMap, isFocused = 
             &lt;MapPin className="w-5 h-5 text-muted-foreground mt-0.5 flex-shrink-0" /&gt;
             &lt;div className="flex-1"&gt;
               &lt;CardTitle className="text-lg mb-1"&gt;
-                {location.city || <span class="branch-1 cbranch-no" title="branch not covered" >location.country </span>|| <span class="branch-2 cbranch-no" title="branch not covered" >'Location'}</span>
+                {location.city || location.country || 'Location'}
               &lt;/CardTitle&gt;
             &lt;/div&gt;
           &lt;/div&gt;
-          {isHQ &amp;&amp; (
+          {<span class="branch-0 cbranch-no" title="branch not covered" >isHQ &amp;&amp; (</span>
             &lt;Badge variant="default" className="bg-red-600 ml-2 flex-shrink-0"&gt;
               HQ
             &lt;/Badge&gt;
@@ -329,15 +329,15 @@ export function LocationCard({ location, isHQ = false, onShowOnMap, isFocused = 
       &lt;CardContent className="space-y-3"&gt;
         {/* Address Information */}
         &lt;div className="space-y-1"&gt;
-          {location.address &amp;&amp; (
+          {<span class="branch-0 cbranch-no" title="branch not covered" >location.address </span>&amp;&amp; (
             &lt;p className="text-sm text-muted-foreground"&gt;{location.address}&lt;/p&gt;
           )}
-          {(location.city || <span class="branch-1 cbranch-no" title="branch not covered" >location.country)</span> &amp;&amp; (
+          {(location.city || location.country) &amp;&amp; (
             &lt;p className="text-sm text-muted-foreground"&gt;
               {[location.city, location.country].filter(Boolean).join(', ')}
             &lt;/p&gt;
           )}
-          {location.postalCode &amp;&amp; (
+          {<span class="branch-0 cbranch-no" title="branch not covered" >location.postalCode </span>&amp;&amp; (
             &lt;p className="text-sm text-muted-foreground"&gt;{location.postalCode}&lt;/p&gt;
           )}
         &lt;/div&gt;
@@ -348,18 +348,18 @@ export function LocationCard({ location, isHQ = false, onShowOnMap, isFocused = 
           {!isHQ &amp;&amp; onShowOnMap &amp;&amp; location.id &amp;&amp; (
             &lt;Button
               onClick={<span class="fstat-no" title="function not covered" >() =&gt; <span class="cstat-no" title="statement not covered" >o</span>nShowOnMap(location.id!)}</span>
-              variant={isFocused ? <span class="branch-0 cbranch-no" title="branch not covered" >"default" : "</span>outline"}
+              variant={isFocused ? "default" : "outline"}
               size="sm"
               className="flex-1"
               disabled={isFocused}
             &gt;
               &lt;Map className="w-4 h-4 mr-2" /&gt;
-              {isFocused ? <span class="branch-0 cbranch-no" title="branch not covered" >'Viewing' : '</span>Show on Map'}
+              {isFocused ? 'Viewing' : 'Show on Map'}
             &lt;/Button&gt;
           )}
 &nbsp;
           {/* Get Directions Button */}
-          {mapsUrl &amp;&amp; (
+          {<span class="branch-0 cbranch-no" title="branch not covered" >mapsUrl &amp;&amp; (</span>
             &lt;Button
               asChild
               variant="outline"
@@ -383,7 +383,7 @@ export function LocationCard({ location, isHQ = false, onShowOnMap, isFocused = 
   );
 }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >export default L</span>ocationCard;
+<span class="cstat-no" title="statement not covered" >export default <span class="cstat-no" title="statement not covered" >L</span>ocationCard;</span>
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -391,7 +391,7 @@ export function LocationCard({ location, isHQ = false, onShowOnMap, isFocused = 
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-26T08:03:02.390Z
+                at 2025-11-07T13:16:22.163Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

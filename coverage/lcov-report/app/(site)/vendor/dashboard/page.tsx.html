@@ -861,7 +861,7 @@ function <span class="fstat-no" title="function not covered" >DashboardContent({
   router: any;
 }) {
   return (
-    &lt;div className="min-h-screen bg-gray-50 dark:bg-gray-900"&gt;
+    &lt;div className="min-h-screen bg-muted dark:bg-gray-900"&gt;
       {/* Dashboard Header */}
       &lt;DashboardHeader
         vendorSlug={user.slug}
@@ -876,10 +876,10 @@ function <span class="fstat-no" title="function not covered" >DashboardContent({
           &lt;div className="lg:col-span-3 space-y-8"&gt;
             {/* Welcome Header */}
             &lt;header&gt;
-              &lt;h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2"&gt;
+              &lt;h1 className="text-3xl font-bold text-foreground dark:text-white mb-2"&gt;
                 Welcome, {user.email.split('@')[0]}
               &lt;/h1&gt;
-              &lt;p className="text-gray-600 dark:text-gray-400"&gt;
+              &lt;p className="text-muted-foreground dark:text-muted-foreground"&gt;
                 Manage your vendor profile, products, and account settings.
               &lt;/p&gt;
             &lt;/header&gt;
@@ -913,10 +913,10 @@ function <span class="fstat-no" title="function not covered" >DashboardContent({
           &lt;CardContent className="space-y-4"&gt;
             &lt;div&gt;
               &lt;div className="flex justify-between items-center mb-2"&gt;
-                &lt;span className="text-sm font-medium text-gray-700"&gt;Profile Completion&lt;/span&gt;
-                &lt;span className="text-sm font-semibold text-gray-900"&gt;{profileCompletion}%&lt;/span&gt;
+                &lt;span className="text-sm font-medium text-foreground"&gt;Profile Completion&lt;/span&gt;
+                &lt;span className="text-sm font-semibold text-foreground"&gt;{profileCompletion}%&lt;/span&gt;
               &lt;/div&gt;
-              &lt;div className="w-full bg-gray-200 rounded-full h-2"&gt;
+              &lt;div className="w-full bg-border rounded-full h-2"&gt;
                 &lt;div
                   className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                   style={{ width: `${profileCompletion}%` }}
@@ -928,9 +928,9 @@ function <span class="fstat-no" title="function not covered" >DashboardContent({
                 /&gt;
               &lt;/div&gt;
             &lt;/div&gt;
-            &lt;div className="pt-2 border-t border-gray-200"&gt;
+            &lt;div className="pt-2 border-t border-border"&gt;
               &lt;div className="flex items-center justify-between"&gt;
-                &lt;span className="text-sm text-gray-600"&gt;Approval Status&lt;/span&gt;
+                &lt;span className="text-sm text-muted-foreground"&gt;Approval Status&lt;/span&gt;
                 {approvalStatus === 'approved' ? (
 <span class="branch-0 cbranch-no" title="branch not covered" >                  &lt;span className="flex items-center gap-1 text-sm font-medium text-green-600"&gt;</span>
                     &lt;CheckCircle2 className="h-4 w-4" aria-hidden="true" /&gt;
@@ -960,12 +960,12 @@ function <span class="fstat-no" title="function not covered" >DashboardContent({
           &lt;/CardHeader&gt;
           &lt;CardContent className="space-y-4"&gt;
             &lt;div className="flex items-center justify-between"&gt;
-              &lt;span className="text-sm font-medium text-gray-700"&gt;Current Tier&lt;/span&gt;
+              &lt;span className="text-sm font-medium text-foreground"&gt;Current Tier&lt;/span&gt;
               {<span class="branch-0 cbranch-no" title="branch not covered" >tier &amp;&amp; &lt;</span>SubscriptionTierBadge tier={tier} /&gt;}
             &lt;/div&gt;
             {<span class="branch-0 cbranch-no" title="branch not covered" >tier === 'free' &amp;&amp; (</span>
-              &lt;div className="pt-4 border-t border-gray-200"&gt;
-                &lt;p className="text-sm text-gray-600 mb-3"&gt;
+              &lt;div className="pt-4 border-t border-border"&gt;
+                &lt;p className="text-sm text-muted-foreground mb-3"&gt;
                   Upgrade to unlock premium features like product management.
                 &lt;/p&gt;
                 &lt;Button variant="outline" size="sm" className="w-full"&gt;
@@ -975,8 +975,8 @@ function <span class="fstat-no" title="function not covered" >DashboardContent({
               &lt;/div&gt;
             )}
             {<span class="branch-0 cbranch-no" title="branch not covered" >tier === 'tier1' &amp;&amp; (</span>
-              &lt;div className="pt-4 border-t border-gray-200"&gt;
-                &lt;p className="text-sm text-gray-600 mb-3"&gt;
+              &lt;div className="pt-4 border-t border-border"&gt;
+                &lt;p className="text-sm text-muted-foreground mb-3"&gt;
                   You&amp;apos;re on Tier 1. Upgrade to Tier 2 for advanced product management.
                 &lt;/p&gt;
                 &lt;Button variant="outline" size="sm" className="w-full"&gt;
@@ -986,7 +986,7 @@ function <span class="fstat-no" title="function not covered" >DashboardContent({
               &lt;/div&gt;
             )}
             {<span class="branch-0 cbranch-no" title="branch not covered" >tier === 'tier2' &amp;&amp; (</span>
-              &lt;div className="pt-4 border-t border-gray-200"&gt;
+              &lt;div className="pt-4 border-t border-border"&gt;
                 &lt;p className="text-sm text-green-600 font-medium"&gt;
                   You have access to all premium features!
                 &lt;/p&gt;
@@ -1046,8 +1046,8 @@ function <span class="fstat-no" title="function not covered" >DashboardContent({
             &lt;li className="flex items-start gap-3"&gt;
               &lt;CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-500 mt-0.5" aria-hidden="true" /&gt;
               &lt;div&gt;
-                &lt;p className="font-medium text-gray-900 dark:text-white"&gt;Complete your profile&lt;/p&gt;
-                &lt;p className="text-sm text-gray-600 dark:text-gray-400"&gt;
+                &lt;p className="font-medium text-foreground dark:text-white"&gt;Complete your profile&lt;/p&gt;
+                &lt;p className="text-sm text-muted-foreground dark:text-muted-foreground"&gt;
                   Add company information, logo, and contact details
                 &lt;/p&gt;
               &lt;/div&gt;
@@ -1056,8 +1056,8 @@ function <span class="fstat-no" title="function not covered" >DashboardContent({
               &lt;li className="flex items-start gap-3"&gt;
                 &lt;CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-500 mt-0.5" aria-hidden="true" /&gt;
                 &lt;div&gt;
-                  &lt;p className="font-medium text-gray-900 dark:text-white"&gt;Add your products&lt;/p&gt;
-                  &lt;p className="text-sm text-gray-600 dark:text-gray-400"&gt;
+                  &lt;p className="font-medium text-foreground dark:text-white"&gt;Add your products&lt;/p&gt;
+                  &lt;p className="text-sm text-muted-foreground dark:text-muted-foreground"&gt;
                     Showcase your products to potential customers
                   &lt;/p&gt;
                 &lt;/div&gt;
@@ -1066,8 +1066,8 @@ function <span class="fstat-no" title="function not covered" >DashboardContent({
             &lt;li className="flex items-start gap-3"&gt;
               &lt;CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-500 mt-0.5" aria-hidden="true" /&gt;
               &lt;div&gt;
-                &lt;p className="font-medium text-gray-900 dark:text-white"&gt;Configure notifications&lt;/p&gt;
-                &lt;p className="text-sm text-gray-600 dark:text-gray-400"&gt;
+                &lt;p className="font-medium text-foreground dark:text-white"&gt;Configure notifications&lt;/p&gt;
+                &lt;p className="text-sm text-muted-foreground dark:text-muted-foreground"&gt;
                   Manage your email preferences and alerts
                 &lt;/p&gt;
               &lt;/div&gt;
@@ -1093,7 +1093,7 @@ function <span class="fstat-no" title="function not covered" >DashboardContent({
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-26T08:03:02.390Z
+                at 2025-11-07T13:16:22.163Z
             </div>
         <script src="../../../../prettify.js"></script>
         <script>

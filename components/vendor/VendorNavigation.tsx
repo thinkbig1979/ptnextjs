@@ -14,6 +14,7 @@ import {
   Settings,
   CreditCard,
   LogOut,
+  Database,
 } from 'lucide-react';
 
 export interface VendorNavigationProps {
@@ -41,6 +42,12 @@ export function VendorNavigation({ className }: VendorNavigationProps) {
       href: '/vendor/dashboard/profile',
       label: 'Profile',
       icon: User,
+      visible: true,
+    },
+    {
+      href: '/vendor/dashboard/data-management',
+      label: 'Data Management',
+      icon: Database,
       visible: true,
     },
     {
