@@ -498,4 +498,17 @@ export class ExcelTemplateService {
       row.getCell(2).alignment = { wrapText: true };
     });
   }
+
+  /**
+   * Generate filename for template download
+   * @param vendorName - Vendor name for filename
+   * @param tier - Vendor tier
+   * @returns Generated filename
+   */
+  static generateFilename(vendorName?: string, tier?: VendorTier): string {
+    const timestamp = new Date().toISOString().split('T')[0];
+    const name = vendorName ? `${vendorName.replace(/[^a-z0-9]/gi, '_')}_` : '';
+    const tierSuffix = tier !== undefined ? `_tier${tier}` : '';
+    return `${name}template${tierSuffix}_${timestamp}.xlsx`;
+  }
 }

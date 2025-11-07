@@ -16,6 +16,7 @@ import CompanyInfo from './payload/collections/CompanyInfo';
 import Tags from './payload/collections/Tags';
 import Yachts from './payload/collections/Yachts';
 import TierUpgradeRequests from './payload/collections/TierUpgradeRequests';
+import ImportHistory from './payload/collections/ImportHistory';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -68,6 +69,7 @@ export default buildConfig({
     Tags,
     Yachts,
     TierUpgradeRequests,
+    ImportHistory,
   ],
 
   // TypeScript configuration
