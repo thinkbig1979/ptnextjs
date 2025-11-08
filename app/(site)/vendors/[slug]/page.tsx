@@ -28,6 +28,7 @@ import { VendorCertificationsSection } from "@/components/vendors/VendorCertific
 import { VendorCaseStudiesSection } from "@/components/vendors/VendorCaseStudiesSection";
 import { VendorTeamSection } from "@/components/vendors/VendorTeamSection";
 import { VendorProductsSection } from "@/components/vendors/VendorProductsSection";
+import { VendorMediaGallery } from "@/components/vendors/VendorMediaGallery";
 import VendorReviewsWrapper from "./_components/vendor-reviews-wrapper";
 
 // Static generation with on-demand revalidation
@@ -205,6 +206,7 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
                 <VendorCertificationsSection vendor={vendor} />
                 <VendorCaseStudiesSection vendor={vendor} />
                 <VendorTeamSection vendor={vendor} />
+                <VendorMediaGallery mediaGallery={vendor.mediaGallery} vendorName={vendor.name} />
               </TabsContent>
 
               {/* Locations Tab */}

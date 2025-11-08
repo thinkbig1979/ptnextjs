@@ -8,7 +8,7 @@
  */
 
 export type Tier = 'free' | 'tier1' | 'tier2' | 'tier3';
-export type TierFeature = 'multipleLocations' | 'advancedAnalytics' | 'apiAccess' | 'customDomain' | 'promotionPack' | 'editorialContent';
+export type TierFeature = 'multipleLocations' | 'advancedAnalytics' | 'apiAccess' | 'customDomain' | 'promotionPack' | 'editorialContent' | 'media-gallery' | 'excel-import';
 
 export const TIER_HIERARCHY: Record<Tier, number> = {
   free: 0,
@@ -24,6 +24,8 @@ export const TIER_FEATURE_MAP: Record<TierFeature, number> = {
   customDomain: TIER_HIERARCHY.tier2,
   promotionPack: TIER_HIERARCHY.tier3,
   editorialContent: TIER_HIERARCHY.tier3,
+  'media-gallery': TIER_HIERARCHY.tier1,
+  'excel-import': TIER_HIERARCHY.tier2,
 };
 
 export const MAX_LOCATIONS_PER_TIER: Record<Tier, number> = {

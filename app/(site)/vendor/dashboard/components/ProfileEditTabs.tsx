@@ -25,6 +25,7 @@ import { useVendorDashboard } from '@/lib/context/VendorDashboardContext';
 import { BasicInfoForm } from '@/components/dashboard/BasicInfoForm';
 import { LocationsManagerCard } from '@/components/dashboard/LocationsManagerCard';
 import { TierUpgradePrompt } from '@/components/dashboard/TierUpgradePrompt';
+import { MediaGalleryManager } from '@/components/dashboard/MediaGalleryManager';
 import { BrandStoryForm } from './BrandStoryForm';
 import { CertificationsAwardsManager } from './CertificationsAwardsManager';
 import { CaseStudiesManager } from './CaseStudiesManager';
@@ -50,9 +51,9 @@ interface TabDefinition {
  *
  * Tier visibility:
  * - Free: Basic Info, Locations (2 tabs)
- * - Tier 1: + Brand Story, Certifications, Case Studies, Team (7 tabs)
- * - Tier 2: + Products (8 tabs)
- * - Tier 3: + Promotion (9 tabs)
+ * - Tier 1: + Brand Story, Certifications, Case Studies, Team, Media Gallery (8 tabs)
+ * - Tier 2: + Products (9 tabs)
+ * - Tier 3: + Promotion (10 tabs)
  */
 export function ProfileEditTabs({ vendor }: ProfileEditTabsProps) {
   const { activeTab, setActiveTab, isDirty, markDirty, updateVendor, saveVendor } = useVendorDashboard();
@@ -163,6 +164,13 @@ export function ProfileEditTabs({ vendor }: ProfileEditTabsProps) {
       minTier: 1,
       component: TeamMembersManager,
       description: 'Your team members',
+    },
+    {
+      id: 'media-gallery',
+      label: 'Media Gallery',
+      minTier: 1,
+      component: () => <MediaGalleryManager vendor={vendor} onSubmit={handleFormSave} />,
+      description: 'Images and videos showcase',
     },
     {
       id: 'products',
