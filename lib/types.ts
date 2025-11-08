@@ -303,6 +303,44 @@ export interface GeocodeErrorResponse {
  */
 export type GeocodeResponse = GeocodeSuccessResponse | GeocodeErrorResponse;
 
+// ============================================================
+// Media Gallery Types (Tier 1+)
+// ============================================================
+
+/**
+ * Type of media item in gallery
+ */
+export type MediaGalleryItemType = 'image' | 'video';
+
+/**
+ * Individual media item in vendor gallery
+ * Supports both uploaded images and embedded videos (YouTube, Vimeo)
+ */
+export interface MediaGalleryItem {
+  id: string;
+  type: MediaGalleryItemType;
+  /** For images: URL to uploaded file; For videos: Embed URL (YouTube, Vimeo) */
+  url: string;
+  /** Original filename for uploaded images */
+  filename?: string;
+  /** Display caption for the media */
+  caption?: string;
+  /** Alt text for accessibility (images only) */
+  altText?: string;
+  /** Album/category name for organization */
+  album?: string;
+  /** Display order within gallery */
+  order?: number;
+  /** Thumbnail URL for videos */
+  thumbnailUrl?: string;
+  /** Video duration in seconds (videos only) */
+  duration?: number;
+  /** Video platform (youtube, vimeo) for embed handling */
+  videoPlatform?: 'youtube' | 'vimeo';
+  /** ISO timestamp when uploaded */
+  uploadedAt?: string;
+}
+
 export interface Vendor {
   id: string;
   slug?: string;
@@ -374,6 +412,7 @@ export interface Vendor {
   promotionPack?: VendorPromotionPack;
   editorialContent?: VendorEditorialContent[];
   companyName?: string;
+  mediaGallery?: MediaGalleryItem[]; // Media gallery (Tier 1+) - images and videos organized by album
 
   // Reviews
   vendorReviews?: VendorReview[];

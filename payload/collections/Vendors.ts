@@ -946,6 +946,93 @@ const Vendors: CollectionConfig = {
       ],
     },
 
+    // Media Gallery Array (Tier 1+)
+    {
+      name: 'mediaGallery',
+      type: 'array',
+      admin: {
+        description: 'Media gallery - images and videos organized by album (Tier 1+ only)',
+        condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
+      },
+      access: {
+        read: () => true,
+        update: ({ req: { user }, data }) => {
+          if (!user) return false;
+          if (user.role === 'admin') return true;
+          return ['tier1', 'tier2', 'tier3'].includes(data?.tier);
+        },
+      },
+      fields: [
+        {
+          name: 'type',
+          type: 'select',
+          options: [
+            { label: 'Image', value: 'image' },
+            { label: 'Video (YouTube/Vimeo)', value: 'video' },
+          ],
+          required: true,
+          defaultValue: 'image',
+          admin: {
+            description: 'Type of media item',
+          },
+        },
+        {
+          name: 'media',
+          type: 'upload',
+          relationTo: 'media',
+          admin: {
+            description: 'Upload image (for image type only)',
+            condition: (data, siblingData) => siblingData?.type === 'image',
+          },
+        },
+        {
+          name: 'videoUrl',
+          type: 'text',
+          maxLength: 500,
+          admin: {
+            description: 'YouTube or Vimeo URL (for video type only)',
+            condition: (data, siblingData) => siblingData?.type === 'video',
+          },
+          hooks: {
+            beforeChange: [sanitizeUrlHook],
+          },
+        },
+        {
+          name: 'caption',
+          type: 'text',
+          maxLength: 500,
+          admin: {
+            description: 'Caption or description for the media',
+          },
+        },
+        {
+          name: 'altText',
+          type: 'text',
+          maxLength: 255,
+          admin: {
+            description: 'Alt text for accessibility (images only)',
+            condition: (data, siblingData) => siblingData?.type === 'image',
+          },
+        },
+        {
+          name: 'album',
+          type: 'text',
+          maxLength: 255,
+          admin: {
+            description: 'Album or category name for organization',
+          },
+        },
+        {
+          name: 'order',
+          type: 'number',
+          defaultValue: 0,
+          admin: {
+            description: 'Display order (0 = first)',
+          },
+        },
+      ],
+    },
+
     // Long Description (Tier 1+)
     {
       name: 'longDescription',
