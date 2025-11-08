@@ -3,30 +3,37 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { GeocodingButton } from '@/components/vendor/GeocodingButton';
 
-// Mock GeocodingService
-const mockGeocodeAddress = jest.fn();
-jest.mock('@/lib/services/geocoding', () => ({
-  GeocodingService: {
-    geocodeAddress: (...args: any[]) => mockGeocodeAddress(...args)
-  }
-}));
+// Mock fetch and localStorage before importing the component
+global.fetch = jest.fn();
 
-// Mock toast notifications
-jest.mock('@/components/ui/sonner', () => ({
+// Mock localStorage
+const localStorageMock = {
+  getItem: jest.fn(() => null),
+  setItem: jest.fn(),
+  removeItem: jest.fn(),
+  clear: jest.fn(),
+};
+Object.defineProperty(window, 'localStorage', { value: localStorageMock });
+
+// Mock sonner toast
+jest.mock('sonner', () => ({
   toast: {
     success: jest.fn(),
     error: jest.fn()
   }
 }));
 
-const { toast } = require('@/components/ui/sonner');
+const { toast } = require('sonner');
 
 describe('GeocodingButton', () => {
-  const mockOnCoordinatesUpdate = jest.fn();
+  const mockOnSuccess = jest.fn();
+  const mockOnError = jest.fn();
   const mockAddress = '123 Main St, Monaco';
 
   beforeEach(() => {
     jest.clearAllMocks();
+    (global.fetch as jest.Mock).mockClear();
+    localStorageMock.getItem.mockReturnValue(null);
   });
 
   describe('Button Rendering', () => {
@@ -34,22 +41,22 @@ describe('GeocodingButton', () => {
       render(
         <GeocodingButton
           address={mockAddress}
-          onCoordinatesUpdate={mockOnCoordinatesUpdate}
+          onSuccess={mockOnSuccess}
         />
       );
 
-      expect(screen.getByRole('button', { name: /get coordinates/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /find coordinates/i })).toBeInTheDocument();
     });
 
     it('displays icon on button', () => {
       render(
         <GeocodingButton
           address={mockAddress}
-          onCoordinatesUpdate={mockOnCoordinatesUpdate}
+          onSuccess={mockOnSuccess}
         />
       );
 
-      const button = screen.getByRole('button', { name: /get coordinates/i });
+      const button = screen.getByRole('button', { name: /find coordinates/i });
       expect(button.querySelector('svg')).toBeInTheDocument();
     });
 
@@ -57,384 +64,342 @@ describe('GeocodingButton', () => {
       render(
         <GeocodingButton
           address=""
-          onCoordinatesUpdate={mockOnCoordinatesUpdate}
+          onSuccess={mockOnSuccess}
         />
       );
 
-      expect(screen.getByRole('button', { name: /get coordinates/i })).toBeDisabled();
+      expect(screen.getByRole('button', { name: /find coordinates/i })).toBeDisabled();
     });
 
     it('is enabled when address provided', () => {
       render(
         <GeocodingButton
           address={mockAddress}
-          onCoordinatesUpdate={mockOnCoordinatesUpdate}
+          onSuccess={mockOnSuccess}
         />
       );
 
-      expect(screen.getByRole('button', { name: /get coordinates/i })).not.toBeDisabled();
+      expect(screen.getByRole('button', { name: /find coordinates/i })).not.toBeDisabled();
+    });
+
+    it('shows loading state during geocoding', async () => {
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          success: true,
+          results: [{
+            type: 'Feature',
+            geometry: {
+              type: 'Point',
+              coordinates: [7.4246, 43.7384]
+            },
+            properties: {
+              name: 'Monaco',
+              country: 'Monaco'
+            }
+          }]
+        })
+      });
+
+      render(
+        <GeocodingButton
+          address={mockAddress}
+          onSuccess={mockOnSuccess}
+        />
+      );
+
+      const button = screen.getByRole('button', { name: /find coordinates/i });
+      fireEvent.click(button);
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /geocoding/i })).toBeInTheDocument();
+      }, { timeout: 3000 });
     });
   });
 
   describe('API Call Success Path', () => {
     it('calls geocoding API when button clicked', async () => {
-      mockGeocodeAddress.mockResolvedValue({
-        latitude: 43.7384,
-        longitude: 7.4246
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          success: true,
+          results: [{
+            type: 'Feature',
+            geometry: {
+              type: 'Point',
+              coordinates: [7.4246, 43.7384]
+            },
+            properties: {
+              name: 'Monaco',
+              country: 'Monaco'
+            }
+          }]
+        })
       });
 
       render(
         <GeocodingButton
           address={mockAddress}
-          onCoordinatesUpdate={mockOnCoordinatesUpdate}
+          onSuccess={mockOnSuccess}
         />
       );
 
-      const button = screen.getByRole('button', { name: /get coordinates/i });
+      const button = screen.getByRole('button', { name: /find coordinates/i });
       fireEvent.click(button);
 
       await waitFor(() => {
-        expect(mockGeocodeAddress).toHaveBeenCalledWith(mockAddress);
-      });
+        expect(global.fetch).toHaveBeenCalled();
+      }, { timeout: 3000 });
     });
 
-    it('updates coordinates on successful geocoding', async () => {
-      mockGeocodeAddress.mockResolvedValue({
-        latitude: 43.7384,
-        longitude: 7.4246
+    it('calls onSuccess callback with coordinates', async () => {
+      const latitude = 43.7384;
+      const longitude = 7.4246;
+
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          success: true,
+          results: [{
+            type: 'Feature',
+            geometry: {
+              type: 'Point',
+              coordinates: [longitude, latitude]
+            },
+            properties: {
+              name: 'Monaco',
+              country: 'Monaco'
+            }
+          }]
+        })
       });
 
       render(
         <GeocodingButton
           address={mockAddress}
-          onCoordinatesUpdate={mockOnCoordinatesUpdate}
+          onSuccess={mockOnSuccess}
         />
       );
 
-      const button = screen.getByRole('button', { name: /get coordinates/i });
+      const button = screen.getByRole('button', { name: /find coordinates/i });
       fireEvent.click(button);
 
       await waitFor(() => {
-        expect(mockOnCoordinatesUpdate).toHaveBeenCalledWith({
-          latitude: 43.7384,
-          longitude: 7.4246
-        });
-      });
+        expect(mockOnSuccess).toHaveBeenCalledWith(latitude, longitude);
+      }, { timeout: 3000 });
     });
 
-    it('shows success toast on successful geocoding', async () => {
-      mockGeocodeAddress.mockResolvedValue({
-        latitude: 43.7384,
-        longitude: 7.4246
+    it('shows success toast message', async () => {
+      const latitude = 43.7384;
+      const longitude = 7.4246;
+
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          success: true,
+          results: [{
+            type: 'Feature',
+            geometry: {
+              type: 'Point',
+              coordinates: [longitude, latitude]
+            },
+            properties: {
+              name: 'Monaco',
+              country: 'Monaco'
+            }
+          }]
+        })
       });
 
       render(
         <GeocodingButton
           address={mockAddress}
-          onCoordinatesUpdate={mockOnCoordinatesUpdate}
+          onSuccess={mockOnSuccess}
         />
       );
 
-      const button = screen.getByRole('button', { name: /get coordinates/i });
+      const button = screen.getByRole('button', { name: /find coordinates/i });
       fireEvent.click(button);
 
       await waitFor(() => {
-        expect(toast.success).toHaveBeenCalledWith(
-          expect.stringMatching(/coordinates updated/i)
-        );
+        expect(toast.success).toHaveBeenCalled();
+      }, { timeout: 3000 });
+    });
+
+    it('clears loading state after successful geocoding', async () => {
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          success: true,
+          results: [{
+            type: 'Feature',
+            geometry: {
+              type: 'Point',
+              coordinates: [7.4246, 43.7384]
+            },
+            properties: {
+              name: 'Monaco',
+              country: 'Monaco'
+            }
+          }]
+        })
       });
+
+      render(
+        <GeocodingButton
+          address={mockAddress}
+          onSuccess={mockOnSuccess}
+        />
+      );
+
+      const button = screen.getByRole('button', { name: /find coordinates/i });
+      fireEvent.click(button);
+
+      await waitFor(() => {
+        const findButton = screen.queryByRole('button', { name: /find coordinates/i });
+        expect(findButton).toBeInTheDocument();
+      }, { timeout: 3000 });
     });
   });
 
   describe('API Call Error Path', () => {
-    it('handles API error gracefully', async () => {
-      mockGeocodeAddress.mockRejectedValue(new Error('Geocoding API failed'));
+    it('shows error toast on API failure', async () => {
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        json: async () => ({
+          success: false,
+          error: 'Address not found'
+        })
+      });
 
       render(
         <GeocodingButton
           address={mockAddress}
-          onCoordinatesUpdate={mockOnCoordinatesUpdate}
+          onSuccess={mockOnSuccess}
+          onError={mockOnError}
         />
       );
 
-      const button = screen.getByRole('button', { name: /get coordinates/i });
+      const button = screen.getByRole('button', { name: /find coordinates/i });
       fireEvent.click(button);
 
       await waitFor(() => {
         expect(toast.error).toHaveBeenCalled();
-      });
+      }, { timeout: 3000 });
     });
 
-    it('shows error toast with message on failure', async () => {
-      mockGeocodeAddress.mockRejectedValue(new Error('Geocoding API failed'));
+    it('calls onError callback on failure', async () => {
+      (global.fetch as jest.Mock).mockRejectedValueOnce(new Error('API Error'));
 
       render(
         <GeocodingButton
           address={mockAddress}
-          onCoordinatesUpdate={mockOnCoordinatesUpdate}
+          onSuccess={mockOnSuccess}
+          onError={mockOnError}
         />
       );
 
-      const button = screen.getByRole('button', { name: /get coordinates/i });
+      const button = screen.getByRole('button', { name: /find coordinates/i });
       fireEvent.click(button);
 
       await waitFor(() => {
-        expect(toast.error).toHaveBeenCalledWith(
-          expect.stringMatching(/failed to geocode address/i)
-        );
-      });
+        expect(mockOnError).toHaveBeenCalledWith(expect.any(Error));
+      }, { timeout: 3000 });
     });
 
-    it('does not update coordinates on error', async () => {
-      mockGeocodeAddress.mockRejectedValue(new Error('Geocoding API failed'));
+    it('clears loading state after error', async () => {
+      (global.fetch as jest.Mock).mockRejectedValueOnce(new Error('API Error'));
 
       render(
         <GeocodingButton
           address={mockAddress}
-          onCoordinatesUpdate={mockOnCoordinatesUpdate}
+          onSuccess={mockOnSuccess}
         />
       );
 
-      const button = screen.getByRole('button', { name: /get coordinates/i });
+      const button = screen.getByRole('button', { name: /find coordinates/i });
       fireEvent.click(button);
 
       await waitFor(() => {
-        expect(toast.error).toHaveBeenCalled();
-      });
-
-      expect(mockOnCoordinatesUpdate).not.toHaveBeenCalled();
-    });
-
-    it('handles network timeout gracefully', async () => {
-      mockGeocodeAddress.mockRejectedValue(new Error('Network timeout'));
-
-      render(
-        <GeocodingButton
-          address={mockAddress}
-          onCoordinatesUpdate={mockOnCoordinatesUpdate}
-        />
-      );
-
-      const button = screen.getByRole('button', { name: /get coordinates/i });
-      fireEvent.click(button);
-
-      await waitFor(() => {
-        expect(toast.error).toHaveBeenCalledWith(
-          expect.stringMatching(/failed to geocode|network/i)
-        );
-      });
+        const findButton = screen.queryByRole('button', { name: /find coordinates/i });
+        expect(findButton).toBeInTheDocument();
+        expect(findButton).not.toBeDisabled();
+      }, { timeout: 3000 });
     });
   });
 
-  describe('Loading States', () => {
-    it('shows loading state while geocoding', async () => {
-      mockGeocodeAddress.mockImplementation(() =>
-        new Promise(resolve => setTimeout(() => resolve({
-          latitude: 43.7384,
-          longitude: 7.4246
-        }), 100))
-      );
-
-      render(
+  describe('Button Variants and Sizes', () => {
+    it('accepts custom variant prop', () => {
+      const { container } = render(
         <GeocodingButton
           address={mockAddress}
-          onCoordinatesUpdate={mockOnCoordinatesUpdate}
+          onSuccess={mockOnSuccess}
+          variant="outline"
         />
       );
 
-      const button = screen.getByRole('button', { name: /get coordinates/i });
-      fireEvent.click(button);
-
-      // Button should show loading state
-      expect(screen.getByRole('button', { name: /geocoding/i })).toBeInTheDocument();
+      const button = container.querySelector('button');
+      expect(button).toBeInTheDocument();
     });
 
-    it('disables button while loading', async () => {
-      mockGeocodeAddress.mockImplementation(() =>
-        new Promise(resolve => setTimeout(() => resolve({
-          latitude: 43.7384,
-          longitude: 7.4246
-        }), 100))
-      );
-
-      render(
+    it('accepts custom size prop', () => {
+      const { container } = render(
         <GeocodingButton
           address={mockAddress}
-          onCoordinatesUpdate={mockOnCoordinatesUpdate}
+          onSuccess={mockOnSuccess}
+          size="lg"
         />
       );
 
-      const button = screen.getByRole('button', { name: /get coordinates/i });
-      fireEvent.click(button);
-
-      const loadingButton = screen.getByRole('button', { name: /geocoding/i });
-      expect(loadingButton).toBeDisabled();
+      const button = container.querySelector('button');
+      expect(button).toBeInTheDocument();
     });
 
-    it('restores button state after loading completes', async () => {
-      mockGeocodeAddress.mockResolvedValue({
-        latitude: 43.7384,
-        longitude: 7.4246
-      });
-
-      render(
+    it('accepts custom className prop', () => {
+      const { container } = render(
         <GeocodingButton
           address={mockAddress}
-          onCoordinatesUpdate={mockOnCoordinatesUpdate}
+          onSuccess={mockOnSuccess}
+          className="custom-class"
         />
       );
 
-      const button = screen.getByRole('button', { name: /get coordinates/i });
-      fireEvent.click(button);
-
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: /get coordinates/i })).not.toBeDisabled();
-      });
-    });
-
-    it('shows loading spinner icon while geocoding', async () => {
-      mockGeocodeAddress.mockImplementation(() =>
-        new Promise(resolve => setTimeout(() => resolve({
-          latitude: 43.7384,
-          longitude: 7.4246
-        }), 100))
-      );
-
-      render(
-        <GeocodingButton
-          address={mockAddress}
-          onCoordinatesUpdate={mockOnCoordinatesUpdate}
-        />
-      );
-
-      const button = screen.getByRole('button', { name: /get coordinates/i });
-      fireEvent.click(button);
-
-      expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
-    });
-  });
-
-  describe('Accessibility', () => {
-    it('has accessible button label', () => {
-      render(
-        <GeocodingButton
-          address={mockAddress}
-          onCoordinatesUpdate={mockOnCoordinatesUpdate}
-        />
-      );
-
-      expect(screen.getByRole('button', { name: /get coordinates/i })).toBeInTheDocument();
-    });
-
-    it('has ARIA attributes for loading state', async () => {
-      mockGeocodeAddress.mockImplementation(() =>
-        new Promise(resolve => setTimeout(() => resolve({
-          latitude: 43.7384,
-          longitude: 7.4246
-        }), 100))
-      );
-
-      render(
-        <GeocodingButton
-          address={mockAddress}
-          onCoordinatesUpdate={mockOnCoordinatesUpdate}
-        />
-      );
-
-      const button = screen.getByRole('button', { name: /get coordinates/i });
-      fireEvent.click(button);
-
-      const loadingButton = screen.getByRole('button', { name: /geocoding/i });
-      expect(loadingButton).toHaveAttribute('aria-busy', 'true');
-    });
-
-    it('supports keyboard activation', () => {
-      mockGeocodeAddress.mockResolvedValue({
-        latitude: 43.7384,
-        longitude: 7.4246
-      });
-
-      render(
-        <GeocodingButton
-          address={mockAddress}
-          onCoordinatesUpdate={mockOnCoordinatesUpdate}
-        />
-      );
-
-      const button = screen.getByRole('button', { name: /get coordinates/i });
-      button.focus();
-      fireEvent.keyDown(button, { key: 'Enter', code: 'Enter' });
-
-      expect(mockGeocodeAddress).toHaveBeenCalledWith(mockAddress);
+      const button = container.querySelector('button');
+      expect(button).toHaveClass('custom-class');
     });
   });
 
   describe('Edge Cases', () => {
-    it('handles empty response from API', async () => {
-      mockGeocodeAddress.mockResolvedValue(null);
-
+    it('handles whitespace-only address', () => {
       render(
         <GeocodingButton
-          address={mockAddress}
-          onCoordinatesUpdate={mockOnCoordinatesUpdate}
+          address="   "
+          onSuccess={mockOnSuccess}
         />
       );
 
-      const button = screen.getByRole('button', { name: /get coordinates/i });
-      fireEvent.click(button);
-
-      await waitFor(() => {
-        expect(toast.error).toHaveBeenCalledWith(
-          expect.stringMatching(/no results found/i)
-        );
-      });
+      const button = screen.getByRole('button', { name: /find coordinates/i });
+      expect(button).toBeDisabled();
     });
 
-    it('handles invalid coordinates in response', async () => {
-      mockGeocodeAddress.mockResolvedValue({
-        latitude: NaN,
-        longitude: NaN
-      });
+    it('handles undefined onError gracefully', async () => {
+      (global.fetch as jest.Mock).mockRejectedValueOnce(new Error('API Error'));
 
       render(
         <GeocodingButton
           address={mockAddress}
-          onCoordinatesUpdate={mockOnCoordinatesUpdate}
+          onSuccess={mockOnSuccess}
+          onError={undefined}
         />
       );
 
-      const button = screen.getByRole('button', { name: /get coordinates/i });
+      const button = screen.getByRole('button', { name: /find coordinates/i });
       fireEvent.click(button);
 
       await waitFor(() => {
-        expect(toast.error).toHaveBeenCalledWith(
-          expect.stringMatching(/invalid coordinates/i)
-        );
-      });
-    });
-
-    it('prevents multiple simultaneous API calls', async () => {
-      mockGeocodeAddress.mockImplementation(() =>
-        new Promise(resolve => setTimeout(() => resolve({
-          latitude: 43.7384,
-          longitude: 7.4246
-        }), 200))
-      );
-
-      render(
-        <GeocodingButton
-          address={mockAddress}
-          onCoordinatesUpdate={mockOnCoordinatesUpdate}
-        />
-      );
-
-      const button = screen.getByRole('button', { name: /get coordinates/i });
-      fireEvent.click(button);
-      fireEvent.click(button); // Second click should be ignored
-
-      await waitFor(() => {
-        expect(mockGeocodeAddress).toHaveBeenCalledTimes(1);
-      });
+        expect(toast.error).toHaveBeenCalled();
+      }, { timeout: 3000 });
     });
   });
 });

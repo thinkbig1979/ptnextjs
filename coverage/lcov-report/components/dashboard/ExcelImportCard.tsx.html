@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">40.14% </span>
+                <span class="strong">42.96% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>57/142</span>
+                <span class='fraction'>58/135</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">28.57% </span>
+                <span class="strong">30% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>6/21</span>
+                <span class='fraction'>6/20</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">41.3% </span>
+                <span class="strong">43.93% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>57/138</span>
+                <span class='fraction'>58/132</span>
             </div>
         
             
@@ -702,23 +702,7 @@
 <a name='L637'></a><a href='#L637'>637</a>
 <a name='L638'></a><a href='#L638'>638</a>
 <a name='L639'></a><a href='#L639'>639</a>
-<a name='L640'></a><a href='#L640'>640</a>
-<a name='L641'></a><a href='#L641'>641</a>
-<a name='L642'></a><a href='#L642'>642</a>
-<a name='L643'></a><a href='#L643'>643</a>
-<a name='L644'></a><a href='#L644'>644</a>
-<a name='L645'></a><a href='#L645'>645</a>
-<a name='L646'></a><a href='#L646'>646</a>
-<a name='L647'></a><a href='#L647'>647</a>
-<a name='L648'></a><a href='#L648'>648</a>
-<a name='L649'></a><a href='#L649'>649</a>
-<a name='L650'></a><a href='#L650'>650</a>
-<a name='L651'></a><a href='#L651'>651</a>
-<a name='L652'></a><a href='#L652'>652</a>
-<a name='L653'></a><a href='#L653'>653</a>
-<a name='L654'></a><a href='#L654'>654</a>
-<a name='L655'></a><a href='#L655'>655</a>
-<a name='L656'></a><a href='#L656'>656</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L640'></a><a href='#L640'>640</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -730,7 +714,7 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -943,24 +927,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -1011,10 +983,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1385,9 +1353,9 @@ import { toast } from 'sonner';
 import { useTierAccess } from '@/hooks/useTierAccess';
 import { useVendorDashboard } from '@/lib/context/VendorDashboardContext';
 import { UpgradePromptCard } from './UpgradePromptCard';
+import { uploadFile } from '@/lib/utils/file-upload';
 &nbsp;
-// TODO: Import ExcelPreviewDialog when FE-6 is complete
-// import { ExcelPreviewDialog } from './ExcelPreviewDialog';
+import { ExcelPreviewDialog } from './ExcelPreviewDialog';
 &nbsp;
 type ImportPhase = 'idle' | 'uploading' | 'validating' | 'preview' | 'importing' | 'complete';
 &nbsp;
@@ -1596,26 +1564,14 @@ export function ExcelImportCard() {
 <span class="cstat-no" title="statement not covered" >      setUploadProgress(0);</span>
 <span class="cstat-no" title="statement not covered" >      setError(null);</span>
 &nbsp;
-      // Simulate upload progress
-      const progressInterval = <span class="cstat-no" title="statement not covered" >setInterval(<span class="fstat-no" title="function not covered" >() =&gt; {</span></span>
-<span class="cstat-no" title="statement not covered" >        setUploadProgress(<span class="fstat-no" title="function not covered" >(p</span>rev) =&gt; <span class="cstat-no" title="statement not covered" >Math.min(prev + 10, 90));</span></span>
-      }, 100);
-&nbsp;
-      // Create form data
-      const formData = <span class="cstat-no" title="statement not covered" >new FormData();</span>
-<span class="cstat-no" title="statement not covered" >      formData.append('file', file);</span>
-&nbsp;
-      // Upload and validate
-      const response = <span class="cstat-no" title="statement not covered" >await fetch(</span>
-        `/api/portal/vendors/${vendor.id}/excel-import?phase=preview`,
-        {
-          method: 'POST',
-          body: formData,
+      // Upload and validate with real progress tracking
+      const response = <span class="cstat-no" title="statement not covered" >await uploadFile({</span>
+        url: `/api/portal/vendors/${vendor.id}/excel-import?phase=preview`,
+        file,
+        onProgress: <span class="fstat-no" title="function not covered" >(p</span>rogress) =&gt; {
+<span class="cstat-no" title="statement not covered" >          setUploadProgress(progress.percentage);</span>
         }
-      );
-&nbsp;
-<span class="cstat-no" title="statement not covered" >      clearInterval(progressInterval);</span>
-<span class="cstat-no" title="statement not covered" >      setUploadProgress(100);</span>
+      });
 &nbsp;
 <span class="cstat-no" title="statement not covered" >      if (!response.ok) {</span>
         const errorData = <span class="cstat-no" title="statement not covered" >await response.json().catch(<span class="fstat-no" title="function not covered" >() =&gt; (<span class="cstat-no" title="statement not covered" >{</span>}));</span></span>
@@ -1669,18 +1625,14 @@ export function ExcelImportCard() {
 <span class="cstat-no" title="statement not covered" >      setPhase('importing');</span>
 <span class="cstat-no" title="statement not covered" >      setError(null);</span>
 &nbsp;
-      // Create form data
-      const formData = <span class="cstat-no" title="statement not covered" >new FormData();</span>
-<span class="cstat-no" title="statement not covered" >      formData.append('file', file);</span>
-&nbsp;
-      // Execute import
-      const response = <span class="cstat-no" title="statement not covered" >await fetch(</span>
-        `/api/portal/vendors/${vendor.id}/excel-import?phase=execute`,
-        {
-          method: 'POST',
-          body: formData,
+      // Execute import with uploadFile utility
+      const response = <span class="cstat-no" title="statement not covered" >await uploadFile({</span>
+        url: `/api/portal/vendors/${vendor.id}/excel-import?phase=execute`,
+        file,
+        additionalData: {
+          confirmed: 'true'
         }
-      );
+      });
 &nbsp;
 <span class="cstat-no" title="statement not covered" >      if (!response.ok) {</span>
         const errorData = <span class="cstat-no" title="statement not covered" >await response.json().catch(<span class="fstat-no" title="function not covered" >() =&gt; (<span class="cstat-no" title="statement not covered" >{</span>}));</span></span>
@@ -2035,7 +1987,7 @@ export function ExcelImportCard() {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-11-07T13:16:22.163Z
+                at 2025-11-07T19:01:58.434Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

@@ -3,6 +3,15 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { InteractiveOrgChart } from '../InteractiveOrgChart';
 
+// Mock framer-motion to avoid animation issues in tests
+jest.mock('framer-motion', () => ({
+  motion: {
+    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    line: ({ children, ...props }: any) => <line {...props}>{children}</line>,
+  },
+  AnimatePresence: ({ children }: any) => <>{children}</>,
+}));
+
 describe('InteractiveOrgChart', () => {
   const mockTeamMembers = [
     {

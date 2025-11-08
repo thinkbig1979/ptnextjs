@@ -180,8 +180,11 @@ payload/collections/
 
 ### Key Features
 - **Dual Authentication**: Separate admin and vendor auth systems
-- **Tier-Based Access**: Free, Tier 1, and Tier 2 vendor subscriptions
+- **Tier-Based Access**: Free, Tier 1-4 vendor subscriptions with feature restrictions
 - **Vendor Approval Workflow**: Registration → Admin Review → Approval/Rejection
+- **Excel Import/Export**: Bulk vendor data management with validation and audit trail
+- **Multi-Location Support**: Vendors can manage multiple physical locations with geocoding
+- **Tier Upgrade Requests**: Vendors can request subscription upgrades with admin approval
 - **Image Optimization**: Automatic optimization with Next.js Image
 - **SEO Optimization**: Meta tags, structured data, and sitemap generation
 - **Performance**: Server-side rendering, lazy loading, and code splitting
@@ -240,6 +243,257 @@ data/
 public/              # Static assets
 └── media/          # Uploaded files
 ```
+
+## Excel Import/Export Feature
+
+The Excel Import/Export feature enables vendors to efficiently manage their profile data through Excel spreadsheets with comprehensive validation and audit capabilities.
+
+### Overview
+
+**Available to**: All tiers can download templates and export data; **Tier 2+** required for import
+
+**Key Capabilities**:
+- **Download Templates**: Tier-appropriate Excel templates with examples and validation
+- **Export Data**: Export current vendor profile to Excel format
+- **Import Data**: Upload Excel files to update profile (with preview and validation)
+- **Import History**: Complete audit trail of all imports with change tracking
+
+### Quick Start
+
+```bash
+# 1. Log in to vendor dashboard at /vendor/dashboard
+
+# 2. Navigate to Import/Export section
+
+# 3. Download template or export current data
+#    - Templates include tier-appropriate fields only
+#    - Exports show your current profile data
+
+# 4. Edit Excel file with your data
+#    - Don't modify column headers
+#    - Follow example row format
+#    - Use dropdown lists where provided
+
+# 5. Upload for preview
+#    - Validation runs automatically
+#    - Fix any errors shown in preview
+
+# 6. Confirm import
+#    - Review changes carefully
+#    - Click "Import Data" to apply
+```
+
+### API Endpoints
+
+All endpoints require authentication and vendor ownership verification (or admin role):
+
+```typescript
+// Download tier-appropriate template
+GET /api/portal/vendors/[id]/excel-template
+
+// Export vendor data to Excel
+GET /api/portal/vendors/[id]/excel-export
+
+// Import vendor data (two-phase: preview → execute)
+POST /api/portal/vendors/[id]/excel-import?phase=preview
+POST /api/portal/vendors/[id]/excel-import?phase=execute
+
+// Get import history with pagination/filtering
+GET /api/portal/vendors/[id]/import-history
+```
+
+### Architecture
+
+**Service Layer**:
+- `ExcelTemplateService`: Generate tier-based templates with validation rules
+- `ExcelExportService`: Export vendor data with formatting
+- `ExcelParserService`: Parse uploaded Excel files
+- `ImportValidationService`: Validate data against business rules
+- `ImportExecutionService`: Execute imports with atomic operations
+
+**Components**:
+- `ExcelExportCard`: Template download and data export UI
+- `ExcelImportCard`: File upload and import workflow UI
+- `ImportHistoryCard`: Import history display with filtering
+- `ExcelPreviewDialog`: Validation preview before import
+
+**Database**:
+- `import_history` collection: Audit trail with changes and errors
+- Indexed for fast queries by vendor, date, and status
+
+### Features
+
+**Template Generation**:
+- Tier-specific field filtering (only show accessible fields)
+- Excel data validation (dropdowns, ranges, formats)
+- Example data row with correct formats
+- Instructions worksheet with usage guide
+- Professional formatting and styling
+
+**Data Export**:
+- Tier-appropriate fields only
+- Current vendor profile data
+- Optional metadata section (export date, tier, record count)
+- Professional formatting with headers and alternating row colors
+- Auto-filter enabled for easy sorting
+
+**Import Validation**:
+- Required field checking
+- Data type and format validation (email, URL, phone, numbers)
+- Text length validation
+- Number range validation
+- Enum/dropdown value validation
+- Tier-based field access enforcement
+- Row-by-row error reporting with suggestions
+
+**Import Execution**:
+- Two-phase process (preview → confirm)
+- Atomic operations (all-or-nothing with rollback)
+- Change tracking (before/after values)
+- Only updates existing vendor (no new vendor creation)
+- Overwrites existing values (empty cells skipped)
+- Import history record creation
+
+**Security**:
+- Authentication required (JWT tokens)
+- Authorization checks (vendor ownership or admin)
+- Tier 2+ enforcement for import feature
+- File size limit (5MB max)
+- File type whitelist (.xlsx, .xls only)
+- Comprehensive data validation
+
+### Documentation
+
+Comprehensive documentation available:
+
+**For Vendors**:
+- User Guide: `/docs/user-guides/vendor-excel-import-export.md`
+- Step-by-step instructions for download, export, and import
+- Field reference with descriptions and examples
+- Common errors and solutions
+- Troubleshooting tips and FAQ
+
+**For Administrators**:
+- Admin Guide: `/docs/admin-guides/excel-import-monitoring.md`
+- Monitoring import activity across vendors
+- Troubleshooting vendor issues
+- Common support scenarios and responses
+- Database queries and reporting
+
+**For Developers**:
+- API Documentation: `/docs/api/excel-import-export.md`
+- Complete endpoint reference with examples
+- Request/response formats
+- Error codes and handling
+- Authentication and authorization details
+
+- Architecture Documentation: `/docs/architecture/excel-import-export-architecture.md`
+- System architecture with diagrams
+- Service layer design
+- Data flow diagrams
+- Database schema
+- Security architecture
+- Performance considerations
+
+### Example Usage
+
+```typescript
+// Download template
+const templateResponse = await fetch(
+  '/api/portal/vendors/123/excel-template',
+  { headers: { 'Authorization': `Bearer ${token}` } }
+);
+const templateBlob = await templateResponse.blob();
+
+// Export current data
+const exportResponse = await fetch(
+  '/api/portal/vendors/123/excel-export?metadata=true',
+  { headers: { 'Authorization': `Bearer ${token}` } }
+);
+const exportBlob = await exportResponse.blob();
+
+// Import data (preview phase)
+const formData = new FormData();
+formData.append('file', fileInput.files[0]);
+const previewResponse = await fetch(
+  '/api/portal/vendors/123/excel-import?phase=preview',
+  {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${token}` },
+    body: formData
+  }
+);
+const previewResult = await previewResponse.json();
+
+// Import data (execute phase)
+if (previewResult.validationResult?.valid) {
+  const executeResponse = await fetch(
+    '/api/portal/vendors/123/excel-import?phase=execute',
+    {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` },
+      body: formData
+    }
+  );
+  const executeResult = await executeResponse.json();
+}
+
+// Get import history
+const historyResponse = await fetch(
+  '/api/portal/vendors/123/import-history?page=1&limit=10',
+  { headers: { 'Authorization': `Bearer ${token}` } }
+);
+const historyData = await historyResponse.json();
+```
+
+### Tier-Based Field Access
+
+Field availability varies by subscription tier:
+
+- **Tier 0 (Free)**: Basic fields (name, email, website)
+- **Tier 1**: + Contact information (phone, address)
+- **Tier 2**: + Business details (founded year, employee count, social media)
+- **Tier 3**: + Marketing content (description, specialties, service areas)
+- **Tier 4**: + All premium fields
+
+Templates and exports automatically include only tier-appropriate fields.
+
+### Testing
+
+Comprehensive test coverage:
+
+```bash
+# Unit tests for services
+npm run test lib/services/Excel*
+npm run test lib/services/Import*
+
+# Integration tests for API routes
+npm run test app/api/portal/vendors/\\[id\\]/excel-*
+
+# E2E tests for user workflows
+npm run test:e2e -- --grep "Excel Import"
+```
+
+### Performance
+
+Typical performance metrics:
+- Template generation: 50-100ms
+- Data export: 100-500ms
+- File parsing: 200-1000ms (file size dependent)
+- Validation: 50-200ms per 100 rows
+- Import execution: 500-2000ms (changes dependent)
+
+File size limit: 5MB (prevents performance issues)
+
+### Future Enhancements
+
+Planned features:
+- Batch imports for multiple vendors (admin only)
+- Scheduled recurring imports
+- Advanced validation (URL checking, email verification)
+- Import templates with pre-saved mappings
+- Webhook notifications on import completion
+- Analytics dashboard for import metrics
 
 ## Deployment
 

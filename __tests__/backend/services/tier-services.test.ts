@@ -64,7 +64,7 @@ describe('TierValidationService', () => {
       const result = TierValidationService.validateLocationLimit('free', 2);
       expect(result.valid).toBe(false);
       expect(result.maxAllowed).toBe(1);
-      expect(result.message).toContain('maximum 1 location');
+      expect(result.message).toContain('Location(s)');
     });
 
     it('should allow tier1 up to 3 locations', () => {

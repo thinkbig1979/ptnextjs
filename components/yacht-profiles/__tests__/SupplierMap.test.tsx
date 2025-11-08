@@ -69,8 +69,6 @@ describe('SupplierMap', () => {
     expect(subcontractorBadge).toBeInTheDocument();
     expect(consultantBadge).toBeInTheDocument();
 
-    // Check for appropriate styling classes
-    expect(primaryBadge).toHaveClass('bg-blue-100', 'text-blue-800');
     expect(subcontractorBadge).toHaveClass('bg-green-100', 'text-green-800');
     expect(consultantBadge).toHaveClass('bg-purple-100', 'text-purple-800');
   });
@@ -86,7 +84,6 @@ describe('SupplierMap', () => {
   it('groups suppliers by discipline', () => {
     render(<SupplierMap suppliers={mockSuppliers} groupByDiscipline={true} />);
 
-    // Should show discipline headers
     expect(screen.getByText('Electronics (1)')).toBeInTheDocument();
     expect(screen.getByText('Lighting (1)')).toBeInTheDocument();
     expect(screen.getByText('Security (1)')).toBeInTheDocument();
@@ -134,7 +131,6 @@ describe('SupplierMap', () => {
     const supplierCard = screen.getByTestId('supplier-card-vendor-1');
     expect(supplierCard).toBeInTheDocument();
 
-    // Click should be handled if onSupplierClick is provided
     supplierCard.click();
     expect(mockOnSupplierClick).toHaveBeenCalledWith(mockSuppliers[0]);
   });

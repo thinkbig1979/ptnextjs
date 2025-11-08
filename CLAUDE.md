@@ -1,6 +1,6 @@
 # CLAUDE.md - Paul Thames Superyacht Technology
 
-**Note**: This project uses [Agent OS Framework](.agent-os/CLAUDE.md) for development automation and [bd (beads)](https://github.com/steveyegge/beads) for issue tracking. See [AGENTS.md](AGENTS.md) for workflow details.
+**Note**: This project uses [Agent OS Framework](.agent-os/CLAUDE.md) for development automation and [bd (beads)](https://github.com/steveyegge/beads) for issue tracking. Ensure you and all subagents always follow the practices outlined in [AGENTS.md](AGENTS.md)
 
 ## Quick Start
 

@@ -53,17 +53,13 @@ if (process.env.NODE_ENV !== 'test' && typeof setInterval !== 'undefined') {
 let lastCleanupTime = 0;
 const CLEANUP_INTERVAL = 10000; // Clean up every 10 seconds
 
-// Helper for testing purposes (not exported as route export)
+// Helper for testing purposes - internal only
+// Tests can access rateLimitMap directly if needed via module re-export pattern
 function clearRateLimitForTesting(): void {
   if (process.env.NODE_ENV === 'test') {
     rateLimitMap.clear();
     lastCleanupTime = 0;
   }
-}
-
-// Only expose to testing via globalThis in test environment
-if (process.env.NODE_ENV === 'test') {
-  (globalThis as any).__clearRateLimitForTesting = clearRateLimitForTesting;
 }
 
 function checkRateLimit(ip: string): { allowed: boolean; resetTime?: number } {

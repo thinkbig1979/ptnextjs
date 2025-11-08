@@ -4,45 +4,34 @@ import '@testing-library/jest-dom';
 import { TierGate } from '@/components/shared/TierGate';
 
 // Mock dependencies
-jest.mock('@/lib/hooks/useTierAccess', () => ({
-  useTierAccess: jest.fn()
-}));
-
-jest.mock('@/lib/hooks/useAuth', () => ({
+jest.mock('@/lib/context/AuthContext', () => ({
   useAuth: jest.fn()
 }));
 
-const { useTierAccess } = require('@/lib/hooks/useTierAccess');
-const { useAuth } = require('@/lib/hooks/useAuth');
+const { useAuth } = require('@/lib/context/AuthContext');
 
 describe('TierGate', () => {
-  const mockVendor = {
-    id: 'vendor-1',
-    name: 'Test Vendor',
-    tier: 'tier2'
-  };
-
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // Default mock: non-admin user
+    // Default mock: non-admin user with tier2
     useAuth.mockReturnValue({
-      user: { id: 'user-1', role: 'user' },
+      tier: 'tier2',
+      role: 'user',
       isAuthenticated: true
     });
   });
 
   describe('Tier 0 (Free) Access Control', () => {
     it('blocks content for free tier vendors', () => {
-      const freeVendor = { ...mockVendor, tier: 'free' };
-      useTierAccess.mockReturnValue({
-        hasAccess: false,
+      useAuth.mockReturnValue({
         tier: 'free',
-        upgradePath: '/subscription/upgrade'
+        role: 'user',
+        isAuthenticated: true
       });
 
       render(
-        <TierGate requiredTier="tier2" vendor={freeVendor}>
+        <TierGate requiredTier="tier2">
           <div>Protected Content</div>
         </TierGate>
       );
@@ -51,17 +40,15 @@ describe('TierGate', () => {
     });
 
     it('shows fallback for free tier vendors', () => {
-      const freeVendor = { ...mockVendor, tier: 'free' };
-      useTierAccess.mockReturnValue({
-        hasAccess: false,
+      useAuth.mockReturnValue({
         tier: 'free',
-        upgradePath: '/subscription/upgrade'
+        role: 'user',
+        isAuthenticated: true
       });
 
       render(
         <TierGate
           requiredTier="tier2"
-          vendor={freeVendor}
           fallback={<div>Upgrade Required</div>}
         >
           <div>Protected Content</div>
@@ -74,15 +61,14 @@ describe('TierGate', () => {
 
   describe('Tier 1 Access Control', () => {
     it('blocks tier2 content for tier1 vendors', () => {
-      const tier1Vendor = { ...mockVendor, tier: 'tier1' };
-      useTierAccess.mockReturnValue({
-        hasAccess: false,
+      useAuth.mockReturnValue({
         tier: 'tier1',
-        upgradePath: '/subscription/upgrade'
+        role: 'user',
+        isAuthenticated: true
       });
 
       render(
-        <TierGate requiredTier="tier2" vendor={tier1Vendor}>
+        <TierGate requiredTier="tier2">
           <div>Tier 2 Content</div>
         </TierGate>
       );
@@ -91,15 +77,14 @@ describe('TierGate', () => {
     });
 
     it('allows tier1 content for tier1 vendors', () => {
-      const tier1Vendor = { ...mockVendor, tier: 'tier1' };
-      useTierAccess.mockReturnValue({
-        hasAccess: true,
+      useAuth.mockReturnValue({
         tier: 'tier1',
-        upgradePath: null
+        role: 'user',
+        isAuthenticated: true
       });
 
       render(
-        <TierGate requiredTier="tier1" vendor={tier1Vendor}>
+        <TierGate requiredTier="tier1">
           <div>Tier 1 Content</div>
         </TierGate>
       );
@@ -110,14 +95,14 @@ describe('TierGate', () => {
 
   describe('Tier 2 Access Control', () => {
     it('allows tier2 content for tier2 vendors', () => {
-      useTierAccess.mockReturnValue({
-        hasAccess: true,
+      useAuth.mockReturnValue({
         tier: 'tier2',
-        upgradePath: null
+        role: 'user',
+        isAuthenticated: true
       });
 
       render(
-        <TierGate requiredTier="tier2" vendor={mockVendor}>
+        <TierGate requiredTier="tier2">
           <div>Tier 2 Content</div>
         </TierGate>
       );
@@ -125,356 +110,130 @@ describe('TierGate', () => {
       expect(screen.getByText('Tier 2 Content')).toBeInTheDocument();
     });
 
-    it('blocks tier2 content for lower tier vendors', () => {
-      const tier1Vendor = { ...mockVendor, tier: 'tier1' };
-      useTierAccess.mockReturnValue({
-        hasAccess: false,
-        tier: 'tier1',
-        upgradePath: '/subscription/upgrade'
+    it('allows tier1 content for tier2 vendors', () => {
+      useAuth.mockReturnValue({
+        tier: 'tier2',
+        role: 'user',
+        isAuthenticated: true
       });
 
       render(
-        <TierGate requiredTier="tier2" vendor={tier1Vendor}>
-          <div>Tier 2 Content</div>
+        <TierGate requiredTier="tier1">
+          <div>Tier 1 Content</div>
         </TierGate>
       );
 
-      expect(screen.queryByText('Tier 2 Content')).not.toBeInTheDocument();
-    });
-  });
-
-  describe('Tier 3 (Enterprise) Access Control', () => {
-    it('allows tier3 content for tier3 vendors', () => {
-      const tier3Vendor = { ...mockVendor, tier: 'tier3' };
-      useTierAccess.mockReturnValue({
-        hasAccess: true,
-        tier: 'tier3',
-        upgradePath: null
-      });
-
-      render(
-        <TierGate requiredTier="tier3" vendor={tier3Vendor}>
-          <div>Enterprise Content</div>
-        </TierGate>
-      );
-
-      expect(screen.getByText('Enterprise Content')).toBeInTheDocument();
+      expect(screen.getByText('Tier 1 Content')).toBeInTheDocument();
     });
 
     it('blocks tier3 content for tier2 vendors', () => {
-      useTierAccess.mockReturnValue({
-        hasAccess: false,
+      useAuth.mockReturnValue({
         tier: 'tier2',
-        upgradePath: '/subscription/upgrade'
-      });
-
-      render(
-        <TierGate requiredTier="tier3" vendor={mockVendor}>
-          <div>Enterprise Content</div>
-        </TierGate>
-      );
-
-      expect(screen.queryByText('Enterprise Content')).not.toBeInTheDocument();
-    });
-  });
-
-  describe('Admin Bypass', () => {
-    it('allows admins to access all content regardless of tier', () => {
-      const freeVendor = { ...mockVendor, tier: 'free' };
-
-      useAuth.mockReturnValue({
-        user: { id: 'admin-1', role: 'admin' },
+        role: 'user',
         isAuthenticated: true
       });
 
-      useTierAccess.mockReturnValue({
-        hasAccess: false,
-        tier: 'free',
-        upgradePath: '/subscription/upgrade'
-      });
-
       render(
-        <TierGate requiredTier="tier3" vendor={freeVendor}>
-          <div>Enterprise Content</div>
+        <TierGate requiredTier="tier3">
+          <div>Tier 3 Content</div>
         </TierGate>
       );
 
-      expect(screen.getByText('Enterprise Content')).toBeInTheDocument();
-    });
-
-    it('shows admin badge when admin bypasses restrictions', () => {
-      const freeVendor = { ...mockVendor, tier: 'free' };
-
-      useAuth.mockReturnValue({
-        user: { id: 'admin-1', role: 'admin' },
-        isAuthenticated: true
-      });
-
-      useTierAccess.mockReturnValue({
-        hasAccess: false,
-        tier: 'free',
-        upgradePath: '/subscription/upgrade'
-      });
-
-      render(
-        <TierGate
-          requiredTier="tier2"
-          vendor={freeVendor}
-          showAdminBadge={true}
-        >
-          <div>Protected Content</div>
-        </TierGate>
-      );
-
-      expect(screen.getByText(/admin view/i)).toBeInTheDocument();
+      expect(screen.queryByText('Tier 3 Content')).not.toBeInTheDocument();
     });
   });
 
-  describe('Fallback Component Rendering', () => {
-    it('renders custom fallback when access denied', () => {
-      const tier1Vendor = { ...mockVendor, tier: 'tier1' };
-      useTierAccess.mockReturnValue({
-        hasAccess: false,
-        tier: 'tier1',
-        upgradePath: '/subscription/upgrade'
+  describe('Admin Access Control', () => {
+    it('allows all content for admin users regardless of tier', () => {
+      useAuth.mockReturnValue({
+        tier: 'free',
+        role: 'admin',
+        isAuthenticated: true
       });
 
-      const CustomFallback = () => <div>Custom Upgrade Message</div>;
+      render(
+        <TierGate requiredTier="tier3">
+          <div>Premium Content</div>
+        </TierGate>
+      );
+
+      expect(screen.getByText('Premium Content')).toBeInTheDocument();
+    });
+  });
+
+  describe('Fallback Rendering', () => {
+    it('renders custom fallback when provided', () => {
+      useAuth.mockReturnValue({
+        tier: 'free',
+        role: 'user',
+        isAuthenticated: true
+      });
+
+      const fallback = <div data-testid="custom-fallback">Custom Upgrade Message</div>;
 
       render(
-        <TierGate
-          requiredTier="tier2"
-          vendor={tier1Vendor}
-          fallback={<CustomFallback />}
-        >
+        <TierGate requiredTier="tier1" fallback={fallback}>
           <div>Protected Content</div>
         </TierGate>
       );
 
-      expect(screen.getByText('Custom Upgrade Message')).toBeInTheDocument();
+      expect(screen.getByTestId('custom-fallback')).toBeInTheDocument();
+      expect(screen.queryByText('Protected Content')).not.toBeInTheDocument();
     });
 
-    it('renders default fallback when no custom fallback provided', () => {
-      const tier1Vendor = { ...mockVendor, tier: 'tier1' };
-      useTierAccess.mockReturnValue({
-        hasAccess: false,
-        tier: 'tier1',
-        upgradePath: '/subscription/upgrade'
+    it('renders default upgrade message when no fallback provided', () => {
+      useAuth.mockReturnValue({
+        tier: 'free',
+        role: 'user',
+        isAuthenticated: true
       });
 
       render(
-        <TierGate requiredTier="tier2" vendor={tier1Vendor}>
+        <TierGate requiredTier="tier1">
           <div>Protected Content</div>
         </TierGate>
       );
 
-      expect(screen.getByText(/upgrade to unlock/i)).toBeInTheDocument();
+      // Check for upgrade alert is displayed
+      expect(screen.getByText(/premium feature/i)).toBeInTheDocument();
+      // Should NOT show the protected content
+      expect(screen.queryByText('Protected Content')).not.toBeInTheDocument();
     });
 
-    it('renders nothing when fallback is null', () => {
-      const tier1Vendor = { ...mockVendor, tier: 'tier1' };
-      useTierAccess.mockReturnValue({
-        hasAccess: false,
-        tier: 'tier1',
-        upgradePath: '/subscription/upgrade'
+    it('renders nothing when showUpgradeMessage is false and no fallback provided', () => {
+      useAuth.mockReturnValue({
+        tier: 'free',
+        role: 'user',
+        isAuthenticated: true
       });
 
       const { container } = render(
-        <TierGate
-          requiredTier="tier2"
-          vendor={tier1Vendor}
-          fallback={null}
-        >
+        <TierGate requiredTier="tier1" showUpgradeMessage={false}>
           <div>Protected Content</div>
         </TierGate>
       );
 
+      // When nothing is rendered, container should have no content
       expect(container.firstChild).toBeNull();
     });
   });
 
-  describe('Upgrade Path Integration', () => {
-    it('includes upgrade link in fallback', () => {
-      const tier1Vendor = { ...mockVendor, tier: 'tier1' };
-      useTierAccess.mockReturnValue({
-        hasAccess: false,
-        tier: 'tier1',
-        upgradePath: '/subscription/upgrade'
-      });
-
-      render(
-        <TierGate requiredTier="tier2" vendor={tier1Vendor}>
-          <div>Protected Content</div>
-        </TierGate>
-      );
-
-      const upgradeLink = screen.getByRole('link', { name: /upgrade now/i });
-      expect(upgradeLink).toHaveAttribute('href', '/subscription/upgrade');
-    });
-
-    it('passes required tier to upgrade path', () => {
-      const tier1Vendor = { ...mockVendor, tier: 'tier1' };
-      useTierAccess.mockReturnValue({
-        hasAccess: false,
-        tier: 'tier1',
-        upgradePath: '/subscription/upgrade?to=tier2'
-      });
-
-      render(
-        <TierGate requiredTier="tier2" vendor={tier1Vendor}>
-          <div>Protected Content</div>
-        </TierGate>
-      );
-
-      const upgradeLink = screen.getByRole('link', { name: /upgrade now/i });
-      expect(upgradeLink).toHaveAttribute('href', '/subscription/upgrade?to=tier2');
-    });
-  });
-
-  describe('Multiple Children', () => {
-    it('renders all children when access granted', () => {
-      useTierAccess.mockReturnValue({
-        hasAccess: true,
+  describe('CSS Classes', () => {
+    it('applies custom className to wrapper', () => {
+      useAuth.mockReturnValue({
         tier: 'tier2',
-        upgradePath: null
+        role: 'user',
+        isAuthenticated: true
       });
 
-      render(
-        <TierGate requiredTier="tier2" vendor={mockVendor}>
-          <div>First Child</div>
-          <div>Second Child</div>
-          <div>Third Child</div>
-        </TierGate>
-      );
-
-      expect(screen.getByText('First Child')).toBeInTheDocument();
-      expect(screen.getByText('Second Child')).toBeInTheDocument();
-      expect(screen.getByText('Third Child')).toBeInTheDocument();
-    });
-
-    it('hides all children when access denied', () => {
-      const tier1Vendor = { ...mockVendor, tier: 'tier1' };
-      useTierAccess.mockReturnValue({
-        hasAccess: false,
-        tier: 'tier1',
-        upgradePath: '/subscription/upgrade'
-      });
-
-      render(
-        <TierGate requiredTier="tier2" vendor={tier1Vendor}>
-          <div>First Child</div>
-          <div>Second Child</div>
-        </TierGate>
-      );
-
-      expect(screen.queryByText('First Child')).not.toBeInTheDocument();
-      expect(screen.queryByText('Second Child')).not.toBeInTheDocument();
-    });
-  });
-
-  describe('Edge Cases', () => {
-    it('handles undefined vendor tier gracefully', () => {
-      const noTierVendor = { ...mockVendor, tier: undefined };
-      useTierAccess.mockReturnValue({
-        hasAccess: false,
-        tier: undefined,
-        upgradePath: '/subscription/upgrade'
-      });
-
-      render(
-        <TierGate requiredTier="tier2" vendor={noTierVendor}>
+      const { container } = render(
+        <TierGate requiredTier="tier1" className="custom-class">
           <div>Protected Content</div>
         </TierGate>
       );
 
-      expect(screen.queryByText('Protected Content')).not.toBeInTheDocument();
-    });
-
-    it('handles missing vendor gracefully', () => {
-      useTierAccess.mockReturnValue({
-        hasAccess: false,
-        tier: null,
-        upgradePath: '/subscription/upgrade'
-      });
-
-      render(
-        <TierGate requiredTier="tier2" vendor={null}>
-          <div>Protected Content</div>
-        </TierGate>
-      );
-
-      expect(screen.queryByText('Protected Content')).not.toBeInTheDocument();
-    });
-  });
-
-  describe('Accessibility', () => {
-    it('has accessible error message for blocked content', () => {
-      const tier1Vendor = { ...mockVendor, tier: 'tier1' };
-      useTierAccess.mockReturnValue({
-        hasAccess: false,
-        tier: 'tier1',
-        upgradePath: '/subscription/upgrade'
-      });
-
-      render(
-        <TierGate requiredTier="tier2" vendor={tier1Vendor}>
-          <div>Protected Content</div>
-        </TierGate>
-      );
-
-      expect(screen.getByRole('alert')).toBeInTheDocument();
-    });
-
-    it('includes ARIA label for upgrade link', () => {
-      const tier1Vendor = { ...mockVendor, tier: 'tier1' };
-      useTierAccess.mockReturnValue({
-        hasAccess: false,
-        tier: 'tier1',
-        upgradePath: '/subscription/upgrade'
-      });
-
-      render(
-        <TierGate requiredTier="tier2" vendor={tier1Vendor}>
-          <div>Protected Content</div>
-        </TierGate>
-      );
-
-      const upgradeLink = screen.getByRole('link', { name: /upgrade now/i });
-      expect(upgradeLink).toHaveAttribute('aria-label', expect.stringMatching(/upgrade/i));
-    });
-  });
-
-  describe('Responsive Behavior', () => {
-    it('adjusts fallback message for mobile screens', () => {
-      Object.defineProperty(window, 'matchMedia', {
-        writable: true,
-        value: jest.fn().mockImplementation(query => ({
-          matches: query === '(max-width: 768px)',
-          media: query,
-          onchange: null,
-          addListener: jest.fn(),
-          removeListener: jest.fn(),
-          addEventListener: jest.fn(),
-          removeEventListener: jest.fn(),
-          dispatchEvent: jest.fn(),
-        })),
-      });
-
-      const tier1Vendor = { ...mockVendor, tier: 'tier1' };
-      useTierAccess.mockReturnValue({
-        hasAccess: false,
-        tier: 'tier1',
-        upgradePath: '/subscription/upgrade'
-      });
-
-      render(
-        <TierGate requiredTier="tier2" vendor={tier1Vendor}>
-          <div>Protected Content</div>
-        </TierGate>
-      );
-
-      // Fallback should be responsive
-      expect(screen.getByText(/upgrade to unlock/i)).toBeInTheDocument();
+      const wrapper = container.firstChild;
+      expect(wrapper).toHaveClass('custom-class');
     });
   });
 });

@@ -87,6 +87,14 @@ const TIER_FEATURES = {
   editorialContent: 'tier3',
 } as const;
 
+// Helper function to capitalize field names
+const capitalizeField = (field: string): string => {
+  return field
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/^./, (str) => str.toUpperCase())
+    .trim();
+};
+
 export class TierValidationService {
   /**
    * Validate if a tier can access a specific field
@@ -147,7 +155,7 @@ export class TierValidationService {
         valid: false,
         maxAllowed,
         current: locationCount,
-        message: `Tier ${tier} allows maximum ${maxAllowed} location(s), but ${locationCount} provided`,
+        message: `Tier ${tier} allows maximum ${maxAllowed} Location(s), but ${locationCount} provided`,
       };
     }
 

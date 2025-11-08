@@ -38,8 +38,9 @@ interface VideoIntroductionProps {
 
 function formatDuration(seconds: number): string {
   const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = seconds % 60;
-  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  const secs = seconds % 60;
+  const padded = String(secs).padStart(2, '0');
+  return `${minutes}:${padded}`;
 }
 
 function isValidVideoUrl(url: string): boolean {
@@ -172,76 +173,76 @@ export function VideoIntroduction({
             // Actual video content
             <div>
               {!hasStarted && video.thumbnailUrl ? (
-            // Thumbnail view
-            <div className="relative w-full h-full">
-              <Image
-                src={video.thumbnailUrl}
-                alt={`${video.title} thumbnail`}
-                fill
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
-                <Button
-                  data-testid="play-overlay"
-                  onClick={handlePlayClick}
-                  size="lg"
-                  className="rounded-full w-16 h-16 bg-card bg-opacity-90 hover:bg-opacity-100 text-black"
-                >
-                  <Play className="w-6 h-6 ml-1" />
-                </Button>
-              </div>
-              {video.duration && (
-                <div className="absolute bottom-4 right-4 bg-black bg-opacity-75 text-white px-2 py-1 rounded text-sm">
-                  {formatDuration(video.duration)}
+                // Thumbnail view
+                <div className="relative w-full h-full">
+                  <Image
+                    src={video.thumbnailUrl}
+                    alt={`${video.title} thumbnail`}
+                    fill
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
+                    <Button
+                      data-testid="play-overlay"
+                      onClick={handlePlayClick}
+                      size="lg"
+                      className="rounded-full w-16 h-16 bg-card bg-opacity-90 hover:bg-opacity-100 text-black"
+                    >
+                      <Play className="w-6 h-6 ml-1" />
+                    </Button>
+                  </div>
+                  {video.duration && (
+                    <div className="absolute bottom-4 right-4 bg-black bg-opacity-75 text-white px-2 py-1 rounded text-sm">
+                      {formatDuration(video.duration)}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          ) : !hasStarted && !video.thumbnailUrl ? (
-            // Default thumbnail
-            <div
-              data-testid="default-thumbnail"
-              className="relative w-full h-full bg-gray-900 flex items-center justify-center"
-            >
-              <Button
-                data-testid="play-overlay"
-                onClick={handlePlayClick}
-                size="lg"
-                className="rounded-full w-16 h-16 bg-card bg-opacity-90 hover:bg-opacity-100 text-black"
-              >
-                <Play className="w-6 h-6 ml-1" />
-              </Button>
-            </div>
-          ) : (
-            // Video player
-            <div className="relative w-full h-full">
-              {React.createElement(ReactPlayer as any, {
-                url: video.url,
-                playing: isPlaying,
-                controls: controls,
-                width: "100%",
-                height: "100%",
-                onPlay: handlePlay,
-                onPause: handlePause,
-                onEnded: handleEnded,
-                onReady: handleReady,
-                onStart: handleStart,
-              })}
-
-              {hasEnded && (
-                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+              ) : !hasStarted && !video.thumbnailUrl ? (
+                // Default thumbnail
+                <div
+                  data-testid="default-thumbnail"
+                  className="relative w-full h-full bg-gray-900 flex items-center justify-center"
+                >
                   <Button
-                    data-testid="replay-button"
-                    onClick={handleReplay}
+                    data-testid="play-overlay"
+                    onClick={handlePlayClick}
                     size="lg"
-                    className="rounded-full"
+                    className="rounded-full w-16 h-16 bg-card bg-opacity-90 hover:bg-opacity-100 text-black"
                   >
-                    <RotateCcw className="w-5 h-5 mr-2" />
-                    Replay
+                    <Play className="w-6 h-6 ml-1" />
                   </Button>
                 </div>
+              ) : (
+                // Video player
+                <div className="relative w-full h-full">
+                  {React.createElement(ReactPlayer as any, {
+                    url: video.url,
+                    playing: isPlaying,
+                    controls: controls,
+                    width: "100%",
+                    height: "100%",
+                    onPlay: handlePlay,
+                    onPause: handlePause,
+                    onEnded: handleEnded,
+                    onReady: handleReady,
+                    onStart: handleStart,
+                  })}
+
+                  {hasEnded && (
+                    <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                      <Button
+                        data-testid="replay-button"
+                        onClick={handleReplay}
+                        size="lg"
+                        className="rounded-full"
+                      >
+                        <RotateCcw className="w-5 h-5 mr-2" />
+                        Replay
+                      </Button>
+                    </div>
+                  )}
+                </div>
               )}
-            </div>
-          )}
             </div>
           )}
         </div>

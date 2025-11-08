@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">30% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/40</span>
+                <span class='fraction'>12/40</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">32.43% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/37</span>
+                <span class='fraction'>12/37</span>
             </div>
         
             
@@ -415,20 +415,18 @@
 <a name='L350'></a><a href='#L350'>350</a>
 <a name='L351'></a><a href='#L351'>351</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -437,7 +435,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -765,18 +765,18 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">'use client';
 &nbsp;
-import { useState } from <span class="cstat-no" title="statement not covered" >'react';</span>
+import { useState } from 'react';
 import { Vendor } from '@/lib/types';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from <span class="cstat-no" title="statement not covered" >'@/components/ui/card';</span>
-import { Badge } from <span class="cstat-no" title="statement not covered" >'@/components/ui/badge';</span>
-import { Button } from <span class="cstat-no" title="statement not covered" >'@/components/ui/button';</span>
-import { Checkbox } from <span class="cstat-no" title="statement not covered" >'@/components/ui/checkbox';</span>
-import { Label } from <span class="cstat-no" title="statement not covered" >'@/components/ui/label';</span>
-import { Alert, AlertDescription } from <span class="cstat-no" title="statement not covered" >'@/components/ui/alert';</span>
-import { Separator } from <span class="cstat-no" title="statement not covered" >'@/components/ui/separator';</span>
-import { TierUpgradePrompt } from <span class="cstat-no" title="statement not covered" >'@/components/dashboard/TierUpgradePrompt';</span>
-import { useVendorDashboard } from <span class="cstat-no" title="statement not covered" >'@/lib/context/VendorDashboardContext';</span>
-import { TierService } from <span class="cstat-no" title="statement not covered" >'@/lib/services/TierService';</span>
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Separator } from '@/components/ui/separator';
+import { TierUpgradePrompt } from '@/components/dashboard/TierUpgradePrompt';
+import { useVendorDashboard } from '@/lib/context/VendorDashboardContext';
+import { TierService } from '@/lib/services/TierService';
 import {
   CheckCircle2,
   Star,
@@ -787,7 +787,7 @@ import {
   Image as ImageIcon,
   Mail,
   Info
-} from <span class="cstat-no" title="statement not covered" >'lucide-react';</span>
+} from 'lucide-react';
 &nbsp;
 interface PromotionPackFormProps {
   vendor: Vendor;
@@ -1120,7 +1120,7 @@ export function <span class="cstat-no" title="statement not covered" ><span clas
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-11-07T13:16:22.163Z
+                at 2025-11-07T19:01:58.434Z
             </div>
         <script src="../../../../../prettify.js"></script>
         <script>

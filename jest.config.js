@@ -27,6 +27,16 @@ const customJestConfig = {
   testPathIgnorePatterns: [
     '<rootDir>/.next/',
     '<rootDir>/node_modules/',
+    '<rootDir>/tests/e2e/',  // Exclude Playwright E2E tests
+    '<rootDir>/e2e/',         // Exclude any other Playwright tests
+    '\\.spec\\.(ts|tsx|js|jsx)$',  // Exclude all .spec.* files (Playwright convention)
+  ],
+  testMatch: [
+    '**/__tests__/**/*.(test|spec).(ts|tsx|js|jsx)',
+    '**/*.(test|spec).(ts|tsx|js|jsx)',
+    '!**/__tests__/fixtures/**',     // Exclude fixture files
+    '!**/__tests__/utils/**',        // Exclude utility files
+    '!**/__tests__/docs/**',         // Exclude documentation templates
   ],
   transformIgnorePatterns: [
     'node_modules/(?!(@react-three/fiber|react-pdf|react-player|three|@react-three/drei|msw|@mswjs|until-async)/)'

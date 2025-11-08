@@ -1,5 +1,5 @@
 import * as React from "react";
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { VideoIntroduction } from '../VideoIntroduction';
 
@@ -15,6 +15,38 @@ jest.mock('react-player', () => {
         <button onClick={() => onEnded?.()} data-testid="ended-button">Ended</button>
       </div>
     );
+  };
+});
+
+// Mock useLazyLoading hook to always report visibility
+jest.mock('@/lib/hooks/use-lazy-loading', () => ({
+  useLazyLoading: () => ({
+    ref: React.createRef(),
+    wasVisible: true
+  })
+}));
+
+// Mock Next.js Image component
+jest.mock('next/image', () => ({
+  __esModule: true,
+  default: (props: any) => {
+    // eslint-disable-next-line jsx-a11y/alt-text
+    return <img {...props} />;
+  }
+}));
+
+// Mock next/dynamic
+jest.mock('next/dynamic', () => {
+  return {
+    __esModule: true,
+    default: (loader: any) => {
+      const DynamicComponent = React.lazy(loader);
+      return (props: any) => (
+        <React.Suspense fallback={<div data-testid="video-loading">Loading...</div>}>
+          <DynamicComponent {...props} />
+        </React.Suspense>
+      );
+    }
   };
 });
 
@@ -54,8 +86,10 @@ describe('VideoIntroduction', () => {
     const playOverlay = screen.getByTestId('play-overlay');
     fireEvent.click(playOverlay);
 
-    // Initially shows loading state
-    expect(screen.getByTestId('video-loading')).toBeInTheDocument();
+    // Wait for the Suspense boundary to resolve
+    await waitFor(() => {
+      expect(screen.getByTestId('react-player')).toBeInTheDocument();
+    }, { timeout: 2000 });
   });
 
   it('displays video duration formatted correctly', () => {
@@ -77,13 +111,15 @@ describe('VideoIntroduction', () => {
     expect(onPlaySpy).toHaveBeenCalled();
   });
 
-  it('shows loading state while video loads', () => {
+  it('shows loading state while video loads', async () => {
     render(<VideoIntroduction video={mockVideoData} />);
 
     fireEvent.click(screen.getByTestId('play-overlay'));
 
     // After clicking play, the video player should be loaded
-    expect(screen.getByTestId('react-player')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId('react-player')).toBeInTheDocument();
+    }, { timeout: 2000 });
   });
 
   it('applies custom className when provided', () => {
@@ -113,21 +149,27 @@ describe('VideoIntroduction', () => {
     expect(screen.getByTestId('react-player')).toBeInTheDocument();
   });
 
-  it('handles video end event', () => {
+  it('handles video end event', async () => {
     const onEndedSpy = jest.fn();
     render(<VideoIntroduction video={mockVideoData} onEnded={onEndedSpy} />);
 
     fireEvent.click(screen.getByTestId('play-overlay'));
-    fireEvent.click(screen.getByTestId('ended-button'));
+    
+    await waitFor(() => {
+      fireEvent.click(screen.getByTestId('ended-button'));
+    });
 
     expect(onEndedSpy).toHaveBeenCalled();
   });
 
-  it('shows replay button when video ends', () => {
+  it('shows replay button when video ends', async () => {
     render(<VideoIntroduction video={mockVideoData} />);
 
     fireEvent.click(screen.getByTestId('play-overlay'));
-    fireEvent.click(screen.getByTestId('ended-button'));
+    
+    await waitFor(() => {
+      fireEvent.click(screen.getByTestId('ended-button'));
+    });
 
     expect(screen.getByTestId('replay-button')).toBeInTheDocument();
   });

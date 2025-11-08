@@ -23,9 +23,9 @@ const mockPayload = {
   find: jest.fn(),
 };
 
-// Mock the getPayloadClient function
-jest.mock('@/payload/payloadClient', () => ({
-  getPayloadClient: () => mockPayload,
+// Mock the getPayload function from 'payload'
+jest.mock('payload', () => ({
+  getPayload: () => mockPayload,
 }));
 
 describe('TierUpgradeRequestService', () => {
