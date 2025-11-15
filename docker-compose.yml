@@ -16,11 +16,6 @@ services:
     container_name: ptnextjs-app
     restart: always
 
-    # Port configuration
-    # Exposed to proxy network only (not published to host)
-    expose:
-      - "3000"
-
     # Environment variables
     # Load from .env.production file
     env_file:
@@ -28,17 +23,17 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3000
-      # SQLite database path (volume mounted)
+      # SQLite database path (bind mounted)
       - DATABASE_URL=file:///data/payload.db
       # Server URL (configured via reverse proxy)
       - NEXT_PUBLIC_SERVER_URL=${NEXT_PUBLIC_SERVER_URL:-http://localhost:3000}
 
-    # Volume mounts for data persistence
+    # Volume mounts for data persistence (bind mounts)
     volumes:
       # SQLite database persistence
-      - payload-db:/data
+      - ./data:/data
       # Media uploads persistence
-      - media-uploads:/app/media
+      - ./media:/app/media
 
     # Network configuration
     networks:
@@ -53,17 +48,6 @@ services:
       start_period: 30s
       retries: 3
 
-    # Resource limits
-    # 1GB memory, 1 CPU core
-    deploy:
-      resources:
-        limits:
-          cpus: '1.0'
-          memory: 1G
-        reservations:
-          cpus: '0.5'
-          memory: 512M
-
     # Logging configuration
     # JSON file driver with 10MB rotation
     logging:
@@ -72,30 +56,6 @@ services:
         max-size: "10m"
         max-file: "3"
         compress: "true"
-
-    # Labels for reverse proxy integration (Traefik example)
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.ptnextjs.rule=Host(`${DOMAIN:-ptnextjs.local}`)"
-      - "traefik.http.routers.ptnextjs.entrypoints=websecure"
-      - "traefik.http.routers.ptnextjs.tls=true"
-      - "traefik.http.routers.ptnextjs.tls.certresolver=letsencrypt"
-      - "traefik.http.services.ptnextjs.loadbalancer.server.port=3000"
-
-# ============================================
-# Volumes
-# Persistent storage for database and media
-# ============================================
-volumes:
-  # SQLite database persistence
-  payload-db:
-    driver: local
-    name: ptnextjs-payload-db
-
-  # Media uploads persistence
-  media-uploads:
-    driver: local
-    name: ptnextjs-media-uploads
 
 # ============================================
 # Networks
