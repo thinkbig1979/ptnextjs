@@ -68,7 +68,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 # Create non-root user for security
 # nodejs user is created by node:alpine image
 # We just need to set up the working directory
-RUN addgroup --system --gid 997 nodejs && \
+RUN addgroup --system --gid 996 nodejs && \
     adduser --system --uid 1005 nextjs && \
     mkdir -p /app /data /app/media && \
     chown -R nextjs:nodejs /app /data
