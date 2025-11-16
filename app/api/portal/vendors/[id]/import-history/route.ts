@@ -76,12 +76,20 @@ export async function GET(
 
     const isAdmin = user.role === 'admin';
 
-    // Authorization: User must own the vendor or be an admin
-    if (!isAdmin && user.vendorId !== id) {
-      return NextResponse.json(
-        { error: 'Forbidden - You do not have access to this vendor\'s import history' },
-        { status: 403 }
-      );
+    // Authorization: Verify user owns this vendor (or is admin)
+    if (!isAdmin) {
+      const vendor = await payload.findByID({
+        collection: 'vendors',
+        id,
+        depth: 0
+      });
+
+      if (!vendor || vendor.user?.toString() !== user.id) {
+        return NextResponse.json(
+          { error: 'Forbidden - You do not have access to this vendor\'s import history' },
+          { status: 403 }
+        );
+      }
     }
 
     // Parse query parameters

@@ -44,6 +44,7 @@
   "exclude": [
     "node_modules",
     "migration-scripts",
+    "tests/**/*",
     "**/__tests__/**/*",
     "**/*.test.ts",
     "**/*.test.tsx",

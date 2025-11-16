@@ -387,7 +387,7 @@ export class ImportExecutionService {
       }
     });
 
-    return history.id;
+    return String(history.id);
   }
 
   /**

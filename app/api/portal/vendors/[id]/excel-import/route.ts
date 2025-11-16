@@ -233,8 +233,8 @@ export async function POST(
         phase: 'execute',
         executionResult,
         message: executionResult.success
-          ? `Successfully imported ${executionResult.summary.successCount} records`
-          : `Import completed with errors. ${executionResult.summary.successCount} successful, ${executionResult.summary.errorCount} failed`
+          ? `Successfully imported ${executionResult.successfulRows} records`
+          : `Import completed with errors. ${executionResult.successfulRows} successful, ${executionResult.failedRows} failed`
       });
     }
 

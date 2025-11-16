@@ -98,14 +98,30 @@ export function ExcelPreviewDialog({
   isLoading = false,
 }: ExcelPreviewDialogProps) {
   /**
-   * Extract all validation errors (both errors and warnings)
+   * Extract and separate validation errors and warnings
+   * Map from ImportValidationService format (rowNumber) to ValidationErrorsTable format (row)
    */
-  const allErrors = useMemo(() => {
-    const errors: ValidationError[] = [];
+  const { errors: validationErrors, warnings: validationWarnings } = useMemo(() => {
+    const errors: any[] = [];
+    const warnings: any[] = [];
+
     validationResult.rows.forEach((row) => {
-      errors.push(...row.errors, ...row.warnings);
+      // Map errors
+      const mappedErrors = row.errors.map(error => ({
+        ...error,
+        row: error.rowNumber,
+      }));
+      errors.push(...mappedErrors);
+
+      // Map warnings
+      const mappedWarnings = row.warnings.map(warning => ({
+        ...warning,
+        row: warning.rowNumber,
+      }));
+      warnings.push(...mappedWarnings);
     });
-    return errors;
+
+    return { errors, warnings };
   }, [validationResult]);
 
   /**
@@ -308,7 +324,7 @@ export function ExcelPreviewDialog({
           {/* Validation Errors Tab */}
           <TabsContent value="errors" className="flex-1 min-h-0 mt-4">
             <ScrollArea className="h-[400px]">
-              <ValidationErrorsTable errors={allErrors} />
+              <ValidationErrorsTable errors={validationErrors} warnings={validationWarnings} />
             </ScrollArea>
           </TabsContent>
 
