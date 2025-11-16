@@ -69,7 +69,12 @@ class PayloadCMSDataService {
 
     // Handle case where mediaPath is an object (Payload media relationship)
     if (typeof mediaPath === 'object') {
-      // Extract URL from media object
+      // Check for external URL first (new feature)
+      if (mediaPath.externalUrl) {
+        return mediaPath.externalUrl;
+      }
+
+      // Extract URL from media object (uploaded files)
       const url = mediaPath.url || mediaPath.filename || '';
       if (!url) return '';
       mediaPath = url;
@@ -78,7 +83,8 @@ class PayloadCMSDataService {
     // Now mediaPath should be a string
     if (typeof mediaPath !== 'string') return '';
 
-    if (mediaPath.startsWith('http')) return mediaPath;
+    // Return external URLs as-is
+    if (mediaPath.startsWith('http://') || mediaPath.startsWith('https://')) return mediaPath;
     if (mediaPath.startsWith('/media/')) return mediaPath;
     if (mediaPath.startsWith('/')) return mediaPath;
     return `/media/${mediaPath.replace(/^\/+/, '')}`;
