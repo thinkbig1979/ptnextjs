@@ -84,12 +84,11 @@ temp
 .tmp
 
 # Database files (mounted via volumes)
-data
-*.db
+# Note: data/payload.db is needed for build-time static generation
+# but other db files can be excluded
 *.db-shm
 *.db-wal
-*.sqlite
-*.sqlite3
+!data/payload.db
 
 # Media uploads (mounted via volumes)
 media
