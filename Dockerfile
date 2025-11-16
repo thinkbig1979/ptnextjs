@@ -35,6 +35,10 @@ COPY --from=deps /app/node_modules ./node_modules
 # Copy all source files
 COPY . .
 
+# Copy database for build-time static generation
+# .dockerignore excludes data/, but we need it for SSG
+COPY data ./data
+
 # Install build dependencies
 # These are needed for the build process but not runtime
 RUN npm ci --legacy-peer-deps
