@@ -82,9 +82,6 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
-# Copy migrations directory for database schema management
-COPY --from=builder --chown=nextjs:nodejs /app/migrations ./migrations
-
 # Copy payload.config.ts and package.json for runtime
 COPY --from=builder --chown=nextjs:nodejs /app/payload.config.ts ./
 COPY --from=builder --chown=nextjs:nodejs /app/package.json ./
