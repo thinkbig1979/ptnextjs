@@ -82,6 +82,11 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
+# Copy native modules required by libsql (SQLite driver)
+# Next.js standalone doesn't include optional native dependencies
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@libsql ./node_modules/@libsql
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/libsql ./node_modules/libsql
+
 # Copy payload.config.ts and package.json for runtime
 COPY --from=builder --chown=nextjs:nodejs /app/payload.config.ts ./
 COPY --from=builder --chown=nextjs:nodejs /app/package.json ./
