@@ -17,10 +17,9 @@ WORKDIR /app
 # This layer is cached unless package files change
 COPY package.json package-lock.json* ./
 
-# Install production dependencies only
-# --omit=dev excludes devDependencies
+# Install all dependencies (needed for postinstall scripts like patch-package)
 # --legacy-peer-deps handles peer dependency conflicts
-RUN npm ci --omit=dev --legacy-peer-deps
+RUN npm ci --legacy-peer-deps
 
 # ============================================
 # Stage 2: Builder
