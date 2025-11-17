@@ -29,8 +29,15 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Apply security headers to API routes
-  if (pathname.startsWith('/api/')) {
+  // Apply security headers to custom API routes only
+  // IMPORTANT: Exclude Payload CMS API routes as they need different CSP settings
+  // for the admin panel to function properly
+  // Payload CMS routes: /api/(anything that's not explicitly our custom routes)
+  const isCustomApiRoute = pathname.startsWith('/api/portal') ||
+                           pathname.startsWith('/api/geocode') ||
+                           pathname.startsWith('/api/contact');
+
+  if (isCustomApiRoute) {
     const response = NextResponse.next();
 
     // Content Security Policy (CSP)
@@ -80,6 +87,10 @@ export function middleware(request: NextRequest) {
 
 /**
  * Configure which routes this middleware should run on
+ *
+ * NOTE: We match ALL routes and handle filtering in the middleware function
+ * This is necessary because Payload CMS uses catch-all API routes that
+ * would conflict with pattern-based exclusions
  */
 export const config = {
   matcher: [
