@@ -88,13 +88,15 @@ export function middleware(request: NextRequest) {
 /**
  * Configure which routes this middleware should run on
  *
- * NOTE: We match ALL routes and handle filtering in the middleware function
- * This is necessary because Payload CMS uses catch-all API routes that
- * would conflict with pattern-based exclusions
+ * IMPORTANT: We explicitly list only our custom routes to avoid interfering
+ * with Payload CMS API routes which handle their own CORS and security headers.
+ * The middleware should NOT run for Payload's /api/* routes at all.
  */
 export const config = {
   matcher: [
     '/vendor/dashboard/:path*',
-    '/api/:path*',
+    '/api/portal/:path*',
+    '/api/geocode/:path*',
+    '/api/contact/:path*',
   ],
 };
