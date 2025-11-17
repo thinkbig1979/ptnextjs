@@ -43,10 +43,17 @@ COPY data ./data
 # These are needed for the build process but not runtime
 RUN npm ci --legacy-peer-deps
 
+# Build arguments for runtime configuration
+# These must be provided at build time for Next.js to bake into the static bundle
+ARG NEXT_PUBLIC_SERVER_URL
+ARG PAYLOAD_SECRET
+
 # Build Next.js application
 # NEXT_TELEMETRY_DISABLED=1 disables Next.js telemetry
 # This creates .next/standalone directory with minimal runtime files
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV NEXT_PUBLIC_SERVER_URL=$NEXT_PUBLIC_SERVER_URL
+ENV PAYLOAD_SECRET=$PAYLOAD_SECRET
 RUN npm run build
 
 # ============================================
