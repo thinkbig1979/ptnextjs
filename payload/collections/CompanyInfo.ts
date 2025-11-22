@@ -101,6 +101,14 @@ const CompanyInfo: CollectionConfig = {
         description: 'Main contact email',
       },
     },
+    {
+      name: 'businessHours',
+      type: 'text',
+      maxLength: 255,
+      admin: {
+        description: 'Business hours (e.g., "Monday - Friday: 9:00 AM - 5:00 PM CET")',
+      },
+    },
 
     // Branding
     {

@@ -904,6 +904,7 @@ export interface CompanyInfo {
   address: string;
   phone: string;
   email: string;
+  businessHours?: string; // Business hours text
   story: string;
   mission?: string; // Company mission statement
   logo?: string; // TinaCMS uses direct string paths

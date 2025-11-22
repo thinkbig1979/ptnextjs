@@ -777,6 +777,7 @@ class PayloadCMSDataService {
       address: doc.address || '',
       phone: doc.phone || '',
       email: doc.email || '',
+      businessHours: doc.businessHours || undefined,
       story,
       mission: doc.mission || undefined,
       logo,

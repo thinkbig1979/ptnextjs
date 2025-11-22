@@ -13,6 +13,7 @@ export default async function ContactPage() {
   const address = companyInfo?.address || "Amsterdam, Netherlands";
   const phone = companyInfo?.phone || "+31 20 555 0123";
   const email = companyInfo?.email || "info@paulthames.com";
+  const businessHours = companyInfo?.businessHours || "Monday - Friday: 9:00 AM - 5:00 PM CET";
 
   const contactInfo = [
     {
@@ -33,7 +34,7 @@ export default async function ContactPage() {
     {
       icon: Clock,
       title: "Business Hours",
-      details: ["Monday - Friday: 9:00 AM - 5:00 PM CET"],
+      details: [businessHours],
     },
   ];
   return (
