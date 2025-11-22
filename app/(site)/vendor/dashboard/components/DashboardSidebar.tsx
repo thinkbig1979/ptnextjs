@@ -40,7 +40,7 @@ export function DashboardSidebar({ tier, vendorName }: DashboardSidebarProps) {
   const isMaxTier = normalizedTier === 'tier3';
 
   return (
-    <aside className="space-y-6">
+    <aside className="space-y-6 sticky top-8">
       {/* Tier Information Card */}
       <Card>
         <CardHeader>
@@ -140,7 +140,7 @@ export function DashboardSidebar({ tier, vendorName }: DashboardSidebarProps) {
             href="/docs/getting-started"
             target="_blank"
             rel="noopener noreferrer"
-            className="block text-sm text-accent dark:text-accent hover:underline"
+            className="block text-sm text-primary hover:text-primary/80 dark:text-primary dark:hover:text-primary/80"
           >
             Getting Started Guide
           </a>
@@ -148,7 +148,7 @@ export function DashboardSidebar({ tier, vendorName }: DashboardSidebarProps) {
             href="/docs/features"
             target="_blank"
             rel="noopener noreferrer"
-            className="block text-sm text-accent dark:text-accent hover:underline"
+            className="block text-sm text-primary hover:text-primary/80 dark:text-primary dark:hover:text-primary/80"
           >
             Feature Documentation
           </a>
@@ -156,7 +156,7 @@ export function DashboardSidebar({ tier, vendorName }: DashboardSidebarProps) {
             href="/docs/best-practices"
             target="_blank"
             rel="noopener noreferrer"
-            className="block text-sm text-accent dark:text-accent hover:underline"
+            className="block text-sm text-primary hover:text-primary/80 dark:text-primary dark:hover:text-primary/80"
           >
             Best Practices
           </a>

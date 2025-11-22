@@ -5,9 +5,6 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/context/AuthContext';
 import { VendorDashboardProvider } from '@/lib/context/VendorDashboardContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { SubscriptionTierBadge } from '@/components/shared/SubscriptionTierBadge';
 import { DashboardHeader } from './components/DashboardHeader';
 import { DashboardSidebar } from './components/DashboardSidebar';
 import { DashboardSkeleton } from './components/DashboardSkeleton';
@@ -15,12 +12,6 @@ import {
   CheckCircle2,
   Clock,
   XCircle,
-  Edit,
-  Package,
-  HelpCircle,
-  ArrowRight,
-  AlertCircle,
-  RefreshCw,
 } from 'lucide-react';
 
 /**
@@ -152,141 +143,56 @@ function DashboardContent({
         </Card>
       )}
 
-      {/* Dashboard Grid */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {/* Profile Status Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <CheckCircle2 className="h-5 w-5 text-green-600" aria-hidden="true" />
-              Profile Status
-            </CardTitle>
-            <CardDescription>Your account information</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-sm font-medium text-foreground">Profile Completion</span>
-                <span className="text-sm font-semibold text-foreground">{profileCompletion}%</span>
-              </div>
-              <div className="w-full bg-border rounded-full h-2">
-                <div
-                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${profileCompletion}%` }}
-                  role="progressbar"
-                  aria-valuenow={profileCompletion}
-                  aria-valuemin={0}
-                  aria-valuemax={100}
-                  aria-label="Profile completion percentage"
-                />
-              </div>
+      {/* Profile Status Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <CheckCircle2 className="h-5 w-5 text-green-600" aria-hidden="true" />
+            Profile Status
+          </CardTitle>
+          <CardDescription>Your account information</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-sm font-medium text-foreground dark:text-white">Profile Completion</span>
+              <span className="text-sm font-semibold text-foreground dark:text-white">{profileCompletion}%</span>
             </div>
-            <div className="pt-2 border-t border-border">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Approval Status</span>
-                {approvalStatus === 'approved' ? (
-                  <span className="flex items-center gap-1 text-sm font-medium text-green-600">
-                    <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
-                    Approved
-                  </span>
-                ) : approvalStatus === 'pending' ? (
-                  <span className="flex items-center gap-1 text-sm font-medium text-yellow-600">
-                    <Clock className="h-4 w-4" aria-hidden="true" />
-                    Pending
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-1 text-sm font-medium text-red-600">
-                    <XCircle className="h-4 w-4" aria-hidden="true" />
-                    Rejected
-                  </span>
-                )}
-              </div>
+            <div className="w-full bg-border rounded-full h-2">
+              <div
+                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                style={{ width: `${profileCompletion}%` }}
+                role="progressbar"
+                aria-valuenow={profileCompletion}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-label="Profile completion percentage"
+              />
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Tier Information Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Subscription Tier</CardTitle>
-            <CardDescription>Your current subscription level</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
+          </div>
+          <div className="pt-2 border-t border-border">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-foreground">Current Tier</span>
-              {tier && <SubscriptionTierBadge tier={tier} />}
+              <span className="text-sm text-muted-foreground dark:text-muted-foreground">Approval Status</span>
+              {approvalStatus === 'approved' ? (
+                <span className="flex items-center gap-1 text-sm font-medium text-green-600 dark:text-green-500">
+                  <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
+                  Approved
+                </span>
+              ) : approvalStatus === 'pending' ? (
+                <span className="flex items-center gap-1 text-sm font-medium text-yellow-600 dark:text-yellow-500">
+                  <Clock className="h-4 w-4" aria-hidden="true" />
+                  Pending
+                </span>
+              ) : (
+                <span className="flex items-center gap-1 text-sm font-medium text-red-600 dark:text-red-500">
+                  <XCircle className="h-4 w-4" aria-hidden="true" />
+                  Rejected
+                </span>
+              )}
             </div>
-            {tier === 'free' && (
-              <div className="pt-4 border-t border-border">
-                <p className="text-sm text-muted-foreground mb-3">
-                  Upgrade to unlock premium features like product management.
-                </p>
-                <Button variant="outline" size="sm" className="w-full">
-                  View Upgrade Options
-                  <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
-                </Button>
-              </div>
-            )}
-            {tier === 'tier1' && (
-              <div className="pt-4 border-t border-border">
-                <p className="text-sm text-muted-foreground mb-3">
-                  You&apos;re on Tier 1. Upgrade to Tier 2 for advanced product management.
-                </p>
-                <Button variant="outline" size="sm" className="w-full">
-                  Upgrade to Tier 2
-                  <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
-                </Button>
-              </div>
-            )}
-            {tier === 'tier2' && (
-              <div className="pt-4 border-t border-border">
-                <p className="text-sm text-green-600 font-medium">
-                  You have access to all premium features!
-                </p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Quick Actions Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>Common tasks and settings</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Button
-              variant="outline"
-              className="w-full justify-start"
-              onClick={() => router.push('/vendor/dashboard/profile')}
-              aria-label="Edit Profile"
-            >
-              <Edit className="mr-3 h-4 w-4" aria-hidden="true" />
-              Edit Profile
-            </Button>
-            {tier === 'tier2' && (
-              <Button
-                variant="outline"
-                className="w-full justify-start"
-                onClick={() => router.push('/vendor/dashboard/products')}
-                aria-label="View Products"
-              >
-                <Package className="mr-3 h-4 w-4" aria-hidden="true" />
-                View Products
-              </Button>
-            )}
-            <Button
-              variant="outline"
-              className="w-full justify-start"
-              onClick={() => router.push('/contact')}
-              aria-label="Contact Support"
-            >
-              <HelpCircle className="mr-3 h-4 w-4" aria-hidden="true" />
-              Contact Support
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Additional Information Section */}
       <Card>
