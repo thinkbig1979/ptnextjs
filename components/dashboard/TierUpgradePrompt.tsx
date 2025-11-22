@@ -13,6 +13,7 @@ export interface TierUpgradePromptProps {
   featureName: string;
   upgradePath?: string;
   className?: string;
+  compact?: boolean;
 }
 
 /**
@@ -27,7 +28,32 @@ export function TierUpgradePrompt({
   featureName,
   upgradePath = '/subscription/upgrade',
   className = '',
+  compact = false,
 }: TierUpgradePromptProps) {
+  // Compact version for inline use
+  if (compact) {
+    return (
+      <div className={`flex flex-wrap items-center gap-3 ${className}`}>
+        <div className="flex items-center gap-2 text-sm">
+          <Badge variant="outline" className="capitalize">
+            {currentTier}
+          </Badge>
+          <span className="text-muted-foreground">→</span>
+          <Badge variant="default" className="capitalize bg-blue-600">
+            {requiredTier}
+          </Badge>
+        </div>
+        <Link href={upgradePath}>
+          <Button size="sm" variant="outline">
+            <ArrowUpCircle className="mr-2 h-4 w-4" />
+            Upgrade
+          </Button>
+        </Link>
+      </div>
+    );
+  }
+
+  // Full version with card
   return (
     <Card className={`border-blue-200 dark:border-blue-800 ${className}`}>
       <CardHeader>

@@ -18,7 +18,7 @@ export const TIER_HIERARCHY: Record<Tier, number> = {
 };
 
 export const TIER_FEATURE_MAP: Record<TierFeature, number> = {
-  multipleLocations: TIER_HIERARCHY.tier1,
+  multipleLocations: TIER_HIERARCHY.tier2,
   advancedAnalytics: TIER_HIERARCHY.tier2,
   apiAccess: TIER_HIERARCHY.tier2,
   customDomain: TIER_HIERARCHY.tier2,
@@ -30,8 +30,8 @@ export const TIER_FEATURE_MAP: Record<TierFeature, number> = {
 
 export const MAX_LOCATIONS_PER_TIER: Record<Tier, number> = {
   free: 1,
-  tier1: 3,
-  tier2: 10,
+  tier1: 1,
+  tier2: 5,
   tier3: 999,
 };
 

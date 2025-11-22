@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -32,17 +32,26 @@ export interface LocationsManagerCardProps {
 /**
  * LocationsManagerCard Component
  *
- * Allows tier2+ vendors to manage multiple office locations.
- * Shows upgrade prompt for tier0/1 vendors.
+ * Allows all vendors to manage their office locations.
+ * Free/Tier1: 1 location (HQ only)
+ * Tier2: 5 locations
+ * Tier3: Unlimited locations
  */
 export function LocationsManagerCard({ vendor, onUpdate }: LocationsManagerCardProps) {
-  const { hasAccess, tier, upgradePath } = useTierAccess('multipleLocations', vendor.tier);
+  const { tier, upgradePath, canAddLocation, maxLocations } = useTierAccess('multipleLocations', vendor.tier);
 
   const [locations, setLocations] = useState<VendorLocation[]>(vendor.locations || []);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [deleteConfirmIndex, setDeleteConfirmIndex] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+
+  // Sync locations state with vendor.locations prop when it changes
+  useEffect(() => {
+    if (vendor.locations && vendor.locations.length > 0) {
+      setLocations(vendor.locations);
+    }
+  }, [vendor.locations]);
 
   /**
    * Find the HQ location index
@@ -60,6 +69,13 @@ export function LocationsManagerCard({ vendor, onUpdate }: LocationsManagerCardP
    * Add a new empty location
    */
   const handleAddLocation = useCallback(() => {
+    // Check tier limits before allowing add - use max of state and prop counts
+    const currentCount = Math.max(locations.length, vendor.locations?.length || 0);
+    if (!canAddLocation(currentCount)) {
+      toast.error(`You've reached the maximum of ${maxLocations} location${maxLocations === 1 ? '' : 's'} for your ${tier} tier. Upgrade to add more.`);
+      return;
+    }
+
     const newLocation: VendorLocation = {
       id: `temp-${Date.now()}`,
       locationName: '',
@@ -73,7 +89,7 @@ export function LocationsManagerCard({ vendor, onUpdate }: LocationsManagerCardP
     };
     setLocations((prev) => [...prev, newLocation]);
     setEditingIndex(locations.length); // Start editing the new location
-  }, [locations.length]);
+  }, [locations.length, vendor.locations?.length, canAddLocation, maxLocations, tier]);
 
   /**
    * Update a specific location
@@ -204,17 +220,11 @@ export function LocationsManagerCard({ vendor, onUpdate }: LocationsManagerCardP
     setEditingIndex((prev) => (prev === index ? null : index));
   }, []);
 
-  // If vendor doesn't have access, show upgrade prompt
-  if (!hasAccess) {
-    return (
-      <TierUpgradePrompt
-        currentTier={tier}
-        requiredTier="tier2"
-        featureName="Multiple Office Locations"
-        upgradePath={upgradePath}
-      />
-    );
-  }
+  // Check if the vendor can add more locations based on their tier
+  // Use the maximum of state and prop counts to ensure we don't allow adding when at limit
+  const effectiveLocationCount = Math.max(locations.length, vendor.locations?.length || 0);
+  const canAddMore = canAddLocation(effectiveLocationCount);
+  const atLocationLimit = !canAddMore && effectiveLocationCount > 0;
 
   return (
     <>
@@ -230,7 +240,7 @@ export function LocationsManagerCard({ vendor, onUpdate }: LocationsManagerCardP
                 Add and manage your office locations. One location must be designated as headquarters.
               </CardDescription>
             </div>
-            <Button onClick={handleAddLocation} size="sm" disabled={isEditing}>
+            <Button onClick={handleAddLocation} size="sm" disabled={isEditing || !canAddMore}>
               <Plus className="h-4 w-4 mr-2" />
               Add Location
             </Button>
@@ -310,6 +320,22 @@ export function LocationsManagerCard({ vendor, onUpdate }: LocationsManagerCardP
                   )}
                 </div>
               ))}
+            </div>
+          )}
+
+          {/* Tier Limit Notice */}
+          {atLocationLimit && (
+            <div className="p-4 bg-muted/50 dark:bg-muted/30 rounded-lg border border-border">
+              <p className="text-sm text-muted-foreground mb-2">
+                You&apos;ve reached the maximum of {maxLocations} location{maxLocations === 1 ? '' : 's'} for your {tier} tier.
+              </p>
+              <TierUpgradePrompt
+                currentTier={tier}
+                requiredTier={upgradePath}
+                featureName="More Locations"
+                upgradePath={upgradePath}
+                compact={true}
+              />
             </div>
           )}
 
