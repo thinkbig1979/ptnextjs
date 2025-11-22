@@ -10,7 +10,14 @@ export type VendorTier = 'free' | 'tier1' | 'tier2' | 'tier3';
  * Tier-based field access mapping
  */
 const TIER_FIELDS: Record<VendorTier, string[]> = {
-  free: ['companyName', 'description', 'logo', 'contactEmail', 'contactPhone'],
+  free: [
+    'companyName',
+    'description',
+    'logo',
+    'contactEmail',
+    'contactPhone',
+    'locations', // Free tier: single HQ location only (enforced by schema validation)
+  ],
   tier1: [
     'companyName',
     'description',
@@ -22,6 +29,7 @@ const TIER_FIELDS: Record<VendorTier, string[]> = {
     'twitterUrl',
     'certifications',
     'foundedYear', // Tier 1+ for years in business computation
+    'locations', // Tier 1: single HQ location (enforced by schema validation)
   ],
   tier2: [
     'companyName',
@@ -34,6 +42,7 @@ const TIER_FIELDS: Record<VendorTier, string[]> = {
     'twitterUrl',
     'certifications',
     'foundedYear', // Tier 1+ for years in business computation
+    'locations', // Tier 2+: multiple locations allowed
     // Tier2 would include products in future, but that's a relationship field
   ],
   tier3: [
@@ -47,6 +56,7 @@ const TIER_FIELDS: Record<VendorTier, string[]> = {
     'twitterUrl',
     'certifications',
     'foundedYear',
+    'locations', // Tier 3+: multiple locations allowed
     // Tier3+ unlocks advanced features like case studies, team members, extended portfolio
   ],
 };
