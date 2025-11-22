@@ -11,6 +11,7 @@ export interface LoginResponse {
     email: string;
     role: 'admin' | 'vendor';
     tier?: 'free' | 'tier1' | 'tier2';
+    status?: 'pending' | 'approved' | 'rejected' | 'suspended';
   };
   tokens: TokenPair;
 }
@@ -102,6 +103,7 @@ class AuthService {
           email: user.email,
           role: user.role,
           tier,
+          status: user.status,
         },
         tokens,
       };

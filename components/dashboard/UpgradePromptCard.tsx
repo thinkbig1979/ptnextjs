@@ -110,14 +110,14 @@ export function UpgradePromptCard({
         </CardContent>
       )}
 
-      <CardFooter className="flex flex-col sm:flex-row gap-3">
-        <Button asChild className="w-full sm:w-auto" size="lg">
+      <CardFooter className="flex flex-col gap-3">
+        <Button asChild className="w-full" size="lg">
           <Link href="/vendor/dashboard/subscription">
             View Subscription Options
             <ArrowRight className="ml-2 h-4 w-4" />
           </Link>
         </Button>
-        <Button variant="outline" className="w-full sm:w-auto" size="lg" asChild>
+        <Button variant="outline" className="w-full" size="lg" asChild>
           <a href="/pricing" target="_blank">
             View Pricing
           </a>

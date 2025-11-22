@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { SubscriptionTierBadge } from '@/components/shared/SubscriptionTierBadge';
 import {
   LayoutDashboard,
   User,
@@ -78,16 +77,13 @@ export function VendorNavigation({ className }: VendorNavigationProps) {
     <nav
       role="navigation"
       aria-label="Vendor dashboard navigation"
-      className={`flex flex-col h-full bg-card dark:bg-slate-900 border-r border-border dark:border-slate-800 ${className || ''}`}
+      className={`flex flex-col h-full bg-card dark:bg-card border-r border-border dark:border-border ${className || ''}`}
     >
       {/* Sidebar Header */}
       <div className="p-6">
-        <h2 className="text-lg font-semibold text-foreground dark:text-white mb-2">Vendor Portal</h2>
-        {user && tier && (
-          <div className="flex flex-col gap-2">
-            <p className="text-sm text-muted-foreground dark:text-muted-foreground truncate">{user.email}</p>
-            <SubscriptionTierBadge tier={tier} />
-          </div>
+        <h2 className="text-lg font-semibold text-foreground dark:text-foreground mb-2">Vendor Portal</h2>
+        {user && (
+          <p className="text-sm text-muted-foreground dark:text-muted-foreground truncate">{user.email}</p>
         )}
       </div>
 
@@ -113,7 +109,7 @@ export function VendorNavigation({ className }: VendorNavigationProps) {
                   ${
                     isActive
                       ? 'bg-blue-50 dark:bg-blue-950 text-accent dark:text-accent'
-                      : 'text-foreground dark:text-muted-foreground hover:bg-muted dark:hover:bg-slate-800 hover:text-foreground dark:hover:text-white'
+                      : 'text-foreground dark:text-muted-foreground hover:bg-muted dark:hover:bg-muted hover:text-foreground dark:hover:text-foreground'
                   }
                 `}
               >
