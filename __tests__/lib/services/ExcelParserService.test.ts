@@ -75,7 +75,7 @@ describe('ExcelParserService', () => {
 
         expect(result.success).toBe(true);
         expect(result.rows.length).toBe(1);
-        expect(result.rows[0].data.name).toBe('Test Corp');
+        expect(result.rows[0].data.companyName).toBe('Test Corp');
         expect(result.rows[0].data.description).toBe('Test description');
         expect(result.rows[0].data.contactEmail).toBe('test@example.com');
         expect(result.rows[0].rowNumber).toBe(2); // Row 2 (after header)
@@ -325,7 +325,7 @@ describe('ExcelParserService', () => {
 
         const result = await ExcelParserService.parse(buffer, 0, 'test.xlsx');
 
-        expect(result.rows[0].data.name).toBe('Test Corp');
+        expect(result.rows[0].data.companyName).toBe('Test Corp');
         expect(result.rows[0].data.contactEmail).toBe('test@example.com');
         expect(result.rows[0].data['Invalid Column']).toBeUndefined();
       });
@@ -381,7 +381,7 @@ describe('ExcelParserService', () => {
         const result = await ExcelParserService.parse(Buffer.from(buffer), 0, 'test.xlsx');
 
         expect(result.success).toBe(true);
-        expect(result.rows[0].data.name).toBe('Test Corp');
+        expect(result.rows[0].data.companyName).toBe('Test Corp');
       });
 
       it('should trim whitespace from cell values', async () => {
@@ -396,7 +396,7 @@ describe('ExcelParserService', () => {
         const result = await ExcelParserService.parse(buffer, 0, 'test.xlsx');
 
         expect(result.success).toBe(true);
-        expect(result.rows[0].data.name).toBe('Test Corp');
+        expect(result.rows[0].data.companyName).toBe('Test Corp');
         expect(result.rows[0].data.description).toBe('Test desc');
         expect(result.rows[0].data.contactEmail).toBe('test@example.com');
       });
@@ -467,7 +467,7 @@ describe('ExcelParserService', () => {
         const result = await ExcelParserService.parse(buffer, 1, 'test.xlsx');
 
         expect(result.success).toBe(true);
-        expect(result.rows[0].data.name).toBe('Test Corp');
+        expect(result.rows[0].data.companyName).toBe('Test Corp');
         expect(result.rows[0].data.contactEmail).toBe('test@example.com');
         expect(result.rows[0].data.website).toBe('https://example.com');
       });

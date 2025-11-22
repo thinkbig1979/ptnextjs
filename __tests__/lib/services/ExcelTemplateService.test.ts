@@ -135,7 +135,7 @@ describe('ExcelTemplateService', () => {
       expect(headers).toContain('Company Name');
       expect(headers).toContain('Website URL');
       expect(headers).toContain('Detailed Description');
-      expect(headers).toContain('Company Mission');
+      expect(headers).toContain('LinkedIn Followers'); // TIER2 field
     });
 
     it('should include correct number of columns for tier', async () => {

@@ -54,7 +54,7 @@ describe('Excel Field Mappings Configuration', () => {
 
     it('should include required core fields', () => {
       const fieldNames = VENDOR_FIELD_MAPPINGS.map(f => f.fieldName);
-      expect(fieldNames).toContain('name');
+      expect(fieldNames).toContain('companyName');
       expect(fieldNames).toContain('description');
       expect(fieldNames).toContain('contactEmail');
     });
@@ -93,7 +93,7 @@ describe('Excel Field Mappings Configuration', () => {
       expect(accessLevels.has(FieldAccessLevel.FREE)).toBe(true);
       expect(accessLevels.has(FieldAccessLevel.TIER1)).toBe(true);
       expect(accessLevels.has(FieldAccessLevel.TIER2)).toBe(true);
-      expect(accessLevels.has(FieldAccessLevel.TIER3)).toBe(true);
+      // Note: No TIER3-specific fields in Excel export currently (TIER3 features handled via dashboard)
       expect(accessLevels.has(FieldAccessLevel.ADMIN)).toBe(false);
     });
 
@@ -114,7 +114,7 @@ describe('Excel Field Mappings Configuration', () => {
         const fieldNames = fields.map(f => f.fieldName);
 
         // Core required fields should be available at all tiers
-        expect(fieldNames).toContain('name');
+        expect(fieldNames).toContain('companyName');
         expect(fieldNames).toContain('description');
         expect(fieldNames).toContain('contactEmail');
       });
@@ -182,7 +182,7 @@ describe('Excel Field Mappings Configuration', () => {
       const requiredFields = getRequiredFieldsForTier(0);
       const fieldNames = requiredFields.map(f => f.fieldName);
 
-      expect(fieldNames).toContain('name');
+      expect(fieldNames).toContain('companyName');
       expect(fieldNames).toContain('description');
       expect(fieldNames).toContain('contactEmail');
     });
@@ -190,9 +190,9 @@ describe('Excel Field Mappings Configuration', () => {
 
   describe('getFieldMapping', () => {
     it('should find field by name', () => {
-      const field = getFieldMapping('name');
+      const field = getFieldMapping('companyName');
       expect(field).toBeDefined();
-      expect(field?.fieldName).toBe('name');
+      expect(field?.fieldName).toBe('companyName');
       expect(field?.excelColumn).toBe('Company Name');
     });
 
@@ -202,7 +202,7 @@ describe('Excel Field Mappings Configuration', () => {
     });
 
     it('should find all core fields', () => {
-      const coreFields = ['name', 'description', 'contactEmail', 'contactPhone', 'website'];
+      const coreFields = ['companyName', 'description', 'contactEmail', 'contactPhone', 'website'];
 
       coreFields.forEach(fieldName => {
         const field = getFieldMapping(fieldName);
@@ -215,7 +215,7 @@ describe('Excel Field Mappings Configuration', () => {
     it('should find field by Excel column name', () => {
       const field = getFieldMappingByColumn('Company Name');
       expect(field).toBeDefined();
-      expect(field?.fieldName).toBe('name');
+      expect(field?.fieldName).toBe('companyName');
     });
 
     it('should return undefined for non-existent column', () => {
@@ -231,7 +231,7 @@ describe('Excel Field Mappings Configuration', () => {
 
   describe('hasFieldAccess', () => {
     it('should return true for accessible fields', () => {
-      expect(hasFieldAccess(0, 'name')).toBe(true);
+      expect(hasFieldAccess(0, 'companyName')).toBe(true);
       expect(hasFieldAccess(1, 'website')).toBe(true);
       expect(hasFieldAccess(2, 'longDescription')).toBe(true);
     });
@@ -247,7 +247,7 @@ describe('Excel Field Mappings Configuration', () => {
 
     it('should enforce tier hierarchy', () => {
       // Higher tiers should have access to lower tier fields
-      expect(hasFieldAccess(1, 'name')).toBe(true); // Tier 1 has access to FREE field
+      expect(hasFieldAccess(1, 'companyName')).toBe(true); // Tier 1 has access to FREE field
       expect(hasFieldAccess(2, 'website')).toBe(true); // Tier 2 has access to TIER1 field
       expect(hasFieldAccess(3, 'longDescription')).toBe(true); // Tier 3 has access to TIER2 field
     });
@@ -319,9 +319,9 @@ describe('Excel Field Mappings Configuration', () => {
       });
     });
 
-    it('should have string type for name field', () => {
-      const nameField = getFieldMapping('name');
-      expect(nameField?.dataType).toBe(FieldDataType.STRING);
+    it('should have string type for companyName field', () => {
+      const companyNameField = getFieldMapping('companyName');
+      expect(companyNameField?.dataType).toBe(FieldDataType.STRING);
     });
 
     it('should have email type for contactEmail field', () => {
@@ -337,9 +337,9 @@ describe('Excel Field Mappings Configuration', () => {
 
   describe('Field validation constraints', () => {
     it('should have maxLength for string fields where applicable', () => {
-      const nameField = getFieldMapping('name');
-      expect(nameField?.maxLength).toBeDefined();
-      expect(nameField?.maxLength).toBeGreaterThan(0);
+      const companyNameField = getFieldMapping('companyName');
+      expect(companyNameField?.maxLength).toBeDefined();
+      expect(companyNameField?.maxLength).toBeGreaterThan(0);
     });
 
     it('should have minValue/maxValue for year fields', () => {
@@ -350,7 +350,7 @@ describe('Excel Field Mappings Configuration', () => {
     });
 
     it('should mark critical fields as required', () => {
-      const requiredFieldNames = ['name', 'description', 'contactEmail'];
+      const requiredFieldNames = ['companyName', 'description', 'contactEmail'];
 
       requiredFieldNames.forEach(fieldName => {
         const field = getFieldMapping(fieldName);

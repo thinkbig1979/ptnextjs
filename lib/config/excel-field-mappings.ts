@@ -91,12 +91,12 @@ export const VENDOR_FIELD_MAPPINGS: FieldMapping[] = [
   // FREE TIER FIELDS (Available to all vendors)
   // ============================================================
   {
-    fieldName: 'name',
+    fieldName: 'companyName',
     excelColumn: 'Company Name',
     accessLevel: FieldAccessLevel.FREE,
     dataType: FieldDataType.STRING,
     required: true,
-    maxLength: 100,
+    maxLength: 255,
     exportable: true,
     importable: true,
     description: 'Official company name',
@@ -244,6 +244,29 @@ export const VENDOR_FIELD_MAPPINGS: FieldMapping[] = [
     description: 'Title for introduction video',
     example: 'Welcome to Acme Marine Technologies'
   },
+  {
+    fieldName: 'videoThumbnail',
+    excelColumn: 'Video Thumbnail URL',
+    accessLevel: FieldAccessLevel.TIER1,
+    dataType: FieldDataType.URL,
+    required: false,
+    exportable: true,
+    importable: false, // File upload handled separately
+    description: 'Video thumbnail image URL (file upload via dashboard)',
+    example: 'https://example.com/thumbnails/video-thumb.jpg'
+  },
+  {
+    fieldName: 'yearsInBusiness',
+    excelColumn: 'Years in Business',
+    accessLevel: FieldAccessLevel.TIER1,
+    dataType: FieldDataType.NUMBER,
+    required: false,
+    minValue: 0,
+    exportable: true,
+    importable: true,
+    description: 'Number of years in business',
+    example: '25'
+  },
 
   // ============================================================
   // TIER 2+ FIELDS (Advanced content and metrics)
@@ -259,18 +282,6 @@ export const VENDOR_FIELD_MAPPINGS: FieldMapping[] = [
     importable: true,
     description: 'Detailed company description (max 2000 chars)',
     example: 'Founded in 1995, Acme Marine Technologies has been at the forefront of...'
-  },
-  {
-    fieldName: 'mission',
-    excelColumn: 'Company Mission',
-    accessLevel: FieldAccessLevel.TIER2,
-    dataType: FieldDataType.STRING,
-    required: false,
-    maxLength: 500,
-    exportable: true,
-    importable: true,
-    description: 'Company mission statement',
-    example: 'To deliver cutting-edge marine technology that enhances safety and performance'
   },
   {
     fieldName: 'linkedinFollowers',
@@ -303,11 +314,11 @@ export const VENDOR_FIELD_MAPPINGS: FieldMapping[] = [
     dataType: FieldDataType.NUMBER,
     required: false,
     minValue: 0,
-    maxValue: 100,
+    maxValue: 10,
     exportable: true,
     importable: true,
-    description: 'Client satisfaction score (0-100)',
-    example: '95'
+    description: 'Client satisfaction score (0-10)',
+    example: '9'
   },
   {
     fieldName: 'repeatClientPercentage',
@@ -333,22 +344,6 @@ export const VENDOR_FIELD_MAPPINGS: FieldMapping[] = [
     importable: true,
     description: 'Description for introduction video',
     example: 'Learn about our innovative approach to marine navigation systems'
-  },
-
-  // ============================================================
-  // TIER 3 FIELDS (Premium features)
-  // ============================================================
-  {
-    fieldName: 'companyName',
-    excelColumn: 'Legal Company Name',
-    accessLevel: FieldAccessLevel.TIER3,
-    dataType: FieldDataType.STRING,
-    required: false,
-    maxLength: 150,
-    exportable: true,
-    importable: true,
-    description: 'Official legal company name (if different from display name)',
-    example: 'Acme Marine Technologies, Inc.'
   },
 
   // ============================================================

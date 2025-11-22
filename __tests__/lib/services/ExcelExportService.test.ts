@@ -18,7 +18,8 @@ import { Vendor } from '@/lib/types';
 describe('ExcelExportService', () => {
   const mockVendor: Partial<Vendor> = {
     id: '1',
-    name: 'Test Vendor Corp',
+    name: 'Test Vendor Corp', // Legacy field
+    companyName: 'Test Vendor Corp', // Correct field used by Excel export
     description: 'A leading provider of marine technology solutions',
     contactEmail: 'contact@testvendor.com',
     contactPhone: '+1-555-123-4567',
@@ -145,7 +146,7 @@ describe('ExcelExportService', () => {
 
     it('should handle null/undefined values gracefully', async () => {
       const vendorWithNulls: Partial<Vendor> = {
-        name: 'Test Corp',
+        companyName: 'Test Corp',
         description: 'Test description',
         contactEmail: 'test@example.com',
         website: undefined,
@@ -221,13 +222,13 @@ describe('ExcelExportService', () => {
         {
           ...mockVendor,
           id: '2',
-          name: 'Test Vendor 2',
+          companyName: 'Test Vendor 2',
           contactEmail: 'contact2@testvendor.com'
         },
         {
           ...mockVendor,
           id: '3',
-          name: 'Test Vendor 3',
+          companyName: 'Test Vendor 3',
           contactEmail: 'contact3@testvendor.com'
         }
       ];
@@ -248,8 +249,8 @@ describe('ExcelExportService', () => {
     it('should apply alternating row colors', async () => {
       const vendors: Partial<Vendor>[] = [
         mockVendor,
-        { ...mockVendor, id: '2', name: 'Vendor 2' },
-        { ...mockVendor, id: '3', name: 'Vendor 3' }
+        { ...mockVendor, id: '2', companyName: 'Vendor 2' },
+        { ...mockVendor, id: '3', companyName: 'Vendor 3' }
       ];
 
       const buffer = await ExcelExportService.exportVendors(
@@ -431,7 +432,7 @@ describe('ExcelExportService', () => {
   describe('edge cases', () => {
     it('should handle vendor with minimal data', async () => {
       const minimalVendor: Partial<Vendor> = {
-        name: 'Minimal Corp',
+        companyName: 'Minimal Corp',
         description: 'Minimal description',
         contactEmail: 'minimal@example.com'
       };
@@ -450,7 +451,7 @@ describe('ExcelExportService', () => {
 
     it('should handle very long text fields', async () => {
       const longTextVendor: Partial<Vendor> = {
-        name: 'Test Corp',
+        companyName: 'Test Corp',
         description: 'Test description',
         contactEmail: 'test@example.com',
         longDescription: 'A'.repeat(2000) // Very long description
@@ -470,7 +471,7 @@ describe('ExcelExportService', () => {
 
     it('should handle special characters in data', async () => {
       const specialCharVendor: Partial<Vendor> = {
-        name: 'Test & "Special" <Corp>',
+        companyName: 'Test & "Special" <Corp>',
         description: 'Description with\nnewlines\tand\ttabs',
         contactEmail: 'test@example.com'
       };
