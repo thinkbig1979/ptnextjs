@@ -224,9 +224,14 @@ export class ExcelExportService {
   }
 
   /**
-   * Get value from vendor object by field name (handles nested properties)
+   * Get value from vendor object by field name (handles nested properties and HQ location)
    */
   private static getVendorFieldValue(vendor: any, fieldName: string): any {
+    // Handle HQ location fields (extract from locations array)
+    if (fieldName === 'hqAddress' || fieldName === 'hqCity' || fieldName === 'hqCountry') {
+      return this.getHQLocationField(vendor, fieldName);
+    }
+
     // Handle nested properties (e.g., 'contact.email')
     const parts = fieldName.split('.');
     let value = vendor;
@@ -237,6 +242,32 @@ export class ExcelExportService {
     }
 
     return value;
+  }
+
+  /**
+   * Extract HQ location field from vendor locations array
+   */
+  private static getHQLocationField(vendor: any, fieldName: string): string | null {
+    // Find HQ location from locations array
+    const locations = vendor.locations || [];
+    const hqLocation = locations.find((loc: any) => loc.isHQ === true);
+
+    // Fall back to legacy location field if no HQ found in array
+    const location = hqLocation || vendor.location;
+
+    if (!location) return null;
+
+    // Map fieldName to location property
+    switch (fieldName) {
+      case 'hqAddress':
+        return location.address || null;
+      case 'hqCity':
+        return location.city || null;
+      case 'hqCountry':
+        return location.country || null;
+      default:
+        return null;
+    }
   }
 
   /**

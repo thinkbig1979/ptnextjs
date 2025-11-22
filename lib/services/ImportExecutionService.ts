@@ -259,7 +259,21 @@ export class ImportExecutionService {
   ): FieldChange[] {
     const changes: FieldChange[] = [];
 
+    // Handle HQ location fields - transform into locations array
+    const hqFields = this.extractHQFields(newData);
+    if (hqFields) {
+      const locationChange = this.buildHQLocationChange(currentVendor, hqFields, overwrite);
+      if (locationChange) {
+        changes.push(locationChange);
+      }
+    }
+
     for (const [field, newValue] of Object.entries(newData)) {
+      // Skip HQ fields - already handled above
+      if (field === 'hqAddress' || field === 'hqCity' || field === 'hqCountry') {
+        continue;
+      }
+
       const oldValue = this.getNestedValue(currentVendor, field);
 
       // Determine if we should apply this change
@@ -290,6 +304,89 @@ export class ImportExecutionService {
     }
 
     return changes;
+  }
+
+  /**
+   * Extract HQ location fields from parsed data
+   */
+  private static extractHQFields(newData: Record<string, any>): { address?: string; city?: string; country?: string } | null {
+    const hqAddress = newData['hqAddress'];
+    const hqCity = newData['hqCity'];
+    const hqCountry = newData['hqCountry'];
+
+    if (!hqAddress && !hqCity && !hqCountry) {
+      return null;
+    }
+
+    return {
+      address: hqAddress || undefined,
+      city: hqCity || undefined,
+      country: hqCountry || undefined
+    };
+  }
+
+  /**
+   * Build location change for HQ fields
+   */
+  private static buildHQLocationChange(
+    currentVendor: Partial<Vendor>,
+    hqFields: { address?: string; city?: string; country?: string },
+    overwrite: boolean
+  ): FieldChange | null {
+    const currentLocations = (currentVendor as any).locations || [];
+    const hasAnyHQData = hqFields.address || hqFields.city || hqFields.country;
+
+    if (!hasAnyHQData) {
+      return null;
+    }
+
+    // Find existing HQ location
+    const hqIndex = currentLocations.findIndex((loc: any) => loc.isHQ === true);
+    const existingHQ = hqIndex >= 0 ? currentLocations[hqIndex] : null;
+
+    // Build new locations array
+    let newLocations: any[];
+
+    if (existingHQ) {
+      // Update existing HQ
+      const updatedHQ = {
+        ...existingHQ,
+        address: (overwrite || !existingHQ.address) && hqFields.address ? hqFields.address : existingHQ.address,
+        city: (overwrite || !existingHQ.city) && hqFields.city ? hqFields.city : existingHQ.city,
+        country: (overwrite || !existingHQ.country) && hqFields.country ? hqFields.country : existingHQ.country
+      };
+
+      // Check if anything actually changed
+      const hasChanges =
+        updatedHQ.address !== existingHQ.address ||
+        updatedHQ.city !== existingHQ.city ||
+        updatedHQ.country !== existingHQ.country;
+
+      if (!hasChanges) {
+        return null;
+      }
+
+      newLocations = [...currentLocations];
+      newLocations[hqIndex] = updatedHQ;
+    } else {
+      // Create new HQ location
+      const newHQ = {
+        address: hqFields.address || '',
+        city: hqFields.city || '',
+        country: hqFields.country || '',
+        isHQ: true,
+        latitude: null,
+        longitude: null
+      };
+      newLocations = [...currentLocations, newHQ];
+    }
+
+    return {
+      field: 'locations',
+      oldValue: currentLocations,
+      newValue: newLocations,
+      changed: true
+    };
   }
 
   /**

@@ -267,14 +267,48 @@ export const VENDOR_FIELD_MAPPINGS: FieldMapping[] = [
     description: 'Number of years in business',
     example: '25'
   },
-
-  // ============================================================
-  // TIER 2+ FIELDS (Advanced content and metrics)
-  // ============================================================
+  // HQ Location fields (Tier 1 vendors get single HQ location)
+  {
+    fieldName: 'hqAddress',
+    excelColumn: 'HQ Address',
+    accessLevel: FieldAccessLevel.TIER1,
+    dataType: FieldDataType.STRING,
+    required: false,
+    maxLength: 500,
+    exportable: true,
+    importable: true,
+    description: 'Headquarters full address',
+    example: '123 Harbor View Drive, Fort Lauderdale, FL 33316'
+  },
+  {
+    fieldName: 'hqCity',
+    excelColumn: 'HQ City',
+    accessLevel: FieldAccessLevel.TIER1,
+    dataType: FieldDataType.STRING,
+    required: false,
+    maxLength: 255,
+    exportable: true,
+    importable: true,
+    description: 'Headquarters city',
+    example: 'Fort Lauderdale'
+  },
+  {
+    fieldName: 'hqCountry',
+    excelColumn: 'HQ Country',
+    accessLevel: FieldAccessLevel.TIER1,
+    dataType: FieldDataType.STRING,
+    required: false,
+    maxLength: 255,
+    exportable: true,
+    importable: true,
+    description: 'Headquarters country',
+    example: 'United States'
+  },
+  // Detailed content (aligned with tierConfig.ts - available from Tier 1)
   {
     fieldName: 'longDescription',
     excelColumn: 'Detailed Description',
-    accessLevel: FieldAccessLevel.TIER2,
+    accessLevel: FieldAccessLevel.TIER1,
     dataType: FieldDataType.STRING,
     required: false,
     maxLength: 2000,
@@ -283,10 +317,11 @@ export const VENDOR_FIELD_MAPPINGS: FieldMapping[] = [
     description: 'Detailed company description (max 2000 chars)',
     example: 'Founded in 1995, Acme Marine Technologies has been at the forefront of...'
   },
+  // Social metrics (aligned with tierConfig.ts - available from Tier 1)
   {
     fieldName: 'linkedinFollowers',
     excelColumn: 'LinkedIn Followers',
-    accessLevel: FieldAccessLevel.TIER2,
+    accessLevel: FieldAccessLevel.TIER1,
     dataType: FieldDataType.NUMBER,
     required: false,
     minValue: 0,
@@ -298,7 +333,7 @@ export const VENDOR_FIELD_MAPPINGS: FieldMapping[] = [
   {
     fieldName: 'instagramFollowers',
     excelColumn: 'Instagram Followers',
-    accessLevel: FieldAccessLevel.TIER2,
+    accessLevel: FieldAccessLevel.TIER1,
     dataType: FieldDataType.NUMBER,
     required: false,
     minValue: 0,
@@ -307,10 +342,11 @@ export const VENDOR_FIELD_MAPPINGS: FieldMapping[] = [
     description: 'Number of Instagram followers',
     example: '8500'
   },
+  // Client metrics (aligned with tierConfig.ts - available from Tier 1)
   {
     fieldName: 'clientSatisfactionScore',
     excelColumn: 'Client Satisfaction Score',
-    accessLevel: FieldAccessLevel.TIER2,
+    accessLevel: FieldAccessLevel.TIER1,
     dataType: FieldDataType.NUMBER,
     required: false,
     minValue: 0,
@@ -323,7 +359,7 @@ export const VENDOR_FIELD_MAPPINGS: FieldMapping[] = [
   {
     fieldName: 'repeatClientPercentage',
     excelColumn: 'Repeat Client Percentage',
-    accessLevel: FieldAccessLevel.TIER2,
+    accessLevel: FieldAccessLevel.TIER1,
     dataType: FieldDataType.NUMBER,
     required: false,
     minValue: 0,
@@ -336,7 +372,7 @@ export const VENDOR_FIELD_MAPPINGS: FieldMapping[] = [
   {
     fieldName: 'videoDescription',
     excelColumn: 'Video Description',
-    accessLevel: FieldAccessLevel.TIER2,
+    accessLevel: FieldAccessLevel.TIER1,
     dataType: FieldDataType.STRING,
     required: false,
     maxLength: 500,
@@ -345,6 +381,22 @@ export const VENDOR_FIELD_MAPPINGS: FieldMapping[] = [
     description: 'Description for introduction video',
     example: 'Learn about our innovative approach to marine navigation systems'
   },
+  // Service areas (aligned with tierConfig.ts - available from Tier 1)
+  {
+    fieldName: 'serviceAreas',
+    excelColumn: 'Service Areas',
+    accessLevel: FieldAccessLevel.TIER1,
+    dataType: FieldDataType.ARRAY_STRING,
+    required: false,
+    exportable: true,
+    importable: true,
+    description: 'Comma-separated list of service areas/regions',
+    example: 'Mediterranean, Caribbean, Pacific Northwest'
+  },
+
+  // ============================================================
+  // TIER 2+ FIELDS (Multiple locations and advanced features)
+  // ============================================================
 
   // ============================================================
   // ADMIN-ONLY FIELDS (Not available for vendor import)
