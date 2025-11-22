@@ -181,11 +181,12 @@ export function LocationsManagerCard({ vendor, onUpdate }: LocationsManagerCardP
 
     try {
       // Call the backend API to update vendor locations
-      const response = await fetch(`/api/vendors/${vendor.id}`, {
+      const response = await fetch(`/api/portal/vendors/${vendor.id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include', // Include auth cookies
         body: JSON.stringify({
           locations: locations,
         }),
