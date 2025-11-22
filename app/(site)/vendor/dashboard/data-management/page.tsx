@@ -4,6 +4,9 @@ import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/context/AuthContext';
 import { Loader2 } from 'lucide-react';
+import { ExcelExportCard } from '@/components/dashboard/ExcelExportCard';
+import { ExcelImportCard } from '@/components/dashboard/ExcelImportCard';
+import { ImportHistoryCard } from '@/components/dashboard/ImportHistoryCard';
 
 /**
  * DataManagementPage Component
@@ -71,37 +74,15 @@ export default function DataManagementPage() {
       {/* Main Content Grid */}
       <div className="grid gap-6 md:grid-cols-2">
         {/* Export Section */}
-        <div className="border rounded-lg p-6">
-          <h2 className="text-xl font-semibold mb-2">Excel Export</h2>
-          <p className="text-sm text-muted-foreground mb-4">
-            Export your vendor data to Excel format
-          </p>
-          <p className="text-sm text-muted-foreground italic">
-            Component: ExcelExportCard (will be implemented in FE-3)
-          </p>
-        </div>
+        <ExcelExportCard />
 
         {/* Import Section */}
-        <div className="border rounded-lg p-6">
-          <h2 className="text-xl font-semibold mb-2">Excel Import</h2>
-          <p className="text-sm text-muted-foreground mb-4">
-            Import vendor data from Excel files
-          </p>
-          <p className="text-sm text-muted-foreground italic">
-            Component: ExcelImportCard (will be implemented in FE-4)
-          </p>
-        </div>
+        <ExcelImportCard />
       </div>
 
       {/* Import History Section (Full Width) */}
-      <div className="w-full border rounded-lg p-6">
-        <h2 className="text-xl font-semibold mb-2">Import History</h2>
-        <p className="text-sm text-muted-foreground mb-4">
-          View your import history and status
-        </p>
-        <p className="text-sm text-muted-foreground italic">
-          Component: ImportHistoryCard (will be implemented in FE-5)
-        </p>
+      <div className="w-full">
+        <ImportHistoryCard />
       </div>
     </div>
   );
