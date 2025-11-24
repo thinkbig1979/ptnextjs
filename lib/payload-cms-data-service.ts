@@ -547,6 +547,18 @@ class PayloadCMSDataService {
     // Convert Lexical JSON to HTML string
     const content = this.lexicalToHtml(doc.content);
 
+    // Handle featuredImage - can be a media object (relationship) or string (legacy)
+    let imageUrl = '';
+    if (doc.featuredImage) {
+      if (typeof doc.featuredImage === 'object' && doc.featuredImage.url) {
+        // It's a media relationship object
+        imageUrl = this.transformMediaPath(doc.featuredImage.url);
+      } else if (typeof doc.featuredImage === 'string') {
+        // It's a legacy string URL
+        imageUrl = this.transformMediaPath(doc.featuredImage);
+      }
+    }
+
     return {
       id: doc.id.toString(),
       slug: doc.slug,
@@ -557,7 +569,7 @@ class PayloadCMSDataService {
       publishedAt: doc.publishedAt || doc.createdAt,
       category: doc.categories?.[0]?.name || '',
       tags: doc.tags?.map((tag: any) => tag.tag) || [],
-      image: this.transformMediaPath(doc.featuredImage || ''),
+      image: imageUrl,
       featured: doc.published || false,
       readTime: '5 min',
     };
