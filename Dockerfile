@@ -80,7 +80,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 # We just need to set up the working directory
 RUN addgroup --system --gid 996 nodejs && \
     adduser --system --uid 1005 nextjs && \
-    mkdir -p /app /data /app/media && \
+    mkdir -p /app /data /app/media /app/.next/cache && \
     chown -R nextjs:nodejs /app /data
 
 # Copy standalone Next.js output from builder
@@ -106,7 +106,8 @@ RUN chmod +x ./docker-entrypoint.sh
 # Create volume mount points
 # /data: SQLite database persistence
 # /app/media: Media uploads persistence
-VOLUME ["/data", "/app/media"]
+# /app/.next/cache: ISR cache for incremental static regeneration
+VOLUME ["/data", "/app/media", "/app/.next/cache"]
 
 # Expose application port
 EXPOSE 3000

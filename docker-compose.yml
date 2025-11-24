@@ -34,6 +34,8 @@ services:
       - ./data:/data
       # Media uploads persistence
       - ./media:/app/media
+      # ISR cache for incremental static regeneration
+      - ./cache:/app/.next/cache
 
     # Network configuration
     networks:
