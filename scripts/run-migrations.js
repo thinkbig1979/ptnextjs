@@ -92,57 +92,9 @@ const migrations = [
 
       console.log(`  📊 Migration summary: ${migratedCount} migrated, ${notFoundCount} not found`);
 
-      console.log('  📝 Step 3: Dropping old featured_image column...');
-      // SQLite doesn't support DROP COLUMN directly, so we need to recreate the table
-      try {
-        // Check if featured_image column exists
-        const tableInfo = await db.execute(`PRAGMA table_info(blog_posts)`);
-        const hasFeaturedImage = tableInfo.rows.some(col => col.name === 'featured_image');
-
-        if (!hasFeaturedImage) {
-          console.log('  ✓ Legacy featured_image column already removed');
-        } else {
-          // Disable foreign key constraints during table recreation
-          await db.execute(`PRAGMA foreign_keys = OFF`);
-
-          // Get all columns except featured_image
-          const columns = tableInfo.rows
-            .filter(col => col.name !== 'featured_image')
-            .map(col => col.name)
-            .join(', ');
-
-          // Recreate table without featured_image column, preserving data and structure
-          await db.execute(`BEGIN TRANSACTION`);
-
-          // Create new table with proper schema (without featured_image)
-          await db.execute(`CREATE TABLE blog_posts_new AS SELECT ${columns} FROM blog_posts`);
-
-          // Drop old table
-          await db.execute(`DROP TABLE blog_posts`);
-
-          // Rename new table
-          await db.execute(`ALTER TABLE blog_posts_new RENAME TO blog_posts`);
-
-          // Recreate indexes (Payload will auto-create these on next startup, but we'll add the unique slug index)
-          await db.execute(`CREATE UNIQUE INDEX IF NOT EXISTS blog_posts_slug_idx ON blog_posts(slug)`);
-
-          await db.execute(`COMMIT`);
-
-          // Re-enable foreign key constraints
-          await db.execute(`PRAGMA foreign_keys = ON`);
-
-          console.log('  ✓ Removed legacy featured_image column');
-        }
-      } catch (error) {
-        console.log('  ⚠️  Could not drop featured_image column (non-critical):', error.message);
-        // Try to rollback if we're in a transaction
-        try {
-          await db.execute(`ROLLBACK`);
-          await db.execute(`PRAGMA foreign_keys = ON`);
-        } catch (rollbackError) {
-          // Ignore rollback errors
-        }
-      }
+      console.log('  📝 Step 3: Cleanup complete');
+      console.log('  ℹ️  Note: Legacy featured_image column kept for backward compatibility');
+      console.log('  ℹ️  Payload will use featured_image_id from blog_posts_rels table')
     },
   },
   // Add more migrations as needed:
