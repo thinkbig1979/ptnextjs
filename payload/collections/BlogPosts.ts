@@ -82,10 +82,10 @@ const BlogPosts: CollectionConfig = {
     // Featured Image
     {
       name: 'featuredImage',
-      type: 'text',
-      maxLength: 500,
+      type: 'upload',
+      relationTo: 'media',
       admin: {
-        description: 'Featured image URL',
+        description: 'Featured image for blog post',
       },
     },
 

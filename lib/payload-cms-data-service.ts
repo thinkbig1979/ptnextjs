@@ -557,6 +557,7 @@ class PayloadCMSDataService {
       publishedAt: doc.publishedAt || doc.createdAt,
       category: doc.categories?.[0]?.name || '',
       tags: doc.tags?.map((tag: any) => tag.tag) || [],
+      // transformMediaPath handles both string URLs (legacy) and media objects (relationship)
       image: this.transformMediaPath(doc.featuredImage || ''),
       featured: doc.published || false,
       readTime: '5 min',
