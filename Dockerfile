@@ -8,8 +8,8 @@
 # ============================================
 FROM node:22-alpine AS deps
 
-# Install libc6-compat for compatibility with native modules
-RUN apk add --no-cache libc6-compat
+# Install libc6-compat and build tools for native modules
+RUN apk add --no-cache libc6-compat python3 make g++
 
 WORKDIR /app
 
