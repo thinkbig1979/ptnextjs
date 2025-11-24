@@ -22,10 +22,18 @@ const migrations = [
   },
   {
     name: 'blog_featured_image_to_upload_relationship',
-    check: `SELECT COUNT(*) as count FROM pragma_table_info('blog_posts') WHERE name = 'featured_image_id'`,
+    check: `SELECT COUNT(*) as count FROM pragma_table_info('blog_posts_rels') WHERE name = 'media_id'`,
     up: async (db) => {
-      console.log('  📝 Step 1: Adding featured_image_id column...');
-      await db.execute(`ALTER TABLE blog_posts ADD COLUMN featured_image_id INTEGER`);
+      console.log('  📝 Step 1: Adding media_id column to blog_posts_rels...');
+      await db.execute(`ALTER TABLE blog_posts_rels ADD COLUMN media_id INTEGER`);
+
+      // Check if featured_image_id column already exists
+      const blogPostsCols = await db.execute(`PRAGMA table_info(blog_posts)`);
+      const hasFeaturedImageId = blogPostsCols.rows.some(col => col.name === 'featured_image_id');
+
+      if (!hasFeaturedImageId) {
+        await db.execute(`ALTER TABLE blog_posts ADD COLUMN featured_image_id INTEGER`);
+      }
 
       console.log('  📝 Step 2: Migrating existing featured_image URLs to media relationships...');
 
@@ -55,10 +63,25 @@ const migrations = [
         );
 
         if (matchingMedia) {
+          // Update blog_posts table
           await db.execute({
             sql: `UPDATE blog_posts SET featured_image_id = ? WHERE id = ?`,
             args: [matchingMedia.id, post.id]
           });
+
+          // Insert into blog_posts_rels table for Payload relationship
+          // Get max order for this parent
+          const maxOrderResult = await db.execute({
+            sql: `SELECT COALESCE(MAX("order"), 0) as max_order FROM blog_posts_rels WHERE parent_id = ?`,
+            args: [post.id]
+          });
+          const nextOrder = (maxOrderResult.rows[0]?.max_order || 0) + 1;
+
+          await db.execute({
+            sql: `INSERT INTO blog_posts_rels (parent_id, path, media_id, "order") VALUES (?, ?, ?, ?)`,
+            args: [post.id, 'featuredImage', matchingMedia.id, nextOrder]
+          });
+
           console.log(`    ✓ Post ${post.id}: "${featuredImage}" -> Media ID ${matchingMedia.id}`);
           migratedCount++;
         } else {
