@@ -68,6 +68,7 @@ docs
 
 # Deployment scripts (not needed in container)
 scripts/*.sh
+!scripts/docker-entrypoint.sh
 docker
 
 # Backup files
