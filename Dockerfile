@@ -98,6 +98,11 @@ COPY --from=builder --chown=nextjs:nodejs /app/node_modules/libsql ./node_module
 COPY --from=builder --chown=nextjs:nodejs /app/payload.config.ts ./
 COPY --from=builder --chown=nextjs:nodejs /app/package.json ./
 
+# Copy migration scripts for runtime schema sync
+COPY --from=builder --chown=nextjs:nodejs /app/scripts/run-migrations.js ./run-migrations.js
+COPY --from=builder --chown=nextjs:nodejs /app/scripts/docker-entrypoint.sh ./docker-entrypoint.sh
+RUN chmod +x ./docker-entrypoint.sh
+
 # Create volume mount points
 # /data: SQLite database persistence
 # /app/media: Media uploads persistence
@@ -120,6 +125,6 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
 # This ensures graceful shutdown on SIGTERM
 ENTRYPOINT ["/sbin/tini", "--"]
 
-# Start the Next.js server
-# The standalone build includes a minimal server.js
-CMD ["node", "server.js"]
+# Start via entrypoint script which handles migrations
+# before starting the Next.js server
+CMD ["./docker-entrypoint.sh"]
