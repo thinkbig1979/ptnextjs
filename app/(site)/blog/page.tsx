@@ -9,7 +9,8 @@ import { BlogClient } from "./_components/blog-client";
 import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
 
 // ISR: Revalidate every 10 minutes in production
-export const dynamic = 'force-static';
+// Use 'auto' to allow ISR revalidation (force-static blocks it)
+export const dynamic = 'auto';
 export const revalidate = 600;
 
 export default async function BlogPage() {
