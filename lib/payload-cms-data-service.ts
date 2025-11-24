@@ -564,8 +564,20 @@ class PayloadCMSDataService {
   }
 
   private lexicalToHtml(lexicalData: any): string {
-    if (!lexicalData || typeof lexicalData === 'string') {
-      return lexicalData || '';
+    if (!lexicalData) {
+      return '';
+    }
+
+    // Parse JSON string if needed
+    let data = lexicalData;
+    if (typeof lexicalData === 'string') {
+      try {
+        data = JSON.parse(lexicalData);
+      } catch (e) {
+        // If it's not JSON, return as-is (might be plain HTML/text)
+        console.error('Failed to parse Lexical JSON:', e);
+        return lexicalData;
+      }
     }
 
     // Basic Lexical to HTML converter
@@ -582,7 +594,7 @@ class PayloadCMSDataService {
           return `<p>${content}</p>`;
 
         case 'heading':
-          const tag = `h${node.tag || '2'}`;
+          const tag = node.tag || 'h2';
           const headingContent = node.children?.map(convertNode).join('') || '';
           return `<${tag}>${headingContent}</${tag}>`;
 
@@ -627,7 +639,9 @@ class PayloadCMSDataService {
     };
 
     try {
-      return convertNode(lexicalData);
+      // Start from root if data has a root property
+      const rootNode = data.root || data;
+      return convertNode(rootNode);
     } catch (error) {
       console.error('Error converting Lexical to HTML:', error);
       return '';
