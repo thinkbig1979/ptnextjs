@@ -43,6 +43,13 @@ COPY data ./data
 # These are needed for the build process but not runtime
 RUN npm ci --legacy-peer-deps
 
+# Copy migration scripts and run migrations BEFORE build
+# This ensures database schema is up-to-date for static generation
+COPY scripts/run-migrations.js ./scripts/run-migrations.js
+RUN echo "🔄 Running pre-build database migrations..." && \
+    DATABASE_URL="file:./data/payload.db" node scripts/run-migrations.js && \
+    echo "✅ Pre-build migrations complete"
+
 # Build arguments for runtime configuration
 # These must be provided at build time for Next.js to bake into the static bundle
 ARG NEXT_PUBLIC_SERVER_URL
