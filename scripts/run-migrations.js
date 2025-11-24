@@ -97,6 +97,92 @@ const migrations = [
       console.log('  ℹ️  Payload will use featured_image_id from blog_posts_rels table')
     },
   },
+  {
+    name: 'repair_blog_posts_foreign_keys',
+    check: `SELECT COUNT(*) as count FROM sqlite_master WHERE type='table' AND name='blog_posts_repair_temp'`,
+    up: async (db) => {
+      console.log('  🔧 Repairing blog_posts table foreign keys...');
+
+      try {
+        // First, check if foreign keys are actually broken
+        await db.execute(`PRAGMA foreign_key_check(blog_posts)`);
+        console.log('  ✓ Foreign keys are valid, no repair needed');
+        return;
+      } catch (fkError) {
+        console.log('  ⚠️  Foreign key issues detected, proceeding with repair...');
+      }
+
+      try {
+        // Disable foreign keys for repair
+        await db.execute(`PRAGMA foreign_keys = OFF`);
+        await db.execute(`BEGIN TRANSACTION`);
+
+        // Get current table structure
+        const tableInfo = await db.execute(`SELECT sql FROM sqlite_master WHERE type='table' AND name='blog_posts'`);
+        const createTableSql = tableInfo.rows[0]?.sql;
+
+        if (!createTableSql) {
+          throw new Error('Could not get blog_posts table schema');
+        }
+
+        console.log('  📝 Backing up blog_posts data...');
+
+        // Create temp table with all data
+        await db.execute(`CREATE TABLE blog_posts_repair_temp AS SELECT * FROM blog_posts`);
+
+        console.log('  🔄 Recreating blog_posts table with proper foreign keys...');
+
+        // Drop and recreate the table (this resets foreign keys)
+        await db.execute(`DROP TABLE blog_posts`);
+
+        // Recreate table with original schema
+        await db.execute(createTableSql);
+
+        console.log('  📥 Restoring blog_posts data...');
+
+        // Copy data back
+        const columns = await db.execute(`PRAGMA table_info(blog_posts)`);
+        const columnNames = columns.rows.map(col => col.name).join(', ');
+
+        await db.execute(`INSERT INTO blog_posts SELECT ${columnNames} FROM blog_posts_repair_temp`);
+
+        // Drop temp table
+        await db.execute(`DROP TABLE blog_posts_repair_temp`);
+
+        console.log('  🔍 Recreating indexes...');
+
+        // Recreate indexes
+        await db.execute(`CREATE UNIQUE INDEX IF NOT EXISTS blog_posts_slug_idx ON blog_posts(slug)`);
+        await db.execute(`CREATE INDEX IF NOT EXISTS blog_posts_author_idx ON blog_posts(author_id)`);
+        await db.execute(`CREATE INDEX IF NOT EXISTS blog_posts_updated_at_idx ON blog_posts(updated_at)`);
+        await db.execute(`CREATE INDEX IF NOT EXISTS blog_posts_created_at_idx ON blog_posts(created_at)`);
+
+        await db.execute(`COMMIT`);
+        await db.execute(`PRAGMA foreign_keys = ON`);
+
+        console.log('  ✅ Foreign keys repaired successfully');
+
+        // Verify repair
+        try {
+          await db.execute(`PRAGMA foreign_key_check(blog_posts)`);
+          console.log('  ✓ Foreign key validation passed');
+        } catch (error) {
+          console.warn('  ⚠️  Foreign key validation warning:', error.message);
+        }
+
+      } catch (error) {
+        console.error('  ❌ Repair failed:', error.message);
+        try {
+          await db.execute(`ROLLBACK`);
+          await db.execute(`DROP TABLE IF EXISTS blog_posts_repair_temp`);
+          await db.execute(`PRAGMA foreign_keys = ON`);
+        } catch (rollbackError) {
+          console.error('  ❌ Rollback failed:', rollbackError.message);
+        }
+        throw error;
+      }
+    },
+  },
   // Add more migrations as needed:
   // {
   //   name: 'migration_name',
