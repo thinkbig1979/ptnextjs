@@ -70,9 +70,23 @@ const migrations = [
       console.log(`  📊 Migration summary: ${migratedCount} migrated, ${notFoundCount} not found`);
 
       console.log('  📝 Step 3: Dropping old featured_image column...');
-      // SQLite doesn't support DROP COLUMN directly, so we'll keep both columns
-      // The old column will be ignored by the new schema
-      console.log('  ℹ️  Keeping legacy featured_image column for rollback capability');
+      // SQLite doesn't support DROP COLUMN directly, so we need to recreate the table
+      try {
+        // Get all columns except featured_image
+        const tableInfo = await db.execute(`PRAGMA table_info(blog_posts)`);
+        const columns = tableInfo.rows
+          .filter(col => col.name !== 'featured_image')
+          .map(col => col.name)
+          .join(', ');
+
+        // Recreate table without featured_image column
+        await db.execute(`CREATE TABLE blog_posts_new AS SELECT ${columns} FROM blog_posts`);
+        await db.execute(`DROP TABLE blog_posts`);
+        await db.execute(`ALTER TABLE blog_posts_new RENAME TO blog_posts`);
+        console.log('  ✓ Removed legacy featured_image column');
+      } catch (error) {
+        console.log('  ⚠️  Could not drop featured_image column (non-critical):', error.message);
+      }
     },
   },
   // Add more migrations as needed:
