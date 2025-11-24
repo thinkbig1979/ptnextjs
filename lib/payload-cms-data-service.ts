@@ -544,12 +544,15 @@ class PayloadCMSDataService {
   }
 
   private transformPayloadBlogPost(doc: any): BlogPost {
+    // Convert Lexical JSON to HTML string
+    const content = this.lexicalToHtml(doc.content);
+
     return {
       id: doc.id.toString(),
       slug: doc.slug,
       title: doc.title,
       excerpt: doc.excerpt || '',
-      content: doc.content || '',
+      content,
       author: doc.author?.email || '',
       publishedAt: doc.publishedAt || doc.createdAt,
       category: doc.categories?.[0]?.name || '',
@@ -558,6 +561,77 @@ class PayloadCMSDataService {
       featured: doc.published || false,
       readTime: '5 min',
     };
+  }
+
+  private lexicalToHtml(lexicalData: any): string {
+    if (!lexicalData || typeof lexicalData === 'string') {
+      return lexicalData || '';
+    }
+
+    // Basic Lexical to HTML converter
+    // This handles the most common node types
+    const convertNode = (node: any): string => {
+      if (!node) return '';
+
+      switch (node.type) {
+        case 'root':
+          return node.children?.map(convertNode).join('') || '';
+
+        case 'paragraph':
+          const content = node.children?.map(convertNode).join('') || '';
+          return `<p>${content}</p>`;
+
+        case 'heading':
+          const tag = `h${node.tag || '2'}`;
+          const headingContent = node.children?.map(convertNode).join('') || '';
+          return `<${tag}>${headingContent}</${tag}>`;
+
+        case 'text':
+          let text = node.text || '';
+          if (node.format) {
+            if (node.format & 1) text = `<strong>${text}</strong>`;
+            if (node.format & 2) text = `<em>${text}</em>`;
+            if (node.format & 4) text = `<u>${text}</u>`;
+            if (node.format & 8) text = `<code>${text}</code>`;
+          }
+          return text;
+
+        case 'link':
+          const linkContent = node.children?.map(convertNode).join('') || '';
+          return `<a href="${node.url || ''}" target="${node.newTab ? '_blank' : '_self'}" rel="${node.newTab ? 'noopener noreferrer' : ''}">${linkContent}</a>`;
+
+        case 'list':
+          const listTag = node.listType === 'number' ? 'ol' : 'ul';
+          const listContent = node.children?.map(convertNode).join('') || '';
+          return `<${listTag}>${listContent}</${listTag}>`;
+
+        case 'listitem':
+          const itemContent = node.children?.map(convertNode).join('') || '';
+          return `<li>${itemContent}</li>`;
+
+        case 'quote':
+          const quoteContent = node.children?.map(convertNode).join('') || '';
+          return `<blockquote>${quoteContent}</blockquote>`;
+
+        case 'code':
+          const codeContent = node.children?.map(convertNode).join('') || '';
+          return `<pre><code>${codeContent}</code></pre>`;
+
+        case 'linebreak':
+          return '<br />';
+
+        default:
+          // For unknown node types, try to process children
+          return node.children?.map(convertNode).join('') || '';
+      }
+    };
+
+    try {
+      return convertNode(lexicalData);
+    } catch (error) {
+      console.error('Error converting Lexical to HTML:', error);
+      return '';
+    }
   }
 
   private transformPayloadTeamMember(doc: any): TeamMember {
