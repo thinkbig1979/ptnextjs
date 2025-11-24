@@ -1,5 +1,3 @@
-
-
 import * as React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +7,10 @@ import Link from "next/link";
 import { formatDate } from "@/lib/utils";
 import { BlogClient } from "./_components/blog-client";
 import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
+
+// ISR: Revalidate every 10 minutes in production
+export const dynamic = 'force-static';
+export const revalidate = 600;
 
 export default async function BlogPage() {
   // Fetch data at build time
