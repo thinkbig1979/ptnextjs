@@ -1460,6 +1460,41 @@ class PayloadCMSDataService {
     }
   }
 
+  /**
+   * Clear blog-related cache entries
+   * Call this when a blog post is created, updated, or deleted
+   */
+  clearBlogCache(blogSlug?: string): void {
+    let deletedCount = 0;
+
+    if (blogSlug) {
+      // Clear specific blog post cache
+      const keysToDelete = [
+        `blog-post:${blogSlug}`,
+      ];
+
+      keysToDelete.forEach(key => {
+        if (this.cache.has(key)) {
+          this.cache.delete(key);
+          console.log(`[Cache] ✓ Deleted: ${key}`);
+          deletedCount++;
+        }
+      });
+    }
+
+    // Always clear the blog posts list since it may be affected
+    const listKeys = ['blog-posts', 'blog-categories', 'popular-tags'];
+    listKeys.forEach(key => {
+      if (this.cache.has(key)) {
+        this.cache.delete(key);
+        console.log(`[Cache] ✓ Deleted list: ${key}`);
+        deletedCount++;
+      }
+    });
+
+    console.log(`[Cache] Cleared ${deletedCount} blog cache entries${blogSlug ? ` for: ${blogSlug}` : ''}`);
+  }
+
   getCacheStats(): { hits: number; misses: number; size: number } {
     return {
       hits: 0,
