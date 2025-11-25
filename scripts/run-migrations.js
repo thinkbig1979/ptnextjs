@@ -109,19 +109,51 @@ const migrations = [
 
         if (fkCheck.rows && fkCheck.rows.length > 0) {
           console.log(`  ⚠️  Found ${fkCheck.rows.length} foreign key violations`);
-          console.log('  🗑️  Dropping payload_locked_documents tables (will be recreated by Payload)...');
+          console.log('  🔧  Recreating payload_locked_documents tables with correct schema...');
 
           // Disable foreign keys temporarily
           await db.execute(`PRAGMA foreign_keys = OFF`);
 
-          // Drop the locked documents tables - they'll be recreated with correct schema
+          // Drop the locked documents tables
           await db.execute(`DROP TABLE IF EXISTS payload_locked_documents_rels`);
           await db.execute(`DROP TABLE IF EXISTS payload_locked_documents`);
+
+          // Recreate payload_locked_documents table with minimal schema
+          await db.execute(`
+            CREATE TABLE IF NOT EXISTS payload_locked_documents (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              global_slug TEXT,
+              updated_at INTEGER DEFAULT (cast((julianday('now') - 2440587.5) * 86400000 as integer)),
+              created_at INTEGER DEFAULT (cast((julianday('now') - 2440587.5) * 86400000 as integer))
+            )
+          `);
+
+          // Recreate payload_locked_documents_rels table with correct foreign keys
+          await db.execute(`
+            CREATE TABLE IF NOT EXISTS payload_locked_documents_rels (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              "order" INTEGER,
+              parent_id INTEGER NOT NULL REFERENCES payload_locked_documents(id) ON DELETE CASCADE,
+              path TEXT NOT NULL,
+              users_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+              media_id INTEGER REFERENCES media(id) ON DELETE CASCADE,
+              vendors_id INTEGER REFERENCES vendors(id) ON DELETE CASCADE,
+              products_id INTEGER REFERENCES products(id) ON DELETE CASCADE,
+              categories_id INTEGER REFERENCES categories(id) ON DELETE CASCADE,
+              blog_posts_id INTEGER REFERENCES blog_posts(id) ON DELETE CASCADE,
+              team_members_id INTEGER REFERENCES team_members(id) ON DELETE CASCADE,
+              company_info_id INTEGER REFERENCES company_info(id) ON DELETE CASCADE,
+              tags_id INTEGER REFERENCES tags(id) ON DELETE CASCADE,
+              yachts_id INTEGER REFERENCES yachts(id) ON DELETE CASCADE,
+              tier_upgrade_requests_id INTEGER REFERENCES tier_upgrade_requests(id) ON DELETE CASCADE,
+              import_history_id INTEGER REFERENCES import_history(id) ON DELETE CASCADE
+            )
+          `);
 
           // Re-enable foreign keys
           await db.execute(`PRAGMA foreign_keys = ON`);
 
-          console.log('  ✅ Dropped locked documents tables - Payload will recreate them correctly');
+          console.log('  ✅ Recreated locked documents tables with correct schema');
         } else {
           console.log('  ✓ No foreign key violations detected');
         }
@@ -138,6 +170,53 @@ const migrations = [
           console.log('  ⚠️  Could not drop tables:', dropError.message);
         }
       }
+    },
+  },
+  {
+    name: 'ensure_locked_documents_tables_exist',
+    check: `SELECT COUNT(*) as count FROM sqlite_master WHERE type='table' AND name='payload_locked_documents'`,
+    up: async (db) => {
+      console.log('  🔧  Ensuring payload_locked_documents tables exist...');
+
+      // Disable foreign keys temporarily
+      await db.execute(`PRAGMA foreign_keys = OFF`);
+
+      // Create payload_locked_documents table if it doesn't exist
+      await db.execute(`
+        CREATE TABLE IF NOT EXISTS payload_locked_documents (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          global_slug TEXT,
+          updated_at INTEGER DEFAULT (cast((julianday('now') - 2440587.5) * 86400000 as integer)),
+          created_at INTEGER DEFAULT (cast((julianday('now') - 2440587.5) * 86400000 as integer))
+        )
+      `);
+
+      // Create payload_locked_documents_rels table if it doesn't exist with correct foreign keys
+      await db.execute(`
+        CREATE TABLE IF NOT EXISTS payload_locked_documents_rels (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          "order" INTEGER,
+          parent_id INTEGER NOT NULL REFERENCES payload_locked_documents(id) ON DELETE CASCADE,
+          path TEXT NOT NULL,
+          users_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+          media_id INTEGER REFERENCES media(id) ON DELETE CASCADE,
+          vendors_id INTEGER REFERENCES vendors(id) ON DELETE CASCADE,
+          products_id INTEGER REFERENCES products(id) ON DELETE CASCADE,
+          categories_id INTEGER REFERENCES categories(id) ON DELETE CASCADE,
+          blog_posts_id INTEGER REFERENCES blog_posts(id) ON DELETE CASCADE,
+          team_members_id INTEGER REFERENCES team_members(id) ON DELETE CASCADE,
+          company_info_id INTEGER REFERENCES company_info(id) ON DELETE CASCADE,
+          tags_id INTEGER REFERENCES tags(id) ON DELETE CASCADE,
+          yachts_id INTEGER REFERENCES yachts(id) ON DELETE CASCADE,
+          tier_upgrade_requests_id INTEGER REFERENCES tier_upgrade_requests(id) ON DELETE CASCADE,
+          import_history_id INTEGER REFERENCES import_history(id) ON DELETE CASCADE
+        )
+      `);
+
+      // Re-enable foreign keys
+      await db.execute(`PRAGMA foreign_keys = ON`);
+
+      console.log('  ✅ Locked documents tables created successfully');
     },
   },
   // Add more migrations as needed:
