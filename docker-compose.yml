@@ -33,7 +33,7 @@ services:
       # SQLite database persistence
       - ./data:/data
       # Media uploads persistence
-      - ./media:/app/media
+      - ./public/media:/app/public/media
       # ISR cache for incremental static regeneration
       - ./cache:/app/.next/cache
 

@@ -8,7 +8,7 @@ const Media: CollectionConfig = {
     description: 'Upload files or reference external URLs',
   },
   upload: {
-    staticDir: 'media',
+    staticDir: 'public/media',
     mimeTypes: ['image/*', 'application/pdf', 'video/*'],
     imageSizes: [
       {
