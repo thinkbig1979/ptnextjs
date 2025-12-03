@@ -232,6 +232,7 @@ export async function sendVendorRegisteredEmail(
 
     const html = renderTemplate(template, {
       COMPANY_NAME: vendorData.companyName,
+      CONTACT_EMAIL: vendorData.contactEmail,
       VENDOR_ID: vendorData.vendorId,
       TIER: vendorData.tier,
       ADMIN_REVIEW_URL: adminReviewUrl,
