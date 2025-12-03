@@ -1,4 +1,9 @@
 import type { CollectionConfig } from 'payload';
+import {
+  sendTierUpgradeRequestedEmail,
+  sendTierUpgradeApprovedEmail,
+  sendTierUpgradeRejectedEmail,
+} from '../../lib/services/EmailService';
 
 const TierUpgradeRequests: CollectionConfig = {
   slug: 'tier_upgrade_requests',
@@ -229,6 +234,73 @@ const TierUpgradeRequests: CollectionConfig = {
         }
 
         return data;
+      },
+    ],
+    afterChange: [
+      // Send email notifications on tier upgrade request create and status changes
+      async ({ doc, previousDoc, req, operation }) => {
+        try {
+          // Fetch vendor data (needed for all email types)
+          const vendorId = typeof doc.vendor === 'object' ? doc.vendor.id : doc.vendor;
+          const vendor = await req.payload.findByID({
+            collection: 'vendors',
+            id: vendorId,
+          });
+
+          // Handle new tier upgrade request (admin notification)
+          if (operation === 'create') {
+            console.log('[EmailService] Sending tier upgrade request email...');
+            await sendTierUpgradeRequestedEmail({
+              companyName: vendor.companyName,
+              contactEmail: vendor.contactEmail,
+              currentTier: doc.currentTier,
+              requestedTier: doc.requestedTier,
+              vendorNotes: doc.vendorNotes,
+              requestId: doc.id,
+              vendorId: vendorId,
+            });
+            return doc;
+          }
+
+          // Handle status changes (update operations only)
+          if (operation === 'update' && previousDoc) {
+            const previousStatus = previousDoc.status;
+            const currentStatus = doc.status;
+
+            // Only send emails when status changes from pending
+            if (previousStatus !== 'pending') {
+              return doc;
+            }
+
+            const emailData = {
+              companyName: vendor.companyName,
+              contactEmail: vendor.contactEmail,
+              currentTier: doc.currentTier,
+              requestedTier: doc.requestedTier,
+              vendorNotes: doc.vendorNotes,
+              rejectionReason: doc.rejectionReason,
+              requestId: doc.id,
+              vendorId: vendorId,
+            };
+
+            // Tier upgrade approved - status changed from pending to approved
+            if (currentStatus === 'approved') {
+              console.log('[EmailService] Sending tier upgrade approved email...');
+              await sendTierUpgradeApprovedEmail(emailData);
+            }
+
+            // Tier upgrade rejected - status changed from pending to rejected
+            if (currentStatus === 'rejected') {
+              console.log('[EmailService] Sending tier upgrade rejected email...');
+              await sendTierUpgradeRejectedEmail(emailData, doc.rejectionReason || 'No reason provided');
+            }
+          }
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          console.error('[EmailService] Failed to send tier upgrade email:', errorMessage);
+          // Don't block document operations on email failure
+        }
+        return doc;
       },
     ],
   },

@@ -2,6 +2,11 @@ import type { CollectionConfig } from 'payload';
 import { lexicalEditor } from '@payloadcms/richtext-lexical';
 import { isAdmin } from '../access/rbac';
 import { sanitizeUrlHook } from '../../lib/utils/url';
+import {
+  sendVendorRegisteredEmail,
+  sendVendorApprovedEmail,
+  sendVendorRejectedEmail,
+} from '../../lib/services/EmailService';
 
 const Vendors: CollectionConfig = {
   slug: 'vendors',
@@ -1840,6 +1845,57 @@ const Vendors: CollectionConfig = {
         }
 
         return data;
+      },
+    ],
+    afterChange: [
+      // Send email notifications on vendor create and publish status changes
+      async ({ doc, previousDoc, operation }) => {
+        try {
+          // Handle new vendor registration (admin notification)
+          if (operation === 'create') {
+            console.log('[EmailService] Sending vendor registered email...');
+            await sendVendorRegisteredEmail({
+              companyName: doc.companyName,
+              contactEmail: doc.contactEmail,
+              tier: doc.tier,
+              vendorId: doc.id,
+            });
+            return doc;
+          }
+
+          // Handle vendor approval/rejection (update operations only)
+          if (operation === 'update' && previousDoc) {
+            const wasPublished = previousDoc.published === true;
+            const isNowPublished = doc.published === true;
+
+            // Vendor approved - published changed from false to true
+            if (!wasPublished && isNowPublished) {
+              console.log('[EmailService] Sending vendor approved email...');
+              await sendVendorApprovedEmail({
+                companyName: doc.companyName,
+                contactEmail: doc.contactEmail,
+                tier: doc.tier,
+                vendorId: doc.id,
+              });
+            }
+
+            // Vendor rejected - published changed from true to false (edge case)
+            if (wasPublished && !isNowPublished) {
+              console.log('[EmailService] Sending vendor rejected email...');
+              await sendVendorRejectedEmail({
+                companyName: doc.companyName,
+                contactEmail: doc.contactEmail,
+                tier: doc.tier,
+                vendorId: doc.id,
+              });
+            }
+          }
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          console.error('[EmailService] Failed to send vendor email:', errorMessage);
+          // Don't block document operations on email failure
+        }
+        return doc;
       },
     ],
   },
