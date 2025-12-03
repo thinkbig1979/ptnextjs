@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -18,6 +19,11 @@ import {
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import { Loader2, Eye, EyeOff, Info } from 'lucide-react';
+
+// Dynamically import HCaptcha to avoid SSR issues
+const HCaptcha = dynamic(() => import('@hcaptcha/react-hcaptcha'), {
+  ssr: false,
+});
 
 /**
  * Password strength validation regex
@@ -102,6 +108,28 @@ export function VendorRegistrationForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+
+  /**
+   * Handle successful captcha verification
+   */
+  const handleCaptchaVerify = (token: string) => {
+    setCaptchaToken(token);
+  };
+
+  /**
+   * Handle captcha expiration
+   */
+  const handleCaptchaExpire = () => {
+    setCaptchaToken(null);
+  };
+
+  /**
+   * Handle captcha error
+   */
+  const handleCaptchaError = () => {
+    setCaptchaToken(null);
+  };
 
   const form = useForm<RegistrationFormData>({
     resolver: zodResolver(registrationSchema),
@@ -120,6 +148,16 @@ export function VendorRegistrationForm() {
    * Handle form submission
    */
   const onSubmit = async (data: RegistrationFormData) => {
+    // Check hCaptcha if configured
+    if (process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY && !captchaToken) {
+      toast({
+        title: 'Verification Required',
+        description: 'Please complete the captcha challenge',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     try {
       setIsSubmitting(true);
 
@@ -133,6 +171,7 @@ export function VendorRegistrationForm() {
           contactEmail: data.email,
           password: data.password,
           companyName: data.companyName,
+          captchaToken: captchaToken || undefined,
         }),
       });
 
@@ -197,8 +236,9 @@ export function VendorRegistrationForm() {
         description: 'Your account is pending approval',
       });
 
-      // Clear form
+      // Clear form and captcha
       form.reset();
+      setCaptchaToken(null);
 
       // Redirect to pending page
       router.push('/vendor/registration-pending');
@@ -348,11 +388,26 @@ export function VendorRegistrationForm() {
           )}
         />
 
+        {/* hCaptcha */}
+        {process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY && (
+          <div className="flex justify-center" data-testid="hcaptcha-container">
+            <HCaptcha
+              sitekey={process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY}
+              onVerify={handleCaptchaVerify}
+              onExpire={handleCaptchaExpire}
+              onError={handleCaptchaError}
+            />
+          </div>
+        )}
+
         {/* Submit Button */}
         <Button
           type="submit"
           className="w-full"
-          disabled={isSubmitting}
+          disabled={
+            isSubmitting ||
+            (!!process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY && !captchaToken)
+          }
           aria-label="Register"
         >
           {isSubmitting ? (

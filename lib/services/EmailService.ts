@@ -41,6 +41,25 @@ export interface VendorEmailData {
 }
 
 /**
+ * Data for user approval/rejection emails (when admin approves/rejects user account)
+ */
+export interface UserEmailData {
+  email: string;
+  vendorName?: string;
+  rejectionReason?: string;
+}
+
+/**
+ * Data for profile submission emails (when vendor submits profile for review)
+ */
+export interface ProfileSubmissionEmailData {
+  companyName: string;
+  contactEmail: string;
+  vendorId: string;
+  submissionDate?: string;
+}
+
+/**
  * Data for tier upgrade request emails
  */
 export interface TierUpgradeEmailData {
@@ -606,6 +625,281 @@ export async function sendTierUpgradeRejectedEmail(
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     console.error('Error sending tier upgrade rejected email:', errorMessage);
+    return {
+      success: false,
+      error: errorMessage,
+    };
+  }
+}
+
+/**
+ * Send email notification when a user account is approved
+ * Notifies the user that their account is now active
+ *
+ * @param userData - User information
+ * @returns Email operation result
+ */
+export async function sendUserApprovedEmail(
+  userData: UserEmailData
+): Promise<EmailResult> {
+  try {
+    const config = validateEmailConfig();
+    if (!config.valid) {
+      console.error('Email configuration invalid:', config.errors);
+      return {
+        success: false,
+        error: 'Email service not configured',
+      };
+    }
+
+    const resend = getResendClient();
+    const template = loadTemplate('user-approved');
+
+    if (!template) {
+      throw new Error('Unable to load user-approved template');
+    }
+
+    const loginUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/login`;
+
+    const html = renderTemplate(template, {
+      loginUrl,
+      CURRENT_YEAR: new Date().getFullYear().toString(),
+    });
+
+    const subject = 'Your Account Has Been Approved - Paul Thames';
+
+    const result = await resend.emails.send({
+      from: process.env.EMAIL_FROM_ADDRESS || 'notifications@resend.dev',
+      to: userData.email,
+      subject,
+      html,
+    });
+
+    if (result.error) {
+      console.error('Failed to send user approved email:', result.error);
+      return {
+        success: false,
+        error: result.error.message,
+      };
+    }
+
+    return { success: true };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('Error sending user approved email:', errorMessage);
+    return {
+      success: false,
+      error: errorMessage,
+    };
+  }
+}
+
+/**
+ * Send email notification when a user account is rejected
+ * Notifies the user that their account application was not approved
+ *
+ * @param userData - User information including rejection reason
+ * @returns Email operation result
+ */
+export async function sendUserRejectedEmail(
+  userData: UserEmailData
+): Promise<EmailResult> {
+  try {
+    const config = validateEmailConfig();
+    if (!config.valid) {
+      console.error('Email configuration invalid:', config.errors);
+      return {
+        success: false,
+        error: 'Email service not configured',
+      };
+    }
+
+    const resend = getResendClient();
+    const template = loadTemplate('user-rejected');
+
+    if (!template) {
+      throw new Error('Unable to load user-rejected template');
+    }
+
+    const loginUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/contact`;
+
+    const html = renderTemplate(template, {
+      vendorName: userData.vendorName || 'Valued Applicant',
+      rejectionReason:
+        userData.rejectionReason ||
+        'Your application did not meet our current requirements.',
+      loginUrl,
+      CURRENT_YEAR: new Date().getFullYear().toString(),
+    });
+
+    const subject = 'Account Status Update - Paul Thames';
+
+    const result = await resend.emails.send({
+      from: process.env.EMAIL_FROM_ADDRESS || 'notifications@resend.dev',
+      to: userData.email,
+      subject,
+      html,
+    });
+
+    if (result.error) {
+      console.error('Failed to send user rejected email:', result.error);
+      return {
+        success: false,
+        error: result.error.message,
+      };
+    }
+
+    return { success: true };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('Error sending user rejected email:', errorMessage);
+    return {
+      success: false,
+      error: errorMessage,
+    };
+  }
+}
+
+/**
+ * Send email notification to admin when a vendor submits their profile for review
+ * Triggered when profileSubmitted is set to true
+ *
+ * @param profileData - Profile submission information
+ * @returns Email operation result
+ */
+export async function sendProfileSubmittedAdminEmail(
+  profileData: ProfileSubmissionEmailData
+): Promise<EmailResult> {
+  try {
+    const config = validateEmailConfig();
+    if (!config.valid) {
+      console.error('Email configuration invalid:', config.errors);
+      return {
+        success: false,
+        error: 'Email service not configured',
+      };
+    }
+
+    const resend = getResendClient();
+    const template = loadTemplate('profile-submitted-admin');
+
+    if (!template) {
+      throw new Error('Unable to load profile-submitted-admin template');
+    }
+
+    const adminUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/admin/collections/vendors/${profileData.vendorId}`;
+    const submissionDate =
+      profileData.submissionDate ||
+      new Date().toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+
+    const html = renderTemplate(template, {
+      vendorName: profileData.companyName,
+      vendorEmail: profileData.contactEmail,
+      submissionDate,
+      adminUrl,
+      CURRENT_YEAR: new Date().getFullYear().toString(),
+    });
+
+    const subject = `Profile Submitted for Review: ${profileData.companyName}`;
+
+    const result = await resend.emails.send({
+      from: process.env.EMAIL_FROM_ADDRESS || 'notifications@resend.dev',
+      to: process.env.ADMIN_EMAIL_ADDRESS || '',
+      subject,
+      html,
+    });
+
+    if (result.error) {
+      console.error(
+        'Failed to send profile submitted admin email:',
+        result.error
+      );
+      return {
+        success: false,
+        error: result.error.message,
+      };
+    }
+
+    return { success: true };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('Error sending profile submitted admin email:', errorMessage);
+    return {
+      success: false,
+      error: errorMessage,
+    };
+  }
+}
+
+/**
+ * Send email notification to vendor when they submit their profile for review
+ * Confirms receipt of profile submission
+ *
+ * @param profileData - Profile submission information
+ * @returns Email operation result
+ */
+export async function sendProfileSubmittedVendorEmail(
+  profileData: ProfileSubmissionEmailData
+): Promise<EmailResult> {
+  try {
+    const config = validateEmailConfig();
+    if (!config.valid) {
+      console.error('Email configuration invalid:', config.errors);
+      return {
+        success: false,
+        error: 'Email service not configured',
+      };
+    }
+
+    const resend = getResendClient();
+    const template = loadTemplate('profile-submitted-vendor');
+
+    if (!template) {
+      throw new Error('Unable to load profile-submitted-vendor template');
+    }
+
+    const loginUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/vendor/dashboard`;
+
+    const html = renderTemplate(template, {
+      vendorName: profileData.companyName,
+      loginUrl,
+      CURRENT_YEAR: new Date().getFullYear().toString(),
+    });
+
+    const subject = 'Profile Submitted for Review - Paul Thames';
+
+    const result = await resend.emails.send({
+      from: process.env.EMAIL_FROM_ADDRESS || 'notifications@resend.dev',
+      to: profileData.contactEmail,
+      subject,
+      html,
+    });
+
+    if (result.error) {
+      console.error(
+        'Failed to send profile submitted vendor email:',
+        result.error
+      );
+      return {
+        success: false,
+        error: result.error.message,
+      };
+    }
+
+    return { success: true };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error(
+      'Error sending profile submitted vendor email:',
+      errorMessage
+    );
     return {
       success: false,
       error: errorMessage,

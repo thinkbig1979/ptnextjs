@@ -1,4 +1,8 @@
 import type { CollectionConfig } from 'payload';
+import {
+  sendUserApprovedEmail,
+  sendUserRejectedEmail,
+} from '../../lib/services/EmailService';
 
 const Users: CollectionConfig = {
   slug: 'users',
@@ -118,6 +122,69 @@ const Users: CollectionConfig = {
     },
   ],
   timestamps: true,
+  hooks: {
+    afterChange: [
+      // Send email notifications on user approval/rejection
+      async ({ doc, previousDoc, operation, req }) => {
+        try {
+          // Only process update operations with previous doc
+          if (operation !== 'update' || !previousDoc) {
+            return doc;
+          }
+
+          const wasStatus = previousDoc.status;
+          const isNowStatus = doc.status;
+
+          // Status didn't change - no email needed
+          if (wasStatus === isNowStatus) {
+            return doc;
+          }
+
+          // Get vendor info if linked (for vendor name in rejection email)
+          let vendorName: string | undefined;
+          if (doc.role === 'vendor') {
+            try {
+              const vendorDocs = await req.payload.find({
+                collection: 'vendors',
+                where: {
+                  user: { equals: doc.id },
+                },
+                limit: 1,
+              });
+              if (vendorDocs.docs.length > 0) {
+                vendorName = vendorDocs.docs[0].companyName;
+              }
+            } catch {
+              // Silently continue without vendor name
+            }
+          }
+
+          // User approved - status changed to 'approved'
+          if (isNowStatus === 'approved' && wasStatus !== 'approved') {
+            console.log('[EmailService] Sending user approved email...');
+            await sendUserApprovedEmail({
+              email: doc.email,
+            });
+          }
+
+          // User rejected - status changed to 'rejected'
+          if (isNowStatus === 'rejected' && wasStatus !== 'rejected') {
+            console.log('[EmailService] Sending user rejected email...');
+            await sendUserRejectedEmail({
+              email: doc.email,
+              vendorName,
+              rejectionReason: doc.rejectionReason,
+            });
+          }
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          console.error('[EmailService] Failed to send user status email:', errorMessage);
+          // Don't block document operations on email failure
+        }
+        return doc;
+      },
+    ],
+  },
 };
 
 export default Users;
