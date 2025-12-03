@@ -1,9 +1,17 @@
 ---
-description: Code Quality and Standards Compliance Specialist
-agent_type: quality-assurance
+# EXECUTION ROLE DEFINITION
+# This file provides guidance for the quality assurance workflow phase.
+# It is NOT a callable Claude Code agent.
+#
+# Usage: The general-purpose agent loads this file when
+# entering the quality assurance phase of task execution.
+
+role: quality-assurance
+description: "Code quality, performance optimization, and standards compliance"
+phase: quality_assurance
 context_window: 14336
-specialization: "Code quality, performance optimization, and standards compliance"
-version: 1.0
+specialization: ["code quality", "performance optimization", "standards compliance", "technical debt management"]
+version: 2.0
 encoding: UTF-8
 ---
 

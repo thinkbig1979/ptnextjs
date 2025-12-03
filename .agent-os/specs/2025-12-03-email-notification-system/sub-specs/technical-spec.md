@@ -1,0 +1,473 @@
+# Technical Specification: Email Notification System
+
+## Architecture Overview
+
+The email notification system integrates Resend email service with Payload CMS lifecycle hooks to send transactional emails triggered by vendor registration and tier upgrade events.
+
+**Key Components:**
+- `lib/services/EmailService.ts` - Email sending service (follows TierUpgradeRequestService pattern)
+- `lib/email-templates/` - HTML email templates with brand styling
+- Payload CMS `afterChange` hooks in `payload/collections/Vendors.ts` and `payload/collections/TierUpgradeRequests.ts`
+- Environment configuration for Resend API credentials
+
+## Implementation Details
+
+### 1. Resend Integration
+
+**Package:** `resend` npm package (latest stable)
+
+**Configuration:**
+```typescript
+// lib/services/EmailService.ts
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+const FROM_ADDRESS = process.env.EMAIL_FROM_ADDRESS || 'noreply@paulthames.com';
+```
+
+**Environment Variables:**
+- `RESEND_API_KEY` - Resend API key (required)
+- `EMAIL_FROM_ADDRESS` - Sender email address (required, must be verified domain in Resend)
+
+**Error Handling:**
+- Log email sending failures with sufficient detail (recipient, template, error message)
+- Do NOT block database operations on email failures (best-effort delivery)
+- Return success/failure status for logging purposes
+
+### 2. Email Service Layer
+
+**File:** `lib/services/EmailService.ts`
+
+**Service Pattern:** Follow existing `TierUpgradeRequestService.ts` structure:
+- Pure functions where possible
+- Clear input/output types
+- Error handling with try/catch
+- JSDoc comments for all exported functions
+
+**Core Functions:**
+
+```typescript
+/**
+ * Send vendor registration notification to admin
+ */
+export async function sendVendorRegisteredEmail(
+  vendorData: { companyName: string; contactEmail: string; tier: string; vendorId: string }
+): Promise<{ success: boolean; error?: string }>;
+
+/**
+ * Send vendor approval notification to vendor
+ */
+export async function sendVendorApprovedEmail(
+  vendorEmail: string,
+  vendorData: { companyName: string; dashboardUrl: string }
+): Promise<{ success: boolean; error?: string }>;
+
+/**
+ * Send vendor rejection notification to vendor
+ */
+export async function sendVendorRejectedEmail(
+  vendorEmail: string,
+  vendorData: { companyName: string; rejectionReason?: string }
+): Promise<{ success: boolean; error?: string }>;
+
+/**
+ * Send tier upgrade request notification to admin
+ */
+export async function sendTierUpgradeRequestedEmail(
+  requestData: {
+    vendorName: string;
+    currentTier: string;
+    requestedTier: string;
+    vendorNotes?: string;
+    requestId: string;
+  }
+): Promise<{ success: boolean; error?: string }>;
+
+/**
+ * Send tier upgrade approval notification to vendor
+ */
+export async function sendTierUpgradeApprovedEmail(
+  vendorEmail: string,
+  upgradeData: {
+    vendorName: string;
+    currentTier: string;
+    newTier: string;
+    newFeatures: string[];
+  }
+): Promise<{ success: boolean; error?: string }>;
+
+/**
+ * Send tier upgrade rejection notification to vendor
+ */
+export async function sendTierUpgradeRejectedEmail(
+  vendorEmail: string,
+  rejectionData: {
+    vendorName: string;
+    requestedTier: string;
+    rejectionReason: string;
+  }
+): Promise<{ success: boolean; error?: string }>;
+```
+
+**Template Rendering:**
+- Templates are static HTML files in `lib/email-templates/`
+- Replace placeholders using simple string replacement: `{{COMPANY_NAME}}`, `{{DASHBOARD_URL}}`, etc.
+- No complex templating engine needed (keep it simple)
+
+### 3. Email Templates
+
+**Location:** `lib/email-templates/`
+
+**Template Files:**
+1. `vendor-registered.html` - Admin notification when new vendor registers
+2. `vendor-approved.html` - Vendor notification when admin approves registration
+3. `vendor-rejected.html` - Vendor notification when admin rejects registration
+4. `tier-upgrade-requested.html` - Admin notification when vendor requests tier upgrade
+5. `tier-upgrade-approved.html` - Vendor notification when admin approves tier upgrade
+6. `tier-upgrade-rejected.html` - Vendor notification when admin rejects tier upgrade
+
+**Template Structure:**
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{SUBJECT}}</title>
+  <style>
+    /* Inline styles for email client compatibility */
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: #1a56db; color: white; padding: 20px; text-align: center; }
+    .content { padding: 30px 20px; background: #ffffff; }
+    .button { display: inline-block; padding: 12px 24px; background: #1a56db; color: white; text-decoration: none; border-radius: 6px; }
+    .footer { padding: 20px; text-align: center; color: #6b7280; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Paul Thames Superyacht Technology</h1>
+    </div>
+    <div class="content">
+      <!-- Template-specific content here -->
+    </div>
+    <div class="footer">
+      <p>&copy; 2025 Paul Thames Superyacht Technology. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>
+```
+
+**Placeholders:**
+- `{{COMPANY_NAME}}` - Vendor company name
+- `{{CONTACT_EMAIL}}` - Vendor contact email
+- `{{TIER}}` - Vendor tier (Free, Tier 1, Tier 2, Tier 3)
+- `{{DASHBOARD_URL}}` - Link to vendor dashboard
+- `{{APPROVAL_URL}}` - Link to admin approval page
+- `{{REQUEST_ID}}` - Tier upgrade request ID
+- `{{VENDOR_NOTES}}` - Vendor business justification
+- `{{REJECTION_REASON}}` - Admin rejection reason
+- `{{NEW_FEATURES}}` - List of new tier features (HTML list)
+- `{{CURRENT_TIER}}` - Current tier name
+- `{{REQUESTED_TIER}}` - Requested tier name
+
+### 4. Payload CMS Hooks
+
+**Vendors Collection Hook** (`payload/collections/Vendors.ts`):
+
+```typescript
+hooks: {
+  afterChange: [
+    async ({ doc, previousDoc, operation, req }) => {
+      // Only trigger on update operations
+      if (operation !== 'update') return;
+
+      // Check if published status changed from false to true (approval)
+      if (!previousDoc.published && doc.published) {
+        // Send vendor approval email
+        await sendVendorApprovedEmail(doc.contactEmail, {
+          companyName: doc.companyName,
+          dashboardUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/portal/dashboard`,
+        });
+      }
+
+      // Check if published status changed from true to false (rejection - rare)
+      // Note: In practice, rejections happen during initial review, not after approval
+      // This is a fallback for completeness
+    },
+  ],
+  afterCreate: [
+    async ({ doc, req }) => {
+      // Send admin notification for new vendor registration
+      await sendVendorRegisteredEmail({
+        companyName: doc.companyName,
+        contactEmail: doc.contactEmail,
+        tier: doc.tier,
+        vendorId: doc.id,
+      });
+    },
+  ],
+}
+```
+
+**TierUpgradeRequests Collection Hook** (`payload/collections/TierUpgradeRequests.ts`):
+
+```typescript
+hooks: {
+  afterChange: [
+    async ({ doc, previousDoc, operation, req }) => {
+      // Only trigger on updates
+      if (operation !== 'update') return;
+
+      // Check if status changed to approved
+      if (previousDoc.status === 'pending' && doc.status === 'approved') {
+        // Get vendor data
+        const vendor = await req.payload.findByID({
+          collection: 'vendors',
+          id: doc.vendor,
+        });
+
+        // Send tier upgrade approval email
+        await sendTierUpgradeApprovedEmail(vendor.contactEmail, {
+          vendorName: vendor.companyName,
+          currentTier: doc.currentTier,
+          newTier: doc.requestedTier,
+          newFeatures: getTierFeatures(doc.requestedTier),
+        });
+      }
+
+      // Check if status changed to rejected
+      if (previousDoc.status === 'pending' && doc.status === 'rejected') {
+        const vendor = await req.payload.findByID({
+          collection: 'vendors',
+          id: doc.vendor,
+        });
+
+        // Send tier upgrade rejection email
+        await sendTierUpgradeRejectedEmail(vendor.contactEmail, {
+          vendorName: vendor.companyName,
+          requestedTier: doc.requestedTier,
+          rejectionReason: doc.rejectionReason || 'No reason provided',
+        });
+      }
+    },
+  ],
+  afterCreate: [
+    async ({ doc, req }) => {
+      // Send admin notification for new tier upgrade request
+      const vendor = await req.payload.findByID({
+        collection: 'vendors',
+        id: doc.vendor,
+      });
+
+      await sendTierUpgradeRequestedEmail({
+        vendorName: vendor.companyName,
+        currentTier: doc.currentTier,
+        requestedTier: doc.requestedTier,
+        vendorNotes: doc.vendorNotes,
+        requestId: doc.id,
+      });
+    },
+  ],
+}
+```
+
+### 5. Helper Functions
+
+**Tier Features Lookup:**
+```typescript
+// lib/services/EmailService.ts
+function getTierFeatures(tier: string): string[] {
+  const features: Record<string, string[]> = {
+    tier1: [
+      'Enhanced profile with video introduction',
+      'Case studies and project portfolio',
+      'Team member profiles',
+      'Certifications and awards display',
+    ],
+    tier2: [
+      'Multiple office locations',
+      'Featured in category listings',
+      'Advanced analytics dashboard',
+      'API access for integrations',
+    ],
+    tier3: [
+      'Homepage banner placement',
+      'Premium search result priority',
+      'Monthly featured articles',
+      'Social media shoutouts',
+      'Email newsletter features',
+    ],
+  };
+
+  return features[tier] || [];
+}
+```
+
+**Admin Email Address:**
+- Use environment variable `ADMIN_EMAIL_ADDRESS` for admin notifications
+- Fallback to hardcoded admin email if not set (e.g., `admin@paulthames.com`)
+
+## Environment Configuration
+
+**Add to `.env.example`:**
+```bash
+# Resend Email Service
+RESEND_API_KEY=your_resend_api_key_here
+EMAIL_FROM_ADDRESS=noreply@paulthames.com
+ADMIN_EMAIL_ADDRESS=admin@paulthames.com
+
+# Base URL for email links
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+```
+
+**Add to `CLAUDE.md` or similar documentation:**
+```markdown
+### Email Notifications (Resend)
+- **Provider**: Resend (3,000 free emails/month)
+- **Usage**: Transactional emails for vendor registration and tier upgrades
+- **Configuration**: RESEND_API_KEY, EMAIL_FROM_ADDRESS, ADMIN_EMAIL_ADDRESS
+- **Templates**: lib/email-templates/ (6 HTML templates)
+- **Service**: lib/services/EmailService.ts
+```
+
+## Integration Points
+
+1. **Existing Services:**
+   - `TierUpgradeRequestService.ts` - Pattern reference for service structure
+   - Payload CMS collections (Vendors, TierUpgradeRequests) - Hook integration points
+
+2. **Existing API Routes:**
+   - No changes needed to existing API routes
+   - Hooks trigger automatically on Payload CMS operations
+
+3. **Environment Variables:**
+   - Add new Resend credentials to .env
+   - Verify domain in Resend dashboard before production use
+
+## Error Handling & Logging
+
+**Email Sending Failures:**
+```typescript
+try {
+  const result = await resend.emails.send({
+    from: FROM_ADDRESS,
+    to: recipientEmail,
+    subject: emailSubject,
+    html: renderedTemplate,
+  });
+
+  console.log('Email sent successfully:', {
+    recipient: recipientEmail,
+    template: templateName,
+    messageId: result.id,
+  });
+
+  return { success: true };
+} catch (error) {
+  console.error('Email sending failed:', {
+    recipient: recipientEmail,
+    template: templateName,
+    error: error.message,
+  });
+
+  return { success: false, error: error.message };
+}
+```
+
+**Hook Error Handling:**
+- Wrap email sending in try/catch to prevent blocking database operations
+- Log errors but do not throw (emails are best-effort)
+- Consider adding a `email_sent` boolean field to collections for tracking (optional)
+
+## Testing Approach
+
+1. **Unit Tests (EmailService.ts):**
+   - Test template rendering with placeholder replacement
+   - Mock Resend API calls
+   - Verify error handling
+
+2. **Integration Tests (Payload Hooks):**
+   - Test that hooks trigger on correct operations
+   - Verify email service is called with correct data
+   - Test hook error handling (email failure should not block database)
+
+3. **E2E Tests:**
+   - Use Resend test mode or mock SMTP server
+   - Verify end-to-end workflow: vendor registration → admin email → approval → vendor email
+   - Verify tier upgrade workflow: request → admin email → approval → vendor email
+
+4. **Manual Testing:**
+   - Send test emails to real addresses
+   - Verify email rendering in multiple email clients (Gmail, Outlook, Apple Mail)
+   - Test all 6 notification templates
+
+## Security Considerations
+
+1. **API Key Storage:**
+   - Store RESEND_API_KEY in environment variables only
+   - Never commit API keys to version control
+   - Use different API keys for development/production
+
+2. **Email Address Validation:**
+   - Trust Payload CMS email field validation
+   - Resend will reject invalid email addresses
+
+3. **Rate Limiting:**
+   - Resend free tier: 3,000 emails/month, 100 emails/day
+   - Expected usage: <200 vendor registrations/month = ~400-600 emails/month (well within limits)
+   - No rate limiting needed for expected volume
+
+4. **Content Security:**
+   - Sanitize user-provided content in templates (vendorNotes, rejectionReason)
+   - Use plain text escaping for email content (no HTML injection risk)
+
+## Performance Considerations
+
+1. **Async Operations:**
+   - Email sending is async (does not block response)
+   - Hooks run after database operations complete
+   - Total overhead: ~100-300ms per email (negligible for admin operations)
+
+2. **Template Loading:**
+   - Load templates from filesystem at runtime
+   - Consider caching templates in production (optional optimization)
+
+3. **Database Queries:**
+   - Hooks may need to fetch related data (e.g., vendor data for tier upgrade emails)
+   - Use Payload's relationship loading where possible
+   - Minimal query overhead (<50ms per query)
+
+## Rollout Strategy
+
+1. **Phase 1: Setup & Templates** (1-2 hours)
+   - Install Resend package
+   - Create EmailService.ts
+   - Create 6 HTML email templates
+   - Add environment variables
+
+2. **Phase 2: Vendor Registration Notifications** (1-2 hours)
+   - Implement sendVendorRegisteredEmail, sendVendorApprovedEmail, sendVendorRejectedEmail
+   - Add hooks to Vendors collection
+   - Test vendor registration workflow
+
+3. **Phase 3: Tier Upgrade Notifications** (1-2 hours)
+   - Implement sendTierUpgradeRequestedEmail, sendTierUpgradeApprovedEmail, sendTierUpgradeRejectedEmail
+   - Add hooks to TierUpgradeRequests collection
+   - Test tier upgrade workflow
+
+4. **Phase 4: Testing & Refinement** (1 hour)
+   - Manual testing of all email templates
+   - Verify email rendering in multiple clients
+   - Refine copy and styling as needed
+
+**Total Implementation Time: 5-7 hours**
+
+## Success Metrics
+
+1. **Email Delivery Rate:** >95% successful delivery (track via Resend dashboard)
+2. **Admin Response Time:** Reduce average time to vendor approval from manual checks to <24 hours
+3. **Vendor Satisfaction:** Eliminate "when will I be approved?" support tickets
+4. **System Reliability:** Zero email failures block database operations (error handling works)

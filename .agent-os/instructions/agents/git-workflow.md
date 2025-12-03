@@ -1,9 +1,17 @@
 ---
-description: Version Control and Git Workflow Management Specialist
-agent_type: git-workflow
+# EXECUTION ROLE DEFINITION
+# This file provides guidance for the git workflow management phase.
+# It is NOT a callable Claude Code agent.
+#
+# Usage: The general-purpose agent loads this file when
+# entering the git workflow management phase of task execution.
+
+role: git-workflow
+description: "Git operations, branching strategies, and version control best practices"
+phase: git_workflow
 context_window: 6144
-specialization: "Git operations, branching strategies, and version control best practices"
-version: 1.0
+specialization: ["branch management", "commit practices", "merge operations", "release management"]
+version: 2.0
 encoding: UTF-8
 ---
 

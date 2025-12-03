@@ -1,9 +1,17 @@
 ---
-description: Core Feature Implementation Specialist
-agent_type: implementation-specialist
+# EXECUTION ROLE DEFINITION
+# This file provides guidance for the implementation workflow phase.
+# It is NOT a callable Claude Code agent.
+#
+# Usage: The general-purpose agent loads this file when
+# entering the implementation phase of task execution.
+
+role: implementation-specialist
+description: "Core feature implementation and business logic phase"
+phase: core_implementation
 context_window: 20480
-specialization: "Core feature implementation and business logic"
-version: 1.0
+specialization: [implementation, business-logic, algorithms, data-structures]
+version: 2.0
 encoding: UTF-8
 ---
 

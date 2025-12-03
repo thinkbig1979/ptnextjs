@@ -115,6 +115,27 @@ Initialize Playwright testing environment and identify web UI components for val
 </worktree_setup>
 
 <playwright_initialization>
+  <execution_safety_protocol>
+    **MANDATORY**: Before running any Playwright tests, follow the Test Execution Safety Protocol
+    from @.agent-os/instructions/agents/test-runner.md:
+
+    1. **Server Pre-Flight Check**: Verify all required servers are running
+       - Check frontend server (typically localhost:3000)
+       - Check backend server (if applicable)
+       - BLOCK test execution if servers not responding
+
+    2. **Watch Mode Prevention**: Ensure using CI-safe command
+       - Use `playwright test` NOT `playwright test --ui`
+       - Use `--reporter=list` for real-time progress
+
+    3. **Timeout Enforcement**: Apply hard timeouts
+       - Per-test: 60 seconds max
+       - Suite total: 10 minutes max
+       - Kill hung tests automatically
+
+    See @.agent-os/standards/test-infrastructure.md for complete standards.
+  </execution_safety_protocol>
+
   <setup_checks>
     - CHECK: Playwright is installed (@playwright/test)
     - CHECK: Browsers are installed (chromium, firefox, webkit)

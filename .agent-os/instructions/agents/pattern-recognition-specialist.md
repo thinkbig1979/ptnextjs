@@ -1,9 +1,17 @@
 ---
-name: pattern-recognition-specialist
-description: Use this agent when you need to analyze code for design patterns, anti-patterns, naming conventions, and code duplication. This agent excels at identifying architectural patterns, detecting code smells, and ensuring consistency across the codebase. <example>Context: The user wants to analyze their codebase for patterns and potential issues.\nuser: "Can you check our codebase for design patterns and anti-patterns?"\nassistant: "I'll use the pattern-recognition-specialist agent to analyze your codebase for patterns, anti-patterns, and code quality issues."\n<commentary>Since the user is asking for pattern analysis and code quality review, use the Task tool to launch the pattern-recognition-specialist agent.</commentary></example><example>Context: After implementing a new feature, the user wants to ensure it follows established patterns.\nuser: "I just added a new service layer. Can we check if it follows our existing patterns?"\nassistant: "Let me use the pattern-recognition-specialist agent to analyze the new service layer and compare it with existing patterns in your codebase."\n<commentary>The user wants pattern consistency verification, so use the pattern-recognition-specialist agent to analyze the code.</commentary></example>
-globs: []
-alwaysApply: false
-version: 1.0
+# EXECUTION ROLE DEFINITION
+# This file provides guidance for the pattern recognition workflow phase.
+# It is NOT a callable Claude Code agent.
+#
+# Usage: The general-purpose agent loads this file when
+# entering the pattern recognition phase of task execution.
+
+role: pattern-recognition-specialist
+description: "Design pattern detection, anti-pattern identification, and code consistency analysis"
+phase: pattern_recognition
+context_window: 14336
+specialization: ["design patterns", "anti-patterns", "naming conventions", "code duplication", "architectural boundaries"]
+version: 2.0
 encoding: UTF-8
 ---
 

@@ -1,0 +1,613 @@
+/**
+ * EmailService - Email notification management using Resend
+ *
+ * Provides:
+ * - Email sending for vendor registration and approval flows
+ * - Email notifications for tier upgrade requests
+ * - Template rendering with placeholder replacement
+ * - Error handling with logging (best-effort delivery)
+ *
+ * Uses:
+ * - Resend email API (https://resend.com)
+ * - HTML email templates from lib/email-templates/*.html
+ * - Environment variables for configuration
+ *
+ * Security:
+ * - All email operations use try/catch (no thrown errors)
+ * - Logs failures for debugging but never blocks
+ * - Validates required environment variables on initialization
+ */
+
+import { Resend } from 'resend';
+import fs from 'fs';
+import path from 'path';
+
+/**
+ * Email operation result
+ */
+export interface EmailResult {
+  success: boolean;
+  error?: string;
+}
+
+/**
+ * Data for vendor registration/approval emails
+ */
+export interface VendorEmailData {
+  companyName: string;
+  contactEmail: string;
+  tier: string;
+  vendorId: string;
+}
+
+/**
+ * Data for tier upgrade request emails
+ */
+export interface TierUpgradeEmailData {
+  companyName: string;
+  contactEmail: string;
+  currentTier: string;
+  requestedTier: string;
+  vendorNotes?: string;
+  rejectionReason?: string;
+  requestId: string;
+  vendorId: string;
+}
+
+/**
+ * Tier features mapping for email templates
+ */
+interface TierFeatures {
+  tier: string;
+  features: string[];
+  description: string;
+}
+
+/**
+ * Initialize Resend client with API key
+ */
+function getResendClient(): Resend {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.error('RESEND_API_KEY environment variable is not set');
+  }
+  return new Resend(apiKey);
+}
+
+/**
+ * Validate required email configuration
+ */
+function validateEmailConfig(): {
+  valid: boolean;
+  errors: string[];
+} {
+  const errors: string[] = [];
+
+  if (!process.env.RESEND_API_KEY) {
+    errors.push('RESEND_API_KEY is not configured');
+  }
+
+  if (!process.env.EMAIL_FROM_ADDRESS) {
+    errors.push('EMAIL_FROM_ADDRESS is not configured');
+  }
+
+  if (!process.env.ADMIN_EMAIL_ADDRESS) {
+    errors.push('ADMIN_EMAIL_ADDRESS is not configured');
+  }
+
+  if (!process.env.NEXT_PUBLIC_BASE_URL) {
+    errors.push('NEXT_PUBLIC_BASE_URL is not configured');
+  }
+
+  return {
+    valid: errors.length === 0,
+    errors,
+  };
+}
+
+/**
+ * Load HTML template from file
+ * @param templateName - Name of template file (without .html extension)
+ * @returns HTML template content
+ */
+function loadTemplate(templateName: string): string {
+  try {
+    const templatePath = path.join(
+      process.cwd(),
+      'lib/email-templates',
+      `${templateName}.html`
+    );
+    return fs.readFileSync(templatePath, 'utf-8');
+  } catch (error) {
+    console.error(`Failed to load email template ${templateName}:`, error);
+    return '';
+  }
+}
+
+/**
+ * Render template by replacing {{PLACEHOLDER}} variables with data values
+ * @param template - HTML template with {{PLACEHOLDER}} variables
+ * @param data - Object with values to replace
+ * @returns Rendered HTML with placeholders replaced
+ */
+function renderTemplate(
+  template: string,
+  data: Record<string, string | undefined>
+): string {
+  let rendered = template;
+
+  // Replace all {{VARIABLE}} placeholders with corresponding data values
+  Object.entries(data).forEach(([key, value]) => {
+    const placeholder = new RegExp(`{{${key}}}`, 'g');
+    rendered = rendered.replace(placeholder, value || '');
+  });
+
+  return rendered;
+}
+
+/**
+ * Get tier features for display in emails
+ * @param tier - Tier name (free, tier1, tier2, tier3)
+ * @returns Tier features object
+ */
+export function getTierFeatures(tier: string): TierFeatures {
+  const tierFeaturesMap: Record<string, TierFeatures> = {
+    free: {
+      tier: 'Free',
+      description: 'Basic vendor profile',
+      features: [
+        'Basic profile listing',
+        'Contact information display',
+      ],
+    },
+    tier1: {
+      tier: 'Tier 1',
+      description: 'Enhanced vendor profile',
+      features: [
+        'Enhanced profile',
+        'Social media links',
+        'Certifications & Awards',
+        'Team members',
+      ],
+    },
+    tier2: {
+      tier: 'Tier 2',
+      description: 'Full featured profile',
+      features: [
+        'Full product management',
+        'Multiple locations',
+        'Featured in category',
+        'Advanced analytics',
+      ],
+    },
+    tier3: {
+      tier: 'Tier 3',
+      description: 'Premium vendor profile',
+      features: [
+        'Premium promotion',
+        'Homepage banner',
+        'Priority placement',
+        'Sponsored content',
+      ],
+    },
+  };
+
+  return (
+    tierFeaturesMap[tier] || {
+      tier: 'Unknown',
+      description: 'Vendor profile',
+      features: [],
+    }
+  );
+}
+
+/**
+ * Send email notification when a new vendor registers
+ * Notifies admin of new registration
+ *
+ * @param vendorData - Vendor information
+ * @returns Email operation result
+ */
+export async function sendVendorRegisteredEmail(
+  vendorData: VendorEmailData
+): Promise<EmailResult> {
+  try {
+    const config = validateEmailConfig();
+    if (!config.valid) {
+      console.error('Email configuration invalid:', config.errors);
+      return {
+        success: false,
+        error: 'Email service not configured',
+      };
+    }
+
+    const resend = getResendClient();
+    const template = loadTemplate('vendor-registered');
+
+    if (!template) {
+      throw new Error('Unable to load vendor-registered template');
+    }
+
+    const adminReviewUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/admin/collections/vendors/${vendorData.vendorId}`;
+
+    const html = renderTemplate(template, {
+      COMPANY_NAME: vendorData.companyName,
+      VENDOR_ID: vendorData.vendorId,
+      TIER: vendorData.tier,
+      ADMIN_REVIEW_URL: adminReviewUrl,
+      CURRENT_YEAR: new Date().getFullYear().toString(),
+    });
+
+    const subject = `New Vendor Registration: ${vendorData.companyName}`;
+
+    const result = await resend.emails.send({
+      from: process.env.EMAIL_FROM_ADDRESS || 'notifications@resend.dev',
+      to: process.env.ADMIN_EMAIL_ADDRESS || '',
+      subject,
+      html,
+    });
+
+    if (result.error) {
+      console.error('Failed to send vendor registered email:', result.error);
+      return {
+        success: false,
+        error: result.error.message,
+      };
+    }
+
+    return { success: true };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('Error sending vendor registered email:', errorMessage);
+    return {
+      success: false,
+      error: errorMessage,
+    };
+  }
+}
+
+/**
+ * Send email notification when a vendor registration is approved
+ * Notifies vendor of approval
+ *
+ * @param vendorData - Vendor information
+ * @returns Email operation result
+ */
+export async function sendVendorApprovedEmail(
+  vendorData: VendorEmailData
+): Promise<EmailResult> {
+  try {
+    const config = validateEmailConfig();
+    if (!config.valid) {
+      console.error('Email configuration invalid:', config.errors);
+      return {
+        success: false,
+        error: 'Email service not configured',
+      };
+    }
+
+    const resend = getResendClient();
+    const template = loadTemplate('vendor-approved');
+
+    if (!template) {
+      throw new Error('Unable to load vendor-approved template');
+    }
+
+    const dashboardUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/vendor/dashboard`;
+    const tierFeatures = getTierFeatures(vendorData.tier);
+
+    const html = renderTemplate(template, {
+      COMPANY_NAME: vendorData.companyName,
+      VENDOR_ID: vendorData.vendorId,
+      TIER: tierFeatures.tier,
+      TIER_DESCRIPTION: tierFeatures.description,
+      DASHBOARD_URL: dashboardUrl,
+      CURRENT_YEAR: new Date().getFullYear().toString(),
+    });
+
+    const subject = 'Your Vendor Profile Has Been Approved - Paul Thames';
+
+    const result = await resend.emails.send({
+      from: process.env.EMAIL_FROM_ADDRESS || 'notifications@resend.dev',
+      to: vendorData.contactEmail,
+      subject,
+      html,
+    });
+
+    if (result.error) {
+      console.error('Failed to send vendor approved email:', result.error);
+      return {
+        success: false,
+        error: result.error.message,
+      };
+    }
+
+    return { success: true };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('Error sending vendor approved email:', errorMessage);
+    return {
+      success: false,
+      error: errorMessage,
+    };
+  }
+}
+
+/**
+ * Send email notification when a vendor registration is rejected
+ * Notifies vendor of rejection with optional reason
+ *
+ * @param vendorData - Vendor information
+ * @param reason - Optional rejection reason
+ * @returns Email operation result
+ */
+export async function sendVendorRejectedEmail(
+  vendorData: VendorEmailData,
+  reason?: string
+): Promise<EmailResult> {
+  try {
+    const config = validateEmailConfig();
+    if (!config.valid) {
+      console.error('Email configuration invalid:', config.errors);
+      return {
+        success: false,
+        error: 'Email service not configured',
+      };
+    }
+
+    const resend = getResendClient();
+    const template = loadTemplate('vendor-rejected');
+
+    if (!template) {
+      throw new Error('Unable to load vendor-rejected template');
+    }
+
+    const html = renderTemplate(template, {
+      COMPANY_NAME: vendorData.companyName,
+      VENDOR_ID: vendorData.vendorId,
+      REJECTION_REASON: reason || 'Your registration did not meet our requirements.',
+      CURRENT_YEAR: new Date().getFullYear().toString(),
+    });
+
+    const subject = 'Vendor Registration Update - Paul Thames';
+
+    const result = await resend.emails.send({
+      from: process.env.EMAIL_FROM_ADDRESS || 'notifications@resend.dev',
+      to: vendorData.contactEmail,
+      subject,
+      html,
+    });
+
+    if (result.error) {
+      console.error('Failed to send vendor rejected email:', result.error);
+      return {
+        success: false,
+        error: result.error.message,
+      };
+    }
+
+    return { success: true };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('Error sending vendor rejected email:', errorMessage);
+    return {
+      success: false,
+      error: errorMessage,
+    };
+  }
+}
+
+/**
+ * Send email notification when a vendor requests tier upgrade
+ * Notifies admin of upgrade request requiring review
+ *
+ * @param requestData - Tier upgrade request information
+ * @returns Email operation result
+ */
+export async function sendTierUpgradeRequestedEmail(
+  requestData: TierUpgradeEmailData
+): Promise<EmailResult> {
+  try {
+    const config = validateEmailConfig();
+    if (!config.valid) {
+      console.error('Email configuration invalid:', config.errors);
+      return {
+        success: false,
+        error: 'Email service not configured',
+      };
+    }
+
+    const resend = getResendClient();
+    const template = loadTemplate('tier-upgrade-requested');
+
+    if (!template) {
+      throw new Error('Unable to load tier-upgrade-requested template');
+    }
+
+    const adminQueueUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/admin/tier-requests/pending`;
+    const currentTierFeatures = getTierFeatures(requestData.currentTier);
+    const requestedTierFeatures = getTierFeatures(requestData.requestedTier);
+
+    const html = renderTemplate(template, {
+      COMPANY_NAME: requestData.companyName,
+      VENDOR_ID: requestData.vendorId,
+      REQUEST_ID: requestData.requestId,
+      CURRENT_TIER: currentTierFeatures.tier,
+      REQUESTED_TIER: requestedTierFeatures.tier,
+      VENDOR_NOTES: requestData.vendorNotes || 'No additional notes provided',
+      ADMIN_QUEUE_URL: adminQueueUrl,
+      CURRENT_YEAR: new Date().getFullYear().toString(),
+    });
+
+    const subject = `Tier Upgrade Request: ${requestData.companyName} (${currentTierFeatures.tier} → ${requestedTierFeatures.tier})`;
+
+    const result = await resend.emails.send({
+      from: process.env.EMAIL_FROM_ADDRESS || 'notifications@resend.dev',
+      to: process.env.ADMIN_EMAIL_ADDRESS || '',
+      subject,
+      html,
+    });
+
+    if (result.error) {
+      console.error('Failed to send tier upgrade requested email:', result.error);
+      return {
+        success: false,
+        error: result.error.message,
+      };
+    }
+
+    return { success: true };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('Error sending tier upgrade requested email:', errorMessage);
+    return {
+      success: false,
+      error: errorMessage,
+    };
+  }
+}
+
+/**
+ * Send email notification when a tier upgrade request is approved
+ * Notifies vendor of approval and new tier status
+ *
+ * @param requestData - Tier upgrade request information
+ * @returns Email operation result
+ */
+export async function sendTierUpgradeApprovedEmail(
+  requestData: TierUpgradeEmailData
+): Promise<EmailResult> {
+  try {
+    const config = validateEmailConfig();
+    if (!config.valid) {
+      console.error('Email configuration invalid:', config.errors);
+      return {
+        success: false,
+        error: 'Email service not configured',
+      };
+    }
+
+    const resend = getResendClient();
+    const template = loadTemplate('tier-upgrade-approved');
+
+    if (!template) {
+      throw new Error('Unable to load tier-upgrade-approved template');
+    }
+
+    const dashboardUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/vendor/dashboard`;
+    const requestedTierFeatures = getTierFeatures(requestData.requestedTier);
+
+    const featuresList = requestedTierFeatures.features
+      .map((feature) => `<div style="margin: 8px 0;">- ${feature}</div>`)
+      .join('');
+
+    const html = renderTemplate(template, {
+      COMPANY_NAME: requestData.companyName,
+      VENDOR_ID: requestData.vendorId,
+      REQUEST_ID: requestData.requestId,
+      NEW_TIER: requestedTierFeatures.tier,
+      TIER_DESCRIPTION: requestedTierFeatures.description,
+      NEW_TIER_FEATURES: featuresList,
+      DASHBOARD_URL: dashboardUrl,
+      CURRENT_YEAR: new Date().getFullYear().toString(),
+    });
+
+    const subject = 'Your Tier Upgrade Has Been Approved - Paul Thames';
+
+    const result = await resend.emails.send({
+      from: process.env.EMAIL_FROM_ADDRESS || 'notifications@resend.dev',
+      to: requestData.contactEmail,
+      subject,
+      html,
+    });
+
+    if (result.error) {
+      console.error('Failed to send tier upgrade approved email:', result.error);
+      return {
+        success: false,
+        error: result.error.message,
+      };
+    }
+
+    return { success: true };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('Error sending tier upgrade approved email:', errorMessage);
+    return {
+      success: false,
+      error: errorMessage,
+    };
+  }
+}
+
+/**
+ * Send email notification when a tier upgrade request is rejected
+ * Notifies vendor of rejection with reason
+ *
+ * @param requestData - Tier upgrade request information
+ * @param reason - Rejection reason (required)
+ * @returns Email operation result
+ */
+export async function sendTierUpgradeRejectedEmail(
+  requestData: TierUpgradeEmailData,
+  reason: string
+): Promise<EmailResult> {
+  try {
+    const config = validateEmailConfig();
+    if (!config.valid) {
+      console.error('Email configuration invalid:', config.errors);
+      return {
+        success: false,
+        error: 'Email service not configured',
+      };
+    }
+
+    const resend = getResendClient();
+    const template = loadTemplate('tier-upgrade-rejected');
+
+    if (!template) {
+      throw new Error('Unable to load tier-upgrade-rejected template');
+    }
+
+    const dashboardUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/vendor/dashboard`;
+    const currentTierFeatures = getTierFeatures(requestData.currentTier);
+    const requestedTierFeatures = getTierFeatures(requestData.requestedTier);
+
+    const html = renderTemplate(template, {
+      COMPANY_NAME: requestData.companyName,
+      VENDOR_ID: requestData.vendorId,
+      REQUEST_ID: requestData.requestId,
+      CURRENT_TIER: currentTierFeatures.tier,
+      REQUESTED_TIER: requestedTierFeatures.tier,
+      REJECTION_REASON: reason,
+      DASHBOARD_URL: dashboardUrl,
+      CURRENT_YEAR: new Date().getFullYear().toString(),
+    });
+
+    const subject = 'Tier Upgrade Request Update - Paul Thames';
+
+    const result = await resend.emails.send({
+      from: process.env.EMAIL_FROM_ADDRESS || 'notifications@resend.dev',
+      to: requestData.contactEmail,
+      subject,
+      html,
+    });
+
+    if (result.error) {
+      console.error('Failed to send tier upgrade rejected email:', result.error);
+      return {
+        success: false,
+        error: result.error.message,
+      };
+    }
+
+    return { success: true };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('Error sending tier upgrade rejected email:', errorMessage);
+    return {
+      success: false,
+      error: errorMessage,
+    };
+  }
+}

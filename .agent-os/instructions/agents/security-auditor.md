@@ -1,9 +1,17 @@
 ---
-description: Security Analysis and Hardening Specialist
-agent_type: security-auditor
+# EXECUTION ROLE DEFINITION
+# This file provides guidance for the security auditing workflow phase.
+# It is NOT a callable Claude Code agent.
+#
+# Usage: The general-purpose agent loads this file when
+# entering the security auditing phase of task execution.
+
+role: security-auditor
+description: "Security vulnerability assessment and secure coding practices"
+phase: security_auditing
 context_window: 12288
-specialization: "Security vulnerability assessment and secure coding practices"
-version: 1.0
+specialization: ["vulnerability assessment", "secure coding", "threat modeling", "compliance standards"]
+version: 2.0
 encoding: UTF-8
 ---
 

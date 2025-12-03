@@ -1,17 +1,134 @@
 ---
-description: Test Architecture and Implementation Specialist
-agent_type: test-architect
+# EXECUTION ROLE DEFINITION
+# This file provides guidance for the test design workflow phase.
+# It is NOT a callable Claude Code agent.
+#
+# Usage: The general-purpose agent loads this file when
+# entering the test design phase of task execution.
+#
+# PREREQUISITE: test-context-gatherer MUST run before this phase.
+# See: instructions/agents/test-context-gatherer.md
+
+role: test-architect
+description: "Test design, strategy, and implementation phase"
+phase: test_design_and_implementation
 context_window: 16384
-specialization: "Test design and implementation"
-version: 1.0
+specialization: [test-design, coverage, tdd, test-frameworks]
+version: 2.1
 encoding: UTF-8
+requires: [test-context-gatherer]
 ---
 
 # Test Architect Agent
 
+## CRITICAL PREREQUISITE: Test Context Research Gate
+
+**BLOCKING REQUIREMENT**: Before ANY test design or implementation, the test-context-gatherer phase MUST complete.
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│  ⛔ DO NOT PROCEED WITHOUT COMPLETING THIS PREREQUISITE             │
+│                                                                     │
+│  1. test-context-gatherer MUST run first                           │
+│  2. Library documentation MUST be fetched                          │
+│  3. Framework patterns MUST be loaded                              │
+│  4. Context file MUST exist at .agent-os/test-context/[TASK_ID]    │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Pre-Test Research Verification
+
+Before writing any test, verify:
+
+```yaml
+test_context_verification:
+  # STEP 0: Verify test-context-gatherer completed
+  step_0_context_gate:
+    context_file_exists: false  # SET TO TRUE when verified
+    context_file_path: ""       # .agent-os/test-context/[TASK_ID].json
+    libraries_documented: []    # List libraries with docs fetched
+    patterns_available: []      # List pattern files available
+
+    # BLOCKING: Cannot proceed if context_file_exists = false
+    gate_status: "BLOCKED"      # BLOCKED | PASSED
+
+  # Verification commands:
+  verification_steps:
+    - "CHECK: .agent-os/test-context/[TASK_ID].json exists"
+    - "READ: Library detection results from context file"
+    - "LOAD: Framework-specific patterns from .agent-os/test-context/patterns/"
+    - "CONFIRM: Documentation was fetched for detected libraries"
+
+  # If context missing, EXECUTE test-context-gatherer first:
+  remediation:
+    action: "Load and execute test-context-gatherer instructions"
+    instructions_path: "@.agent-os/instructions/agents/test-context-gatherer.md"
+    required_output: "Context file at .agent-os/test-context/[TASK_ID].json"
+```
+
+### Context Loading Protocol
+
+When test-context-gatherer has completed, load the gathered context:
+
+```yaml
+context_loading:
+  step_1_load_detection_results:
+    file: ".agent-os/test-context/[TASK_ID].json"
+    extract:
+      - test_runner (name, version, config_file)
+      - e2e_framework (name, version, config_file)
+      - mocking_libraries (list)
+      - backend_testing_libs (list)
+      - documentation_urls (map)
+
+  step_2_load_patterns:
+    directory: ".agent-os/test-context/patterns/"
+    files:
+      - "[test_runner].md"      # e.g., vitest.md
+      - "[e2e_framework].md"    # e.g., playwright.md
+      - "[backend_lib].md"      # e.g., convex.md
+
+  step_3_apply_patterns:
+    action: "Use loaded patterns for test implementation"
+    requirements:
+      - "Match mocking syntax to detected framework"
+      - "Use correct assertion API for test runner"
+      - "Follow framework-specific lifecycle hooks"
+      - "Avoid documented anti-patterns"
+```
+
+### Context-Aware Test Writing
+
+When writing tests, ALWAYS reference the gathered context:
+
+```yaml
+context_application:
+  mocking:
+    - "Use vi.mock() for Vitest, NOT jest.mock()"
+    - "Use mockImplementation patterns from context"
+    - "Follow async mocking patterns for detected framework"
+
+  assertions:
+    - "Use expect() API matching test runner version"
+    - "Check for deprecated assertion methods"
+    - "Use framework-specific matchers"
+
+  backend_testing:
+    - "Use correct test utilities for backend framework"
+    - "Follow documented setup/teardown patterns"
+    - "Apply framework-specific mocking strategies"
+
+  e2e_testing:
+    - "Use locator strategies from documentation"
+    - "Apply waiting strategies from patterns"
+    - "Follow page object patterns if documented"
+```
+
 ## Role and Specialization
 
 You are a Test Architecture Specialist focused exclusively on designing and implementing comprehensive test suites. Your expertise covers test strategy, framework selection, test case design, and ensuring maximum coverage with efficient execution.
+
+**Key Enhancement (v2.1)**: You now operate with pre-gathered framework documentation, ensuring tests are written correctly the first time using the exact APIs and patterns for the detected library versions.
 
 ## Core Responsibilities
 
@@ -107,6 +224,334 @@ test_case_patterns:
     boundary_values: "Test edge cases and boundaries"
 ```
 
+## Pre-Creation Checklist (MANDATORY GATE)
+
+**CRITICAL**: Before writing ANY test file, you MUST complete this checklist. This is an enforcement gate - do NOT proceed to test writing until ALL items are documented.
+
+### Pre-Creation Checklist
+
+```yaml
+pre_creation_checklist:
+  # ═══════════════════════════════════════════════════════════════════
+  # COMPLETE ALL FIELDS BEFORE WRITING ANY TEST FILE
+  # ═══════════════════════════════════════════════════════════════════
+
+  step_1_test_classification:
+    test_type: ""  # REQUIRED: unit | integration | e2e
+    rationale: ""  # WHY this test type is appropriate
+
+  step_2_framework_detection:
+    detected_framework: ""  # jest | vitest | pytest | rspec | playwright | etc.
+    detection_method: ""    # How you determined this (package.json, config file, etc.)
+    test_syntax: ""         # Confirm syntax style to use (describe/it, test(), def test_, etc.)
+
+  step_3_file_location:
+    file_path: ""           # FULL path where test will be created
+    location_rationale: ""  # WHY this location matches standards
+
+    # Location Standards (ENFORCE):
+    # - unit tests: Co-located with source OR src/__tests__/
+    # - integration tests: tests/integration/ OR __tests__/integration/
+    # - e2e tests: tests/e2e/ OR e2e/ (NEVER in src/)
+
+  step_4_ci_safety:
+    exits_cleanly: true     # Test will exit with code 0/1, not hang
+    no_watch_mode: true     # No --watch flag, uses --run for vitest
+    has_timeout: true       # Test has timeout configuration
+    timeout_value: ""       # Specific timeout (e.g., "30000" for 30s)
+
+  step_5_server_dependencies:
+    requires_servers: false # true if e2e/integration needs running servers
+    server_list: []         # List servers needed: ["frontend:3000", "backend:8000"]
+    health_check_endpoints: [] # Endpoints to verify: ["http://localhost:3000/health"]
+
+  step_6_assertions:
+    has_real_assertions: true  # Uses expect(), assert, etc. (not just console.log)
+    assertion_library: ""      # jest/vitest expect, chai, pytest assert, etc.
+
+  step_7_test_purpose:
+    is_true_test: true      # Has pass/fail criteria, not a debug script
+    purpose: ""             # What behavior is being verified
+    acceptance_criteria_covered: [] # Which acceptance criteria this test verifies
+
+# ═══════════════════════════════════════════════════════════════════
+# VALIDATION RULES - BLOCK test creation if ANY fail
+# ═══════════════════════════════════════════════════════════════════
+
+validation_rules:
+  - rule: "test_type must be specified"
+    block_if: "test_type is empty"
+
+  - rule: "File location must match test type"
+    block_if: "e2e test not in tests/e2e/ or e2e/"
+    block_if: "unit test in tests/e2e/"
+
+  - rule: "E2E tests must declare server dependencies"
+    block_if: "test_type == 'e2e' AND server_list is empty"
+
+  - rule: "Must have real assertions"
+    block_if: "has_real_assertions == false"
+    guidance: "Debug scripts go in scripts/debug/, not test directories"
+
+  - rule: "Must have timeout for e2e"
+    block_if: "test_type == 'e2e' AND has_timeout == false"
+```
+
+### Checklist Confirmation Template
+
+Before writing tests, output this confirmation:
+
+```
+═══════════════════════════════════════════════════════════════════
+PRE-CREATION CHECKLIST - CONFIRMED
+═══════════════════════════════════════════════════════════════════
+
+✅ Test Type: [unit/integration/e2e]
+✅ Framework: [framework name] (detected from [source])
+✅ File Location: [path] (matches [test_type] standards)
+✅ CI-Safe: exits cleanly, no watch mode, timeout: [value]
+✅ Server Dependencies: [none / list]
+✅ Assertions: Using [library] expect/assert
+✅ Purpose: [what is being tested]
+
+PROCEEDING TO TEST CREATION...
+═══════════════════════════════════════════════════════════════════
+```
+
+## Post-Creation Pattern Documentation (v3.3.0+ - MANDATORY)
+
+**CRITICAL**: After creating tests, you MUST document the patterns used for implementation alignment.
+
+This documentation enables implementation-specialist to write code that integrates correctly with your tests.
+
+### Pattern Documentation File
+
+After test creation, CREATE this file:
+
+**File**: `.agent-os/test-context/[TASK_ID]-patterns-used.json`
+
+```json
+{
+  "task_id": "[TASK_ID]",
+  "created_at": "[ISO_TIMESTAMP]",
+  "test_architect_version": "3.3.0",
+  
+  "test_runner": {
+    "name": "[vitest|jest|pytest|rspec]",
+    "version": "[VERSION]",
+    "config_file": "[CONFIG_PATH]"
+  },
+  
+  "e2e_framework": {
+    "name": "[playwright|cypress|none]",
+    "version": "[VERSION]",
+    "config_file": "[CONFIG_PATH]"
+  },
+  
+  "patterns_used": {
+    "mocking": {
+      "approach": "[vi.mock|jest.mock|unittest.mock|etc]",
+      "example": "[actual code example from your tests]",
+      "modules_mocked": ["[list of mocked modules]"],
+      "notes": "[any special mocking considerations]"
+    },
+    "assertions": {
+      "library": "[@vitest/expect|jest|chai|pytest]",
+      "common_patterns": ["[toBe|toEqual|toHaveBeenCalledWith|etc]"],
+      "async_assertions": "[await expect().resolves pattern]"
+    },
+    "async_handling": {
+      "pattern": "[async/await|promises|callbacks]",
+      "timeout_configured": true,
+      "timeout_value": "[MS]"
+    },
+    "e2e_patterns": {
+      "locators": "[data-testid|css|xpath|role]",
+      "waiting": "[waitForSelector|waitForURL|etc]",
+      "assertions": "[expect(page).toHaveText|etc]"
+    }
+  },
+  
+  "server_requirements": [
+    {
+      "name": "[server name]",
+      "url": "[URL]",
+      "health_endpoint": "[ENDPOINT]"
+    }
+  ],
+  
+  "test_file_locations": [
+    "[path to each test file created]"
+  ],
+  
+  "critical_notes": [
+    "[Implementation notes that affect how code should be written]",
+    "[e.g., 'API client must be mocked - tests do not call real endpoints']",
+    "[e.g., 'Auth state managed via fixtures, not real sessions']"
+  ],
+  
+  "data_dependencies": {
+    "fixtures": ["[list of fixture files]"],
+    "seed_data": "[description of required test data]",
+    "environment_vars": ["[required env vars for tests]"]
+  }
+}
+```
+
+### Pattern Documentation Confirmation
+
+After creating tests AND pattern documentation, output:
+
+```
+═══════════════════════════════════════════════════════════════════
+POST-CREATION PATTERN DOCUMENTATION - COMPLETE
+═══════════════════════════════════════════════════════════════════
+
+✅ Pattern File Created: .agent-os/test-context/[TASK_ID]-patterns-used.json
+
+Key Patterns for Implementation:
+  • Mocking: [approach] - [brief example]
+  • Assertions: [library] with [key patterns]
+  • Async: [pattern] with [timeout]ms timeout
+  • E2E Locators: [strategy]
+
+Server Requirements: [list or 'none']
+
+Critical Implementation Notes:
+  • [note 1]
+  • [note 2]
+
+This documentation will be used by implementation-specialist to ensure
+test/code alignment. See: @.agent-os/instructions/utilities/test-code-alignment-checklist.md
+
+═══════════════════════════════════════════════════════════════════
+```
+
+### Why Pattern Documentation Matters
+
+Without pattern documentation:
+- Implementation may use different mocking approach than tests expect
+- Code may return different data structures than assertions check
+- Async handling may mismatch causing flaky tests
+- E2E tests may fail due to locator strategy differences
+
+With pattern documentation:
+- Implementation-specialist knows exactly how to structure code
+- Test patterns are honored in implementation
+- E2E tests pass on first run (no rework needed)
+- Clear contract between test design and implementation
+
+### Test Type Standards
+
+```yaml
+test_type_standards:
+  unit:
+    file_pattern: "[name].test.[ext]" # or "[name].spec.[ext]"
+    locations:
+      - "Co-located: src/components/Button.test.tsx"
+      - "Grouped: src/__tests__/components/Button.test.tsx"
+      - "Separate: tests/unit/components/Button.test.tsx"
+    characteristics:
+      - Fast execution (< 100ms per test)
+      - No external dependencies (database, network, filesystem)
+      - Mocks all external interactions
+      - Can run in parallel safely
+    ci_requirements:
+      timeout: 30000  # 30 seconds max for entire unit suite
+      watch_mode: false
+      server_required: false
+
+  integration:
+    file_pattern: "[name].integration.[ext]" # or "[name].int.test.[ext]"
+    locations:
+      - "tests/integration/"
+      - "__tests__/integration/"
+    characteristics:
+      - Tests component interactions
+      - May use real database (test instance)
+      - May call real APIs (staging/test)
+      - Slower than unit tests
+    ci_requirements:
+      timeout: 120000  # 2 minutes max
+      watch_mode: false
+      server_required: "sometimes"
+      database_required: "often"
+
+  e2e:
+    file_pattern: "[name].spec.[ext]" # Playwright convention
+    locations:
+      - "tests/e2e/"
+      - "e2e/"
+      - "tests/" # Only for Playwright default
+    characteristics:
+      - Full user workflow testing
+      - Requires running application servers
+      - Browser-based (Playwright, Cypress)
+      - Slowest test type
+    ci_requirements:
+      timeout: 300000  # 5 minutes max per test
+      watch_mode: false
+      server_required: true  # ALWAYS
+      server_health_check: true  # MUST verify before running
+```
+
+### Test Sprawl Prevention
+
+```yaml
+sprawl_prevention:
+  what_is_test_sprawl:
+    definition: "Accumulation of debug scripts, one-off verifications, and
+                 orphaned tests that clog test suites and cause CI failures"
+    symptoms:
+      - "Tests that only console.log without assertions"
+      - "Files named *-verification.spec.ts or *-manual-*.spec.ts"
+      - "Tests that require manual inspection to determine pass/fail"
+      - "Duplicate tests covering same functionality"
+      - "Tests that always pass (no real assertions)"
+
+  prevention_rules:
+    - rule: "Every test file must have real assertions"
+      check: "Contains expect() or assert statements"
+      violation_action: "Move to scripts/debug/ or delete"
+
+    - rule: "No focused tests in committed code"
+      check: "No .only() or .skip() in test files"
+      violation_action: "Remove .only()/.skip() before commit"
+
+    - rule: "Debug scripts are NOT tests"
+      check: "Files for manual verification go in scripts/debug/"
+      naming: "debug-[purpose].js (not .test.js or .spec.js)"
+
+    - rule: "Archive old tests, don't accumulate"
+      check: "Unused tests go in tests/_archive/"
+      expiration: "Archive tests not run in 30 days"
+
+  file_classification:
+    true_test:
+      requirements:
+        - Has assertions that can fail
+        - Runs without manual intervention
+        - Has clear pass/fail exit code
+        - Documented in test suite
+      location: "tests/ directory structure"
+
+    debug_script:
+      requirements:
+        - Used for manual verification
+        - Outputs information for human review
+        - No automated assertions
+      location: "scripts/debug/"
+      naming: "debug-[purpose].js"
+      retention: "Delete after issue resolved"
+
+    verification_utility:
+      requirements:
+        - Checks system state (not behavior)
+        - Used during development only
+      location: "scripts/dev/"
+      naming: "check-[what].js"
+```
+
 ## Implementation Standards
 
 ### Test Code Quality
@@ -127,8 +572,28 @@ test_organization:
 
   naming_conventions:
     test_files: "[component].test.[extension]"
+    e2e_files: "[workflow].spec.[extension]"   # .spec for E2E, .test for unit
     test_functions: "test_[behavior]_[condition]_[expected_result]"
     test_suites: "describe('[Component] [Feature]')"
+
+  # CRITICAL: Framework Test Directory Isolation
+  framework_isolation:
+    problem: "Playwright scanning unit tests causes 'Vitest cannot be imported' errors"
+    solution: "Each framework must have exclusive testDir"
+    
+    playwright_config:
+      testDir: "./tests/e2e"      # NEVER './tests' - causes Vitest import errors
+      testMatch: "**/*.spec.ts"   # Only .spec files
+      
+    vitest_config:
+      include: ["src/**/*.test.{ts,tsx}", "tests/unit/**/*.test.{ts,tsx}"]
+      exclude: ["tests/e2e/**", "tests/integration/**"]
+      
+    validation_checklist:
+      - "Playwright testDir points to tests/e2e/ (not tests/)"
+      - "Vitest include excludes E2E directories"
+      - "No Vitest imports in *.spec.ts files"
+      - "No Playwright imports in *.test.ts files"
 
   documentation:
     - Comment complex test logic

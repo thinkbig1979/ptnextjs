@@ -1,394 +1,574 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Agent OS v4.1.0 - Structured workflows for AI agents to build products systematically.
 
-## Agent OS Framework
+## Quick Reference
 
-This is an Agent OS configuration repository that provides structured workflows for AI agents to build products systematically. Agent OS is designed to help agents follow consistent patterns for product planning, specification creation, task management, and execution.
+```
+commands/           → Entry points (plan-product.md, create-spec.md, execute-tasks.md)
+instructions/core/  → Detailed workflow steps
+standards/          → Code style, tech stack, best practices
+setup/              → Installation scripts
+config.yml          → Version and feature toggles
+```
 
-### Core Commands
+## Core Workflow
 
-Agent OS provides main commands accessible through markdown files in the `commands/` directory:
+1. **Plan**: `commands/plan-product.md` - Define product, install Agent OS
+2. **Specify**: `commands/create-spec.md` - Create feature specifications
+3. **Task**: `commands/create-tasks.md` - Break specs into executable tasks
+4. **Execute**: `commands/execute-tasks.md` - Run tasks with orchestration
+5. **Validate**: `commands/validate-browser.md` - Browser testing for web components
 
-**Core Workflow Commands:**
-- `plan-product.md` - Plan new products and install Agent OS in codebases
-- `analyze-product.md` - Analyze existing codebases and install Agent OS
-- `create-spec.md` - Create detailed feature specifications with technical requirements
-- `create-tasks.md` - Break down specifications into executable tasks
-- `execute-tasks.md` - Execute individual tasks from the task list using **Orchestrated Parallel Execution**
+## Code Style (Enforced)
 
-**Maintenance & Upgrade Commands:**
-- `upgrade-spec.md` - Fully modernize existing specs to v2.1 standards (complete re-evaluation and regeneration)
-- `enhance-existing.md` - Add validation requirements to existing specs (preserves structure, adds validation)
+| Element | Convention | Example |
+|---------|------------|---------|
+| Indentation | 2 spaces | `if (x) {\n  return y;\n}` |
+| Variables | snake_case | `user_name`, `is_active` |
+| Classes | PascalCase | `UserProfile`, `AuthService` |
+| Constants | UPPER_SNAKE_CASE | `MAX_RETRIES`, `API_BASE_URL` |
+| Strings | Single quotes | `'hello'` (double for interpolation) |
 
-**Validation Commands:**
-- `validate-browser.md` - Mandatory browser testing for web components
-- `validate-quality.md` - Comprehensive quality validation for specifications
-- `validate-system.md` - System-wide validation and health checks
+## Tech Stack Defaults
 
-Each command references detailed instructions in `instructions/core/` that provide step-by-step workflows.
+- **Framework**: Next.js + React (TypeScript)
+- **Database**: PostgreSQL 17+ with Active Record
+- **Build**: Vite, pnpm, Node 22 LTS
+- **Styling**: TailwindCSS 4.0+, shadcn, Lucide icons
+- **Hosting**: Self-hosted Docker Compose
 
-### Orchestrated Parallel Execution (v2.0)
+## Agent Execution Model
 
-Agent OS v2.0 introduces **Orchestrated Parallel Task Execution**, providing:
+Agent OS provides structured workflows executed by Claude Code's actual agents:
 
-- **60-80% faster task completion** through intelligent parallel processing
-- **Specialist agent coordination** for testing, implementation, integration, quality, security, and documentation
-- **Advanced error handling** with automatic recovery and intelligent escalation
-- **Context optimization** for maximum efficiency and relevance
-- **🆕 Deliverable Verification (v2.5+)**: Mandatory verification of all files and deliverables before task completion
+| Agent Type | Purpose | Invocation |
+|------------|---------|------------|
+| `general-purpose` | Main execution for all tasks | `Task(subagent_type: "general-purpose")` |
+| `Explore` | Codebase analysis and context | `Task(subagent_type: "Explore")` |
+| `Plan` | Strategic planning | `Task(subagent_type: "Plan")` |
 
-The execution system uses Claude Code's agent framework to coordinate task execution systematically, with optimized context and focused responsibilities for each task phase.
+**Important**: The "execution roles" in config.yml (test-architect, security-sentinel, etc.) are **workflow phase definitions**, NOT callable agents. They document structured phases that guide task execution through a single Claude Code agent.
 
-### Deliverable Verification Framework (v2.5+)
+For terminology definitions, see: `docs/GLOSSARY.md`
 
-Agent OS v2.5+ includes **Mandatory Deliverable Verification** that ensures orchestrators verify all subagent deliverables before marking tasks complete:
+## Key Features by Version
 
-- **100% file verification** - All expected files verified to exist using Read tool
-- **Test execution validation** - All tests verified to pass using test-runner
-- **Acceptance criteria evidence** - All criteria verified with tangible proof
-- **Integration verification** - All integration points verified to work correctly
-- **Automatic blocking** - Tasks cannot be marked complete without passing verification
+### Task Execution (v2.0+)
+- Parallel task processing via Claude Code's Task tool (spawns general-purpose subagents)
+- Workflow phases: testing, implementation, integration, security (guided by instruction files)
+- Context optimization per task phase
 
-This prevents the critical issue where orchestrators marked tasks complete while files were missing. The orchestrator now:
-1. Creates a deliverable manifest before delegation
-2. Tracks deliverable completion during execution
-3. Verifies ALL deliverables exist after execution
-4. Only marks task complete after verification passes
+### Task File Structure (v2.1+)
+- **Master file**: `tasks.md` (~50-100 lines) - task overview only
+- **Detail files**: `tasks/task-*.md` - loaded per-task execution
+- 90%+ context reduction for large task lists
 
-See `instructions/utilities/deliverable-verification-guide.md` for comprehensive verification workflows.
+### Quality Hooks (v2.2+)
+Auto-triggered on every file write via `.claude/hooks/validate-file.js`:
+- Syntax, formatting, linting, imports, types, security
+- Auto-fix enabled for safe issues
+- ~0.8s overhead per file
 
-### Task File Structure Optimization (v2.1)
+**Install**: `~/.agent-os/setup/install-hooks.sh`
 
-Agent OS v2.1 introduces **Optimized Task File Structure**, providing:
+### Deliverable Verification (v2.5+)
+Tasks blocked until verified:
+1. All expected files exist (Read tool verification)
+2. All tests pass (test-runner execution)
+3. All acceptance criteria have evidence
+4. All integration points work
 
-- **90%+ reduction in context consumption** through split file architecture
-- **Lightweight master tasks.md** (~50-100 lines) for quick overview and task selection
-- **Individual task detail files** (tasks/task-*.md) loaded only when executing specific tasks
-- **Scales efficiently** to 50+, 100+, or 200+ tasks without context bloat
+### Compound Engineering (v2.7+)
 
-The split structure separates essential task overview (ID, title, agent, time, dependencies, link) from verbose implementation details (acceptance criteria, testing requirements, evidence specifications). This dramatically improves performance when reviewing task lists or selecting next tasks. See `TASK_FILE_OPTIMIZATION_GUIDE.md` for detailed documentation.
+**Review Phases** (workflow phases with instruction files, NOT callable agents):
+- `security-sentinel` instructions - OWASP Top 10, vulnerability scanning
+- `performance-oracle` instructions - Bottleneck identification
+- `architecture-strategist` instructions - Design pattern analysis
+- `code-simplicity-reviewer` instructions - Complexity reduction
 
-### Automatic Quality Enforcement (v2.2+)
+**Research Phases** (load via general-purpose agent):
+- `repo-research-analyst` instructions - Codebase pattern analysis
+- `best-practices-researcher` instructions - External best practices
+- `framework-docs-researcher` instructions - Framework conventions
 
-Agent OS v2.2+ includes an **Automatic Quality Hooks System** that validates and auto-fixes every file write and edit operation using **Claude Code's native PostToolUse hooks**:
+Note: These are instruction files in `instructions/agents/`, loaded by the general-purpose agent during relevant workflow phases. See `docs/GLOSSARY.md` for terminology.
 
-- **Zero manual intervention** - formatters, linters, and validators run automatically after every file operation
-- **7 integrated validators** - syntax, formatting, linting, imports, type checking, security, test generation
-- **Auto-fix capabilities** - automatically corrects formatting, imports, and safe lint issues
-- **60% context token savings** - catches errors early, preventing iteration cycles
-- **~0.8s overhead per file** - parallel execution optimized for performance
-- **Language-agnostic** - supports JavaScript, TypeScript, Python, CSS, JSON, YAML, Markdown, and more
-- **Native integration** - Uses Claude Code's built-in hook system for reliable, automatic triggering
+**Security Gate**: P1 (CRITICAL) findings block task completion.
 
-Every file creation and modification automatically triggers validation through Claude Code's PostToolUse hooks (configured in `.claude/settings.json`). Issues are detected and often auto-fixed immediately, ensuring consistent code quality without manual effort.
+**Triage Workflow**: `commands/triage.md` - Interactive finding management with pause/resume.
 
-**Installation**: Run `~/.agent-os/setup/install-hooks.sh` in your project to enable hooks.
+**Worktree Isolation**: `.agent-os/worktrees/[task-id]/` - Parallel work without conflicts.
 
-See `CLAUDE_CODE_HOOKS_INTEGRATION.md` for setup guide and `instructions/utilities/quality-hooks-guide.md` for comprehensive documentation.
+### Beads Integration (v2.8+)
+Git-backed task tracking for persistent agent memory:
 
-### Compound Engineering Integration (v2.7+)
-
-Agent OS v2.7+ introduces **Compound Engineering Philosophy** - a comprehensive set of 15 transformative features that ensure each unit of engineering work makes subsequent work easier, not harder:
-
-#### Multi-Agent System (10 Specialized Review Agents)
-
-**Deep Analysis Agents** for comprehensive code review:
-- `security-sentinel` - Security vulnerability detection and OWASP Top 10 analysis
-- `performance-oracle` - Performance optimization and bottleneck identification
-- `architecture-strategist` - Architectural pattern analysis and system design review
-- `pattern-recognition-specialist` - Code pattern detection and reusability opportunities
-- `code-simplicity-reviewer` - Complexity reduction and maintainability improvement
-- `data-integrity-guardian` - Data validation, consistency, and integrity checks
-
-**Research Agents** for context gathering:
-- `repo-research-analyst` - Codebase pattern analysis and existing implementations
-- `best-practices-researcher` - External best practice research and recommendations
-- `framework-docs-researcher` - Framework documentation and convention research
-- `git-history-analyzer` - Historical context and evolution analysis
-
-All agents output standardized findings with severity (P1/P2/P3), effort estimation, and actionable solutions.
-
-#### Interactive Triage Workflow
-
-Comprehensive finding management system with intelligent prioritization:
-- **One-by-one presentation** - Process findings individually with full context
-- **Progress tracking** - Real-time progress display ("Finding 5/12 - 40% complete")
-- **Time estimation** - Dynamic time remaining calculation based on actual processing speeds
-- **Pause/resume capability** - State persistence to `.triage-state/` for multi-session triage
-- **Structured todo generation** - Priority-based filenames (XXX-pending-p[1-3]-slug.md)
-- **Interactive decisions** - Yes (create todo), Next (skip), Custom text options
-
-Access via: `commands/triage.md` (1356 lines of comprehensive workflow)
-
-#### Systematic Security Scanning
-
-**6-Step Security Protocol** integrated into every task execution:
-1. Input validation analysis (injection attacks, XSS)
-2. SQL injection vulnerability detection
-3. Authentication/authorization flaw identification
-4. Data exposure risk assessment
-5. OWASP Top 10 compliance checking
-6. Security best practice verification
-
-**P1 (CRITICAL) findings block task completion** - mandatory security gate prevents shipping vulnerable code.
-
-Integration: Automatic scanning in `execute-task-orchestrated.md` Step 2.5
-
-#### Ultra-Thinking Deep Dive Protocol
-
-Multi-perspective analysis framework for comprehensive requirement gathering:
-- **Stakeholder perspectives** - Developer, Ops, User, Security, Business viewpoints
-- **Scenario exploration** - Edge cases, failure modes, scale considerations
-- **Multi-angle review** - Technical, Business, Risk, Team impact analysis
-
-Integrated into spec creation (Step 4.5) to ensure specifications consider all angles before development begins.
-
-#### Finding Synthesis & Prioritization
-
-Intelligent consolidation and ranking of multi-agent findings:
-- **Duplicate removal** - Smart clustering of similar findings across agents
-- **Severity assignment** - 🔴 P1 (Critical), 🟡 P2 (Important), 🔵 P3 (Nice-to-have)
-- **Effort estimation** - Small/Medium/Large based on complexity analysis
-- **ROI calculation** - Prioritize highest-impact, lowest-effort improvements
-- **Categorization** - Security, Performance, Architecture, Quality, Data Integrity, Patterns
-
-Outputs prioritized, actionable findings ready for triage workflow.
-
-#### Git Worktree Isolation Pattern
-
-**Isolated work environments** prevent context switching and file conflicts:
-- Worktrees created at `.agent-os/worktrees/[task-id]/`
-- Automatic branch creation and management
-- Metadata tracking in `.worktree-metadata`
-- Clean separation from main workspace
-- Scripts: `setup/create-worktree.sh` and `setup/cleanup-worktree.sh`
-
-Benefits: Parallel work on multiple tasks, test reviews without affecting main branch, easy cleanup.
-
-#### Language-Specific Quality Standards
-
-**5,773+ lines of comprehensive standards** across multiple languages:
-- **Backend**: `standards/backend/rails-patterns.md` (1308 lines)
-- **Backend**: `standards/backend/python-patterns.md` (2409 lines)
-- **Frontend**: `standards/frontend/typescript-patterns.md` (2056 lines)
-- **Additional**: API patterns, Database patterns, Styling patterns, HTML patterns
-
-Each standard includes framework-specific validation rules, security patterns, linting configuration, anti-pattern detection, and code style conventions.
-
-#### Code Examples in Specifications
-
-**Real, working examples** from actual codebase:
-- Actual code examples following established patterns
-- Mock filenames with realistic structure (todos)
-- ERD diagrams for model changes
-- Research agents provide formatted examples automatically
-- Reference format: `file_path:line_number` or `file.rb:42-58` for ranges
-
-Ensures specifications are immediately actionable with proven patterns.
-
-#### Multi-Level Planning Detail
-
-**Three specification detail levels** for different feature complexities:
-- **Minimal** - Simple features, quick development (basic structure only)
-- **Standard** - Typical features, moderate complexity (full sections)
-- **Comprehensive** - Complex features, architectural changes (includes ADRs, ultra-thinking)
-
-User selects detail level during spec creation (Step 2.5) - template automatically includes appropriate sections.
-
-#### Comprehensive Reference Collection
-
-**Standardized reference format** for traceability:
-- Internal: `src/models/user.rb:42` or `app/controllers/auth.ts:105-120`
-- External: Full URLs to documentation
-- Related: Issue/PR references (#123, PR #456)
-- Standards: `@.agent-os/standards/rails-patterns.md:250`
-
-All specifications, findings, and documentation use consistent reference format for easy navigation.
-
-#### AI-Era Development Considerations
-
-**Documentation for AI-assisted development**:
-- AI tools used documented in specs
-- Effective prompts captured for reuse
-- AI-generated code review requirements
-- Testing emphasis for rapid implementation
-- Context sections for AI agents
-
-Template section: `## AI Development Notes` in architecture-decisions-template.md
-
-#### Enhanced Work Command
-
-**Execute-task workflow improvements**:
-- Explicit "read plan document" capability for PRD/design doc execution
-- Automatic test execution after each task completion
-- Task detail files loaded from `tasks/` directory
-- Integration verification framework
-- Deliverable verification before completion
-
-All task orchestration includes automatic validation and testing.
-
-#### Interactive Finding Presentation
-
-**Real-time progress tracking during triage**:
-- Progress display: "📊 Triage Progress: 15/42 findings (36%)"
-- Time estimation: "⏱️ Estimated time remaining: ~27 minutes"
-- Rolling average calculation (last 10 findings)
-- Complexity adjustments (more P1s = longer estimates)
-- Fastest/slowest finding metrics
-
-Integrated into triage workflow for accurate planning.
-
-#### Compounding Engineering Philosophy
-
-**Core principle: Write code that compounds in value over time**
-
-Four key concepts integrated throughout Agent OS:
-1. **Reusability First** - Extract patterns, create composable components
-2. **Composability** - Build features from existing building blocks
-3. **Knowledge Capture** - Document patterns in CLAUDE.md, standards, examples
-4. **Systematic Improvement** - Each task should leave codebase easier to work with
-
-**Required in all workflows:**
-- Reusability analysis in specifications
-- Pattern documentation as task acceptance criteria
-- Code review agents check for reusability opportunities
-- Examples: shared UI components vs one-off implementations, extracted utilities vs duplicated logic
-
-Documented in: `standards/best-practices.md` - Compounding Engineering Philosophy section
-
-#### Beads Issue Tracking Integration (v2.8+)
-
-**Distributed, git-backed task tracking** for persistent agent memory across sessions:
-
-Agent OS v2.8+ integrates **Beads** - a lightweight issue tracker designed specifically for AI coding agents. Beads provides distributed memory through git-backed task tracking, eliminating context window amnesia.
-
-**Hybrid Architecture:**
-- **Markdown** (tasks.md, tasks/*.md) - Human-readable specifications, acceptance criteria, implementation details
-- **Beads** (.beads/issues.jsonl) - Execution state, dependency resolution, cross-session persistence
-
-**Key Benefits:**
-- **Persistent Memory** - Tasks survive context loss and session boundaries
-- **Automatic Dependency Resolution** - `bd ready` finds unblocked work instantly
-- **Discovered Work Tracking** - Issues found during implementation automatically linked with `discovered-from` dependencies
-- **Git-Based Distribution** - Multi-agent safe with collision-resistant hash IDs (bd-a1b2)
-- **Zero Context Cost** - SQLite cache (<100ms queries) + JSONL source of truth
-
-**Integration Points:**
-1. **Task Creation** (create-tasks.md Step 2.6) - Auto-sync markdown tasks to Beads
-2. **Task Execution** (execute-task-orchestrated.md Step 0.2) - Query ready work before orchestration
-3. **Task Completion** (execute-task-orchestrated.md Step 99) - Mark complete, sync to git, detect newly unblocked tasks
-4. **Worktree Compatibility** - No-daemon mode prevents branch contamination
-
-**Common Workflow:**
 ```bash
-# Query unblocked tasks
-bd ready
-
-# Claim task
-bd update impl-comp1-core --status in_progress
-
-# (Execute task via Agent OS orchestration)
-
-# Complete task
-bd close impl-comp1-core --reason "All acceptance criteria met"
-
-# Sync to git (CRITICAL at session end)
-bd sync
-
-# Check for newly unblocked work
-bd ready
+bd ready                    # Find unblocked tasks
+bd update TASK --status in_progress
+bd close TASK --reason "Done"
+bd sync                     # Commit to git (critical at session end)
 ```
 
-**MCP Integration:** When using Claude Code, prefer MCP function calls (`mcp__beads__ready()`) over CLI for structured return types and automatic workspace detection.
+**Hybrid mode**: Markdown specs + Beads execution state.
 
-**Configuration:** Beads integration controlled via `config.yml` → `beads.enabled: true` (default). Disable with `false` to use markdown-only workflow.
+### Test Infrastructure Reliability (v2.9+)
+Prevents hung tests, CI failures, and test sprawl.
 
-**Documentation:** Complete guide at `instructions/utilities/beads-integration-guide.md`
+**Mandatory Protocols**:
 
-**Installation:** `~/.agent-os/setup/install-beads.sh` (automatically prompted during Agent OS installation)
+1. **Instruction Loading** (Step 1.9 in execute-task-orchestrated.md)
+   - Subagents MUST read their instruction file before work
+   - Agent type validated against task requirements
 
-#### System Integration
+2. **Server Pre-Flight** (before E2E tests)
+   - Health check required servers (2s timeout each)
+   - Block test execution if servers down
+   - Never auto-start servers (causes conflicts)
 
-All 15 features work together as a **compounding development system**:
+3. **Watch Mode Prevention**
+   - Detect and block: `vitest` (use `vitest run`), `jest --watch`, `playwright --ui`
+   - Auto-fix commands when possible
 
-**Spec Creation Pipeline:**
-Research agents → Ultra-thinking → Multi-level detail → Code examples → AI considerations → Standardized references
+4. **Timeout Enforcement**
+   - Unit: 2 min | Integration: 5 min | E2E: 10 min
+   - Idle detection: 60s no output = hung test
+   - Auto-kill hung tests
 
-**Quality Assurance Pipeline:**
-Multi-agent review → Security scanning → Finding synthesis → Interactive triage → Progress tracking → Language standards validation
+5. **Test Standards Validator** (`hooks/validators/test_standards.js`)
+   - Validates: real assertions, no `.only()`, correct file location, timeout config
+   - Blocks debug patterns as test files
 
-**Development Workflow:**
-Beads task query → Worktree isolation → Work command orchestration → Security gate → Compounding philosophy → Deliverable verification → Beads sync
+6. **Sprawl Prevention**
+   - Max 5 console statements per test file (configurable)
+   - Debug scripts go to `scripts/debug/`, not test directories
+   - Archive location: `tests/_archive/`
 
-**Verification Status:** All 15 features verified operational (see `FEATURE_VERIFICATION_REPORT.md`). Beads integration added in v2.8+.
+**Required package.json scripts**:
+```json
+{
+  "test:unit:ci": "vitest run",
+  "test:e2e:ci": "playwright test",
+  "test:check-servers": "curl -f http://localhost:3000/health"
+}
+```
 
-### Configuration Structure
+### Test Context Gathering (v3.1+)
+Pre-test research phase that gathers library documentation BEFORE test writing.
 
-The repository follows this organizational pattern:
+**Problem Solved**: Tests often fail on first run due to incorrect API usage, outdated patterns, or framework-specific requirements (e.g., Convex tests using wrong patterns).
+
+**How It Works**:
+1. **Library Detection** (Step 2.0): Scans package.json/pyproject.toml/Gemfile
+2. **Documentation Fetching**: Skills → DocFork MCP → Context7 MCP → WebSearch (priority order)
+3. **Pattern Extraction**: Extracts mocking, assertion, and lifecycle patterns
+4. **Context Handoff**: Saves to `.agent-os/test-context/[TASK_ID].json`
+5. **Test Writing**: test-architect uses gathered patterns
+
+**Key Files**:
+- `instructions/agents/test-context-gatherer.md` - Research phase instructions
+- `~/.claude/skills/agent-os-test-research/` - Test research skill (v3.2+)
+- `~/.claude/skills/agent-os-patterns/` - Testing patterns skill (v3.2+)
+
+**Workflow Integration**: Step 2.0 in `execute-task-orchestrated.md` (before test-architect)
+
+### Skills Integration (v3.2+)
+Claude Code skills provide progressive-disclosure documentation without network dependencies.
+
+**Pattern Lookup Hierarchy** (IMPORTANT):
+```
+1. FIRST:  .agent-os/patterns/  (project-specific, generated by codebase analysis)
+2. SECOND: ~/.claude/skills/    (global generic patterns from skills)
+```
+
+Project-specific patterns take PRECEDENCE over global skill patterns.
+
+**Available Skills** (installed to `~/.claude/skills/`):
+
+| Skill | Purpose | Available References |
+|-------|---------|----------------------|
+| `agent-os-patterns` | Testing & code style | vitest.md, playwright.md, convex.md, test-strategies.md, coding-style.md |
+| `agent-os-specialists` | Development guidance | backend-nodejs.md, frontend-react.md, implementation.md |
+| `agent-os-test-research` | Pre-test research | Detection patterns, documentation sources |
+
+**Project-Specific Patterns** (generated per-project in `.agent-os/patterns/`):
+
+| Category | File | Generated By |
+|----------|------|--------------|
+| Frontend | `.agent-os/patterns/frontend/typescript.md` | Codebase analysis |
+| Backend | `.agent-os/patterns/backend/python.md` | Codebase analysis |
+| Backend | `.agent-os/patterns/backend/rails.md` | Codebase analysis |
+| Backend | `.agent-os/patterns/backend/api.md` | Codebase analysis |
+| Testing | `.agent-os/patterns/testing/*.md` | Codebase analysis |
+| Global | `.agent-os/patterns/global/error-handling.md` | Codebase analysis |
+
+**Workflow Integration Points**:
+```yaml
+create_tasks: Step 1.7 → Check .agent-os/patterns/, then agent-os-patterns skill
+test_context: Step 2.0 → Check .agent-os/patterns/testing/, then skills
+implementation: Step 2.2 → Check .agent-os/patterns/, then skills
+```
+
+**Skill Invocation Pattern**:
+```
+1. CHECK .agent-os/patterns/ for project-specific patterns (FIRST)
+2. INVOKE Skill tool: Skill(skill="agent-os-patterns")
+3. READ relevant references from skill
+4. Project patterns OVERRIDE skill patterns where both exist
+```
+
+**IMPORTANT**: Instruction files have explicit pattern lookup steps that check project-specific patterns FIRST, then fall back to global skills.
+
+### Test Execution Monitoring (v3.3.0+)
+Real-time test visibility with hung test detection and streaming reporters.
+
+**Problem Solved**: Tests run as batch, hung tests not detected until timeout, no per-test visibility.
+
+**Solution**: Streaming reporters + test monitor utility:
+
+**Key Files**:
+- `scripts/reporters/vitest-streaming.js` - Vitest real-time reporter
+- `scripts/reporters/playwright-streaming.ts` - Playwright real-time reporter
+- `hooks/lib/test-monitor.js` - Monitor with hung detection
+- `setup/install-test-monitoring.sh` - Installation script
+
+**Usage**:
+```bash
+# Run with monitoring
+node ~/.agent-os/hooks/lib/test-monitor.js pnpm vitest run --reporter=./scripts/reporters/vitest-streaming.js
+
+# Environment variables
+AGENT_OS_TEST_TIMEOUT=30000   # Per-test timeout (ms)
+AGENT_OS_IDLE_TIMEOUT=15000   # Idle detection (ms)
+AGENT_OS_ON_HUNG=alert        # Action: alert|kill|skip
+```
+
+**Benefits**:
+- Per-test progress visibility (see which test is running)
+- Hung test detection (alert/kill after timeout)
+- Idle detection (no output = potential hang)
+- Structured JSON events for parsing
+
+### Test Failure Handling Protocol (v4.0.1+)
+Direct test execution with automated failure analysis and delegated fixes.
+
+**Problem Solved**: No explicit protocol for handling test failures - what to do after failures are detected.
+
+**Solution**: Direct test execution (for real-time visibility) with delegated fixes:
 
 ```
-.agent-os/
-├── config.yml              # Agent OS version and project type configuration
-├── commands/               # High-level command entry points
-├── instructions/           # Detailed workflow instructions
-│   ├── core/              # Main workflow instructions
-│   ├── meta/              # Pre/post-flight checks
-│   └── utilities/         # Utility guides and helpers
-├── standards/             # Code and development standards
-│   ├── best-practices.md  # Development guidelines
-│   ├── code-style.md      # Formatting and naming conventions
-│   ├── tech-stack.md      # Default technology choices
-│   └── code-style/        # Language-specific style guides
-└── setup/                 # Installation scripts
+MAIN AGENT
+├─► Run tests DIRECTLY (user sees real-time streaming output)
+├─► Analyze failures (classify, group by root cause)
+├─► Triage decision (ask user: investigate|fix|skip|rerun)
+├─► Delegate fixes → FIX SUBAGENT(s)
+├─► Run verification tests DIRECTLY
+└─► Loop until resolved
 ```
 
-### Development Standards
+**Key Principle**: Main agent runs tests DIRECTLY (real-time output), only FIXES are delegated to subagents.
 
-#### Tech Stack Defaults
-- **App Framework**: Next.js latest stable
-- **Language**: TypeScript
-- **Database**: PostgreSQL 17+
-- **ORM**: Active Record
-- **Frontend**: React latest stable
-- **Build Tool**: Vite
-- **Package Manager**: pnpm
-- **Node Version**: 22 LTS
-- **CSS**: TailwindCSS 4.0+
-- **UI Components**: shadcn latest
-- **Icons**: Lucide React components
-- **Hosting**: Self-hosted Docker Compose stacks
+**Why direct execution?** Subagents don't stream intermediate output - users would see nothing for 5+ minutes.
 
-#### Code Style Guidelines
-- **Indentation**: 2 spaces (never tabs)
-- **Methods/Variables**: snake_case
-- **Classes/Modules**: PascalCase
-- **Constants**: UPPER_SNAKE_CASE
-- **Strings**: Single quotes ('') unless interpolation needed
-- **Comments**: Explain "why" not "what", keep concise and accurate
+**Failure Classification**:
+| Type | Indicators | Fix Location |
+|------|------------|--------------|
+| `assertion` | Expected vs actual mismatch | Test or implementation |
+| `timeout` | Test exceeded time limit | Async handling, server |
+| `environment` | Missing server/dep/env var | Environment setup |
+| `syntax` | Parse/compile error | Code fix |
+| `runtime` | Uncaught exception | Implementation |
 
-#### Development Principles
-- Keep implementations simple and avoid over-engineering
-- Optimize for code readability over micro-optimizations
-- Follow DRY principles - extract repeated logic to reusable components
-- Choose well-maintained, popular libraries when adding dependencies
-- Maintain consistent file organization and naming conventions
+**Subagent Delegation**:
 
-#### Automatic Quality Assurance
-- **Quality hooks run automatically** on every file write and edit via Claude Code's native PostToolUse hooks
-- **No manual validation needed** - syntax, formatting, linting, security checks happen automatically
-- **Auto-fix enabled** - code formatting, import organization, and safe lint issues are corrected on-the-fly
-- **Test generation** - basic test scaffolding is created for new source files
-- **Configured in `.claude-settings.json`** - uses Claude Code's built-in hook system for reliability
-- See `instructions/utilities/quality-hooks-guide.md` for details on the quality enforcement system
+1. **Main agent runs tests directly**: For real-time streaming output visibility
+   - References `instructions/agents/test-runner.md` for protocol
+   - Uses streaming reporters and test-monitor.js
+   - User sees `[AGENT-OS-TEST]` markers in real-time
 
-### Workflow Integration
+2. **FIX SUBAGENT**: Fixes specific failures based on analysis (delegated)
+   - Receives explicit fix instructions from main agent
+   - Modifies only specified files
+   - Does NOT run tests (main agent verifies)
+   - Reports what changed + confidence level
 
-When working with this Agent OS installation:
+**Analysis Persistence**: `.agent-os/test-failures/[run-id].json`
+- Survives context, enables resume
+- Tracks fix history across iterations
+- Groups failures by root cause
 
-1. Use the command files in `commands/` as entry points
-2. Each command will reference the appropriate instruction file in `instructions/core/`
-3. Follow the standards defined in `standards/` for consistent code quality
-4. The configuration in `config.yml` determines which agents are enabled and project structure
+### Unified Execution Protocol (v4.1.0+)
+Beads-first orchestration with parallel specialist delegation.
 
-This framework enables systematic, repeatable workflows for product development while maintaining consistency across different projects and team members.
+**Problem Solved**: Context exhaustion without clean handoffs, tasks not tracked in Beads before execution, subagent work lost on context limits.
+
+**Solution**: Create ALL Beads tasks with dependencies BEFORE any execution, then delegate to parallel specialists with context-aware monitoring.
+
+**Key Principle**: Main agent creates full task graph upfront, then orchestrates parallel execution waves.
+
+**Execution Flow**:
+```
+Phase 0: Pre-Flight
+├─ Quality hooks verification
+├─ Repository health check
+└─ Branch setup
+
+Phase 1: Beads Task Decomposition (BEFORE any execution)
+├─ Analyze full work scope
+├─ Create ALL beads tasks with bd create
+├─ Define ALL dependencies with bd dep add
+└─ Create execution plan (parallel waves)
+
+Phase 2: Parallel Execution
+├─ Wave N: Launch parallel subagents (each on assigned Beads task)
+├─ Collect status reports (STATUS, COMPLETED, REMAINING, BLOCKERS)
+├─ Handle completions → bd close
+├─ Handle checkpoints → bd note, continuation queue
+├─ Handle blockers → prompt user
+├─ Update documents (tasks.md, specs)
+└─ Checkpoint (git commit, bd sync)
+
+Phase 3: Context-Aware Monitoring
+├─ Monitor orchestrator context (75% limit)
+└─ Graceful stop with full state saved
+
+Phase 4: Post-Execution
+├─ Verify all deliverables
+├─ Run full test suite
+├─ Close all beads tasks
+└─ Final commit and summary
+```
+
+**Beads-First Benefits**:
+- Every subagent has a tracked task ID
+- Dependencies prevent out-of-order execution
+- Progress survives context exhaustion
+- Clean handoff via `bd show <TASK_ID>`
+
+**Subagent Status Report Format**:
+```
+STATUS: [completed | stopped_at_checkpoint | blocked]
+TASK_ID: <beads_task_id>
+COMPLETED: [bullet list]
+REMAINING: [bullet list]
+STOPPED_AT: [exact point - file:line or step]
+NEXT_ACTION: [what next agent should do first]
+BLOCKERS: [any issues]
+```
+
+**User Decision Prompts**: Main agent ALWAYS prompts user for:
+- Blocked tasks (resolve | skip | abort)
+- Checkpoint continuations (continue | defer | investigate)
+- Execution plan confirmation before starting
+
+**Key Files**:
+- `instructions/core/execute-tasks-unified.md` - Full protocol
+- `.claude/commands/execute-tasks.md` - Command entry point
+
+**Configuration** (`config.yml`):
+```yaml
+unified_execution:
+  enabled: true
+  beads_first: true
+  context_limit: 0.75
+  parallel_waves: true
+  confirm_execution_plan: true
+```
+
+**Key Files**:
+- `.claude/commands/run-tests.md` - Full protocol (v4.1)
+- `instructions/agents/test-runner.md` - Test execution reference (v3.1)
+
+**Usage**: `/run-tests` command triggers the workflow.
+
+### Test/Code Alignment (v3.3.0+)
+Ensures tests and implementation code remain aligned throughout TDD cycle.
+
+**Problem Solved**: E2E tests need rework because implementation doesn't match test patterns.
+
+**Solution**: Pattern documentation + context handoff:
+
+**Key Files**:
+- `instructions/utilities/test-code-alignment-checklist.md` - Full alignment guide
+- `instructions/agents/implementation-context-handoff.md` - GREEN phase guidance
+- `execute-task-orchestrated.md` (Steps 2.1a, 2.2a) - Workflow integration
+
+**Workflow**:
+1. **RED Phase (2.1)**: test-architect documents patterns used
+   - Output: `.agent-os/test-context/[TASK_ID]-patterns-used.json`
+2. **Step 2.1a**: Orchestrator verifies pattern documentation exists
+3. **GREEN Phase (2.2)**: implementation-specialist reads pattern file FIRST
+4. **Step 2.2a**: Alignment validation before marking GREEN complete
+
+**Pattern Documentation** (created by test-architect):
+```json
+{
+  "patterns_used": {
+    "mocking": { "approach": "vi.mock()", "modules_mocked": [...] },
+    "assertions": { "library": "@vitest/expect", "patterns": [...] },
+    "e2e_patterns": { "locators": "data-testid", "waiting": "waitForSelector" }
+  },
+  "critical_notes": ["API must be mocked", "Auth via fixtures"]
+}
+```
+
+**Configuration** (`config.yml`):
+```yaml
+test_execution_monitoring:
+  enabled: true
+  per_test_timeout:
+    unit_test: 5000
+    e2e_test: 30000
+  intervention:
+    on_hung_test: "alert"
+
+test_code_alignment:
+  enabled: true
+  pattern_documentation:
+    required: true
+  alignment_validation:
+    coverage_threshold: 85
+```
+
+### Subagent Delegation Template (v3.2.1+)
+Ensures mandatory instructions, skills, and context are passed to subagents in orchestrated workflows.
+
+**Problem Solved**: When delegating work via `Task()`, subagents do NOT automatically inherit:
+- Mandatory instruction loading requirements
+- Skill invocation requirements from config.yml
+- Global CLAUDE.md context
+- Pattern lookup hierarchy
+
+**Solution**: Standard delegation template at `instructions/utilities/subagent-delegation-template.md`
+
+**Key Files**:
+- `instructions/utilities/subagent-delegation-template.md` - Copy-paste template for Task() prompts
+- `instructions/core/execute-task-orchestrated.md` (Step 1.9a) - Template reference
+- `instructions/core/create-spec.md` - Subagent delegation guidance section
+- `instructions/agents/test-context-gatherer.md` (Section 2.0) - Mandatory skill invocations
+
+**Required Skills by Phase**:
+
+| Phase | Required Skills |
+|-------|-----------------|
+| Test Context (2.0) | `agent-os-test-research`, `agent-os-patterns` |
+| Test Design (2.1) | `agent-os-patterns`, `agent-os-specialists` |
+| Implementation (3.0) | `agent-os-patterns`, `agent-os-specialists` |
+| Security Review (4.0) | `agent-os-specialists` |
+| Spec Creation | `agent-os-patterns`, shadcn MCPs for UI |
+
+**Verification Checklist** (after delegation):
+- [ ] Instruction file was read and key constraints stated
+- [ ] Required skills were invoked (check for Skill() calls)
+- [ ] Project-specific patterns were checked first
+- [ ] All deliverables were produced
+
+**Configuration** (`config.yml`):
+```yaml
+skills_integration:
+  enabled: true
+  invocation_mode: "explicit"  # or "auto" for model-invoked
+test_context_gathering:
+  documentation_sources:
+    priority:
+      - skills           # Priority 1: Always available
+      - dockfork_mcp     # Priority 2: If MCP available
+      - context7_mcp     # Priority 3: If MCP available
+      - websearch        # Priority 4: Fallback
+```
+
+### Validator Improvements (v3.0+)
+
+**Configurable Test Standards** (`hooks/validators/test_standards.js` v2.0):
+- All thresholds configurable via `config.yml`
+- Per-file skip directives: `// @agent-os-skip test-standards:<check>`
+- CI environment auto-detection (stricter validation in CI)
+- Enhanced error messages with why/fix/example guidance
+
+**Skip Directives** (add to first 10 lines of test file):
+```javascript
+// @agent-os-skip test-standards:assertions
+// @agent-os-skip test-standards:console-limit
+// @agent-os-skip test-standards:timeout-config
+```
+
+**TDD State Manager** (`hooks/tdd-state-manager.js`):
+- Tracks RED-GREEN-REFACTOR cycle per task
+- Auto-transition on metrics changes
+- Phase validation and action blocking
+- Enforcement levels: strict/standard/relaxed
+
+**Validator Registry** (`hooks/validator-registry.js`):
+- Pluggable validator system
+- Dynamic discovery and registration
+- Priority-based execution ordering
+- Configuration-driven enable/disable
+
+**Standalone Execution** (`instructions/core/execute-task-standalone.md`):
+- Execute tasks without Beads dependency
+- Simplified workflow for prototyping
+- Full TDD state integration (optional)
+
+## Checklist: Task Execution
+
+Before marking task complete:
+- [ ] All files in deliverable manifest exist
+- [ ] All tests pass (`test:unit:ci`, `test:e2e:ci`)
+- [ ] No P1 security findings
+- [ ] Acceptance criteria verified with evidence
+- [ ] Integration points tested
+- [ ] `bd sync` if using Beads
+
+## Checklist: Test Creation
+
+Before creating tests:
+- [ ] Read `instructions/agents/test-architect.md`
+- [ ] Verify test type (unit/integration/E2E)
+- [ ] Confirm file location matches type
+- [ ] Add appropriate timeouts for E2E
+- [ ] No `.only()` or debug patterns
+- [ ] Real assertions (not just `expect(true)`)
+
+## Common Commands
+
+```bash
+# Install Agent OS in a project
+~/.agent-os/setup/install-agent-os.sh
+
+# Update existing installation
+~/.agent-os/setup/update-agent-os.sh --target ./.agent-os
+
+# Rollout to all projects
+~/.agent-os/setup/rollout-agent-os.sh
+
+# Install quality hooks
+~/.agent-os/setup/install-hooks.sh
+
+# Install TDD hooks
+~/.agent-os/setup/install-tdd-hooks.sh
+```
+
+## File Reference Format
+
+Use consistent references for traceability:
+- Internal: `src/models/user.rb:42` or `app/controllers/auth.ts:105-120`
+- Standards: `@.agent-os/standards/rails-patterns.md:250`
+- External: Full URLs
+
+## Configuration
+
+All features toggled in `config.yml`:
+- `skills_integration.enabled: true` - v3.2 skills-based context (NEW)
+- `test_infrastructure.enabled: true` - v2.9 test reliability
+- `tdd_enforcement.enabled: true` - Test-first workflow
+- `beads.enabled: true` - Git-backed task tracking
+- `quality_hooks.enabled: true` - Auto-validation
+- `compound_engineering.enabled: true` - Review workflow phases
+
+## Additional Documentation
+
+- [Glossary](docs/GLOSSARY.md) - Terminology definitions
+- [Getting Started](docs/GETTING_STARTED.md) - New user guide
+- [Troubleshooting](docs/TROUBLESHOOTING.md) - Common issues and solutions
+- [FAQ](docs/FAQ.md) - Frequently asked questions
+- [Architecture](docs/ARCHITECTURE.md) - System architecture
