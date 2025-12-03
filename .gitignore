@@ -56,3 +56,19 @@ payload-types.ts
 generated-schema.graphql
 migrations/
 .env
+
+# Agent OS test monitoring
+.agent-os/test-events/
+
+# Test artifacts
+test-results/
+playwright-report/
+coverage/
+
+# Database backups
+backups/db/
+*.backup-*
+
+# Temporary files and directories
+temp/
+creds.md
