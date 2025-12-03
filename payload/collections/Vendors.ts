@@ -4,7 +4,7 @@ import { isAdmin } from '../access/rbac';
 import { sanitizeUrlHook } from '../../lib/utils/url';
 import {
   sendVendorRegisteredEmail,
-  sendVendorApprovedEmail,
+  sendProfilePublishedEmail,
   sendVendorRejectedEmail,
 } from '../../lib/services/EmailService';
 
@@ -1607,6 +1607,19 @@ const Vendors: CollectionConfig = {
         update: isAdmin, // Only admins can publish vendors
       },
     },
+    {
+      name: 'profileSubmitted',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        position: 'sidebar',
+        description: 'Profile Submitted for Review',
+      },
+      access: {
+        // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
+        update: isAdmin, // Only admins can modify profile submission status
+      },
+    },
 
     // ============================================================================
     // VENDOR REVIEWS & TESTIMONIALS
@@ -1868,10 +1881,10 @@ const Vendors: CollectionConfig = {
             const wasPublished = previousDoc.published === true;
             const isNowPublished = doc.published === true;
 
-            // Vendor approved - published changed from false to true
+            // Profile published - published changed from false to true
             if (!wasPublished && isNowPublished) {
-              console.log('[EmailService] Sending vendor approved email...');
-              await sendVendorApprovedEmail({
+              console.log('[EmailService] Sending profile published email...');
+              await sendProfilePublishedEmail({
                 companyName: doc.companyName,
                 contactEmail: doc.contactEmail,
                 tier: doc.tier,

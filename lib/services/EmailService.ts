@@ -268,13 +268,13 @@ export async function sendVendorRegisteredEmail(
 }
 
 /**
- * Send email notification when a vendor registration is approved
- * Notifies vendor of approval
+ * Send email notification when a vendor's profile is published (made visible to public)
+ * Notifies vendor that their profile is now live on the site
  *
  * @param vendorData - Vendor information
  * @returns Email operation result
  */
-export async function sendVendorApprovedEmail(
+export async function sendProfilePublishedEmail(
   vendorData: VendorEmailData
 ): Promise<EmailResult> {
   try {
@@ -288,10 +288,10 @@ export async function sendVendorApprovedEmail(
     }
 
     const resend = getResendClient();
-    const template = loadTemplate('vendor-approved');
+    const template = loadTemplate('profile-published-vendor');
 
     if (!template) {
-      throw new Error('Unable to load vendor-approved template');
+      throw new Error('Unable to load profile-published-vendor template');
     }
 
     const dashboardUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/vendor/dashboard`;
@@ -306,7 +306,7 @@ export async function sendVendorApprovedEmail(
       CURRENT_YEAR: new Date().getFullYear().toString(),
     });
 
-    const subject = 'Your Vendor Profile Has Been Approved - Paul Thames';
+    const subject = 'Your Profile is Now Published - Paul Thames';
 
     const result = await resend.emails.send({
       from: process.env.EMAIL_FROM_ADDRESS || 'notifications@resend.dev',
@@ -316,7 +316,7 @@ export async function sendVendorApprovedEmail(
     });
 
     if (result.error) {
-      console.error('Failed to send vendor approved email:', result.error);
+      console.error('Failed to send profile published email:', result.error);
       return {
         success: false,
         error: result.error.message,
@@ -326,7 +326,7 @@ export async function sendVendorApprovedEmail(
     return { success: true };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    console.error('Error sending vendor approved email:', errorMessage);
+    console.error('Error sending profile published email:', errorMessage);
     return {
       success: false,
       error: errorMessage,

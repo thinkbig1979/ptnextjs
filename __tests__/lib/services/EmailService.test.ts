@@ -5,7 +5,7 @@
 
 import {
   sendVendorRegisteredEmail,
-  sendVendorApprovedEmail,
+  sendProfilePublishedEmail,
   sendVendorRejectedEmail,
   sendTierUpgradeRequestedEmail,
   sendTierUpgradeApprovedEmail,
@@ -51,7 +51,7 @@ describe('EmailService', () => {
     it('should have correct function signatures for vendor emails', async () => {
       // These tests verify the functions exist and have correct return types
       expect(typeof sendVendorRegisteredEmail).toBe('function');
-      expect(typeof sendVendorApprovedEmail).toBe('function');
+      expect(typeof sendProfilePublishedEmail).toBe('function');
       expect(typeof sendVendorRejectedEmail).toBe('function');
     });
 
