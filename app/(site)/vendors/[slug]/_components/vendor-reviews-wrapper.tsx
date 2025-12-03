@@ -32,7 +32,7 @@ export default function VendorReviewsWrapper({ vendorId, vendorSlug, vendorRevie
   }));
 
   const handleSubmitReview = async (review: Partial<VendorReview> & { captchaToken?: string }) => {
-    const response = await fetch(`/api/vendors/${vendorSlug}/reviews`, {
+    const response = await fetch(`/api/public/vendors/${vendorSlug}/reviews`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -25,8 +25,7 @@ services:
       - PORT=3000
       # SQLite database path (bind mounted)
       - DATABASE_URL=file:///data/payload.db
-      # Server URL (configured via reverse proxy)
-      - NEXT_PUBLIC_SERVER_URL=${NEXT_PUBLIC_SERVER_URL:-http://localhost:3000}
+      # NEXT_PUBLIC_SERVER_URL is loaded from .env.production
 
     # Volume mounts for data persistence (bind mounts)
     volumes:

@@ -184,7 +184,7 @@ export async function fetchVendorBySlug(
   slug: string,
   options?: RequestInit
 ): Promise<Vendor> {
-  const response = await fetch(`/api/vendors/${slug}`, {
+  const response = await fetch(`/api/public/vendors/${slug}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
