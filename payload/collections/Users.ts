@@ -123,6 +123,29 @@ const Users: CollectionConfig = {
   ],
   timestamps: true,
   hooks: {
+    beforeChange: [
+      // Set approval/rejection timestamps when status changes
+      async ({ data, originalDoc, operation }) => {
+        if (operation !== 'update' || !originalDoc) {
+          return data;
+        }
+
+        const wasStatus = originalDoc.status;
+        const isNowStatus = data.status;
+
+        // Set approvedAt timestamp when status changes to 'approved'
+        if (isNowStatus === 'approved' && wasStatus !== 'approved') {
+          data.approvedAt = new Date().toISOString();
+        }
+
+        // Set rejectedAt timestamp when status changes to 'rejected'
+        if (isNowStatus === 'rejected' && wasStatus !== 'rejected') {
+          data.rejectedAt = new Date().toISOString();
+        }
+
+        return data;
+      },
+    ],
     afterChange: [
       // Send email notifications on user approval/rejection
       async ({ doc, previousDoc, operation, req }) => {

@@ -10,10 +10,16 @@ import {
   sendTierUpgradeRequestedEmail,
   sendTierUpgradeApprovedEmail,
   sendTierUpgradeRejectedEmail,
+  sendUserApprovedEmail,
+  sendUserRejectedEmail,
+  sendProfileSubmittedAdminEmail,
+  sendProfileSubmittedVendorEmail,
   getTierFeatures,
   type EmailResult,
   type VendorEmailData,
   type TierUpgradeEmailData,
+  type UserEmailData,
+  type ProfileSubmissionEmailData,
 } from '@/lib/services/EmailService';
 
 describe('EmailService', () => {
@@ -60,6 +66,16 @@ describe('EmailService', () => {
       expect(typeof sendTierUpgradeApprovedEmail).toBe('function');
       expect(typeof sendTierUpgradeRejectedEmail).toBe('function');
     });
+
+    it('should have correct function signatures for user approval emails', async () => {
+      expect(typeof sendUserApprovedEmail).toBe('function');
+      expect(typeof sendUserRejectedEmail).toBe('function');
+    });
+
+    it('should have correct function signatures for profile submission emails', async () => {
+      expect(typeof sendProfileSubmittedAdminEmail).toBe('function');
+      expect(typeof sendProfileSubmittedVendorEmail).toBe('function');
+    });
   });
 
   describe('type definitions', () => {
@@ -100,6 +116,61 @@ describe('EmailService', () => {
       };
 
       expect(data.vendorNotes).toBeUndefined();
+    });
+
+    it('should allow valid UserEmailData', () => {
+      const data: UserEmailData = {
+        email: 'user@example.com',
+        vendorName: 'Test Vendor',
+      };
+
+      expect(data.email).toBe('user@example.com');
+      expect(data.vendorName).toBe('Test Vendor');
+    });
+
+    it('should allow optional fields in UserEmailData', () => {
+      const data: UserEmailData = {
+        email: 'user@example.com',
+        // vendorName and rejectionReason are optional
+      };
+
+      expect(data.email).toBe('user@example.com');
+      expect(data.vendorName).toBeUndefined();
+      expect(data.rejectionReason).toBeUndefined();
+    });
+
+    it('should allow UserEmailData with rejection reason', () => {
+      const data: UserEmailData = {
+        email: 'user@example.com',
+        rejectionReason: 'Incomplete information',
+      };
+
+      expect(data.rejectionReason).toBe('Incomplete information');
+    });
+
+    it('should allow valid ProfileSubmissionEmailData', () => {
+      const data: ProfileSubmissionEmailData = {
+        companyName: 'Test Company',
+        contactEmail: 'contact@example.com',
+        vendorId: 'vendor-123',
+        submissionDate: '2025-12-03',
+      };
+
+      expect(data.companyName).toBe('Test Company');
+      expect(data.contactEmail).toBe('contact@example.com');
+      expect(data.vendorId).toBe('vendor-123');
+      expect(data.submissionDate).toBe('2025-12-03');
+    });
+
+    it('should allow optional fields in ProfileSubmissionEmailData', () => {
+      const data: ProfileSubmissionEmailData = {
+        companyName: 'Test Company',
+        contactEmail: 'contact@example.com',
+        vendorId: 'vendor-123',
+        // submissionDate is optional
+      };
+
+      expect(data.submissionDate).toBeUndefined();
     });
 
     it('should define EmailResult type', () => {

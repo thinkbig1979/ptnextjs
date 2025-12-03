@@ -721,14 +721,14 @@ export async function sendUserRejectedEmail(
       throw new Error('Unable to load user-rejected template');
     }
 
-    const loginUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/contact`;
+    const contactUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/contact`;
 
     const html = renderTemplate(template, {
       vendorName: userData.vendorName || 'Valued Applicant',
       rejectionReason:
         userData.rejectionReason ||
         'Your application did not meet our current requirements.',
-      loginUrl,
+      contactUrl,
       CURRENT_YEAR: new Date().getFullYear().toString(),
     });
 

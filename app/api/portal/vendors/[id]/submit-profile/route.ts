@@ -5,6 +5,14 @@ import {
   sendProfileSubmittedAdminEmail,
   sendProfileSubmittedVendorEmail,
 } from '@/lib/services/EmailService';
+/**
+ * Vendor fields required for profile submission validation
+ */
+interface VendorProfileFields {
+  description?: string | null;
+  logo?: unknown;
+  contactPhone?: string | null;
+}
 
 interface SubmitProfileSuccessResponse {
   success: true;
@@ -32,7 +40,7 @@ interface SubmitProfileErrorResponse {
 /**
  * Validate that mandatory fields are filled before profile submission
  */
-function validateMandatoryFields(vendor: any): {
+function validateMandatoryFields(vendor: VendorProfileFields): {
   valid: boolean;
   missingFields: string[];
 } {
@@ -143,7 +151,7 @@ export async function POST(
     }
 
     // Validate mandatory fields
-    const validation = validateMandatoryFields(vendor);
+    const validation = validateMandatoryFields(vendor as VendorProfileFields);
     if (!validation.valid) {
       return NextResponse.json(
         {
