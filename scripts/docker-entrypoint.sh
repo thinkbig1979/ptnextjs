@@ -28,11 +28,14 @@ SERVER_PID=$!
 # Wait for server to be healthy (two-phase check)
 echo "⏳ Waiting for server to be ready..."
 
+# Use 127.0.0.1 instead of localhost for Docker compatibility
+SERVER_URL="http://127.0.0.1:3000"
+
 # Phase 1: Wait for port to be open (fast check)
 echo "   Phase 1: Checking if port 3000 is open..."
 PORT_ATTEMPTS=0
 while [ $PORT_ATTEMPTS -lt 60 ]; do
-    if wget --quiet --timeout=2 --spider http://localhost:3000 2>/dev/null; then
+    if wget --quiet --timeout=2 --spider "$SERVER_URL" 2>/dev/null; then
         echo "   ✓ Port 3000 is responding"
         break
     fi
@@ -44,7 +47,7 @@ done
 echo "   Phase 2: Checking health endpoint..."
 HEALTH_ATTEMPTS=0
 while [ $HEALTH_ATTEMPTS -lt 30 ]; do
-    if wget --quiet --timeout=5 --spider http://localhost:3000/api/health 2>/dev/null; then
+    if wget --quiet --timeout=5 --spider "$SERVER_URL/api/health" 2>/dev/null; then
         TOTAL_TIME=$((PORT_ATTEMPTS + HEALTH_ATTEMPTS))
         echo "✅ Server is healthy! (took ~${TOTAL_TIME} seconds)"
         break
@@ -62,10 +65,12 @@ fi
 echo "🔥 Warming up cache..."
 WARMUP_URLS="/ /vendors /products /blog /about /contact"
 for url in $WARMUP_URLS; do
-    if wget --quiet --spider "http://localhost:3000${url}" 2>/dev/null; then
+    # Use longer timeout for page generation (ISR can be slow on first hit)
+    HTTP_CODE=$(wget --quiet --timeout=30 --server-response --spider "${SERVER_URL}${url}" 2>&1 | grep "HTTP/" | tail -1 | awk '{print $2}')
+    if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "304" ]; then
         echo "   ✓ ${url}"
     else
-        echo "   ✗ ${url} (failed)"
+        echo "   ✗ ${url} (HTTP ${HTTP_CODE:-timeout})"
     fi
 done
 echo "✅ Cache warmup complete!"
