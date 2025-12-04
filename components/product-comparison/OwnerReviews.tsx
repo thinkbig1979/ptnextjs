@@ -571,11 +571,12 @@ export function OwnerReviews({
                 />
               </div>
 
-              {/* hCaptcha */}
+              {/* hCaptcha - Always use light theme for consistency across light/dark modes */}
               <div className="flex justify-center">
                 {process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY && (
                   <HCaptcha
                     sitekey={process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY}
+                    theme="light"
                     onVerify={handleCaptchaVerify}
                     onExpire={handleCaptchaExpire}
                     onError={handleCaptchaError}

@@ -76,6 +76,7 @@ docker
 *.backup
 *.old
 *.orig
+backups
 
 # Logs and temporary files
 logs
