@@ -27,19 +27,29 @@ SERVER_PID=$!
 
 # Wait for server to be healthy
 echo "⏳ Waiting for server to be ready..."
-MAX_ATTEMPTS=30
+# Initial delay - Next.js + Payload cold start takes time
+sleep 5
+
+MAX_ATTEMPTS=60
 ATTEMPT=0
 while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
-    if wget --quiet --spider http://localhost:3000/api/health 2>/dev/null; then
-        echo "✅ Server is healthy!"
+    # Use wget with timeout to check health endpoint
+    if wget --quiet --timeout=5 --spider http://localhost:3000/api/health 2>/dev/null; then
+        echo "✅ Server is healthy! (took ~$((ATTEMPT * 2 + 5)) seconds)"
         break
     fi
     ATTEMPT=$((ATTEMPT + 1))
+    # Show progress every 10 attempts
+    if [ $((ATTEMPT % 10)) -eq 0 ]; then
+        echo "   Still waiting... (${ATTEMPT}/${MAX_ATTEMPTS})"
+    fi
     sleep 2
 done
 
 if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
-    echo "⚠️  Server health check timed out, continuing anyway..."
+    echo "⚠️  Health check timed out after ~2 minutes."
+    echo "   This can happen on first start while Payload initializes the database."
+    echo "   Continuing with warmup - pages will generate on-demand."
 fi
 
 # Cache warmup - pre-populate ISR cache for main pages
