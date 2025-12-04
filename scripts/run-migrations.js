@@ -99,7 +99,16 @@ const migrations = [
   },
   {
     name: 'fix_broken_foreign_keys_simple',
-    check: `SELECT 0 as count`, // Always run this check
+    // Check if there are foreign key violations - only run if violations exist
+    check: async (db) => {
+      try {
+        const fkCheck = await db.execute(`PRAGMA foreign_key_check`);
+        // Return count > 0 if no violations (skip migration), 0 if violations exist (run migration)
+        return fkCheck.rows && fkCheck.rows.length > 0 ? 0 : 1;
+      } catch (e) {
+        return 1; // Skip if we can't check
+      }
+    },
     up: async (db) => {
       console.log('  🔧 Checking and fixing broken foreign keys...');
 
@@ -236,9 +245,14 @@ async function runMigrations() {
     for (const migration of migrations) {
       console.log(`🔍 Checking migration: ${migration.name}`);
 
-      // Check if migration is needed
-      const result = await db.execute(migration.check);
-      const count = result.rows[0]?.count || 0;
+      // Check if migration is needed (supports both SQL string and async function)
+      let count;
+      if (typeof migration.check === 'function') {
+        count = await migration.check(db);
+      } else {
+        const result = await db.execute(migration.check);
+        count = result.rows[0]?.count || 0;
+      }
 
       if (count === 0) {
         console.log(`⬆️  Applying migration: ${migration.name}`);
