@@ -213,6 +213,36 @@ Tier upgrade requests are stored in the `tier_upgrade_requests` collection with 
 - Only one pending request per vendor allowed
 - Only pending requests can be cancelled by vendor
 
+### Email Notification System
+
+The platform sends automated transactional emails via Resend for vendor registration workflow and tier upgrade requests:
+
+**Email Types:**
+- **Vendor Registered (Admin)**: Notifies admin when new vendor registers
+- **Vendor Approved/Rejected**: Notifies vendor of registration status
+- **Tier Upgrade Requested (Admin)**: Notifies admin of tier upgrade request
+- **Tier Upgrade Approved/Rejected**: Notifies vendor of tier request decision
+
+**Key Components:**
+- `lib/services/EmailService.ts` - Email sending functions with template rendering
+- `lib/email-templates/*.html` - HTML email templates (6 templates)
+- `payload/collections/Vendors.ts` - afterCreate/afterChange hooks for vendor emails
+- `payload/collections/TierUpgradeRequests.ts` - afterCreate/afterChange hooks for tier emails
+
+**Environment Configuration:**
+```bash
+RESEND_API_KEY=re_your_api_key_here
+EMAIL_FROM_ADDRESS=notifications@yourdomain.com
+ADMIN_EMAIL_ADDRESS=admin@yourdomain.com
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+```
+
+**Design Principles:**
+- **Best-effort delivery**: Email failures logged but don't block database operations
+- **Consistent branding**: All templates use #1a56db blue, professional styling
+- **Mobile-responsive**: Templates use max-width: 600px with inline styles
+- **Error handling**: All email functions return `{ success: boolean; error?: string }`
+
 ## Development Guidelines
 
 ### Working with Content

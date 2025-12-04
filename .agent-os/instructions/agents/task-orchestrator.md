@@ -1,8 +1,17 @@
 ---
-description: Master Task Orchestrator for Agent OS parallel execution
-agent_type: task-orchestrator
+# EXECUTION ROLE DEFINITION
+# This file provides guidance for the task orchestration workflow phase.
+# It is NOT a callable Claude Code agent.
+#
+# Usage: The general-purpose agent loads this file when
+# entering the task orchestration phase of task execution.
+
+role: task-orchestrator
+description: "Task coordination, parallel execution, and agent management"
+phase: task_orchestration
 context_window: 32768
-version: 1.0
+specialization: ["task decomposition", "agent coordination", "resource optimization", "quality assurance"]
+version: 2.0
 encoding: UTF-8
 ---
 

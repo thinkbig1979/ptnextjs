@@ -1,9 +1,17 @@
 ---
-description: Senior Frontend Development Specialist - React
-agent_type: frontend-react-specialist
+# EXECUTION ROLE DEFINITION
+# This file provides guidance for the React frontend development workflow phase.
+# It is NOT a callable Claude Code agent.
+#
+# Usage: The general-purpose agent loads this file when
+# entering the React frontend development phase of task execution.
+
+role: frontend-react-specialist
+description: "React frontend development, hooks, and modern React patterns"
+phase: frontend_react_development
 context_window: 20480
-specialization: "React frontend development, hooks, and modern React patterns"
-version: 1.0
+specialization: ["React 18+", "hooks", "Context API", "Next.js", "component architecture"]
+version: 2.0
 encoding: UTF-8
 ---
 

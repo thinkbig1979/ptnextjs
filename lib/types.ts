@@ -355,6 +355,7 @@ export interface Vendor {
   tier?: 'free' | 'tier1' | 'tier2' | 'tier3'; // Vendor subscription tier (affects multi-location access)
   featured?: boolean;
   partner?: boolean; // New field: indicates if vendor is also a strategic partner
+  profileSubmitted?: boolean; // Indicates if vendor has submitted their profile for review
   createdAt?: string;
   updatedAt?: string;
   publishedAt?: string;

@@ -451,26 +451,522 @@ Use the task-orchestrator subagent to analyze the task, decompose for parallel e
 
 </step>
 
+<step number="1.9" name="mandatory_instruction_loading">
+
+### Step 1.9: Mandatory Instruction Loading Protocol (ENFORCEMENT)
+
+**PURPOSE**: Ensure ALL subagents read and internalize their specialist instruction files before performing any work. This is the critical enforcement point that guarantees test and implementation standards are followed.
+
+<instruction_loading_protocol>
+  <rationale>
+    Subagents spawned via Task tool do NOT automatically receive Agent OS instruction files.
+    Without explicit instruction loading, subagents use general knowledge instead of
+    Agent OS standards, leading to:
+    - Tests written without CI-safe patterns
+    - Missing timeout configurations
+    - Incorrect file organization
+    - Watch mode defaults causing hangs
+    - Test sprawl and debug scripts masquerading as tests
+
+    This protocol ENFORCES instruction loading before any work begins.
+  </rationale>
+
+  <agent_instruction_mapping>
+    AGENT_TYPE → INSTRUCTION_FILE:
+      test-architect     → @.agent-os/instructions/agents/test-architect.md
+      test-runner        → @.agent-os/instructions/agents/test-runner.md
+      implementation-specialist → @.agent-os/instructions/agents/implementation-specialist.md
+      frontend-react-specialist → @.agent-os/instructions/agents/frontend-react-specialist.md
+      frontend-vue-specialist   → @.agent-os/instructions/agents/frontend-vue-specialist.md
+      backend-nodejs-specialist → @.agent-os/instructions/agents/backend-nodejs-specialist.md
+      integration-coordinator   → @.agent-os/instructions/agents/integration-coordinator.md
+      quality-assurance        → @.agent-os/instructions/agents/quality-assurance.md
+      security-sentinel        → @.agent-os/instructions/agents/security-sentinel.md
+      documentation-generator  → @.agent-os/instructions/agents/documentation-generator.md
+  </agent_instruction_mapping>
+
+  <mandatory_prompt_prefix>
+    ALL subagent delegation prompts MUST begin with this instruction block:
+
+    ```
+    ═══════════════════════════════════════════════════════════════════
+    MANDATORY INSTRUCTION LOADING - DO NOT SKIP
+    ═══════════════════════════════════════════════════════════════════
+
+    BEFORE performing ANY work, you MUST:
+
+    1. READ the instruction file for your role:
+       @.agent-os/instructions/agents/{AGENT_TYPE}.md
+
+    2. INTERNALIZE all protocols, especially:
+       - Pre-creation checklists (if applicable)
+       - Quality gates you must pass
+       - File organization standards
+       - CI/CD safety requirements
+
+    3. CONFIRM understanding by stating:
+       "I have read {AGENT_TYPE}.md and will follow:
+        - [Key constraint 1]
+        - [Key constraint 2]
+        - [Key constraint 3]"
+
+    4. PROCEED with task only AFTER confirmation
+
+    FAILURE to read instructions will result in work that doesn't meet
+    Agent OS standards and will be rejected during verification.
+    ═══════════════════════════════════════════════════════════════════
+    ```
+  </mandatory_prompt_prefix>
+
+  <test_specific_enforcement>
+    FOR test-architect subagent delegations, ADD additional requirements:
+
+    ```
+    ═══════════════════════════════════════════════════════════════════
+    TEST-SPECIFIC ENFORCEMENT
+    ═══════════════════════════════════════════════════════════════════
+
+    ALSO READ these critical standards:
+    - @.agent-os/standards/test-infrastructure.md (test organization)
+    - @.agent-os/instructions/utilities/tdd-validator.md (TDD enforcement)
+
+    BEFORE writing ANY test file, you MUST complete the PRE-CREATION CHECKLIST
+    documented in test-architect.md. This includes:
+
+    1. TEST TYPE DECLARATION: unit | integration | e2e
+    2. FILE LOCATION: Must match standards for test type
+    3. CI-SAFE CONFIRMATION: No watch mode, has timeouts, exits cleanly
+    4. SERVER DEPENDENCIES: List all required servers (for e2e)
+    5. FRAMEWORK CONFIRMATION: Detected framework and syntax to use
+
+    DO NOT write test files until checklist is complete.
+    ═══════════════════════════════════════════════════════════════════
+    ```
+  </test_specific_enforcement>
+
+  <test_runner_enforcement>
+    FOR test-runner subagent delegations, ADD additional requirements:
+
+    ```
+    ═══════════════════════════════════════════════════════════════════
+    TEST EXECUTION ENFORCEMENT
+    ═══════════════════════════════════════════════════════════════════
+
+    BEFORE running ANY tests, you MUST:
+
+    1. VERIFY servers are running (if required by test type)
+       - Check each endpoint with 2-second timeout
+       - BLOCK execution if servers not responding
+       - Report clear status: ✅ Running | ❌ Not Running
+
+    2. VERIFY test command will EXIT cleanly
+       - Check for watch mode (vitest without --run)
+       - Add --run flag if needed
+       - Wrap execution with hard timeout
+
+    3. MONITOR for hung tests
+       - If no output for 60 seconds, test is likely hung
+       - Kill hung tests and report
+       - Never wait indefinitely
+
+    4. REPORT results clearly
+       - Total / Passed / Failed counts
+       - Exit code (0 = success, non-zero = failure)
+       - Execution time
+
+    See @.agent-os/standards/test-infrastructure.md for full protocol.
+    ═══════════════════════════════════════════════════════════════════
+    ```
+  </test_runner_enforcement>
+
+  <verification_of_instruction_loading>
+    ORCHESTRATOR must verify subagent loaded instructions:
+
+    AFTER spawning subagent, CHECK response for:
+      - Explicit mention of reading instruction file
+      - Listing of key constraints from the file
+      - Commitment to follow protocols
+
+    IF verification missing:
+      WARN: "Subagent did not confirm instruction loading"
+      ACTION: Re-prompt with explicit instruction requirement
+
+    IF verification present:
+      LOG: "✅ Subagent confirmed instruction loading for {AGENT_TYPE}"
+      PROCEED: Allow subagent to begin work
+  </verification_of_instruction_loading>
+
+  <agent_type_validation>
+    BEFORE delegating ANY task, validate agent assignment is correct:
+
+    IF task involves WRITING tests:
+      REQUIRED_AGENT: test-architect
+      BLOCK_IF: agent assignment != test-architect
+      MESSAGE: "❌ Test creation tasks MUST use test-architect agent.
+                Current assignment: {CURRENT_AGENT}
+                Fix task assignment before proceeding."
+
+    IF task involves RUNNING tests:
+      REQUIRED_AGENT: test-runner
+      BLOCK_IF: agent assignment != test-runner
+      MESSAGE: "❌ Test execution tasks MUST use test-runner agent.
+                Current assignment: {CURRENT_AGENT}
+                Fix task assignment before proceeding."
+
+    IF task involves TEST INFRASTRUCTURE setup:
+      REQUIRED_AGENTS: [test-architect, integration-coordinator]
+      REQUIRE: Consultation with both agents
+      MESSAGE: "Test infrastructure tasks require test-architect for standards
+                and integration-coordinator for CI/CD integration."
+  </agent_type_validation>
+</instruction_loading_protocol>
+
+</step>
+
+<step number="1.9a" name="subagent_delegation_template">
+
+### Step 1.9a: Subagent Delegation Prompt Template (CRITICAL)
+
+**Purpose**: Ensure ALL mandatory instructions, skills, and context are passed to subagents.
+
+When constructing `Task()` calls for subagent delegation, you MUST use the standard template from:
+
+```
+@.agent-os/instructions/utilities/subagent-delegation-template.md
+```
+
+**Why This Matters**: Subagents do NOT automatically inherit:
+- Mandatory instruction loading requirements
+- Skill invocation requirements from config.yml
+- Global CLAUDE.md context
+- Pattern lookup hierarchy
+
+**Template Ensures Every Subagent Receives**:
+1. Instruction loading protocol (read role file, confirm understanding)
+2. Mandatory skill invocations for their phase
+3. Pattern lookup hierarchy (project patterns > skills > web search)
+4. Global execution requirements
+5. Specific task requirements and acceptance criteria
+
+**Quick Reference - Required Skills by Phase**:
+
+| Phase | Required Skills |
+|-------|-----------------|
+| Test Context (2.0) | `agent-os-test-research`, `agent-os-patterns` |
+| Test Design (2.1) | `agent-os-patterns`, `agent-os-specialists` |
+| Implementation (3.0) | `agent-os-patterns`, `agent-os-specialists` |
+| Security Review (4.0) | `agent-os-specialists` |
+| Spec Creation | `agent-os-patterns`, shadcn MCPs for UI |
+
+**Verification After Delegation**:
+After receiving subagent response, verify:
+- [ ] Instruction file was read and key constraints stated
+- [ ] Required skills were invoked (check for Skill() calls)
+- [ ] Project-specific patterns were checked first
+- [ ] All deliverables were produced
+
+</step>
+
 <step number="2" name="parallel_execution_streams">
 
 ### Step 2: Parallel Execution Coordination
 
 The task-orchestrator manages multiple specialist agents working in parallel across different execution streams, with intelligent context distribution and dependency coordination.
 
+<step_2_0_test_context_gathering>
+
+#### Step 2.0: Test Context Gathering (PREREQUISITE FOR ALL TESTING)
+
+**Execution Order**: BEFORE test-architect (mandatory prerequisite)
+**Agent**: general-purpose (test-context-gatherer role)
+**Purpose**: Gather library documentation and testing patterns BEFORE test writing
+
+**CRITICAL**: This step prevents test failures caused by incorrect API usage, outdated patterns, or framework-specific requirements. Tests written without proper context frequently fail on first run.
+
+**⚠️ MANDATORY SKILL INVOCATION IN PHASE 3**
+
+This step REQUIRES you to invoke the Skill tool. In Phase 3 below, you MUST call:
+```
+Skill(skill="agent-os-patterns")
+Skill(skill="agent-os-test-research")
+```
+These are REQUIRED tool invocations, not optional guidance. Do not proceed to test-architect without invoking these skills first.
+
+<test_context_research>
+  **Phase 1: Detect Testing Libraries**
+
+  EXECUTE library detection to identify all testing frameworks and libraries:
+
+  ```
+  ACTION: Run library detection utility
+  COMMAND: node ~/.agent-os/hooks/lib/detect-test-libraries.js [PROJECT_PATH] --json
+
+  ALTERNATIVE (if utility unavailable):
+  READ: package.json (JavaScript/TypeScript)
+  READ: pyproject.toml or requirements.txt (Python)
+  READ: Gemfile (Ruby)
+
+  EXTRACT:
+  - Test runner (jest, vitest, pytest, rspec, etc.)
+  - E2E framework (playwright, cypress, etc.)
+  - Mocking libraries (msw, sinon, nock, etc.)
+  - Backend testing (convex-test, supertest, prisma, etc.)
+  - Component testing (@testing-library/react, @vue/test-utils, etc.)
+  - Versions for all detected libraries
+  ```
+
+  **Phase 2: Check Available Documentation Sources**
+
+  DETERMINE available documentation fetching methods in priority order:
+
+  ```yaml
+  documentation_source_check:
+    priority_0_skills:  # v3.2+: ALWAYS CHECK FIRST - No network required
+      check: "Is skills_integration.enabled = true in config.yml?"
+      if_available:
+        action: "Invoke agent-os-patterns and agent-os-test-research skills"
+        trigger: "Use Skill tool with skill='agent-os-patterns'"
+        references:
+          - references/testing/vitest.md
+          - references/testing/playwright.md
+          - references/testing/convex.md
+          - references/testing/test-strategies.md
+      benefits:
+        - Always available (no network dependency)
+        - Version controlled with Agent OS
+        - Pre-validated patterns
+        - Progressive disclosure
+
+    priority_1_dockfork:
+      check: "Are mcp__dockfork__* tools available?"
+      if_available: "Use DocFork MCP for pre-indexed docs"
+
+    priority_2_context7:
+      check: "Are mcp__context7__* tools available?"
+      if_available: "Use Context7 MCP for AI-optimized docs"
+
+    priority_3_websearch:
+      check: "WebSearch tool always available"
+      usage: "Search for official documentation"
+
+    priority_4_webfetch:
+      check: "WebFetch tool always available"
+      usage: "Direct fetch from known documentation URLs"
+  ```
+
+  **Phase 3: Fetch Documentation**
+
+  **⚠️ EXECUTE PATTERN LOOKUP NOW**
+
+  ```
+  STEP 1: CHECK PROJECT-SPECIFIC PATTERNS FIRST
+
+  CHECK: .agent-os/patterns/ and .agent-os/test-context/ in the project
+
+  IF .agent-os/patterns/testing/ exists:
+    READ project-specific test patterns (these take PRECEDENCE):
+    - .agent-os/patterns/testing/vitest.md
+    - .agent-os/patterns/testing/playwright.md
+    - .agent-os/patterns/testing/convex.md
+
+  IF .agent-os/test-context/[TASK_ID].json exists:
+    READ cached test context from previous runs
+
+  STEP 2: INVOKE SKILLS FOR GENERIC PATTERNS (MANDATORY)
+
+  EXECUTE NOW - These are required tool calls:
+
+    Skill(skill="agent-os-patterns")
+    Skill(skill="agent-os-test-research")
+
+  After invoking agent-os-patterns, READ the relevant testing references:
+
+  | Detected Library | Skill Reference (Generic) |
+  |------------------|---------------------------|
+  | Vitest | references/testing/vitest.md |
+  | Playwright | references/testing/playwright.md |
+  | Convex | references/testing/convex.md |
+  | All projects | references/testing/test-strategies.md |
+
+  VERIFICATION before proceeding:
+  - [ ] Checked .agent-os/patterns/ for project-specific patterns
+  - [ ] Skill(skill="agent-os-patterns") was invoked
+  - [ ] Skill(skill="agent-os-test-research") was invoked
+  - [ ] Relevant reference files were read
+  - [ ] Testing patterns are loaded
+
+  OUTPUT:
+  "✅ Project patterns: [list if found] (from .agent-os/patterns/)"
+  "✅ Skill patterns: vitest.md, playwright.md, test-strategies.md"
+
+  STEP 3: FALLBACK TO MCP/WEBSEARCH (only if skills insufficient)
+
+  ELSE IF mcp__dockfork__get_documentation available:
+    CALL mcp__dockfork__get_documentation(
+      library: "[LIBRARY_NAME]",
+      version: "[VERSION]",
+      sections: ["mocking", "assertions", "lifecycle", "configuration"]
+    )
+
+  ELSE IF mcp__context7__get_library_docs available:
+    CALL mcp__context7__get_library_docs(
+      library_name: "[LIBRARY_NAME]",
+      topic: "testing patterns mocking assertions API"
+    )
+
+  ELSE (WebSearch fallback):
+    CALL WebSearch(
+      query: "[LIBRARY_NAME] [VERSION] official documentation testing API",
+      allowed_domains: ["[LIBRARY_DOCS_DOMAIN]", "github.com"]
+    )
+
+    THEN CALL WebFetch for specific documentation pages:
+    - API reference
+    - Mocking guide
+    - Configuration reference
+    - Migration/changelog (for version-specific features)
+  ```
+
+  **Phase 4: Extract Patterns and Anti-Patterns**
+
+  FROM fetched documentation, extract:
+
+  ```yaml
+  patterns_to_extract:
+    mocking_patterns:
+      - Module mocking syntax
+      - Partial mocking
+      - Async mocking
+      - Mock clearing/resetting
+
+    assertion_patterns:
+      - Available matchers
+      - Async assertions
+      - Custom matchers
+
+    lifecycle_patterns:
+      - Setup/teardown hooks
+      - Test isolation
+      - Parallel execution
+
+    anti_patterns:
+      - Common mistakes for this framework
+      - Deprecated APIs
+      - Version-specific gotchas
+  ```
+
+  **Phase 5: Store Context for test-architect**
+
+  SAVE gathered context to accessible location:
+
+  ```
+  CREATE DIRECTORY: .agent-os/test-context/
+
+  WRITE: .agent-os/test-context/[TASK_ID].json
+  {
+    "generated_at": "[TIMESTAMP]",
+    "libraries": {
+      "test_runner": { "name": "vitest", "version": "1.6.0", ... },
+      "e2e_framework": { "name": "playwright", "version": "1.42.0", ... },
+      ...
+    },
+    "documentation_sources_used": ["dockfork_mcp", "websearch"],
+    "patterns_extracted": { ... },
+    "anti_patterns": [ ... ]
+  }
+
+  WRITE: .agent-os/test-context/patterns/[LIBRARY].md
+  - One file per major library
+  - Contains code examples
+  - Version-specific notes
+  ```
+</test_context_research>
+
+<test_context_verification>
+  **Verification Gate**
+
+  BEFORE proceeding to Step 2.1 (test-architect), verify:
+
+  ```yaml
+  test_context_gate:
+    required:
+      - context_file_exists: ".agent-os/test-context/[TASK_ID].json"
+      - test_runner_documented: true
+      - patterns_extracted: true
+
+    blocking_if_missing:
+      - "Test runner documentation not fetched"
+      - "No patterns available for detected frameworks"
+
+    gate_status: "PASSED"  # Must be PASSED to proceed
+  ```
+
+  **Output Summary**:
+  ```
+  ═══════════════════════════════════════════════════════════════════
+  TEST CONTEXT GATHERING - COMPLETE
+  ═══════════════════════════════════════════════════════════════════
+
+  ✅ Libraries Detected:
+     - vitest@1.6.0 (test runner)
+     - playwright@1.42.0 (E2E)
+     - convex-test@0.1.0 (backend)
+
+  ✅ Documentation Fetched:
+     - Vitest: via DocFork MCP
+     - Playwright: via WebSearch + WebFetch
+     - Convex: via WebFetch (docs.convex.dev)
+
+  ✅ Patterns Extracted: 12 patterns, 5 anti-patterns
+
+  ✅ Context Saved: .agent-os/test-context/[TASK_ID].json
+
+  PROCEEDING TO TEST-ARCHITECT (Step 2.1)...
+  ═══════════════════════════════════════════════════════════════════
+  ```
+</test_context_verification>
+
+</step_2_0_test_context_gathering>
+
 <step_2_1_test_architecture_red_phase>
 
 #### Step 2.1: Test Architecture & RED Phase Validation
 
-**Execution Order**: FIRST (must complete before implementation)
+**Execution Order**: AFTER test-context-gatherer (Step 2.0)
 **Agent**: test-architect (general-purpose with test focus)
 **Purpose**: Create failing tests to establish RED phase of TDD cycle
 
 **Prerequisites**:
+- **NEW**: Test context gathered (Step 2.0 complete)
+- **NEW**: Context file exists at .agent-os/test-context/[TASK_ID].json
 - TDD state initialized in Step 0.5 (current_phase: INIT)
 - TDD enforcement enabled in config.yml
 - Task requirements and acceptance criteria loaded
 
 <test_creation_workflow>
+  **Phase 0: Load Test Context (NEW)**
+
+  BEFORE creating tests, LOAD gathered context:
+
+  ```
+  READ: .agent-os/test-context/[TASK_ID].json
+  EXTRACT:
+    - test_runner: name, version, config
+    - e2e_framework: name, version, config
+    - mocking_libraries: list
+    - patterns: framework-specific patterns
+    - anti_patterns: things to avoid
+
+  READ: .agent-os/test-context/patterns/[TEST_RUNNER].md
+  EXTRACT:
+    - Mocking syntax for this framework
+    - Assertion API
+    - Lifecycle hooks
+
+  APPLY: Use extracted patterns when writing tests
+  AVOID: Documented anti-patterns
+  ```
+
   **Phase 1: Delegate Test Creation to test-architect Agent**
 
   DELEGATE to test-architect subagent with TDD-focused prompt:
@@ -484,6 +980,16 @@ The task-orchestrator manages multiple specialist agents working in parallel acr
             - Target Phase: RED (tests must fail initially)
             - Enforcement Level: [STRICT|BALANCED|MINIMAL from config]
             - State File: .agent-os/tdd-state/[TASK_ID].json
+
+            **TEST CONTEXT (from Step 2.0)**:
+            - Test Runner: [NAME]@[VERSION]
+            - E2E Framework: [NAME]@[VERSION] (if applicable)
+            - Backend Testing: [NAME]@[VERSION] (if applicable)
+            - Patterns File: .agent-os/test-context/patterns/[RUNNER].md
+
+            **IMPORTANT**: Use the patterns from the context file.
+            Do NOT use generic patterns - use the exact API syntax
+            documented for the detected framework version.
 
             Task Requirements:
             [ACCEPTANCE_CRITERIA from task detail file]
@@ -499,6 +1005,9 @@ The task-orchestrator manages multiple specialist agents working in parallel acr
             5. Follow project testing standards and conventions
             6. Expected Result: All tests FAIL with meaningful error messages
             7. Failure messages should indicate MISSING implementation (not syntax errors)
+            8. **NEW**: Use mocking syntax from gathered context
+            9. **NEW**: Use assertion API from gathered context
+            10. **NEW**: Avoid documented anti-patterns
 
             Test-First Requirements:
             - Write tests for features that don't exist yet
@@ -507,12 +1016,11 @@ The task-orchestrator manages multiple specialist agents working in parallel acr
             - Do NOT make tests pass - they should fail correctly
             - Failure messages should be clear and actionable
 
-            Framework Detection:
-            Analyze project structure to detect test framework:
-            - JavaScript/TypeScript: Look for Jest, Vitest, Mocha config
-            - Python: Look for pytest, unittest config
-            - Ruby: Look for RSpec, Minitest config
-            Use appropriate test syntax for detected framework.
+            Framework-Specific (from context):
+            [PATTERNS_FROM_CONTEXT_FILE]
+
+            Anti-Patterns to Avoid:
+            [ANTI_PATTERNS_FROM_CONTEXT_FILE]
 
             Verification:
             After test creation, I will execute tests to confirm RED phase.
@@ -961,10 +1469,136 @@ The task-orchestrator manages multiple specialist agents working in parallel acr
 - Failing test output captured and analyzed
 - Test failure patterns understood
 
+<skill_invocation_for_implementation>
+  **Phase 0: Load Implementation Patterns (v3.2+)**
+
+  **⚠️ MANDATORY PATTERN LOOKUP - DO NOT SKIP**
+
+  ```
+  STEP 1: CHECK PROJECT-SPECIFIC PATTERNS FIRST
+
+  CHECK: .agent-os/patterns/ directory in the project
+
+  IF .agent-os/patterns/ exists:
+    READ relevant files based on task type (these take PRECEDENCE):
+    - .agent-os/patterns/frontend/typescript.md (TypeScript/React)
+    - .agent-os/patterns/backend/python.md (Python)
+    - .agent-os/patterns/backend/rails.md (Rails)
+    - .agent-os/patterns/backend/api.md (API development)
+    - .agent-os/patterns/global/error-handling.md (Error handling)
+
+  Project-specific patterns reflect the actual codebase conventions.
+
+  STEP 2: INVOKE SKILLS FOR GENERIC PATTERNS (MANDATORY)
+
+  EXECUTE NOW - These are required tool calls:
+
+    Skill(skill="agent-os-patterns")
+    Skill(skill="agent-os-specialists")
+  ```
+
+  After invoking the skills, READ the relevant reference files:
+
+  | Task Type | Skill Reference (Generic) |
+  |-----------|---------------------------|
+  | Code style | agent-os-patterns → references/global/coding-style.md |
+  | Testing | agent-os-patterns → references/testing/*.md |
+
+  | Task Type | Specialist Reference |
+  |-----------|----------------------|
+  | Node.js backend | agent-os-specialists → references/development/backend-nodejs.md |
+  | React frontend | agent-os-specialists → references/development/frontend-react.md |
+  | Vue frontend | agent-os-specialists → references/development/frontend-vue.md |
+  | General | agent-os-specialists → references/development/implementation.md |
+
+  **VERIFICATION** before proceeding to Phase 1:
+  - [ ] Checked .agent-os/patterns/ for project-specific patterns
+  - [ ] Skill(skill="agent-os-patterns") was invoked
+  - [ ] Skill(skill="agent-os-specialists") was invoked
+  - [ ] Relevant reference files were read
+  - [ ] Implementation patterns are loaded
+
+  **OUTPUT**:
+  "✅ Project patterns: [list if found] (from .agent-os/patterns/)"
+  "✅ Skill patterns: coding-style.md, backend-nodejs.md"
+</skill_invocation_for_implementation>
+
+<step_2_1a_pattern_context_handoff>
+#### Step 2.1a: Pattern Context Handoff (v3.3.0+)
+
+**Execution Order**: AFTER RED phase validation (Step 2.1), BEFORE implementation
+**Purpose**: Ensure implementation-specialist has access to test patterns for alignment
+
+**CRITICAL**: This step prevents test/code misalignment by passing test patterns to implementation.
+
+<pattern_documentation_verification>
+  **Verify Pattern Documentation Exists**
+
+  BEFORE proceeding to implementation:
+
+  1. CHECK for pattern documentation file:
+     ```
+     FILE: .agent-os/test-context/[TASK_ID]-patterns-used.json
+     ```
+
+  2. IF file does NOT exist:
+     ```
+     ❌ BLOCK: Pattern documentation missing
+
+     The test-architect did not create pattern documentation.
+     This is REQUIRED for test/code alignment.
+
+     ACTION: Return to Step 2.1 and ensure test-architect creates:
+     .agent-os/test-context/[TASK_ID]-patterns-used.json
+
+     REFERENCE: @.agent-os/instructions/utilities/test-code-alignment-checklist.md
+     ```
+
+  3. IF file EXISTS:
+     ```
+     ✅ Pattern documentation found
+
+     File: .agent-os/test-context/[TASK_ID]-patterns-used.json
+     ```
+     PROCEED to context handoff
+</pattern_documentation_verification>
+
+<context_handoff_to_implementation>
+  **Pass Pattern Context to Implementation Specialist**
+
+  When delegating to implementation-specialist, INCLUDE pattern context:
+
+  ```
+  MANDATORY CONTEXT FOR IMPLEMENTATION:
+
+  **PATTERN DOCUMENTATION** (READ THIS FIRST):
+  File: .agent-os/test-context/[TASK_ID]-patterns-used.json
+
+  **ALIGNMENT CHECKLIST** (FOLLOW THIS):
+  @.agent-os/instructions/utilities/test-code-alignment-checklist.md
+
+  Before writing ANY implementation code:
+  1. READ the pattern documentation file above
+  2. NOTE the mocking approach tests use
+  3. NOTE the assertion patterns tests expect
+  4. NOTE any critical implementation notes
+  5. IMPLEMENT code that integrates with these patterns
+
+  **SPECIFIC PATTERNS TO HONOR**:
+  - Mocking: [EXTRACT FROM PATTERN FILE]
+  - Assertions: [EXTRACT FROM PATTERN FILE]
+  - Async: [EXTRACT FROM PATTERN FILE]
+  - Server Requirements: [EXTRACT FROM PATTERN FILE]
+
+  Your implementation MUST work with the test patterns, not against them.
+  ```
+</context_handoff_to_implementation>
+</step_2_1a_pattern_context_handoff>
+
 <implementation_workflow>
   **Phase 1: Delegate Implementation to Specialist Agents**
 
-  After RED phase validation, launch parallel implementation streams:
+  After RED phase validation AND pattern context handoff (Step 2.1a):
 
   DELEGATE to appropriate specialist agents based on task type:
 
@@ -978,6 +1612,12 @@ The task-orchestrator manages multiple specialist agents working in parallel acr
             - Enforcement Level: [STRICT|BALANCED|MINIMAL from config]
             - State File: .agent-os/tdd-state/[TASK_ID].json
             - Failing Tests: [COUNT] tests failing
+
+            **PATTERN CONTEXT (v3.3.0+ - MANDATORY)**:
+            - Pattern File: .agent-os/test-context/[TASK_ID]-patterns-used.json
+            - Alignment Checklist: @.agent-os/instructions/utilities/test-code-alignment-checklist.md
+            - READ pattern file BEFORE implementing
+            - HONOR test patterns in your implementation
 
             RED Phase Evidence:
             - Test Output: .agent-os/tdd-state/[TASK_ID]-red-output.txt
@@ -1061,7 +1701,28 @@ The task-orchestrator manages multiple specialist agents working in parallel acr
      - All tests must pass (100% pass rate required)
      - No skipped tests (unless intentional and documented)
 
-  **Test Monitoring Commands**:
+  **Test Monitoring Commands** (v3.3.0+ with Real-Time Streaming):
+
+  ```bash
+  # PREFERRED: Use Agent OS Test Monitor for real-time visibility
+  # This provides hung test detection and per-test progress tracking
+
+  # For Vitest (with streaming reporter)
+  node ~/.agent-os/hooks/lib/test-monitor.js \
+    pnpm vitest run --reporter=./scripts/reporters/vitest-streaming.js
+
+  # For Playwright (with streaming reporter)
+  node ~/.agent-os/hooks/lib/test-monitor.js \
+    pnpm playwright test --reporter=./scripts/reporters/playwright-streaming.ts
+
+  # Environment variables for test monitor:
+  # AGENT_OS_TEST_TIMEOUT=30000   # Per-test timeout (ms)
+  # AGENT_OS_IDLE_TIMEOUT=15000   # Idle detection timeout (ms)
+  # AGENT_OS_ON_HUNG=alert        # Action: alert|kill|skip
+  # AGENT_OS_TEST_OUTPUT=./test-events.json  # Save events to file
+  ```
+
+  **LEGACY: Basic test execution (no real-time monitoring)**:
   ```bash
   # Detect test framework and run tests
   if [[ -f "package.json" ]]; then
@@ -1072,7 +1733,93 @@ The task-orchestrator manages multiple specialist agents working in parallel acr
     bundle exec rspec
   fi
   ```
+
+  **Real-Time Monitoring Benefits** (v3.3.0+):
+  - Per-test progress visibility (see which test is running)
+  - Hung test detection (alert/kill after configurable timeout)
+  - Idle detection (no output = potential hang)
+  - Structured JSON events for parsing
+  - Immediate intervention on issues
 </continuous_test_monitoring>
+
+<step_2_2a_alignment_validation>
+#### Step 2.2a: Test/Code Alignment Validation (v3.3.0+)
+
+**Execution Order**: AFTER implementation complete, BEFORE marking GREEN phase done
+**Purpose**: Verify implementation code properly integrates with test patterns
+
+**CRITICAL**: This step catches alignment issues before they cause E2E rework.
+
+<alignment_validation_process>
+  **Validate Test/Code Alignment**
+
+  BEFORE transitioning to GREEN phase complete:
+
+  1. **READ Alignment Checklist**:
+     ```
+     @.agent-os/instructions/utilities/test-code-alignment-checklist.md
+     ```
+
+  2. **Verify Pattern Integration**:
+     ```
+     CHECKLIST (from alignment guide):
+
+     [ ] Test patterns were documented (file exists)
+     [ ] Implementation read pattern documentation
+     [ ] Mocking approach matches between test and code
+     [ ] Assertion patterns are compatible
+     [ ] No bypass logic in implementation
+     [ ] Coverage is from real code, not stubs
+     ```
+
+  3. **Run Coverage Check**:
+     ```bash
+     # Verify tests actually cover implementation
+     pnpm vitest run --coverage
+
+     # Required thresholds:
+     # Line: >= 85%
+     # Branch: >= 80%
+     # Function: >= 85%
+     ```
+
+  4. **Scan for Bypass Patterns** (Advisory):
+     ```
+     SCAN implementation files for:
+     - process.env.TEST
+     - process.env.NODE_ENV === 'test'
+     - jest.fn() or vi.fn() in production code
+     - Hardcoded returns that bypass logic
+
+     IF found:
+       ⚠️ WARN: Potential test bypass detected
+       FILE: [filename]
+       PATTERN: [matched pattern]
+       REVIEW: Ensure this is intentional
+     ```
+
+  5. **Alignment Result**:
+     ```
+     IF all checks pass:
+       ✅ Test/Code Alignment Validated
+
+       - Pattern documentation: ✓
+       - Pattern integration: ✓
+       - Coverage threshold: [X]% (meets 85% minimum)
+       - No bypass patterns: ✓
+
+       PROCEED to GREEN phase completion
+
+     IF checks fail:
+       ❌ Alignment Issues Detected
+
+       - [List specific issues]
+       - [Remediation steps]
+
+       ACTION: Fix alignment issues before completing GREEN phase
+     ```
+</alignment_validation_process>
+</step_2_2a_alignment_validation>
 
 <green_phase_validation_checklist>
   **Phase 3: GREEN Phase Validation Criteria**

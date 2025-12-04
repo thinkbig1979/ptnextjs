@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -16,10 +17,13 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/components/ui/use-toast';
 import { Loader2, Eye, EyeOff, Info } from 'lucide-react';
+
+// Dynamically import HCaptcha to avoid SSR issues
+const HCaptcha = dynamic(() => import('@hcaptcha/react-hcaptcha'), {
+  ssr: false,
+});
 
 /**
  * Password strength validation regex
@@ -33,6 +37,7 @@ const PASSWORD_REGEX = {
 
 /**
  * Zod validation schema for vendor registration form
+ * Simplified to only collect essential fields during initial registration
  */
 const registrationSchema = z.object({
   email: z
@@ -59,32 +64,6 @@ const registrationSchema = z.object({
     .min(1, { message: 'Company name is required' })
     .min(2, { message: 'Company name must be at least 2 characters' })
     .max(100, { message: 'Company name must be less than 100 characters' }),
-
-  contactName: z
-    .string()
-    .max(255, { message: 'Contact name must be less than 255 characters' })
-    .optional(),
-
-  phone: z
-    .string()
-    .regex(/^[\d\s\-\+\(\)]+$/, { message: 'Invalid phone number format' })
-    .optional()
-    .or(z.literal('')),
-
-  website: z
-    .string()
-    .url({ message: 'Invalid website URL' })
-    .optional()
-    .or(z.literal('')),
-
-  description: z
-    .string()
-    .max(500, { message: 'Description must be less than 500 characters' })
-    .optional(),
-
-  agreeToTerms: z
-    .boolean()
-    .refine((val) => val === true, { message: 'You must agree to the terms and conditions' }),
 }).refine((data) => data.password === data.confirmPassword, {
   message: 'Passwords do not match',
   path: ['confirmPassword'],
@@ -114,8 +93,14 @@ function calculatePasswordStrength(password: string): 'Weak' | 'Medium' | 'Stron
 /**
  * VendorRegistrationForm Component
  *
- * Registration form for new vendors with comprehensive validation,
- * error handling, and user feedback.
+ * Simplified registration form for new vendors that collects only essential fields:
+ * - Company Name (required)
+ * - Contact Email (required)
+ * - Password (required)
+ * - Confirm Password (required)
+ *
+ * Full profile details (website, description, contact info, etc.) will be collected later
+ * during profile setup or vendor dashboard onboarding.
  */
 export function VendorRegistrationForm() {
   const router = useRouter();
@@ -123,6 +108,28 @@ export function VendorRegistrationForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+
+  /**
+   * Handle successful captcha verification
+   */
+  const handleCaptchaVerify = (token: string) => {
+    setCaptchaToken(token);
+  };
+
+  /**
+   * Handle captcha expiration
+   */
+  const handleCaptchaExpire = () => {
+    setCaptchaToken(null);
+  };
+
+  /**
+   * Handle captcha error
+   */
+  const handleCaptchaError = () => {
+    setCaptchaToken(null);
+  };
 
   const form = useForm<RegistrationFormData>({
     resolver: zodResolver(registrationSchema),
@@ -131,22 +138,26 @@ export function VendorRegistrationForm() {
       password: '',
       confirmPassword: '',
       companyName: '',
-      contactName: '',
-      phone: '',
-      website: '',
-      description: '',
-      agreeToTerms: false,
     },
   });
 
   const password = form.watch('password');
-  const description = form.watch('description');
   const passwordStrength = calculatePasswordStrength(password || '');
 
   /**
    * Handle form submission
    */
   const onSubmit = async (data: RegistrationFormData) => {
+    // Check hCaptcha if configured
+    if (process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY && !captchaToken) {
+      toast({
+        title: 'Verification Required',
+        description: 'Please complete the captcha challenge',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     try {
       setIsSubmitting(true);
 
@@ -160,10 +171,7 @@ export function VendorRegistrationForm() {
           contactEmail: data.email,
           password: data.password,
           companyName: data.companyName,
-          contactName: data.contactName,
-          contactPhone: data.phone,
-          website: data.website,
-          description: data.description,
+          captchaToken: captchaToken || undefined,
         }),
       });
 
@@ -172,7 +180,7 @@ export function VendorRegistrationForm() {
       if (!response.ok) {
         // Handle specific error codes
         if (response.status === 409) {
-          if (result.code === 'EMAIL_EXISTS' || result.code === 'DUPLICATE_EMAIL') {
+          if (result.error?.code === 'DUPLICATE_EMAIL') {
             form.setError('email', {
               type: 'manual',
               message: 'Email already exists'
@@ -185,7 +193,7 @@ export function VendorRegistrationForm() {
             return;
           }
 
-          if (result.code === 'COMPANY_EXISTS') {
+          if (result.error?.code === 'COMPANY_EXISTS') {
             form.setError('companyName', {
               type: 'manual',
               message: 'Company name already exists'
@@ -203,7 +211,7 @@ export function VendorRegistrationForm() {
           // Validation errors from backend
           toast({
             title: 'Validation Error',
-            description: result.error || 'Please check your form inputs',
+            description: result.error?.message || 'Please check your form inputs',
             variant: 'destructive',
           });
           return;
@@ -212,14 +220,14 @@ export function VendorRegistrationForm() {
         if (response.status === 500) {
           toast({
             title: 'Server Error',
-            description: result.error || 'Internal server error',
+            description: result.error?.message || 'Internal server error',
             variant: 'destructive',
           });
           return;
         }
 
         // Generic error
-        throw new Error(result.error || 'Registration failed');
+        throw new Error(result.error?.message || 'Registration failed');
       }
 
       // Success
@@ -228,8 +236,9 @@ export function VendorRegistrationForm() {
         description: 'Your account is pending approval',
       });
 
-      // Clear form
+      // Clear form and captcha
       form.reset();
+      setCaptchaToken(null);
 
       // Redirect to pending page
       router.push('/vendor/registration-pending');
@@ -250,26 +259,6 @@ export function VendorRegistrationForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        {/* Email Field */}
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel aria-label="Email">Email</FormLabel>
-              <FormControl>
-                <Input
-                  type="email"
-                  placeholder="vendor@example.com"
-                  aria-label="Email"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage role="alert" />
-            </FormItem>
-          )}
-        />
-
         {/* Company Name Field */}
         <FormField
           control={form.control}
@@ -290,58 +279,18 @@ export function VendorRegistrationForm() {
           )}
         />
 
-        {/* Contact Name Field */}
+        {/* Email Field */}
         <FormField
           control={form.control}
-          name="contactName"
+          name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel aria-label="Contact Name">Contact Name</FormLabel>
+              <FormLabel aria-label="Email">Email</FormLabel>
               <FormControl>
                 <Input
-                  type="text"
-                  placeholder="John Smith"
-                  aria-label="Contact Name"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage role="alert" />
-            </FormItem>
-          )}
-        />
-
-        {/* Phone Field */}
-        <FormField
-          control={form.control}
-          name="phone"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel aria-label="Phone">Phone</FormLabel>
-              <FormControl>
-                <Input
-                  type="tel"
-                  placeholder="+1 (555) 123-4567"
-                  aria-label="Phone"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage role="alert" />
-            </FormItem>
-          )}
-        />
-
-        {/* Website Field */}
-        <FormField
-          control={form.control}
-          name="website"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel aria-label="Website">Website</FormLabel>
-              <FormControl>
-                <Input
-                  type="url"
-                  placeholder="https://example.com"
-                  aria-label="Website"
+                  type="email"
+                  placeholder="vendor@example.com"
+                  aria-label="Email"
                   {...field}
                 />
               </FormControl>
@@ -439,57 +388,27 @@ export function VendorRegistrationForm() {
           )}
         />
 
-        {/* Description Field */}
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel aria-label="Description">Description</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Tell us about your company..."
-                  aria-label="Description"
-                  className="resize-none"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>
-                {description?.length || 0} / 500
-              </FormDescription>
-              <FormMessage role="alert" />
-            </FormItem>
-          )}
-        />
-
-        {/* Terms and Conditions Checkbox */}
-        <FormField
-          control={form.control}
-          name="agreeToTerms"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-              <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                  aria-label="Agree to terms and conditions"
-                />
-              </FormControl>
-              <div className="space-y-1 leading-none">
-                <FormLabel aria-label="Agree to terms and conditions">
-                  I agree to the terms and conditions
-                </FormLabel>
-                <FormMessage role="alert" />
-              </div>
-            </FormItem>
-          )}
-        />
+        {/* hCaptcha - Always use light theme for consistency across light/dark modes */}
+        {process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY && (
+          <div className="flex justify-center" data-testid="hcaptcha-container">
+            <HCaptcha
+              sitekey={process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY}
+              theme="light"
+              onVerify={handleCaptchaVerify}
+              onExpire={handleCaptchaExpire}
+              onError={handleCaptchaError}
+            />
+          </div>
+        )}
 
         {/* Submit Button */}
         <Button
           type="submit"
           className="w-full"
-          disabled={isSubmitting}
+          disabled={
+            isSubmitting ||
+            (!!process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY && !captchaToken)
+          }
           aria-label="Register"
         >
           {isSubmitting ? (

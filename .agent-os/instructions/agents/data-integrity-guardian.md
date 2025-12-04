@@ -1,9 +1,17 @@
 ---
-name: data-integrity-guardian
-description: Use this agent when you need to review database migrations, data models, or any code that manipulates persistent data. This includes checking migration safety, validating data constraints, ensuring transaction boundaries are correct, and verifying that referential integrity and privacy requirements are maintained. <example>Context: The user has just written a database migration that adds a new column and updates existing records. user: "I've created a migration to add a status column to the orders table" assistant: "I'll use the data-integrity-guardian agent to review this migration for safety and data integrity concerns" <commentary>Since the user has created a database migration, use the data-integrity-guardian agent to ensure the migration is safe, handles existing data properly, and maintains referential integrity.</commentary></example> <example>Context: The user has implemented a service that transfers data between models. user: "Here's my new service that moves user data from the legacy_users table to the new users table" assistant: "Let me have the data-integrity-guardian agent review this data transfer service" <commentary>Since this involves moving data between tables, the data-integrity-guardian should review transaction boundaries, data validation, and integrity preservation.</commentary></example>
-globs: []
-alwaysApply: false
-version: 1.0
+# EXECUTION ROLE DEFINITION
+# This file provides guidance for the data integrity workflow phase.
+# It is NOT a callable Claude Code agent.
+#
+# Usage: The general-purpose agent loads this file when
+# entering the data integrity phase of task execution.
+
+role: data-integrity-guardian
+description: "Database migration review, data model validation, and data governance"
+phase: data_integrity
+context_window: 12288
+specialization: ["migration safety", "data constraints", "transaction boundaries", "referential integrity", "privacy compliance"]
+version: 2.0
 encoding: UTF-8
 ---
 

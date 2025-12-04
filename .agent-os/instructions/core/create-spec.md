@@ -12,6 +12,50 @@ encoding: UTF-8
 
 Generate detailed feature specifications aligned with product roadmap and mission.
 
+## CRITICAL: Subagent Delegation Requirements
+
+When delegating sub-spec creation to actual subagents via `Task()`, you MUST use the standard delegation template:
+
+```
+@.agent-os/instructions/utilities/subagent-delegation-template.md
+```
+
+**Why This Matters**: Subagents do NOT automatically inherit:
+- Mandatory skill invocations (Step 3.8)
+- Pattern lookup hierarchy
+- shadcn MCP requirements for UI specs
+
+**Required for ALL Sub-Spec Delegation Prompts**:
+```yaml
+mandatory_inclusions:
+  1_skill_invocation: |
+    BEFORE writing this specification, you MUST invoke:
+    - Skill(skill="agent-os-patterns")
+    For UI specs: mcp__shadcn__list_components() and mcp__shadcn__get_component_demo()
+
+  2_pattern_lookup_hierarchy: |
+    FIRST: Check .agent-os/patterns/ (project-specific)
+    SECOND: Invoke skills (generic patterns)
+    THIRD: Use WebSearch as fallback
+
+  3_confirmation_requirement: |
+    CONFIRM which patterns/demos were loaded in the spec
+```
+
+**Example Delegation Prompt for UI Sub-Spec**:
+```javascript
+Task(subagent_type: "general-purpose", prompt: `
+... [Use full template from subagent-delegation-template.md]
+
+MANDATORY: Before writing this UI spec, invoke:
+1. Skill(skill="agent-os-patterns")
+2. mcp__shadcn__list_components()
+3. mcp__shadcn__get_component_demo(componentName) for each component you specify
+
+Document which skills/demos were loaded at the end of the spec.
+`)
+```
+
 ## Prerequisites
 
 Before running create-spec, ensure Agent OS is installed via:
@@ -512,6 +556,66 @@ Execute specialized research agents in parallel to gather comprehensive insights
   PREPARE: Enhanced context for spec creation in subsequent steps
   PERSIST: Save research findings for reference during spec creation
 </instructions>
+
+</step>
+
+<step number="3.8" name="skill_pattern_lookup">
+
+### Step 3.8: Load Tech Stack Patterns via Skills (v3.2+)
+
+**⚠️ MANDATORY TOOL INVOCATION - DO NOT SKIP**
+
+This step requires you to use the Skill tool. You MUST make an actual tool call.
+
+<skill_invocation_required>
+  **STEP 1: Check for Project-Specific Patterns FIRST**
+
+  Before invoking the global skill, check if project-specific patterns exist:
+
+  ```
+  CHECK: .agent-os/patterns/ directory in the project
+
+  IF .agent-os/patterns/ exists:
+    READ relevant files based on tech stack:
+    - .agent-os/patterns/frontend/typescript.md (TypeScript/React)
+    - .agent-os/patterns/backend/python.md (Python)
+    - .agent-os/patterns/backend/rails.md (Rails)
+    - .agent-os/patterns/backend/api.md (API development)
+    - .agent-os/patterns/global/error-handling.md (Error handling)
+
+  These project-specific patterns take PRECEDENCE over generic skill patterns.
+  ```
+
+  **STEP 2: Invoke Global Skill for Generic Patterns**
+
+  ```
+  Skill(skill="agent-os-patterns")
+  ```
+
+  This is a REQUIRED tool invocation. The skill provides generic patterns for:
+  - Testing conventions (Vitest, Playwright, Convex)
+  - Code style standards
+
+  **After invoking the skill**, READ the relevant reference files:
+
+  | Task | Skill Reference (Generic) |
+  |------|---------------------------|
+  | Vitest testing | references/testing/vitest.md |
+  | Playwright E2E | references/testing/playwright.md |
+  | Convex testing | references/testing/convex.md |
+  | Test strategy | references/testing/test-strategies.md |
+  | Code style | references/global/coding-style.md |
+
+  **VERIFICATION**: Before proceeding to Step 4, confirm:
+  - [ ] Checked .agent-os/patterns/ for project-specific patterns
+  - [ ] Skill tool was invoked
+  - [ ] Relevant reference files were loaded
+  - [ ] Patterns are available for spec creation
+
+  **OUTPUT**: State which patterns were loaded, e.g.:
+  "✅ Project patterns: typescript.md (from .agent-os/patterns/)"
+  "✅ Skill patterns: vitest.md, coding-style.md"
+</skill_invocation_required>
 
 </step>
 

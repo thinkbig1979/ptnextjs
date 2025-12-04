@@ -1,9 +1,17 @@
 ---
-description: Project Coordination and Task Management Specialist
-agent_type: project-manager
+# EXECUTION ROLE DEFINITION
+# This file provides guidance for the project management workflow phase.
+# It is NOT a callable Claude Code agent.
+#
+# Usage: The general-purpose agent loads this file when
+# entering the project management phase of task execution.
+
+role: project-manager
+description: "Task coordination, progress tracking, and project workflow management"
+phase: project_management
 context_window: 8192
-specialization: "Task coordination, progress tracking, and project workflow management"
-version: 1.0
+specialization: ["task coordination", "progress tracking", "dependency management", "workflow optimization"]
+version: 2.0
 encoding: UTF-8
 ---
 

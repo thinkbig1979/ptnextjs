@@ -1,25 +1,29 @@
 ---
-description: Comprehensive workflow for upgrading existing specs to Agent OS v2.1 standards
+description: Comprehensive workflow for upgrading existing specs to Agent OS v3.3.0 standards
 globs:
 alwaysApply: false
-version: 1.0
+version: 2.0
 encoding: UTF-8
 ---
 
-# Upgrade Spec to v2.1 Standards
+# Upgrade Spec to v3.3.0 Standards
 
 ## Overview
 
-This workflow performs a complete modernization of existing Agent OS specifications to v2.1 standards through:
+This workflow performs a complete modernization of existing Agent OS specifications to v3.3.0 standards through:
 - Full re-evaluation of spec content
 - Fresh codebase analysis with integration intelligence
 - 6-file comprehensive spec structure
 - Micro-granular task regeneration
 - Optimized split task file structure
+- Test context gathering with library documentation (v3.1+)
+- Skills integration for pattern lookup (v3.2+)
+- Test execution monitoring with streaming reporters (v3.3.0+)
+- Test/code alignment validation (v3.3.0+)
 
 **Expected Time**: 30-60 minutes depending on spec complexity
 
-**Outcome**: Fully modernized spec with latest Agent OS v2.1 standards
+**Outcome**: Fully modernized spec with latest Agent OS v3.3.0 standards
 
 <pre_flight_check>
   EXECUTE: @.agent-os/instructions/meta/pre-flight.md
@@ -85,10 +89,10 @@ Analyze the existing spec and create comprehensive backup before any modificatio
   - **Implementation Notes**: Lessons learned, gotchas, decisions made
 
   IDENTIFY:
-  - **Spec Version**: v1.0, v2.0, or custom format
+  - **Spec Version**: v1.0, v2.x, v3.x, or custom format
   - **File Structure**: Monolithic, partial v2.0, or custom
   - **Completeness**: Missing files, incomplete sections
-  - **Modernization Needs**: What needs updating for v2.1
+  - **Modernization Needs**: What needs updating for v3.3.0
 </existing_content_analysis>
 
 <instructions>
@@ -161,14 +165,14 @@ Perform comprehensive codebase analysis to gather current integration intelligen
 
 ### Step 3: Regenerate 6-File Comprehensive Spec Structure
 
-Regenerate complete v2.1 spec structure with all 6 specification files.
+Regenerate complete v3.3.0 spec structure with all 6 specification files.
 
 <spec_regeneration_approach>
   **Re-evaluation Strategy**:
 
   USE: Extracted content from Step 1 (existing spec analysis)
   APPLY: Fresh codebase intelligence from Step 2
-  FOLLOW: Latest v2.1 spec templates from create-spec.md
+  FOLLOW: Latest v3.3.0 spec templates from create-spec.md
   ENHANCE: With modern best practices and standards
   PRESERVE: Core feature purpose and completed work insights
 
@@ -185,6 +189,10 @@ Regenerate complete v2.1 spec structure with all 6 specification files.
 
   USE: file-creator subagent for each file
   REFERENCE: Templates from @.agent-os/instructions/core/create-spec.md
+  
+  INVOKE SKILLS (v3.2+):
+  - Skill(skill="agent-os-patterns") for code style and testing patterns
+  - Skill(skill="agent-os-specialists") for specialist guidance
 
   1. **spec.md** - Core feature specification
      - Feature overview and user stories (preserve from original)
@@ -278,7 +286,7 @@ Regenerate complete v2.1 spec structure with all 6 specification files.
 
 <instructions>
   ACTION: Use file-creator subagent to regenerate all 6 spec files
-  REFERENCE: create-spec.md templates for v2.1 structure
+  REFERENCE: create-spec.md templates for v3.3.0 structure
   SYNTHESIZE: Original spec content + fresh codebase analysis
   ENHANCE: Apply latest standards and best practices
   VALIDATE: All 6 files complete and consistent
@@ -454,7 +462,7 @@ Validate the upgraded spec and present to user for review.
 
   📊 **Upgrade Summary**:
   - **Original Spec Version**: [detected version]
-  - **Upgraded To**: Agent OS v2.1.0
+  - **Upgraded To**: Agent OS v3.3.0
   - **Files Backed Up**: [count] files to `.backup-[timestamp]/`
   - **Files Generated**: [count] spec files + [count] task files
   - **Tasks Preserved**: [count]/[total] tasks marked complete
@@ -484,7 +492,7 @@ Validate the upgraded spec and present to user for review.
   - ✅ Fresh codebase integration intelligence
   - ✅ Micro-granular task breakdown
   - ✅ 90%+ context reduction with split task files
-  - ✅ Latest Agent OS v2.1 standards
+  - ✅ Latest Agent OS v3.3.0 standards
   - ✅ Work preservation (completed tasks marked [x])
 
   🔄 **Rollback Available**:
@@ -514,7 +522,7 @@ Finalize the upgrade and provide guidance on next steps.
   **IF user approves upgrade**:
 
   ✅ **Confirm Upgrade Complete**:
-  - Spec successfully upgraded to v2.1 standards
+  - Spec successfully upgraded to v3.3.0 standards
   - Backup preserved in `.backup-[timestamp]/` directory
   - Ready for task execution with modern workflow
 
@@ -526,7 +534,7 @@ Finalize the upgrade and provide guidance on next steps.
 
   INFORM USER:
   ```
-  ✅ Spec upgrade to v2.1 complete!
+  ✅ Spec upgrade to v3.3.0 complete!
 
   **Next Steps**:
 
@@ -555,7 +563,7 @@ Finalize the upgrade and provide guidance on next steps.
 
   **IF user requests adjustments**:
   - Make specific changes to requested files
-  - Maintain v2.1 structure and standards
+  - Maintain v3.3.0 structure and standards
   - Re-validate after changes
 
   **IF user wants rollback**:
@@ -593,7 +601,7 @@ Finalize the upgrade and provide guidance on next steps.
 - **No data loss** - all original content backed up
 
 ### **✅ Modern Standards**
-- **Agent OS v2.1.0** - latest version standards
+- **Agent OS v3.3.0** - latest version standards
 - **Codebase intelligence** - real integration points
 - **Quality gates** - comprehensive validation
 - **Evidence requirements** - thorough testing standards
@@ -611,7 +619,7 @@ Finalize the upgrade and provide guidance on next steps.
 ## Upgrade-Spec vs Enhance-Existing
 
 **Use `upgrade-spec` when**:
-- ✅ You want to fully modernize an old spec to v2.1 standards
+- ✅ You want to fully modernize an old spec to v3.3.0 standards
 - ✅ You need fresh codebase analysis and integration intelligence
 - ✅ You want the 6-file comprehensive spec structure
 - ✅ You want micro-granular task regeneration

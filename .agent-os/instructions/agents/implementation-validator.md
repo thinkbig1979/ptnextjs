@@ -1,9 +1,17 @@
 ---
-description: Implementation Validation and Correctness Verification Specialist
-agent_type: implementation-validator
+# EXECUTION ROLE DEFINITION
+# This file provides guidance for the implementation validation workflow phase.
+# It is NOT a callable Claude Code agent.
+#
+# Usage: The general-purpose agent loads this file when
+# entering the implementation validation phase of task execution.
+
+role: implementation-validator
+description: "Implementation verification, correctness validation, and requirement compliance checking"
+phase: implementation_validation
 context_window: 8192
-specialization: "Implementation verification, correctness validation, and requirement compliance checking"
-version: 1.0
+specialization: ["requirement validation", "code correctness", "integration verification", "specification compliance"]
+version: 2.0
 encoding: UTF-8
 ---
 

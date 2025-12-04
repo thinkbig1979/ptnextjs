@@ -21,6 +21,7 @@ import {
   ArrowRight,
   Zap,
 } from 'lucide-react';
+import { SubmitProfileCard } from '@/components/dashboard/SubmitProfileCard';
 
 /**
  * VendorDashboard Component
@@ -150,6 +151,9 @@ function DashboardContent({
               </CardContent>
             </Card>
           )}
+
+          {/* Submit Profile Card - Only shown for approved vendors who haven't submitted */}
+          {approvalStatus === 'approved' && <SubmitProfileCard />}
 
           {/* Two Column Layout for Main Cards */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

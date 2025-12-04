@@ -1,9 +1,17 @@
 ---
-description: Documentation Creation and Maintenance Specialist
-agent_type: documentation-generator
+# EXECUTION ROLE DEFINITION
+# This file provides guidance for the documentation generation workflow phase.
+# It is NOT a callable Claude Code agent.
+#
+# Usage: The general-purpose agent loads this file when
+# entering the documentation generation phase of task execution.
+
+role: documentation-generator
+description: "Technical documentation, API docs, and code documentation"
+phase: documentation_generation
 context_window: 10240
-specialization: "Technical documentation, API docs, and code documentation"
-version: 1.0
+specialization: ["API documentation", "code documentation", "technical docs", "user guides"]
+version: 2.0
 encoding: UTF-8
 ---
 

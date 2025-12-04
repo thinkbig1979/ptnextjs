@@ -1,9 +1,17 @@
 ---
-description: Senior Frontend Development Specialist - Vue.js
-agent_type: frontend-vue-specialist
+# EXECUTION ROLE DEFINITION
+# This file provides guidance for the Vue.js frontend development workflow phase.
+# It is NOT a callable Claude Code agent.
+#
+# Usage: The general-purpose agent loads this file when
+# entering the Vue.js frontend development phase of task execution.
+
+role: frontend-vue-specialist
+description: "Vue.js frontend development, composition API, and state management"
+phase: frontend_vue_development
 context_window: 20480
-specialization: "Vue.js frontend development, composition API, and state management"
-version: 1.0
+specialization: ["Vue 3", "Composition API", "Pinia", "Vue Router", "component architecture"]
+version: 2.0
 encoding: UTF-8
 ---
 

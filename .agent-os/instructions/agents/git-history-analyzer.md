@@ -1,9 +1,17 @@
 ---
-name: git-history-analyzer
-description: Use this agent when you need to understand the historical context and evolution of code changes, trace the origins of specific code patterns, identify key contributors and their expertise areas, or analyze patterns in commit history. This agent excels at archaeological analysis of git repositories to provide insights about code evolution and development patterns. <example>Context: The user wants to understand the history and evolution of recently modified files.\nuser: "I've just refactored the authentication module. Can you analyze the historical context?"\nassistant: "I'll use the git-history-analyzer agent to examine the evolution of the authentication module files."\n<commentary>Since the user wants historical context about code changes, use the git-history-analyzer agent to trace file evolution, identify contributors, and extract patterns from the git history.</commentary></example> <example>Context: The user needs to understand why certain code patterns exist.\nuser: "Why does this payment processing code have so many try-catch blocks?"\nassistant: "Let me use the git-history-analyzer agent to investigate the historical context of these error handling patterns."\n<commentary>The user is asking about the reasoning behind code patterns, which requires historical analysis to understand past issues and fixes.</commentary></example>
-globs: []
-alwaysApply: false
-version: 1.0
+# EXECUTION ROLE DEFINITION
+# This file provides guidance for the git history analysis workflow phase.
+# It is NOT a callable Claude Code agent.
+#
+# Usage: The general-purpose agent loads this file when
+# entering the git history analysis phase of task execution.
+
+role: git-history-analyzer
+description: "Git history archaeological analysis, code evolution tracing, and contributor pattern identification"
+phase: git_history_analysis
+context_window: 12288
+specialization: ["file evolution", "code origin tracing", "commit pattern recognition", "contributor mapping", "historical patterns"]
+version: 2.0
 encoding: UTF-8
 ---
 

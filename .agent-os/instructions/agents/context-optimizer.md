@@ -1,9 +1,17 @@
 ---
-description: Intelligent Context Optimization and Distribution Engine
-agent_type: context-optimizer
+# EXECUTION ROLE DEFINITION
+# This file provides guidance for the context optimization workflow phase.
+# It is NOT a callable Claude Code agent.
+#
+# Usage: The general-purpose agent loads this file when
+# entering the context optimization phase of task execution.
+
+role: context-optimizer
+description: "Context analysis, optimization, and intelligent distribution"
+phase: context_optimization
 context_window: 16384
-specialization: "Context analysis, optimization, and intelligent distribution"
-version: 1.0
+specialization: ["context analysis", "filtering", "distribution", "performance optimization"]
+version: 2.0
 encoding: UTF-8
 ---
 

@@ -1,0 +1,662 @@
+# Agent OS Hook Configuration System
+# Version: 1.0
+#
+# This configuration controls the validation and quality assurance hooks
+# that run during file operations (creation, editing, commits).
+
+# =============================================================================
+# GLOBAL HOOK SETTINGS
+# =============================================================================
+
+hooks:
+  enabled: true
+
+  # Validation modes:
+  # - strict: All validations must pass, blocks operations on failure
+  # - balanced: Run all validations, warn on failure but don't block (recommended)
+  # - minimal: Only run critical validations (syntax, security)
+  mode: balanced
+
+  # Global behavior settings
+  fail_on_error: false  # Warn but don't block operations on validation failures
+  show_detailed_output: true  # Display detailed validation results
+  timeout_seconds: 30  # Maximum time for validation operations
+
+# =============================================================================
+# FILE CREATION HOOKS
+# =============================================================================
+
+file_creation:
+  enabled: true
+  description: "Validations that run when new files are created"
+
+  validators:
+    # Check for syntax errors in the created file
+    - name: syntax_check
+      enabled: true
+      priority: 1
+      description: "Validate file syntax is correct"
+
+    # Apply code formatting standards
+    - name: formatting
+      enabled: true
+      priority: 2
+      description: "Check and apply code formatting standards"
+      auto_fix: true
+
+    # Run linting checks
+    - name: linting
+      enabled: true
+      priority: 3
+      description: "Run language-specific linting rules"
+      auto_fix: true
+
+    # Organize and optimize imports
+    - name: imports_organization
+      enabled: true
+      priority: 4
+      description: "Organize and sort import statements"
+      auto_fix: true
+
+    # Type checking for typed languages
+    - name: type_checking
+      enabled: true
+      priority: 5
+      description: "Validate type correctness (TypeScript, Python type hints)"
+
+    # Security vulnerability scanning
+    - name: security_scan
+      enabled: true
+      priority: 6
+      description: "Scan for common security issues and vulnerabilities"
+
+    # Generate initial tests for new code
+    - name: test_generator
+      enabled: true
+      priority: 7
+      description: "Generate basic test scaffolding for new files"
+      auto_fix: true
+
+    # Validate test files against infrastructure standards
+    - name: test_standards
+      enabled: true
+      priority: 8
+      description: "Validate test files meet CI-safe standards (no watch mode, has assertions, correct location)"
+      auto_fix: false
+      applies_to:
+        - "**/*.test.ts"
+        - "**/*.test.tsx"
+        - "**/*.test.js"
+        - "**/*.test.jsx"
+        - "**/*.spec.ts"
+        - "**/*.spec.tsx"
+        - "**/*.spec.js"
+        - "**/*.integration.ts"
+        - "**/test_*.py"
+        - "**/*_test.py"
+        - "**/*_spec.rb"
+
+# =============================================================================
+# FILE EDIT HOOKS
+# =============================================================================
+
+file_edit:
+  enabled: true
+  description: "Validations that run when existing files are modified"
+
+  validators:
+    # Check for syntax errors in the edited file
+    - name: syntax_check
+      enabled: true
+      priority: 1
+      description: "Validate file syntax is correct"
+
+    # Apply code formatting standards
+    - name: formatting
+      enabled: true
+      priority: 2
+      description: "Check and apply code formatting standards"
+      auto_fix: true
+
+    # Run linting checks
+    - name: linting
+      enabled: true
+      priority: 3
+      description: "Run language-specific linting rules"
+      auto_fix: true
+
+    # Organize and optimize imports
+    - name: imports_organization
+      enabled: true
+      priority: 4
+      description: "Organize and sort import statements"
+      auto_fix: true
+
+    # Type checking for typed languages
+    - name: type_checking
+      enabled: true
+      priority: 5
+      description: "Validate type correctness (TypeScript, Python type hints)"
+
+    # Validate test files against infrastructure standards
+    - name: test_standards
+      enabled: true
+      priority: 6
+      description: "Validate test files meet CI-safe standards (no watch mode, has assertions, correct location)"
+      auto_fix: false
+      applies_to:
+        - "**/*.test.ts"
+        - "**/*.test.tsx"
+        - "**/*.test.js"
+        - "**/*.test.jsx"
+        - "**/*.spec.ts"
+        - "**/*.spec.tsx"
+        - "**/*.spec.js"
+        - "**/*.integration.ts"
+        - "**/test_*.py"
+        - "**/*_test.py"
+        - "**/*_spec.rb"
+
+# =============================================================================
+# LANGUAGE-SPECIFIC VALIDATION RULES
+# =============================================================================
+
+# Language-specific standards documentation references
+# These standards documents provide detailed code style, patterns, and best practices
+# that validators should enforce when checking files of each type.
+standards_documentation:
+
+  # Ruby on Rails standards
+  rails:
+    enabled: true
+    standards_file: "standards/backend/rails-patterns.md"
+    description: "Comprehensive Rails code style standards including naming, patterns, and best practices"
+    file_patterns:
+      - "**/*.rb"
+      - "**/Gemfile"
+      - "**/Rakefile"
+      - "**/*.rake"
+    applies_to_validators:
+      - linting
+      - formatting
+      - security_scan
+      - code_quality
+
+  # TypeScript/React standards
+  typescript:
+    enabled: true
+    standards_file: "standards/frontend/typescript-patterns.md"
+    description: "TypeScript and React code style standards including component patterns, hooks, and type safety"
+    file_patterns:
+      - "**/*.ts"
+      - "**/*.tsx"
+    applies_to_validators:
+      - linting
+      - formatting
+      - type_checking
+      - security_scan
+      - code_quality
+
+  # Python standards
+  python:
+    enabled: true
+    standards_file: "standards/backend/python-patterns.md"
+    description: "Python code style standards including naming, patterns, type hints, and best practices"
+    file_patterns:
+      - "**/*.py"
+    applies_to_validators:
+      - linting
+      - formatting
+      - type_checking
+      - security_scan
+      - code_quality
+
+validation_rules:
+
+  # JavaScript validation
+  javascript:
+    enabled: true
+    file_patterns:
+      - "**/*.js"
+      - "**/*.jsx"
+      - "**/*.mjs"
+
+    tools:
+      syntax_checker: "acorn"  # Fast JavaScript parser
+      formatter: "prettier"
+      linter: "eslint"
+
+    rules:
+      max_line_length: 100
+      indent_size: 2
+      indent_style: "space"
+      quote_style: "single"
+      semicolons: true
+      trailing_commas: "es5"
+
+    linting:
+      extends:
+        - "eslint:recommended"
+      rules:
+        no-unused-vars: "warn"
+        no-console: "off"
+        prefer-const: "warn"
+
+  # TypeScript validation
+  # See standards/frontend/typescript-patterns.md for comprehensive style guide
+  typescript:
+    enabled: true
+    standards_reference: "standards/frontend/typescript-patterns.md"
+    file_patterns:
+      - "**/*.ts"
+      - "**/*.tsx"
+
+    tools:
+      syntax_checker: "typescript"
+      formatter: "prettier"
+      linter: "eslint"
+      type_checker: "tsc"
+
+    rules:
+      max_line_length: 100
+      indent_size: 2
+      indent_style: "space"
+      quote_style: "single"
+      semicolons: true
+      trailing_commas: "es5"
+      strict_mode: true
+
+    type_checking:
+      strict: true
+      no_implicit_any: true
+      strict_null_checks: true
+
+    linting:
+      extends:
+        - "eslint:recommended"
+        - "plugin:@typescript-eslint/recommended"
+      rules:
+        "@typescript-eslint/no-unused-vars": "warn"
+        "@typescript-eslint/explicit-function-return-type": "off"
+        "@typescript-eslint/no-explicit-any": "warn"
+
+  # Python validation
+  # See standards/backend/python-patterns.md for comprehensive style guide
+  python:
+    enabled: true
+    standards_reference: "standards/backend/python-patterns.md"
+    file_patterns:
+      - "**/*.py"
+
+    tools:
+      syntax_checker: "python -m py_compile"
+      formatter: "black"
+      linter: "ruff"
+      type_checker: "mypy"
+      import_sorter: "isort"
+
+    rules:
+      max_line_length: 100
+      indent_size: 4
+      indent_style: "space"
+      quote_style: "single"
+
+    formatting:
+      line_length: 100
+
+    linting:
+      select:
+        - "E"   # pycodestyle errors
+        - "F"   # pyflakes
+        - "I"   # isort
+        - "N"   # pep8-naming
+        - "W"   # pycodestyle warnings
+      ignore:
+        - "E501"  # line too long (handled by formatter)
+
+    type_checking:
+      strict: false
+      warn_unused_ignores: true
+      disallow_untyped_defs: false
+
+  # Ruby on Rails validation
+  # See standards/backend/rails-patterns.md for comprehensive style guide
+  ruby:
+    enabled: true
+    standards_reference: "standards/backend/rails-patterns.md"
+    file_patterns:
+      - "**/*.rb"
+      - "**/Gemfile"
+      - "**/Rakefile"
+      - "**/*.rake"
+
+    tools:
+      syntax_checker: "ruby -c"
+      formatter: "rubocop"
+      linter: "rubocop"
+
+    rules:
+      max_line_length: 100
+      indent_size: 2
+      indent_style: "space"
+      quote_style: "single"
+
+    linting:
+      extends:
+        - "rubocop-rails"
+        - "rubocop-rspec"
+      rules:
+        Metrics/LineLength: 100
+        Style/StringLiterals: "single_quotes"
+        Style/FrozenStringLiteralComment: "enabled"
+        Naming/VariableName: "snake_case"
+        Naming/MethodName: "snake_case"
+
+  # CSS/SCSS validation
+  css:
+    enabled: true
+    file_patterns:
+      - "**/*.css"
+      - "**/*.scss"
+      - "**/*.sass"
+
+    tools:
+      syntax_checker: "stylelint"
+      formatter: "prettier"
+
+    rules:
+      indent_size: 2
+      indent_style: "space"
+
+    linting:
+      extends:
+        - "stylelint-config-standard"
+      rules:
+        indentation: 2
+        string-quotes: "single"
+
+  # JSON validation
+  json:
+    enabled: true
+    file_patterns:
+      - "**/*.json"
+
+    tools:
+      syntax_checker: "jsonlint"
+      formatter: "prettier"
+
+    rules:
+      indent_size: 2
+      indent_style: "space"
+      trailing_commas: false
+
+  # Markdown validation
+  markdown:
+    enabled: true
+    file_patterns:
+      - "**/*.md"
+      - "**/*.markdown"
+
+    tools:
+      formatter: "prettier"
+      linter: "markdownlint"
+
+    rules:
+      indent_size: 2
+      indent_style: "space"
+      max_line_length: 100
+
+    linting:
+      rules:
+        line_length: false  # Don't enforce in markdown
+        no-inline-html: false
+
+# =============================================================================
+# TEST STANDARDS VALIDATION RULES (v3.0+)
+# =============================================================================
+# Configurable rules for test file validation.
+# These settings control which checks are enabled and their severity.
+# Individual checks can be skipped per-file using @agent-os-skip directives.
+
+test_standards:
+  # Global enable/disable for test standards validation
+  enabled: true
+
+  # CI environment behavior
+  ci_behavior:
+    # When true, warnings are promoted to errors in CI
+    strict_mode: true
+    # Detected CI environments: CI, GITHUB_ACTIONS, GITLAB_CI, CIRCLECI, JENKINS_URL, TRAVIS, BUILDKITE
+
+  rules:
+    # Tests must have real assertions (expect, assert, should, etc.)
+    assertions_required:
+      enabled: true
+      severity: error  # error | warning
+
+    # No focused tests (.only) allowed - they skip other tests
+    focused_tests:
+      enabled: true
+      severity: error
+
+    # Skipped tests (.skip) should be reviewed
+    skipped_tests:
+      enabled: true
+      severity: warning
+
+    # Test files should be in correct directories
+    file_location:
+      enabled: true
+      severity: warning
+      # Additional allowed patterns (merged with defaults)
+      allowed_patterns:
+        - "tests/**/*"
+        - "src/**/*.test.*"
+        - "src/**/*.spec.*"
+        - "__tests__/**/*"
+        - "test/**/*"
+
+    # E2E tests must have timeout configuration
+    timeout_config:
+      enabled: true
+      severity: warning
+      required_for:
+        - "e2e"
+        - "integration"  # Optional: also require for integration tests
+
+    # Limit console statements in test files
+    console_limit:
+      enabled: true
+      severity: warning
+      max_statements: 5  # Configurable threshold
+
+    # Detect hardcoded URLs that should use config
+    hardcoded_urls:
+      enabled: true
+      severity: warning
+      max_localhost_urls: 2  # Warn if more than this many localhost URLs
+
+    # No watch mode configurations in test files
+    watch_mode:
+      enabled: true
+      severity: warning
+
+    # No debugger statements (always an error)
+    debugger_statements:
+      enabled: true
+      severity: error
+
+    # Debug script detection by filename
+    debug_file_names:
+      enabled: true
+      severity: warning
+      patterns:
+        - "verification"
+        - "manual"
+        - "check-"
+
+  # Per-file override directives
+  # Add these comments to the first 10 lines of a file to skip specific checks:
+  #   // @agent-os-skip test-standards:assertions
+  #   // @agent-os-skip test-standards:console-limit
+  #   // @agent-os-skip test-standards:timeout-config
+  #   // @agent-os-skip test-standards:file-location
+  #   // @agent-os-skip test-standards:focused-tests
+  #   // @agent-os-skip test-standards:hardcoded-urls
+  #   // @agent-os-skip test-standards:watch-mode
+  skip_directives:
+    enabled: true
+    scan_lines: 10  # How many lines to scan for directives
+
+# =============================================================================
+# AUTO-FIX CAPABILITIES
+# =============================================================================
+
+auto_fix:
+  enabled: true
+  description: "Automatically fix common issues when possible"
+
+  capabilities:
+    # Apply code formatting automatically
+    formatting:
+      enabled: true
+      description: "Auto-format code using language-specific formatters"
+
+    # Sort and organize imports
+    import_sorting:
+      enabled: true
+      description: "Automatically sort and organize import statements"
+
+    # Fix common linting issues
+    lint_fixes:
+      enabled: true
+      description: "Auto-fix common linting issues (safe fixes only)"
+      safe_only: true
+
+    # Remove unused imports
+    remove_unused_imports:
+      enabled: true
+      description: "Remove unused import statements"
+
+    # Generate missing tests
+    generate_tests:
+      enabled: true
+      description: "Generate test scaffolding for untested code"
+
+# =============================================================================
+# PERFORMANCE OPTIMIZATIONS
+# =============================================================================
+
+performance:
+
+  # Run independent validations in parallel
+  parallel_execution:
+    enabled: true
+    max_workers: 4
+    description: "Run independent validations concurrently"
+
+  # Only validate changed portions of files
+  incremental_validation:
+    enabled: true
+    description: "Only validate changed code sections for edits"
+
+  # Cache validation results
+  smart_caching:
+    enabled: true
+    cache_duration_minutes: 30
+    description: "Cache validation results for unchanged files"
+
+# =============================================================================
+# ERROR HANDLING
+# =============================================================================
+
+error_handling:
+
+  # Retry failed validations
+  retry_on_failure:
+    enabled: true
+    max_retries: 2
+    retry_delay_seconds: 1
+
+  # Collect and report issues
+  error_reporting:
+    show_stack_traces: false
+    group_similar_errors: true
+    max_errors_displayed: 10
+
+  # Fallback behavior
+  fallback:
+    on_validator_crash: "skip"  # skip | fail | warn
+    on_timeout: "warn"  # warn | fail | skip
+
+# =============================================================================
+# INTEGRATION SETTINGS
+# =============================================================================
+
+integrations:
+
+  # Git hook integration
+  git_hooks:
+    enabled: false
+    pre_commit: true
+    pre_push: false
+
+  # IDE integration hints
+  ide:
+    generate_config_files: true
+    configs:
+      - ".editorconfig"
+      - ".prettierrc"
+      - ".eslintrc.json"
+
+# =============================================================================
+# EXCLUSIONS
+# =============================================================================
+
+exclusions:
+
+  # Directories to skip
+  ignore_directories:
+    - "node_modules"
+    - ".git"
+    - "dist"
+    - "build"
+    - ".next"
+    - "coverage"
+    - ".cache"
+    - "__pycache__"
+    - "venv"
+    - ".venv"
+
+  # Files to skip
+  ignore_files:
+    - "*.min.js"
+    - "*.min.css"
+    - "*.map"
+    - "package-lock.json"
+    - "yarn.lock"
+    - "pnpm-lock.yaml"
+
+  # File patterns to skip
+  ignore_patterns:
+    - "**/*.generated.*"
+    - "**/*.auto.*"
+    - "**/vendor/**"
+
+# =============================================================================
+# REPORTING
+# =============================================================================
+
+reporting:
+
+  # Output format for validation results
+  output_format: "pretty"  # pretty | json | minimal
+
+  # Verbosity level
+  verbosity: "normal"  # minimal | normal | verbose | debug
+
+  # Save validation reports
+  save_reports:
+    enabled: false
+    output_directory: ".agent-os/hooks/reports"
+    format: "json"

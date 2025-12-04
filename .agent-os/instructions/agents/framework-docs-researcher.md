@@ -1,9 +1,17 @@
 ---
-name: framework-docs-researcher
-description: Use this agent when you need to gather comprehensive documentation and best practices for frameworks, libraries, or dependencies in your project. This includes fetching official documentation, exploring source code, identifying version-specific constraints, and understanding implementation patterns. <example>Context: The user needs to understand how to properly implement a new feature using a Rails library. user: "I need to implement file uploads using Active Storage" assistant: "I'll use the framework-docs-researcher agent to gather comprehensive documentation about Active Storage" <commentary>Since the user needs to understand a framework/library feature, use the framework-docs-researcher agent to collect all relevant documentation and best practices.</commentary></example> <example>Context: The user is troubleshooting an issue with a Rails gem. user: "Why is the turbo-rails gem not working as expected?" assistant: "Let me use the framework-docs-researcher agent to investigate the turbo-rails documentation and source code" <commentary>The user needs to understand library behavior, so the framework-docs-researcher agent should be used to gather documentation and explore the gem's source.</commentary></example> <example>Context: The user needs to understand a TypeScript library. user: "How do I use React Query for data fetching in TypeScript?" assistant: "I'll use the framework-docs-researcher agent to gather documentation about React Query with TypeScript" <commentary>The user needs TypeScript-specific documentation for a library, so the framework-docs-researcher agent should collect type definitions and best practices.</commentary></example> <example>Context: The user needs to understand a Python library. user: "How should I use FastAPI with Pydantic models?" assistant: "Let me use the framework-docs-researcher agent to research FastAPI and Pydantic integration patterns" <commentary>The user needs Python-specific documentation, so the framework-docs-researcher agent should gather FastAPI/Pydantic best practices.</commentary></example>
-globs: []
-alwaysApply: false
-version: 1.0
+# EXECUTION ROLE DEFINITION
+# This file provides guidance for the framework documentation research workflow phase.
+# It is NOT a callable Claude Code agent.
+#
+# Usage: The general-purpose agent loads this file when
+# entering the framework documentation research phase of task execution.
+
+role: framework-docs-researcher
+description: "Framework and library documentation gathering, version-specific research, and implementation patterns"
+phase: framework_docs_research
+context_window: 16384
+specialization: ["official documentation", "source code exploration", "version constraints", "implementation patterns", "API references"]
+version: 2.0
 encoding: UTF-8
 ---
 

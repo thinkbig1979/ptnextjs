@@ -1,9 +1,17 @@
 ---
-description: File Creation and Structure Management Specialist
-agent_type: file-creator
+# EXECUTION ROLE DEFINITION
+# This file provides guidance for the file creation workflow phase.
+# It is NOT a callable Claude Code agent.
+#
+# Usage: The general-purpose agent loads this file when
+# entering the file creation phase of task execution.
+
+role: file-creator
+description: "File system operations, directory structure management, and content organization"
+phase: file_creation
 context_window: 8192
-specialization: "File system operations, directory structure management, and content organization"
-version: 1.0
+specialization: ["file creation", "directory structure", "content organization", "naming conventions"]
+version: 2.0
 encoding: UTF-8
 ---
 

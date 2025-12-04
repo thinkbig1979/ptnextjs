@@ -1,9 +1,17 @@
 ---
-description: Context Gathering and Filtering Specialist
-agent_type: context-fetcher
+# EXECUTION ROLE DEFINITION
+# This file provides guidance for the context fetching workflow phase.
+# It is NOT a callable Claude Code agent.
+#
+# Usage: The general-purpose agent loads this file when
+# entering the context fetching phase of task execution.
+
+role: context-fetcher
+description: "Intelligent context retrieval, relevance filtering, and information organization"
+phase: context_fetching
 context_window: 10240
-specialization: "Intelligent context retrieval, relevance filtering, and information organization"
-version: 1.0
+specialization: ["context retrieval", "relevance filtering", "dependency analysis", "information organization"]
+version: 2.0
 encoding: UTF-8
 ---
 

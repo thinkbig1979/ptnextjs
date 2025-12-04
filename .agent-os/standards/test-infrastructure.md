@@ -1,0 +1,498 @@
+# Test Infrastructure Standards
+
+**Version**: 1.0.0
+**Purpose**: Universal standards for reliable, repeatable test infrastructure across all Agent OS projects.
+
+---
+
+## Overview
+
+This document defines the standards that prevent common testing failures:
+- Hung tests that never complete
+- Watch mode defaults causing CI failures
+- Missing server dependencies
+- Test sprawl and debug scripts in test suites
+- Inconsistent test organization
+
+**All test-related agents (test-architect, test-runner) MUST follow these standards.**
+
+---
+
+## 1. Test Classification System
+
+### 1.1 Test Types
+
+| Type | Purpose | Speed | Dependencies | Location |
+|------|---------|-------|--------------|----------|
+| **Unit** | Test isolated functions/components | Fast (<100ms) | None (mocked) | Co-located or `tests/unit/` |
+| **Integration** | Test component interactions | Medium (<30s) | Database, APIs | `tests/integration/` |
+| **E2E** | Test full user workflows | Slow (<5min) | All servers | `tests/e2e/` |
+
+### 1.2 File Naming Conventions
+
+```
+Unit Tests:
+  [component].test.ts      # TypeScript/JavaScript
+  [component].test.tsx     # React components
+  test_[module].py         # Python
+  [module]_test.py         # Python alternative
+  [module]_spec.rb         # Ruby
+
+Integration Tests:
+  [feature].integration.ts
+  [feature].int.test.ts
+  test_[feature]_integration.py
+
+E2E Tests:
+  [workflow].spec.ts       # Playwright convention
+  [workflow].e2e.ts
+  [workflow].cy.ts         # Cypress convention
+```
+
+### 1.3 Directory Structure
+
+```
+project/
+├── src/
+│   ├── components/
+│   │   ├── Button.tsx
+│   │   └── Button.test.tsx    # Co-located unit test
+│   └── utils/
+│       ├── helpers.ts
+│       └── helpers.test.ts    # Co-located unit test
+├── tests/
+│   ├── unit/                  # Alternative unit test location
+│   │   └── utils.test.ts
+│   ├── integration/           # Integration tests
+│   │   └── api.integration.ts
+│   └── e2e/                   # E2E tests ONLY
+│       ├── user-login.spec.ts
+│       └── checkout-flow.spec.ts
+├── scripts/
+│   └── debug/                 # Debug scripts (NOT tests)
+│       └── debug-auth-flow.js
+└── tests/_archive/            # Archived old tests
+    └── deprecated-feature.test.ts
+```
+
+---
+
+## 2. CI-Safe Test Commands
+
+### 2.1 Required Package.json Scripts
+
+Every project MUST have these CI-safe test scripts:
+
+```json
+{
+  "scripts": {
+    "test:unit": "vitest",
+    "test:unit:ci": "vitest run --reporter=verbose",
+
+    "test:e2e": "playwright test",
+    "test:e2e:ci": "playwright test --reporter=list",
+
+    "test:check-servers": "node scripts/check-test-servers.js",
+
+    "test:all:ci": "npm run test:unit:ci && npm run test:e2e:ci"
+  }
+}
+```
+
+### 2.2 Watch Mode Prevention
+
+| Framework | Default Behavior | CI-Safe Command |
+|-----------|-----------------|-----------------|
+| **Vitest** | Watch mode (hangs) | `vitest run` |
+| **Jest** | Single run (OK) | `jest --ci` |
+| **Playwright** | Single run (OK) | `playwright test` |
+| **Pytest** | Single run (OK) | `pytest -v` |
+
+**CRITICAL**: Never use `vitest` alone - always use `vitest run` for CI.
+
+### 2.3 Server Health Check Script
+
+Every project with E2E tests MUST have a server check script:
+
+```javascript
+// scripts/check-test-servers.js
+const http = require('http');
+
+const SERVERS = [
+  { name: 'Frontend', url: 'http://localhost:3000' },
+  { name: 'Backend', url: 'http://localhost:8000/health' },
+  // Add all required servers
+];
+
+async function checkServer(server) {
+  return new Promise((resolve) => {
+    const req = http.get(server.url, { timeout: 2000 }, (res) => {
+      resolve({ ...server, status: 'running', code: res.statusCode });
+    });
+    req.on('error', () => resolve({ ...server, status: 'not_running' }));
+    req.on('timeout', () => {
+      req.destroy();
+      resolve({ ...server, status: 'timeout' });
+    });
+  });
+}
+
+async function main() {
+  console.log('═══════════════════════════════════════════════════════════════════');
+  console.log('SERVER PRE-FLIGHT CHECK');
+  console.log('═══════════════════════════════════════════════════════════════════');
+
+  const results = await Promise.all(SERVERS.map(checkServer));
+  let allRunning = true;
+
+  for (const result of results) {
+    const icon = result.status === 'running' ? '✅' : '❌';
+    console.log(`${icon} ${result.name}: ${result.status}`);
+    if (result.status !== 'running') allRunning = false;
+  }
+
+  console.log('═══════════════════════════════════════════════════════════════════');
+
+  if (allRunning) {
+    console.log('All servers running. Ready for E2E tests.');
+    process.exit(0);
+  } else {
+    console.log('Some servers not running. Start them before running tests.');
+    process.exit(1);
+  }
+}
+
+main();
+```
+
+---
+
+## 3. Timeout Configuration
+
+### 3.1 Required Timeouts by Test Type
+
+| Test Type | Per-Test Timeout | Suite Timeout |
+|-----------|-----------------|---------------|
+| Unit | 5 seconds | 2 minutes |
+| Integration | 30 seconds | 5 minutes |
+| E2E | 60 seconds | 10 minutes |
+
+### 3.2 Framework-Specific Configuration
+
+**Vitest (vitest.config.ts)**:
+```typescript
+export default defineConfig({
+  test: {
+    testTimeout: 5000,      // 5s per test
+    hookTimeout: 10000,     // 10s for setup/teardown
+  },
+});
+```
+
+**Playwright (playwright.config.ts)**:
+```typescript
+export default defineConfig({
+  // CRITICAL: Point to e2e directory ONLY, not parent tests/ folder
+  testDir: './tests/e2e',   // NOT './tests' - prevents Vitest file pickup
+  timeout: 60000,           // 60s per test
+  expect: { timeout: 10000 }, // 10s for assertions
+  use: {
+    actionTimeout: 15000,   // 15s for actions
+    navigationTimeout: 30000, // 30s for navigation
+  },
+});
+```
+
+### 3.3 CRITICAL: Framework Test Directory Isolation
+
+**Problem**: When Playwright's `testDir` includes unit test files, it tries to import Vitest and fails:
+```
+Error: Vitest cannot be imported in a CommonJS module using require()
+```
+
+**Root Cause**: Playwright scans `testDir` for all `.spec.ts` or `.test.ts` files. If unit tests with Vitest imports exist in that directory tree, Playwright attempts to load them.
+
+**MANDATORY Configuration Rules**:
+
+| Framework | testDir Setting | Rationale |
+|-----------|-----------------|-----------|
+| **Playwright** | `testDir: './tests/e2e'` | Only scan E2E tests |
+| **Vitest** | `include: ['tests/unit/**']` | Only scan unit tests |
+| **Jest** | `testPathIgnorePatterns: ['e2e']` | Exclude E2E tests |
+
+**Correct Vitest Configuration**:
+```typescript
+// vitest.config.ts
+export default defineConfig({
+  test: {
+    include: ['src/**/*.test.{ts,tsx}', 'tests/unit/**/*.test.{ts,tsx}'],
+    exclude: ['tests/e2e/**', 'tests/integration/**'],
+  },
+});
+```
+
+**Correct Playwright Configuration**:
+```typescript
+// playwright.config.ts
+export default defineConfig({
+  testDir: './tests/e2e',  // NEVER use './tests'
+  testMatch: '**/*.spec.ts',
+});
+```
+
+**Validation Checklist**:
+- [ ] Playwright `testDir` points to `tests/e2e/` (not `tests/`)
+- [ ] Vitest `include` excludes E2E directories
+- [ ] No Vitest imports in files matching `*.spec.ts`
+- [ ] No Playwright imports in files matching `*.test.ts`
+
+**Jest (jest.config.js)**:
+```javascript
+module.exports = {
+  testTimeout: 5000,        // 5s per test
+};
+```
+
+**Pytest (pytest.ini)**:
+```ini
+[pytest]
+timeout = 30
+timeout_method = signal
+```
+
+---
+
+## 4. Test Sprawl Prevention
+
+### 4.1 What is Test Sprawl?
+
+Test sprawl occurs when debug scripts, one-off verifications, and orphaned tests accumulate in test directories, causing:
+- CI suite bloat (3000+ tests from node_modules)
+- Inconsistent pass/fail behavior
+- Tests that require manual inspection
+- Slow test execution
+
+### 4.2 Test Classification Rules
+
+**TRUE TEST** (belongs in tests/):
+- Has assertions that can fail
+- Runs without manual intervention
+- Produces clear pass/fail exit code
+- Tests actual behavior
+
+**DEBUG SCRIPT** (belongs in scripts/debug/):
+- Used for manual verification
+- Outputs information for human review
+- No automated assertions
+- Delete after issue resolved
+
+**VERIFICATION UTILITY** (belongs in scripts/dev/):
+- Checks system state (not behavior)
+- Used during development only
+- Named `check-[what].js`
+
+### 4.3 Forbidden Patterns in Test Files
+
+```javascript
+// ❌ FORBIDDEN - No real assertions
+test('check data', async () => {
+  const data = await fetchData();
+  console.log(data);  // Just logging, no assertion
+});
+
+// ❌ FORBIDDEN - Focused test
+test.only('my test', () => {  // Will skip all other tests
+  expect(true).toBe(true);
+});
+
+// ❌ FORBIDDEN - Always passes
+test('verification', () => {
+  // No assertions = always passes
+});
+
+// ✅ CORRECT - Real assertion
+test('fetches user data correctly', async () => {
+  const data = await fetchData();
+  expect(data.id).toBeDefined();
+  expect(data.name).toBe('Test User');
+});
+```
+
+### 4.4 File Naming Red Flags
+
+These file names suggest debug scripts, NOT tests:
+- `*-verification.spec.ts`
+- `*-manual-*.spec.ts`
+- `check-*.spec.ts`
+- `debug-*.spec.ts`
+- `evaluate-*.spec.ts`
+
+**Action**: Move to `scripts/debug/` or delete.
+
+---
+
+## 5. Server Management Protocol
+
+### 5.1 Pre-Test Server Verification
+
+Before running E2E or integration tests:
+
+1. **DETECT** required servers from:
+   - `playwright.config.ts` → `webServer` configuration
+   - Test file imports and URLs
+   - Test setup files
+
+2. **VERIFY** each server is running:
+   - HTTP GET to health endpoint
+   - 2-second timeout
+   - Report status: ✅ Running | ❌ Not Running
+
+3. **BLOCK** if any server not running:
+   - Do NOT auto-start servers (causes conflicts)
+   - Report which servers need to be started
+   - Wait for user action
+
+### 5.2 Playwright webServer Configuration
+
+```typescript
+// playwright.config.ts
+export default defineConfig({
+  webServer: {
+    command: 'pnpm dev',
+    url: 'http://localhost:3000',
+    reuseExistingServer: true,  // Use existing if running
+    timeout: 120000,            // 2 minutes to start
+  },
+});
+```
+
+**Important**: When `reuseExistingServer: true`, Playwright will use an existing server. The test-runner agent should verify the server is running BEFORE letting Playwright attempt to start it, to avoid port conflicts.
+
+---
+
+## 6. Hung Test Detection and Recovery
+
+### 6.1 Detection Criteria
+
+A test is considered hung if:
+- No stdout/stderr output for 60 seconds
+- Total execution exceeds suite timeout
+- Process doesn't respond to SIGTERM
+
+### 6.2 Recovery Protocol
+
+```bash
+# Execution wrapper with timeout
+timeout --signal=SIGTERM --kill-after=30s 600s \
+  pnpm test:e2e:ci 2>&1
+
+EXIT_CODE=$?
+if [ $EXIT_CODE -eq 124 ]; then
+  echo "❌ TEST EXECUTION TIMED OUT"
+  echo "Possible causes:"
+  echo "  - Infinite loop in code"
+  echo "  - Missing async/await"
+  echo "  - Server not responding"
+  echo "  - Test waiting for user input"
+fi
+```
+
+### 6.3 Common Hang Causes
+
+| Symptom | Likely Cause | Fix |
+|---------|--------------|-----|
+| Test starts, never finishes | Infinite loop | Add breakpoint debugging |
+| Test waits for element | Element never appears | Check selectors, add timeout |
+| Multiple tests hang | Server issue | Verify server health |
+| Intermittent hangs | Race condition | Add proper waits/retries |
+
+---
+
+## 7. Quality Hooks Integration
+
+### 7.1 Automatic Validation
+
+The `test_standards.js` validator automatically checks test files for:
+- Correct file location for test type
+- Presence of real assertions
+- Absence of focused tests (.only)
+- Timeout configuration for E2E
+- Debug script patterns
+
+### 7.2 Validation Output
+
+```
+═══════════════════════════════════════════════════════════════════
+TEST STANDARDS VIOLATION - Review and fix before committing
+═══════════════════════════════════════════════════════════════════
+
+ERRORS (must fix):
+  ❌ Focused test (.only) found - will skip other tests in CI
+  ❌ Test file has no assertions - is this a debug script?
+
+WARNINGS (should review):
+  ⚠️  E2E test without explicit timeout configuration
+
+STANDARDS REFERENCE:
+  📖 @.agent-os/standards/test-infrastructure.md
+  📖 @.agent-os/instructions/agents/test-architect.md
+═══════════════════════════════════════════════════════════════════
+```
+
+---
+
+## 8. Quick Reference
+
+### 8.1 Before Writing Tests
+
+```
+✅ Determine test type (unit/integration/e2e)
+✅ Choose correct file location
+✅ Select appropriate framework syntax
+✅ Plan assertions (not just console.log)
+✅ Document server dependencies (if e2e)
+✅ Configure timeouts
+```
+
+### 8.2 Before Running Tests
+
+```
+✅ Check servers running (pnpm test:check-servers)
+✅ Use CI-safe command (vitest run, not vitest)
+✅ Have timeout wrapper ready
+✅ Know how to kill hung tests
+```
+
+### 8.3 Before Committing Tests
+
+```
+✅ Remove .only() and .skip()
+✅ Remove console.log debugging
+✅ Remove debugger statements
+✅ Verify tests pass in CI mode
+✅ Check test_standards validator passes
+```
+
+---
+
+## 9. References
+
+- **Test Architect Agent**: `@.agent-os/instructions/agents/test-architect.md`
+- **Test Runner Agent**: `@.agent-os/instructions/agents/test-runner.md`
+- **TDD Validator**: `@.agent-os/instructions/utilities/tdd-validator.md`
+- **Quality Hooks**: `@.agent-os/instructions/utilities/quality-hooks-guide.md`
+- **Test Standards Validator**: `@.agent-os/hooks/validators/test_standards.js`
+
+---
+
+## Change Log
+
+### v1.0.0 (2024-11-23)
+- Initial release
+- Test classification system
+- CI-safe test commands
+- Timeout configuration standards
+- Test sprawl prevention rules
+- Server management protocol
+- Hung test detection and recovery
+- Quality hooks integration

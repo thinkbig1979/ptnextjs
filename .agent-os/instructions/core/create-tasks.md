@@ -390,6 +390,72 @@ Check if tasks already exist for this spec and offer to upgrade to v2.2.0 full-s
 
 </step>
 
+<step number="1.7" name="skill_pattern_lookup">
+
+### Step 1.7: Load Code Patterns via Skills (v3.2+)
+
+**⚠️ MANDATORY TOOL INVOCATION - DO NOT SKIP**
+
+This step requires you to use the Skill tool. You MUST make an actual tool call.
+
+<skill_invocation_required>
+  **STEP 1: Check for Project-Specific Patterns FIRST**
+
+  Before invoking the global skill, check if project-specific patterns exist:
+
+  ```
+  CHECK: .agent-os/patterns/ directory in the project
+
+  IF .agent-os/patterns/ exists:
+    READ relevant files based on tech stack:
+    - .agent-os/patterns/frontend/typescript.md (TypeScript/React)
+    - .agent-os/patterns/backend/python.md (Python)
+    - .agent-os/patterns/backend/rails.md (Rails)
+    - .agent-os/patterns/backend/api.md (API development)
+
+  These project-specific patterns take PRECEDENCE over generic skill patterns.
+  Use these patterns for code examples in task detail files.
+  ```
+
+  **STEP 2: Invoke Global Skill for Generic Patterns**
+
+  ```
+  Skill(skill="agent-os-patterns")
+  ```
+
+  This is a REQUIRED tool invocation. The skill provides generic patterns for:
+  - Testing conventions (Vitest, Playwright, Convex)
+  - Code style standards
+
+  **After invoking the skill**, READ the relevant reference files:
+
+  | Task | Skill Reference (Generic) |
+  |------|---------------------------|
+  | Vitest testing | references/testing/vitest.md |
+  | Playwright E2E | references/testing/playwright.md |
+  | Convex testing | references/testing/convex.md |
+  | Test strategy | references/testing/test-strategies.md |
+  | Code style | references/global/coding-style.md |
+
+  **USE PATTERNS IN TASK GENERATION**:
+  - Include code examples in task detail files (tasks/task-*.md)
+  - Reference correct mocking syntax for the framework
+  - Use proper file locations for test types
+  - Apply naming conventions from loaded patterns
+
+  **VERIFICATION**: Before proceeding to Step 2, confirm:
+  - [ ] Checked .agent-os/patterns/ for project-specific patterns
+  - [ ] Skill tool was invoked
+  - [ ] Relevant reference files were loaded
+  - [ ] Patterns are ready to include in generated tasks
+
+  **OUTPUT**: State which patterns were loaded, e.g.:
+  "✅ Project patterns: typescript.md (from .agent-os/patterns/)"
+  "✅ Skill patterns: vitest.md, coding-style.md"
+</skill_invocation_required>
+
+</step>
+
 <step number="2" subagent="file-creator" name="generate_micro_granular_tasks">
 
 ### Step 2: Generate Micro-Granular Tasks with Codebase Intelligence

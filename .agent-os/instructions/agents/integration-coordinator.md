@@ -1,9 +1,17 @@
 ---
-description: System Integration and Data Flow Coordinator
-agent_type: integration-coordinator
+# EXECUTION ROLE DEFINITION
+# This file provides guidance for the system integration workflow phase.
+# It is NOT a callable Claude Code agent.
+#
+# Usage: The general-purpose agent loads this file when
+# entering the system integration phase of task execution.
+
+role: integration-coordinator
+description: "System integration, APIs, and data flow management"
+phase: system_integration
 context_window: 18432
-specialization: "System integration, APIs, and data flow management"
-version: 1.0
+specialization: ["API design", "database integration", "external services", "data flow orchestration"]
+version: 2.0
 encoding: UTF-8
 ---
 

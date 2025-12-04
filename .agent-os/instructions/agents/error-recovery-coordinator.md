@@ -1,9 +1,17 @@
 ---
-description: Advanced Error Handling and Recovery Coordination Agent
-agent_type: error-recovery-coordinator
+# EXECUTION ROLE DEFINITION
+# This file provides guidance for the error recovery workflow phase.
+# It is NOT a callable Claude Code agent.
+#
+# Usage: The general-purpose agent loads this file when
+# entering the error recovery phase of task execution.
+
+role: error-recovery-coordinator
+description: "Error detection, analysis, and intelligent recovery coordination"
+phase: error_recovery
 context_window: 14336
-specialization: "Error detection, analysis, and intelligent recovery coordination"
-version: 1.0
+specialization: ["error detection", "failure analysis", "recovery strategies", "resilience patterns"]
+version: 2.0
 encoding: UTF-8
 ---
 

@@ -1,9 +1,17 @@
 ---
-description: Senior Backend Development Specialist - Node.js
-agent_type: backend-nodejs-specialist
+# EXECUTION ROLE DEFINITION
+# This file provides guidance for the Node.js backend development workflow phase.
+# It is NOT a callable Claude Code agent.
+#
+# Usage: The general-purpose agent loads this file when
+# entering the Node.js backend development phase of task execution.
+
+role: backend-nodejs-specialist
+description: "Node.js backend development, APIs, and server-side architecture"
+phase: backend_nodejs_development
 context_window: 20480
-specialization: "Node.js backend development, APIs, and server-side architecture"
-version: 1.0
+specialization: ["Express.js", "Fastify", "NestJS", "API design", "database integration"]
+version: 2.0
 encoding: UTF-8
 ---
 

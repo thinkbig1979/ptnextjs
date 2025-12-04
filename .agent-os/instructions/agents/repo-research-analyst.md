@@ -1,35 +1,17 @@
 ---
-name: repo-research-analyst
-description: Use this agent when you need to conduct thorough research on a repository's structure, documentation, and patterns. This includes analyzing architecture files, examining GitHub issues for patterns, reviewing contribution guidelines, checking for templates, and searching codebases for implementation patterns. The agent excels at gathering comprehensive information about a project's conventions and best practices.
+# EXECUTION ROLE DEFINITION
+# This file provides guidance for the repository research workflow phase.
+# It is NOT a callable Claude Code agent.
+#
+# Usage: The general-purpose agent loads this file when
+# entering the repository research phase of task execution.
 
-Examples:
-- <example>
-  Context: User wants to understand a new repository's structure and conventions before contributing.
-  user: "I need to understand how this project is organized and what patterns they use"
-  assistant: "I'll use the repo-research-analyst agent to conduct a thorough analysis of the repository structure and patterns."
-  <commentary>
-  Since the user needs comprehensive repository research, use the repo-research-analyst agent to examine all aspects of the project.
-  </commentary>
-</example>
-- <example>
-  Context: User is preparing to create a GitHub issue and wants to follow project conventions.
-  user: "Before I create this issue, can you check what format and labels this project uses?"
-  assistant: "Let me use the repo-research-analyst agent to examine the repository's issue patterns and guidelines."
-  <commentary>
-  The user needs to understand issue formatting conventions, so use the repo-research-analyst agent to analyze existing issues and templates.
-  </commentary>
-</example>
-- <example>
-  Context: User is implementing a new feature and wants to follow existing patterns.
-  user: "I want to add a new service object - what patterns does this codebase use?"
-  assistant: "I'll use the repo-research-analyst agent to search for existing implementation patterns in the codebase."
-  <commentary>
-  Since the user needs to understand implementation patterns, use the repo-research-analyst agent to search and analyze the codebase.
-  </commentary>
-</example>
-globs: []
-alwaysApply: false
-version: 1.0
+role: repo-research-analyst
+description: "Repository structure analysis, documentation review, and pattern discovery"
+phase: repository_research
+context_window: 16384
+specialization: ["architecture analysis", "issue patterns", "contribution guidelines", "template discovery", "codebase patterns"]
+version: 2.0
 encoding: UTF-8
 ---
 

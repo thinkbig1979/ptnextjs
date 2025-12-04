@@ -1,16 +1,50 @@
-# Agent OS Configuration v2.8.0
+# Agent OS Configuration v4.1.0
 # Clean configuration with sane defaults for compound engineering integration
+# v4.1.0: Unified Execution Protocol - Beads-first orchestration with parallel specialist delegation
+# v4.0.1: Direct test execution (not subagent) for real-time output visibility
+# v4.0.0: Test Failure Handling Protocol - Orchestrated test execution with subagent delegation
+# v3.3.0: Test Execution Monitoring - Real-time streaming, hung test detection, test/code alignment
+# v3.2.0: Skills Integration - Context gathering via Claude Code skills
+# v3.1.0: Test Context Gathering - Pre-test research phase for library documentation
+# v3.0.0: Documentation clarity, terminology fixes, configuration cleanup
+# v2.9.0: Added Test Infrastructure Reliability System
 
-agent_os_version: 2.8.0
+agent_os_version: 4.1.0
 
 # ================================================
-# AGENT MODE CONFIGURATION
+# CONFIGURATION HIERARCHY
 # ================================================
-multi_agent_mode: true
-multi_agent_tool: claude-code
+# This configuration follows a parent-child toggle pattern:
+#
+# 1. When a parent section has `enabled: false`, ALL child toggles are
+#    ignored regardless of their individual settings.
+#
+# 2. Child toggles only take effect when their parent is enabled.
+#
+# 3. Feature dependencies:
+#    - TDD enforcement requires quality_hooks.enabled: true
+#    - Compound engineering review requires test_infrastructure.enabled: true
+#
+# See docs/FAQ.md for common configuration questions.
 
-single_agent_mode: false
-single_agent_tool: generic
+# ================================================
+# AGENT EXECUTION MODE
+# ================================================
+# Choose ONE mode for task execution (mutually exclusive):
+# - "multi": Uses Task tool to spawn subagents for parallel work
+# - "single": Executes all work in main agent context sequentially
+#
+# IMPORTANT: Only one mode can be active. Set execution_mode to choose.
+
+execution_mode: "multi" # "multi" | "single"
+
+# Tool configuration per mode (only active mode's tool is used)
+multi_agent_tool: claude-code # When execution_mode: "multi"
+single_agent_tool: generic # When execution_mode: "single"
+
+# DEPRECATED (v2.x compatibility) - Use execution_mode instead
+# multi_agent_mode: true
+# single_agent_mode: false
 
 # ================================================
 # PROJECT CONFIGURATION
@@ -59,14 +93,32 @@ execution:
     efficiency_tracking: true
 
 # ================================================
-# EXECUTION ROLES (Documentation Only)
+# EXECUTION ROLES (Workflow Phase Documentation)
 # ================================================
-# NOTE: These are conceptual execution roles that document workflow phases.
-# They are NOT callable Claude Code agents. Agent OS workflows use Claude Code's
-# general-purpose agent for execution, guided by these phase definitions.
+# IMPORTANT: These are NOT callable Claude Code agents.
 #
-# Available Claude Code Agents: general-purpose, Explore, Plan, (+ custom user agents)
-# These roles below serve as workflow phase documentation only.
+# What these ARE:
+#   - Documentation of workflow phases
+#   - Context window recommendations per phase
+#   - Specialization focus areas for instruction files
+#
+# What these are NOT:
+#   - Real Claude Code agents you can invoke with Task tool
+#   - Separate processes or subagents
+#   - Anything that can be "called" or "spawned"
+#
+# How they're used:
+#   The general-purpose agent loads instruction files from
+#   instructions/agents/{role_name}.md when entering each workflow phase.
+#   These configs document the recommended context and focus.
+#
+# Available REAL Claude Code Agents (can be invoked):
+#   - general-purpose: Main execution agent
+#   - Explore: Codebase analysis
+#   - Plan: Strategic planning
+#   - (+ any custom user-defined agents)
+#
+# See: docs/GLOSSARY.md for terminology definitions
 
 execution_roles:
   # Core coordination role (not a callable agent)
@@ -203,21 +255,21 @@ compound_engineering:
 
   # All 15 transformative features
   features:
-    - multi_agent_review          # 10 specialized review agents
-    - research_agents             # Codebase and best practice research
-    - interactive_triage          # Finding management workflow
-    - security_scanning           # Systematic security protocol
-    - ultra_thinking              # Multi-perspective analysis
-    - finding_synthesis           # Intelligent consolidation
-    - worktree_isolation          # Git worktree pattern
-    - language_standards          # Rails, Python, TypeScript patterns
-    - code_examples               # Real working examples in specs
-    - multi_level_planning        # Minimal/Standard/Comprehensive detail
-    - reference_collection        # Standardized reference format
-    - ai_development_notes        # AI-era development docs
-    - enhanced_work_command       # Improved task execution
-    - interactive_progress        # Real-time triage tracking
-    - compounding_philosophy      # Write code that compounds
+    - multi_agent_review # 10 specialized review agents
+    - research_agents # Codebase and best practice research
+    - interactive_triage # Finding management workflow
+    - security_scanning # Systematic security protocol
+    - ultra_thinking # Multi-perspective analysis
+    - finding_synthesis # Intelligent consolidation
+    - worktree_isolation # Git worktree pattern
+    - language_standards # Rails, Python, TypeScript patterns
+    - code_examples # Real working examples in specs
+    - multi_level_planning # Minimal/Standard/Comprehensive detail
+    - reference_collection # Standardized reference format
+    - ai_development_notes # AI-era development docs
+    - enhanced_work_command # Improved task execution
+    - interactive_progress # Real-time triage tracking
+    - compounding_philosophy # Write code that compounds
 
   # Multi-agent system configuration
   multi_agent_system:
@@ -234,9 +286,11 @@ compound_engineering:
     pause_resume: true
 
   # Security scanning
+  # Enforced in: instructions/core/execute-task-orchestrated.md (Step 4.3)
+  # Checked by: hooks/validators/security_scan.js
   security:
     enabled: true
-    block_on_p1: true  # P1 (CRITICAL) findings block task completion
+    block_on_p1: true # P1 (CRITICAL) findings block task completion
     owasp_top_10: true
 
   # Worktree isolation
@@ -248,6 +302,9 @@ compound_engineering:
 # ================================================
 # QUALITY HOOKS (v2.2+)
 # ================================================
+# Implementation: hooks/runner.js
+# Called by: .claude/hooks/validate-file.js (Claude Code integration)
+# Validators: hooks/validators/*.js
 quality_hooks:
   enabled: true
   mode: "balanced" # "strict" | "balanced" | "minimal"
@@ -275,6 +332,7 @@ quality_hooks:
     - type_validator
     - security_validator
     - test_generator
+    - test_standards # v2.9.0: Test infrastructure validation
 
 # ================================================
 # PROJECT TYPES
@@ -300,7 +358,7 @@ default_project_type: default
 # ================================================
 deliverable_verification:
   enabled: true
-  strict_mode: true  # Block task completion if deliverables missing
+  strict_mode: true # Block task completion if deliverables missing
   verify_files: true
   verify_tests: true
   verify_acceptance_criteria: true
@@ -321,7 +379,7 @@ tdd_enforcement:
   # Test-first workflow enforcement
   test_first:
     enabled: true
-    block_implementation: false  # Set true for strict enforcement
+    block_implementation: false # Set true for strict enforcement
     require_passing_tests: true
     allow_refactoring: true
 
@@ -342,15 +400,15 @@ tdd_enforcement:
   # TDD workflow hooks
   hooks:
     enabled: true
-    pre_implementation: true  # Validate tests exist before implementation
-    post_test: true           # Validate tests pass after changes
-    pre_commit: false         # Optional: Validate before git commit
+    pre_implementation: true # Validate tests exist before implementation
+    post_test: true # Validate tests pass after changes
+    pre_commit: false # Optional: Validate before git commit
 
   # Coverage targets
   coverage_targets:
-    minimum: 85     # Required minimum coverage
-    target: 90      # Target coverage goal
-    threshold: 80   # Threshold for warnings
+    minimum: 85 # Required minimum coverage
+    target: 90 # Target coverage goal
+    threshold: 80 # Threshold for warnings
 
 # ================================================
 # BEADS ISSUE TRACKING (v2.8+)
@@ -359,7 +417,7 @@ beads:
   enabled: true
 
   # Integration mode
-  mode: "hybrid"  # "hybrid" (markdown + beads) or "beads_only"
+  mode: "hybrid" # "hybrid" (markdown + beads) or "beads_only"
 
   # Automatic initialization
   auto_init: true
@@ -371,15 +429,15 @@ beads:
   sync_on_session_end: true
 
   # Task creation
-  create_beads_from_tasks_md: true  # Auto-create bd issues from tasks.md
-  bidirectional_sync: true          # Keep tasks.md and beads in sync
+  create_beads_from_tasks_md: true # Auto-create bd issues from tasks.md
+  bidirectional_sync: true # Keep tasks.md and beads in sync
 
   # MCP integration (Claude Code)
   mcp_server_enabled: true
-  mcp_preferred: true  # Use MCP functions over CLI when available
+  mcp_preferred: true # Use MCP functions over CLI when available
 
   # ID strategy
-  id_format: "hash"  # "hash" (bd-a1b2) or "sequential" (bd-1, bd-2)
+  id_format: "hash" # "hash" (bd-a1b2) or "sequential" (bd-1, bd-2)
 
   # Dependency mapping
   auto_detect_dependencies: true
@@ -394,12 +452,12 @@ beads:
 
   # Priority mapping (Agent OS phases → Beads priority 0-4)
   priority_mapping:
-    phase_1_pre_execution: 1      # Important
-    phase_2_backend: 1            # Important
-    phase_3_frontend: 1           # Important
-    phase_4_integration: 0        # Critical path
-    phase_5_validation: 0         # Critical path
-    default: 2                    # Normal priority
+    phase_1_pre_execution: 1 # Important
+    phase_2_backend: 1 # Important
+    phase_3_frontend: 1 # Important
+    phase_4_integration: 0 # Critical path
+    phase_5_validation: 0 # Critical path
+    default: 2 # Normal priority
 
   # Type mapping
   type_mapping:
@@ -413,14 +471,529 @@ beads:
 
   # Worktree integration
   worktree_compatibility: true
-  no_daemon_in_worktrees: true  # Prevents branch contamination
+  no_daemon_in_worktrees: true # Prevents branch contamination
 
   # Discovered work tracking
   track_discovered_work: true
-  auto_link_discovered: true    # Auto-add "discovered-from" dependencies
+  auto_link_discovered: true # Auto-add "discovered-from" dependencies
 
   # Stale task detection
   stale_detection:
     enabled: true
     threshold_days: 30
     warn_on_stale: true
+
+# ================================================
+# TEST INFRASTRUCTURE RELIABILITY (v2.9+)
+# ================================================
+# Prevents hung tests, CI failures, and test sprawl through
+# mandatory pre-flight checks, timeout enforcement, and validation.
+
+test_infrastructure:
+  enabled: true
+
+  # Instruction Loading Protocol
+  # Ensures subagents read their instruction files before working
+  instruction_loading:
+    enabled: true
+    mandatory: true # Block work if instructions not confirmed
+    verify_confirmation: true # Check subagent confirms understanding
+    agent_type_validation: true # Validate correct agent for task type
+
+  # Server Pre-Flight Check
+  # Verifies required servers are running before E2E/integration tests
+  server_preflight:
+    enabled: true
+    health_check_timeout: 2000 # 2 seconds per server
+    block_on_failure: true # Don't run tests if servers down
+    auto_start_servers: false # Never auto-start (causes conflicts)
+
+  # Watch Mode Prevention
+  # Ensures test commands exit cleanly (no indefinite hanging)
+  watch_mode_prevention:
+    enabled: true
+    detect_vitest_watch: true # vitest without --run
+    detect_jest_watch: true # jest with --watch
+    detect_playwright_ui: true # playwright with --ui
+    auto_fix_commands: true # Add --run flags automatically
+
+  # Timeout Enforcement
+  # Hard limits on test execution time
+  # CANONICAL SOURCE: These are the single source of truth for timeout values.
+  # All other documents should reference this section, not duplicate values.
+  # Referenced by:
+  #   - standards/test-infrastructure.md
+  #   - instructions/agents/test-architect.md
+  #   - instructions/agents/test-runner.md
+  timeout_enforcement:
+    enabled: true
+    unit_suite_timeout: 120000 # 2 minutes for unit tests
+    integration_suite_timeout: 300000 # 5 minutes for integration
+    e2e_suite_timeout: 600000 # 10 minutes for E2E
+    idle_detection_timeout: 60000 # 60 seconds no output = hung
+    kill_hung_tests: true # Automatically kill hung tests
+
+  # Test Standards Validator
+  # Automatic validation of test files on write
+  # Implementation: hooks/validators/test_standards.js
+  # Called by: hooks/runner.js via Claude Code file write hooks
+  test_standards_validator:
+    enabled: true
+    check_assertions: true # Test must have real assertions
+    check_focused_tests: true # No .only() in committed code
+    check_file_location: true # Correct dir for test type
+    check_timeout_config: true # E2E must have timeouts
+    check_debug_patterns: true # No debug scripts as tests
+
+  # Test Sprawl Prevention
+  # Prevents accumulation of debug scripts and orphaned tests
+  sprawl_prevention:
+    enabled: true
+    max_console_statements: 5 # More suggests debug script
+    block_debug_file_names: true # *-verification.spec.ts etc.
+    debug_script_location: "scripts/debug/"
+    archive_location: "tests/_archive/"
+
+  # CI-Safe Test Scripts
+  # Required package.json scripts for reliable CI execution
+  required_scripts:
+    - "test:unit:ci" # Unit tests with clean exit
+    - "test:e2e:ci" # E2E tests, no auto-start
+    - "test:check-servers" # Server health check
+
+# ================================================
+# TEST CONTEXT GATHERING (v3.0+)
+# ================================================
+# Pre-test research phase that gathers library documentation and patterns
+# BEFORE test writing begins. Prevents test failures from incorrect API usage.
+#
+# Implementation: instructions/agents/test-context-gatherer.md
+# Utilities: hooks/lib/detect-test-libraries.js, hooks/lib/fetch-test-documentation.js
+# Workflow: execute-task-orchestrated.md Step 2.0
+
+test_context_gathering:
+  enabled: true
+
+  # Gate enforcement
+  # If true, test-architect CANNOT proceed without context being gathered
+  gate_enforcement:
+    enabled: true
+    block_test_writing: true # Block test creation without context
+    warn_only: false # Set true to warn but allow bypass
+
+  # Library detection
+  # Automatically detect testing libraries from project files
+  library_detection:
+    enabled: true
+    scan_package_json: true # JavaScript/TypeScript projects
+    scan_pyproject: true # Python projects
+    scan_gemfile: true # Ruby projects
+    detect_versions: true # Extract version numbers
+    detect_config_files: true # Find framework config files
+
+  # Documentation source priority
+  # Order in which documentation sources are checked
+  # Skills are checked FIRST as they're always available and don't require network
+  documentation_sources:
+    priority:
+      - skills # Priority 1: Claude Code skills (always available)
+      - dockfork_mcp # Priority 2: DocFork MCP (if available)
+      - context7_mcp # Priority 3: Context7 MCP (if available)
+      - websearch # Priority 4: WebSearch (always available)
+      - webfetch # Priority 5: Direct URL fetch (always available)
+
+    # Skills to invoke for pattern lookup
+    skills:
+      patterns: agent-os-patterns # Code and testing patterns
+      specialists: agent-os-specialists # Specialist guidance
+      test_research: agent-os-test-research # Test library research
+
+    # MCP tool names to check for availability
+    mcp_tools:
+      dockfork:
+        - mcp__dockfork__get_documentation
+        - mcp__dockfork__search_docs
+      context7:
+        - mcp__context7__get_library_docs
+        - mcp__context7__resolve_library_id
+
+  # Pattern catalog
+  # Pre-built patterns for common libraries
+  pattern_catalog:
+    enabled: true
+    directory: "standards/testing/patterns"
+    builtin_patterns:
+      - vitest
+      - jest
+      - playwright
+      - cypress
+      - convex
+      - prisma
+      - supertest
+
+  # Context caching
+  # Cache fetched documentation to speed up repeated runs
+  caching:
+    enabled: true
+    cache_directory: ".agent-os/test-context/cache"
+    cache_ttl_hours: 24 # How long to cache documentation
+    invalidate_on_version_change: true # Refetch if library version changes
+
+  # Output configuration
+  # Where to store gathered context for test-architect
+  output:
+    context_directory: ".agent-os/test-context"
+    context_file_pattern: "{task_id}.json"
+    patterns_directory: ".agent-os/test-context/patterns"
+
+  # Required documentation sections
+  # What to fetch for each library type
+  required_sections:
+    test_runners:
+      - test-lifecycle-hooks
+      - assertions
+      - configuration
+      - mocking
+      - async-testing
+      - timeout-configuration
+    e2e_frameworks:
+      - locators
+      - assertions
+      - page-objects
+      - network-interception
+      - waiting-strategies
+      - parallel-execution
+    mocking_libraries:
+      - creating-mocks
+      - module-mocking
+      - spy-functions
+      - mock-implementations
+      - clearing-mocks
+    backend_testing:
+      - test-setup
+      - database-mocking
+      - api-testing
+      - authentication
+      - transactions
+
+# ================================================
+# SKILLS INTEGRATION (v3.2+)
+# ================================================
+# Claude Code skills provide progressive-disclosure documentation
+# that loads on-demand without network dependencies.
+#
+# Benefits over MCP/WebSearch:
+#   - Always available (no network required)
+#   - Progressive disclosure (load only needed sections)
+#   - Version controlled with Agent OS
+#   - Explicit invocation in workflows
+#
+# Skills location: ~/.claude/skills/
+# See: https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
+
+skills_integration:
+  enabled: true
+
+  # Available Agent OS skills
+  skills:
+    agent-os-patterns:
+      description: "Code and testing patterns"
+      references:
+        - testing/vitest.md
+        - testing/playwright.md
+        - testing/convex.md
+        - testing/test-strategies.md
+        - global/coding-style.md
+        - global/tech-stack.md
+
+    agent-os-specialists:
+      description: "Specialist guidance for development phases"
+      references:
+        - development/test-architect.md
+        - development/backend-nodejs.md
+        - review/security-sentinel.md
+        - review/quality-assurance.md
+
+    agent-os-test-research:
+      description: "Pre-test library detection and documentation gathering"
+      references:
+        - detection patterns
+        - documentation sources
+        - pattern extraction
+
+  # Workflow integration points
+  # Where skills are explicitly invoked during task execution
+  workflow_integration:
+    create_tasks:
+      step: "1.7"
+      skills:
+        - agent-os-patterns # For code examples in task generation
+    test_context_gathering:
+      step: "2.0"
+      skills:
+        - agent-os-test-research # For library detection
+        - agent-os-patterns # For testing patterns (fallback)
+    test_design:
+      step: "2.1"
+      skills:
+        - agent-os-specialists # For test-architect guidance
+    implementation:
+      step: "3.0"
+      skills:
+        - agent-os-patterns # For code style/patterns
+        - agent-os-specialists # For specialist guidance
+    security_review:
+      step: "4.5"
+      skills:
+        - agent-os-specialists # For security-sentinel guidance
+
+  # Invocation mode
+  # "explicit": Only invoke when workflow specifies
+  # "auto": Also allow Claude to invoke based on description matching
+  invocation_mode: "explicit"
+
+  # Subagent delegation (v3.2.1+)
+  # Ensures mandatory instructions and skills are passed to subagents
+  subagent_delegation:
+    enabled: true
+    template_path: "@.agent-os/instructions/utilities/subagent-delegation-template.md"
+    enforcement: "advisory" # "advisory" logs warnings, "strict" blocks without template
+    required_sections:
+      - instruction_loading # Must read role instruction file
+      - skill_invocations # Must invoke phase-appropriate skills
+      - pattern_lookup_hierarchy # Must check project patterns first
+      - global_requirements # Must include CLAUDE.md context
+
+# ================================================
+# TEST EXECUTION MONITORING (v3.3.0+)
+# ================================================
+# Real-time test monitoring with hung test detection and streaming reporters.
+# Provides immediate visibility into test progress and automatic intervention.
+#
+# Implementation:
+#   - hooks/lib/test-monitor.js - Main monitoring utility
+#   - scripts/reporters/vitest-streaming.js - Vitest reporter
+#   - scripts/reporters/playwright-streaming.ts - Playwright reporter
+#
+# Workflow: execute-task-orchestrated.md Steps 2.1, 2.2, 3.0
+
+test_execution_monitoring:
+  enabled: true
+
+  # Streaming reporter configuration
+  # Reporters emit structured JSON events for real-time parsing
+  streaming:
+    enabled: true
+    vitest_reporter: "./scripts/reporters/vitest-streaming.js"
+    playwright_reporter: "./scripts/reporters/playwright-streaming.ts"
+    output_format: "structured_json" # "structured_json" | "tap"
+    event_prefix: "[AGENT-OS-TEST]"
+
+  # Per-test timeout enforcement
+  # More granular than suite-level timeouts in test_infrastructure
+  per_test_timeout:
+    enabled: true
+    unit_test: 5000 # 5 seconds per unit test
+    integration_test: 15000 # 15 seconds per integration test
+    e2e_test: 30000 # 30 seconds per E2E test
+    e2e_step: 10000 # 10 seconds per E2E step
+
+  # Real-time monitoring intervals
+  monitoring:
+    enabled: true
+    poll_interval: 2000 # Check output every 2 seconds
+    idle_threshold: 15000 # Alert after 15 seconds no output
+    hung_test_threshold: 30000 # Consider test hung after 30 seconds stuck
+
+  # Intervention actions when issues detected
+  intervention:
+    on_hung_test: "alert" # "alert" | "kill" | "skip"
+    on_idle: "warn" # "warn" | "kill"
+    on_timeout: "kill" # "kill" | "alert"
+    auto_retry_failed: false # Don't auto-retry (let test framework handle)
+    max_hung_detections: 3 # Kill after this many hung alerts
+
+  # Output and logging
+  output:
+    save_events: true
+    events_directory: ".agent-os/test-events"
+    events_file_pattern: "{task_id}-{timestamp}.json"
+    verbose: false # Extra logging for debugging
+
+# ================================================
+# TEST/CODE ALIGNMENT (v3.3.0+)
+# ================================================
+# Ensures tests and implementation code remain aligned throughout TDD cycle.
+# Prevents common misalignment issues where tests pass but code is wrong.
+#
+# Implementation:
+#   - instructions/utilities/test-code-alignment-checklist.md
+#   - Pattern documentation created by test-architect
+#   - Context handoff read by implementation-specialist
+#
+# Workflow: execute-task-orchestrated.md Steps 2.1, 2.2, 2.2a
+
+test_code_alignment:
+  enabled: true
+
+  # Pattern documentation (RED phase output)
+  pattern_documentation:
+    enabled: true
+    required: true # Block GREEN phase without pattern docs
+    file_pattern: ".agent-os/test-context/{task_id}-patterns-used.json"
+    required_sections:
+      - test_runner # Framework and version
+      - patterns_used # Mocking, assertions, async handling
+      - server_requirements # For E2E tests
+      - critical_notes # Implementation guidance
+
+  # Context handoff (GREEN phase input)
+  context_handoff:
+    enabled: true
+    required: true # Block implementation without reading patterns
+    verify_read: true # Require confirmation of reading pattern file
+    checklist_path: "@.agent-os/instructions/utilities/test-code-alignment-checklist.md"
+
+  # Alignment validation (GREEN phase exit)
+  alignment_validation:
+    enabled: true
+    coverage_threshold: 85 # Minimum coverage to verify real testing
+    bypass_scan: true # Scan for test-bypass patterns
+    block_on_failure: true # Block task completion if alignment fails
+
+    # Patterns to flag (advisory, not blocking)
+    bypass_patterns:
+      - "process.env.TEST"
+      - "process.env.NODE_ENV === 'test'"
+      - "if (typeof jest !== 'undefined')"
+      - "if (typeof vi !== 'undefined')"
+
+  # Reporting
+  output:
+    save_results: true
+    results_directory: ".agent-os/tdd-state"
+    results_file_pattern: "{task_id}-alignment.yml"
+
+# ================================================
+# UNIFIED EXECUTION PROTOCOL (v4.1+)
+# ================================================
+# Combines Context-Aware Execution + Orchestrated Parallel Execution
+# Core Principle: Beads-first task creation, then parallel specialist delegation
+#
+# Implementation: instructions/core/execute-tasks-unified.md
+# Command: commands/execute-tasks.md
+
+unified_execution:
+  enabled: true
+
+  # Beads-first approach
+  beads_first: true
+  create_all_tasks_upfront: true # Create ALL beads tasks before any execution
+  define_all_dependencies: true # Define ALL dependencies before execution
+
+  # Context management
+  context_limit: 0.75 # Stop at 75% context capacity
+  checkpoint_interval: 10 # Save progress every N tool calls
+
+  # Parallel execution
+  parallel_waves: true # Execute independent tasks in parallel waves
+  max_concurrent_subagents: 5 # Maximum parallel subagents per wave
+
+  # User interaction
+  auto_continuation: false # Require user approval for continuations
+  prompt_on_blocked: true # Always prompt user for blocked tasks
+  confirm_execution_plan: true # Show and confirm plan before execution
+
+  # Document synchronization
+  sync_documents:
+    enabled: true
+    update_tasks_md: true # Update tasks.md status as work progresses
+    update_task_details: true # Update tasks/task-*.md files
+    update_specs: true # Update spec documents if needed
+    commit_after_wave: true # Git commit after each wave
+
+  # Checkpointing
+  checkpointing:
+    enabled: true
+    beads_sync_on_checkpoint: true # bd sync at every checkpoint
+    git_commit_on_checkpoint: true # Git commit at every checkpoint
+    save_orchestrator_state: true # Save full orchestration state
+
+# ================================================
+# TEST FAILURE HANDLING PROTOCOL (v4.0.1+)
+# ================================================
+# Direct test execution with automated failure analysis and delegated fixes.
+# Main agent runs tests DIRECTLY for real-time output visibility.
+# Only FIXES are delegated to subagents.
+#
+# Implementation:
+#   - .claude/commands/run-tests.md - Full protocol (v4.1)
+#   - instructions/agents/test-runner.md - Test execution reference (v3.1)
+#
+# Workflow:
+#   1. Run tests DIRECTLY (user sees real-time streaming output)
+#   2. Analyze failures (classify, group by root cause)
+#   3. Triage decision (ask user: investigate|fix|skip|rerun)
+#   4. Delegate fixes → FIX SUBAGENT(s)
+#   5. Run verification tests DIRECTLY
+#   6. Loop until resolved
+#
+# Why direct execution?
+#   Subagents don't stream intermediate output - users would see nothing for 5+ minutes.
+
+test_failure_handling:
+  enabled: true
+
+  # Execution model (v4.0.1+)
+  execution_model:
+    main_agent_runs_tests: true # Main agent runs tests directly for real-time output
+    main_agent_fixes_code: false # Fixes delegated to subagents
+    parallel_fixes: false # Sequential by default (safer), set true for parallel
+
+  # Failure classification types
+  classification:
+    types:
+      - assertion # Expected vs actual mismatch
+      - timeout # Test exceeded time limit
+      - environment # Missing server, env var, dependency
+      - syntax # Parse/compile error
+      - runtime # Uncaught exception
+
+  # Triage options presented to user
+  triage:
+    enabled: true
+    options:
+      - investigate # Show detailed analysis
+      - fix # Spawn fix subagents
+      - skip # Continue without fixing
+      - rerun # Run failed tests again (flaky)
+    auto_triage: false # Always ask user (set true to auto-fix)
+
+  # Fix subagent configuration
+  fix_subagent:
+    max_iterations: 3 # Max fix attempts before escalating
+    verify_after_fix: true # Always run verification after fix
+    revert_on_regression: true # Revert if new failures introduced
+    report_other_issues: true # Report unrelated issues discovered
+
+  # Analysis persistence
+  persistence:
+    enabled: true
+    directory: ".agent-os/test-failures"
+    file_pattern: "{run_id}.json"
+    track_fix_history: true # Track what was tried across iterations
+    enable_resume: true # Allow resuming fix work after session break
+
+  # Subagent delegation requirements
+  subagent_requirements:
+    test_runner:
+      instruction_file: "instructions/agents/test-runner.md"
+      must_use_streaming_reporter: true
+      must_use_test_monitor: true
+      must_report_protocol_compliance: true
+    fix_agent:
+      must_read_test_file: true
+      must_read_implementation: true
+      must_confirm_analysis: true
+      must_not_run_tests: true
+      must_not_fix_unrelated: true
