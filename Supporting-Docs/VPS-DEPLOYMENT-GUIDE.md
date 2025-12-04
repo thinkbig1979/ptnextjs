@@ -42,7 +42,7 @@ This guide documents the VPS setup and deployment process for the Paul Thames Su
 3. **Static Generation**: Next.js builds pages (ISR handles missing DB gracefully)
 4. **Container Start**: New container starts with mounted data volume
 5. **Schema Sync**: Payload's `push: true` auto-updates database schema
-6. **Cache Warmup**: (Optional) Run warmup script to pre-populate cache
+6. **Cache Warmup**: Entrypoint script automatically warms main pages
 
 ## Database Schema Changes
 
@@ -76,21 +76,32 @@ sqlite3 /home/dockge/stacks/ptnext-app/data/payload.db \
   "PRAGMA table_info(vendors);" | grep profile_submitted
 ```
 
-## Post-Deployment Cache Warmup
+## Cache Warmup
 
-After deployment, warm the cache to ensure fast page loads for first visitors:
+### Automatic (Default)
+
+The Docker entrypoint script automatically warms main pages on container start:
+
+1. Starts Next.js server in background
+2. Waits for health check to pass (up to 60 seconds)
+3. Pre-fetches: `/`, `/vendors`, `/products`, `/blog`, `/about`, `/contact`
+4. Logs progress to container output
+
+**No manual action needed** - this happens automatically on every container start!
+
+### Manual (Optional)
+
+For more comprehensive warming including individual detail pages:
 
 ```bash
-# From the running container or VPS
+# From the running container
 npm run warmup
 
-# Or with custom base URL
+# Or from outside with custom base URL
 npx tsx scripts/warmup-cache.ts --base-url=https://yourdomain.com
 ```
 
-This pre-generates and caches:
-- Homepage and main list pages
-- Individual vendor, product, and blog pages
+This additionally warms individual vendor, product, and blog detail pages.
 
 ## Troubleshooting
 
@@ -104,10 +115,11 @@ If you still see this error, ensure you have the latest code with the ISR-gracef
 
 ### First Page Load is Slow After Deploy
 
-This is expected for ISR - the first request generates and caches the page. Solutions:
+Main pages are automatically warmed on container start. If detail pages are slow:
 
-1. Run `npm run warmup` after deployment
-2. Add warmup to your deployment script/CI pipeline
+1. The automatic warmup covers list pages; detail pages warm on first visit
+2. For comprehensive warming, run `npm run warmup` from the container
+3. Detail pages cache for 60s (vendors) or 5min (products) via ISR
 
 ### Database is Locked
 
@@ -148,7 +160,7 @@ docker compose up -d
 - [ ] Docker build completes successfully
 - [ ] Container starts without errors
 - [ ] Health check passes (site loads)
-- [ ] (Optional) Run cache warmup
+- [ ] Container logs show "Cache warmup complete!"
 - [ ] Verify new features work correctly
 
 ## Environment Variables
