@@ -30,8 +30,8 @@ import {
   VisualDemo
 } from "@/components/product-comparison";
 
-// Force static generation for optimal SEO and performance
-export const dynamic = 'force-static';
+// Allow dynamic rendering with ISR for optimal flexibility
+export const dynamic = 'auto';
 export const dynamicParams = true;
 // ISR: Revalidate every 10s in dev, 5min in production
 export const revalidate = 300; // ISR: Revalidate every 5 minutes
@@ -59,8 +59,10 @@ export async function generateStaticParams() {
     
     return params;
   } catch (error) {
-    console.error('❌ Failed to generate static params for products:', error);
-    throw error; // Fail the build if we can't generate static params
+    // Return empty array on error - pages will be generated on-demand via ISR
+    // This allows Docker builds to succeed without database access
+    console.warn('⚠️  Could not generate static params for products (DB unavailable), using ISR:', error instanceof Error ? error.message : error);
+    return [];
   }
 }
 

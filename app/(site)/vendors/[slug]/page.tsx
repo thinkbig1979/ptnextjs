@@ -58,8 +58,10 @@ export async function generateStaticParams() {
     console.log(`✅ Generated ${params.length} static vendor params`);
     return params;
   } catch (error) {
-    console.error('❌ Failed to generate static params for vendors:', error);
-    throw error; // Fail the build if we can't generate static params
+    // Return empty array on error - pages will be generated on-demand via ISR
+    // This allows Docker builds to succeed without database access
+    console.warn('⚠️  Could not generate static params for vendors (DB unavailable), using ISR:', error instanceof Error ? error.message : error);
+    return [];
   }
 }
 
