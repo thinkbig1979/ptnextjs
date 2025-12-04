@@ -21,8 +21,9 @@ else
 fi
 
 # Start the Next.js server in background
+# HOSTNAME=0.0.0.0 ensures server binds to all interfaces (not just container hostname)
 echo "🌐 Starting Next.js server..."
-node server.js &
+HOSTNAME=0.0.0.0 node server.js &
 SERVER_PID=$!
 
 # Wait for server to be healthy (two-phase check)
