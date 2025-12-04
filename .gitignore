@@ -65,8 +65,8 @@ test-results/
 playwright-report/
 coverage/
 
-# Database backups
-backups/db/
+# Backups folder (code and database backups)
+backups/
 *.backup-*
 
 # Temporary files and directories
