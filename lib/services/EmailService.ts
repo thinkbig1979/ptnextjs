@@ -38,6 +38,7 @@ export interface VendorEmailData {
   contactEmail: string;
   tier: string;
   vendorId: string;
+  userId?: string;
 }
 
 /**
@@ -247,7 +248,10 @@ export async function sendVendorRegisteredEmail(
       throw new Error('Unable to load vendor-registered template');
     }
 
-    const adminReviewUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/admin/collections/vendors/${vendorData.vendorId}`;
+    // Link to user approval page (not vendor profile) since admin needs to approve user account first
+    const adminReviewUrl = vendorData.userId
+      ? `${process.env.NEXT_PUBLIC_BASE_URL}/admin/collections/users/${vendorData.userId}`
+      : `${process.env.NEXT_PUBLIC_BASE_URL}/admin/collections/users`;
 
     const html = renderTemplate(template, {
       COMPANY_NAME: vendorData.companyName,
@@ -386,6 +390,7 @@ export async function sendVendorRejectedEmail(
       COMPANY_NAME: vendorData.companyName,
       VENDOR_ID: vendorData.vendorId,
       REJECTION_REASON: reason || 'Your registration did not meet our requirements.',
+      SUPPORT_EMAIL: process.env.ADMIN_EMAIL_ADDRESS || 'support@paulthames.com',
       CURRENT_YEAR: new Date().getFullYear().toString(),
     });
 
@@ -601,6 +606,7 @@ export async function sendTierUpgradeRejectedEmail(
       REQUESTED_TIER: requestedTierFeatures.tier,
       REJECTION_REASON: reason,
       DASHBOARD_URL: dashboardUrl,
+      SUPPORT_EMAIL: process.env.ADMIN_EMAIL_ADDRESS || 'support@paulthames.com',
       CURRENT_YEAR: new Date().getFullYear().toString(),
     });
 

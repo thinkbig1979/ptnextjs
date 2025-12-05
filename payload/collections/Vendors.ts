@@ -1867,11 +1867,16 @@ const Vendors: CollectionConfig = {
           // Handle new vendor registration (admin notification)
           if (operation === 'create') {
             console.log('[EmailService] Sending vendor registered email...');
+            // Extract userId from the user relationship (can be number, string, or object with id)
+            const userId = typeof doc.user === 'object' && doc.user !== null
+              ? String(doc.user.id)
+              : String(doc.user);
             await sendVendorRegisteredEmail({
               companyName: doc.companyName,
               contactEmail: doc.contactEmail,
               tier: doc.tier,
-              vendorId: doc.id,
+              vendorId: String(doc.id),
+              userId,
             });
             return doc;
           }
