@@ -176,58 +176,75 @@ The platform provides a workflow for vendors to request subscription tier upgrad
 - **Complete Audit Trail**: Tracks reviewer, timestamps, and rejection reasons
 
 **Key Components:**
-- `components/dashboard/TierUpgradeRequestForm.tsx` - Vendor request submission form with validation
+- `components/dashboard/TierUpgradeRequestForm.tsx` - Vendor upgrade request form
+- `components/dashboard/TierDowngradeRequestForm.tsx` - Vendor downgrade request form with warnings
 - `components/dashboard/UpgradeRequestStatusCard.tsx` - Display request status and details
 - `components/TierComparisonTable.tsx` - Side-by-side tier feature comparison
-- `components/admin/AdminTierRequestQueue.tsx` - Admin review interface with approve/reject actions
+- `components/admin/AdminTierRequestQueue.tsx` - Admin review interface with upgrade/downgrade badges
+- `components/admin/AdminDirectTierChange.tsx` - Admin direct tier change without request
 - `lib/services/TierUpgradeRequestService.ts` - Business logic and data access layer
 
 **Database Schema:**
-Tier upgrade requests are stored in the `tier_upgrade_requests` collection with these key fields:
+Tier change requests are stored in the `tier_upgrade_requests` collection with these key fields:
 - `vendor`, `user` - Relationships to vendor and submitting user
-- `currentTier`, `requestedTier` - Tier snapshot and requested upgrade
+- `currentTier`, `requestedTier` - Tier snapshot and requested tier change
+- `requestType` - 'upgrade' | 'downgrade' (auto-detected or explicit)
 - `status` - pending, approved, rejected, or cancelled
 - `vendorNotes` - Business justification from vendor (optional, max 500 chars)
 - `rejectionReason` - Admin explanation for rejection (max 1000 chars)
 - `reviewedBy`, `reviewedAt` - Admin review audit trail
 - `requestedAt`, `createdAt`, `updatedAt` - Timestamps
 
-**API Endpoints (Vendor Portal):**
+**API Endpoints (Vendor Portal - Upgrades):**
 - `POST /api/portal/vendors/[id]/tier-upgrade-request` - Submit upgrade request
-- `GET /api/portal/vendors/[id]/tier-upgrade-request` - Get current/pending request status
-- `DELETE /api/portal/vendors/[id]/tier-upgrade-request/[requestId]` - Cancel pending request
+- `GET /api/portal/vendors/[id]/tier-upgrade-request` - Get current/pending upgrade request
+- `DELETE /api/portal/vendors/[id]/tier-upgrade-request/[requestId]` - Cancel pending upgrade
+
+**API Endpoints (Vendor Portal - Downgrades):**
+- `POST /api/portal/vendors/[id]/tier-downgrade-request` - Submit downgrade request
+- `GET /api/portal/vendors/[id]/tier-downgrade-request` - Get current/pending downgrade request
+- `DELETE /api/portal/vendors/[id]/tier-downgrade-request/[requestId]` - Cancel pending downgrade
 
 **API Endpoints (Admin):**
-- `GET /api/admin/tier-upgrade-requests` - List all requests with filtering (status, vendor, tier)
-- `PUT /api/admin/tier-upgrade-requests/[id]/approve` - Approve request and upgrade vendor
+- `GET /api/admin/tier-upgrade-requests` - List all requests with filtering (status, vendor, tier, requestType)
+- `PUT /api/admin/tier-upgrade-requests/[id]/approve` - Approve request (works for both upgrade/downgrade)
 - `PUT /api/admin/tier-upgrade-requests/[id]/reject` - Reject request with reason
+- `PUT /api/admin/vendors/[id]/tier` - Direct tier change (admin bypass, no request needed)
 
 **Admin Interface:**
-- Route: `/admin/tier-requests/pending` - Manage pending tier upgrade requests
-- Features: Filter by status, approve/reject with dialog, view request history
+- Route: `/admin/tier-requests/pending` - Manage pending tier upgrade/downgrade requests
+- Features: Filter by status and request type, approve/reject with dialog, view request history
+- `AdminTierRequestQueue` component shows upgrade/downgrade badges with visual distinction
+- `AdminDirectTierChange` component allows direct tier changes without request workflow
 
 **Validation Rules:**
-- Requested tier must be higher than current tier (no downgrades)
+- Upgrade requests: Requested tier must be higher than current tier
+- Downgrade requests: Requested tier must be lower than current tier
 - Vendor notes: 20-500 characters if provided
 - Rejection reason: required, 10-1000 characters
-- Only one pending request per vendor allowed
+- One pending upgrade AND one pending downgrade allowed per vendor
 - Only pending requests can be cancelled by vendor
+
+**Key Design Decision - Hide, Don't Delete:**
+When a vendor downgrades, their tier-restricted data (products, locations, team members, etc.) is HIDDEN from public profiles, not deleted. The data remains in the database and will reappear if the vendor upgrades again.
 
 ### Email Notification System
 
-The platform sends automated transactional emails via Resend for vendor registration workflow and tier upgrade requests:
+The platform sends automated transactional emails via Resend for vendor registration workflow and tier change requests:
 
 **Email Types:**
 - **Vendor Registered (Admin)**: Notifies admin when new vendor registers
 - **Vendor Approved/Rejected**: Notifies vendor of registration status
 - **Tier Upgrade Requested (Admin)**: Notifies admin of tier upgrade request
-- **Tier Upgrade Approved/Rejected**: Notifies vendor of tier request decision
+- **Tier Upgrade Approved/Rejected**: Notifies vendor of tier upgrade decision
+- **Tier Downgrade Requested (Admin)**: Notifies admin of tier downgrade request
+- **Tier Downgrade Approved/Rejected**: Notifies vendor of tier downgrade decision
 
 **Key Components:**
 - `lib/services/EmailService.ts` - Email sending functions with template rendering
-- `lib/email-templates/*.html` - HTML email templates (6 templates)
+- `lib/email-templates/*.html` - HTML email templates (9 templates: 3 vendor, 3 upgrade, 3 downgrade)
 - `payload/collections/Vendors.ts` - afterCreate/afterChange hooks for vendor emails
-- `payload/collections/TierUpgradeRequests.ts` - afterCreate/afterChange hooks for tier emails
+- `payload/collections/TierUpgradeRequests.ts` - afterCreate/afterChange hooks for tier emails (handles both types)
 
 **Environment Configuration:**
 ```bash
