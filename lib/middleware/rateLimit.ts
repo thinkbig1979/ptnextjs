@@ -74,10 +74,21 @@ function getClientIp(request: NextRequest): string {
 }
 
 /**
+ * Rate limit options
+ */
+export interface RateLimitOptions {
+  /** Maximum requests per window (default: 10) */
+  maxRequests?: number;
+  /** Time window in milliseconds (default: 60000 = 1 minute) */
+  windowMs?: number;
+}
+
+/**
  * Rate limit middleware
  *
  * @param request - Next.js request object
  * @param handler - The actual API handler function to call if rate limit passes
+ * @param options - Optional rate limit configuration
  * @returns NextResponse with 429 status if rate limited, otherwise handler response
  *
  * @example
@@ -87,34 +98,49 @@ function getClientIp(request: NextRequest): string {
  *     return NextResponse.json({ success: true });
  *   });
  * }
+ *
+ * @example
+ * // With custom limits
+ * export async function GET(request: NextRequest) {
+ *   return rateLimit(request, async () => {
+ *     return NextResponse.json({ data: [] });
+ *   }, { maxRequests: 60, windowMs: 60000 });
+ * }
  */
 export async function rateLimit(
   request: NextRequest,
-  handler: () => Promise<NextResponse>
+  handler: () => Promise<NextResponse>,
+  options?: RateLimitOptions
 ): Promise<NextResponse> {
   // Start cleanup timer on first use
   startCleanupTimer();
 
+  const maxRequests = options?.maxRequests ?? MAX_REQUESTS_PER_WINDOW;
+  const windowMs = options?.windowMs ?? RATE_LIMIT_WINDOW_MS;
+
   const clientIp = getClientIp(request);
   const now = Date.now();
 
+  // Create a unique key combining IP and rate limit config for different limits
+  const storeKey = `${clientIp}:${maxRequests}:${windowMs}`;
+
   // Get or create rate limit entry
-  let entry = rateLimitStore.get(clientIp);
+  let entry = rateLimitStore.get(storeKey);
 
   if (!entry || entry.resetTime < now) {
     // Create new entry or reset expired one
     entry = {
       count: 1,
-      resetTime: now + RATE_LIMIT_WINDOW_MS,
+      resetTime: now + windowMs,
     };
-    rateLimitStore.set(clientIp, entry);
+    rateLimitStore.set(storeKey, entry);
   } else {
     // Increment existing entry
     entry.count += 1;
   }
 
   // Check if rate limit exceeded
-  if (entry.count > MAX_REQUESTS_PER_WINDOW) {
+  if (entry.count > maxRequests) {
     const retryAfter = Math.ceil((entry.resetTime - now) / 1000);
 
     return NextResponse.json(
@@ -128,7 +154,7 @@ export async function rateLimit(
         status: 429,
         headers: {
           'Retry-After': String(retryAfter),
-          'X-RateLimit-Limit': String(MAX_REQUESTS_PER_WINDOW),
+          'X-RateLimit-Limit': String(maxRequests),
           'X-RateLimit-Remaining': '0',
           'X-RateLimit-Reset': String(Math.floor(entry.resetTime / 1000)),
         },
@@ -146,8 +172,8 @@ export async function rateLimit(
     headers: response.headers,
   });
 
-  newResponse.headers.set('X-RateLimit-Limit', String(MAX_REQUESTS_PER_WINDOW));
-  newResponse.headers.set('X-RateLimit-Remaining', String(MAX_REQUESTS_PER_WINDOW - entry.count));
+  newResponse.headers.set('X-RateLimit-Limit', String(maxRequests));
+  newResponse.headers.set('X-RateLimit-Remaining', String(maxRequests - entry.count));
   newResponse.headers.set('X-RateLimit-Reset', String(Math.floor(entry.resetTime / 1000)));
 
   return newResponse;

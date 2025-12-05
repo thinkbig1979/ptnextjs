@@ -19,6 +19,7 @@
  */
 
 import { getPayload } from 'payload';
+import type { Where } from 'payload';
 import config from '@/payload.config';
 import type { Tier } from '@/lib/constants/tierConfig';
 
@@ -421,17 +422,17 @@ export async function getPendingRequest(
 ): Promise<TierUpgradeRequest | null> {
   const payloadClient = await getPayload({ config });
 
-  const whereClause: any = {
-    and: [
-      { vendor: { equals: vendorId } },
-      { status: { equals: 'pending' } },
-    ],
-  };
+  const conditions: Where[] = [
+    { vendor: { equals: vendorId } },
+    { status: { equals: 'pending' } },
+  ];
 
   // If requestType is specified, filter by it
   if (requestType) {
-    whereClause.and.push({ requestType: { equals: requestType } });
+    conditions.push({ requestType: { equals: requestType } });
   }
+
+  const whereClause: Where = { and: conditions };
 
   const result = await payloadClient.find({
     collection: 'tier_upgrade_requests',
@@ -451,14 +452,14 @@ export async function getMostRecentRequest(
 ): Promise<TierUpgradeRequest | null> {
   const payloadClient = await getPayload({ config });
 
-  const whereClause: any = {
-    vendor: { equals: vendorId },
-  };
-
-  // If requestType is specified, filter by it
-  if (requestType) {
-    whereClause.requestType = { equals: requestType };
-  }
+  const whereClause: Where = requestType
+    ? {
+        and: [
+          { vendor: { equals: vendorId } },
+          { requestType: { equals: requestType } },
+        ],
+      }
+    : { vendor: { equals: vendorId } };
 
   const result = await payloadClient.find({
     collection: 'tier_upgrade_requests',
@@ -525,16 +526,18 @@ export async function listRequests(filters: ListRequestsFilters): Promise<ListRe
   const limit = filters.limit || 20;
 
   // Build where clause
-  const where: any = {};
+  const conditions: Where[] = [];
   if (filters.status) {
-    where.status = { equals: filters.status };
+    conditions.push({ status: { equals: filters.status } });
   }
   if (filters.requestType) {
-    where.requestType = { equals: filters.requestType };
+    conditions.push({ requestType: { equals: filters.requestType } });
   }
   if (filters.vendorId) {
-    where.vendor = { equals: filters.vendorId };
+    conditions.push({ vendor: { equals: filters.vendorId } });
   }
+
+  const where: Where = conditions.length > 0 ? { and: conditions } : {};
 
   // PERFORMANCE OPTIMIZATION: Select only required fields to reduce payload size
   // Reduces response from ~85KB to ~45KB by excluding unused relationship data

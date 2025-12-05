@@ -738,6 +738,7 @@ export async function sendTierDowngradeApprovedEmail(
     }
 
     const dashboardUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/vendor/dashboard`;
+    const currentTierFeatures = getTierFeatures(requestData.currentTier);
     const requestedTierFeatures = getTierFeatures(requestData.requestedTier);
 
     const featuresList = requestedTierFeatures.features
@@ -748,6 +749,8 @@ export async function sendTierDowngradeApprovedEmail(
       COMPANY_NAME: requestData.companyName,
       VENDOR_ID: requestData.vendorId,
       REQUEST_ID: requestData.requestId,
+      PREVIOUS_TIER: currentTierFeatures.tier,
+      NEW_TIER: requestedTierFeatures.tier,
       REQUESTED_TIER: requestedTierFeatures.tier,
       NEW_TIER_FEATURES: featuresList,
       DASHBOARD_URL: dashboardUrl,

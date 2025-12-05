@@ -10,53 +10,9 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getPayload } from 'payload';
-import config from '@/payload.config';
 import * as TierUpgradeRequestService from '@/lib/services/TierUpgradeRequestService';
 import { rateLimit } from '@/lib/middleware/rateLimit';
-
-/**
- * Authenticate and authorize vendor access
- */
-async function authenticateVendor(request: NextRequest, vendorId: string) {
-  const payload = await getPayload({ config });
-
-  // Get user from cookie
-  const token = request.cookies.get('payload-token')?.value;
-
-  if (!token) {
-    return { error: 'UNAUTHORIZED', status: 401, message: 'Authentication required' };
-  }
-
-  try {
-    // Verify token and get user
-    const { user } = await payload.auth({ headers: request.headers });
-
-    if (!user) {
-      return { error: 'UNAUTHORIZED', status: 401, message: 'Invalid authentication token' };
-    }
-
-    // Check if user has vendor relationship
-    const vendor = await payload.findByID({
-      collection: 'vendors',
-      id: vendorId,
-    });
-
-    if (!vendor) {
-      return { error: 'NOT_FOUND', status: 404, message: 'Vendor not found' };
-    }
-
-    // Check if this user owns the vendor account
-    if (vendor.user !== user.id && user.role !== 'admin') {
-      return { error: 'FORBIDDEN', status: 403, message: 'Cannot access another vendor account' };
-    }
-
-    return { user, vendor };
-  } catch (error) {
-    console.error('Authentication error:', error);
-    return { error: 'UNAUTHORIZED', status: 401, message: 'Authentication failed' };
-  }
-}
+import { authenticateVendorPortal } from '@/lib/middleware/vendor-portal-auth';
 
 /**
  * POST - Submit a new tier downgrade request
@@ -68,7 +24,7 @@ export async function POST(
   return rateLimit(request, async () => {
     try {
       const { id } = await params;
-      const auth = await authenticateVendor(request, id);
+      const auth = await authenticateVendorPortal(request, id);
 
       if ('error' in auth) {
         return NextResponse.json(
@@ -158,32 +114,34 @@ export async function POST(
 
 /**
  * GET - Get pending or most recent tier downgrade request
- * Note: GET requests are not rate-limited as aggressively since they're read-only
+ * Rate limited to 60 requests per minute (higher than POST since read-only)
  */
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  try {
-    const { id } = await params;
-    const auth = await authenticateVendor(request, id);
+  return rateLimit(request, async () => {
+    try {
+      const { id } = await params;
+      const auth = await authenticateVendorPortal(request, id);
 
-    if ('error' in auth) {
+      if ('error' in auth) {
+        return NextResponse.json(
+          { success: false, error: auth.error, message: auth.message },
+          { status: auth.status }
+        );
+      }
+
+      // Get pending downgrade request
+      const tierRequest = await TierUpgradeRequestService.getPendingRequest(id, 'downgrade');
+
+      return NextResponse.json({ success: true, data: tierRequest });
+    } catch (error) {
+      console.error('Error fetching tier downgrade request:', error);
       return NextResponse.json(
-        { success: false, error: auth.error, message: auth.message },
-        { status: auth.status }
+        { success: false, error: 'INTERNAL_ERROR', message: 'Failed to fetch request' },
+        { status: 500 }
       );
     }
-
-    // Get pending downgrade request
-    const tierRequest = await TierUpgradeRequestService.getPendingRequest(id, 'downgrade');
-
-    return NextResponse.json({ success: true, data: tierRequest });
-  } catch (error) {
-    console.error('Error fetching tier downgrade request:', error);
-    return NextResponse.json(
-      { success: false, error: 'INTERNAL_ERROR', message: 'Failed to fetch request' },
-      { status: 500 }
-    );
-  }
+  }, { maxRequests: 60, windowMs: 60000 });
 }
