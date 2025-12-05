@@ -3,6 +3,9 @@ import {
   sendTierUpgradeRequestedEmail,
   sendTierUpgradeApprovedEmail,
   sendTierUpgradeRejectedEmail,
+  sendTierDowngradeRequestedEmail,
+  sendTierDowngradeApprovedEmail,
+  sendTierDowngradeRejectedEmail,
 } from '../../lib/services/EmailService';
 
 const TierUpgradeRequests: CollectionConfig = {
@@ -281,7 +284,7 @@ const TierUpgradeRequests: CollectionConfig = {
       },
     ],
     afterChange: [
-      // Send email notifications on tier upgrade request create and status changes
+      // Send email notifications on tier request create and status changes
       async ({ doc, previousDoc, req, operation }) => {
         try {
           // Fetch vendor data (needed for all email types)
@@ -291,10 +294,13 @@ const TierUpgradeRequests: CollectionConfig = {
             id: vendorId,
           });
 
-          // Handle new tier upgrade request (admin notification)
+          // Determine if this is an upgrade or downgrade
+          const requestType = doc.requestType || 'upgrade';
+          const isUpgrade = requestType === 'upgrade';
+
+          // Handle new tier request (admin notification)
           if (operation === 'create') {
-            console.log('[EmailService] Sending tier upgrade request email...');
-            await sendTierUpgradeRequestedEmail({
+            const emailData = {
               companyName: vendor.companyName,
               contactEmail: vendor.contactEmail,
               currentTier: doc.currentTier,
@@ -302,7 +308,15 @@ const TierUpgradeRequests: CollectionConfig = {
               vendorNotes: doc.vendorNotes,
               requestId: doc.id,
               vendorId: vendorId,
-            });
+            };
+
+            if (isUpgrade) {
+              console.log('[EmailService] Sending tier upgrade request email...');
+              await sendTierUpgradeRequestedEmail(emailData);
+            } else {
+              console.log('[EmailService] Sending tier downgrade request email...');
+              await sendTierDowngradeRequestedEmail(emailData);
+            }
             return doc;
           }
 
@@ -327,21 +341,31 @@ const TierUpgradeRequests: CollectionConfig = {
               vendorId: vendorId,
             };
 
-            // Tier upgrade approved - status changed from pending to approved
+            // Tier request approved - status changed from pending to approved
             if (currentStatus === 'approved') {
-              console.log('[EmailService] Sending tier upgrade approved email...');
-              await sendTierUpgradeApprovedEmail(emailData);
+              if (isUpgrade) {
+                console.log('[EmailService] Sending tier upgrade approved email...');
+                await sendTierUpgradeApprovedEmail(emailData);
+              } else {
+                console.log('[EmailService] Sending tier downgrade approved email...');
+                await sendTierDowngradeApprovedEmail(emailData);
+              }
             }
 
-            // Tier upgrade rejected - status changed from pending to rejected
+            // Tier request rejected - status changed from pending to rejected
             if (currentStatus === 'rejected') {
-              console.log('[EmailService] Sending tier upgrade rejected email...');
-              await sendTierUpgradeRejectedEmail(emailData, doc.rejectionReason || 'No reason provided');
+              if (isUpgrade) {
+                console.log('[EmailService] Sending tier upgrade rejected email...');
+                await sendTierUpgradeRejectedEmail(emailData, doc.rejectionReason || 'No reason provided');
+              } else {
+                console.log('[EmailService] Sending tier downgrade rejected email...');
+                await sendTierDowngradeRejectedEmail(emailData, doc.rejectionReason || 'No reason provided');
+              }
             }
           }
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : String(error);
-          console.error('[EmailService] Failed to send tier upgrade email:', errorMessage);
+          console.error('[EmailService] Failed to send tier request email:', errorMessage);
           // Don't block document operations on email failure
         }
         return doc;

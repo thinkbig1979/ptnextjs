@@ -5,24 +5,44 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/context/AuthContext';
 import { useVendorDashboard } from '@/lib/context/VendorDashboardContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SubscriptionTierBadge } from '@/components/shared/SubscriptionTierBadge';
 import { TierComparisonTable } from '@/components/TierComparisonTable';
 import { TierUpgradeRequestForm } from '@/components/dashboard/TierUpgradeRequestForm';
+import { TierDowngradeRequestForm } from '@/components/dashboard/TierDowngradeRequestForm';
 import { UpgradeRequestStatusCard } from '@/components/dashboard/UpgradeRequestStatusCard';
-import { Loader2, AlertCircle } from 'lucide-react';
+import { Loader2, AlertCircle, ArrowUp, ArrowDown } from 'lucide-react';
 import { TierUpgradeRequest } from '@/lib/types';
+
+// Interface for downgrade request (mirrors upgrade request structure)
+interface TierDowngradeRequest {
+  id: string;
+  vendor: string;
+  user: string;
+  currentTier: 'free' | 'tier1' | 'tier2' | 'tier3';
+  requestedTier: 'free' | 'tier1' | 'tier2';
+  status: 'pending' | 'approved' | 'rejected' | 'cancelled';
+  vendorNotes?: string;
+  rejectionReason?: string;
+  requestedAt: string;
+  reviewedAt?: string;
+  reviewedBy?: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 /**
  * SubscriptionPage Component
  *
- * Central hub for vendors to view tier comparison, submit upgrade requests,
+ * Central hub for vendors to view tier comparison, submit upgrade/downgrade requests,
  * and track request status.
  *
  * Features:
  * - Route protection (redirects to login if not authenticated)
  * - Displays current subscription tier
  * - Shows tier comparison table
- * - Displays pending upgrade request status or upgrade request form
+ * - Tabbed interface for upgrade and downgrade requests
+ * - Displays pending request status or request forms
  * - Auto-refresh on successful request submission
  * - Loading and error states
  */
@@ -31,6 +51,7 @@ export default function SubscriptionPage() {
   const { isAuthenticated, isLoading: authLoading, role, user } = useAuth();
   const { vendor, isLoading: vendorLoading, error } = useVendorDashboard();
   const [upgradeRequest, setUpgradeRequest] = useState<TierUpgradeRequest | null>(null);
+  const [downgradeRequest, setDowngradeRequest] = useState<TierDowngradeRequest | null>(null);
   const [isLoadingRequest, setIsLoadingRequest] = useState(true);
   const [requestError, setRequestError] = useState<string | null>(null);
 
@@ -49,63 +70,74 @@ export default function SubscriptionPage() {
   }, [isAuthenticated, authLoading, role, router]);
 
   /**
-   * Fetch pending upgrade request for vendor
+   * Fetch pending upgrade and downgrade requests for vendor
    */
   useEffect(() => {
-    const fetchUpgradeRequest = async () => {
+    const fetchRequests = async () => {
       if (!vendor?.id) return;
 
       try {
         setIsLoadingRequest(true);
         setRequestError(null);
 
-        const response = await fetch(`/api/portal/vendors/${vendor.id}/tier-upgrade-request`);
+        // Fetch upgrade request
+        const upgradeResponse = await fetch(`/api/portal/vendors/${vendor.id}/tier-upgrade-request`);
 
-        if (!response.ok) {
-          if (response.status === 401) {
-            router.push('/vendor/login');
-            return;
-          } else if (response.status === 403) {
-            router.push('/vendor/dashboard');
-            return;
-          } else if (response.status === 404) {
-            // 404 means no pending request, which is fine
-            setUpgradeRequest(null);
-            return;
-          } else if (response.status === 500) {
-            setRequestError('Server error. Please try again later.');
-            return;
+        if (upgradeResponse.ok) {
+          const upgradeData = await upgradeResponse.json();
+          if (upgradeData.success && upgradeData.data?.status === 'pending') {
+            setUpgradeRequest(upgradeData.data);
           } else {
-            setRequestError('Failed to load upgrade request');
-            return;
+            setUpgradeRequest(null);
           }
+        } else if (upgradeResponse.status === 401) {
+          router.push('/vendor/login');
+          return;
+        } else if (upgradeResponse.status === 403) {
+          router.push('/vendor/dashboard');
+          return;
+        } else if (upgradeResponse.status !== 404) {
+          // 404 is fine (no request), other errors should be logged
+          console.error('Failed to fetch upgrade request:', upgradeResponse.status);
         }
 
-        const data = await response.json();
-        // Only set request if it's pending (don't show old approved/rejected requests)
-        if (data.success && data.data?.status === 'pending') {
-          setUpgradeRequest(data.data);
-        } else {
-          setUpgradeRequest(null);
+        // Fetch downgrade request
+        const downgradeResponse = await fetch(`/api/portal/vendors/${vendor.id}/tier-downgrade-request`);
+
+        if (downgradeResponse.ok) {
+          const downgradeData = await downgradeResponse.json();
+          if (downgradeData.success && downgradeData.data?.status === 'pending') {
+            setDowngradeRequest(downgradeData.data);
+          } else {
+            setDowngradeRequest(null);
+          }
+        } else if (downgradeResponse.status === 401) {
+          router.push('/vendor/login');
+          return;
+        } else if (downgradeResponse.status === 403) {
+          router.push('/vendor/dashboard');
+          return;
+        } else if (downgradeResponse.status !== 404) {
+          // 404 is fine (no request), other errors should be logged
+          console.error('Failed to fetch downgrade request:', downgradeResponse.status);
         }
       } catch (err) {
-        console.error('Failed to fetch upgrade request:', err);
-        setRequestError('Failed to load upgrade request');
+        console.error('Failed to fetch tier requests:', err);
+        setRequestError('Failed to load tier requests');
       } finally {
         setIsLoadingRequest(false);
       }
     };
 
     if (vendor?.id && !vendorLoading) {
-      fetchUpgradeRequest();
+      fetchRequests();
     }
   }, [vendor?.id, vendorLoading, router]);
 
   /**
-   * Handle successful request submission - refresh data
+   * Handle successful upgrade request submission - refresh data
    */
-  const handleRequestSuccess = async () => {
-    // Refresh the upgrade request
+  const handleUpgradeSuccess = async () => {
     if (vendor?.id) {
       try {
         const response = await fetch(`/api/portal/vendors/${vendor.id}/tier-upgrade-request`);
@@ -122,10 +154,36 @@ export default function SubscriptionPage() {
   };
 
   /**
-   * Handle request cancellation - clear request
+   * Handle successful downgrade request submission - refresh data
    */
-  const handleRequestCancel = async () => {
+  const handleDowngradeSuccess = async () => {
+    if (vendor?.id) {
+      try {
+        const response = await fetch(`/api/portal/vendors/${vendor.id}/tier-downgrade-request`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.data?.status === 'pending') {
+            setDowngradeRequest(data.data);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to refresh downgrade request:', err);
+      }
+    }
+  };
+
+  /**
+   * Handle upgrade request cancellation - clear request
+   */
+  const handleUpgradeCancel = async () => {
     setUpgradeRequest(null);
+  };
+
+  /**
+   * Handle downgrade request cancellation - clear request
+   */
+  const handleDowngradeCancel = async () => {
+    setDowngradeRequest(null);
   };
 
   /**
@@ -178,6 +236,11 @@ export default function SubscriptionPage() {
     return null;
   }
 
+  // Determine if upgrade/downgrade options should be shown
+  const canUpgrade = vendor.tier !== 'tier3';
+  const canDowngrade = vendor.tier !== 'free';
+  const showTabs = canUpgrade && canDowngrade;
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -218,24 +281,103 @@ export default function SubscriptionPage() {
         <TierComparisonTable currentTier={vendor.tier} />
       </div>
 
-      {/* Upgrade Request Form or Status */}
+      {/* Tier Change Requests */}
       <div>
         <h2 className="text-2xl font-semibold text-foreground dark:text-white mb-4">
-          {upgradeRequest ? 'Upgrade Request Status' : 'Request Tier Upgrade'}
+          Tier Change Requests
         </h2>
-        {upgradeRequest ? (
-          <UpgradeRequestStatusCard
-            request={upgradeRequest}
-            vendorId={vendor.id}
-            onCancel={handleRequestCancel}
-            showActions={true}
-          />
+
+        {showTabs ? (
+          <Tabs defaultValue="upgrade" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 max-w-md">
+              <TabsTrigger value="upgrade" className="flex items-center gap-2">
+                <ArrowUp className="h-4 w-4" />
+                Upgrade
+              </TabsTrigger>
+              <TabsTrigger value="downgrade" className="flex items-center gap-2">
+                <ArrowDown className="h-4 w-4" />
+                Downgrade
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="upgrade" className="mt-4">
+              {upgradeRequest ? (
+                <UpgradeRequestStatusCard
+                  request={upgradeRequest}
+                  vendorId={vendor.id}
+                  onCancel={handleUpgradeCancel}
+                  showActions={true}
+                />
+              ) : (
+                <TierUpgradeRequestForm
+                  currentTier={vendor.tier as 'free' | 'tier1' | 'tier2' | 'tier3'}
+                  vendorId={vendor.id}
+                  onSuccess={handleUpgradeSuccess}
+                />
+              )}
+            </TabsContent>
+
+            <TabsContent value="downgrade" className="mt-4">
+              {downgradeRequest ? (
+                <UpgradeRequestStatusCard
+                  request={downgradeRequest as any}
+                  vendorId={vendor.id}
+                  onCancel={handleDowngradeCancel}
+                  showActions={true}
+                />
+              ) : (
+                <TierDowngradeRequestForm
+                  currentTier={vendor.tier as 'free' | 'tier1' | 'tier2' | 'tier3'}
+                  vendorId={vendor.id}
+                  onSuccess={handleDowngradeSuccess}
+                />
+              )}
+            </TabsContent>
+          </Tabs>
+        ) : canUpgrade ? (
+          // Only show upgrade if not on tier3
+          <>
+            {upgradeRequest ? (
+              <UpgradeRequestStatusCard
+                request={upgradeRequest}
+                vendorId={vendor.id}
+                onCancel={handleUpgradeCancel}
+                showActions={true}
+              />
+            ) : (
+              <TierUpgradeRequestForm
+                currentTier={vendor.tier as 'free' | 'tier1' | 'tier2' | 'tier3'}
+                vendorId={vendor.id}
+                onSuccess={handleUpgradeSuccess}
+              />
+            )}
+          </>
+        ) : canDowngrade ? (
+          // Only show downgrade if not on free
+          <>
+            {downgradeRequest ? (
+              <UpgradeRequestStatusCard
+                request={downgradeRequest as any}
+                vendorId={vendor.id}
+                onCancel={handleDowngradeCancel}
+                showActions={true}
+              />
+            ) : (
+              <TierDowngradeRequestForm
+                currentTier={vendor.tier as 'free' | 'tier1' | 'tier2' | 'tier3'}
+                vendorId={vendor.id}
+                onSuccess={handleDowngradeSuccess}
+              />
+            )}
+          </>
         ) : (
-          <TierUpgradeRequestForm
-            currentTier={vendor.tier as 'free' | 'tier1' | 'tier2' | 'tier3'}
-            vendorId={vendor.id}
-            onSuccess={handleRequestSuccess}
-          />
+          <Card>
+            <CardContent className="pt-6">
+              <p className="text-muted-foreground text-center">
+                No tier changes available at this time.
+              </p>
+            </CardContent>
+          </Card>
         )}
       </div>
 

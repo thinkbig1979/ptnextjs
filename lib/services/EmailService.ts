@@ -639,6 +639,224 @@ export async function sendTierUpgradeRejectedEmail(
 }
 
 /**
+ * Send email notification when a vendor requests tier downgrade
+ * Notifies admin of downgrade request requiring review
+ *
+ * @param requestData - Tier downgrade request information
+ * @returns Email operation result
+ */
+export async function sendTierDowngradeRequestedEmail(
+  requestData: TierUpgradeEmailData
+): Promise<EmailResult> {
+  try {
+    const config = validateEmailConfig();
+    if (!config.valid) {
+      console.error('Email configuration invalid:', config.errors);
+      return {
+        success: false,
+        error: 'Email service not configured',
+      };
+    }
+
+    const resend = getResendClient();
+    const template = loadTemplate('tier-downgrade-requested');
+
+    if (!template) {
+      throw new Error('Unable to load tier-downgrade-requested template');
+    }
+
+    const adminQueueUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/admin/tier-requests/pending`;
+    const currentTierFeatures = getTierFeatures(requestData.currentTier);
+    const requestedTierFeatures = getTierFeatures(requestData.requestedTier);
+
+    const html = renderTemplate(template, {
+      COMPANY_NAME: requestData.companyName,
+      VENDOR_ID: requestData.vendorId,
+      REQUEST_ID: requestData.requestId,
+      CURRENT_TIER: currentTierFeatures.tier,
+      REQUESTED_TIER: requestedTierFeatures.tier,
+      VENDOR_NOTES: requestData.vendorNotes || 'No additional notes provided',
+      CONTACT_EMAIL: requestData.contactEmail,
+      ADMIN_REVIEW_URL: adminQueueUrl,
+      SUPPORT_EMAIL: process.env.ADMIN_EMAIL_ADDRESS || 'support@paulthames.com',
+      CURRENT_YEAR: new Date().getFullYear().toString(),
+    });
+
+    const subject = `Tier Downgrade Request: ${requestData.companyName} (${currentTierFeatures.tier} → ${requestedTierFeatures.tier})`;
+
+    const result = await resend.emails.send({
+      from: process.env.EMAIL_FROM_ADDRESS || 'notifications@resend.dev',
+      to: process.env.ADMIN_EMAIL_ADDRESS || '',
+      subject,
+      html,
+    });
+
+    if (result.error) {
+      console.error('Failed to send tier downgrade requested email:', result.error);
+      return {
+        success: false,
+        error: result.error.message,
+      };
+    }
+
+    return { success: true };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('Error sending tier downgrade requested email:', errorMessage);
+    return {
+      success: false,
+      error: errorMessage,
+    };
+  }
+}
+
+/**
+ * Send email notification when a tier downgrade request is approved
+ * Notifies vendor of approval and new tier status
+ *
+ * @param requestData - Tier downgrade request information
+ * @returns Email operation result
+ */
+export async function sendTierDowngradeApprovedEmail(
+  requestData: TierUpgradeEmailData
+): Promise<EmailResult> {
+  try {
+    const config = validateEmailConfig();
+    if (!config.valid) {
+      console.error('Email configuration invalid:', config.errors);
+      return {
+        success: false,
+        error: 'Email service not configured',
+      };
+    }
+
+    const resend = getResendClient();
+    const template = loadTemplate('tier-downgrade-approved');
+
+    if (!template) {
+      throw new Error('Unable to load tier-downgrade-approved template');
+    }
+
+    const dashboardUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/vendor/dashboard`;
+    const requestedTierFeatures = getTierFeatures(requestData.requestedTier);
+
+    const featuresList = requestedTierFeatures.features
+      .map((feature) => `<div style="margin: 8px 0;">- ${feature}</div>`)
+      .join('');
+
+    const html = renderTemplate(template, {
+      COMPANY_NAME: requestData.companyName,
+      VENDOR_ID: requestData.vendorId,
+      REQUEST_ID: requestData.requestId,
+      REQUESTED_TIER: requestedTierFeatures.tier,
+      NEW_TIER_FEATURES: featuresList,
+      DASHBOARD_URL: dashboardUrl,
+      SUPPORT_EMAIL: process.env.ADMIN_EMAIL_ADDRESS || 'support@paulthames.com',
+      CURRENT_YEAR: new Date().getFullYear().toString(),
+    });
+
+    const subject = 'Your Tier Downgrade Has Been Approved - Paul Thames';
+
+    const result = await resend.emails.send({
+      from: process.env.EMAIL_FROM_ADDRESS || 'notifications@resend.dev',
+      to: requestData.contactEmail,
+      subject,
+      html,
+    });
+
+    if (result.error) {
+      console.error('Failed to send tier downgrade approved email:', result.error);
+      return {
+        success: false,
+        error: result.error.message,
+      };
+    }
+
+    return { success: true };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('Error sending tier downgrade approved email:', errorMessage);
+    return {
+      success: false,
+      error: errorMessage,
+    };
+  }
+}
+
+/**
+ * Send email notification when a tier downgrade request is rejected
+ * Notifies vendor of rejection with reason
+ *
+ * @param requestData - Tier downgrade request information
+ * @param reason - Rejection reason (required)
+ * @returns Email operation result
+ */
+export async function sendTierDowngradeRejectedEmail(
+  requestData: TierUpgradeEmailData,
+  reason: string
+): Promise<EmailResult> {
+  try {
+    const config = validateEmailConfig();
+    if (!config.valid) {
+      console.error('Email configuration invalid:', config.errors);
+      return {
+        success: false,
+        error: 'Email service not configured',
+      };
+    }
+
+    const resend = getResendClient();
+    const template = loadTemplate('tier-downgrade-rejected');
+
+    if (!template) {
+      throw new Error('Unable to load tier-downgrade-rejected template');
+    }
+
+    const dashboardUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/vendor/dashboard`;
+    const currentTierFeatures = getTierFeatures(requestData.currentTier);
+    const requestedTierFeatures = getTierFeatures(requestData.requestedTier);
+
+    const html = renderTemplate(template, {
+      COMPANY_NAME: requestData.companyName,
+      VENDOR_ID: requestData.vendorId,
+      REQUEST_ID: requestData.requestId,
+      CURRENT_TIER: currentTierFeatures.tier,
+      REQUESTED_TIER: requestedTierFeatures.tier,
+      REJECTION_REASON: reason,
+      DASHBOARD_URL: dashboardUrl,
+      SUPPORT_EMAIL: process.env.ADMIN_EMAIL_ADDRESS || 'support@paulthames.com',
+      CURRENT_YEAR: new Date().getFullYear().toString(),
+    });
+
+    const subject = 'Tier Downgrade Request Update - Paul Thames';
+
+    const result = await resend.emails.send({
+      from: process.env.EMAIL_FROM_ADDRESS || 'notifications@resend.dev',
+      to: requestData.contactEmail,
+      subject,
+      html,
+    });
+
+    if (result.error) {
+      console.error('Failed to send tier downgrade rejected email:', result.error);
+      return {
+        success: false,
+        error: result.error.message,
+      };
+    }
+
+    return { success: true };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('Error sending tier downgrade rejected email:', errorMessage);
+    return {
+      success: false,
+      error: errorMessage,
+    };
+  }
+}
+
+/**
  * Send email notification when a user account is approved
  * Notifies the user that their account is now active
  *
