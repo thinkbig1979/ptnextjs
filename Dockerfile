@@ -52,7 +52,11 @@ RUN echo "🔄 Running pre-build database migrations..." && \
 
 # Build arguments for runtime configuration
 # These must be provided at build time for Next.js to bake into the static bundle
+# NEXT_PUBLIC_* vars are embedded in the client JS bundle at build time
 ARG NEXT_PUBLIC_SERVER_URL
+ARG NEXT_PUBLIC_SITE_URL
+ARG NEXT_PUBLIC_BASE_URL
+ARG NEXT_PUBLIC_HCAPTCHA_SITE_KEY
 ARG PAYLOAD_SECRET
 
 # Build Next.js application
@@ -60,6 +64,9 @@ ARG PAYLOAD_SECRET
 # This creates .next/standalone directory with minimal runtime files
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NEXT_PUBLIC_SERVER_URL=$NEXT_PUBLIC_SERVER_URL
+ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
+ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
+ENV NEXT_PUBLIC_HCAPTCHA_SITE_KEY=$NEXT_PUBLIC_HCAPTCHA_SITE_KEY
 ENV PAYLOAD_SECRET=$PAYLOAD_SECRET
 RUN npm run build
 

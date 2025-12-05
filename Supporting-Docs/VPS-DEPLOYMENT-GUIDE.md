@@ -165,21 +165,92 @@ docker compose up -d
 
 ## Environment Variables
 
-Ensure these are set in your Docker environment:
+### Build-Time vs Runtime Variables
+
+**Critical distinction for Next.js:**
+- `NEXT_PUBLIC_*` variables are embedded in the JavaScript bundle **at build time**
+- Server-side variables are read **at runtime**
+
+This means if you set `NEXT_PUBLIC_HCAPTCHA_SITE_KEY` after the Docker image is built, it won't work!
+
+### Required Environment Variables
+
+Create a `.env` file (or `.env.production`) in the **same directory as docker-compose.yml**:
 
 ```env
-# Required
-PAYLOAD_SECRET=your-secret-key-minimum-32-characters
-DATABASE_URL=file:/app/data/payload.db
+# ============================================
+# BUILD-TIME VARIABLES (NEXT_PUBLIC_*)
+# These MUST be present when running `docker compose build`
+# They get baked into the Next.js client bundle
+# ============================================
+NEXT_PUBLIC_SERVER_URL=https://yourdomain.com
+NEXT_PUBLIC_SITE_URL=https://yourdomain.com
+NEXT_PUBLIC_BASE_URL=https://yourdomain.com
+NEXT_PUBLIC_HCAPTCHA_SITE_KEY=your-hcaptcha-site-key
 
-# Email notifications (if using)
+# ============================================
+# RUNTIME VARIABLES
+# These are read when the container starts
+# ============================================
+PAYLOAD_SECRET=your-secret-key-minimum-32-characters
+DATABASE_URL=file:/data/payload.db
+
+# hCaptcha server-side secret (must match site key above)
+HCAPTCHA_SECRET_KEY=your-hcaptcha-secret-key
+
+# Email notifications
 RESEND_API_KEY=re_your_api_key
 EMAIL_FROM_ADDRESS=notifications@yourdomain.com
 ADMIN_EMAIL_ADDRESS=admin@yourdomain.com
-
-# Public URL
-NEXT_PUBLIC_SERVER_URL=https://yourdomain.com
 ```
+
+### Flexible Deployment: Separate Compose and Repo Locations
+
+The docker-compose.yml supports deploying from any location using `BUILD_CONTEXT`:
+
+**Scenario**: docker-compose.yml in `/home/dockge/stacks/ptnext-app/`, repo in `/home/pt/ptnextjs/`
+
+```bash
+# Option 1: Set in .env file
+BUILD_CONTEXT=/home/pt/ptnextjs
+
+# Option 2: Set inline when building
+BUILD_CONTEXT=/home/pt/ptnextjs docker compose build
+```
+
+**Default behavior**: If `BUILD_CONTEXT` is not set, it defaults to `.` (same directory as docker-compose.yml).
+
+### How Build Args Work
+
+The docker-compose.yml passes `NEXT_PUBLIC_*` variables to Docker build:
+
+```yaml
+build:
+  context: ${BUILD_CONTEXT:-.}
+  args:
+    - NEXT_PUBLIC_SERVER_URL=${NEXT_PUBLIC_SERVER_URL}
+    - NEXT_PUBLIC_HCAPTCHA_SITE_KEY=${NEXT_PUBLIC_HCAPTCHA_SITE_KEY}
+    # ... etc
+```
+
+Docker Compose reads these from:
+1. Shell environment variables (highest priority)
+2. `.env` file in the docker-compose.yml directory (auto-loaded)
+3. `env_file` directive (for runtime only, not build args)
+
+### Verifying Build Args Were Applied
+
+After building, verify the NEXT_PUBLIC vars are in the bundle:
+
+```bash
+# Check if hCaptcha site key is in the client bundle
+docker exec ptnextjs-app grep -r "your-site-key" .next/static/chunks/ 2>/dev/null
+
+# Check runtime env vars are set
+docker exec ptnextjs-app env | grep -i captcha
+```
+
+If the grep returns nothing but env shows the var, you need to **rebuild** the image.
 
 ## Related Documentation
 
