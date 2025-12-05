@@ -238,10 +238,10 @@ export function TierDowngradeRequestForm({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             {/* Warning Alert */}
-            <Alert variant="destructive" className="bg-yellow-50 border-yellow-300 text-yellow-900">
-              <AlertTriangle className="h-4 w-4 text-yellow-600" />
-              <AlertTitle className="text-yellow-900">Important: Feature Loss Warning</AlertTitle>
-              <AlertDescription className="text-yellow-800">
+            <Alert variant="warning">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle>Important: Feature Loss Warning</AlertTitle>
+              <AlertDescription>
                 Downgrading your tier will immediately remove access to premium features.
                 This may result in:
                 <ul className="list-disc list-inside mt-2 space-y-1">
@@ -290,11 +290,11 @@ export function TierDowngradeRequestForm({
 
             {/* Features Lost Display */}
             {selectedTier && featuresLost.length > 0 && (
-              <div className="rounded-lg border border-orange-200 bg-orange-50 p-4">
-                <h4 className="font-semibold text-orange-900 mb-2">
+              <div className="rounded-lg border border-warning/50 bg-warning/10 p-4 dark:border-warning dark:bg-warning/15">
+                <h4 className="font-semibold text-warning-foreground mb-2">
                   Features You Will Lose:
                 </h4>
-                <ul className="list-disc list-inside space-y-1 text-sm text-orange-800">
+                <ul className="list-disc list-inside space-y-1 text-sm text-warning-foreground">
                   {featuresLost.map((feature, index) => (
                     <li key={index}>{feature}</li>
                   ))}
@@ -342,20 +342,21 @@ export function TierDowngradeRequestForm({
               control={form.control}
               name="confirmation"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border border-orange-200 bg-orange-50 p-4">
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border border-warning/50 bg-warning/10 p-4 dark:border-warning dark:bg-warning/15">
                   <FormControl>
                     <Checkbox
                       checked={field.value}
                       onCheckedChange={field.onChange}
                       disabled={isSubmitting || !selectedTier}
                       aria-label="Confirmation"
+                      className="border-warning data-[state=checked]:bg-warning data-[state=checked]:text-warning-foreground"
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">
-                    <FormLabel className="text-sm font-medium text-orange-900">
+                    <FormLabel className="text-sm font-medium text-warning-foreground">
                       I understand the consequences
                     </FormLabel>
-                    <FormDescription className="text-orange-800">
+                    <FormDescription className="text-warning-foreground/80">
                       I acknowledge that downgrading will immediately remove access to the features listed above,
                       and I accept the limitations of the {selectedTier ? TIER_LABELS[selectedTier] : 'selected'} tier.
                     </FormDescription>

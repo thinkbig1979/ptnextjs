@@ -25,6 +25,12 @@
     --popover-foreground: 0 0% 10%;
     --ring: 18 100% 50%;
     --radius: 0.5rem;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 38 100% 10%;
+    --success: 142 71% 45%;
+    --success-foreground: 142 100% 10%;
   }
 
   /* Enhanced media query for better mobile browser support */
@@ -47,6 +53,12 @@
       --popover: 222 47% 16%;
       --popover-foreground: 0 0% 96%;
       --ring: 18 100% 50%;
+      --destructive: 0 62% 55%;
+      --destructive-foreground: 0 0% 98%;
+      --warning: 38 92% 55%;
+      --warning-foreground: 38 100% 95%;
+      --success: 142 71% 50%;
+      --success-foreground: 142 100% 95%;
     }
   }
 
@@ -68,6 +80,12 @@
     --popover: 222 47% 16%;
     --popover-foreground: 0 0% 96%;
     --ring: 18 100% 50%;
+    --destructive: 0 62% 55%;
+    --destructive-foreground: 0 0% 98%;
+    --warning: 38 92% 55%;
+    --warning-foreground: 38 100% 95%;
+    --success: 142 71% 50%;
+    --success-foreground: 142 100% 95%;
   }
 
   * {

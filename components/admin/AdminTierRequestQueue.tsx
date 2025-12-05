@@ -289,14 +289,14 @@ export default function AdminTierRequestQueue() {
   const getRequestTypeBadge = (requestType: 'upgrade' | 'downgrade') => {
     if (requestType === 'upgrade') {
       return (
-        <Badge variant="default" className="bg-green-600 hover:bg-green-700 text-white">
+        <Badge variant="default" className="bg-success hover:bg-success/90 text-success-foreground">
           <ArrowUp className="mr-1 h-3 w-3" />
           Upgrade
         </Badge>
       );
     } else {
       return (
-        <Badge variant="default" className="bg-amber-600 hover:bg-amber-700 text-white">
+        <Badge variant="default" className="bg-warning hover:bg-warning/90 text-warning-foreground">
           <ArrowDown className="mr-1 h-3 w-3" />
           Downgrade
         </Badge>
@@ -309,7 +309,7 @@ export default function AdminTierRequestQueue() {
    */
   const getRowClassName = (requestType: 'upgrade' | 'downgrade') => {
     if (requestType === 'downgrade') {
-      return 'bg-amber-50/50 hover:bg-amber-50';
+      return 'bg-warning/5 hover:bg-warning/10';
     }
     return '';
   };
@@ -409,8 +409,8 @@ export default function AdminTierRequestQueue() {
                         variant="default"
                         className={`text-xs ${
                           request.requestType === 'upgrade'
-                            ? 'bg-green-600'
-                            : 'bg-amber-600'
+                            ? 'bg-success text-success-foreground'
+                            : 'bg-warning text-warning-foreground'
                         }`}
                       >
                         {TIER_LABELS[request.requestedTier]}
@@ -487,9 +487,9 @@ export default function AdminTierRequestQueue() {
             </div>
           )}
           {selectedRequest?.requestType === 'downgrade' && (
-            <div className="rounded-md border border-amber-200 bg-amber-50 p-3">
-              <p className="text-sm font-medium text-amber-900">Downgrade Warning:</p>
-              <p className="mt-1 text-sm text-amber-800">
+            <div className="rounded-md border border-warning/50 bg-warning/10 p-3 dark:border-warning dark:bg-warning/15">
+              <p className="text-sm font-medium text-warning-foreground">Downgrade Warning:</p>
+              <p className="mt-1 text-sm text-warning-foreground/80">
                 The vendor will lose access to features available in their current tier.
                 Make sure they understand the limitations of the lower tier.
               </p>

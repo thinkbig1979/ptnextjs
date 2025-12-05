@@ -233,13 +233,13 @@ export default function AdminDirectTierChange({
 
             {/* Downgrade Warning */}
             {isDowngrade() && (
-              <div className="flex items-start gap-2 rounded-md border border-yellow-500 bg-yellow-50 p-3 dark:bg-yellow-950">
-                <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
+              <div className="flex items-start gap-2 rounded-md border border-warning/50 bg-warning/10 p-3 dark:border-warning dark:bg-warning/15">
+                <AlertTriangle className="h-5 w-5 text-warning" />
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+                  <p className="text-sm font-medium text-warning-foreground">
                     Downgrade Warning
                   </p>
-                  <p className="mt-1 text-sm text-yellow-700 dark:text-yellow-300">
+                  <p className="mt-1 text-sm text-warning-foreground/80">
                     This vendor will lose access to features available in higher
                     tiers. Their data will be preserved but may exceed new tier
                     limits.
@@ -250,13 +250,13 @@ export default function AdminDirectTierChange({
 
             {/* Upgrade Confirmation */}
             {!isDowngrade() && hasChanged && (
-              <div className="flex items-start gap-2 rounded-md border border-green-500 bg-green-50 p-3 dark:bg-green-950">
-                <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+              <div className="flex items-start gap-2 rounded-md border border-success/50 bg-success/10 p-3 dark:border-success dark:bg-success/15">
+                <CheckCircle className="h-5 w-5 text-success" />
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-green-800 dark:text-green-200">
+                  <p className="text-sm font-medium text-success-foreground">
                     Upgrade Confirmation
                   </p>
-                  <p className="mt-1 text-sm text-green-700 dark:text-green-300">
+                  <p className="mt-1 text-sm text-success-foreground/80">
                     This vendor will gain access to additional features available
                     in {TIER_NAMES[selectedTier as keyof typeof TIER_NAMES]}.
                   </p>
