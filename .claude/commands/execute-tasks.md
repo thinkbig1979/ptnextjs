@@ -77,8 +77,4 @@ Phase 4: Post-Execution
 
 ## Instructions
 
-Refer to the unified execution protocol:
 @.agent-os/instructions/core/execute-tasks-unified.md
-
-For legacy orchestrated execution (without Beads-first):
-@.agent-os/instructions/core/execute-tasks.md

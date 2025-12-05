@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tier Change Request Approved</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f4f4f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f4f4f5;">
+    <tr>
+      <td style="padding: 40px 20px;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden;">
+          <!-- Header -->
+          <tr>
+            <td style="background-color: #1a56db; padding: 30px; text-align: center;">
+              <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600;">Paul Thames</h1>
+              <p style="color: #bfdbfe; margin: 8px 0 0 0; font-size: 14px;">Superyacht Technology</p>
+            </td>
+          </tr>
+          <!-- Content -->
+          <tr>
+            <td style="padding: 40px 30px;">
+              <h2 style="color: #111827; margin: 0 0 16px 0; font-size: 20px; font-weight: 600;">Your Tier Change Request Has Been Approved</h2>
+              <p style="color: #4b5563; margin: 0 0 24px 0; font-size: 16px; line-height: 1.6;">Hello {{COMPANY_NAME}},</p>
+
+              <p style="color: #4b5563; margin: 0 0 24px 0; font-size: 16px; line-height: 1.6;">Your tier change request has been approved and is now effective immediately.</p>
+
+              <!-- Success Message -->
+              <div style="background-color: #dbeafe; border-left: 4px solid #3b82f6; padding: 16px; border-radius: 4px; margin: 24px 0;">
+                <p style="color: #1e40af; margin: 0; font-size: 14px; font-weight: 500;">Your account has been changed from <strong>{{PREVIOUS_TIER}}</strong> to <strong>{{NEW_TIER}}</strong>. All your existing data has been preserved.</p>
+              </div>
+
+              <!-- Tier Change Card -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f9fafb; border-radius: 6px; margin: 24px 0;">
+                <tr>
+                  <td style="padding: 24px;">
+                    <p style="margin: 0 0 16px 0; color: #6b7280; font-size: 12px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Tier Change Summary</p>
+
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                      <tr>
+                        <td style="padding: 8px 0;">
+                          <p style="margin: 0; color: #6b7280; font-size: 12px;">Previous Tier</p>
+                          <p style="margin: 4px 0 0 0; color: #111827; font-size: 16px; font-weight: 500;">{{PREVIOUS_TIER}}</p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 12px 0; border-top: 1px solid #e5e7eb;">
+                          <p style="margin: 0; color: #6b7280; font-size: 12px;">New Tier</p>
+                          <p style="margin: 4px 0 0 0; color: #1a56db; font-size: 16px; font-weight: 600;">{{NEW_TIER}}</p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 12px 0; border-top: 1px solid #e5e7eb;">
+                          <p style="margin: 0; color: #6b7280; font-size: 12px;">Effective Date</p>
+                          <p style="margin: 4px 0 0 0; color: #111827; font-size: 16px; font-weight: 500;">Immediately</p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Important Information -->
+              <div style="margin: 24px 0;">
+                <h3 style="color: #111827; margin: 0 0 12px 0; font-size: 16px; font-weight: 600;">Important Information</h3>
+                <div style="background-color: #fef3c7; border-left: 3px solid #f59e0b; padding: 16px; border-radius: 4px;">
+                  <p style="color: #92400e; margin: 0 0 8px 0; font-size: 14px; line-height: 1.6;"><strong>Your existing data has been preserved</strong> and will remain accessible. However, some features that were available in your previous tier may no longer be accessible.</p>
+                  <p style="color: #92400e; margin: 0; font-size: 14px; line-height: 1.6;">If you need to access features from your previous tier, you can submit an upgrade request at any time.</p>
+                </div>
+              </div>
+
+              <!-- CTA Button -->
+              <div style="text-align: center; margin: 32px 0;">
+                <a href="{{DASHBOARD_URL}}" style="display: inline-block; background-color: #1a56db; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">Go to Dashboard</a>
+              </div>
+
+              <p style="color: #6b7280; margin: 24px 0 0 0; font-size: 14px; line-height: 1.6;">If you have any questions or concerns about your tier change, please don't hesitate to reach out to our support team.</p>
+            </td>
+          </tr>
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #f9fafb; padding: 24px 30px; border-top: 1px solid #e5e7eb;">
+              <p style="color: #6b7280; margin: 0; font-size: 12px; text-align: center;">
+                © {{CURRENT_YEAR}} Paul Thames Superyacht Technology. All rights reserved.
+              </p>
+              <p style="color: #9ca3af; margin: 8px 0 0 0; font-size: 11px; text-align: center;">
+                This is an automated message. Please do not reply directly to this email.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

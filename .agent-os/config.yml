@@ -1,15 +1,13 @@
-# Agent OS Configuration v4.1.0
+# Agent OS Configuration v4.3.0
 # Clean configuration with sane defaults for compound engineering integration
+# v4.3.0: Codebase Cleanup - Removed legacy/deprecated code, streamlined instructions
+# v4.2.0: Testing Alignment - Canonical standards, verification gates, clear ownership, failure classification
 # v4.1.0: Unified Execution Protocol - Beads-first orchestration with parallel specialist delegation
 # v4.0.1: Direct test execution (not subagent) for real-time output visibility
 # v4.0.0: Test Failure Handling Protocol - Orchestrated test execution with subagent delegation
 # v3.3.0: Test Execution Monitoring - Real-time streaming, hung test detection, test/code alignment
-# v3.2.0: Skills Integration - Context gathering via Claude Code skills
-# v3.1.0: Test Context Gathering - Pre-test research phase for library documentation
-# v3.0.0: Documentation clarity, terminology fixes, configuration cleanup
-# v2.9.0: Added Test Infrastructure Reliability System
 
-agent_os_version: 4.1.0
+agent_os_version: 4.3.0
 
 # ================================================
 # CONFIGURATION HIERARCHY
@@ -42,10 +40,6 @@ execution_mode: "multi" # "multi" | "single"
 multi_agent_tool: claude-code # When execution_mode: "multi"
 single_agent_tool: generic # When execution_mode: "single"
 
-# DEPRECATED (v2.x compatibility) - Use execution_mode instead
-# multi_agent_mode: true
-# single_agent_mode: false
-
 # ================================================
 # PROJECT CONFIGURATION
 # ================================================
@@ -67,7 +61,7 @@ agents:
 # ================================================
 task_file_structure:
   enabled: true
-  format: "split" # "split" (master + detail files) or "monolithic" (legacy)
+  format: "split" # "split" (master + detail files)
   master_file: "tasks.md"
   detail_directory: "tasks/"
   context_optimization: true

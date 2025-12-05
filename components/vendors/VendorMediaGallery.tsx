@@ -12,12 +12,18 @@ import type { MediaGalleryItem } from '@/lib/types';
 interface VendorMediaGalleryProps {
   mediaGallery?: MediaGalleryItem[];
   vendorName: string;
+  vendorTier?: 'free' | 'tier1' | 'tier2' | 'tier3';
 }
 
-export function VendorMediaGallery({ mediaGallery, vendorName }: VendorMediaGalleryProps) {
+export function VendorMediaGallery({ mediaGallery, vendorName, vendorTier }: VendorMediaGalleryProps) {
   const [selectedItem, setSelectedItem] = useState<MediaGalleryItem | null>(null);
   const [lightboxIndex, setLightboxIndex] = useState<number>(0);
   const [activeAlbum, setActiveAlbum] = useState<string>('all');
+
+  // Hide media gallery for Free tier - Media Gallery is Tier1+ feature
+  if (!vendorTier || vendorTier === 'free') {
+    return null;
+  }
 
   if (!mediaGallery || mediaGallery.length === 0) {
     return null;

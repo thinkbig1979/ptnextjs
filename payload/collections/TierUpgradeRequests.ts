@@ -11,7 +11,7 @@ const TierUpgradeRequests: CollectionConfig = {
   admin: {
     useAsTitle: 'id',
     group: 'Administration',
-    defaultColumns: ['vendor', 'currentTier', 'requestedTier', 'status', 'requestedAt'],
+    defaultColumns: ['vendor', 'requestType', 'currentTier', 'requestedTier', 'status', 'requestedAt'],
   },
 
   access: {
@@ -49,7 +49,7 @@ const TierUpgradeRequests: CollectionConfig = {
       hasMany: false,
       index: true,
       admin: {
-        description: 'Vendor submitting the tier upgrade request',
+        description: 'Vendor submitting the tier change request',
       },
     },
 
@@ -81,18 +81,35 @@ const TierUpgradeRequests: CollectionConfig = {
       },
     },
 
-    // Requested Tier (cannot request 'free' - downgrades not supported)
+    // Request Type (upgrade or downgrade)
+    {
+      name: 'requestType',
+      type: 'select',
+      options: [
+        { label: 'Upgrade', value: 'upgrade' },
+        { label: 'Downgrade', value: 'downgrade' },
+      ],
+      defaultValue: 'upgrade',
+      required: true,
+      index: true,
+      admin: {
+        description: 'Type of tier change request (upgrade or downgrade)',
+      },
+    },
+
+    // Requested Tier (supports both upgrades and downgrades)
     {
       name: 'requestedTier',
       type: 'select',
       options: [
+        { label: 'Free', value: 'free' },
         { label: 'Tier 1 - Enhanced Profile', value: 'tier1' },
         { label: 'Tier 2 - Full Product Management', value: 'tier2' },
         { label: 'Tier 3 - Premium Promoted Profile', value: 'tier3' },
       ],
       required: true,
       admin: {
-        description: 'Requested tier (must be higher than current tier)',
+        description: 'Requested tier (must be different from current tier based on request type)',
       },
     },
 
@@ -195,7 +212,7 @@ const TierUpgradeRequests: CollectionConfig = {
           }
         }
 
-        // 2. Validate requested tier > current tier
+        // 2. Auto-detect requestType and validate tier comparison
         if (data.requestedTier && data.currentTier) {
           const tierOrder: Record<string, number> = {
             free: 0,
@@ -204,8 +221,29 @@ const TierUpgradeRequests: CollectionConfig = {
             tier3: 3,
           };
 
-          if (tierOrder[data.requestedTier] <= tierOrder[data.currentTier]) {
-            throw new Error('Requested tier must be higher than current tier');
+          const requestedTierValue = tierOrder[data.requestedTier];
+          const currentTierValue = tierOrder[data.currentTier];
+
+          // Auto-detect requestType if not explicitly set
+          if (!data.requestType) {
+            if (requestedTierValue > currentTierValue) {
+              data.requestType = 'upgrade';
+            } else if (requestedTierValue < currentTierValue) {
+              data.requestType = 'downgrade';
+            } else {
+              throw new Error('Requested tier must be different from current tier');
+            }
+          }
+
+          // Validate based on requestType
+          if (data.requestType === 'upgrade') {
+            if (requestedTierValue <= currentTierValue) {
+              throw new Error('Requested tier must be higher than current tier for upgrades');
+            }
+          } else if (data.requestType === 'downgrade') {
+            if (requestedTierValue >= currentTierValue) {
+              throw new Error('Requested tier must be lower than current tier for downgrades');
+            }
           }
         }
 
@@ -214,22 +252,28 @@ const TierUpgradeRequests: CollectionConfig = {
           data.requestedAt = new Date().toISOString();
         }
 
-        // 4. Validate unique pending request per vendor
+        // 4. Validate unique pending request per vendor per request type
+        // A vendor can have ONE pending upgrade AND ONE pending downgrade at the same time
+        // But NOT two pending upgrades or two pending downgrades
         if (operation === 'create' && data.status === 'pending') {
           const vendorId = typeof data.vendor === 'object' ? data.vendor.id : data.vendor;
+          const requestType = data.requestType || 'upgrade';
+
           const existingPending = await req.payload.find({
             collection: 'tier_upgrade_requests',
             where: {
               and: [
                 { vendor: { equals: vendorId } },
                 { status: { equals: 'pending' } },
+                { requestType: { equals: requestType } },
               ],
             },
             limit: 1,
           });
 
           if (existingPending.docs.length > 0) {
-            throw new Error('Vendor already has a pending tier upgrade request');
+            const requestTypeName = requestType === 'upgrade' ? 'upgrade' : 'downgrade';
+            throw new Error(`Vendor already has a pending tier ${requestTypeName} request`);
           }
         }
 

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tier Change Request Update</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f4f4f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f4f4f5;">
+    <tr>
+      <td style="padding: 40px 20px;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden;">
+          <!-- Header -->
+          <tr>
+            <td style="background-color: #1a56db; padding: 30px; text-align: center;">
+              <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600;">Paul Thames</h1>
+              <p style="color: #bfdbfe; margin: 8px 0 0 0; font-size: 14px;">Superyacht Technology</p>
+            </td>
+          </tr>
+          <!-- Content -->
+          <tr>
+            <td style="padding: 40px 30px;">
+              <h2 style="color: #111827; margin: 0 0 16px 0; font-size: 20px; font-weight: 600;">Update on Your Tier Change Request</h2>
+              <p style="color: #4b5563; margin: 0 0 24px 0; font-size: 16px; line-height: 1.6;">Dear {{COMPANY_NAME}},</p>
+
+              <p style="color: #4b5563; margin: 0 0 24px 0; font-size: 16px; line-height: 1.6;">Thank you for submitting your tier change request to {{REQUESTED_TIER}}. After careful review, we are unable to approve your request at this time.</p>
+
+              <!-- Status Notice -->
+              <div style="background-color: #dbeafe; border-left: 4px solid #3b82f6; padding: 16px; border-radius: 4px; margin: 24px 0;">
+                <p style="color: #1e40af; margin: 0; font-size: 14px; font-weight: 500;">Your current tier remains unchanged at <strong>{{CURRENT_TIER}}</strong>.</p>
+              </div>
+
+              <!-- Rejection Reason Card -->
+              <div style="background-color: #fef2f2; border-left: 4px solid #ef4444; padding: 16px; border-radius: 4px; margin: 24px 0;">
+                <p style="color: #7f1d1d; margin: 0 0 8px 0; font-size: 12px; font-weight: 600; text-transform: uppercase;">Reason</p>
+                <p style="color: #7f1d1d; margin: 0; font-size: 14px; line-height: 1.6;">{{REJECTION_REASON}}</p>
+              </div>
+
+              <!-- Information Box -->
+              <div style="background-color: #f9fafb; border-radius: 6px; padding: 20px; margin: 24px 0;">
+                <h3 style="color: #111827; margin: 0 0 12px 0; font-size: 16px; font-weight: 600;">What Happens Next?</h3>
+                <p style="color: #4b5563; margin: 0 0 12px 0; font-size: 14px; line-height: 1.6;">Your account will continue at your current tier level with no interruption to your service. All your features and data remain fully accessible.</p>
+                <p style="color: #4b5563; margin: 0; font-size: 14px; line-height: 1.6;">If you still wish to change tiers, please address the feedback provided above and you may submit a new request in the future.</p>
+              </div>
+
+              <!-- Contact Support -->
+              <p style="color: #4b5563; margin: 24px 0 0 0; font-size: 16px; line-height: 1.6;">If you have questions about this decision or need clarification, our support team is here to help:</p>
+
+              <div style="text-align: center; margin: 32px 0;">
+                <a href="mailto:{{SUPPORT_EMAIL}}" style="display: inline-block; background-color: #1a56db; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">Contact Support</a>
+              </div>
+
+              <p style="color: #6b7280; margin: 24px 0 0 0; font-size: 14px; line-height: 1.6;">We appreciate your understanding and remain committed to supporting your success on the platform.</p>
+            </td>
+          </tr>
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #f9fafb; padding: 24px 30px; border-top: 1px solid #e5e7eb;">
+              <p style="color: #6b7280; margin: 0; font-size: 12px; text-align: center;">
+                © {{CURRENT_YEAR}} Paul Thames Superyacht Technology. All rights reserved.
+              </p>
+              <p style="color: #9ca3af; margin: 8px 0 0 0; font-size: 11px; text-align: center;">
+                This is an automated message. Please do not reply directly to this email.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

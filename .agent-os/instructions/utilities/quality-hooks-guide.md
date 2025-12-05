@@ -943,7 +943,7 @@ A: Yes, test files are validated for syntax, formatting, and linting. They are e
 - **Configuration File**: `/home/edwin/.agent-os/hooks/config.yml` - Full configuration
 - **HookRunner Source**: `/home/edwin/.agent-os/hooks/runner.js` - Core implementation
 - **Validators**: `/home/edwin/.agent-os/hooks/validators/` - Individual validator implementations
-- **Execute Tasks**: `/home/edwin/.agent-os/instructions/core/execute-tasks.md` - Workflow integration
+- **Execute Tasks**: `/home/edwin/.agent-os/instructions/core/execute-tasks-unified.md` - Workflow integration
 
 ## Version History
 

@@ -14,12 +14,64 @@ description: "Test design, strategy, and implementation phase"
 phase: test_design_and_implementation
 context_window: 16384
 specialization: [test-design, coverage, tdd, test-frameworks]
-version: 2.1
+version: 2.2
 encoding: UTF-8
 requires: [test-context-gatherer]
 ---
 
 # Test Architect Agent
+
+## MANDATORY SKILL INVOCATION (Step 0)
+
+**BEFORE any other work, you MUST invoke the testing standards skill:**
+
+```
+Skill(skill="agent-os-testing-standards")
+```
+
+**This is NOT optional. Do NOT proceed without invoking this skill first.**
+
+After invoking, READ the following references:
+- `references/canonical-values.md` - Timeouts, file locations, patterns
+- `references/validation-checklist.md` - If doing alignment validation
+
+**Confirm invocation by stating:**
+"I have invoked Skill(skill='agent-os-testing-standards') and read the canonical values."
+
+---
+
+## MANDATORY PREREQUISITES
+
+**Before reading ANY other section, you MUST:**
+
+1. **INVOKE SKILL** `Skill(skill="agent-os-testing-standards")` (see Step 0 above)
+2. **READ** `references/canonical-values.md` from the skill (canonical reference for all testing values)
+   - **NOTE**: The skill `Skill(skill="agent-os-testing-standards")` provides this content.
+   - You MUST invoke the skill explicitly - do not assume you have access to this information.
+3. **VERIFY** test-context-gatherer has completed (context file exists)
+4. **CHECK** config.yml for feature toggles that affect your work
+
+**Canonical Reference**: `references/canonical-values.md` (from skill) contains:
+- Section 1: Timeout configuration (per-test and suite)
+- Section 2: File location standards
+- Section 3: Framework directory isolation (CRITICAL)
+- Section 4: Pattern lookup hierarchy
+- Section 5: Pre-Creation Checklist (MANDATORY)
+- Section 6: Post-Creation Requirements (patterns-used.json)
+- Section 7: Test sprawl prevention rules
+
+**Config Check**:
+```yaml
+# Read from config.yml before proceeding:
+IF test_code_alignment.pattern_documentation.required = true:
+  patterns-used.json is MANDATORY after test creation
+  Cannot complete RED phase without it
+
+IF test_code_alignment.pattern_documentation.required = false:
+  patterns-used.json is optional (but recommended)
+```
+
+---
 
 ## CRITICAL PREREQUISITE: Test Context Research Gate
 

@@ -2521,10 +2521,9 @@ Use the file-creator subagent to create the file: {AGENT_OS_ROOT}/.agent-os/spec
     - security requirements with authentication, authorization, and data protection
     - quality validation requirements with specific validation criteria
   </performance_and_security>
-  <technical_requirements_legacy>
-    - maintain existing technical requirements section for backward compatibility
+  <technical_requirements>
     - external dependencies (conditional) for new libraries/packages
-  </technical_requirements_legacy>
+  </technical_requirements>
 </enhanced_spec_sections>
 
 <comprehensive_template>
@@ -3290,7 +3289,7 @@ Use the file-creator subagent to create the file: {AGENT_OS_ROOT}/.agent-os/spec
     - Performance Criteria section
     - Security Requirements section
     - Quality Validation Requirements section
-    - Technical Requirements section (for backward compatibility)
+    - Technical Requirements section
 
   CONDITIONAL:
     IF spec_requires_new_external_dependencies:
@@ -3438,7 +3437,7 @@ Use the file-creator subagent to create the file: {AGENT_OS_ROOT}/.agent-os/spec
     [SPEC_NAME] → spec name from Step 7
     [SPEC_DATE] → date from Step 6
     [INTEGRATION_SYSTEMS] → identified system dependencies
-    [COMPATIBILITY_REQUIREMENTS] → backward/forward compatibility needs
+    [COMPATIBILITY_REQUIREMENTS] → compatibility needs
   </variable_substitution>
 </file_template>
 
@@ -3464,9 +3463,8 @@ Use the file-creator subagent to create the file: {AGENT_OS_ROOT}/.agent-os/spec
     - service level agreements and reliability
   </external_service_integration>
   <compatibility_requirements>
-    - backward compatibility constraints
     - version compatibility matrix
-    - deprecation and migration strategies
+    - migration strategies
   </compatibility_requirements>
 </integration_requirements_content>
 

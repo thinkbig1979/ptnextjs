@@ -208,7 +208,7 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
                 <VendorCertificationsSection vendor={vendor} />
                 <VendorCaseStudiesSection vendor={vendor} />
                 <VendorTeamSection vendor={vendor} />
-                <VendorMediaGallery mediaGallery={vendor.mediaGallery} vendorName={vendor.name} />
+                <VendorMediaGallery mediaGallery={vendor.mediaGallery} vendorName={vendor.name} vendorTier={vendor.tier} />
               </TabsContent>
 
               {/* Locations Tab */}

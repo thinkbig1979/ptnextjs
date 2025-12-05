@@ -1,7 +1,70 @@
 # Test Infrastructure Standards
 
-**Version**: 1.0.0
+**Version**: 1.1.0
 **Purpose**: Universal standards for reliable, repeatable test infrastructure across all Agent OS projects.
+
+---
+
+## CANONICAL REFERENCE
+
+**For canonical testing values, see: `@standards/testing-standards.md`**
+
+This document provides implementation details and scripts. For authoritative values (timeouts, file locations, pattern hierarchies), always reference the canonical testing-standards.md file.
+
+---
+
+## CRITICAL: Framework Directory Isolation
+
+**This section prevents the "Vitest cannot be imported" error and MUST be verified BEFORE any test work.**
+
+### The Problem
+
+When Playwright's `testDir` includes directories containing Vitest unit tests, Playwright attempts to load those files and fails:
+```
+Error: Vitest cannot be imported in a CommonJS module using require()
+```
+
+### The Solution
+
+**Each test framework MUST have exclusive ownership of its test directory.**
+
+### Mandatory Configuration
+
+**Playwright** (`playwright.config.ts`):
+```typescript
+export default defineConfig({
+  // CRITICAL: Must be './tests/e2e', NEVER './tests'
+  testDir: './tests/e2e',
+  testMatch: '**/*.spec.ts',
+});
+```
+
+**Vitest** (`vitest.config.ts`):
+```typescript
+export default defineConfig({
+  test: {
+    include: [
+      'src/**/*.test.{ts,tsx}',
+      'tests/unit/**/*.test.{ts,tsx}'
+    ],
+    // CRITICAL: Exclude E2E and integration directories
+    exclude: [
+      'tests/e2e/**',
+      'tests/integration/**',
+      'node_modules/**'
+    ],
+  },
+});
+```
+
+### Validation Checklist (MUST verify before test work)
+
+- [ ] Playwright `testDir` is `./tests/e2e` (NOT `./tests`)
+- [ ] Vitest `include` excludes E2E directories
+- [ ] No Vitest imports (`vi`, `vitest`) in `*.spec.ts` files
+- [ ] No Playwright imports (`@playwright/test`) in `*.test.ts` files
+
+**Full details**: See `@standards/testing-standards.md` Section 3.
 
 ---
 
@@ -169,6 +232,8 @@ main();
 
 ## 3. Timeout Configuration
 
+**CANONICAL VALUES**: See `@standards/testing-standards.md` Section 1 for authoritative timeout values.
+
 ### 3.1 Required Timeouts by Test Type
 
 | Test Type | Per-Test Timeout | Suite Timeout |
@@ -203,48 +268,11 @@ export default defineConfig({
 });
 ```
 
-### 3.3 CRITICAL: Framework Test Directory Isolation
+### 3.3 Framework Test Directory Isolation
 
-**Problem**: When Playwright's `testDir` includes unit test files, it tries to import Vitest and fails:
-```
-Error: Vitest cannot be imported in a CommonJS module using require()
-```
+**NOTE**: This critical topic is now covered at the TOP of this document and in `@standards/testing-standards.md` Section 3.
 
-**Root Cause**: Playwright scans `testDir` for all `.spec.ts` or `.test.ts` files. If unit tests with Vitest imports exist in that directory tree, Playwright attempts to load them.
-
-**MANDATORY Configuration Rules**:
-
-| Framework | testDir Setting | Rationale |
-|-----------|-----------------|-----------|
-| **Playwright** | `testDir: './tests/e2e'` | Only scan E2E tests |
-| **Vitest** | `include: ['tests/unit/**']` | Only scan unit tests |
-| **Jest** | `testPathIgnorePatterns: ['e2e']` | Exclude E2E tests |
-
-**Correct Vitest Configuration**:
-```typescript
-// vitest.config.ts
-export default defineConfig({
-  test: {
-    include: ['src/**/*.test.{ts,tsx}', 'tests/unit/**/*.test.{ts,tsx}'],
-    exclude: ['tests/e2e/**', 'tests/integration/**'],
-  },
-});
-```
-
-**Correct Playwright Configuration**:
-```typescript
-// playwright.config.ts
-export default defineConfig({
-  testDir: './tests/e2e',  // NEVER use './tests'
-  testMatch: '**/*.spec.ts',
-});
-```
-
-**Validation Checklist**:
-- [ ] Playwright `testDir` points to `tests/e2e/` (not `tests/`)
-- [ ] Vitest `include` excludes E2E directories
-- [ ] No Vitest imports in files matching `*.spec.ts`
-- [ ] No Playwright imports in files matching `*.test.ts`
+See the "CRITICAL: Framework Directory Isolation" section above for mandatory configuration.
 
 **Jest (jest.config.js)**:
 ```javascript
@@ -485,7 +513,24 @@ STANDARDS REFERENCE:
 
 ---
 
+## Related Files
+
+| File | Relationship |
+|------|--------------|
+| `@standards/testing-standards.md` | Canonical values (REFERENCE THIS FIRST) |
+| `@instructions/agents/test-architect.md` | Test creation workflow |
+| `@instructions/agents/test-runner.md` | Test execution workflow |
+| `@instructions/core/execute-task-orchestrated.md` | Orchestration flow |
+
+---
+
 ## Change Log
+
+### v1.1.0 (v4.2.0)
+- Added canonical reference banner
+- Moved Framework Directory Isolation to top (CRITICAL section)
+- Added cross-references to testing-standards.md
+- Removed duplicate content (now references canonical source)
 
 ### v1.0.0 (2024-11-23)
 - Initial release

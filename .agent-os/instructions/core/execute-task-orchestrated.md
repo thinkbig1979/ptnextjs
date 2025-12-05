@@ -355,6 +355,32 @@ Use the task-orchestrator subagent to analyze the task, decompose for parallel e
       - ✓ Error handling in place for failures
   </tdd_state_initialization>
 
+  <prerequisite_gates>
+    ### Step 1.6: Pre-Execution Verification Gates
+
+    BEFORE delegating ANY work to subagents, verify:
+
+    1. CONFIG CHECK:
+       - IF config.yml → skills_integration.enabled = true:
+           Skills are available, Step 2.0 will invoke them
+       - IF config.yml → tdd_enforcement.enabled = true:
+           TDD state must be initialized (verify file exists)
+       - IF config.yml → test_context_gathering.gate_enforcement.enabled = true:
+           Step 2.0 is MANDATORY, cannot skip
+
+    2. FRAMEWORK ISOLATION CHECK (for projects with E2E tests):
+       - READ playwright.config.ts (if exists)
+       - VERIFY testDir is "./tests/e2e" (NOT "./tests")
+       - IF VIOLATION: Block and report before ANY test work
+       - REFERENCE: @standards/testing-standards.md Section 3
+
+    3. TDD STATE VERIFICATION (if enabled):
+       - VERIFY .agent-os/tdd-state/[TASK_ID].json exists
+       - IF MISSING: Initialize now (don't proceed without it)
+
+    GATE STATUS: [ ] All prerequisites verified
+  </prerequisite_gates>
+
   <task_decomposition>
     - Read task overview from master tasks.md (lightweight format)
     - Load detailed requirements from tasks/task-[TASK_ID].md
@@ -692,6 +718,20 @@ Skill(skill="agent-os-test-research")
 ```
 These are REQUIRED tool invocations, not optional guidance. Do not proceed to test-architect without invoking these skills first.
 
+<skill_invocation_ownership>
+  ### Skill Invocation Responsibility
+
+  OWNERSHIP: test-context-gatherer agent OWNS skill invocations
+
+  The orchestrator does NOT invoke skills directly. Instead:
+  1. Orchestrator delegates to test-context-gatherer
+  2. test-context-gatherer invokes Skill(skill="agent-os-patterns")
+  3. test-context-gatherer invokes Skill(skill="agent-os-test-research")
+  4. test-context-gatherer outputs context file
+
+  VERIFICATION: Orchestrator checks context file exists (not skill invocation)
+</skill_invocation_ownership>
+
 <test_context_research>
   **Phase 1: Detect Testing Libraries**
 
@@ -774,7 +814,7 @@ These are REQUIRED tool invocations, not optional guidance. Do not proceed to te
 
   STEP 2: INVOKE SKILLS FOR GENERIC PATTERNS (MANDATORY)
 
-  EXECUTE NOW - These are required tool calls:
+  The test-context-gatherer agent invokes these skills:
 
     Skill(skill="agent-os-patterns")
     Skill(skill="agent-os-test-research")
@@ -882,30 +922,158 @@ These are REQUIRED tool invocations, not optional guidance. Do not proceed to te
   ```
 </test_context_research>
 
+<test_context_delegation>
+  **Phase 6: Delegate to test-context-gatherer Agent**
+
+  DELEGATE test context gathering to specialized agent:
+
+  ```
+  ACTION: Use general-purpose subagent (test-context-gatherer role)
+  REQUEST: "Gather testing library documentation and patterns for task:
+
+            ═══════════════════════════════════════════════════════════════════
+            MANDATORY INSTRUCTION LOADING - DO NOT SKIP
+            ═══════════════════════════════════════════════════════════════════
+
+            BEFORE performing ANY work, you MUST:
+
+            1. READ the instruction file for your role:
+               @.agent-os/instructions/agents/test-context-gatherer.md
+
+            2. READ the testing standards:
+               @.agent-os/standards/testing-standards.md Section 4 (Pattern Lookup Hierarchy)
+
+            3. CONFIRM understanding by stating:
+               'I have read test-context-gatherer.md and testing-standards.md and will follow:
+                - Pattern lookup hierarchy (project patterns FIRST, then skills)
+                - Mandatory skill invocations (agent-os-test-research, agent-os-patterns)
+                - Documentation priority order (skills → MCPs → web search)
+                - Output requirements (context JSON with patterns extracted)'
+
+            4. PROCEED with context gathering only AFTER confirmation
+
+            ═══════════════════════════════════════════════════════════════════
+            MANDATORY SKILL INVOCATIONS (You own these)
+            ═══════════════════════════════════════════════════════════════════
+
+            1. CHECK .agent-os/patterns/testing/ for project-specific patterns FIRST
+            2. INVOKE Skill(skill='agent-os-testing-standards')  # Canonical testing values
+            3. INVOKE Skill(skill='agent-os-test-research')      # Library detection
+            4. INVOKE Skill(skill='agent-os-patterns')           # Code patterns
+            5. ONLY THEN fall back to MCPs/WebSearch for gaps
+
+            These are explicit Skill() tool calls you must make - not implicit knowledge.
+            The agent-os-testing-standards skill provides canonical values for timeouts,
+            file locations, and the pre-creation checklist.
+
+            ═══════════════════════════════════════════════════════════════════
+            CONTEXT GATHERING TASKS
+            ═══════════════════════════════════════════════════════════════════
+
+            Task Context:
+            - Task ID: [TASK_ID]
+            - Project Path: [PROJECT_PATH]
+            - Testing Libraries: [TO BE DETECTED]
+
+            Your Responsibilities:
+            1. Detect all testing libraries (test runner, E2E, mocking, etc.)
+            2. Gather documentation for detected libraries
+            3. Extract patterns: mocking, assertions, lifecycle, async handling
+            4. Document anti-patterns to avoid
+            5. Save context to .agent-os/test-context/[TASK_ID].json
+
+            Follow the process documented in your instruction file:
+            - Phase 1: Detect Testing Libraries
+            - Phase 2: Check Available Documentation Sources
+            - Phase 3: Fetch Documentation (with pattern lookup)
+            - Phase 4: Extract Patterns and Anti-Patterns
+            - Phase 5: Store Context
+
+            ═══════════════════════════════════════════════════════════════════
+            MANDATORY OUTPUT
+            ═══════════════════════════════════════════════════════════════════
+
+            1. CREATE .agent-os/test-context/[TASK_ID].json
+            2. INCLUDE sections: test_runner, e2e_framework, patterns_extracted, anti_patterns
+            3. DOCUMENT sources used (skills, MCPs, web search)
+
+            ═══════════════════════════════════════════════════════════════════
+            VERIFICATION (Orchestrator will check)
+            ═══════════════════════════════════════════════════════════════════
+
+            After completion, orchestrator will verify:
+            - [ ] Instruction confirmation statement present
+            - [ ] Skill invocations performed (check for Skill() calls)
+            - [ ] Context file created and contains required sections
+            - [ ] Project-specific patterns were checked first"
+
+  COORDINATE: Orchestrator tracks context gathering progress
+  MONITOR: Verify skill invocations occur
+  VERIFY: Context file created with required content
+  ```
+</test_context_delegation>
+
 <test_context_verification>
   **Verification Gate**
 
-  BEFORE proceeding to Step 2.1 (test-architect), verify:
+  AFTER test-context-gatherer completes, orchestrator MUST verify:
 
   ```yaml
   test_context_gate:
-    required:
-      - context_file_exists: ".agent-os/test-context/[TASK_ID].json"
-      - test_runner_documented: true
-      - patterns_extracted: true
+    instruction_loading:
+      - [ ] Confirmation statement present in response
+      - [ ] Agent stated they read test-context-gatherer.md
+      - [ ] Agent stated key constraints they will follow
+
+    skill_invocation:
+      - [ ] Skill(skill="agent-os-testing-standards") was called
+      - [ ] Skill(skill="agent-os-test-research") was called
+      - [ ] Skill(skill="agent-os-patterns") was called
+      - [ ] Project patterns checked first (if they exist)
+
+    output_files:
+      - [ ] .agent-os/test-context/[TASK_ID].json EXISTS
+      - [ ] File contains: test_runner, e2e_framework, patterns_extracted
+      - [ ] Anti-patterns documented
 
     blocking_if_missing:
-      - "Test runner documentation not fetched"
-      - "No patterns available for detected frameworks"
+      - "Instruction confirmation missing - agent may not follow standards"
+      - "Skills not invoked - missing critical pattern context"
+      - "Context file missing or incomplete"
 
     gate_status: "PASSED"  # Must be PASSED to proceed
   ```
 
-  **Output Summary**:
+  **IF ANY VERIFICATION FAILS**:
+  ```
+  ❌ BLOCK: Context gathering incomplete or non-compliant
+
+  Missing Elements:
+  - [List what failed verification]
+
+  Required Action:
+  - Re-delegate to test-context-gatherer with explicit requirements
+  - Emphasize mandatory instruction loading
+  - Confirm skill invocations are tool calls, not just mentions
+
+  DO NOT PROCEED to test-architect until verification passes.
+  ```
+
+  **Output Summary** (when verification passes):
   ```
   ═══════════════════════════════════════════════════════════════════
   TEST CONTEXT GATHERING - COMPLETE
   ═══════════════════════════════════════════════════════════════════
+
+  ✅ Instruction Loading Verified:
+     - test-context-gatherer.md read and confirmed
+     - Key constraints stated
+
+  ✅ Skill Invocations Verified:
+     - agent-os-testing-standards invoked ✓
+     - agent-os-test-research invoked ✓
+     - agent-os-patterns invoked ✓
+     - Project patterns checked first ✓
 
   ✅ Libraries Detected:
      - vitest@1.6.0 (test runner)
@@ -913,8 +1081,8 @@ These are REQUIRED tool invocations, not optional guidance. Do not proceed to te
      - convex-test@0.1.0 (backend)
 
   ✅ Documentation Fetched:
-     - Vitest: via DocFork MCP
-     - Playwright: via WebSearch + WebFetch
+     - Vitest: via Skills (agent-os-patterns)
+     - Playwright: via Skills (agent-os-patterns)
      - Convex: via WebFetch (docs.convex.dev)
 
   ✅ Patterns Extracted: 12 patterns, 5 anti-patterns
@@ -925,6 +1093,26 @@ These are REQUIRED tool invocations, not optional guidance. Do not proceed to te
   ═══════════════════════════════════════════════════════════════════
   ```
 </test_context_verification>
+
+<step_2_0_completion_gate>
+  ### Step 2.0 Completion Gate (BLOCKING)
+
+  BEFORE proceeding to Step 2.1 (test-architect), verify:
+
+  REQUIRED FILES:
+  - [ ] .agent-os/test-context/[TASK_ID].json EXISTS
+  - [ ] File contains: test_runner, e2e_framework (if applicable), patterns_extracted
+
+  IF ANY FILE MISSING:
+    ❌ BLOCK: Cannot delegate to test-architect
+    ACTION: Re-execute test-context-gatherer
+    DO NOT PROCEED until gate passes
+
+  IF ALL FILES EXIST:
+    ✅ PROCEED to Step 2.1
+
+  GATE STATUS: __________ (BLOCKED/PASSED)
+</step_2_0_completion_gate>
 
 </step_2_0_test_context_gathering>
 
@@ -975,6 +1163,51 @@ These are REQUIRED tool invocations, not optional guidance. Do not proceed to te
   ACTION: Use general-purpose subagent (test-architect role)
   REQUEST: "Create comprehensive failing tests for task requirements (TDD RED phase):
 
+            ═══════════════════════════════════════════════════════════════════
+            MANDATORY INSTRUCTION LOADING - DO NOT SKIP
+            ═══════════════════════════════════════════════════════════════════
+
+            Before ANY work, you MUST:
+
+            1. READ @.agent-os/instructions/agents/test-architect.md
+            2. READ @.agent-os/standards/testing-standards.md
+            3. CONFIRM by stating:
+               'I have read test-architect.md and testing-standards.md and will follow:
+                - Pre-Creation Checklist (all 7 steps before writing tests)
+                - Test type declaration and file location standards
+                - CI-safe patterns (no watch mode, proper timeouts)
+                - Pattern documentation requirements (patterns-used.json)'
+
+            4. PROCEED with test creation only AFTER confirmation
+
+            ═══════════════════════════════════════════════════════════════════
+            MANDATORY SKILL INVOCATION (First action)
+            ═══════════════════════════════════════════════════════════════════
+
+            INVOKE Skill(skill='agent-os-testing-standards')
+
+            This provides canonical values for timeouts, file locations, and the
+            pre-creation checklist. You MUST invoke this skill before writing any tests.
+
+            ═══════════════════════════════════════════════════════════════════
+            MANDATORY PRE-CREATION CHECKLIST
+            ═══════════════════════════════════════════════════════════════════
+
+            Before writing ANY test file, you MUST:
+
+            1. Complete the Pre-Creation Checklist (all 7 steps from testing-standards.md Section 5)
+            2. OUTPUT the checklist confirmation template showing:
+               - Test type: [unit|integration|e2e]
+               - File location: [path - must match test type standards]
+               - CI-safe: [yes - no watch mode, has timeouts]
+               - Server dependencies: [list if any]
+               - Framework: [detected framework and syntax to use]
+            3. ONLY THEN proceed to write tests
+
+            ═══════════════════════════════════════════════════════════════════
+            TDD & TEST CONTEXT
+            ═══════════════════════════════════════════════════════════════════
+
             TDD Context:
             - Current Phase: INIT
             - Target Phase: RED (tests must fail initially)
@@ -997,7 +1230,10 @@ These are REQUIRED tool invocations, not optional guidance. Do not proceed to te
             Deliverable Manifest - Test Files:
             [LIST_OF_TEST_FILES_TO_CREATE from deliverable planning]
 
-            Test Creation Guidelines:
+            ═══════════════════════════════════════════════════════════════════
+            TEST CREATION GUIDELINES
+            ═══════════════════════════════════════════════════════════════════
+
             1. Create comprehensive tests covering ALL acceptance criteria
             2. Tests MUST fail initially (implementation doesn't exist yet)
             3. Use descriptive test names indicating expected behavior
@@ -1021,6 +1257,37 @@ These are REQUIRED tool invocations, not optional guidance. Do not proceed to te
 
             Anti-Patterns to Avoid:
             [ANTI_PATTERNS_FROM_CONTEXT_FILE]
+
+            ═══════════════════════════════════════════════════════════════════
+            MANDATORY POST-CREATION
+            ═══════════════════════════════════════════════════════════════════
+
+            After writing tests, you MUST:
+
+            1. Create .agent-os/test-context/[TASK_ID]-patterns-used.json
+            2. Document ALL patterns you used:
+               - mocking: { approach, modules_mocked, clearing_strategy }
+               - assertions: { library, patterns_used }
+               - async_handling: { approach, waiting_patterns }
+               - e2e_patterns: { locators, waiting, navigation }
+            3. Include critical_notes for implementation phase:
+               - Required mocking patterns implementation must use
+               - Data structures tests expect
+               - Server/environment requirements
+               - Any critical integration notes
+
+            This file is MANDATORY for test/code alignment (Step 2.1a).
+
+            ═══════════════════════════════════════════════════════════════════
+            VERIFICATION (Orchestrator will check)
+            ═══════════════════════════════════════════════════════════════════
+
+            After completion, orchestrator will verify:
+            - [ ] Instruction confirmation statement present
+            - [ ] Pre-Creation Checklist output present
+            - [ ] All test files created
+            - [ ] patterns-used.json file created
+            - [ ] Tests execute and fail for RIGHT reason
 
             Verification:
             After test creation, I will execute tests to confirm RED phase.
@@ -1166,6 +1433,212 @@ These are REQUIRED tool invocations, not optional guidance. Do not proceed to te
   - Tests fail for wrong reasons
   - Setup or configuration errors
 </red_phase_validation_checklist>
+
+<failure_classification>
+  ### RED Phase Failure Classification
+
+  **BLOCKING FAILURES** (cannot proceed):
+  
+  - **NO_TESTS_FOUND**: No tests created, nothing to implement against
+    
+    **ACTION**: Block, request test-architect to create tests
+    
+    **REASON**: TDD requires tests first - cannot implement without test specifications
+    
+    **MESSAGE**:
+    ```
+    ❌ BLOCKING: No Tests Found
+    
+    Cannot proceed to implementation without tests.
+    TDD workflow requires tests to be created first.
+    
+    Required Action:
+    - Request test-architect to create comprehensive tests
+    - Tests must cover all acceptance criteria
+    - Tests should fail due to missing implementation
+    
+    Status: BLOCKED at RED phase
+    Next: Create tests, then retry RED phase validation
+    ```
+
+  **FIXABLE FAILURES** (can delegate fix):
+
+  - **SYNTAX_ERRORS**: Tests have syntax issues
+    
+    **ACTION**: Delegate fix to test-architect, then re-validate
+    
+    **MAX_RETRIES**: 2
+    
+    **REASON**: Syntax errors prevent test execution - must be fixed before proceeding
+    
+    **MESSAGE**:
+    ```
+    ⚠️ FIXABLE: Syntax Errors in Tests
+    
+    Tests have syntax errors that prevent execution.
+    These can be fixed by test-architect.
+    
+    Error Details:
+    [Specific syntax errors from test output]
+    
+    Required Action:
+    - Delegate to test-architect to fix syntax errors
+    - Re-run RED phase validation after fixes
+    
+    Retry Count: [X]/2
+    Status: Attempting fix (will block if max retries exceeded)
+    ```
+
+  - **TESTS_PASSED_PREMATURELY**: Tests pass before implementation
+    
+    **ACTION**: Delegate investigation to test-architect
+    
+    **OUTCOMES**: 
+      - Revise tests to properly fail when implementation missing
+      - OR: Confirm this is a refactor task (implementation exists)
+    
+    **MESSAGE**:
+    ```
+    ⚠️ FIXABLE: Tests Passed Prematurely
+    
+    All tests passed before implementation exists.
+    This indicates tests may not be validating real behavior.
+    
+    Possible Causes:
+    - Tests check trivial conditions
+    - Tests don't import non-existent implementation
+    - Implementation already exists (refactor task?)
+    
+    Required Action:
+    - Delegate investigation to test-architect
+    - OPTION 1: Revise tests to fail when implementation missing
+    - OPTION 2: Confirm this is a refactor task
+    
+    If refactor task:
+      - Adjust TDD enforcement level to MINIMAL
+      - Skip RED phase requirement
+      - Proceed to implementation improvements
+    
+    Retry Count: [X]/2
+    Status: Investigating cause
+    ```
+
+  - **INVALID_FAILURES**: Tests fail for wrong reasons (setup issues)
+    
+    **ACTION**: Delegate fix to test-architect, then re-validate
+    
+    **MAX_RETRIES**: 2
+    
+    **REASON**: Tests must fail due to missing implementation, not setup problems
+    
+    **MESSAGE**:
+    ```
+    ⚠️ FIXABLE: Invalid Test Failures
+    
+    Tests are failing, but for the wrong reasons.
+    Expected: Failures due to missing implementation
+    Actual: Failures due to setup/configuration issues
+    
+    Error Details:
+    [Specific error patterns from test output]
+    
+    Required Action:
+    - Delegate to test-architect to fix test setup
+    - Ensure tests can execute properly
+    - Re-run RED phase validation after fixes
+    
+    Retry Count: [X]/2
+    Status: Attempting fix (will block if max retries exceeded)
+    ```
+
+  **WORKFLOW**:
+  ```
+  1. Execute tests
+  2. Classify result (VALID_RED_PHASE | BLOCKING | FIXABLE)
+  3. IF BLOCKING:
+       - STOP with clear error message
+       - Do NOT proceed to implementation
+       - Wait for manual intervention or test creation
+  4. IF FIXABLE:
+       - Delegate fix to test-architect
+       - Track retry count
+       - Loop back to step 1 after fix
+       - IF retry count > MAX_RETRIES:
+           - Escalate to user for decision
+           - Provide options: continue with warnings | manual intervention | skip TDD
+  5. IF MAX_RETRIES exceeded:
+       - ESCALATE to user with detailed report
+       - Options:
+         * Manual intervention to fix issues
+         * Adjust TDD enforcement level
+         * Skip TDD for this task (not recommended)
+         * Abandon task until issues resolved
+  6. IF VALID_RED_PHASE:
+       - Proceed to Step 2.2 (GREEN phase implementation)
+  ```
+
+  **RETRY TRACKING**:
+  ```yaml
+  retry_state:
+    task_id: [TASK_ID]
+    failure_type: [SYNTAX_ERRORS|TESTS_PASSED_PREMATURELY|INVALID_FAILURES]
+    retry_count: [current count]
+    max_retries: 2
+    attempts:
+      - attempt: 1
+        timestamp: [ISO timestamp]
+        failure_reason: [specific reason]
+        fix_action: [what was done]
+        outcome: [still failed | fixed]
+      - attempt: 2
+        timestamp: [ISO timestamp]
+        failure_reason: [specific reason]
+        fix_action: [what was done]
+        outcome: [still failed | fixed]
+  ```
+
+  **ESCALATION MESSAGE** (when max retries exceeded):
+  ```
+  ⚠️ ESCALATION: Unable to Achieve Valid RED Phase
+  
+  After [MAX_RETRIES] attempts, tests still cannot reach valid RED phase.
+  
+  Failure Type: [SYNTAX_ERRORS|TESTS_PASSED_PREMATURELY|INVALID_FAILURES]
+  
+  Attempt History:
+  [List of all attempts with timestamps, actions, and outcomes]
+  
+  Current Status:
+  - Tests created: [YES/NO]
+  - Tests execute: [YES/NO]
+  - Tests fail: [YES/NO]
+  - Failures valid: [YES/NO]
+  
+  Options for Resolution:
+  
+  1. MANUAL INTERVENTION (Recommended)
+     - Review test files manually
+     - Fix underlying issues
+     - Resume RED phase validation
+  
+  2. ADJUST TDD ENFORCEMENT
+     - Change enforcement level to MINIMAL
+     - Allow proceeding with warnings
+     - Track technical debt
+  
+  3. SKIP TDD FOR THIS TASK (Not Recommended)
+     - Implement without tests first
+     - Add tests after implementation
+     - Higher risk of bugs
+  
+  4. ABANDON TASK
+     - Mark task as blocked
+     - Resolve issues before resuming
+     - Investigate root cause
+  
+  Please choose an option to proceed.
+  ```
+</failure_classification>
 
 <state_transition_and_blocking>
   **Phase 4: TDD State Transition and Blocking Logic**
@@ -1453,6 +1926,36 @@ These are REQUIRED tool invocations, not optional guidance. Do not proceed to te
   - Capture all attempts in validation evidence
 </integration_with_orchestration>
 
+<step_2_1_exit_gate>
+  ### Step 2.1 Exit Gate (RED Phase Completion)
+
+  BEFORE proceeding to Step 2.2 (GREEN phase), verify:
+
+  REQUIRED FILES:
+  - [ ] All test files from deliverable manifest exist
+  - [ ] .agent-os/test-context/[TASK_ID]-patterns-used.json EXISTS
+  - [ ] patterns-used.json contains: mocking, assertions, async_handling
+
+  TEST EXECUTION RESULTS:
+  - [ ] Tests execute without syntax errors
+  - [ ] Tests FAIL (indicating missing implementation)
+  - [ ] Failures are for RIGHT reason (missing impl, not setup errors)
+
+  IF patterns-used.json MISSING:
+    ❌ BLOCK: Cannot proceed without pattern documentation
+    ACTION: Request test-architect to create pattern documentation
+    REFERENCE: @instructions/agents/test-architect.md → Post-Creation Pattern Documentation
+
+  IF tests pass prematurely:
+    ⚠️ WARNING: Tests pass before implementation - investigate
+    OPTIONS:
+      - Tests may not be validating real behavior
+      - Implementation may already exist (refactor task?)
+    ACTION: Request test-architect review
+
+  GATE STATUS: __________ (BLOCKED/PASSED)
+</step_2_1_exit_gate>
+
 </step_2_1_test_architecture_red_phase>
 
 <step_2_2_implementation_green_phase>
@@ -1606,6 +2109,50 @@ These are REQUIRED tool invocations, not optional guidance. Do not proceed to te
   ACTION: Use specialist subagents (frontend, backend, or implementation-specialist)
   REQUEST: "Implement minimal code to pass failing tests (TDD GREEN phase):
 
+            ═══════════════════════════════════════════════════════════════════
+            MANDATORY CONTEXT LOADING - DO NOT SKIP
+            ═══════════════════════════════════════════════════════════════════
+
+            Before writing ANY implementation code, you MUST:
+
+            1. READ @.agent-os/instructions/agents/implementation-specialist.md
+            2. READ .agent-os/test-context/[TASK_ID]-patterns-used.json
+            3. CONFIRM by stating:
+               'I have read patterns-used.json and understand:
+                - Mocking approach: [state the approach used in tests]
+                - Assertion patterns: [list key assertion patterns]
+                - Async handling: [state async patterns tests use]
+                - Server requirements: [list any server dependencies]
+                - Critical notes: [summarize implementation notes from file]'
+
+            4. PROCEED with implementation only AFTER confirmation
+
+            This confirmation is MANDATORY. You must demonstrate you understand
+            the test patterns before writing code that integrates with them.
+
+            ═══════════════════════════════════════════════════════════════════
+            ALIGNMENT REQUIREMENT
+            ═══════════════════════════════════════════════════════════════════
+
+            Your implementation MUST align with test patterns:
+
+            - Use mocking patterns that tests expect
+              (if tests mock axios, you MUST use axios, not fetch)
+            - Return data structures that match test assertions
+              (if tests expect array, return array, not object)
+            - Throw error types that tests catch
+              (if tests expect CustomError, throw CustomError)
+            - Use async patterns tests expect
+              (if tests expect promises, return promises, not callbacks)
+            - Include data-testid attributes for E2E locators
+              (if tests use data-testid='submit-btn', add that attribute)
+
+            Alignment is CRITICAL. Misalignment causes test failures and rework.
+
+            ═══════════════════════════════════════════════════════════════════
+            TDD CONTEXT
+            ═══════════════════════════════════════════════════════════════════
+
             TDD Context:
             - Current Phase: RED (tests are failing)
             - Target Phase: GREEN (make tests pass)
@@ -1616,7 +2163,7 @@ These are REQUIRED tool invocations, not optional guidance. Do not proceed to te
             **PATTERN CONTEXT (v3.3.0+ - MANDATORY)**:
             - Pattern File: .agent-os/test-context/[TASK_ID]-patterns-used.json
             - Alignment Checklist: @.agent-os/instructions/utilities/test-code-alignment-checklist.md
-            - READ pattern file BEFORE implementing
+            - READ pattern file BEFORE implementing (see above)
             - HONOR test patterns in your implementation
 
             RED Phase Evidence:
@@ -1624,7 +2171,10 @@ These are REQUIRED tool invocations, not optional guidance. Do not proceed to te
             - Failing Test Names: [LIST_OF_FAILING_TESTS]
             - Expected Errors: [ReferenceError|NameError|undefined function/class]
 
-            Implementation Guidelines:
+            ═══════════════════════════════════════════════════════════════════
+            IMPLEMENTATION GUIDELINES
+            ═══════════════════════════════════════════════════════════════════
+
             1. Implement MINIMAL code to make tests pass
             2. Focus on making tests green, not perfect code
             3. Avoid over-engineering or premature optimization
@@ -1652,7 +2202,17 @@ These are REQUIRED tool invocations, not optional guidance. Do not proceed to te
             - All previously failing tests now PASS
             - No new test failures introduced
             - Implementation is minimal but correct
-            - Code is clean and readable (but not over-engineered)"
+            - Code is clean and readable (but not over-engineered)
+
+            ═══════════════════════════════════════════════════════════════════
+            VERIFICATION (Orchestrator will check)
+            ═══════════════════════════════════════════════════════════════════
+
+            After completion, orchestrator will verify:
+            - [ ] Pattern confirmation statement present with SPECIFIC patterns stated
+            - [ ] Implementation aligns with patterns-used.json
+            - [ ] All tests pass (alignment validation in Step 2.2a)
+            - [ ] No test bypasses or hardcoded shortcuts"
 
   COORDINATE: task-orchestrator monitors implementation progress
   MONITOR: Track which tests transition from failing → passing
@@ -1722,19 +2282,7 @@ These are REQUIRED tool invocations, not optional guidance. Do not proceed to te
   # AGENT_OS_TEST_OUTPUT=./test-events.json  # Save events to file
   ```
 
-  **LEGACY: Basic test execution (no real-time monitoring)**:
-  ```bash
-  # Detect test framework and run tests
-  if [[ -f "package.json" ]]; then
-    npm test
-  elif [[ -f "pytest.ini" ]] || [[ -f "pyproject.toml" ]]; then
-    pytest
-  elif [[ -f "Gemfile" ]]; then
-    bundle exec rspec
-  fi
-  ```
-
-  **Real-Time Monitoring Benefits** (v3.3.0+):
+  **Real-Time Monitoring Benefits**:
   - Per-test progress visibility (see which test is running)
   - Hung test detection (alert/kill after configurable timeout)
   - Idle detection (no output = potential hang)
@@ -1755,69 +2303,232 @@ These are REQUIRED tool invocations, not optional guidance. Do not proceed to te
 
   BEFORE transitioning to GREEN phase complete:
 
-  1. **READ Alignment Checklist**:
-     ```
-     @.agent-os/instructions/utilities/test-code-alignment-checklist.md
-     ```
+  REFERENCE: @.agent-os/instructions/utilities/test-code-alignment-checklist.md
 
-  2. **Verify Pattern Integration**:
-     ```
-     CHECKLIST (from alignment guide):
+  **ALIGNMENT VALIDATION REFERENCE:**
+    Skill(skill='agent-os-testing-standards') → references/validation-checklist.md
+    
+  The validation checklist and bypass detection patterns are available in the skill.
+  Orchestrator can reference this skill for alignment validation criteria.
 
-     [ ] Test patterns were documented (file exists)
-     [ ] Implementation read pattern documentation
-     [ ] Mocking approach matches between test and code
-     [ ] Assertion patterns are compatible
-     [ ] No bypass logic in implementation
-     [ ] Coverage is from real code, not stubs
-     ```
+  **VALIDATION CHECKLIST:**
 
-  3. **Run Coverage Check**:
+  **A. PATTERN INTEGRATION CHECK:**
+     - [ ] Implementation uses mocking approach from patterns-used.json
+     - [ ] Return types match test assertion expectations
+     - [ ] Async handling matches test patterns (callbacks, promises, async/await)
+     - [ ] Error types match test catch expectations
+     - [ ] Data structures returned match test expectations
+
+     **How to Verify:**
+     1. READ: .agent-os/test-context/[TASK_ID]-patterns-used.json
+     2. EXTRACT: mocking.approach, assertions.patterns, async_handling
+     3. READ: Implementation files from deliverable manifest
+     4. COMPARE: Implementation patterns vs test patterns
+     5. CONFIRM: Patterns are compatible
+
+     **Common Issues:**
+     - Implementation uses callbacks but tests expect promises
+     - Implementation throws Error but tests expect CustomError
+     - Implementation returns object but tests expect array
+     - Implementation uses different module mocking approach
+
+  **B. STRUCTURE ALIGNMENT CHECK:**
+     - [ ] Mocked modules in tests are actually called in implementation
+     - [ ] Test data structures match implementation returns
+     - [ ] E2E locators (data-testid) exist in components
+     - [ ] API contracts match between test mocks and implementation
+     - [ ] Function signatures match test calls
+
+     **How to Verify:**
+     1. GREP for module imports in implementation files
+     2. COMPARE with mocked modules list in patterns-used.json
+     3. VERIFY implementation actually uses mocked dependencies
+     4. CHECK E2E tests for data-testid locators
+     5. GREP implementation for matching data-testid attributes
+     6. VERIFY API endpoint paths match between tests and routes
+
+     **Common Issues:**
+     - Tests mock 'axios' but implementation uses 'fetch'
+     - E2E tests use data-testid="submit-btn" but component has id="submit-btn"
+     - Tests mock '/api/users' but implementation calls '/users'
+     - Tests expect getUser() but implementation has fetchUser()
+
+  **C. BYPASS LOGIC CHECK:**
+     - [ ] No hardcoded returns bypassing real logic
+     - [ ] No process.env.TEST branches in production code
+     - [ ] No stub implementations (functions that just return empty values)
+     - [ ] No test-specific code paths in production files
+
+     **How to Verify:**
+     1. GREP implementation for patterns:
+        - `process.env.TEST`
+        - `process.env.NODE_ENV === 'test'`
+        - `if (process.env.TESTING)`
+        - `jest.fn()` or `vi.fn()` in non-test files
+     2. READ implementation functions for:
+        - Functions that just return hardcoded values
+        - Missing logic that tests should validate
+        - Suspiciously simple implementations
+     3. VERIFY coverage is from real logic, not shortcuts
+
+     **Common Issues:**
+     - `function getUser() { return { id: 1 } }` (hardcoded, bypasses real logic)
+     - `if (process.env.TEST) return mockData;` (test-specific bypass)
+     - `function save() { }` (empty stub that makes tests pass)
+
+  **D. COVERAGE VALIDATION:**
+     - [ ] Coverage >= 85% (from config.yml test_code_alignment.alignment_validation.coverage_threshold)
+     - [ ] All new code paths covered by tests
+     - [ ] Critical paths not uncovered (no untested error handlers)
+     - [ ] Coverage metrics are from real execution, not stubs
+
+     **How to Verify:**
      ```bash
-     # Verify tests actually cover implementation
+     # Run coverage check
      pnpm vitest run --coverage
 
-     # Required thresholds:
-     # Line: >= 85%
-     # Branch: >= 80%
-     # Function: >= 85%
+     # Check thresholds:
+     # Line coverage: >= 85%
+     # Branch coverage: >= 80%
+     # Function coverage: >= 85%
+     # Statement coverage: >= 85%
      ```
 
-  4. **Scan for Bypass Patterns** (Advisory):
-     ```
-     SCAN implementation files for:
-     - process.env.TEST
-     - process.env.NODE_ENV === 'test'
-     - jest.fn() or vi.fn() in production code
-     - Hardcoded returns that bypass logic
+     **Read coverage report:**
+     1. CHECK: coverage/index.html or terminal output
+     2. IDENTIFY: Any uncovered lines in new files
+     3. VERIFY: Uncovered lines are acceptable (edge cases, defensive code)
+     4. CONFIRM: Main code paths are covered
 
-     IF found:
-       ⚠️ WARN: Potential test bypass detected
-       FILE: [filename]
-       PATTERN: [matched pattern]
-       REVIEW: Ensure this is intentional
-     ```
+     **Common Issues:**
+     - High coverage from stub functions (false positive)
+     - Error handlers not covered
+     - Edge cases not tested
+     - Coverage < 85% due to incomplete tests
 
-  5. **Alignment Result**:
-     ```
-     IF all checks pass:
-       ✅ Test/Code Alignment Validated
+  **IF ANY CHECK FAILS:**
+    ❌ BLOCK: Alignment validation failed
+    ACTION: Request implementation-specialist to fix alignment issues
+    
+    **SPECIFIC FAILURE RESPONSES:**
 
-       - Pattern documentation: ✓
-       - Pattern integration: ✓
-       - Coverage threshold: [X]% (meets 85% minimum)
-       - No bypass patterns: ✓
+    **Pattern Integration Failure:**
+    ```
+    ❌ Alignment Issue: Pattern Integration Mismatch
 
-       PROCEED to GREEN phase completion
+    Problem: Implementation patterns don't match test patterns
+    
+    Details:
+    - Test expects: [pattern from patterns-used.json]
+    - Implementation uses: [detected pattern]
+    - File: [implementation file]
+    
+    Required Action:
+    1. Review patterns-used.json for test expectations
+    2. Modify implementation to use compatible patterns
+    3. OR: Modify tests if implementation pattern is correct
+    4. Re-run alignment validation after fixes
+    
+    Examples:
+    - If tests mock axios, implementation must use axios (not fetch)
+    - If tests expect promises, implementation must return promises (not callbacks)
+    - If tests expect CustomError, implementation must throw CustomError
+    ```
 
-     IF checks fail:
-       ❌ Alignment Issues Detected
+    **Structure Alignment Failure:**
+    ```
+    ❌ Alignment Issue: Structure Mismatch
 
-       - [List specific issues]
-       - [Remediation steps]
+    Problem: Test and code structures don't align
+    
+    Details:
+    - Missing locators: [list of data-testid missing in components]
+    - Mocked modules not used: [list of mocked modules not imported]
+    - API path mismatches: [list of path differences]
+    
+    Required Action:
+    1. Add missing data-testid attributes to components
+    2. Update implementation to use mocked modules
+    3. Align API endpoint paths between tests and routes
+    4. Re-run alignment validation after fixes
+    ```
 
-       ACTION: Fix alignment issues before completing GREEN phase
-     ```
+    **Bypass Logic Detected:**
+    ```
+    ⚠️ Alignment Issue: Test Bypass Patterns Found
+
+    Problem: Implementation contains test-specific code or stubs
+    
+    Details:
+    - Files with bypass patterns: [list]
+    - Detected patterns: [process.env.TEST, hardcoded returns, etc.]
+    
+    Required Action:
+    1. Remove test-specific conditionals from production code
+    2. Replace hardcoded returns with real logic
+    3. Implement actual functionality instead of stubs
+    4. Re-run tests to ensure real code works
+    5. Re-run alignment validation after fixes
+    ```
+
+    **Coverage Below Threshold:**
+    ```
+    ❌ Alignment Issue: Coverage Below Threshold
+
+    Problem: Test coverage does not meet minimum requirements
+    
+    Current Coverage:
+    - Line: [X]% (required: >= 85%)
+    - Branch: [Y]% (required: >= 80%)
+    - Function: [Z]% (required: >= 85%)
+    
+    Uncovered Areas:
+    - [List of uncovered files or functions]
+    
+    Required Action:
+    1. Add tests for uncovered code paths
+    2. OR: Justify why certain code is acceptable to leave uncovered
+    3. Re-run coverage after adding tests
+    4. Re-run alignment validation after fixes
+    ```
+
+  **IF ALL CHECKS PASS:**
+    ✅ PROCEED to GREEN phase completion
+
+    **Success Output:**
+    ```
+    ✅ Test/Code Alignment Validated Successfully
+
+    Pattern Integration:
+    - Mocking approach: ✓ Compatible
+    - Assertion patterns: ✓ Compatible
+    - Async handling: ✓ Matches
+    - Error types: ✓ Match
+
+    Structure Alignment:
+    - Mocked modules: ✓ All used in implementation
+    - Data structures: ✓ Match test expectations
+    - E2E locators: ✓ All present in components
+    - API contracts: ✓ Aligned
+
+    Bypass Logic:
+    - Test-specific code: ✓ None detected
+    - Hardcoded returns: ✓ None detected
+    - Stub implementations: ✓ None detected
+
+    Coverage:
+    - Line: [X]% ✓ (>= 85%)
+    - Branch: [Y]% ✓ (>= 80%)
+    - Function: [Z]% ✓ (>= 85%)
+    - Critical paths: ✓ All covered
+
+    GATE STATUS: PASSED
+
+    Proceeding to GREEN phase completion...
+    ```
+
+  **GATE STATUS:** __________ (BLOCKED/PASSED)
 </alignment_validation_process>
 </step_2_2a_alignment_validation>
 

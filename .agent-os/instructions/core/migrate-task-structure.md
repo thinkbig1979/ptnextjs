@@ -16,7 +16,7 @@ This workflow detects and migrates monolithic tasks.md files to Agent OS v2.1.0'
 - **Scalability**: Efficiently handle 50+, 100+, or 200+ tasks
 - **Performance**: Only load detailed requirements when executing specific tasks
 - **Maintainability**: Easier to update individual task details without reloading entire file
-- **Backward Compatible**: Old format continues to work; migration is optional but recommended
+- **Migration Recommended**: Split format is the standard; migration improves performance
 
 ## Detection Logic
 
@@ -592,6 +592,6 @@ The migration process is designed to be:
 - **Reliable**: Comprehensive error handling and recovery
 - **Transparent**: Clear reporting and verification
 - **Efficient**: 90%+ context reduction achieved
-- **Backward Compatible**: Old format still works, migration optional
+- **Migration Recommended**: Split format is the standard for optimal performance
 
 Migration transforms large, unwieldy task files into efficient, scalable structures that support Agent OS's orchestrated execution model while maintaining all original content and completion status.

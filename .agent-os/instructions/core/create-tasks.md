@@ -155,7 +155,7 @@ Check if tasks already exist for this spec and offer to upgrade to v2.2.0 full-s
         - Single tasks.md file with all details inline
         - No tasks/ subdirectory
         - Task details embedded directly in checkbox items
-      Version: Pre-2.1.0 (legacy)
+      Action: Migrate to split format
     </monolithic_format>
 
     <split_format_v21>
@@ -1138,15 +1138,15 @@ Present the enhanced task breakdown with orchestration overview and parallel exe
 
 <enhanced_execution_flow>
   IF user_chooses_orchestrated_parallel:
-    REFERENCE: @.agent-os/instructions/core/execute-task-orchestrated.md
-    MODE: Full orchestrated execution with all specialist agents
+    REFERENCE: @.agent-os/instructions/core/execute-tasks-unified.md
+    MODE: Full orchestrated execution with Beads-first orchestration
     OPTIMIZATION: Use generated context packages for maximum efficiency
   ELIF user_chooses_phase_by_phase:
-    REFERENCE: @.agent-os/instructions/core/execute-tasks.md
+    REFERENCE: @.agent-os/instructions/core/execute-tasks-unified.md
     MODE: Sequential phase execution with micro-granular tasks
     FOCUS: Complete one phase before proceeding to next
   ELIF user_chooses_single_task:
-    REFERENCE: @.agent-os/instructions/core/execute-tasks.md
+    REFERENCE: @.agent-os/instructions/core/execute-tasks-unified.md
     MODE: Single task execution for validation
     CONSTRAINT: Execute only first task and wait for user confirmation
   ELSE:
