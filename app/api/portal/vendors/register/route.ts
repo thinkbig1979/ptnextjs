@@ -236,6 +236,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<SuccessRe
 
     try {
       // Create user record
+      // Note: overrideAccess is needed since this is a public registration endpoint
       const user = await payload.create({
         collection: 'users',
         data: {
@@ -244,11 +245,14 @@ export async function POST(request: NextRequest): Promise<NextResponse<SuccessRe
           role: 'vendor',
           status: 'pending',
         },
+        overrideAccess: true,
       });
 
       userId = user.id;
 
       // Create vendor record
+      // Note: overrideAccess is needed since this is a public registration endpoint
+      // and the Vendors collection has create: isAdmin access control
       const vendor = await payload.create({
         collection: 'vendors',
         data: {
@@ -264,6 +268,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<SuccessRe
           published: false,
           featured: false,
         },
+        overrideAccess: true,
       });
 
       vendorId = vendor.id;
@@ -296,6 +301,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<SuccessRe
           await payload.delete({
             collection: 'users',
             id: userId,
+            overrideAccess: true,
           });
           console.log('[VendorRegistration] Rolled back user creation:', userId);
         } catch (rollbackError) {
