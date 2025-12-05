@@ -1,0 +1,393 @@
+'use client';
+
+import * as React from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { toast } from '@/components/ui/sonner';
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormDescription,
+  FormMessage
+} from '@/components/ui/form';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription
+} from '@/components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Checkbox } from '@/components/ui/checkbox';
+import { AlertTriangle } from 'lucide-react';
+
+export interface TierDowngradeRequestFormProps {
+  vendorId: string;
+  currentTier: 'free' | 'tier1' | 'tier2' | 'tier3';
+  onSuccess?: (data?: any) => void;
+  onCancel?: () => void;
+}
+
+// Zod validation schema
+const tierDowngradeRequestSchema = z.object({
+  requestedTier: z.enum(['free', 'tier1', 'tier2', 'tier3'], {
+    required_error: 'Please select a tier',
+  }),
+  vendorNotes: z.string().superRefine((val, ctx) => {
+    if (val && val.length > 0 && val.length < 20) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Vendor notes must be at least 20 characters',
+      });
+    }
+    if (val && val.length > 500) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Vendor notes cannot exceed 500 characters',
+      });
+    }
+  }).optional(),
+  confirmation: z.boolean().refine((val) => val === true, {
+    message: 'You must confirm that you understand the consequences of downgrading',
+  }),
+});
+
+type TierDowngradeRequestFormData = z.infer<typeof tierDowngradeRequestSchema>;
+
+// Tier display labels
+const TIER_LABELS: Record<string, string> = {
+  free: 'Free',
+  tier1: 'Tier 1',
+  tier2: 'Tier 2',
+  tier3: 'Tier 3',
+};
+
+// Feature descriptions for each tier
+const TIER_FEATURES: Record<string, string[]> = {
+  free: [
+    'Basic profile only',
+    '1 product listing',
+    '1 business location',
+    'No social media links',
+    'No video introduction',
+    'Standard email support (48hrs)',
+  ],
+  tier1: [
+    'Up to 5 products',
+    '1 featured product',
+    'Video introduction',
+    'Team member profiles',
+    'Case studies & certifications',
+    'Social media links',
+    'Priority email support (24hrs)',
+  ],
+  tier2: [
+    'Up to 25 products',
+    '5 featured products',
+    'Up to 5 business locations',
+    'Custom branding colors',
+    'Advanced analytics',
+    'Homepage featured listing',
+    'Priority email support (12hrs)',
+  ],
+  tier3: [
+    'Unlimited products',
+    'Unlimited featured products',
+    'Up to 10 business locations',
+    'Priority search ranking',
+    'Dedicated account manager',
+    'Premium email support (4hrs)',
+    '12 promotion credits/month',
+  ],
+};
+
+// Get available lower tiers based on current tier
+function getAvailableLowerTiers(currentTier: 'free' | 'tier1' | 'tier2' | 'tier3'): string[] {
+  const tierHierarchy = ['free', 'tier1', 'tier2', 'tier3'];
+  const currentIndex = tierHierarchy.indexOf(currentTier);
+  return tierHierarchy.slice(0, currentIndex);
+}
+
+// Get features that will be lost when downgrading to a specific tier
+function getFeaturesLost(currentTier: string, targetTier: string): string[] {
+  const tierHierarchy = ['free', 'tier1', 'tier2', 'tier3'];
+  const currentIndex = tierHierarchy.indexOf(currentTier);
+  const targetIndex = tierHierarchy.indexOf(targetTier);
+
+  const featuresLost: string[] = [];
+
+  // Collect features from all tiers between target and current
+  for (let i = targetIndex + 1; i <= currentIndex; i++) {
+    const tier = tierHierarchy[i];
+    featuresLost.push(...TIER_FEATURES[tier]);
+  }
+
+  return [...new Set(featuresLost)]; // Remove duplicates
+}
+
+export function TierDowngradeRequestForm({
+  vendorId,
+  currentTier,
+  onSuccess,
+  onCancel
+}: TierDowngradeRequestFormProps) {
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  const form = useForm<TierDowngradeRequestFormData>({
+    resolver: zodResolver(tierDowngradeRequestSchema),
+    mode: 'onBlur',
+    defaultValues: {
+      requestedTier: undefined,
+      vendorNotes: '',
+      confirmation: false,
+    },
+  });
+
+  const selectedTier = form.watch('requestedTier');
+  const vendorNotes = form.watch('vendorNotes');
+  const notesLength = vendorNotes?.length || 0;
+
+  // Don't render form if already at lowest tier
+  if (currentTier === 'free') {
+    return null;
+  }
+
+  const availableTiers = getAvailableLowerTiers(currentTier);
+  const featuresLost = selectedTier ? getFeaturesLost(currentTier, selectedTier) : [];
+
+  const onSubmit = async (data: TierDowngradeRequestFormData) => {
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(
+        `/api/portal/vendors/${vendorId}/tier-downgrade-request`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            requestedTier: data.requestedTier,
+            vendorNotes: data.vendorNotes || undefined,
+          }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        // Handle specific error cases
+        if (response.status === 401) {
+          toast.error('Your session has expired. Please log in again.');
+          setTimeout(() => { window.location.href = '/vendor/login'; }, 1500);
+          return;
+        } else if (response.status === 403) {
+          toast.error('You do not have permission to perform this action.');
+          setTimeout(() => { window.location.href = '/vendor/dashboard'; }, 1500);
+          return;
+        } else if (response.status === 409) {
+          toast.error('You already have a pending downgrade request');
+        } else if (response.status === 400) {
+          toast.error(result.message || 'Please fix the errors in the form');
+        } else if (response.status === 500) {
+          toast.error('Server error. Please try again later.');
+        } else {
+          toast.error('Failed to submit request. Please try again.');
+        }
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Success
+      toast.success('Tier downgrade request submitted successfully!');
+      form.reset();
+
+      if (onSuccess) {
+        onSuccess(result.data);
+      }
+    } catch (error) {
+      console.error('Error submitting tier downgrade request:', error);
+      toast.error('Failed to submit request. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Request Tier Downgrade</CardTitle>
+        <CardDescription>
+          Select a lower tier and understand what features you will lose
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            {/* Warning Alert */}
+            <Alert variant="destructive" className="bg-yellow-50 border-yellow-300 text-yellow-900">
+              <AlertTriangle className="h-4 w-4 text-yellow-600" />
+              <AlertTitle className="text-yellow-900">Important: Feature Loss Warning</AlertTitle>
+              <AlertDescription className="text-yellow-800">
+                Downgrading your tier will immediately remove access to premium features.
+                This may result in:
+                <ul className="list-disc list-inside mt-2 space-y-1">
+                  <li>Reduced product listing limits</li>
+                  <li>Loss of featured placements and priority rankings</li>
+                  <li>Removal of advanced analytics and insights</li>
+                  <li>Reduced location capacity</li>
+                  <li>Loss of custom branding options</li>
+                </ul>
+              </AlertDescription>
+            </Alert>
+
+            {/* Requested Tier Select */}
+            <FormField
+              control={form.control}
+              name="requestedTier"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Target Tier</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    disabled={isSubmitting}
+                    name="requestedTier"
+                  >
+                    <FormControl>
+                      <SelectTrigger aria-label="Target Tier">
+                        <SelectValue placeholder="Select a lower tier" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {availableTiers.map((tier) => (
+                        <SelectItem key={tier} value={tier}>
+                          {TIER_LABELS[tier]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    Current tier: <strong>{TIER_LABELS[currentTier]}</strong>
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Features Lost Display */}
+            {selectedTier && featuresLost.length > 0 && (
+              <div className="rounded-lg border border-orange-200 bg-orange-50 p-4">
+                <h4 className="font-semibold text-orange-900 mb-2">
+                  Features You Will Lose:
+                </h4>
+                <ul className="list-disc list-inside space-y-1 text-sm text-orange-800">
+                  {featuresLost.map((feature, index) => (
+                    <li key={index}>{feature}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Vendor Notes Textarea */}
+            <FormField
+              control={form.control}
+              name="vendorNotes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Reason for Downgrade <span className="text-muted-foreground">(Optional)</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      placeholder="Please share your reason for downgrading (optional)..."
+                      disabled={isSubmitting}
+                      aria-label="Reason for Downgrade"
+                      className="min-h-[120px]"
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    {notesLength > 0 && (
+                      <span className={notesLength > 500 ? 'text-destructive' : ''}>
+                        {notesLength}/500 characters
+                      </span>
+                    )}
+                    {notesLength === 0 && (
+                      <span className="text-muted-foreground">
+                        Minimum 20 characters if provided
+                      </span>
+                    )}
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Confirmation Checkbox */}
+            <FormField
+              control={form.control}
+              name="confirmation"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border border-orange-200 bg-orange-50 p-4">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                      disabled={isSubmitting || !selectedTier}
+                      aria-label="Confirmation"
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel className="text-sm font-medium text-orange-900">
+                      I understand the consequences
+                    </FormLabel>
+                    <FormDescription className="text-orange-800">
+                      I acknowledge that downgrading will immediately remove access to the features listed above,
+                      and I accept the limitations of the {selectedTier ? TIER_LABELS[selectedTier] : 'selected'} tier.
+                    </FormDescription>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
+
+            {/* Form Actions */}
+            <div className="flex gap-3 justify-end">
+              {onCancel && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={onCancel}
+                  disabled={isSubmitting}
+                >
+                  Cancel
+                </Button>
+              )}
+              <Button
+                type="submit"
+                variant="destructive"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Submitting...' : 'Submit Downgrade Request'}
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
+  );
+}

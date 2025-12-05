@@ -17,11 +17,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { CheckCircle, XCircle, Loader2, ArrowRight } from 'lucide-react';
+import { CheckCircle, XCircle, Loader2, ArrowRight, ArrowUp, ArrowDown } from 'lucide-react';
 
 /**
  * Tier Upgrade Request Interface
@@ -35,6 +42,7 @@ interface TierUpgradeRequest {
   };
   currentTier: string;
   requestedTier: string;
+  requestType: 'upgrade' | 'downgrade';
   vendorNotes?: string;
   status: 'pending' | 'approved' | 'rejected' | 'cancelled';
   requestedAt: string;
@@ -53,9 +61,11 @@ const TIER_LABELS: Record<string, string> = {
 /**
  * AdminTierRequestQueue Component
  *
- * Displays pending tier upgrade requests in a table with approve/reject actions.
+ * Displays pending tier upgrade/downgrade requests in a table with approve/reject actions.
  * Features:
  * - Table display of pending requests
+ * - Filter by request type (upgrade/downgrade)
+ * - Visual distinction between upgrade and downgrade requests
  * - Approve action with confirmation dialog
  * - Reject action with reason input dialog
  * - Toast notifications for success/error
@@ -68,6 +78,7 @@ export default function AdminTierRequestQueue() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [requestTypeFilter, setRequestTypeFilter] = useState<'all' | 'upgrade' | 'downgrade'>('all');
 
   // Dialog states
   const [approveDialogOpen, setApproveDialogOpen] = useState(false);
@@ -78,11 +89,11 @@ export default function AdminTierRequestQueue() {
   const { toast } = useToast();
 
   /**
-   * Fetch pending requests on mount
+   * Fetch pending requests on mount and when filter changes
    */
   useEffect(() => {
     fetchPendingRequests();
-  }, []);
+  }, [requestTypeFilter]);
 
   /**
    * Fetch pending tier upgrade requests from API
@@ -92,7 +103,16 @@ export default function AdminTierRequestQueue() {
       setIsLoading(true);
       setError(null);
 
-      const response = await fetch('/api/admin/tier-upgrade-requests?status=pending', {
+      const params = new URLSearchParams({
+        status: 'pending',
+      });
+
+      // Add requestType filter if not 'all'
+      if (requestTypeFilter !== 'all') {
+        params.append('requestType', requestTypeFilter);
+      }
+
+      const response = await fetch(`/api/admin/tier-upgrade-requests?${params.toString()}`, {
         method: 'GET',
         credentials: 'include',
       });
@@ -160,9 +180,10 @@ export default function AdminTierRequestQueue() {
       setRequests((prev) => prev.filter((r) => r.id !== selectedRequest.id));
 
       // Show success toast
+      const requestTypeName = selectedRequest.requestType === 'upgrade' ? 'upgrade' : 'downgrade';
       toast({
         title: 'Tier Request Approved',
-        description: `${selectedRequest.vendor.companyName}'s upgrade to ${TIER_LABELS[selectedRequest.requestedTier]} has been approved successfully.`,
+        description: `${selectedRequest.vendor.companyName}'s ${requestTypeName} to ${TIER_LABELS[selectedRequest.requestedTier]} has been approved successfully.`,
       });
 
       // Close dialog
@@ -223,9 +244,10 @@ export default function AdminTierRequestQueue() {
       setRequests((prev) => prev.filter((r) => r.id !== selectedRequest.id));
 
       // Show success toast
+      const requestTypeName = selectedRequest.requestType === 'upgrade' ? 'upgrade' : 'downgrade';
       toast({
         title: 'Tier Request Rejected',
-        description: `${selectedRequest.vendor.companyName}'s upgrade request has been rejected.`,
+        description: `${selectedRequest.vendor.companyName}'s ${requestTypeName} request has been rejected.`,
       });
 
       // Close dialog
@@ -262,6 +284,37 @@ export default function AdminTierRequestQueue() {
   };
 
   /**
+   * Get request type badge component
+   */
+  const getRequestTypeBadge = (requestType: 'upgrade' | 'downgrade') => {
+    if (requestType === 'upgrade') {
+      return (
+        <Badge variant="default" className="bg-green-600 hover:bg-green-700 text-white">
+          <ArrowUp className="mr-1 h-3 w-3" />
+          Upgrade
+        </Badge>
+      );
+    } else {
+      return (
+        <Badge variant="default" className="bg-amber-600 hover:bg-amber-700 text-white">
+          <ArrowDown className="mr-1 h-3 w-3" />
+          Downgrade
+        </Badge>
+      );
+    }
+  };
+
+  /**
+   * Get row styling based on request type
+   */
+  const getRowClassName = (requestType: 'upgrade' | 'downgrade') => {
+    if (requestType === 'downgrade') {
+      return 'bg-amber-50/50 hover:bg-amber-50';
+    }
+    return '';
+  };
+
+  /**
    * Loading state
    */
   if (isLoading) {
@@ -287,107 +340,141 @@ export default function AdminTierRequestQueue() {
     );
   }
 
-  /**
-   * Empty state
-   */
-  if (requests.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center rounded-md border border-dashed py-12">
-        <CheckCircle className="h-12 w-12 text-muted-foreground" />
-        <h3 className="mt-4 text-lg font-semibold">No Pending Tier Requests</h3>
-        <p className="mt-2 text-sm text-muted-foreground">
-          All tier upgrade requests have been reviewed.
-        </p>
-      </div>
-    );
-  }
-
   return (
     <>
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Company Name</TableHead>
-              <TableHead>Contact Email</TableHead>
-              <TableHead>Tier Change</TableHead>
-              <TableHead>Vendor Notes</TableHead>
-              <TableHead>Request Date</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {requests.map((request) => (
-              <TableRow key={request.id}>
-                <TableCell className="font-medium">
-                  {request.vendor.companyName}
-                </TableCell>
-                <TableCell>{request.vendor.contactEmail || 'N/A'}</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="text-xs">
-                      {TIER_LABELS[request.currentTier]}
-                    </Badge>
-                    <ArrowRight className="h-3 w-3 text-muted-foreground" />
-                    <Badge variant="default" className="text-xs">
-                      {TIER_LABELS[request.requestedTier]}
-                    </Badge>
-                  </div>
-                </TableCell>
-                <TableCell className="max-w-xs">
-                  {request.vendorNotes ? (
-                    <div className="truncate text-sm text-muted-foreground" title={request.vendorNotes}>
-                      {request.vendorNotes}
-                    </div>
-                  ) : (
-                    <span className="text-xs text-muted-foreground italic">No notes provided</span>
-                  )}
-                </TableCell>
-                <TableCell>{formatDate(request.requestedAt)}</TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
-                    <Button
-                      onClick={() => handleApproveClick(request)}
-                      disabled={actionLoading === request.id}
-                      size="sm"
-                      variant="default"
-                      aria-label={`Approve ${request.vendor.companyName}'s tier upgrade request`}
-                    >
-                      {actionLoading === request.id ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <>
-                          <CheckCircle className="mr-1 h-4 w-4" />
-                          Approve
-                        </>
-                      )}
-                    </Button>
-                    <Button
-                      onClick={() => handleRejectClick(request)}
-                      disabled={actionLoading === request.id}
-                      size="sm"
-                      variant="destructive"
-                      aria-label={`Reject ${request.vendor.companyName}'s tier upgrade request`}
-                    >
-                      <XCircle className="mr-1 h-4 w-4" />
-                      Reject
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+      {/* Filter Controls */}
+      <div className="mb-4 flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          <label htmlFor="request-type-filter" className="text-sm font-medium">
+            Request Type:
+          </label>
+          <Select
+            value={requestTypeFilter}
+            onValueChange={(value: 'all' | 'upgrade' | 'downgrade') => setRequestTypeFilter(value)}
+          >
+            <SelectTrigger id="request-type-filter" className="w-[180px]">
+              <SelectValue placeholder="Select type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Requests</SelectItem>
+              <SelectItem value="upgrade">Upgrades Only</SelectItem>
+              <SelectItem value="downgrade">Downgrades Only</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
+
+      {/* Empty state */}
+      {requests.length === 0 ? (
+        <div className="flex flex-col items-center justify-center rounded-md border border-dashed py-12">
+          <CheckCircle className="h-12 w-12 text-muted-foreground" />
+          <h3 className="mt-4 text-lg font-semibold">No Pending Tier Requests</h3>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {requestTypeFilter === 'all'
+              ? 'All tier change requests have been reviewed.'
+              : `No pending ${requestTypeFilter} requests.`}
+          </p>
+        </div>
+      ) : (
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Type</TableHead>
+                <TableHead>Company Name</TableHead>
+                <TableHead>Contact Email</TableHead>
+                <TableHead>Tier Change</TableHead>
+                <TableHead>Vendor Notes</TableHead>
+                <TableHead>Request Date</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {requests.map((request) => (
+                <TableRow key={request.id} className={getRowClassName(request.requestType)}>
+                  <TableCell>
+                    {getRequestTypeBadge(request.requestType)}
+                  </TableCell>
+                  <TableCell className="font-medium">
+                    {request.vendor.companyName}
+                  </TableCell>
+                  <TableCell>{request.vendor.contactEmail || 'N/A'}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs">
+                        {TIER_LABELS[request.currentTier]}
+                      </Badge>
+                      <ArrowRight className="h-3 w-3 text-muted-foreground" />
+                      <Badge
+                        variant="default"
+                        className={`text-xs ${
+                          request.requestType === 'upgrade'
+                            ? 'bg-green-600'
+                            : 'bg-amber-600'
+                        }`}
+                      >
+                        {TIER_LABELS[request.requestedTier]}
+                      </Badge>
+                    </div>
+                  </TableCell>
+                  <TableCell className="max-w-xs">
+                    {request.vendorNotes ? (
+                      <div className="truncate text-sm text-muted-foreground" title={request.vendorNotes}>
+                        {request.vendorNotes}
+                      </div>
+                    ) : (
+                      <span className="text-xs text-muted-foreground italic">No notes provided</span>
+                    )}
+                  </TableCell>
+                  <TableCell>{formatDate(request.requestedAt)}</TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        onClick={() => handleApproveClick(request)}
+                        disabled={actionLoading === request.id}
+                        size="sm"
+                        variant="default"
+                        aria-label={`Approve ${request.vendor.companyName}'s tier ${request.requestType} request`}
+                      >
+                        {actionLoading === request.id ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <>
+                            <CheckCircle className="mr-1 h-4 w-4" />
+                            Approve
+                          </>
+                        )}
+                      </Button>
+                      <Button
+                        onClick={() => handleRejectClick(request)}
+                        disabled={actionLoading === request.id}
+                        size="sm"
+                        variant="destructive"
+                        aria-label={`Reject ${request.vendor.companyName}'s tier ${request.requestType} request`}
+                      >
+                        <XCircle className="mr-1 h-4 w-4" />
+                        Reject
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      )}
 
       {/* Approve Confirmation Dialog */}
       <Dialog open={approveDialogOpen} onOpenChange={setApproveDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Approve Tier Upgrade Request</DialogTitle>
+            <DialogTitle>
+              Approve Tier {selectedRequest?.requestType === 'upgrade' ? 'Upgrade' : 'Downgrade'} Request
+            </DialogTitle>
             <DialogDescription>
               Are you sure you want to approve{' '}
-              <strong>{selectedRequest?.vendor.companyName}</strong>'s upgrade request?
+              <strong>{selectedRequest?.vendor.companyName}</strong>'s{' '}
+              {selectedRequest?.requestType === 'upgrade' ? 'upgrade' : 'downgrade'} request?
               Their tier will be automatically updated from{' '}
               <strong>{selectedRequest && TIER_LABELS[selectedRequest.currentTier]}</strong> to{' '}
               <strong>{selectedRequest && TIER_LABELS[selectedRequest.requestedTier]}</strong>.
@@ -397,6 +484,15 @@ export default function AdminTierRequestQueue() {
             <div className="rounded-md bg-muted p-3">
               <p className="text-sm font-medium">Vendor Notes:</p>
               <p className="mt-1 text-sm text-muted-foreground">{selectedRequest.vendorNotes}</p>
+            </div>
+          )}
+          {selectedRequest?.requestType === 'downgrade' && (
+            <div className="rounded-md border border-amber-200 bg-amber-50 p-3">
+              <p className="text-sm font-medium text-amber-900">Downgrade Warning:</p>
+              <p className="mt-1 text-sm text-amber-800">
+                The vendor will lose access to features available in their current tier.
+                Make sure they understand the limitations of the lower tier.
+              </p>
             </div>
           )}
           <DialogFooter>
@@ -428,10 +524,13 @@ export default function AdminTierRequestQueue() {
       <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Reject Tier Upgrade Request</DialogTitle>
+            <DialogTitle>
+              Reject Tier {selectedRequest?.requestType === 'upgrade' ? 'Upgrade' : 'Downgrade'} Request
+            </DialogTitle>
             <DialogDescription>
               Please provide a reason for rejecting{' '}
-              <strong>{selectedRequest?.vendor.companyName}</strong>'s tier upgrade request.
+              <strong>{selectedRequest?.vendor.companyName}</strong>'s tier{' '}
+              {selectedRequest?.requestType === 'upgrade' ? 'upgrade' : 'downgrade'} request.
               This reason will be visible to the vendor.
             </DialogDescription>
           </DialogHeader>
