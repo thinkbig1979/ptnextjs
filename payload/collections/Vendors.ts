@@ -6,6 +6,8 @@ import {
   sendVendorRegisteredEmail,
   sendProfilePublishedEmail,
   sendVendorRejectedEmail,
+  sendProfileSubmittedAdminEmail,
+  sendProfileSubmittedVendorEmail,
 } from '../../lib/services/EmailService';
 
 const Vendors: CollectionConfig = {
@@ -1905,6 +1907,28 @@ const Vendors: CollectionConfig = {
                 contactEmail: doc.contactEmail,
                 tier: doc.tier,
                 vendorId: doc.id,
+              });
+            }
+
+            // Profile submitted for review - profileSubmitted changed from false to true
+            const wasSubmitted = previousDoc.profileSubmitted === true;
+            const isNowSubmitted = doc.profileSubmitted === true;
+
+            if (!wasSubmitted && isNowSubmitted) {
+              console.log('[EmailService] Sending profile submitted emails...');
+
+              // Notify admin
+              await sendProfileSubmittedAdminEmail({
+                companyName: doc.companyName,
+                contactEmail: doc.contactEmail,
+                vendorId: String(doc.id),
+              });
+
+              // Confirm to vendor
+              await sendProfileSubmittedVendorEmail({
+                companyName: doc.companyName,
+                contactEmail: doc.contactEmail,
+                vendorId: String(doc.id),
               });
             }
           }
