@@ -6,8 +6,6 @@ import {
   sendVendorRegisteredEmail,
   sendProfilePublishedEmail,
   sendVendorRejectedEmail,
-  sendProfileSubmittedAdminEmail,
-  sendProfileSubmittedVendorEmail,
 } from '../../lib/services/EmailService';
 
 const Vendors: CollectionConfig = {
@@ -1910,27 +1908,9 @@ const Vendors: CollectionConfig = {
               });
             }
 
-            // Profile submitted for review - profileSubmitted changed from false to true
-            const wasSubmitted = previousDoc.profileSubmitted === true;
-            const isNowSubmitted = doc.profileSubmitted === true;
-
-            if (!wasSubmitted && isNowSubmitted) {
-              console.log('[EmailService] Sending profile submitted emails...');
-
-              // Notify admin
-              await sendProfileSubmittedAdminEmail({
-                companyName: doc.companyName,
-                contactEmail: doc.contactEmail,
-                vendorId: String(doc.id),
-              });
-
-              // Confirm to vendor
-              await sendProfileSubmittedVendorEmail({
-                companyName: doc.companyName,
-                contactEmail: doc.contactEmail,
-                vendorId: String(doc.id),
-              });
-            }
+            // Note: Profile submission emails (#9, #10) are sent by the
+            // /api/portal/vendors/[id]/submit-profile API route, not here.
+            // This avoids duplicate emails when the route updates profileSubmitted.
           }
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : String(error);
