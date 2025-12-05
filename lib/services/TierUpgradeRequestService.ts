@@ -80,7 +80,7 @@ interface TierUpgradeRequest {
   reviewedAt?: string;
 }
 
-interface ListRequestsFilters {
+export interface ListRequestsFilters {
   status?: RequestStatus;
   requestType?: RequestType;
   vendorId?: string;

@@ -12,7 +12,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getPayload } from 'payload';
 import config from '@/payload.config';
 import * as TierUpgradeRequestService from '@/lib/services/TierUpgradeRequestService';
-import type { RequestStatus } from '@/lib/services/TierUpgradeRequestService';
+import type { RequestStatus, RequestType } from '@/lib/services/TierUpgradeRequestService';
 import { rateLimit } from '@/lib/middleware/rateLimit';
 
 /**
@@ -66,6 +66,7 @@ export async function GET(request: NextRequest) {
       // Parse query parameters
       const searchParams = request.nextUrl.searchParams;
       const status = searchParams.get('status') as RequestStatus | null;
+      const requestType = searchParams.get('requestType') as RequestType | null;
       const vendorId = searchParams.get('vendorId');
       const page = parseInt(searchParams.get('page') || '1', 10);
       const limit = Math.min(parseInt(searchParams.get('limit') || '20', 10), 100);
@@ -73,7 +74,7 @@ export async function GET(request: NextRequest) {
       const sortOrder = (searchParams.get('sortOrder') || 'desc') as 'asc' | 'desc';
 
       // Build filters
-      const filters: any = {
+      const filters: TierUpgradeRequestService.ListRequestsFilters = {
         page,
         limit,
         sortBy,
@@ -82,6 +83,10 @@ export async function GET(request: NextRequest) {
 
       if (status) {
         filters.status = status;
+      }
+
+      if (requestType) {
+        filters.requestType = requestType;
       }
 
       if (vendorId) {
