@@ -5,8 +5,8 @@ const createJestConfig = nextJest({
 });
 
 const customJestConfig = {
-  setupFiles: ['<rootDir>/test-polyfills.js'],
-  setupFilesAfterEnv: ['<rootDir>/test-setup.js'],
+  setupFiles: ['<rootDir>/jest.polyfills.js'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
     '^marked$': '<rootDir>/__mocks__/marked.js',
