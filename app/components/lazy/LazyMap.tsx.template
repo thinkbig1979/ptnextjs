@@ -1,0 +1,189 @@
+/**
+ * Lazy-loaded Map Components (Template)
+ *
+ * This is a template for future implementation of lazy-loaded map components.
+ * Only uncomment and use when react-leaflet is actually needed.
+ *
+ * Installation:
+ * npm install react-leaflet leaflet
+ * npm install -D @types/leaflet
+ *
+ * Usage:
+ * import { LazyMap } from '@/components/lazy/LazyMap';
+ *
+ * Task: ptnextjs-nr29
+ * Created: 2025-12-06
+ */
+
+import dynamic from 'next/dynamic';
+import { Skeleton } from '@/components/ui/skeleton';
+
+// Loading component for maps
+const MapLoading = () => (
+  <div className="relative h-64 w-full rounded-md overflow-hidden">
+    <Skeleton className="h-full w-full" />
+    <div className="absolute inset-0 flex items-center justify-center">
+      <p className="text-sm text-muted-foreground">Loading map...</p>
+    </div>
+  </div>
+);
+
+// Lazy load the entire map component
+// This prevents Leaflet from trying to access the DOM during SSR
+export const LazyMap = dynamic(
+  () => import('./MapComponent'),
+  {
+    ssr: false, // Important: Leaflet requires browser APIs
+    loading: () => <MapLoading />
+  }
+);
+
+// Individual Leaflet components (if needed separately)
+export const LazyMapContainer = dynamic(
+  () => import('react-leaflet').then(mod => ({ default: mod.MapContainer })),
+  { ssr: false }
+);
+
+export const LazyTileLayer = dynamic(
+  () => import('react-leaflet').then(mod => ({ default: mod.TileLayer })),
+  { ssr: false }
+);
+
+export const LazyMarker = dynamic(
+  () => import('react-leaflet').then(mod => ({ default: mod.Marker })),
+  { ssr: false }
+);
+
+export const LazyPopup = dynamic(
+  () => import('react-leaflet').then(mod => ({ default: mod.Popup })),
+  { ssr: false }
+);
+
+export const LazyCircle = dynamic(
+  () => import('react-leaflet').then(mod => ({ default: mod.Circle })),
+  { ssr: false }
+);
+
+export const LazyPolygon = dynamic(
+  () => import('react-leaflet').then(mod => ({ default: mod.Polygon })),
+  { ssr: false }
+);
+
+export const LazyPolyline = dynamic(
+  () => import('react-leaflet').then(mod => ({ default: mod.Polyline })),
+  { ssr: false }
+);
+
+export const LazyUseMap = dynamic(
+  () => import('react-leaflet').then(mod => ({ default: mod.useMap })),
+  { ssr: false }
+);
+
+/**
+ * Example MapComponent.tsx:
+ *
+ * 'use client';
+ *
+ * import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+ * import 'leaflet/dist/leaflet.css';
+ * import L from 'leaflet';
+ *
+ * // Fix default marker icon issue in Next.js
+ * delete (L.Icon.Default.prototype as any)._getIconUrl;
+ * L.Icon.Default.mergeOptions({
+ *   iconRetinaUrl: '/leaflet/marker-icon-2x.png',
+ *   iconUrl: '/leaflet/marker-icon.png',
+ *   shadowUrl: '/leaflet/marker-shadow.png',
+ * });
+ *
+ * interface MapComponentProps {
+ *   center: [number, number];
+ *   zoom?: number;
+ *   markers?: Array<{
+ *     position: [number, number];
+ *     label: string;
+ *   }>;
+ * }
+ *
+ * export default function MapComponent({
+ *   center,
+ *   zoom = 13,
+ *   markers = []
+ * }: MapComponentProps) {
+ *   return (
+ *     <MapContainer
+ *       center={center}
+ *       zoom={zoom}
+ *       className="h-64 w-full rounded-md"
+ *       scrollWheelZoom={false}
+ *     >
+ *       <TileLayer
+ *         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+ *         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+ *       />
+ *       {markers.map((marker, idx) => (
+ *         <Marker key={idx} position={marker.position}>
+ *           <Popup>{marker.label}</Popup>
+ *         </Marker>
+ *       ))}
+ *     </MapContainer>
+ *   );
+ * }
+ *
+ * Example Usage in your pages:
+ *
+ * import { LazyMap } from '@/components/lazy/LazyMap';
+ *
+ * export function VendorLocationPage() {
+ *   return (
+ *     <div>
+ *       <h1>Vendor Location</h1>
+ *       <LazyMap
+ *         center={[51.505, -0.09]}
+ *         zoom={13}
+ *         markers={[
+ *           { position: [51.505, -0.09], label: 'Vendor HQ' }
+ *         ]}
+ *       />
+ *     </div>
+ *   );
+ * }
+ */
+
+/**
+ * Alternative: Mapbox GL JS Template
+ *
+ * If you prefer Mapbox:
+ *
+ * npm install mapbox-gl react-map-gl
+ * npm install -D @types/mapbox-gl
+ *
+ * import dynamic from 'next/dynamic';
+ *
+ * export const LazyMapboxMap = dynamic(
+ *   () => import('./MapboxMap'),
+ *   { ssr: false, loading: () => <MapLoading /> }
+ * );
+ *
+ * // MapboxMap.tsx
+ * import Map, { Marker, NavigationControl } from 'react-map-gl';
+ * import 'mapbox-gl/dist/mapbox-gl.css';
+ *
+ * export default function MapboxMap({ ...props }) {
+ *   return (
+ *     <Map
+ *       mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN}
+ *       initialViewState={{
+ *         longitude: -0.09,
+ *         latitude: 51.505,
+ *         zoom: 13
+ *       }}
+ *       style={{ width: '100%', height: 400 }}
+ *       mapStyle="mapbox://styles/mapbox/streets-v12"
+ *     >
+ *       <NavigationControl />
+ *       <Marker longitude={-0.09} latitude={51.505} />
+ *     </Map>
+ *   );
+ * }
+ */
