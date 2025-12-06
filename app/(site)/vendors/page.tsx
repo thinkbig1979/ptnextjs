@@ -86,7 +86,6 @@ export default async function VendorsPage({ searchParams }: VendorsPageProps) {
             initialVendors={vendors}
             initialCategories={categoryNames}
             initialProducts={products}
-            baseUrl="/vendors"
             pageTitle="vendors"
           />
         </Suspense>

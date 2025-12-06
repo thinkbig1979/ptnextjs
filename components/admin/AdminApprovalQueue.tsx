@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Table,
   TableBody,
@@ -68,16 +68,10 @@ export default function AdminApprovalQueue() {
   const { toast } = useToast();
 
   /**
-   * Fetch pending vendors on mount
-   */
-  useEffect(() => {
-    fetchPendingVendors();
-  }, []);
-
-  /**
    * Fetch pending vendors from API
+   * Wrapped in useCallback to stabilize the function reference
    */
-  const fetchPendingVendors = async () => {
+  const fetchPendingVendors = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -105,7 +99,14 @@ export default function AdminApprovalQueue() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [toast]);
+
+  /**
+   * Fetch pending vendors on mount
+   */
+  useEffect(() => {
+    fetchPendingVendors();
+  }, [fetchPendingVendors]);
 
   /**
    * Open approve confirmation dialog

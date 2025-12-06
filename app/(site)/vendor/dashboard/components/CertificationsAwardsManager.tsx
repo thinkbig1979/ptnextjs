@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Badge } from '@/components/ui/badge';
 import {
   Loader2, Save, Plus, Edit2, Trash2, Award, Medal, Building2,
-  Calendar, Link2, FileText, X, Upload, Image as ImageIcon
+  Calendar, Link2, Image as ImageIcon
 } from 'lucide-react';
 import { VendorCertification, VendorAward, Vendor } from '@/lib/types';
 import { useVendorDashboard } from '@/lib/context/VendorDashboardContext';

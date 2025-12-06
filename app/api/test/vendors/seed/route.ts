@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { getPayload } from 'payload';
 import config from '@/payload.config';
-import { authService } from '@/lib/services/auth-service';
 /**
  * Test Vendor Seed API
  * POST /api/test/vendors/seed

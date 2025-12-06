@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,7 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import {
   Loader2, Save, Plus, Edit2, Trash2, Star, Calendar,
-  Image as ImageIcon, X, FileText, Award, Briefcase
+  Image as ImageIcon, X, Award, Briefcase
 } from 'lucide-react';
 import { Vendor } from '@/lib/types';
 import { useVendorDashboard } from '@/lib/context/VendorDashboardContext';
@@ -86,7 +85,7 @@ export function CaseStudiesManager({ vendor }: CaseStudiesManagerProps) {
   const {
     register,
     handleSubmit,
-    formState: { errors, isDirty },
+    formState: { errors },
     reset,
     watch,
     setValue,

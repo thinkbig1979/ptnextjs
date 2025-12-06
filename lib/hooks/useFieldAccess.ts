@@ -183,18 +183,15 @@ export function useFieldAccessWithVendor(
  * ```
  */
 export function useFieldAccessContext(): UseFieldAccessReturn {
-  // This hook requires VendorDashboardContext
-  // We'll import it dynamically to avoid circular dependencies
-  let vendor: { tier?: Tier | null } | null = null;
+  // Import the hook - this is safe because this function
+  // should only be called from components within VendorDashboardProvider
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { useVendorDashboard } = require('@/lib/context/VendorDashboardContext');
 
-  try {
-    // Try to get vendor from context
-    const { useVendorDashboard } = require('@/lib/context/VendorDashboardContext');
-    const context = useVendorDashboard();
-    vendor = context.vendor;
-  } catch (error) {
-    console.warn('useFieldAccessContext: VendorDashboardContext not available');
-  }
+  // Call the hook unconditionally at the top level (React hooks rule)
+  // This will throw if not within VendorDashboardProvider (expected behavior)
+  const context = useVendorDashboard();
+  const vendor = context.vendor;
 
   return useFieldAccess({
     tier: vendor?.tier ?? null,

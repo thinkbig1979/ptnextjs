@@ -1,14 +1,14 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Loader2, Save, Plus, X, Link2, Calendar, Users, TrendingUp, Star, Video, Globe } from 'lucide-react';
+import { Loader2, Save, Plus, X, Calendar, TrendingUp, Video, Globe } from 'lucide-react';
 import { brandStorySchema, type BrandStoryFormData } from '@/lib/validation/vendorSchemas';
 import { Vendor } from '@/lib/types';
 import { useVendorDashboard } from '@/lib/context/VendorDashboardContext';
@@ -49,7 +49,6 @@ export function BrandStoryForm({ vendor, onSubmit }: BrandStoryFormProps) {
     formState: { errors, isDirty, isSubmitting },
     watch,
     reset,
-    control,
   } = useForm<BrandStoryFormData>({
     resolver: zodResolver(brandStorySchema),
     defaultValues: {

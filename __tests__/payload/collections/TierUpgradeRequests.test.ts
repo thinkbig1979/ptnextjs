@@ -154,7 +154,7 @@ describe('TierUpgradeRequests Collection - Schema Tests', () => {
 
       const result = validateTierUpgradeRequest(request);
       expect(result.valid).toBe(false);
-      expect(result.errors).toContain('Invalid requested tier value');
+      expect(result.errors).toContain('Invalid requested tier value for upgrade');
     });
 
     it('should reject requestedTier as free', () => {
@@ -168,7 +168,7 @@ describe('TierUpgradeRequests Collection - Schema Tests', () => {
 
       const result = validateTierUpgradeRequest(request);
       expect(result.valid).toBe(false);
-      expect(result.errors).toContain('Cannot request free tier (downgrades not supported)');
+      expect(result.errors).toContain('Invalid requested tier value for upgrade');
     });
   });
 
@@ -236,7 +236,7 @@ describe('TierUpgradeRequests Collection - Schema Tests', () => {
 
       const result = validateTierUpgradeRequest(request);
       expect(result.valid).toBe(false);
-      expect(result.errors).toContain('Requested tier must be higher than current tier');
+      expect(result.errors).toContain('Requested tier must be higher than current tier for upgrades');
     });
 
     it('should reject downgrade from tier2 to tier1', () => {
@@ -250,7 +250,7 @@ describe('TierUpgradeRequests Collection - Schema Tests', () => {
 
       const result = validateTierUpgradeRequest(request);
       expect(result.valid).toBe(false);
-      expect(result.errors).toContain('Requested tier must be higher than current tier');
+      expect(result.errors).toContain('Requested tier must be higher than current tier for upgrades');
     });
 
     it('should reject downgrade from tier3 to tier2', () => {
@@ -264,7 +264,7 @@ describe('TierUpgradeRequests Collection - Schema Tests', () => {
 
       const result = validateTierUpgradeRequest(request);
       expect(result.valid).toBe(false);
-      expect(result.errors).toContain('Requested tier must be higher than current tier');
+      expect(result.errors).toContain('Requested tier must be higher than current tier for upgrades');
     });
 
     it('should reject downgrade from tier1 to free', () => {
@@ -278,7 +278,8 @@ describe('TierUpgradeRequests Collection - Schema Tests', () => {
 
       const result = validateTierUpgradeRequest(request);
       expect(result.valid).toBe(false);
-      expect(result.errors).toContain('Requested tier must be higher than current tier');
+      // 'free' is invalid for upgrade requests (fails validation before comparison)
+      expect(result.errors).toContain('Invalid requested tier value for upgrade');
     });
   });
 

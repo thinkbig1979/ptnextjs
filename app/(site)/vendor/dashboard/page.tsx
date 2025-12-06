@@ -13,7 +13,6 @@ import { Tier } from '@/lib/services/TierService';
 import {
   CheckCircle2,
   Clock,
-  XCircle,
   FileText,
   Mail,
   HelpCircle,

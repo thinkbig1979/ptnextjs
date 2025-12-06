@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Table,
   TableBody,
@@ -89,16 +89,10 @@ export default function AdminTierRequestQueue() {
   const { toast } = useToast();
 
   /**
-   * Fetch pending requests on mount and when filter changes
-   */
-  useEffect(() => {
-    fetchPendingRequests();
-  }, [requestTypeFilter]);
-
-  /**
    * Fetch pending tier upgrade requests from API
+   * Wrapped in useCallback to stabilize the function reference
    */
-  const fetchPendingRequests = async () => {
+  const fetchPendingRequests = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -135,7 +129,14 @@ export default function AdminTierRequestQueue() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [requestTypeFilter, toast]);
+
+  /**
+   * Fetch pending requests on mount and when filter changes
+   */
+  useEffect(() => {
+    fetchPendingRequests();
+  }, [fetchPendingRequests]);
 
   /**
    * Open approve confirmation dialog

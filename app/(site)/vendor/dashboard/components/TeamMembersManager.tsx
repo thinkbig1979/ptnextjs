@@ -10,11 +10,10 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   Loader2, Save, Plus, Edit2, Trash2, GripVertical, Mail,
-  Upload, X, User, Briefcase, Linkedin, Info
+  User, Linkedin, Info
 } from 'lucide-react';
 import { TeamMember, Vendor } from '@/lib/types';
 import { useVendorDashboard } from '@/lib/context/VendorDashboardContext';

@@ -108,7 +108,6 @@ const TIER_ORDER: Record<string, number> = {
 const VALID_CURRENT_TIERS = ['free', 'tier1', 'tier2', 'tier3'];
 const VALID_UPGRADE_TIERS = ['tier1', 'tier2', 'tier3']; // Cannot upgrade to 'free'
 const VALID_DOWNGRADE_TIERS = ['free', 'tier1', 'tier2']; // Cannot downgrade to 'tier3'
-const VALID_REQUESTED_TIERS = ['tier1', 'tier2', 'tier3']; // Legacy - kept for backward compatibility
 const VALID_STATUSES = ['pending', 'approved', 'rejected', 'cancelled'];
 
 /**

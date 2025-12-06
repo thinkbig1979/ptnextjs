@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '@/lib/context/AuthContext';
 import { VendorDashboardProvider } from '@/lib/context/VendorDashboardContext';
 import { VendorNavigation } from '@/components/vendor/VendorNavigation';

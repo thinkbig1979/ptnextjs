@@ -22,7 +22,6 @@ interface VendorsClientProps {
   initialProducts?: Product[];
   showPartnersOnly?: boolean; // Filter to show only partners (partner: true)
   showNonPartnersOnly?: boolean; // Filter to show only non-partners (partner: false or undefined)
-  baseUrl?: string; // "/partners" or "/vendors"
   pageTitle?: string; // For dynamic page title in results
 }
 
@@ -32,7 +31,6 @@ export function VendorsClient({
   initialProducts = [],
   showPartnersOnly = false,
   showNonPartnersOnly = false,
-  baseUrl = "/vendors",
   pageTitle = "vendors",
 }: VendorsClientProps) {
   const router = useRouter();
@@ -57,12 +55,7 @@ export function VendorsClient({
     React.useState<VendorCoordinates | null>(null);
   const [maxDistance, setMaxDistance] = React.useState(100);
 
-  // Remove broken useInView hook - components should be visible immediately
-  // const [ref, inView] = useInView({
-  //   triggerOnce: true,
-  //   threshold: 0.1,
-  // });
-  const inView = true; // Always show content immediately
+  // Content is always visible immediately (removed broken useInView hook)
 
   // Update state when URL parameters change
   React.useEffect(() => {
@@ -75,30 +68,10 @@ export function VendorsClient({
     );
   }, [searchParams]);
 
-  // Navigation functions
-  const navigateToProducts = React.useCallback(
-    (vendor: Vendor) => {
-      let url = `/products?partner=${encodeURIComponent(vendor.name)}`;
-
-      // If vendor is not a partner, add view=all to show all vendors' products by default
-      if (!vendor.partner) {
-        url += "&view=all";
-      }
-
-      router.push(url);
-    },
-    [router],
-  );
-
-  const handleCategoryClick = React.useCallback((category: string) => {
-    setSelectedCategory(category);
-    setCurrentPage(1);
-  }, []);
 
   // Apply location filter first (this adds distance data and filters by proximity)
   const {
     filteredVendors: locationFilteredVendors,
-    vendorsWithCoordinates,
     isFiltering: isLocationFiltering,
   } = useLocationFilter(initialVendors, userLocation, maxDistance);
 
@@ -343,13 +316,7 @@ export function VendorsClient({
 
       {/* Vendors Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-        {paginatedVendors.map((vendor, index) => {
-          // Find products for this vendor from the provided products data
-          const vendorProducts = initialProducts.filter(
-            (product) =>
-              product?.partnerId === vendor?.id ||
-              product?.vendorId === vendor?.id,
-          );
+        {paginatedVendors.map((vendor) => {
           const isHighlighted = highlightedVendor === vendor?.name;
 
           return (
