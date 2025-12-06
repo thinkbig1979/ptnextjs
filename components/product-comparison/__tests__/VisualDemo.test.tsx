@@ -30,7 +30,31 @@ jest.mock('react-player', () => {
   };
 });
 
+// Mock useLazyLoading hook with controllable state
+const mockUseLazyLoading = jest.fn();
+jest.mock('@/lib/hooks/use-lazy-loading', () => ({
+  useLazyLoading: () => mockUseLazyLoading(),
+  usePerformanceMetrics: () => ({
+    startMeasure: jest.fn(),
+    endMeasure: jest.fn(),
+    getMetrics: jest.fn(() => ({}))
+  })
+}));
+
 describe('VisualDemo', () => {
+  // Default mock behavior - visible (loaded state)
+  beforeEach(() => {
+    mockUseLazyLoading.mockReturnValue({
+      ref: React.createRef(),
+      isVisible: true,
+      wasVisible: true
+    });
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   const mockVisualContent: VisualDemoContent = {
     type: '360-image',
     title: 'Navigation System 360 View',
@@ -128,6 +152,12 @@ describe('VisualDemo', () => {
   });
 
   it('supports lazy loading for performance', () => {
+    // Mock not-yet-visible state for lazy loading test
+    mockUseLazyLoading.mockReturnValue({
+      ref: React.createRef(),
+      isVisible: false,
+      wasVisible: false
+    });
     render(<VisualDemo content={mockVisualContent} lazyLoad />);
     expect(screen.getByTestId('lazy-load-placeholder')).toBeInTheDocument();
   });

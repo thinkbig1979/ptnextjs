@@ -82,3 +82,13 @@ if (typeof ResizeObserver === 'undefined') {
     disconnect() {}
   };
 }
+
+// URL.createObjectURL and URL.revokeObjectURL polyfills
+// Required for file download functionality (CSV export, PDF generation)
+if (typeof URL.createObjectURL === 'undefined') {
+  let objectUrlCounter = 0;
+  URL.createObjectURL = () => `blob:mock-url-${++objectUrlCounter}`;
+}
+if (typeof URL.revokeObjectURL === 'undefined') {
+  URL.revokeObjectURL = () => {};
+}
