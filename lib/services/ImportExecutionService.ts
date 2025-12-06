@@ -468,11 +468,12 @@ export class ImportExecutionService {
       }));
 
     // Create import history record
+    // Note: Payload CMS relationship fields require numeric IDs
     const history = await payload.create({
       collection: 'import_history',
       data: {
-        vendor: options.vendorId,
-        user: options.userId,
+        vendor: Number(options.vendorId),
+        user: Number(options.userId),
         importDate: new Date().toISOString(),
         status,
         rowsProcessed: result.totalRows,

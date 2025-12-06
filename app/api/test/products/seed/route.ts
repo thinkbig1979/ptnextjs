@@ -122,7 +122,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<SeedRespo
         if (productData.vendor) {
           console.log(`[Product ${i}] Validating vendor: ${productData.vendor}`);
           // Try to find vendor by ID first, then by slug
-          let vendorId: string | null = null;
+          // Note: Payload CMS relationship fields require numeric IDs
+          let vendorId: number | null = null;
           try {
             // Try as direct ID
             const vendorCheck = await payload.findByID({
@@ -130,7 +131,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<SeedRespo
               id: productData.vendor,
             });
             if (vendorCheck) {
-              vendorId = vendorCheck.id as string;
+              vendorId = vendorCheck.id as number;
               console.log(`[Product ${i}] Found vendor by ID: ${vendorId}`);
             }
           } catch (idError) {
@@ -146,7 +147,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<SeedRespo
                 },
               });
               if (vendorBySlug.docs && vendorBySlug.docs.length > 0) {
-                vendorId = vendorBySlug.docs[0].id as string;
+                vendorId = vendorBySlug.docs[0].id as number;
                 console.log(`[Product ${i}] Found vendor by slug: ${vendorId}`);
               }
             } catch (slugError) {

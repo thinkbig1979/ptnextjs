@@ -322,11 +322,12 @@ export async function createUpgradeRequest(
   }
 
   // Create the request
+  // Note: Payload CMS relationship fields require numeric IDs
   const newRequest = await payloadClient.create({
     collection: 'tier_upgrade_requests',
     data: {
-      vendor: payload.vendorId,
-      user: payload.userId,
+      vendor: Number(payload.vendorId),
+      user: Number(payload.userId),
       currentTier: vendor.tier as Tier,
       requestedTier: payload.requestedTier,
       requestType: 'upgrade',
@@ -383,11 +384,12 @@ export async function createDowngradeRequest(
   }
 
   // Create the request
+  // Note: Payload CMS relationship fields require numeric IDs
   const newRequest = await payloadClient.create({
     collection: 'tier_upgrade_requests',
     data: {
-      vendor: payload.vendorId,
-      user: payload.userId,
+      vendor: Number(payload.vendorId),
+      user: Number(payload.userId),
       currentTier: vendor.tier as Tier,
       requestedTier: payload.requestedTier,
       requestType: 'downgrade',
@@ -608,12 +610,13 @@ export async function approveRequest(
     });
 
     // Update request status
+    // Note: Payload CMS relationship fields require numeric IDs
     await payloadClient.update({
       collection: 'tier_upgrade_requests',
       id: requestId,
       data: {
         status: 'approved',
-        reviewedBy: adminUserId,
+        reviewedBy: Number(adminUserId),
         reviewedAt: new Date().toISOString(),
       },
     });
@@ -651,12 +654,13 @@ export async function rejectRequest(
     }
 
     // Update request status
+    // Note: Payload CMS relationship fields require numeric IDs
     await payloadClient.update({
       collection: 'tier_upgrade_requests',
       id: requestId,
       data: {
         status: 'rejected',
-        reviewedBy: adminUserId,
+        reviewedBy: Number(adminUserId),
         reviewedAt: new Date().toISOString(),
         rejectionReason,
       },
