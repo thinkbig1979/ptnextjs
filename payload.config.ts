@@ -4,6 +4,25 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+// SECURITY: Validate PAYLOAD_SECRET at startup
+if (!process.env.PAYLOAD_SECRET) {
+  throw new Error(
+    'PAYLOAD_SECRET environment variable is required but not set.\n' +
+    'Please set it in your .env file:\n' +
+    '  PAYLOAD_SECRET=your-secret-key-here\n\n' +
+    'Generate a secure secret with:\n' +
+    '  openssl rand -base64 32\n\n' +
+    'SECURITY WARNING: Never commit this secret to version control.'
+  );
+}
+
+if (process.env.PAYLOAD_SECRET.length < 32) {
+  console.warn(
+    'WARNING: PAYLOAD_SECRET is shorter than recommended minimum of 32 characters.\n' +
+    'Generate a secure secret with: openssl rand -base64 32'
+  );
+}
+
 // Import collection schemas
 import Users from './payload/collections/Users';
 import Media from './payload/collections/Media';
@@ -96,8 +115,8 @@ export default buildConfig({
     process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
   ].filter(Boolean),
 
-  // Secret key for JWT authentication
-  secret: process.env.PAYLOAD_SECRET || 'your-secret-key-here-minimum-32-characters',
+  // Secret key for JWT authentication (validated at startup)
+  secret: process.env.PAYLOAD_SECRET,
 
   // Upload configuration (local filesystem storage)
   upload: {

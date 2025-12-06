@@ -1661,7 +1661,6 @@ class PayloadCMSDataService {
   // Cache management
   clearCache(): void {
     this.cache.clear();
-    console.log('🗑️ Payload CMS cache cleared');
   }
 
   clearVendorCache(vendorIdOrSlug?: string): void {
@@ -1684,29 +1683,22 @@ class PayloadCMSDataService {
       ];
       
       // Delete exact keys
-      let deletedCount = 0;
       keysToDelete.forEach(key => {
         if (this.cache.has(key)) {
           this.cache.delete(key);
-          console.log(`[Cache] ✓ Deleted: ${key}`);
-          deletedCount++;
         }
       });
-      
+
       // Always clear lists since vendor was modified
       const listKeys = ['vendors', 'partners', 'featured-partners', 'products'];
       listKeys.forEach(key => {
         if (this.cache.has(key)) {
           this.cache.delete(key);
-          deletedCount++;
         }
       });
-      
-      console.log(`[Cache] Cleared ${deletedCount} cache entries for vendor: ${vendorIdOrSlug}`);
     } else {
       // Clear all vendor-related cache
       this.cache.clear();
-      console.log('[Cache] Cleared entire data service cache');
     }
   }
 
@@ -1715,8 +1707,6 @@ class PayloadCMSDataService {
    * Call this when a blog post is created, updated, or deleted
    */
   clearBlogCache(blogSlug?: string): void {
-    let deletedCount = 0;
-
     if (blogSlug) {
       // Clear specific blog post cache
       const keysToDelete = [
@@ -1726,8 +1716,6 @@ class PayloadCMSDataService {
       keysToDelete.forEach(key => {
         if (this.cache.has(key)) {
           this.cache.delete(key);
-          console.log(`[Cache] ✓ Deleted: ${key}`);
-          deletedCount++;
         }
       });
     }
@@ -1737,12 +1725,8 @@ class PayloadCMSDataService {
     listKeys.forEach(key => {
       if (this.cache.has(key)) {
         this.cache.delete(key);
-        console.log(`[Cache] ✓ Deleted list: ${key}`);
-        deletedCount++;
       }
     });
-
-    console.log(`[Cache] Cleared ${deletedCount} blog cache entries${blogSlug ? ` for: ${blogSlug}` : ''}`);
   }
 
   getCacheStats(): { hits: number; misses: number; size: number } {

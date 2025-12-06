@@ -81,6 +81,8 @@ export interface RateLimitOptions {
   maxRequests?: number;
   /** Time window in milliseconds (default: 60000 = 1 minute) */
   windowMs?: number;
+  /** Optional identifier for logging (e.g., endpoint name) */
+  identifier?: string;
 }
 
 /**
@@ -142,6 +144,17 @@ export async function rateLimit(
   // Check if rate limit exceeded
   if (entry.count > maxRequests) {
     const retryAfter = Math.ceil((entry.resetTime - now) / 1000);
+
+    // Security logging for rate limit violations
+    console.warn('[RateLimit] Rate limit exceeded:', {
+      ip: clientIp,
+      endpoint: options?.identifier || 'unknown',
+      requestCount: entry.count,
+      maxRequests,
+      windowMs,
+      retryAfter,
+      timestamp: new Date().toISOString(),
+    });
 
     return NextResponse.json(
       {

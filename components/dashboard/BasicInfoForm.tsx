@@ -54,24 +54,6 @@ export function BasicInfoForm({ vendor, onSubmit }: BasicInfoFormProps) {
     },
   });
 
-  // DEBUG: Log validation state
-  useEffect(() => {
-    console.log('[BasicInfoForm] Validation State:', {
-      isDirty,
-      isValid,
-      isSubmitting,
-      errors: Object.keys(errors).length > 0 ? errors : 'none',
-      formValues: {
-        companyName: watch('companyName'),
-        slug: watch('slug'),
-        description: watch('description'),
-        logo: watch('logo'),
-        contactEmail: watch('contactEmail'),
-        contactPhone: watch('contactPhone'),
-      },
-    });
-  }, [isDirty, isValid, isSubmitting, errors, watch]);
-
   const description = watch('description');
   const descriptionLength = description?.length || 0;
 
@@ -112,16 +94,9 @@ export function BasicInfoForm({ vendor, onSubmit }: BasicInfoFormProps) {
   ]);
 
   const handleFormSubmit = async (data: BasicInfoFormData) => {
-    console.log('[BasicInfoForm] handleFormSubmit called with:', data);
-    console.log('[BasicInfoForm] onSubmit prop exists:', !!onSubmit);
-    console.log('[BasicInfoForm] form state - isDirty:', isDirty, 'errors:', errors);
-
     if (onSubmit) {
-      console.log('[BasicInfoForm] Calling onSubmit callback');
       await onSubmit(data);
-      console.log('[BasicInfoForm] onSubmit completed');
     } else {
-      console.log('[BasicInfoForm] Using fallback - updateVendor + saveVendor');
       // Update vendor in context
       updateVendor({
         name: data.companyName,
@@ -136,14 +111,14 @@ export function BasicInfoForm({ vendor, onSubmit }: BasicInfoFormProps) {
       await saveVendor();
     }
 
-    console.log('[BasicInfoForm] Resetting form');
     // Reset form dirty state
     reset(data);
   };
 
-  const handleFormError = (errors: Record<string, { message?: string }>): void => {
-    console.error('[BasicInfoForm] Validation failed!', errors);
-    console.error('[BasicInfoForm] Detailed errors:', JSON.stringify(errors, null, 2));
+  const handleFormError = (formErrors: Record<string, { message?: string }>): void => {
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('[BasicInfoForm] Validation failed:', formErrors);
+    }
   };
 
   return (

@@ -75,13 +75,6 @@ function filterVendorPayload(vendor: any): Record<string, any> {
     filtered[payloadFieldName] = value;
   });
 
-  console.log('[VendorDashboardContext] Filtered payload:', {
-    originalFields: Object.keys(vendor),
-    filteredFields: Object.keys(filtered),
-    excludedFields: Object.keys(vendor).filter(k => !ALLOWED_UPDATE_FIELDS.has(k)),
-    nameMapped: 'name' in vendor && 'companyName' in filtered && !('name' in filtered),
-  });
-
   return filtered;
 }
 
@@ -112,7 +105,6 @@ const VendorDashboardContext = createContext<VendorDashboardContextValue | undef
 const fetcher = (url: string) => fetch(url).then(async (res) => {
   if (!res.ok) throw new Error('Failed to fetch vendor');
   const json = await res.json();
-  console.log('[VendorDashboardContext] Fetcher received:', json);
   // API returns { success: true, data: vendor }, extract the vendor data
   return json.success ? json.data : json;
 });
@@ -147,14 +139,6 @@ export function VendorDashboardProvider({
       fallbackData: initialData,
       revalidateOnFocus: false,
       onSuccess: (data) => {
-        console.log('[VendorDashboardContext] onSuccess - Vendor loaded:', {
-          id: data?.id,
-          hasName: 'name' in (data || {}),
-          name: data?.name,
-          hasCompanyName: 'companyName' in (data || {}),
-          companyName: data?.companyName,
-          contactEmail: data?.contactEmail,
-        });
         setLocalVendor(data);
       },
     }
@@ -185,26 +169,19 @@ export function VendorDashboardProvider({
    */
   const saveVendor = useCallback(async (vendorData?: Vendor | null) => {
     const dataToSave = vendorData || vendor;
-    console.log('[VendorDashboardContext] saveVendor called');
-    console.log('[VendorDashboardContext] vendor data:', dataToSave);
 
     if (!dataToSave) {
-      console.error('[VendorDashboardContext] No vendor data to save');
       toast.error('No vendor data to save');
       return;
     }
 
     setIsSaving(true);
-    console.log('[VendorDashboardContext] isSaving set to true');
 
     try {
       const url = `/api/portal/vendors/${dataToSave.id}`;
 
-      // CRITICAL FIX: Filter payload to only include updatable fields and convert empty strings
+      // Filter payload to only include updatable fields and convert empty strings
       const payloadToSend = filterVendorPayload(dataToSave);
-
-      console.log('[VendorDashboardContext] Making PUT request to:', url);
-      console.log('[VendorDashboardContext] Filtered request body:', JSON.stringify(payloadToSend, null, 2));
 
       // Use vendor.id for PUT (actual vendor ID, not user ID)
       const response = await fetch(url, {
@@ -216,38 +193,33 @@ export function VendorDashboardProvider({
         body: JSON.stringify(payloadToSend),
       });
 
-      console.log('[VendorDashboardContext] Response status:', response.status);
-
       const responseData = await response.json();
-      console.log('[VendorDashboardContext] Response data:', responseData);
 
       if (!response.ok) {
         // Handle nested error structure from API
         const errorMessage = typeof responseData.error === 'string'
           ? responseData.error
           : responseData.error?.message || 'Failed to save vendor';
-        console.error('[VendorDashboardContext] API error:', errorMessage);
         throw new Error(errorMessage);
       }
 
       // Extract vendor from nested data structure: { success: true, data: { vendor, message } }
       const updatedVendor = responseData.data?.vendor || responseData.data || responseData;
-      console.log('[VendorDashboardContext] Updated vendor:', updatedVendor);
 
       // Update SWR cache
       await mutate(updatedVendor, { revalidate: false });
       setLocalVendor(updatedVendor);
       setIsDirty(false);
 
-      console.log('[VendorDashboardContext] Save successful');
       toast.success('Profile saved successfully');
     } catch (error) {
-      console.error('[VendorDashboardContext] Error saving vendor:', error);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('[VendorDashboardContext] Error saving vendor:', error);
+      }
       toast.error(error instanceof Error ? error.message : 'Failed to save profile');
       throw error;
     } finally {
       setIsSaving(false);
-      console.log('[VendorDashboardContext] isSaving set to false');
     }
   }, [vendor, mutate]);
 

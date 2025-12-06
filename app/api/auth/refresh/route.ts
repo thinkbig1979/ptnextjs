@@ -1,5 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { refreshAccessToken } from '@/lib/utils/jwt';
+import { rateLimit } from '@/lib/middleware/rateLimit';
+
+// Rate limit: 10 requests per minute per IP
+const REFRESH_RATE_LIMIT = {
+  maxRequests: 10,
+  windowMs: 60 * 1000, // 1 minute
+  identifier: '/api/auth/refresh',
+};
 
 /**
  * POST /api/auth/refresh
@@ -7,47 +15,49 @@ import { refreshAccessToken } from '@/lib/utils/jwt';
  * Refreshes access token using refresh token from httpOnly cookie
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
-  try {
-    // Extract refresh token from httpOnly cookie
-    const refreshToken = request.cookies.get('refresh_token')?.value;
+  return rateLimit(request, async () => {
+    try {
+      // Extract refresh token from httpOnly cookie
+      const refreshToken = request.cookies.get('refresh_token')?.value;
 
-    if (!refreshToken) {
+      if (!refreshToken) {
+        return NextResponse.json(
+          { error: 'No refresh token provided' },
+          { status: 401 }
+        );
+      }
+
+      // Generate new access token
+      const newAccessToken = refreshAccessToken(refreshToken);
+
+      // Set new access token cookie
+      const response = NextResponse.json({
+        message: 'Token refreshed successfully',
+      });
+
+      response.cookies.set('access_token', newAccessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 60 * 60, // 1 hour
+        path: '/',
+      });
+
+      return response;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Token refresh failed';
+
+      if (message === 'Token expired') {
+        return NextResponse.json(
+          { error: 'Refresh token expired', code: 'REFRESH_TOKEN_EXPIRED' },
+          { status: 401 }
+        );
+      }
+
       return NextResponse.json(
-        { error: 'No refresh token provided' },
+        { error: 'Invalid refresh token' },
         { status: 401 }
       );
     }
-
-    // Generate new access token
-    const newAccessToken = refreshAccessToken(refreshToken);
-
-    // Set new access token cookie
-    const response = NextResponse.json({
-      message: 'Token refreshed successfully',
-    });
-
-    response.cookies.set('access_token', newAccessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 60 * 60, // 1 hour
-      path: '/',
-    });
-
-    return response;
-  } catch (error) {
-    const message = error instanceof Error ? error.message : 'Token refresh failed';
-
-    if (message === 'Token expired') {
-      return NextResponse.json(
-        { error: 'Refresh token expired', code: 'REFRESH_TOKEN_EXPIRED' },
-        { status: 401 }
-      );
-    }
-
-    return NextResponse.json(
-      { error: 'Invalid refresh token' },
-      { status: 401 }
-    );
-  }
+  }, REFRESH_RATE_LIMIT);
 }

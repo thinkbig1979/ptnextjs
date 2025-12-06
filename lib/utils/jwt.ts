@@ -1,6 +1,12 @@
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.PAYLOAD_SECRET || 'your-secret-key-here-minimum-32-characters';
+// SECURITY: JWT_SECRET is validated at startup in payload.config.ts
+// This file will only be imported after the validation passes
+if (!process.env.PAYLOAD_SECRET) {
+  throw new Error('PAYLOAD_SECRET environment variable is required');
+}
+
+const JWT_SECRET = process.env.PAYLOAD_SECRET;
 const JWT_ACCESS_EXPIRY = '1h';
 const JWT_REFRESH_EXPIRY = '7d';
 
