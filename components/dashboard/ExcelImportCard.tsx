@@ -28,7 +28,7 @@ interface RowValidationResult {
   valid: boolean;
   errors: ValidationError[];
   warnings: ValidationError[];
-  data: Record<string, any>;
+  data: Record<string, unknown>;
 }
 
 interface ValidationResult {
@@ -47,7 +47,7 @@ interface ValidationResult {
 
 interface ParseResult {
   success: boolean;
-  rows: any[];
+  rows: Array<{ rowNumber: number; data: Record<string, unknown> }>;
   metadata?: {
     filename: string;
     rowCount: number;
@@ -73,8 +73,8 @@ interface ExecuteResponse {
       errorCount: number;
       warningCount: number;
     };
-    changes: any[];
-    errors: any[];
+    changes: Array<{ rowNumber: number; field: string; oldValue: unknown; newValue: unknown }>;
+    errors: Array<{ rowNumber: number; field: string; message: string }>;
   };
   message: string;
 }
@@ -147,7 +147,7 @@ export function ExcelImportCard() {
   /**
    * Handle file selection
    */
-  const handleFileSelect = useCallback((selectedFile: File) => {
+  const handleFileSelect = useCallback((selectedFile: File): void => {
     const validationError = validateFile(selectedFile);
     if (validationError) {
       setError(validationError);
@@ -167,7 +167,7 @@ export function ExcelImportCard() {
   /**
    * Handle file input change
    */
-  const handleFileInputChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileInputChange = useCallback((event: React.ChangeEvent<HTMLInputElement>): void => {
     const selectedFile = event.target.files?.[0];
     if (selectedFile) {
       handleFileSelect(selectedFile);
@@ -177,24 +177,24 @@ export function ExcelImportCard() {
   /**
    * Handle drag and drop events
    */
-  const handleDragEnter = useCallback((e: React.DragEvent) => {
+  const handleDragEnter = useCallback((e: React.DragEvent): void => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(true);
   }, []);
 
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
+  const handleDragLeave = useCallback((e: React.DragEvent): void => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
   }, []);
 
-  const handleDragOver = useCallback((e: React.DragEvent) => {
+  const handleDragOver = useCallback((e: React.DragEvent): void => {
     e.preventDefault();
     e.stopPropagation();
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
+  const handleDrop = useCallback((e: React.DragEvent): void => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
@@ -327,7 +327,7 @@ export function ExcelImportCard() {
   /**
    * Cancel preview and return to idle
    */
-  const handleCancelPreview = useCallback(() => {
+  const handleCancelPreview = useCallback((): void => {
     setPhase('idle');
     setValidationResult(null);
     setParseResult(null);
@@ -337,7 +337,7 @@ export function ExcelImportCard() {
   /**
    * Reset to initial state
    */
-  const handleReset = useCallback(() => {
+  const handleReset = useCallback((): void => {
     setPhase('idle');
     setFile(null);
     setValidationResult(null);
@@ -352,7 +352,7 @@ export function ExcelImportCard() {
   /**
    * Trigger file input click
    */
-  const handleBrowseClick = useCallback(() => {
+  const handleBrowseClick = useCallback((): void => {
     fileInputRef.current?.click();
   }, []);
 

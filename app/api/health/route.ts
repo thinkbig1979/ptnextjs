@@ -11,7 +11,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(_request: NextRequest) {
+export async function GET(_request: NextRequest): Promise<NextResponse> {
   const startTime = process.hrtime.bigint();
 
   // Build response with application status
@@ -38,7 +38,7 @@ export async function GET(_request: NextRequest) {
 }
 
 // Support HEAD requests for lightweight health checks
-export async function HEAD(_request: NextRequest) {
+export async function HEAD(_request: NextRequest): Promise<NextResponse> {
   return new NextResponse(null, {
     status: 200,
     headers: {

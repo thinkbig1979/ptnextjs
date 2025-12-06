@@ -53,7 +53,7 @@ function validateTier(tier: unknown): tier is VendorTier {
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
-) {
+): Promise<NextResponse> {
   try {
     // Verify admin authentication
     extractAdminUser(request);

@@ -83,7 +83,7 @@ function convertTierToNumeric(tier: string | undefined): NumericVendorTier {
 export async function POST(
   request: NextRequest,
   context: RouteContext
-) {
+): Promise<NextResponse> {
   try {
     // Await params
     const { id } = await context.params;
@@ -165,7 +165,7 @@ export async function POST(
     const buffer = Buffer.from(bytes);
 
     // Convert tier to numeric format for Excel services
-    const numericTier = convertTierToNumeric(vendor.tier);
+    const numericTier = convertTierToNumeric(vendor.tier as string | undefined);
 
     // Parse Excel file
     const parseResult = await ExcelParserService.parse(
@@ -190,7 +190,7 @@ export async function POST(
     const validationResult = await ImportValidationService.validate(
       parseResult.rows,
       numericTier,
-      vendor.id
+      vendor.id as string
     );
 
     // Preview phase: Return validation results
@@ -223,7 +223,7 @@ export async function POST(
       const executionResult = await ImportExecutionService.execute(
         validationResult.rows,
         {
-          vendorId: vendor.id,
+          vendorId: vendor.id as string,
           userId: user.id.toString(),
           overwriteExisting: true
         }

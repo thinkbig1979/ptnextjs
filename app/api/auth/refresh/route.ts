@@ -6,7 +6,7 @@ import { refreshAccessToken } from '@/lib/utils/jwt';
  *
  * Refreshes access token using refresh token from httpOnly cookie
  */
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     // Extract refresh token from httpOnly cookie
     const refreshToken = request.cookies.get('refresh_token')?.value;

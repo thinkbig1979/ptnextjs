@@ -1,6 +1,13 @@
 "use client";
 
 import * as React from "react";
+import { GitCompare, Plus, X } from "lucide-react";
+import { toast } from "sonner";
+
+import { Product } from "@/lib/types";
+
+import { Badge } from "./badge";
+import { Button } from "./button";
 import {
   Dialog,
   DialogContent,
@@ -8,13 +15,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { GitCompare, X, Plus } from "lucide-react";
-import { Product } from "@/lib/types";
-import { OptimizedImage } from "@/components/ui/optimized-image";
-import { toast } from "sonner";
+} from "./dialog";
+import { OptimizedImage } from "./optimized-image";
 
 
 interface ComparisonContextType {
@@ -27,7 +29,7 @@ interface ComparisonContextType {
 
 const ComparisonContext = React.createContext<ComparisonContextType | undefined>(undefined);
 
-export function ComparisonProvider({ children }: { children: React.ReactNode }) {
+export function ComparisonProvider({ children }: { children: React.ReactNode }): React.ReactElement {
   const [comparedProducts, setComparedProducts] = React.useState<Product[]>([]);
 
   const addToComparison = React.useCallback((product: Product) => {
@@ -82,7 +84,7 @@ export function useComparison() {
   return context;
 }
 
-export function CompareButton({ product }: { product: Product }) {
+export function CompareButton({ product }: { product: Product }): React.ReactElement {
   const { addToComparison, removeFromComparison, isComparing, comparedProducts } = useComparison();
   const isInComparison = isComparing(product.id);
   const isAtLimit = comparedProducts.length >= 3 && !isInComparison;
@@ -158,7 +160,7 @@ export function CompareButton({ product }: { product: Product }) {
   );
 }
 
-export function ComparisonFloatingButton() {
+export function ComparisonFloatingButton(): React.ReactElement | null {
   const { comparedProducts, clearComparison } = useComparison();
 
   if (comparedProducts.length === 0) return null;
@@ -191,7 +193,7 @@ export function ComparisonFloatingButton() {
   );
 }
 
-function ProductComparisonTable({ products }: { products: Product[] }) {
+function ProductComparisonTable({ products }: { products: Product[] }): React.ReactElement {
   if (products.length === 0) {
     return (
       <div className="text-center py-8">
@@ -315,23 +317,29 @@ function ProductComparisonTable({ products }: { products: Product[] }) {
                     </div>
                   </td>
                   {products.map((product) => {
-                    const categoryData = product.comparisonMetrics?.[category] as Record<string, any>;
+                    const categoryData = product.comparisonMetrics?.[category] as Record<string, unknown> | undefined;
                     const value = categoryData?.[specKey];
 
                     // Format arrays nicely
-                    let displayValue = value;
+                    let displayValue: React.ReactNode;
                     if (Array.isArray(value)) {
                       displayValue = value.length > 3
                         ? `${value.slice(0, 3).join(', ')} +${value.length - 3} more`
                         : value.join(', ');
                     } else if (typeof value === 'boolean') {
                       displayValue = value ? 'Yes' : 'No';
+                    } else if (value === null || value === undefined) {
+                      displayValue = "—";
+                    } else if (typeof value === 'object') {
+                      displayValue = JSON.stringify(value);
+                    } else {
+                      displayValue = String(value);
                     }
 
                     return (
                       <td key={`${product.id}-${specKey}`} className={`py-3 px-4 text-center text-sm ${index === 0 ? 'bg-blue-50 dark:bg-blue-950/30' : ''}`}>
                         <span className="font-medium text-foreground">
-                          {displayValue || "—"}
+                          {displayValue}
                         </span>
                       </td>
                     );

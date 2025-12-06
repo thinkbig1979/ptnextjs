@@ -94,7 +94,11 @@ export function MediaGalleryManager({ vendor, onSubmit }: MediaGalleryManagerPro
   /**
    * Parse video URL and extract platform info
    */
-  const parseVideoUrl = useCallback((url: string): { platform: 'youtube' | 'vimeo' | null; embedUrl: string | null; thumbnailUrl: string | null } => {
+  const parseVideoUrl = useCallback((url: string): {
+    platform: 'youtube' | 'vimeo' | null;
+    embedUrl: string | null;
+    thumbnailUrl: string | null;
+  } => {
     // YouTube patterns
     const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
     const youtubeMatch = url.match(youtubeRegex);
@@ -125,7 +129,7 @@ export function MediaGalleryManager({ vendor, onSubmit }: MediaGalleryManagerPro
   /**
    * Handle file selection from drag-drop or browse
    */
-  const handleFileSelect = useCallback((file: File) => {
+  const handleFileSelect = useCallback((file: File): void => {
     const validationError = validateImageFile(file);
     if (validationError) {
       setError(validationError);
@@ -141,24 +145,24 @@ export function MediaGalleryManager({ vendor, onSubmit }: MediaGalleryManagerPro
   /**
    * Handle drag and drop events
    */
-  const handleDragEnter = useCallback((e: React.DragEvent) => {
+  const handleDragEnter = useCallback((e: React.DragEvent): void => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(true);
   }, []);
 
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
+  const handleDragLeave = useCallback((e: React.DragEvent): void => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
   }, []);
 
-  const handleDragOver = useCallback((e: React.DragEvent) => {
+  const handleDragOver = useCallback((e: React.DragEvent): void => {
     e.preventDefault();
     e.stopPropagation();
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
+  const handleDrop = useCallback((e: React.DragEvent): void => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
@@ -172,7 +176,7 @@ export function MediaGalleryManager({ vendor, onSubmit }: MediaGalleryManagerPro
   /**
    * Handle file input change
    */
-  const handleFileInputChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileInputChange = useCallback((event: React.ChangeEvent<HTMLInputElement>): void => {
     const selectedFile = event.target.files?.[0];
     if (selectedFile) {
       handleFileSelect(selectedFile);
@@ -182,7 +186,7 @@ export function MediaGalleryManager({ vendor, onSubmit }: MediaGalleryManagerPro
   /**
    * Trigger file input click
    */
-  const handleBrowseClick = useCallback(() => {
+  const handleBrowseClick = useCallback((): void => {
     fileInputRef.current?.click();
   }, []);
 
@@ -332,7 +336,7 @@ export function MediaGalleryManager({ vendor, onSubmit }: MediaGalleryManagerPro
   /**
    * Delete media item
    */
-  const handleDeleteMediaItem = useCallback((itemId: string) => {
+  const handleDeleteMediaItem = useCallback((itemId: string): void => {
     const updatedItems = mediaItems.filter(item => item.id !== itemId);
     setMediaItems(updatedItems);
     markDirty(true);
@@ -344,7 +348,7 @@ export function MediaGalleryManager({ vendor, onSubmit }: MediaGalleryManagerPro
   /**
    * Open edit dialog with existing item data
    */
-  const handleOpenEditDialog = useCallback((item: MediaGalleryItem) => {
+  const handleOpenEditDialog = useCallback((item: MediaGalleryItem): void => {
     setEditingItem(item);
     setFormData({
       type: item.type,

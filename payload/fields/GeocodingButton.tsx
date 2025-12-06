@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+
 import type { FieldClientComponent } from 'payload';
 import { useForm, useFormFields } from '@payloadcms/ui';
 
@@ -27,7 +28,7 @@ export const GeocodingButton: FieldClientComponent = ({ path }) => {
   const addressField = useFormFields(([fields]) => fields[`${parentPath}.address`]);
   const address = addressField?.value as string;
 
-  const handleGeocode = async () => {
+  const handleGeocode = async (): Promise<void> => {
     // Validate address from form state
     if (!address || address.trim().length === 0) {
       setMessage({

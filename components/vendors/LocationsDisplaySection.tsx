@@ -14,7 +14,7 @@ import 'leaflet/dist/leaflet.css';
  * MapController - Component to handle map view changes
  * Must be used inside MapContainer
  */
-function MapController({ center, zoom }: { center: [number, number]; zoom: number }) {
+function MapController({ center, zoom }: { center: [number, number]; zoom: number }): null {
   const map = useMap();
 
   useEffect(() => {
@@ -48,7 +48,7 @@ export function LocationsDisplaySection({
   vendorTier,
   isLoading = false,
   error,
-}: LocationsDisplaySectionProps) {
+}: LocationsDisplaySectionProps): React.JSX.Element {
   // State for focused location (for "Show on Map" feature)
   const [focusedLocationId, setFocusedLocationId] = useState<string | null>(null);
 

@@ -3,6 +3,7 @@
 import * as React from "react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
+
 import { cn } from "@/lib/utils";
 
 interface LogoProps {
@@ -31,7 +32,7 @@ const sizesAttribute = {
   "mobile-nav": "(max-width: 640px) 256px, (max-width: 768px) 320px, (max-width: 1024px) 256px, 320px"
 };
 
-export function Logo({ className, size = 'md', priority = false }: LogoProps) {
+export function Logo({ className, size = 'md', priority = false }: LogoProps): React.ReactElement {
   const { theme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
 

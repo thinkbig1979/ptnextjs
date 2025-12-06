@@ -43,7 +43,7 @@ export interface ValidationError {
   severity: ValidationSeverity;
   code: string;
   message: string;
-  value?: any;
+  value?: unknown;
   suggestion?: string;
 }
 
@@ -55,7 +55,7 @@ export interface RowValidationResult {
   valid: boolean;
   errors: ValidationError[];
   warnings: ValidationError[];
-  data: Record<string, any>;
+  data: Record<string, unknown>;
 }
 
 /**
@@ -241,7 +241,7 @@ export class ImportValidationService {
   private static async validateField(
     row: ParsedVendorRow,
     fieldName: string,
-    value: any,
+    value: unknown,
     fieldMapping: FieldMapping,
     rowResult: RowValidationResult
   ): Promise<void> {
@@ -285,7 +285,7 @@ export class ImportValidationService {
   private static validateEmail(
     rowNumber: number,
     fieldName: string,
-    value: any,
+    value: unknown,
     rowResult: RowValidationResult
   ): void {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -308,7 +308,7 @@ export class ImportValidationService {
   private static validateURL(
     rowNumber: number,
     fieldName: string,
-    value: any,
+    value: unknown,
     rowResult: RowValidationResult
   ): void {
     try {
@@ -332,7 +332,7 @@ export class ImportValidationService {
   private static validatePhone(
     rowNumber: number,
     fieldName: string,
-    value: any,
+    value: unknown,
     rowResult: RowValidationResult
   ): void {
     const phoneRegex = /^[\d\s\-\+\(\)]+$/;
@@ -355,7 +355,7 @@ export class ImportValidationService {
   private static validateNumber(
     rowNumber: number,
     fieldName: string,
-    value: any,
+    value: unknown,
     fieldMapping: FieldMapping,
     rowResult: RowValidationResult
   ): void {
@@ -401,7 +401,7 @@ export class ImportValidationService {
   private static validateString(
     rowNumber: number,
     fieldName: string,
-    value: any,
+    value: unknown,
     fieldMapping: FieldMapping,
     rowResult: RowValidationResult
   ): void {
@@ -424,7 +424,7 @@ export class ImportValidationService {
   private static validateArrayString(
     rowNumber: number,
     fieldName: string,
-    value: any,
+    value: unknown,
     rowResult: RowValidationResult
   ): void {
     if (!Array.isArray(value)) {
@@ -445,7 +445,7 @@ export class ImportValidationService {
   private static validateAllowedValues(
     rowNumber: number,
     fieldName: string,
-    value: any,
+    value: unknown,
     fieldMapping: FieldMapping,
     rowResult: RowValidationResult
   ): void {

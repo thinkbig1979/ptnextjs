@@ -5,7 +5,7 @@ import { NextResponse } from 'next/server';
  *
  * Clears authentication cookies
  */
-export async function POST() {
+export async function POST(): Promise<NextResponse> {
   const response = NextResponse.json({
     message: 'Logout successful',
   });

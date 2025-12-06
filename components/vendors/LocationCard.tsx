@@ -15,7 +15,7 @@ export interface LocationCardProps {
 /**
  * LocationCard - Display individual location details with "Get Directions" and "Show on Map" buttons
  */
-export function LocationCard({ location, isHQ = false, onShowOnMap, isFocused = false }: LocationCardProps) {
+export function LocationCard({ location, isHQ = false, onShowOnMap, isFocused = false }: LocationCardProps): React.JSX.Element {
   // Construct Google Maps directions URL
   const mapsUrl = location.latitude && location.longitude
     ? `https://www.google.com/maps?q=${location.latitude},${location.longitude}`

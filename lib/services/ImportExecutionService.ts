@@ -36,8 +36,8 @@ export interface ImportOptions {
  */
 export interface FieldChange {
   field: string;
-  oldValue: any;
-  newValue: any;
+  oldValue: unknown;
+  newValue: unknown;
   changed: boolean;
 }
 
@@ -163,7 +163,7 @@ export class ImportExecutionService {
       if (result.changes.length > 0) {
         try {
           // Build update data from changes
-          const updateData: Record<string, any> = {};
+          const updateData: Record<string, unknown> = {};
           result.changes.forEach(change => {
             updateData[change.field] = change.newValue;
           });
@@ -254,7 +254,7 @@ export class ImportExecutionService {
    */
   private static calculateChanges(
     currentVendor: Partial<Vendor>,
-    newData: Record<string, any>,
+    newData: Record<string, unknown>,
     overwrite: boolean
   ): FieldChange[] {
     const changes: FieldChange[] = [];
@@ -309,7 +309,7 @@ export class ImportExecutionService {
   /**
    * Extract HQ location fields from parsed data
    */
-  private static extractHQFields(newData: Record<string, any>): { address?: string; city?: string; country?: string } | null {
+  private static extractHQFields(newData: Record<string, unknown>): { address?: string; city?: string; country?: string } | null {
     const hqAddress = newData['hqAddress'];
     const hqCity = newData['hqCity'];
     const hqCountry = newData['hqCountry'];
@@ -319,9 +319,9 @@ export class ImportExecutionService {
     }
 
     return {
-      address: hqAddress || undefined,
-      city: hqCity || undefined,
-      country: hqCountry || undefined
+      address: (hqAddress as string | undefined) || undefined,
+      city: (hqCity as string | undefined) || undefined,
+      country: (hqCountry as string | undefined) || undefined
     };
   }
 
@@ -333,7 +333,7 @@ export class ImportExecutionService {
     hqFields: { address?: string; city?: string; country?: string },
     overwrite: boolean
   ): FieldChange | null {
-    const currentLocations = (currentVendor as any).locations || [];
+    const currentLocations = ((currentVendor as Record<string, unknown>).locations as Array<Record<string, unknown>>) || [];
     const hasAnyHQData = hqFields.address || hqFields.city || hqFields.country;
 
     if (!hasAnyHQData) {
@@ -341,11 +341,11 @@ export class ImportExecutionService {
     }
 
     // Find existing HQ location
-    const hqIndex = currentLocations.findIndex((loc: any) => loc.isHQ === true);
+    const hqIndex = currentLocations.findIndex((loc) => loc.isHQ === true);
     const existingHQ = hqIndex >= 0 ? currentLocations[hqIndex] : null;
 
     // Build new locations array
-    let newLocations: any[];
+    let newLocations: Array<Record<string, unknown>>;
 
     if (existingHQ) {
       // Update existing HQ
@@ -392,15 +392,15 @@ export class ImportExecutionService {
   /**
    * Get nested value from object by field path
    */
-  private static getNestedValue(obj: any, path: string): any {
+  private static getNestedValue(obj: Record<string, unknown>, path: string): unknown {
     const parts = path.split('.');
-    let value = obj;
+    let value: unknown = obj;
 
     for (const part of parts) {
       if (value === null || value === undefined) {
         return null;
       }
-      value = value[part];
+      value = (value as Record<string, unknown>)[part];
     }
 
     return value;
@@ -409,7 +409,7 @@ export class ImportExecutionService {
   /**
    * Compare two values for equality
    */
-  private static valuesEqual(a: any, b: any): boolean {
+  private static valuesEqual(a: unknown, b: unknown): boolean {
     // Handle null/undefined
     if (a === null || a === undefined) return b === null || b === undefined;
     if (b === null || b === undefined) return false;
@@ -422,10 +422,12 @@ export class ImportExecutionService {
 
     // Handle objects
     if (typeof a === 'object' && typeof b === 'object') {
-      const aKeys = Object.keys(a);
-      const bKeys = Object.keys(b);
+      const aRecord = a as Record<string, unknown>;
+      const bRecord = b as Record<string, unknown>;
+      const aKeys = Object.keys(aRecord);
+      const bKeys = Object.keys(bRecord);
       if (aKeys.length !== bKeys.length) return false;
-      return aKeys.every(key => this.valuesEqual(a[key], b[key]));
+      return aKeys.every(key => this.valuesEqual(aRecord[key], bRecord[key]));
     }
 
     // Handle primitives
@@ -491,7 +493,7 @@ export class ImportExecutionService {
   /**
    * Sanitize value for JSON storage (handle circular references, etc.)
    */
-  private static sanitizeValueForStorage(value: any): any {
+  private static sanitizeValueForStorage(value: unknown): unknown {
     if (value === null || value === undefined) {
       return null;
     }

@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload';
+
 import { isAdmin } from '../access/rbac';
 
 const TeamMembers: CollectionConfig = {

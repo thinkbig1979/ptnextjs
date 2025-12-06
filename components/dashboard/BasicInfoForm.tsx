@@ -141,7 +141,7 @@ export function BasicInfoForm({ vendor, onSubmit }: BasicInfoFormProps) {
     reset(data);
   };
 
-  const handleFormError = (errors: any) => {
+  const handleFormError = (errors: Record<string, { message?: string }>): void => {
     console.error('[BasicInfoForm] Validation failed!', errors);
     console.error('[BasicInfoForm] Detailed errors:', JSON.stringify(errors, null, 2));
   };

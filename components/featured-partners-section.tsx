@@ -7,15 +7,16 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Building2 } from "lucide-react";
 import Link from "next/link";
 import { formatVendorLocation } from "@/lib/utils/location";
+import type { Vendor } from "@/lib/types";
 
 interface FeaturedPartnersSectionProps {
-  featuredPartners: any[];
+  featuredPartners: Vendor[];
 }
 
-export function FeaturedPartnersSection({ featuredPartners }: FeaturedPartnersSectionProps) {
+export function FeaturedPartnersSection({ featuredPartners }: FeaturedPartnersSectionProps): React.JSX.Element {
 
   return (
-    <section className="py-20 bg-secondary/30" data-testid="featured-vendors">
+    <section className="py-20 bg-secondary/30" data-testid="featured-vendors" aria-label="Featured technology partners">
       <div className="container max-w-screen-xl">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-cormorant font-bold mb-4">

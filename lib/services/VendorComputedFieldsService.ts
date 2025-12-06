@@ -8,7 +8,7 @@
 export interface VendorWithComputed {
   yearsInBusiness?: number | null;
   name?: string; // Mapped from companyName for consistency
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export class VendorComputedFieldsService {
@@ -114,12 +114,12 @@ export class VendorComputedFieldsService {
    * @param vendor - Vendor object
    * @returns Object with all computed metrics
    */
-  static computeAllMetrics(vendor: Record<string, any>): {
+  static computeAllMetrics(vendor: Record<string, unknown>): {
     yearsInBusiness: number | null;
     // Add more computed fields here in the future
   } {
     return {
-      yearsInBusiness: this.computeYearsInBusiness(vendor.foundedYear),
+      yearsInBusiness: this.computeYearsInBusiness(vendor.foundedYear as number | undefined),
       // Future computed fields:
       // totalRevenue: this.computeTotalRevenue(vendor.projects),
       // averageProjectSize: this.computeAvgProjectSize(vendor.projects),

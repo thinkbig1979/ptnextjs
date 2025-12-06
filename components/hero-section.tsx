@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Users, Ship, Zap } from "lucide-react";
 import Link from "next/link";
 import { HeroClient } from "./hero-client";
+import type { CompanyInfo } from "@/lib/types";
 
 const stats = [
   { icon: Users, label: "Partner Companies", value: 50, suffix: "+" },
@@ -13,13 +14,13 @@ const stats = [
 ];
 
 interface HeroSectionProps {
-  companyInfo: any;
+  companyInfo?: CompanyInfo;
 }
 
-export function HeroSection({ companyInfo }: HeroSectionProps) {
-  
+export function HeroSection({ companyInfo }: HeroSectionProps): React.JSX.Element {
+
   return (
-    <section className="relative min-h-screen flex items-center justify-center bg-gradient-hero overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center bg-gradient-hero overflow-hidden" aria-label="Hero section">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-accent blur-3xl"></div>

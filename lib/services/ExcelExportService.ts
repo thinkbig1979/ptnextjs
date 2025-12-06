@@ -190,7 +190,7 @@ export class ExcelExportService {
       const cell = dataRow.getCell(index + 1);
 
       // Get value from vendor object
-      let value = this.getVendorFieldValue(vendor, field.fieldName);
+      let value = this.getVendorFieldValue(vendor as unknown as Record<string, unknown>, field.fieldName);
 
       // Apply export transformation if defined
       if (value !== null && value !== undefined && field.exportTransform) {
@@ -202,8 +202,9 @@ export class ExcelExportService {
         }
       }
 
-      // Set cell value
-      cell.value = value ?? '';
+      // Set cell value - handle unknown type conversion
+      const cellValue = value ?? '';
+      cell.value = cellValue as ExcelJS.CellValue;
 
       // Apply cell formatting based on data type
       this.formatCell(cell, field);
@@ -226,7 +227,7 @@ export class ExcelExportService {
   /**
    * Get value from vendor object by field name (handles nested properties and HQ location)
    */
-  private static getVendorFieldValue(vendor: any, fieldName: string): any {
+  private static getVendorFieldValue(vendor: Record<string, unknown>, fieldName: string): unknown {
     // Handle HQ location fields (extract from locations array)
     if (fieldName === 'hqAddress' || fieldName === 'hqCity' || fieldName === 'hqCountry') {
       return this.getHQLocationField(vendor, fieldName);
@@ -234,11 +235,11 @@ export class ExcelExportService {
 
     // Handle nested properties (e.g., 'contact.email')
     const parts = fieldName.split('.');
-    let value = vendor;
+    let value: unknown = vendor;
 
     for (const part of parts) {
       if (value === null || value === undefined) return null;
-      value = value[part];
+      value = (value as Record<string, unknown>)[part];
     }
 
     return value;
@@ -247,10 +248,10 @@ export class ExcelExportService {
   /**
    * Extract HQ location field from vendor locations array
    */
-  private static getHQLocationField(vendor: any, fieldName: string): string | null {
+  private static getHQLocationField(vendor: Record<string, unknown>, fieldName: string): string | null {
     // Find HQ location from locations array
-    const locations = vendor.locations || [];
-    const hqLocation = locations.find((loc: any) => loc.isHQ === true);
+    const locations = (vendor.locations as Array<Record<string, unknown>>) || [];
+    const hqLocation = locations.find((loc) => loc.isHQ === true);
 
     // Fall back to legacy location field if no HQ found in array
     const location = hqLocation || vendor.location;
@@ -258,13 +259,14 @@ export class ExcelExportService {
     if (!location) return null;
 
     // Map fieldName to location property
+    const loc = location as Record<string, unknown>;
     switch (fieldName) {
       case 'hqAddress':
-        return location.address || null;
+        return (loc.address as string | undefined) || null;
       case 'hqCity':
-        return location.city || null;
+        return (loc.city as string | undefined) || null;
       case 'hqCountry':
-        return location.country || null;
+        return (loc.country as string | undefined) || null;
       default:
         return null;
     }

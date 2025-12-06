@@ -130,7 +130,7 @@ export function ValidationErrorsTable({ errors, warnings }: ValidationErrorsTabl
   }, [filterField, filterCode]);
 
   // Handlers
-  const handleSort = (field: SortField) => {
+  const handleSort = (field: SortField): void => {
     if (sortField === field) {
       // Toggle direction
       setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
@@ -141,7 +141,7 @@ export function ValidationErrorsTable({ errors, warnings }: ValidationErrorsTabl
     }
   };
 
-  const handleExportToClipboard = async () => {
+  const handleExportToClipboard = async (): Promise<void> => {
     try {
       // Create CSV content
       const headers = ['Row', 'Field', 'Severity', 'Code', 'Message', 'Suggestion'];
@@ -168,7 +168,7 @@ export function ValidationErrorsTable({ errors, warnings }: ValidationErrorsTabl
     }
   };
 
-  const getSeverityBadge = (severity: 'error' | 'warning') => {
+  const getSeverityBadge = (severity: 'error' | 'warning'): React.ReactElement => {
     if (severity === 'error') {
       return (
         <Badge variant="destructive" className="gap-1">

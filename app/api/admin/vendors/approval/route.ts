@@ -26,7 +26,7 @@ function extractAdminUser(request: NextRequest) {
 /**
  * GET /api/admin/vendors/approval - Get pending vendor approvals
  */
-export async function GET(request: NextRequest) {
+export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     extractAdminUser(request);
 
@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
 /**
  * POST /api/admin/vendors/approval - Approve or reject vendor
  */
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     extractAdminUser(request);
 
@@ -107,7 +107,12 @@ export async function POST(request: NextRequest) {
     const payload = await getPayload({ config });
 
     // Update user status
-    const updateData: any = {
+    const updateData: {
+      status: 'active' | 'rejected';
+      approved_at?: string;
+      rejected_at?: string;
+      rejection_reason?: string;
+    } = {
       status: action === 'approve' ? 'active' : 'rejected',
     };
 

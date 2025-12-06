@@ -253,7 +253,14 @@ export function canAccessField(tier: Tier | undefined, fieldName: string): boole
 /**
  * Helper function to get tier display info
  */
-export function getTierDisplayInfo(tier: Tier | undefined) {
+export function getTierDisplayInfo(tier: Tier | undefined): {
+  name: string;
+  description: string;
+  colors: typeof TIER_COLORS[Tier];
+  features: string[];
+  maxLocations: number;
+  pricing: typeof TIER_PRICING[Tier];
+} {
   const normalizedTier = tier ?? 'free';
   return {
     name: TIER_NAMES[normalizedTier],

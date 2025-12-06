@@ -40,7 +40,7 @@ function createLexicalContent(text: string) {
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
-) {
+): Promise<NextResponse> {
   try {
     const { slug } = await params;
     const body = await request.json();
@@ -155,7 +155,7 @@ export async function POST(
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
-) {
+): Promise<NextResponse> {
   try {
     const { slug } = await params;
     const payload = await getPayload({ config });

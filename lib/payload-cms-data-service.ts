@@ -22,6 +22,13 @@ import type {
   VendorLocation,
   SystemRequirements,
   SystemCompatibility,
+  VendorService,
+  ServiceArea,
+  CompanyValue,
+  VendorAward,
+  VendorInnovationHighlight,
+  VendorYachtProject,
+  VendorReview,
 } from './types';
 
 interface CacheEntry<T> {
@@ -30,8 +37,254 @@ interface CacheEntry<T> {
   accessCount: number;
 }
 
+// Payload CMS Document Types (as they come from database)
+interface PayloadMediaDocument {
+  id: number | string;
+  url?: string;
+  filename?: string;
+  externalUrl?: string;
+  alt?: string;
+  width?: number;
+  height?: number;
+}
+
+interface PayloadLexicalNode {
+  type: string;
+  children?: PayloadLexicalNode[];
+  text?: string;
+  format?: number;
+  url?: string;
+  target?: string;
+  tag?: string;
+  listType?: string;
+  newTab?: boolean;
+  language?: string;
+}
+
+interface PayloadLexicalDocument {
+  root?: PayloadLexicalNode;
+  [key: string]: unknown;
+}
+
+interface PayloadVendorDocument {
+  id: number | string;
+  slug?: string;
+  companyName?: string;
+  name?: string;
+  description?: unknown;
+  logo?: PayloadMediaDocument | string;
+  image?: PayloadMediaDocument | string;
+  website?: string;
+  founded?: number;
+  foundedYear?: number;
+  location?: string;
+  location_address?: string;
+  location_city?: string;
+  location_country?: string;
+  location_latitude?: number;
+  location_longitude?: number;
+  locations?: Array<{
+    id?: string;
+    locationName?: string;
+    address?: string;
+    city?: string;
+    state?: string;
+    postalCode?: string;
+    country?: string;
+    latitude?: number;
+    longitude?: number;
+    isHQ?: boolean;
+  }>;
+  tier?: 'free' | 'tier1' | 'tier2' | 'tier3';
+  category?: { name?: string } | string;
+  tags?: Array<{ name?: string } | string>;
+  featured?: boolean;
+  partner?: boolean;
+  published?: boolean;
+  services?: PayloadRecord[];
+  contactEmail?: string;
+  contactPhone?: string;
+  longDescription?: unknown;
+  serviceAreas?: PayloadRecord[];
+  companyValues?: PayloadRecord[];
+  totalProjects?: number;
+  employeeCount?: number;
+  linkedinFollowers?: number;
+  instagramFollowers?: number;
+  clientSatisfactionScore?: number;
+  repeatClientPercentage?: number;
+  yearsInBusiness?: number;
+  videoUrl?: string;
+  videoThumbnail?: PayloadMediaDocument;
+  videoDuration?: string;
+  videoTitle?: string;
+  videoDescription?: string;
+  certifications?: PayloadRecord[];
+  awards?: PayloadRecord[];
+  caseStudies?: PayloadRecord[];
+  innovationHighlights?: PayloadRecord[];
+  teamMembers?: PayloadRecord[];
+  yachtProjects?: PayloadRecord[];
+  vendorReviews?: PayloadRecord[];
+  createdAt?: string;
+  updatedAt?: string;
+  publishedAt?: string;
+}
+
+interface PayloadProductDocument {
+  id: number | string;
+  slug?: string;
+  name?: string;
+  vendor?: PayloadVendorDocument;
+  categories?: Array<{ name?: string }>;
+  description?: unknown;
+  images?: Array<{
+    url?: string;
+    altText?: string;
+    isMain?: boolean;
+  }>;
+  features?: PayloadRecord[];
+  price?: string;
+  specifications?: PayloadRecord[];
+  comparisonMetrics?: PayloadRecord[];
+  integrationCompatibility?: {
+    supportedProtocols?: Array<{ protocol?: string }>;
+    systemRequirements?: PayloadRecord;
+    compatibilityMatrix?: PayloadRecord[];
+  };
+  ownerReviews?: PayloadRecord[];
+  visualDemoContent?: PayloadRecord;
+  published?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+  shortDescription?: string;
+}
+
+interface PayloadBlogDocument {
+  id: number | string;
+  slug: string;
+  title: string;
+  excerpt?: string;
+  content?: unknown;
+  author?: { email?: string };
+  publishedAt?: string;
+  categories?: Array<{ name?: string }>;
+  tags?: Array<{ tag?: string }>;
+  featuredImage?: PayloadMediaDocument | string;
+  published?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+interface PayloadTeamMemberDocument {
+  id: number | string;
+  name: string;
+  role: string;
+  bio?: string;
+  image?: PayloadMediaDocument | string;
+  email?: string;
+  linkedin?: string;
+  order?: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+interface PayloadCategoryDocument {
+  id: number | string;
+  name: string;
+  slug: string;
+  description?: string;
+  icon?: string;
+  color?: string;
+  order?: number;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt?: string;
+}
+
+interface PayloadTagDocument {
+  id: number | string;
+  name: string;
+  slug: string;
+  description?: string;
+  color?: string;
+  usageCount?: number;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt?: string;
+}
+
+interface PayloadYachtDocument {
+  id: number | string;
+  slug: string;
+  name: string;
+  description?: unknown;
+  heroImage?: PayloadMediaDocument;
+  gallery?: Array<{ image?: PayloadMediaDocument }>;
+  lengthMeters?: number;
+  beamMeters?: number;
+  draftMeters?: number;
+  tonnage?: number;
+  builder?: string;
+  launchYear?: number;
+  deliveryDate?: string;
+  flagState?: string;
+  classification?: string;
+  featured?: boolean;
+  timeline?: PayloadRecord[];
+  supplierMap?: PayloadRecord[];
+  co2EmissionsTonsPerYear?: number;
+  energyEfficiencyRating?: string;
+  hybridPropulsion?: boolean;
+  solarPanelCapacityKw?: number;
+  batteryStorageKwh?: number;
+  sustainabilityFeatures?: PayloadRecord[];
+  greenCertifications?: Array<{ certification?: string }>;
+  maintenanceHistory?: PayloadRecord[];
+  categories?: Array<{ name?: string }>;
+  tags?: Array<{ name?: string }>;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+interface PayloadCompanyDocument {
+  id: number | string;
+  name: string;
+  tagline?: string;
+  description?: string;
+  founded?: number;
+  location?: string;
+  address?: string;
+  phone?: string;
+  email?: string;
+  businessHours?: string;
+  story?: unknown;
+  mission?: string;
+  logo?: PayloadMediaDocument | string;
+  socialMedia?: {
+    facebook?: string;
+    twitter?: string;
+    linkedin?: string;
+    instagram?: string;
+    youtube?: string;
+  };
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
+    keywords?: string;
+    ogImage?: PayloadMediaDocument | string;
+  };
+  createdAt?: string;
+  updatedAt?: string;
+  publishedAt?: string;
+}
+
+// Helper type for untyped nested payload structures
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type PayloadRecord = Record<string, any>;
+
 class PayloadCMSDataService {
-  private cache: Map<string, CacheEntry<any>> = new Map();
+  private cache: Map<string, CacheEntry<unknown>> = new Map();
   private readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutes (matching TinaCMS service)
 
   private async getCached<T>(key: string, fetcher: () => Promise<T>): Promise<T> {
@@ -43,7 +296,7 @@ class PayloadCMSDataService {
       if (process.env.NODE_ENV === 'development') {
         console.log(`📋 Cache hit for ${key} (accessed ${cached.accessCount} times)`);
       }
-      return cached.data;
+      return cached.data as T;
     }
 
     if (process.env.NODE_ENV === 'development') {
@@ -64,7 +317,7 @@ class PayloadCMSDataService {
     return data;
   }
 
-  private transformMediaPath(mediaPath: string | any): string {
+  private transformMediaPath(mediaPath: string | PayloadMediaDocument | null | undefined): string {
     if (!mediaPath) return '';
 
     // Handle case where mediaPath is an object (Payload media relationship)
@@ -94,7 +347,7 @@ class PayloadCMSDataService {
    * Transforms Lexical rich text format to HTML string
    * Handles the conversion of Payload's Lexical editor format to displayable HTML
    */
-  private transformLexicalToHtml(lexicalData: any): string {
+  private transformLexicalToHtml(lexicalData: PayloadLexicalDocument | string | null | undefined): string {
     if (!lexicalData) return '';
 
     // If it's already a string, return it
@@ -113,7 +366,7 @@ class PayloadCMSDataService {
    * Transforms Lexical rich text format to plain text string
    * Extracts only the text content without HTML tags
    */
-  private transformLexicalToPlainText(lexicalData: any): string {
+  private transformLexicalToPlainText(lexicalData: PayloadLexicalDocument | string | null | undefined): string {
     if (!lexicalData) return '';
 
     // If it's already a string, return it
@@ -124,7 +377,7 @@ class PayloadCMSDataService {
 
     // If it has a root node (Lexical document structure)
     if (lexicalData.root && lexicalData.root.children) {
-      return lexicalToPlainText(lexicalData as LexicalDocument);
+      return lexicalToPlainText(lexicalData as unknown as LexicalDocument);
     }
 
     // Fallback to string conversion
@@ -134,7 +387,7 @@ class PayloadCMSDataService {
   /**
    * Recursively converts Lexical nodes to HTML
    */
-  private lexicalNodeToHtml(nodes: any[]): string {
+  private lexicalNodeToHtml(nodes: PayloadLexicalNode[]): string {
     if (!Array.isArray(nodes)) return '';
 
     return nodes.map(node => {
@@ -179,7 +432,7 @@ class PayloadCMSDataService {
           return `<blockquote>${quoteChildren}</blockquote>`;
 
         case 'code':
-          const codeText = node.children ? node.children.map((c: any) => c.text || '').join('') : '';
+          const codeText = node.children ? node.children.map((c) => (c as { text?: string }).text || '').join('') : '';
           return `<pre><code${node.language ? ` class="language-${node.language}"` : ''}>${codeText}</code></pre>`;
 
         case 'horizontalrule':
@@ -195,11 +448,11 @@ class PayloadCMSDataService {
     }).join('');
   }
 
-  private transformPayloadVendor(doc: any): Vendor {
+  private transformPayloadVendor(doc: PayloadVendorDocument): Vendor {
     // ============================================================================
     // SECTION 1: CERTIFICATIONS ARRAY - Transform logo media paths
     // ============================================================================
-    const certifications = doc.certifications?.map((cert: any) => ({
+    const certifications = doc.certifications?.map((cert: PayloadRecord) => ({
       name: cert.name || '',
       issuer: cert.issuer || '',
       issuedDate: cert.year ? `${cert.year}` : undefined,
@@ -212,13 +465,12 @@ class PayloadCMSDataService {
     // ============================================================================
     // SECTION 2: AWARDS ARRAY - Transform image media paths
     // ============================================================================
-    const awards = doc.awards?.map((award: any) => ({
-      awardName: award.title || '',
-      issuingOrganization: award.organization || '',
+    const awards: VendorAward[] = doc.awards?.map((award: PayloadRecord) => ({
+      title: award.title || '',
       year: award.year || 0,
+      organization: award.organization || undefined,
       category: award.category || undefined,
       description: award.description || undefined,
-      image: award.image?.url ? this.transformMediaPath(award.image.url) : undefined,
     })) || [];
 
     // ============================================================================
@@ -244,7 +496,7 @@ class PayloadCMSDataService {
     // ============================================================================
     // SECTION 5: CASE STUDIES ARRAY - Transform Lexical content, resolve yacht relationships, transform thumbnails
     // ============================================================================
-    const caseStudies = doc.caseStudies?.map((cs: any) => ({
+    const caseStudies = doc.caseStudies?.map((cs: PayloadRecord) => ({
       title: cs.title || '',
       client: cs.yachtName || undefined,
       yacht: cs.yacht?.id?.toString() || undefined,
@@ -261,37 +513,34 @@ class PayloadCMSDataService {
     // ============================================================================
     // SECTION 6: INNOVATIONS ARRAY - Transform Lexical description, transform image
     // ============================================================================
-    const innovationHighlights = doc.innovationHighlights?.map((innovation: any) => ({
-      title: innovation.title || '',
-      category: undefined, // Not in Payload schema
+    const innovationHighlights: VendorInnovationHighlight[] = doc.innovationHighlights?.map((innovation: PayloadRecord) => ({
+      technology: innovation.title || '',
       description: this.transformLexicalToHtml(innovation.description),
-      launchDate: innovation.year ? `${innovation.year}` : undefined,
-      patentInfo: innovation.patentNumber || undefined,
-      image: innovation.image?.url ? this.transformMediaPath(innovation.image.url) : undefined,
-      productLinks: innovation.benefits?.map((b: any) => b.benefit) || [],
+      uniqueApproach: innovation.patentNumber || undefined,
+      benefitsToClients: innovation.benefits?.map((b: PayloadRecord) => b.benefit) || undefined,
     })) || [];
 
     // ============================================================================
     // SECTION 7: TEAM MEMBERS ARRAY - Transform photo media path
     // ============================================================================
-    const teamMembers = doc.teamMembers?.map((member: any) => ({
+    const teamMembers: TeamMember[] = doc.teamMembers?.map((member: PayloadRecord) => ({
+      id: member.id?.toString() || `member-${Date.now()}`,
       name: member.name || '',
       role: member.role || '',
-      bio: member.bio || undefined,
-      expertise: undefined, // Not in Payload schema
-      photo: member.photo?.url ? this.transformMediaPath(member.photo.url) : undefined,
-      linkedinUrl: member.linkedinUrl || undefined,
+      bio: member.bio || '',
+      image: member.photo?.url ? this.transformMediaPath(member.photo.url) : undefined,
+      linkedin: member.linkedinUrl || undefined,
     })) || [];
 
     // ============================================================================
     // SECTION 8: YACHT PROJECTS ARRAY - Resolve yacht relationships, transform image
     // ============================================================================
-    const yachtProjects = doc.yachtProjects?.map((project: any) => ({
-      yacht: project.yacht?.id?.toString() || undefined,
-      roleDescription: project.role || '',
-      yearCompleted: project.completionDate ? new Date(project.completionDate).getFullYear() : undefined,
-      image: project.image?.url ? this.transformMediaPath(project.image.url) : undefined,
-      projectHighlights: project.systemsInstalled?.map((s: any) => s.system) || [],
+    const yachtProjects: VendorYachtProject[] = doc.yachtProjects?.map((project: PayloadRecord) => ({
+      yachtName: project.yacht?.name || '',
+      systems: project.systemsInstalled?.map((s: PayloadRecord) => s.system) || [],
+      projectYear: project.completionDate ? new Date(project.completionDate).getFullYear() : undefined,
+      role: project.role || undefined,
+      description: project.description || undefined,
     })) || [];
 
     // ============================================================================
@@ -311,7 +560,7 @@ class PayloadCMSDataService {
     // ============================================================================
     // SECTION 9: LOCATIONS ARRAY - Multi-location support (Tier 2+)
     // ============================================================================
-    const locations: VendorLocation[] | undefined = doc.locations?.map((loc: any) => ({
+    const locations: VendorLocation[] | undefined = doc.locations?.map((loc: PayloadRecord) => ({
       id: loc.id || undefined,
       locationName: loc.locationName || undefined,
       address: loc.address || '',
@@ -327,8 +576,9 @@ class PayloadCMSDataService {
     // ============================================================================
     // SECTION 10: VENDOR REVIEWS ARRAY - Transform review data
     // ============================================================================
-    const vendorReviews = doc.vendorReviews?.map((review: any) => ({
-      id: review.id || '',
+    const vendorReviews: VendorReview[] = doc.vendorReviews?.map((review: PayloadRecord) => ({
+      id: review.id?.toString() || '',
+      vendorId: doc.id?.toString() || '',
       reviewerName: review.reviewerName || '',
       reviewerRole: review.reviewerRole || '',
       yachtName: review.yachtName,
@@ -353,8 +603,8 @@ class PayloadCMSDataService {
       id: doc.id ? doc.id.toString() : '',
       slug: doc.slug || '',
       name: doc.companyName || doc.name || '',
-      category: doc.category?.name || '',
-      description: this.transformLexicalToHtml(doc.description) || '',
+      category: typeof doc.category === 'string' ? doc.category : (doc.category?.name || ''),
+      description: this.transformLexicalToHtml(doc.description as PayloadLexicalDocument) || '',
       logo: this.transformMediaPath(doc.logo || ''),
       image: this.transformMediaPath(doc.image || ''),
       website: doc.website || '',
@@ -363,15 +613,15 @@ class PayloadCMSDataService {
       location,
       locations,
       tier: doc.tier || 'free',
-      tags: doc.tags?.map((tag: any) => tag.name || tag) || [],
+      tags: doc.tags?.map((tag) => typeof tag === 'string' ? tag : (tag.name || '')) || [],
       featured: doc.featured || false,
       partner: doc.partner !== undefined ? doc.partner : false,
-      services: doc.services || [],
+      services: (doc.services || []) as VendorService[],
       contactEmail: doc.contactEmail,
       contactPhone: doc.contactPhone,
-      longDescription: this.transformLexicalToHtml(doc.longDescription),
-      serviceAreas: doc.serviceAreas || [],
-      companyValues: doc.companyValues || [],
+      longDescription: this.transformLexicalToHtml(doc.longDescription as PayloadLexicalDocument),
+      serviceAreas: (doc.serviceAreas || []) as ServiceArea[],
+      companyValues: (doc.companyValues || []) as CompanyValue[],
       totalProjects: doc.totalProjects,
       employeeCount: doc.employeeCount,
       linkedinFollowers: doc.linkedinFollowers,
@@ -395,15 +645,15 @@ class PayloadCMSDataService {
     };
   }
 
-  private transformPayloadProduct(doc: any): Product {
+  private transformPayloadProduct(doc: PayloadProductDocument): Product {
     const vendor = doc.vendor;
-    const mainImage = doc.images?.find((img: any) => img.isMain) || doc.images?.[0];
+    const mainImage = doc.images?.find((img: PayloadRecord) => img.isMain) || doc.images?.[0];
 
     // ============================================================================
     // SECTION 1: COMPARISON METRICS - Convert array to nested object structure
     // ============================================================================
     const comparisonMetrics: { [category: string]: { [key: string]: string | number | boolean } } = {};
-    doc.comparisonMetrics?.forEach((metric: any) => {
+    doc.comparisonMetrics?.forEach((metric: PayloadRecord) => {
       const category = metric.category || 'general';
       if (!comparisonMetrics[category]) {
         comparisonMetrics[category] = {};
@@ -414,7 +664,7 @@ class PayloadCMSDataService {
     // ============================================================================
     // SECTION 2: INTEGRATION COMPATIBILITY - Extract supported protocols as string array
     // ============================================================================
-    const integrationCompatibility = doc.integrationCompatibility?.supportedProtocols?.map((proto: any) => proto.protocol) || [];
+    const integrationCompatibility = doc.integrationCompatibility?.supportedProtocols?.map((proto: PayloadRecord) => proto.protocol) || [];
 
     // ============================================================================
     // SECTION 2A: SYSTEM REQUIREMENTS - Transform system requirements object
@@ -430,11 +680,11 @@ class PayloadCMSDataService {
     // ============================================================================
     // SECTION 2B: COMPATIBILITY MATRIX - Transform compatibility matrix array
     // ============================================================================
-    const compatibilityMatrix: SystemCompatibility[] = doc.integrationCompatibility?.compatibilityMatrix?.map((item: any) => ({
+    const compatibilityMatrix: SystemCompatibility[] = doc.integrationCompatibility?.compatibilityMatrix?.map((item: PayloadRecord) => ({
       system: item.system || '',
       compatibility: item.compatibility || 'none',
       notes: item.notes || undefined,
-      requirements: item.requirements?.map((req: any) => req.requirement).filter(Boolean) || undefined,
+      requirements: item.requirements?.map((req: PayloadRecord) => req.requirement).filter(Boolean) || undefined,
       complexity: item.complexity || undefined,
       estimatedCost: item.estimatedCost || undefined,
     })) || [];
@@ -442,7 +692,7 @@ class PayloadCMSDataService {
     // ============================================================================
     // SECTION 3: OWNER REVIEWS ARRAY - Transform Lexical reviewText, resolve yacht relationships
     // ============================================================================
-    const ownerReviews: OwnerReview[] = doc.ownerReviews?.map((review: any) => ({
+    const ownerReviews: OwnerReview[] = doc.ownerReviews?.map((review: PayloadRecord) => ({
       id: review.id?.toString() || `review-${Date.now()}`,
       productId: doc.id?.toString() || '',
       ownerName: review.reviewerName || '',
@@ -451,8 +701,8 @@ class PayloadCMSDataService {
       rating: review.overallRating || 0,
       title: review.reviewText ? this.transformLexicalToPlainText(review.reviewText).substring(0, 100) : '',
       review: this.transformLexicalToPlainText(review.reviewText),
-      pros: review.pros?.map((p: any) => p.pro) || undefined,
-      cons: review.cons?.map((c: any) => c.con) || undefined,
+      pros: review.pros?.map((p: PayloadRecord) => p.pro) || undefined,
+      cons: review.cons?.map((c: PayloadRecord) => c.con) || undefined,
       installationDate: undefined, // Not in Payload schema
       verified: review.verified || false,
       helpful: undefined, // Not in Payload schema
@@ -469,13 +719,13 @@ class PayloadCMSDataService {
       type: '3d-model' as const,
       title: doc.name || '',
       description: doc.shortDescription || undefined,
-      imageUrl: doc.visualDemoContent.model3d.thumbnailImage?.url
+      imageUrl: doc.visualDemoContent?.model3d?.thumbnailImage?.url
         ? this.transformMediaPath(doc.visualDemoContent.model3d.thumbnailImage.url)
         : undefined,
-      modelUrl: doc.visualDemoContent.model3d.modelUrl || undefined,
-      videoUrl: doc.visualDemoContent.videoWalkthrough?.videoUrl || undefined,
-      hotspots: doc.visualDemoContent.interactiveHotspots?.flatMap((hotspotGroup: any) =>
-        hotspotGroup.hotspots?.map((hotspot: any) => ({
+      modelUrl: doc.visualDemoContent?.model3d?.modelUrl || undefined,
+      videoUrl: doc.visualDemoContent?.videoWalkthrough?.videoUrl || undefined,
+      hotspots: doc.visualDemoContent?.interactiveHotspots?.flatMap((hotspotGroup: PayloadRecord) =>
+        hotspotGroup.hotspots?.map((hotspot: PayloadRecord) => ({
           position: { x: hotspot.x || 0, y: hotspot.y || 0 },
           title: hotspot.title || '',
           description: hotspot.description || undefined,
@@ -489,15 +739,15 @@ class PayloadCMSDataService {
       type: 'video' as const,
       title: doc.name || '',
       description: doc.shortDescription || undefined,
-      videoUrl: doc.visualDemoContent.videoWalkthrough.videoUrl || undefined,
-      imageUrl: doc.visualDemoContent.videoWalkthrough.thumbnail?.url
+      videoUrl: doc.visualDemoContent?.videoWalkthrough?.videoUrl || undefined,
+      imageUrl: doc.visualDemoContent?.videoWalkthrough?.thumbnail?.url
         ? this.transformMediaPath(doc.visualDemoContent.videoWalkthrough.thumbnail.url)
         : undefined,
-    } : doc.visualDemoContent?.images360?.length > 0 ? {
+    } : doc.visualDemoContent?.images360 && doc.visualDemoContent.images360.length > 0 ? {
       type: '360-image' as const,
       title: doc.name || '',
       description: doc.shortDescription || undefined,
-      imageUrl: doc.visualDemoContent.images360[0]?.image?.url
+      imageUrl: doc.visualDemoContent?.images360?.[0]?.image?.url
         ? this.transformMediaPath(doc.visualDemoContent.images360[0].image.url)
         : undefined,
     } : undefined;
@@ -511,15 +761,15 @@ class PayloadCMSDataService {
       partnerId: vendor?.id?.toString() || '',
       partnerName: vendor?.companyName || vendor?.name || '',
       category: doc.categories?.[0]?.name || '',
-      description: this.transformLexicalToHtml(doc.description) || '',
+      description: this.transformLexicalToHtml(doc.description as PayloadLexicalDocument) || '',
       image: this.transformMediaPath(mainImage?.url || ''),
-      images: doc.images?.map((img: any) => ({
+      images: doc.images?.map((img: PayloadRecord) => ({
         id: img.url,
         url: this.transformMediaPath(img.url || ''),
         altText: img.altText || '',
         isMain: img.isMain || false,
       })) || [],
-      features: doc.features?.map((feature: any) => ({
+      features: doc.features?.map((feature: PayloadRecord) => ({
         id: feature.id || `feature-${Date.now()}`,
         title: feature.title || '',
         description: feature.description || undefined,
@@ -529,7 +779,7 @@ class PayloadCMSDataService {
       price: doc.price,
       tags: [],
       comparisonMetrics,
-      specifications: doc.specifications?.map((spec: any) => ({
+      specifications: doc.specifications?.map((spec: PayloadRecord) => ({
         label: spec.label,
         value: spec.value,
       })) || [],
@@ -543,20 +793,20 @@ class PayloadCMSDataService {
     };
   }
 
-  private transformPayloadBlogPost(doc: any): BlogPost {
+  private transformPayloadBlogPost(doc: PayloadBlogDocument): BlogPost {
     // Convert Lexical JSON to HTML string
-    const content = this.lexicalToHtml(doc.content);
+    const content = this.lexicalToHtml(doc.content as PayloadLexicalDocument);
 
     return {
       id: doc.id.toString(),
-      slug: doc.slug,
-      title: doc.title,
+      slug: doc.slug || '',
+      title: doc.title || '',
       excerpt: doc.excerpt || '',
       content,
       author: doc.author?.email || '',
-      publishedAt: doc.publishedAt || doc.createdAt,
+      publishedAt: doc.publishedAt || doc.createdAt || '',
       category: doc.categories?.[0]?.name || '',
-      tags: doc.tags?.map((tag: any) => tag.tag) || [],
+      tags: doc.tags?.map((tag: PayloadRecord) => tag.tag) || [],
       // transformMediaPath handles both string URLs (legacy) and media objects (relationship)
       image: this.transformMediaPath(doc.featuredImage || ''),
       featured: doc.published || false,
@@ -564,7 +814,7 @@ class PayloadCMSDataService {
     };
   }
 
-  private lexicalToHtml(lexicalData: any): string {
+  private lexicalToHtml(lexicalData: PayloadLexicalDocument | string | null | undefined): string {
     if (!lexicalData) {
       return '';
     }
@@ -583,7 +833,7 @@ class PayloadCMSDataService {
 
     // Basic Lexical to HTML converter
     // This handles the most common node types
-    const convertNode = (node: any): string => {
+    const convertNode = (node: PayloadLexicalNode): string => {
       if (!node) return '';
 
       switch (node.type) {
@@ -641,15 +891,15 @@ class PayloadCMSDataService {
 
     try {
       // Start from root if data has a root property
-      const rootNode = data.root || data;
-      return convertNode(rootNode);
+      const rootNode = (typeof data === 'object' && 'root' in data) ? data.root : data;
+      return convertNode(rootNode as PayloadLexicalNode);
     } catch (error) {
       console.error('Error converting Lexical to HTML:', error);
       return '';
     }
   }
 
-  private transformPayloadTeamMember(doc: any): TeamMember {
+  private transformPayloadTeamMember(doc: PayloadTeamMemberDocument): TeamMember {
     return {
       id: doc.id.toString(),
       name: doc.name,
@@ -662,7 +912,7 @@ class PayloadCMSDataService {
     };
   }
 
-  private transformCategory(doc: any): Category {
+  private transformCategory(doc: PayloadCategoryDocument): Category {
     return {
       id: doc.id.toString(),
       name: doc.name,
@@ -677,7 +927,7 @@ class PayloadCMSDataService {
     };
   }
 
-  private transformTag(doc: any): Tag {
+  private transformTag(doc: PayloadTagDocument): Tag {
     return {
       id: doc.id.toString(),
       name: doc.name,
@@ -691,23 +941,23 @@ class PayloadCMSDataService {
     };
   }
 
-  private transformYacht(doc: any): Yacht {
+  private transformYacht(doc: PayloadYachtDocument): Yacht {
     // Transform Lexical description to HTML
-    const description = this.transformLexicalToHtml(doc.description);
+    const description = this.transformLexicalToHtml(doc.description as PayloadLexicalDocument);
 
     // Transform heroImage (media relationship)
     const heroImage = doc.heroImage?.url ? this.transformMediaPath(doc.heroImage.url) : undefined;
 
     // Transform gallery images
-    const gallery = doc.gallery?.map((item: any) => {
+    const gallery = doc.gallery?.map((item: PayloadRecord) => {
       if (item.image?.url) {
         return this.transformMediaPath(item.image.url);
       }
       return null;
-    }).filter(Boolean) || [];
+    }).filter((url): url is string => url !== null) || [];
 
     // Transform timeline events
-    const timeline = doc.timeline?.map((event: any) => ({
+    const timeline = doc.timeline?.map((event: PayloadRecord) => ({
       date: event.date,
       event: event.title || event.event || '',
       description: event.description || '',
@@ -717,7 +967,7 @@ class PayloadCMSDataService {
     })) || [];
 
     // Transform supplier map with vendor and product relationships
-    const supplierMap = doc.supplierMap?.map((supplier: any) => {
+    const supplierMap = doc.supplierMap?.map((supplier: PayloadRecord) => {
       const vendor = supplier.vendor;
       const vendorData = vendor ? {
         id: vendor.id?.toString() || '',
@@ -726,7 +976,7 @@ class PayloadCMSDataService {
         logo: vendor.logo?.url ? this.transformMediaPath(vendor.logo.url) : undefined,
       } : null;
 
-      const products = supplier.products?.map((product: any) => ({
+      const products = supplier.products?.map((product: PayloadRecord) => ({
         id: product.id?.toString() || '',
         name: product.name || '',
         slug: product.slug || '',
@@ -737,7 +987,7 @@ class PayloadCMSDataService {
         vendorId: vendor?.id?.toString() || '',
         vendorName: vendor?.companyName || vendor?.name || '',
         discipline: supplier.systemCategory || '',
-        systems: products.map((p: any) => p.name),
+        systems: products.map((p: PayloadRecord) => p.name),
         role: 'primary' as const,
         projectPhase: undefined,
       };
@@ -752,11 +1002,11 @@ class PayloadCMSDataService {
       waterConservation: undefined,
       materialSustainability: undefined,
       overallScore: undefined,
-      certifications: doc.greenCertifications?.map((c: any) => c.certification) || [],
+      certifications: doc.greenCertifications?.map((c: PayloadRecord) => c.certification) || [],
     } : undefined;
 
     // Transform maintenance history with vendor resolution
-    const maintenanceHistory = doc.maintenanceHistory?.map((record: any) => {
+    const maintenanceHistory = doc.maintenanceHistory?.map((record: PayloadRecord) => {
       const vendor = record.vendor;
       return {
         date: record.date,
@@ -816,7 +1066,7 @@ class PayloadCMSDataService {
 
       // Relations
       category: doc.categories?.[0]?.name || undefined,
-      tags: doc.tags?.map((tag: any) => tag.name) || [],
+      tags: doc.tags?.map((tag: PayloadRecord) => tag.name) || [],
 
       // Computed fields
       imageUrl: heroImage,
@@ -824,9 +1074,9 @@ class PayloadCMSDataService {
     };
   }
 
-  private transformCompany(doc: any): CompanyInfo {
+  private transformCompany(doc: PayloadCompanyDocument): CompanyInfo {
     // Transform Lexical story to HTML
-    const story = this.transformLexicalToHtml(doc.story);
+    const story = this.transformLexicalToHtml(doc.story as PayloadLexicalDocument);
 
     // Transform logo media path
     const logo = this.transformMediaPath(doc.logo || '');
@@ -848,7 +1098,7 @@ class PayloadCMSDataService {
       meta_description: doc.seo.metaDescription || undefined,
       keywords: doc.seo.keywords || undefined,
       og_image: doc.seo.ogImage ? {
-        id: doc.seo.ogImage,
+        id: typeof doc.seo.ogImage === 'string' ? doc.seo.ogImage : (doc.seo.ogImage.id?.toString() || ''),
         name: '',
         url: this.transformMediaPath(doc.seo.ogImage),
       } : undefined,
@@ -1056,7 +1306,7 @@ class PayloadCMSDataService {
         depth: 1,
       });
 
-      return result.docs.map(doc => this.transformCategory(doc));
+      return result.docs.map(doc => this.transformCategory(doc as unknown as PayloadCategoryDocument));
     });
   }
 
@@ -1071,7 +1321,7 @@ class PayloadCMSDataService {
           depth: 1,
         });
 
-        return result.docs[0] ? this.transformCategory(result.docs[0]) : null;
+        return result.docs[0] ? this.transformCategory(result.docs[0] as unknown as PayloadCategoryDocument) : null;
       } catch (error) {
         console.error(`Error fetching category by slug ${slug}:`, error);
         return null;
@@ -1094,7 +1344,7 @@ class PayloadCMSDataService {
           depth: 1,
         });
 
-        return result.docs.map(doc => this.transformTag(doc));
+        return result.docs.map(doc => this.transformTag(doc as unknown as PayloadTagDocument));
       } catch (error) {
         console.error('Error fetching tags:', error);
         return [];
@@ -1113,7 +1363,7 @@ class PayloadCMSDataService {
           depth: 1,
         });
 
-        return result.docs[0] ? this.transformTag(result.docs[0]) : null;
+        return result.docs[0] ? this.transformTag(result.docs[0] as unknown as PayloadTagDocument) : null;
       } catch (error) {
         console.error(`Error fetching tag by slug ${slug}:`, error);
         return null;
@@ -1132,7 +1382,7 @@ class PayloadCMSDataService {
           sort: '-usageCount', // Sort by usageCount descending
         });
 
-        return result.docs.map(doc => this.transformTag(doc));
+        return result.docs.map(doc => this.transformTag(doc as unknown as PayloadTagDocument));
       } catch (error) {
         console.error('Error fetching popular tags:', error);
         return [];
@@ -1152,7 +1402,7 @@ class PayloadCMSDataService {
         sort: '-publishedAt',
       });
 
-      return result.docs.map(doc => this.transformPayloadBlogPost(doc));
+      return result.docs.map(doc => this.transformPayloadBlogPost(doc as unknown as PayloadBlogDocument));
     });
   }
 
@@ -1181,7 +1431,7 @@ class PayloadCMSDataService {
         depth: 2,
       });
 
-      return result.docs[0] ? this.transformPayloadBlogPost(result.docs[0]) : null;
+      return result.docs[0] ? this.transformPayloadBlogPost(result.docs[0] as unknown as PayloadBlogDocument) : null;
     });
   }
 
@@ -1195,7 +1445,7 @@ class PayloadCMSDataService {
         sort: 'order',
       });
 
-      return result.docs.map(doc => this.transformPayloadTeamMember(doc));
+      return result.docs.map(doc => this.transformPayloadTeamMember(doc as unknown as PayloadTeamMemberDocument));
     });
   }
 
@@ -1216,7 +1466,7 @@ class PayloadCMSDataService {
           return null;
         }
 
-        return this.transformCompany(doc);
+        return this.transformCompany(doc as unknown as PayloadCompanyDocument);
       } catch (error) {
         console.error('Error fetching company info:', error);
         return null;
@@ -1280,7 +1530,7 @@ class PayloadCMSDataService {
         sort: '-launchYear', // Newest first
       });
 
-      return result.docs.map(doc => this.transformYacht(doc));
+      return result.docs.map(doc => this.transformYacht(doc as unknown as PayloadYachtDocument));
     });
   }
 
@@ -1294,7 +1544,7 @@ class PayloadCMSDataService {
         limit: 1,
       });
 
-      return result.docs[0] ? this.transformYacht(result.docs[0]) : null;
+      return result.docs[0] ? this.transformYacht(result.docs[0] as unknown as PayloadYachtDocument) : null;
     });
   }
 
@@ -1309,7 +1559,7 @@ class PayloadCMSDataService {
         sort: '-launchYear',
       });
 
-      return result.docs.map(doc => this.transformYacht(doc));
+      return result.docs.map(doc => this.transformYacht(doc as unknown as PayloadYachtDocument));
     });
   }
 
@@ -1330,7 +1580,7 @@ class PayloadCMSDataService {
         sort: '-launchYear',
       });
 
-      return result.docs.map(doc => this.transformYacht(doc));
+      return result.docs.map(doc => this.transformYacht(doc as unknown as PayloadYachtDocument));
     });
   }
 

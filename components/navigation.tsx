@@ -41,11 +41,11 @@ const navigationItems: NavigationItem[] = [
   { href: "/contact", label: "Contact" },
 ];
 
-export function Navigation() {
+export function Navigation(): React.JSX.Element {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = React.useState(false);
 
-  const isActiveItem = (item: NavigationItem) => {
+  const isActiveItem = (item: NavigationItem): boolean => {
     if (pathname === item.href) return true;
     if (item.submenu) {
       return item.submenu.some(subItem => pathname === subItem.href);
@@ -54,14 +54,14 @@ export function Navigation() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60" role="banner">
       <div className="container flex h-20 sm:h-24 md:h-22 lg:h-26 max-w-screen-xl items-center justify-between px-4 sm:px-6">
-        <Link href="/" className="flex items-center">
+        <Link href="/" className="flex items-center" aria-label="Paul Thames Home">
           <Logo size="mobile-nav" priority />
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center space-x-6">
+        <nav className="hidden lg:flex items-center space-x-6" role="navigation" aria-label="Main navigation">
           {navigationItems.map((item) => (
             <div key={item.href}>
               {item.submenu ? (

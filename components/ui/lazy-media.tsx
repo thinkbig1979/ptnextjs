@@ -6,10 +6,12 @@
 "use client";
 
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { FileText, Image as ImageIcon, Play } from "lucide-react";
+
 import { useLazyLoading, usePerformanceMetrics } from "@/lib/hooks/use-lazy-loading";
+import { cn } from "@/lib/utils";
+
 import { ProgressiveImage } from "./progressive-image";
-import { Play, Image as ImageIcon, FileText } from "lucide-react";
 
 interface LazyMediaProps {
   children: React.ReactNode;
@@ -32,7 +34,7 @@ export function LazyMedia({
   className,
   trackPerformance = false,
   performanceName = 'LazyMedia'
-}: LazyMediaProps) {
+}: LazyMediaProps): React.ReactElement {
   const { ref, wasVisible } = useLazyLoading({
     threshold,
     rootMargin,
@@ -61,7 +63,7 @@ export function LazyMedia({
 /**
  * Media Placeholder Component
  */
-function MediaPlaceholder({ type = 'image' }: { type?: 'image' | 'video' | 'document' }) {
+function MediaPlaceholder({ type = 'image' }: { type?: 'image' | 'video' | 'document' }): React.ReactElement {
   const icons = {
     image: ImageIcon,
     video: Play,
@@ -123,7 +125,7 @@ export function LazyVideo({
   controls = true,
   loop = false,
   preload = 'none'
-}: LazyVideoProps) {
+}: LazyVideoProps): React.ReactElement {
   // Validate video src
   if (!src || typeof src !== 'string') {
     console.warn('LazyVideo: Invalid or missing src prop');
@@ -171,7 +173,7 @@ export function LazyIframe({
   width,
   height,
   allowFullScreen = false
-}: LazyIframeProps) {
+}: LazyIframeProps): React.ReactElement {
   // Validate iframe src and title
   if (!src || typeof src !== 'string') {
     console.warn('LazyIframe: Invalid or missing src prop');
@@ -226,7 +228,7 @@ export function LazyImageGrid({
   className,
   imageClassName,
   onImageClick
-}: LazyImageGridProps) {
+}: LazyImageGridProps): React.ReactElement {
   const gridClasses = {
     1: "grid-cols-1",
     2: "grid-cols-1 md:grid-cols-2",
@@ -300,7 +302,7 @@ export function VirtualizedMediaList({
   containerHeight,
   className,
   overscan = 3
-}: VirtualizedMediaListProps) {
+}: VirtualizedMediaListProps): React.ReactElement {
   const [scrollTop, setScrollTop] = React.useState(0);
   const scrollElementRef = React.useRef<HTMLDivElement>(null);
   const scrollTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);

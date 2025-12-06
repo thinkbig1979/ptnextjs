@@ -1,8 +1,11 @@
 import type { CollectionConfig } from 'payload';
+
 import { lexicalEditor } from '@payloadcms/richtext-lexical';
 import { revalidatePath } from 'next/cache';
-import { isAdmin } from '../access/rbac';
+
 import { payloadCMSDataService } from '../../lib/payload-cms-data-service';
+
+import { isAdmin } from '../access/rbac';
 
 const BlogPosts: CollectionConfig = {
   slug: 'blog-posts',

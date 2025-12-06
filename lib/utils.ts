@@ -27,7 +27,12 @@ export function formatDate(dateString: string): string {
 }
 
 // URL parameter utilities for static sites
-export const parseFilterParams = (searchParams: URLSearchParams) => {
+export const parseFilterParams = (searchParams: URLSearchParams): {
+  category: string;
+  partner: string;
+  search: string;
+  view: string;
+} => {
   return {
     category: searchParams.get('category') || 'all',
     partner: searchParams.get('partner') || '',

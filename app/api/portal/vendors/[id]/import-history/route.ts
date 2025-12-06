@@ -60,7 +60,7 @@ async function authenticateUser(request: NextRequest) {
 export async function GET(
   request: NextRequest,
   context: RouteContext
-) {
+): Promise<NextResponse> {
   try {
     // Await params
     const { id } = await context.params;
@@ -101,7 +101,14 @@ export async function GET(
     const endDate = url.searchParams.get('endDate');
 
     // Build query conditions
-    const where: any = {
+    const where: {
+      vendor: { equals: string };
+      status?: { equals: string };
+      importDate?: {
+        greater_than_equal?: string;
+        less_than_equal?: string;
+      };
+    } = {
       vendor: { equals: id }
     };
 

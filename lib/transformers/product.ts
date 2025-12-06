@@ -143,28 +143,28 @@ export interface PayloadProduct {
   vendor: string;
   name: string;
   slug: string;
-  description: any;
+  description: unknown;
   shortDescription?: string;
-  images?: any[];
+  images?: unknown[];
   categories?: string[];
   tags?: string[];
-  specifications?: any[];
+  specifications?: unknown[];
   published: boolean;
   price?: string;
-  pricing?: any;
-  features?: any[];
-  benefits?: any[];
-  services?: any[];
-  actionButtons?: any[];
-  badges?: any[];
-  seo?: any;
-  comparisonMetrics?: any;
-  integrationCompatibility?: any;
-  ownerReviews?: any;
-  visualDemoContent?: any;
-  technicalDocumentation?: any;
-  warrantySupport?: any;
-  [key: string]: any;
+  pricing?: unknown;
+  features?: unknown[];
+  benefits?: unknown[];
+  services?: unknown[];
+  actionButtons?: unknown[];
+  badges?: unknown[];
+  seo?: unknown;
+  comparisonMetrics?: unknown;
+  integrationCompatibility?: unknown;
+  ownerReviews?: unknown;
+  visualDemoContent?: unknown;
+  technicalDocumentation?: unknown;
+  warrantySupport?: unknown;
+  [key: string]: unknown;
 }
 
 export async function transformProductFromMarkdown(

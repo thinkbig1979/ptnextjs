@@ -296,7 +296,7 @@ export async function PUT(
       const { payloadCMSDataService } = await import('@/lib/payload-cms-data-service');
       // Clear by both ID and slug to ensure all cache keys are invalidated
       payloadCMSDataService.clearVendorCache(vendorId.toString());
-      if (updatedVendor.slug) {
+      if (updatedVendor.slug && typeof updatedVendor.slug === 'string') {
         payloadCMSDataService.clearVendorCache(updatedVendor.slug);
       }
       console.log('[VendorUpdate] Cleared data service cache for vendor:', vendorId, updatedVendor.slug);
@@ -573,7 +573,7 @@ export async function PATCH(
     const { payloadCMSDataService } = await import('@/lib/payload-cms-data-service');
     // Clear by both ID and slug to ensure all cache keys are invalidated
     payloadCMSDataService.clearVendorCache(vendorId);
-    if (updatedVendor.slug) {
+    if (updatedVendor.slug && typeof updatedVendor.slug === 'string') {
       payloadCMSDataService.clearVendorCache(updatedVendor.slug);
     }
     console.log('[VendorUpdate] Cleared data service cache for vendor:', vendorId, updatedVendor.slug);

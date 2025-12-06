@@ -29,7 +29,7 @@ import {
  */
 export interface ParsedVendorRow {
   rowNumber: number;
-  data: Partial<Record<string, any>>;
+  data: Partial<Record<string, unknown>>;
   rawData: Record<string, string>; // Original values for debugging
 }
 
@@ -41,7 +41,7 @@ export interface ParsingError {
   column: string;
   fieldName?: string;
   error: string;
-  value?: any;
+  value?: unknown;
 }
 
 /**

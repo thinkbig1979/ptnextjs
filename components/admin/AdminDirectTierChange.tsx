@@ -1,6 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
+import { AlertTriangle, CheckCircle, Loader2 } from 'lucide-react';
+
+import { TIER_DESCRIPTIONS, TIER_HIERARCHY, TIER_NAMES } from '@/lib/constants/tierConfig';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -9,13 +14,6 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -23,15 +21,42 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { AlertTriangle, CheckCircle, Loader2 } from 'lucide-react';
-import { TIER_NAMES, TIER_DESCRIPTIONS, TIER_HIERARCHY } from '@/lib/constants/tierConfig';
 
+/**
+ * Tier Type Definition
+ */
+type TierType = 'free' | 'tier1' | 'tier2' | 'tier3';
+
+/**
+ * API Response Types
+ */
+interface ApiErrorResponse {
+  error?: string;
+}
+
+interface ApiSuccessResponse {
+  message: string;
+  vendor: {
+    id: string;
+    companyName: string;
+    tier: string;
+  };
+}
+
+/**
+ * Component Props
+ */
 export interface AdminDirectTierChangeProps {
   vendorId: string;
-  currentTier: 'free' | 'tier1' | 'tier2' | 'tier3';
+  currentTier: TierType;
   vendorName: string;
   onSuccess?: () => void;
 }
@@ -52,25 +77,21 @@ export default function AdminDirectTierChange({
   currentTier,
   vendorName,
   onSuccess,
-}: AdminDirectTierChangeProps) {
+}: AdminDirectTierChangeProps): React.ReactElement {
   const [selectedTier, setSelectedTier] = useState<string>(currentTier);
-  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const { toast } = useToast();
 
   // All available tiers
-  const allTiers: Array<'free' | 'tier1' | 'tier2' | 'tier3'> = [
-    'free',
-    'tier1',
-    'tier2',
-    'tier3',
-  ];
+  const allTiers: TierType[] = ['free', 'tier1', 'tier2', 'tier3'];
 
   // Check if selected tier is a downgrade
-  const isDowngrade = () => {
-    return TIER_HIERARCHY[selectedTier as keyof typeof TIER_HIERARCHY] <
-      TIER_HIERARCHY[currentTier];
+  const isDowngrade = (): boolean => {
+    return (
+      TIER_HIERARCHY[selectedTier as keyof typeof TIER_HIERARCHY] < TIER_HIERARCHY[currentTier]
+    );
   };
 
   // Check if tier has changed
@@ -79,7 +100,7 @@ export default function AdminDirectTierChange({
   /**
    * Open confirmation dialog
    */
-  const handleChangeTierClick = () => {
+  const handleChangeTierClick = (): void => {
     if (!hasChanged) {
       toast({
         title: 'No change',
@@ -94,7 +115,7 @@ export default function AdminDirectTierChange({
   /**
    * Confirm and execute tier change
    */
-  const handleConfirmChange = async () => {
+  const handleConfirmChange = async (): Promise<void> => {
     setIsSubmitting(true);
 
     try {
@@ -109,10 +130,11 @@ export default function AdminDirectTierChange({
         }),
       });
 
-      const data = await response.json();
+      const data = (await response.json()) as ApiSuccessResponse | ApiErrorResponse;
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to update vendor tier');
+        const errorData = data as ApiErrorResponse;
+        throw new Error(errorData.error || 'Failed to update vendor tier');
       }
 
       // Success
@@ -143,7 +165,7 @@ export default function AdminDirectTierChange({
   /**
    * Cancel confirmation dialog
    */
-  const handleCancelChange = () => {
+  const handleCancelChange = (): void => {
     setConfirmDialogOpen(false);
   };
 

@@ -20,7 +20,7 @@ function extractUser(request: NextRequest) {
 /**
  * GET /api/vendors/profile - Get current vendor's profile
  */
-export async function GET(request: NextRequest) {
+export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     const user = extractUser(request);
 
@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
 /**
  * PATCH /api/vendors/profile - Update current vendor's profile
  */
-export async function PATCH(request: NextRequest) {
+export async function PATCH(request: NextRequest): Promise<NextResponse> {
   try {
     const user = extractUser(request);
 

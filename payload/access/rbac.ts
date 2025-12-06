@@ -1,14 +1,33 @@
 import type { Access } from 'payload';
 
 /**
- * Check if user is an admin
+ * Check if user has admin role
+ *
+ * @returns {boolean} True if user is an admin, false otherwise
+ *
+ * @example
+ * ```ts
+ * access: {
+ *   create: isAdmin,
+ *   update: isAdmin,
+ * }
+ * ```
  */
 export const isAdmin: Access = ({ req: { user } }) => {
   return user?.role === 'admin';
 };
 
 /**
- * Check if user is a vendor
+ * Check if user has vendor role
+ *
+ * @returns {boolean} True if user is a vendor, false otherwise
+ *
+ * @example
+ * ```ts
+ * access: {
+ *   read: isVendor,
+ * }
+ * ```
  */
 export const isVendor: Access = ({ req: { user } }) => {
   return user?.role === 'vendor';
@@ -16,13 +35,32 @@ export const isVendor: Access = ({ req: { user } }) => {
 
 /**
  * Check if user is authenticated (admin or vendor)
+ *
+ * @returns {boolean} True if user is logged in with any role, false otherwise
+ *
+ * @example
+ * ```ts
+ * access: {
+ *   read: isAuthenticated,
+ * }
+ * ```
  */
 export const isAuthenticated: Access = ({ req: { user } }) => {
   return Boolean(user);
 };
 
 /**
- * Check if user is admin OR vendor accessing their own resource
+ * Check if user is admin OR accessing their own resource
+ *
+ * @returns {boolean} True if user is admin or accessing their own document
+ *
+ * @example
+ * ```ts
+ * access: {
+ *   update: isAdminOrSelf,
+ *   delete: isAdminOrSelf,
+ * }
+ * ```
  */
 export const isAdminOrSelf: Access = ({ req: { user }, id }) => {
   if (!user) return false;
@@ -31,10 +69,37 @@ export const isAdminOrSelf: Access = ({ req: { user }, id }) => {
 };
 
 /**
- * Check if vendor has specific tier access
- * @param minTier - Minimum tier required ('free' | 'tier1' | 'tier2')
+ * Tier level type definition
  */
-export const hasTierAccess = (minTier: 'free' | 'tier1' | 'tier2'): Access => {
+type TierLevel = 'free' | 'tier1' | 'tier2';
+
+/**
+ * Tier level hierarchy mapping
+ * Higher numbers represent higher tier levels
+ */
+const TIER_LEVELS: Record<TierLevel, number> = {
+  free: 0,
+  tier1: 1,
+  tier2: 2,
+};
+
+/**
+ * Check if vendor has minimum tier access
+ *
+ * Admins always have access. For vendors, checks if their tier level
+ * meets or exceeds the required minimum tier level.
+ *
+ * @param {TierLevel} minTier - Minimum tier required ('free' | 'tier1' | 'tier2')
+ * @returns {Access} Access control function
+ *
+ * @example
+ * ```ts
+ * access: {
+ *   create: hasTierAccess('tier2'), // Only tier2+ vendors can create
+ * }
+ * ```
+ */
+export const hasTierAccess = (minTier: TierLevel): Access => {
   return async ({ req: { user, payload } }) => {
     if (!user) return false;
     if (user.role === 'admin') return true;
@@ -52,27 +117,42 @@ export const hasTierAccess = (minTier: 'free' | 'tier1' | 'tier2'): Access => {
 
     if (!vendor.docs[0]) return false;
 
-    const tier = vendor.docs[0].tier as 'free' | 'tier1' | 'tier2';
-    const tierLevels: Record<'free' | 'tier1' | 'tier2', number> = { free: 0, tier1: 1, tier2: 2 };
+    const tier = vendor.docs[0].tier as TierLevel;
 
-    return tierLevels[tier] >= tierLevels[minTier];
+    return TIER_LEVELS[tier] >= TIER_LEVELS[minTier];
   };
 };
 
 /**
  * Check if user can access tier-restricted field
- * Used in field-level access control
+ *
+ * Used in field-level access control. Admins always have access.
+ * For vendors, checks if the document's tier meets or exceeds the required tier.
+ *
+ * @param {TierLevel} requiredTier - Tier required to access this field
+ * @returns {Access} Access control function for field-level restrictions
+ *
+ * @example
+ * ```ts
+ * {
+ *   name: 'premiumFeature',
+ *   type: 'text',
+ *   access: {
+ *     read: canAccessTierField('tier2'),
+ *     update: canAccessTierField('tier2'),
+ *   }
+ * }
+ * ```
  */
-export const canAccessTierField = (requiredTier: 'free' | 'tier1' | 'tier2'): Access => {
-  return async ({ req: { user, payload }, data }) => {
+export const canAccessTierField = (requiredTier: TierLevel): Access => {
+  return async ({ req: { user }, data }) => {
     if (!user) return false;
     if (user.role === 'admin') return true;
     if (user.role !== 'vendor') return false;
 
     // Check vendor's tier
-    const tier = (data?.tier || 'free') as 'free' | 'tier1' | 'tier2';
-    const tierLevels: Record<'free' | 'tier1' | 'tier2', number> = { free: 0, tier1: 1, tier2: 2 };
+    const tier = (data?.tier || 'free') as TierLevel;
 
-    return tierLevels[tier] >= tierLevels[requiredTier];
+    return TIER_LEVELS[tier] >= TIER_LEVELS[requiredTier];
   };
 };

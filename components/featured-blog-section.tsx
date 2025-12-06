@@ -7,15 +7,16 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Calendar, User, Clock } from "lucide-react";
 import Link from "next/link";
 import { formatDate } from "@/lib/utils";
+import type { BlogPost } from "@/lib/types";
 
 interface FeaturedBlogSectionProps {
-  featuredPosts: any[];
+  featuredPosts: BlogPost[];
 }
 
-export function FeaturedBlogSection({ featuredPosts }: FeaturedBlogSectionProps) {
+export function FeaturedBlogSection({ featuredPosts }: FeaturedBlogSectionProps): React.JSX.Element {
 
   return (
-    <section className="py-20 bg-secondary/30">
+    <section className="py-20 bg-secondary/30" aria-label="Featured blog posts">
       <div className="container max-w-screen-xl">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-cormorant font-bold mb-4">

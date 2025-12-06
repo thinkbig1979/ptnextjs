@@ -7,6 +7,7 @@
 
 import * as React from "react";
 import Image from "next/image";
+
 import { cn } from "@/lib/utils";
 
 interface OptimizedAvatarProps {
@@ -32,7 +33,7 @@ export function OptimizedAvatar({
   size = "md",
   className,
   priority = false
-}: OptimizedAvatarProps) {
+}: OptimizedAvatarProps): React.ReactElement {
   const [hasError, setHasError] = React.useState(false);
   const [isLoaded, setIsLoaded] = React.useState(false);
 
@@ -130,7 +131,7 @@ export function AvatarGroup({
   size = "md",
   max = 5,
   className
-}: AvatarGroupProps) {
+}: AvatarGroupProps): React.ReactElement {
   const visibleAvatars = avatars.slice(0, max);
   const remainingCount = Math.max(0, avatars.length - max);
 

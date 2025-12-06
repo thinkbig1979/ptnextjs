@@ -1,12 +1,15 @@
 import type { CollectionConfig } from 'payload';
+
 import { lexicalEditor } from '@payloadcms/richtext-lexical';
-import { isAdmin } from '../access/rbac';
-import { sanitizeUrlHook } from '../../lib/utils/url';
+
 import {
-  sendVendorRegisteredEmail,
   sendProfilePublishedEmail,
   sendVendorRejectedEmail,
+  sendVendorRegisteredEmail,
 } from '../../lib/services/EmailService';
+import { sanitizeUrlHook } from '../../lib/utils/url';
+
+import { isAdmin } from '../access/rbac';
 
 const Vendors: CollectionConfig = {
   slug: 'vendors',
@@ -1225,16 +1228,16 @@ const Vendors: CollectionConfig = {
           },
         },
       ],
-      validate: (value) => {
-        if (!value || value.length === 0) {
+      validate: (value: unknown) => {
+        if (!value || !Array.isArray(value) || value.length === 0) {
           return true; // Empty array is valid
         }
 
         // Validate HQ uniqueness
-        const hqLocations = value.filter((loc: any) => loc.isHQ === true);
+        const hqLocations = value.filter((loc) => loc && typeof loc === 'object' && 'isHQ' in loc && loc.isHQ === true);
 
         if (hqLocations.length === 0) {
-          const allExplicitlyFalse = value.every((loc: any) => loc.isHQ === false);
+          const allExplicitlyFalse = value.every((loc) => loc && typeof loc === 'object' && 'isHQ' in loc && loc.isHQ === false);
           if (allExplicitlyFalse) {
             return 'Exactly one location must be designated as Headquarters';
           }
@@ -1249,12 +1252,12 @@ const Vendors: CollectionConfig = {
       hooks: {
         beforeChange: [
           ({ value }) => {
-            if (!value || value.length === 0) {
+            if (!value || !Array.isArray(value) || value.length === 0) {
               return value;
             }
 
             // Auto-designate first location as HQ if no HQ exists
-            const hasHQ = value.some((loc: any) => loc.isHQ === true);
+            const hasHQ = value.some((loc) => loc && typeof loc === 'object' && 'isHQ' in loc && loc.isHQ === true);
 
             if (!hasHQ) {
               const updated = [...value];

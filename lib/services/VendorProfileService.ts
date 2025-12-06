@@ -6,6 +6,7 @@
  */
 
 import { getPayload } from 'payload';
+import type { Where } from 'payload';
 import config from '@/payload.config';
 import { TierValidationService } from './TierValidationService';
 import { VendorComputedFieldsService } from './VendorComputedFieldsService';
@@ -39,7 +40,7 @@ export class VendorProfileService {
   static async getVendorProfile(
     slug: string,
     options: VendorProfileOptions = {}
-  ): Promise<any> {
+  ): Promise<Record<string, unknown>> {
     const { includeComputed = true } = options;
 
     const payload = await getPayload({ config });
@@ -85,7 +86,7 @@ export class VendorProfileService {
     id: string,
     userId: string,
     isAdmin: boolean
-  ): Promise<any> {
+  ): Promise<Record<string, unknown>> {
     const payload = await getPayload({ config });
 
     // Fetch vendor
@@ -94,19 +95,11 @@ export class VendorProfileService {
       id,
     });
 
-    console.log('[VendorProfileService] Raw vendor from Payload:', {
-      id: vendor.id,
-      tier: vendor.tier,
-      hasTierField: 'tier' in vendor,
-      tierType: typeof vendor.tier,
-      allKeys: Object.keys(vendor),
-    });
-
     // Authorization: Check ownership
     if (!isAdmin) {
       const vendorUserId =
         typeof vendor.user === 'object' && vendor.user !== null
-          ? vendor.user.id
+          ? (vendor.user as Record<string, unknown>).id
           : vendor.user;
 
       if (vendorUserId?.toString() !== userId.toString()) {
@@ -117,12 +110,6 @@ export class VendorProfileService {
     // Enrich with computed fields
     const enriched = VendorComputedFieldsService.enrichVendorData(vendor);
 
-    console.log('[VendorProfileService] After enrichment:', {
-      id: enriched.id,
-      tier: enriched.tier,
-      hasTierField: 'tier' in enriched,
-    });
-
     return enriched;
   }
 
@@ -130,7 +117,7 @@ export class VendorProfileService {
    * Get vendor by user ID for editing
    * Used when user logs in and we need to find their vendor profile
    */
-  static async getVendorByUserId(userId: string): Promise<any> {
+  static async getVendorByUserId(userId: string): Promise<Record<string, unknown>> {
     const payload = await getPayload({ config });
 
     // Find vendor by user_id
@@ -150,21 +137,8 @@ export class VendorProfileService {
 
     const vendor = result.docs[0];
 
-    console.log('[VendorProfileService.getVendorByUserId] Raw vendor from Payload:', {
-      id: vendor.id,
-      tier: vendor.tier,
-      hasTierField: 'tier' in vendor,
-      tierType: typeof vendor.tier,
-    });
-
     // Enrich with computed fields
     const enriched = VendorComputedFieldsService.enrichVendorData(vendor);
-
-    console.log('[VendorProfileService.getVendorByUserId] After enrichment:', {
-      id: enriched.id,
-      tier: enriched.tier,
-      hasTierField: 'tier' in enriched,
-    });
 
     return enriched;
   }
@@ -179,18 +153,10 @@ export class VendorProfileService {
    */
   static async updateVendorProfile(
     id: string,
-    data: Record<string, any>,
+    data: Record<string, unknown>,
     options: UpdateVendorOptions
-  ): Promise<any> {
+  ): Promise<Record<string, unknown>> {
     const { userId, isAdmin, validateTier = true } = options;
-
-    // Log what's being sent
-    console.log('[VendorProfileService.update] Input data:', {
-      id,
-      hasFoundedYear: 'foundedYear' in data,
-      foundedYearValue: data.foundedYear,
-      updatingFields: Object.keys(data),
-    });
 
     const payload = await getPayload({ config });
 
@@ -204,7 +170,7 @@ export class VendorProfileService {
     if (!isAdmin) {
       const vendorUserId =
         typeof vendor.user === 'object' && vendor.user !== null
-          ? vendor.user.id
+          ? (vendor.user as Record<string, unknown>).id
           : vendor.user;
 
       if (vendorUserId?.toString() !== userId.toString()) {
@@ -246,14 +212,6 @@ export class VendorProfileService {
       collection: 'vendors',
       id,
       data,
-    });
-
-    // Log what Payload returned
-    console.log('[VendorProfileService.update] Payload response:', {
-      id: updatedVendor.id,
-      hasFoundedYear: 'foundedYear' in updatedVendor,
-      foundedYearValue: updatedVendor.foundedYear,
-      tier: updatedVendor.tier,
     });
 
     // Enrich with computed fields
@@ -301,24 +259,24 @@ export class VendorProfileService {
    * @param limit - Max number of results
    * @returns Array of vendor profiles
    */
-  static async getVendors(tier?: Tier, limit: number = 100): Promise<any[]> {
+  static async getVendors(tier?: Tier, limit: number = 100): Promise<Array<Record<string, unknown>>> {
     const payload = await getPayload({ config });
 
-    const query: any = {
-      collection: 'vendors',
-      where: {
-        published: {
-          equals: true,
-        },
+    const whereClause: Where = {
+      published: {
+        equals: true,
       },
-      limit,
     };
 
     if (tier) {
-      query.where.tier = { equals: tier };
+      whereClause.tier = { equals: tier };
     }
 
-    const result = await payload.find(query);
+    const result = await payload.find({
+      collection: 'vendors',
+      where: whereClause,
+      limit,
+    });
 
     // Enrich all vendors with computed fields
     const enriched = VendorComputedFieldsService.enrichVendorsData(result.docs);
@@ -332,7 +290,7 @@ export class VendorProfileService {
    * @param limit - Max number of results
    * @returns Array of featured vendor profiles
    */
-  static async getFeaturedVendors(limit: number = 10): Promise<any[]> {
+  static async getFeaturedVendors(limit: number = 10): Promise<Array<Record<string, unknown>>> {
     const payload = await getPayload({ config });
 
     const result = await payload.find({

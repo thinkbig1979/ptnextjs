@@ -13,7 +13,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getPayload } from 'payload';
 import config from '@payload-config';
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest): Promise<NextResponse> {
   const startTime = process.hrtime.bigint();
 
   const checks = {
@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
 }
 
 // Support HEAD requests for lightweight readiness checks
-export async function HEAD(request: NextRequest) {
+export async function HEAD(_request: NextRequest): Promise<NextResponse> {
   try {
     const payload = await getPayload({ config });
     await payload.find({

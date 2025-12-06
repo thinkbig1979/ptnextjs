@@ -60,7 +60,7 @@ export function TierBadge({
   size = 'md',
   showIcon = true,
   className = '',
-}: TierBadgeProps) {
+}: TierBadgeProps): React.JSX.Element {
   const normalizedTier = (tier as Tier) || 'free';
   const config = TIER_CONFIG[normalizedTier] || TIER_CONFIG.free;
   const Icon = config.icon;

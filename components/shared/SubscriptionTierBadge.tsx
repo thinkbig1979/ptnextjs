@@ -11,7 +11,7 @@ export interface SubscriptionTierBadgeProps {
  *
  * Displays a tier badge with appropriate styling for different subscription tiers.
  */
-export function SubscriptionTierBadge({ tier, className }: SubscriptionTierBadgeProps) {
+export function SubscriptionTierBadge({ tier, className }: SubscriptionTierBadgeProps): React.JSX.Element {
   const tierConfig = {
     free: {
       label: 'Free Tier',

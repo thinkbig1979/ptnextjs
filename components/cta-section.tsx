@@ -4,14 +4,15 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Mail, Phone } from "lucide-react";
 import Link from "next/link";
+import type { CompanyInfo } from "@/lib/types";
 
 interface CTASectionProps {
-  companyInfo: any;
+  companyInfo?: CompanyInfo;
 }
 
-export function CTASection({ companyInfo }: CTASectionProps) {
+export function CTASection({ companyInfo }: CTASectionProps): React.JSX.Element {
   return (
-    <section className="py-20 bg-accent text-accent-foreground relative overflow-hidden">
+    <section className="py-20 bg-accent text-accent-foreground relative overflow-hidden" aria-label="Call to action">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full bg-card blur-3xl"></div>

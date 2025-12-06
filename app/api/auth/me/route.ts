@@ -9,7 +9,7 @@ import config from '@/payload.config';
  * Returns current authenticated user from JWT token in httpOnly cookie
  * Also fetches fresh approval status from database to ensure it's up-to-date
  */
-export async function GET(request: NextRequest) {
+export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     // Extract token from httpOnly cookie
     const token = request.cookies.get('access_token')?.value;
@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
 
       // Update status from database if user is a vendor
       if (userDoc && user.role === 'vendor') {
-        user.status = (userDoc.status as any) || 'pending';
+        user.status = (userDoc.status as 'pending' | 'approved' | 'rejected') || 'pending';
       }
     } catch (dbError) {
       // If database fetch fails, continue with JWT status

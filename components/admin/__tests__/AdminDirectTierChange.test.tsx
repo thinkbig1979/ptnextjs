@@ -19,8 +19,10 @@ jest.mock('@/hooks/use-toast', () => ({
 // Mock fetch
 global.fetch = jest.fn();
 
-// Helper function to select a tier from the dropdown
-async function selectTier(user: ReturnType<typeof userEvent.setup>, tierLabel: string) {
+/**
+ * Helper function to select a tier from the dropdown
+ */
+async function selectTier(user: ReturnType<typeof userEvent.setup>, tierLabel: string): Promise<void> {
   const trigger = screen.getByRole('combobox');
   await user.click(trigger);
   // shadcn Select renders options in a portal - there will be multiple matches:

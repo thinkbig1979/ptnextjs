@@ -12,7 +12,7 @@ import { useRouter } from 'next/navigation';
 export const LogoutButton: React.FC = () => {
   const router = useRouter();
 
-  const handleLogout = async () => {
+  const handleLogout = async (): Promise<void> => {
     try {
       // Call Payload's logout endpoint
       const response = await fetch('/api/users/logout', {

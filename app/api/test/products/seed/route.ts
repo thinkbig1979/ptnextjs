@@ -106,7 +106,17 @@ export async function POST(request: NextRequest): Promise<NextResponse<SeedRespo
           continue;
         }
         // Prepare product data
-        const createData: any = {
+        const createData: {
+          name: string;
+          description: unknown;
+          category: string;
+          manufacturer?: string;
+          model?: string;
+          price?: number;
+          published: boolean;
+          vendor?: string | number;
+          specifications?: Record<string, unknown>;
+        } = {
           name: productData.name,
           // Convert description to Lexical format (richText field requirement)
           description: productData.description

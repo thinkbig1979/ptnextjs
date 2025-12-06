@@ -58,8 +58,8 @@ export interface ExcelPreviewDialogProps {
 interface ChangeRecord {
   rowNumber: number;
   field: string;
-  oldValue: any;
-  newValue: any;
+  oldValue: unknown;
+  newValue: unknown;
 }
 
 /**
@@ -102,21 +102,47 @@ export function ExcelPreviewDialog({
    * Map from ImportValidationService format (rowNumber) to ValidationErrorsTable format (row)
    */
   const { errors: validationErrors, warnings: validationWarnings } = useMemo(() => {
-    const errors: any[] = [];
-    const warnings: any[] = [];
+    const errors: Array<{
+      row: number;
+      field: string;
+      code: string;
+      message: string;
+      suggestion?: string;
+      severity: 'error' | 'warning';
+      value?: unknown;
+    }> = [];
+    const warnings: Array<{
+      row: number;
+      field: string;
+      code: string;
+      message: string;
+      suggestion?: string;
+      severity: 'error' | 'warning';
+      value?: unknown;
+    }> = [];
 
     validationResult.rows.forEach((row) => {
       // Map errors
       const mappedErrors = row.errors.map(error => ({
-        ...error,
         row: error.rowNumber,
+        field: error.field,
+        code: error.code,
+        message: error.message,
+        suggestion: error.suggestion,
+        severity: 'error' as const,
+        value: error.value,
       }));
       errors.push(...mappedErrors);
 
       // Map warnings
       const mappedWarnings = row.warnings.map(warning => ({
-        ...warning,
         row: warning.rowNumber,
+        field: warning.field,
+        code: warning.code,
+        message: warning.message,
+        suggestion: warning.suggestion,
+        severity: 'warning' as const,
+        value: warning.value,
       }));
       warnings.push(...mappedWarnings);
     });
@@ -163,7 +189,7 @@ export function ExcelPreviewDialog({
   /**
    * Determine if a row has validation errors
    */
-  const getRowErrors = (rowNumber: number) => {
+  const getRowErrors = (rowNumber: number): ValidationError[] => {
     const row = validationResult.rows.find((r) => r.rowNumber === rowNumber);
     return row?.errors || [];
   };
@@ -360,10 +386,14 @@ export function ExcelPreviewDialog({
                           {change.field}
                         </TableCell>
                         <TableCell className="text-muted-foreground font-mono text-sm">
-                          {change.oldValue || <span className="italic">empty</span>}
+                          {change.oldValue !== null && change.oldValue !== undefined
+                            ? String(change.oldValue)
+                            : <span className="italic">empty</span>}
                         </TableCell>
                         <TableCell className="font-medium font-mono text-sm">
-                          {change.newValue}
+                          {change.newValue !== null && change.newValue !== undefined
+                            ? String(change.newValue)
+                            : '-'}
                         </TableCell>
                       </TableRow>
                     ))

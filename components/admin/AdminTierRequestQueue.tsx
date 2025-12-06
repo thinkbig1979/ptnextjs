@@ -1,14 +1,10 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import React, { useCallback, useEffect, useState } from 'react';
+import { ArrowDown, ArrowRight, ArrowUp, CheckCircle, Loader2, XCircle } from 'lucide-react';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -24,11 +20,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { CheckCircle, XCircle, Loader2, ArrowRight, ArrowUp, ArrowDown } from 'lucide-react';
+
+/**
+ * API Response Types
+ */
+interface ApiErrorResponse {
+  error?: string;
+  message?: string;
+}
+
+interface ApiSuccessResponse {
+  data?: TierUpgradeRequest[];
+  requests?: TierUpgradeRequest[];
+}
 
 /**
  * Tier Upgrade Request Interface
@@ -47,6 +61,11 @@ interface TierUpgradeRequest {
   status: 'pending' | 'approved' | 'rejected' | 'cancelled';
   requestedAt: string;
 }
+
+/**
+ * Request Type Filter Values
+ */
+type RequestTypeFilter = 'all' | 'upgrade' | 'downgrade';
 
 /**
  * Tier Display Labels
@@ -73,18 +92,18 @@ const TIER_LABELS: Record<string, string> = {
  * - Empty state
  * - Tier visual comparison (current → requested)
  */
-export default function AdminTierRequestQueue() {
+export default function AdminTierRequestQueue(): React.ReactElement {
   const [requests, setRequests] = useState<TierUpgradeRequest[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
-  const [requestTypeFilter, setRequestTypeFilter] = useState<'all' | 'upgrade' | 'downgrade'>('all');
+  const [requestTypeFilter, setRequestTypeFilter] = useState<RequestTypeFilter>('all');
 
   // Dialog states
-  const [approveDialogOpen, setApproveDialogOpen] = useState(false);
-  const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
+  const [approveDialogOpen, setApproveDialogOpen] = useState<boolean>(false);
+  const [rejectDialogOpen, setRejectDialogOpen] = useState<boolean>(false);
   const [selectedRequest, setSelectedRequest] = useState<TierUpgradeRequest | null>(null);
-  const [rejectionReason, setRejectionReason] = useState('');
+  const [rejectionReason, setRejectionReason] = useState<string>('');
 
   const { toast } = useToast();
 
@@ -92,7 +111,7 @@ export default function AdminTierRequestQueue() {
    * Fetch pending tier upgrade requests from API
    * Wrapped in useCallback to stabilize the function reference
    */
-  const fetchPendingRequests = useCallback(async () => {
+  const fetchPendingRequests = useCallback(async (): Promise<void> => {
     try {
       setIsLoading(true);
       setError(null);
@@ -112,11 +131,11 @@ export default function AdminTierRequestQueue() {
       });
 
       if (!response.ok) {
-        const data = await response.json();
+        const data = (await response.json()) as ApiErrorResponse;
         throw new Error(data.error || data.message || 'Failed to fetch pending tier requests');
       }
 
-      const data = await response.json();
+      const data = (await response.json()) as ApiSuccessResponse;
       setRequests(data.data || data.requests || []);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to load pending tier requests';
@@ -141,7 +160,7 @@ export default function AdminTierRequestQueue() {
   /**
    * Open approve confirmation dialog
    */
-  const handleApproveClick = (request: TierUpgradeRequest) => {
+  const handleApproveClick = (request: TierUpgradeRequest): void => {
     setSelectedRequest(request);
     setApproveDialogOpen(true);
   };
@@ -149,7 +168,7 @@ export default function AdminTierRequestQueue() {
   /**
    * Open reject dialog with reason input
    */
-  const handleRejectClick = (request: TierUpgradeRequest) => {
+  const handleRejectClick = (request: TierUpgradeRequest): void => {
     setSelectedRequest(request);
     setRejectionReason('');
     setRejectDialogOpen(true);
@@ -158,7 +177,7 @@ export default function AdminTierRequestQueue() {
   /**
    * Approve tier upgrade request
    */
-  const handleApprove = async () => {
+  const handleApprove = async (): Promise<void> => {
     if (!selectedRequest) return;
 
     try {
@@ -173,7 +192,7 @@ export default function AdminTierRequestQueue() {
       });
 
       if (!response.ok) {
-        const data = await response.json();
+        const data = (await response.json()) as ApiErrorResponse;
         throw new Error(data.error || data.message || 'Failed to approve tier request');
       }
 
@@ -209,7 +228,7 @@ export default function AdminTierRequestQueue() {
   /**
    * Reject tier upgrade request with reason
    */
-  const handleReject = async () => {
+  const handleReject = async (): Promise<void> => {
     if (!selectedRequest) return;
 
     // Validate rejection reason
@@ -237,7 +256,7 @@ export default function AdminTierRequestQueue() {
       });
 
       if (!response.ok) {
-        const data = await response.json();
+        const data = (await response.json()) as ApiErrorResponse;
         throw new Error(data.error || data.message || 'Failed to reject tier request');
       }
 
@@ -275,7 +294,7 @@ export default function AdminTierRequestQueue() {
   /**
    * Format date for display
    */
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
@@ -287,7 +306,7 @@ export default function AdminTierRequestQueue() {
   /**
    * Get request type badge component
    */
-  const getRequestTypeBadge = (requestType: 'upgrade' | 'downgrade') => {
+  const getRequestTypeBadge = (requestType: 'upgrade' | 'downgrade'): React.ReactElement => {
     if (requestType === 'upgrade') {
       return (
         <Badge variant="default" className="bg-success hover:bg-success/90 text-success-foreground">
@@ -295,20 +314,19 @@ export default function AdminTierRequestQueue() {
           Upgrade
         </Badge>
       );
-    } else {
-      return (
-        <Badge variant="default" className="bg-warning hover:bg-warning/90 text-warning-foreground">
-          <ArrowDown className="mr-1 h-3 w-3" />
-          Downgrade
-        </Badge>
-      );
     }
+    return (
+      <Badge variant="default" className="bg-warning hover:bg-warning/90 text-warning-foreground">
+        <ArrowDown className="mr-1 h-3 w-3" />
+        Downgrade
+      </Badge>
+    );
   };
 
   /**
    * Get row styling based on request type
    */
-  const getRowClassName = (requestType: 'upgrade' | 'downgrade') => {
+  const getRowClassName = (requestType: 'upgrade' | 'downgrade'): string => {
     if (requestType === 'downgrade') {
       return 'bg-warning/5 hover:bg-warning/10';
     }
@@ -363,6 +381,13 @@ export default function AdminTierRequestQueue() {
             </SelectContent>
           </Select>
         </div>
+      </div>
+
+      {/* Status announcements for screen readers */}
+      <div role="status" aria-live="polite" className="sr-only">
+        {requests.length === 0
+          ? 'No pending tier requests'
+          : `${requests.length} pending tier ${requests.length === 1 ? 'request' : 'requests'}`}
       </div>
 
       {/* Empty state */}
@@ -474,7 +499,7 @@ export default function AdminTierRequestQueue() {
             </DialogTitle>
             <DialogDescription>
               Are you sure you want to approve{' '}
-              <strong>{selectedRequest?.vendor.companyName}</strong>'s{' '}
+              <strong>{selectedRequest?.vendor.companyName}</strong>&apos;s{' '}
               {selectedRequest?.requestType === 'upgrade' ? 'upgrade' : 'downgrade'} request?
               Their tier will be automatically updated from{' '}
               <strong>{selectedRequest && TIER_LABELS[selectedRequest.currentTier]}</strong> to{' '}
@@ -530,7 +555,7 @@ export default function AdminTierRequestQueue() {
             </DialogTitle>
             <DialogDescription>
               Please provide a reason for rejecting{' '}
-              <strong>{selectedRequest?.vendor.companyName}</strong>'s tier{' '}
+              <strong>{selectedRequest?.vendor.companyName}</strong>&apos;s tier{' '}
               {selectedRequest?.requestType === 'upgrade' ? 'upgrade' : 'downgrade'} request.
               This reason will be visible to the vendor.
             </DialogDescription>
@@ -543,12 +568,14 @@ export default function AdminTierRequestQueue() {
           )}
           <div className="py-4">
             <Textarea
+              id="rejection-reason-input"
               placeholder="Enter rejection reason (e.g., 'Please provide more details about your business needs')"
               value={rejectionReason}
-              onChange={(e) => setRejectionReason(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setRejectionReason(e.target.value)}
               rows={4}
               className="w-full"
               aria-label="Rejection reason"
+              aria-required="true"
             />
           </div>
           <DialogFooter>

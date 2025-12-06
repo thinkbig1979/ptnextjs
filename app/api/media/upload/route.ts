@@ -6,7 +6,7 @@ import config from '@payload-config';
  * POST /api/media/upload
  * Upload an image to Payload Media collection
  */
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File;

@@ -273,6 +273,6 @@ export function validateVendorUpdate(data: unknown): VendorUpdateRequest {
 /**
  * Safe validation that returns success/error result
  */
-export function safeValidateVendorUpdate(data: unknown) {
+export function safeValidateVendorUpdate(data: unknown): z.SafeParseReturnType<unknown, VendorUpdateRequest> {
   return vendorUpdateSchema.safeParse(data);
 }

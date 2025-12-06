@@ -48,7 +48,7 @@ export function VendorReviews({
   itemsPerPage = 10,
   searchable = true,
   allowSubmission = true
-}: VendorReviewsProps) {
+}: VendorReviewsProps): React.JSX.Element {
   const [searchTerm, setSearchTerm] = React.useState('');
   const [currentPage, setCurrentPage] = React.useState(1);
   const [showSubmissionForm, setShowSubmissionForm] = React.useState(false);
@@ -89,7 +89,8 @@ export function VendorReviews({
     // Sort reviews
     if (filtered.length > 0) {
       filtered = [...filtered].sort((a, b) => {
-        let aValue: any, bValue: any;
+        let aValue: number;
+        let bValue: number;
 
         switch (sortBy) {
           case 'rating':
@@ -133,7 +134,7 @@ export function VendorReviews({
   }, [processedReviews]);
 
   // Render star rating
-  const renderStars = (rating: number, size: 'sm' | 'md' | 'lg' = 'sm') => {
+  const renderStars = (rating: number, size: 'sm' | 'md' | 'lg' = 'sm'): React.JSX.Element => {
     const sizeClass = size === 'sm' ? 'h-4 w-4' : size === 'md' ? 'h-5 w-5' : 'h-6 w-6';
 
     return (
@@ -153,7 +154,7 @@ export function VendorReviews({
     );
   };
 
-  const handleSubmitReview = async () => {
+  const handleSubmitReview = async (): Promise<void> => {
     if (!onSubmitReview || !newReview.reviewerName || !newReview.review || !newReview.reviewerRole) {
       toast.error("Please fill in all required fields");
       return;
@@ -171,9 +172,8 @@ export function VendorReviews({
       await onSubmitReview({
         ...newReview,
         vendorId,
-        rating: newReview.overallRating,
         captchaToken: captchaToken || undefined,
-      } as any);
+      });
 
       toast.success("Review submitted successfully! It will be reviewed before being published.");
 
@@ -199,15 +199,15 @@ export function VendorReviews({
     }
   };
 
-  const handleCaptchaVerify = (token: string) => {
+  const handleCaptchaVerify = (token: string): void => {
     setCaptchaToken(token);
   };
 
-  const handleCaptchaExpire = () => {
+  const handleCaptchaExpire = (): void => {
     setCaptchaToken(null);
   };
 
-  const handleCaptchaError = () => {
+  const handleCaptchaError = (): void => {
     setCaptchaToken(null);
   };
 
@@ -280,10 +280,10 @@ export function VendorReviews({
         {paginatedReviews.map((review) => {
           const reviewText = review.reviewText || review.review || '';
           const prosArray = Array.isArray(review.pros)
-            ? review.pros.map(p => typeof p === 'string' ? p : (p as any).pro)
+            ? review.pros.map(p => typeof p === 'string' ? p : (p as { pro: string }).pro)
             : [];
           const consArray = Array.isArray(review.cons)
-            ? review.cons.map(c => typeof c === 'string' ? c : (c as any).con)
+            ? review.cons.map(c => typeof c === 'string' ? c : (c as { con: string }).con)
             : [];
 
           return (

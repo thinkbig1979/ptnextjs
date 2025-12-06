@@ -60,7 +60,7 @@ export function TierGate({
   fallback,
   className = '',
   showUpgradeMessage = true,
-}: TierGateProps) {
+}: TierGateProps): React.JSX.Element | null {
   const { tier, role } = useAuth();
 
   // Determine if user has access

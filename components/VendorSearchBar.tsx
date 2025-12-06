@@ -45,7 +45,7 @@ export function VendorSearchBar({
   locationTotalCount,
   placeholder = "Search vendors by name, description, or technology...",
   className = '',
-}: VendorSearchBarProps) {
+}: VendorSearchBarProps): React.JSX.Element {
   const [searchMode, setSearchMode] = useState<'name' | 'location'>('name');
 
   // Location search state

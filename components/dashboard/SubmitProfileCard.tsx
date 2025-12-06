@@ -70,7 +70,7 @@ export function SubmitProfileCard() {
   /**
    * Handle profile submission
    */
-  const handleSubmit = async () => {
+  const handleSubmit = async (): Promise<void> => {
     if (!vendor?.id) {
       toast.error('Unable to submit profile. Please try again.');
       return;

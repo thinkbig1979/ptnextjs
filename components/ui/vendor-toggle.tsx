@@ -1,9 +1,10 @@
 "use client";
 
 import * as React from "react";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
+
+import { Label } from "./label";
+import { Switch } from "./switch";
 
 export interface VendorToggleProps {
   value: "partners" | "all";
@@ -19,7 +20,7 @@ export function VendorToggle({
   isLoading = false,
   partnersLabel = "Partner Products",
   allLabel = "All Vendors"
-}: VendorToggleProps) {
+}: VendorToggleProps): React.ReactElement {
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}

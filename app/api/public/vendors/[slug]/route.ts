@@ -22,15 +22,26 @@ interface ErrorResponse {
   };
 }
 
+interface VendorLocation {
+  isHQ: boolean;
+  [key: string]: unknown;
+}
+
+interface VendorData {
+  tier?: Tier;
+  locations?: VendorLocation[];
+  [key: string]: unknown;
+}
+
 /**
  * Filter array fields based on tier limits
  */
-function filterArrayFieldsByTier(vendor: any, tier: Tier): any {
+function filterArrayFieldsByTier(vendor: VendorData, tier: Tier): VendorData {
   const filtered = { ...vendor };
 
   // Free tier: Only HQ location
   if (tier === 'free' && filtered.locations && Array.isArray(filtered.locations)) {
-    filtered.locations = filtered.locations.filter((loc: any) => loc.isHQ).slice(0, 1);
+    filtered.locations = filtered.locations.filter((loc) => loc.isHQ).slice(0, 1);
   }
   // Tier 1: Max 3 locations
   else if (tier === 'tier1' && filtered.locations && Array.isArray(filtered.locations)) {
@@ -45,12 +56,12 @@ function filterArrayFieldsByTier(vendor: any, tier: Tier): any {
  * Filter vendor fields based on tier
  * Only return fields accessible at the vendor's tier level
  */
-function filterFieldsByTier(vendor: any): any {
+function filterFieldsByTier(vendor: VendorData): VendorData {
   const tier = (vendor.tier as Tier) || 'free';
   const accessibleFields = TierValidationService.getAccessibleFields(tier);
 
   // Create filtered vendor object
-  const filtered: any = {};
+  const filtered: VendorData = {};
 
   // Always include these base fields
   const alwaysInclude = ['id', 'tier', 'slug', 'createdAt', 'updatedAt'];

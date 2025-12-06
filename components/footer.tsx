@@ -1,14 +1,15 @@
-
+import * as React from "react";
 import Link from "next/link";
 import { Anchor, Mail, Phone, MapPin } from "lucide-react";
+import type { CompanyInfo } from "@/lib/types";
 
 interface FooterProps {
-  companyInfo: any;
+  companyInfo?: CompanyInfo;
 }
 
-export function Footer({ companyInfo }: FooterProps) {
+export function Footer({ companyInfo }: FooterProps): React.JSX.Element {
   return (
-    <footer className="bg-card border-t">
+    <footer className="bg-card border-t" role="contentinfo">
       <div className="container max-w-screen-xl py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}

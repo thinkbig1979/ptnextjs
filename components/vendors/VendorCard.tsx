@@ -35,8 +35,8 @@ export function VendorCard({
   vendor,
   featured = false,
   showTierBadge = true,
-}: VendorCardProps) {
-  const truncateDescription = (text: string | undefined, maxLength: number = 150) => {
+}: VendorCardProps): React.JSX.Element {
+  const truncateDescription = (text: string | undefined, maxLength: number = 150): string => {
     if (!text) return '';
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength).trim() + '...';
@@ -172,7 +172,7 @@ export function VendorCard({
  *
  * Loading skeleton for VendorCard
  */
-export function VendorCardSkeleton() {
+export function VendorCardSkeleton(): React.JSX.Element {
   return (
     <Card className="h-full">
       <CardContent className="p-4">

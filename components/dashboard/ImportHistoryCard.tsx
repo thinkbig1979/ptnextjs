@@ -54,8 +54,8 @@ interface ImportHistoryItem {
   changes?: Array<{
     rowNumber: number;
     field: string;
-    oldValue: any;
-    newValue: any;
+    oldValue: unknown;
+    newValue: unknown;
   }>;
   errors?: Array<{
     rowNumber: number;
@@ -120,7 +120,7 @@ export function ImportHistoryCard() {
   /**
    * Fetch import history from API
    */
-  const fetchHistory = useCallback(async () => {
+  const fetchHistory = useCallback(async (): Promise<void> => {
     if (!vendor?.id) return;
 
     setLoading(true);
@@ -169,7 +169,7 @@ export function ImportHistoryCard() {
   /**
    * Handle status filter change
    */
-  const handleFilterChange = (value: string) => {
+  const handleFilterChange = (value: string): void => {
     setStatusFilter(value);
     setPage(1); // Reset to first page when filter changes
   };
@@ -177,13 +177,13 @@ export function ImportHistoryCard() {
   /**
    * Handle page navigation
    */
-  const handlePreviousPage = () => {
+  const handlePreviousPage = (): void => {
     if (pagination?.hasPrevPage) {
       setPage(page - 1);
     }
   };
 
-  const handleNextPage = () => {
+  const handleNextPage = (): void => {
     if (pagination?.hasNextPage) {
       setPage(page + 1);
     }
@@ -192,7 +192,7 @@ export function ImportHistoryCard() {
   /**
    * Handle view details
    */
-  const handleViewDetails = (importItem: ImportHistoryItem) => {
+  const handleViewDetails = (importItem: ImportHistoryItem): void => {
     setSelectedImport(importItem);
     setDetailsDialogOpen(true);
   };
@@ -215,7 +215,12 @@ export function ImportHistoryCard() {
   /**
    * Get status badge variant and icon
    */
-  const getStatusDisplay = (status: ImportStatus) => {
+  const getStatusDisplay = (status: ImportStatus): {
+    variant: 'default' | 'destructive';
+    className: string;
+    icon: React.ReactElement;
+    label: string;
+  } => {
     switch (status) {
       case 'success':
         return {

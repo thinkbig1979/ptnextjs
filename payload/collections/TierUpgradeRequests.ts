@@ -1,11 +1,12 @@
 import type { CollectionConfig } from 'payload';
+
 import {
-  sendTierUpgradeRequestedEmail,
-  sendTierUpgradeApprovedEmail,
-  sendTierUpgradeRejectedEmail,
-  sendTierDowngradeRequestedEmail,
   sendTierDowngradeApprovedEmail,
   sendTierDowngradeRejectedEmail,
+  sendTierDowngradeRequestedEmail,
+  sendTierUpgradeApprovedEmail,
+  sendTierUpgradeRejectedEmail,
+  sendTierUpgradeRequestedEmail,
 } from '../../lib/services/EmailService';
 
 const TierUpgradeRequests: CollectionConfig = {

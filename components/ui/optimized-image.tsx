@@ -2,8 +2,9 @@
 
 import * as React from "react";
 import Image, { ImageProps } from "next/image";
+import { Briefcase, Building2, FileText, Package, Ship, Tag, Users } from "lucide-react";
+
 import { cn } from "@/lib/utils";
-import { Package, Building2, Users, Ship, Briefcase, FileText, Tag } from "lucide-react";
 
 interface OptimizedImageProps extends Omit<ImageProps, 'src'> {
   src?: string | null;
@@ -50,7 +51,7 @@ export function OptimizedImage({
   iconSize = 'md',
   fill,
   ...props
-}: OptimizedImageProps) {
+}: OptimizedImageProps): React.ReactElement {
   const [imageError, setImageError] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
 

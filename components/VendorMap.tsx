@@ -32,7 +32,7 @@ export function VendorMap({
   className = '',
   zoom = 13,
   height = '400px',
-}: VendorMapProps) {
+}: VendorMapProps): React.JSX.Element {
   // Validate coordinates
   const { latitude, longitude } = coordinates;
 

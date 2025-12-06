@@ -27,7 +27,7 @@ export interface VendorHeroProps {
  *
  * This component is tier-aware and displays different information based on vendor tier
  */
-export function VendorHero({ vendor, productCount }: VendorHeroProps) {
+export function VendorHero({ vendor, productCount }: VendorHeroProps): React.JSX.Element {
   return (
     <div className="mb-8">
       {/* Badges Row */}

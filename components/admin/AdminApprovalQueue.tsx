@@ -1,14 +1,10 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import React, { useCallback, useEffect, useState } from 'react';
+import { CheckCircle, Loader2, XCircle } from 'lucide-react';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -17,11 +13,27 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
+
+/**
+ * API Response Types
+ */
+interface ApiErrorResponse {
+  error?: string;
+}
+
+interface ApiSuccessResponse {
+  pending?: PendingVendor[];
+}
 
 /**
  * Pending Vendor Interface
@@ -53,17 +65,17 @@ interface PendingVendor {
  * - Loading states
  * - Empty state
  */
-export default function AdminApprovalQueue() {
+export default function AdminApprovalQueue(): React.ReactElement {
   const [vendors, setVendors] = useState<PendingVendor[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
   // Dialog states
-  const [approveDialogOpen, setApproveDialogOpen] = useState(false);
-  const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
+  const [approveDialogOpen, setApproveDialogOpen] = useState<boolean>(false);
+  const [rejectDialogOpen, setRejectDialogOpen] = useState<boolean>(false);
   const [selectedVendor, setSelectedVendor] = useState<PendingVendor | null>(null);
-  const [rejectionReason, setRejectionReason] = useState('');
+  const [rejectionReason, setRejectionReason] = useState<string>('');
 
   const { toast } = useToast();
 
@@ -71,7 +83,7 @@ export default function AdminApprovalQueue() {
    * Fetch pending vendors from API
    * Wrapped in useCallback to stabilize the function reference
    */
-  const fetchPendingVendors = useCallback(async () => {
+  const fetchPendingVendors = useCallback(async (): Promise<void> => {
     try {
       setIsLoading(true);
       setError(null);
@@ -82,11 +94,11 @@ export default function AdminApprovalQueue() {
       });
 
       if (!response.ok) {
-        const data = await response.json();
+        const data = (await response.json()) as ApiErrorResponse;
         throw new Error(data.error || 'Failed to fetch pending vendors');
       }
 
-      const data = await response.json();
+      const data = (await response.json()) as ApiSuccessResponse;
       setVendors(data.pending || []);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to load pending vendors';
@@ -111,7 +123,7 @@ export default function AdminApprovalQueue() {
   /**
    * Open approve confirmation dialog
    */
-  const handleApproveClick = (vendor: PendingVendor) => {
+  const handleApproveClick = (vendor: PendingVendor): void => {
     setSelectedVendor(vendor);
     setApproveDialogOpen(true);
   };
@@ -119,7 +131,7 @@ export default function AdminApprovalQueue() {
   /**
    * Open reject dialog with reason input
    */
-  const handleRejectClick = (vendor: PendingVendor) => {
+  const handleRejectClick = (vendor: PendingVendor): void => {
     setSelectedVendor(vendor);
     setRejectionReason('');
     setRejectDialogOpen(true);
@@ -128,7 +140,7 @@ export default function AdminApprovalQueue() {
   /**
    * Approve vendor
    */
-  const handleApprove = async () => {
+  const handleApprove = async (): Promise<void> => {
     if (!selectedVendor) return;
 
     try {
@@ -140,7 +152,7 @@ export default function AdminApprovalQueue() {
       });
 
       if (!response.ok) {
-        const data = await response.json();
+        const data = (await response.json()) as ApiErrorResponse;
         throw new Error(data.error || 'Failed to approve vendor');
       }
 
@@ -175,7 +187,7 @@ export default function AdminApprovalQueue() {
   /**
    * Reject vendor with reason
    */
-  const handleReject = async () => {
+  const handleReject = async (): Promise<void> => {
     if (!selectedVendor) return;
 
     // Validate rejection reason
@@ -201,7 +213,7 @@ export default function AdminApprovalQueue() {
       });
 
       if (!response.ok) {
-        const data = await response.json();
+        const data = (await response.json()) as ApiErrorResponse;
         throw new Error(data.error || 'Failed to reject vendor');
       }
 
@@ -238,7 +250,7 @@ export default function AdminApprovalQueue() {
   /**
    * Format date for display
    */
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
@@ -290,6 +302,13 @@ export default function AdminApprovalQueue() {
 
   return (
     <>
+      {/* Status announcements for screen readers */}
+      <div role="status" aria-live="polite" className="sr-only">
+        {vendors.length === 0
+          ? 'No pending vendor approvals'
+          : `${vendors.length} pending vendor ${vendors.length === 1 ? 'approval' : 'approvals'}`}
+      </div>
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -401,12 +420,14 @@ export default function AdminApprovalQueue() {
           </DialogHeader>
           <div className="py-4">
             <Textarea
+              id="rejection-reason-input"
               placeholder="Enter rejection reason..."
               value={rejectionReason}
-              onChange={(e) => setRejectionReason(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setRejectionReason(e.target.value)}
               rows={4}
               className="w-full"
               aria-label="Rejection reason"
+              aria-required="true"
             />
           </div>
           <DialogFooter>

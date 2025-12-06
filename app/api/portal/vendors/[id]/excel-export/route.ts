@@ -76,7 +76,7 @@ function convertTierToNumeric(tier: string | undefined): NumericVendorTier {
 export async function GET(
   request: NextRequest,
   context: RouteContext
-) {
+): Promise<NextResponse> {
   try {
     // Await params
     const { id } = await context.params;
@@ -107,11 +107,11 @@ export async function GET(
     }
 
     // Convert tier to numeric format for Excel service
-    const numericTier = convertTierToNumeric(vendor.tier);
+    const numericTier = convertTierToNumeric(vendor.tier as string | undefined);
 
     // Export vendor data to Excel using ExcelExportService
     const buffer = await ExcelExportService.exportVendor(
-      vendor as Vendor,
+      vendor as unknown as Vendor,
       numericTier,
       {
         includeMetadata: true,
@@ -120,7 +120,7 @@ export async function GET(
     );
 
     // Generate filename
-    const filename = ExcelExportService.generateFilename(vendor.name, numericTier);
+    const filename = ExcelExportService.generateFilename(vendor.name as string | undefined, numericTier);
 
     // Return Excel file with proper headers
     return new NextResponse(buffer, {

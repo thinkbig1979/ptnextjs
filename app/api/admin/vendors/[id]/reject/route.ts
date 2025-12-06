@@ -29,7 +29,7 @@ function extractAdminUser(request: NextRequest) {
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
-) {
+): Promise<NextResponse> {
   try {
     extractAdminUser(request);
 
@@ -49,7 +49,11 @@ export async function POST(
     const payload = await getPayload({ config });
 
     // Update user status
-    const updateData: any = {
+    const updateData: {
+      status: 'rejected';
+      rejected_at: string;
+      rejection_reason: string;
+    } = {
       status: 'rejected',
       rejected_at: new Date().toISOString(),
       rejection_reason: rejectionReason,

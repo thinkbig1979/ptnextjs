@@ -26,7 +26,7 @@ function extractAdminUser(request: NextRequest) {
 /**
  * GET /api/admin/vendors/pending - Get pending vendor approvals
  */
-export async function GET(request: NextRequest) {
+export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     extractAdminUser(request);
 

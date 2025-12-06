@@ -47,15 +47,15 @@ export function LocationFormFields({
   /**
    * Validate a single field
    */
-  const validateField = useCallback((name: string, value: any): string | undefined => {
+  const validateField = useCallback((name: string, value: unknown): string | undefined => {
     switch (name) {
       case 'locationName':
-        if (value && value.length > 100) {
+        if (typeof value === 'string' && value.length > 100) {
           return 'Location name must be 100 characters or less';
         }
         break;
       case 'address':
-        if (!value || value.trim() === '') {
+        if (typeof value !== 'string' || value.trim() === '') {
           return 'Address is required';
         }
         if (value.length > 200) {
@@ -63,12 +63,12 @@ export function LocationFormFields({
         }
         break;
       case 'city':
-        if (!value || value.trim() === '') {
+        if (typeof value !== 'string' || value.trim() === '') {
           return 'City is required';
         }
         break;
       case 'country':
-        if (!value || value.trim() === '') {
+        if (typeof value !== 'string' || value.trim() === '') {
           return 'Country is required';
         }
         break;
@@ -128,7 +128,7 @@ export function LocationFormFields({
    * Handle field change
    */
   const handleFieldChange = useCallback(
-    (field: keyof VendorLocation, value: any) => {
+    (field: keyof VendorLocation, value: unknown): void => {
       const updatedLocation = { ...location, [field]: value };
       onChange(updatedLocation);
 
@@ -146,7 +146,7 @@ export function LocationFormFields({
    * Handle field blur (for validation display)
    */
   const handleBlur = useCallback(
-    (field: keyof VendorLocation) => {
+    (field: keyof VendorLocation): void => {
       // Mark as touched on blur to enable error display
       setTouched((prev) => ({ ...prev, [field]: true }));
     },
@@ -156,7 +156,7 @@ export function LocationFormFields({
   /**
    * Handle HQ radio button change
    */
-  const handleHQChange = useCallback(() => {
+  const handleHQChange = useCallback((): void => {
     if (canEdit) {
       onChange({ ...location, isHQ: !isHQ });
     }
@@ -166,7 +166,7 @@ export function LocationFormFields({
    * Handle geocoding success
    */
   const handleGeocodingSuccess = useCallback(
-    (latitude: number, longitude: number) => {
+    (latitude: number, longitude: number): void => {
       onChange({
         ...location,
         latitude,

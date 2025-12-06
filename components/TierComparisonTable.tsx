@@ -151,7 +151,7 @@ const FEATURE_CATEGORIES: FeatureCategory[] = [
   },
 ];
 
-const BooleanCell: React.FC<{ value: boolean }> = ({ value }) => {
+const BooleanCell: React.FC<{ value: boolean }> = ({ value }): React.JSX.Element => {
   if (value) {
     return (
       <span className="inline-flex items-center justify-center" aria-label="Available">
@@ -166,7 +166,7 @@ const BooleanCell: React.FC<{ value: boolean }> = ({ value }) => {
   );
 };
 
-const FeatureValueCell: React.FC<{ value: React.ReactNode }> = ({ value }) => {
+const FeatureValueCell: React.FC<{ value: React.ReactNode }> = ({ value }): React.JSX.Element => {
   if (typeof value === 'boolean') {
     return <BooleanCell value={value} />;
   }
@@ -177,7 +177,7 @@ export function TierComparisonTable({
   currentTier,
   highlightTier,
   className,
-}: TierComparisonTableProps) {
+}: TierComparisonTableProps): React.JSX.Element {
   const validCurrentTier: TierKey | null =
     currentTier && ['free', 'tier1', 'tier2', 'tier3'].includes(currentTier)
       ? currentTier

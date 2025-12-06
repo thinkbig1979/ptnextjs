@@ -55,7 +55,7 @@ export function calculateBounds(locations: VendorLocation[]): LatLngBounds | nul
   return new LatLngBounds([minLat, minLng], [maxLat, maxLng]);
 }
 
-export function getMarkerColor(isHQ?: boolean) {
+export function getMarkerColor(isHQ?: boolean): { color: string; accent: string } {
   return isHQ ? MARKER_COLORS.hq : MARKER_COLORS.additional;
 }
 

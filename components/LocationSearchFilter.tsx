@@ -25,7 +25,7 @@ export function LocationSearchFilter({
   resultCount,
   totalCount,
   className = '',
-}: LocationSearchFilterProps) {
+}: LocationSearchFilterProps): React.JSX.Element {
   // Location name search state
   const [locationInput, setLocationInput] = useState('');
   const [searchResults, setSearchResults] = useState<PhotonFeature[]>([]);

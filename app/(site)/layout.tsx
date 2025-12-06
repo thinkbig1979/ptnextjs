@@ -121,7 +121,7 @@ export default async function SiteLayout({
               <main className="flex-1">
                 {children}
               </main>
-              <Footer companyInfo={companyInfo} />
+              <Footer companyInfo={companyInfo || undefined} />
             </div>
             <Toaster />
           </ThemeProvider>

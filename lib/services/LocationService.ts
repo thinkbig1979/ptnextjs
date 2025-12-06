@@ -203,11 +203,11 @@ export function filterLocationsByTier(
  * Returns vendors with at least one location within the radius
  */
 export function findVendorsWithinRadius(
-  vendors: any[],
+  vendors: Array<{ locations?: VendorLocation[]; tier: string }>,
   centerLat: number,
   centerLon: number,
   radiusKm: number
-): any[] {
+): Array<{ locations?: VendorLocation[]; tier: string }> {
   return vendors.filter(vendor => {
     if (!vendor.locations || vendor.locations.length === 0) {
       return false;

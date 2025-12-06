@@ -7,8 +7,9 @@
 
 import * as React from "react";
 import Image from "next/image";
-import { cn } from "@/lib/utils";
+
 import { useLazyLoading } from "@/lib/hooks/use-lazy-loading";
+import { cn } from "@/lib/utils";
 
 interface ProgressiveImageProps {
   src: string;
@@ -40,7 +41,7 @@ export function ProgressiveImage({
   blurDataURL,
   onLoad,
   onError
-}: ProgressiveImageProps) {
+}: ProgressiveImageProps): React.ReactElement {
   const { ref, isVisible } = useLazyLoading({
     threshold: 0.1,
     rootMargin: '100px',
@@ -196,7 +197,7 @@ export function ImageGallery({
   columns = 3,
   aspectRatio = "video",
   showLoadingState = true
-}: ImageGalleryProps) {
+}: ImageGalleryProps): React.ReactElement {
   const [loadedImages, setLoadedImages] = React.useState<Set<number>>(new Set());
 
   const handleImageLoad = React.useCallback((index: number) => {
@@ -265,7 +266,7 @@ export function HeroImage({
   overlay = false,
   children,
   priority = true
-}: HeroImageProps) {
+}: HeroImageProps): React.ReactElement {
   return (
     <div className={cn("relative overflow-hidden", className)}>
       <ProgressiveImage
