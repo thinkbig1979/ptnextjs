@@ -27,7 +27,7 @@ export class TagRepository extends BaseRepository {
         collection: 'tags',
         limit: 1000,
       });
-      return result.docs.map(transformTag);
+      return result.docs.map((doc) => transformTag(doc as unknown as PayloadTagDocument));
     };
     return this.executeQuery(cacheKey, fetcher);
   }
@@ -53,7 +53,7 @@ export class TagRepository extends BaseRepository {
         return null;
       }
 
-      return transformTag(result.docs[0]);
+      return transformTag(result.docs[0] as unknown as PayloadTagDocument);
     };
     return this.executeQuery(cacheKey, fetcher);
   }
@@ -70,7 +70,7 @@ export class TagRepository extends BaseRepository {
         limit: 1000,
       });
 
-      const tags = result.docs.map(transformTag);
+      const tags = result.docs.map((doc) => transformTag(doc as unknown as PayloadTagDocument));
 
       // Sort by usage count (if available) or fallback to alphabetical
       const sorted = tags.sort((a, b) => {

@@ -9,6 +9,7 @@ import { BaseRepository } from './BaseRepository';
 import { transformCompany, transformPayloadTeamMember } from '@/lib/transformers';
 import type { CompanyInfo, TeamMember } from '@/lib/types';
 import type { CacheService } from '@/lib/cache';
+import type { PayloadCompanyDocument, PayloadTeamMemberDocument } from '@/lib/transformers/PayloadTypes';
 
 export class CompanyRepository extends BaseRepository {
   constructor(cache?: CacheService) {
@@ -30,7 +31,7 @@ export class CompanyRepository extends BaseRepository {
         return null;
       }
 
-      return transformCompany(result);
+      return transformCompany(result as unknown as PayloadCompanyDocument);
     };
     return this.executeQuery(cacheKey, fetcher);
   }
@@ -46,7 +47,7 @@ export class CompanyRepository extends BaseRepository {
         collection: 'team',
         limit: 1000,
       });
-      return result.docs.map(transformPayloadTeamMember);
+      return result.docs.map((doc) => transformPayloadTeamMember(doc as unknown as PayloadTeamMemberDocument));
     };
     return this.executeQuery(cacheKey, fetcher);
   }

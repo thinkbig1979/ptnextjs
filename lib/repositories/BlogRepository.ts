@@ -10,6 +10,7 @@ import { transformPayloadBlogPost } from '@/lib/transformers';
 import type { BlogPost } from '@/lib/types';
 import type { CacheService } from '@/lib/cache';
 import type { BlogQueryParams } from './types';
+import type { PayloadBlogDocument } from '@/lib/transformers/PayloadTypes';
 
 export class BlogRepository extends BaseRepository {
   constructor(cache?: CacheService) {
@@ -28,7 +29,7 @@ export class BlogRepository extends BaseRepository {
         limit: 1000,
         sort: '-publishedAt',
       });
-      return result.docs.map(transformPayloadBlogPost);
+      return result.docs.map((doc) => transformPayloadBlogPost(doc as unknown as PayloadBlogDocument));
     };
     return this.executeQuery(cacheKey, fetcher);
   }
@@ -62,7 +63,7 @@ export class BlogRepository extends BaseRepository {
         sort: '-publishedAt',
       });
 
-      return result.docs.map(transformPayloadBlogPost);
+      return result.docs.map((doc) => transformPayloadBlogPost(doc as unknown as PayloadBlogDocument));
     };
     return this.executeQuery(cacheKey, fetcher);
   }
@@ -88,7 +89,7 @@ export class BlogRepository extends BaseRepository {
         return null;
       }
 
-      return transformPayloadBlogPost(result.docs[0]);
+      return transformPayloadBlogPost(result.docs[0] as unknown as PayloadBlogDocument);
     };
     return this.executeQuery(cacheKey, fetcher);
   }

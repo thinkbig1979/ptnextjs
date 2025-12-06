@@ -9,6 +9,7 @@ import { BaseRepository } from './BaseRepository';
 import { transformYacht } from '@/lib/transformers';
 import type { Yacht } from '@/lib/types';
 import type { CacheService } from '@/lib/cache';
+import type { PayloadYachtDocument } from '@/lib/transformers/PayloadTypes';
 
 export class YachtRepository extends BaseRepository {
   constructor(cache?: CacheService) {
@@ -26,7 +27,7 @@ export class YachtRepository extends BaseRepository {
         collection: 'yachts',
         limit: 1000,
       });
-      return result.docs.map(transformYacht);
+      return result.docs.map((doc) => transformYacht(doc as unknown as PayloadYachtDocument));
     };
     return this.executeQuery(cacheKey, fetcher);
   }
@@ -52,7 +53,7 @@ export class YachtRepository extends BaseRepository {
         return null;
       }
 
-      return transformYacht(result.docs[0]);
+      return transformYacht(result.docs[0] as unknown as PayloadYachtDocument);
     };
     return this.executeQuery(cacheKey, fetcher);
   }
@@ -73,7 +74,7 @@ export class YachtRepository extends BaseRepository {
         },
         limit: 1000,
       });
-      return result.docs.map(transformYacht);
+      return result.docs.map((doc) => transformYacht(doc as unknown as PayloadYachtDocument));
     };
     return this.executeQuery(cacheKey, fetcher);
   }
@@ -114,7 +115,7 @@ export class YachtRepository extends BaseRepository {
         limit: 1000,
       });
 
-      return result.docs.map(transformYacht);
+      return result.docs.map((doc) => transformYacht(doc as unknown as PayloadYachtDocument));
     };
     return this.executeQuery(cacheKey, fetcher);
   }
