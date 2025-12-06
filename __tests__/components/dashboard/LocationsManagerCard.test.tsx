@@ -15,6 +15,32 @@ jest.mock('@/components/ui/sonner', () => ({
   }
 }));
 
+// Mock the TierUpgradePrompt component
+jest.mock('@/components/dashboard/TierUpgradePrompt', () => ({
+  TierUpgradePrompt: ({ featureName }: { featureName: string }) => (
+    <div data-testid="tier-upgrade-prompt">Upgrade to unlock {featureName}</div>
+  )
+}));
+
+// Mock LocationFormFields component
+jest.mock('@/components/dashboard/LocationFormFields', () => ({
+  LocationFormFields: ({ location, onChange }: any) => (
+    <div data-testid="location-form-fields">
+      <input
+        type="text"
+        aria-label="Address"
+        value={location.address}
+        onChange={(e) => onChange({ ...location, address: e.target.value })}
+      />
+      <input
+        type="text"
+        value={location.city}
+        onChange={(e) => onChange({ ...location, city: e.target.value })}
+      />
+    </div>
+  )
+}));
+
 const { useTierAccess } = require('@/hooks/useTierAccess');
 
 describe('LocationsManagerCard', () => {
@@ -35,59 +61,73 @@ describe('LocationsManagerCard', () => {
     ]
   };
 
+  // Default mock return value with all required fields
+  const defaultMockTierAccess = {
+    hasAccess: true,
+    tier: 'tier2',
+    upgradePath: 'tier3',
+    feature: 'multipleLocations',
+    canAddLocation: jest.fn((count: number) => count < 5),
+    maxLocations: 5
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
+    // Set default mock return value
+    useTierAccess.mockReturnValue(defaultMockTierAccess);
   });
 
   describe('Tier-based Rendering', () => {
     it('renders LocationsManagerCard for tier2 vendors', () => {
       useTierAccess.mockReturnValue({
+        ...defaultMockTierAccess,
         hasAccess: true,
         tier: 'tier2',
-        upgradePath: null
+        upgradePath: 'tier3'
       });
 
       render(<LocationsManagerCard vendor={mockVendor} />);
 
       expect(screen.getByText(/manage locations/i)).toBeInTheDocument();
-      expect(screen.queryByText(/upgrade/i)).not.toBeInTheDocument();
+      expect(screen.queryByTestId('tier-upgrade-prompt')).not.toBeInTheDocument();
     });
 
-    it('renders TierUpgradePrompt for tier1 vendors', () => {
+    it('renders LocationsManagerCard for tier1 vendors with location limit', () => {
       const tier1Vendor = { ...mockVendor, tier: 'tier1' };
       useTierAccess.mockReturnValue({
-        hasAccess: false,
+        ...defaultMockTierAccess,
+        hasAccess: true,
         tier: 'tier1',
-        upgradePath: '/subscription/upgrade'
+        upgradePath: 'tier2',
+        canAddLocation: jest.fn((count: number) => count < 1),
+        maxLocations: 1
       });
 
       render(<LocationsManagerCard vendor={tier1Vendor} />);
 
-      expect(screen.getByText(/upgrade to unlock/i)).toBeInTheDocument();
-      expect(screen.queryByText(/manage locations/i)).not.toBeInTheDocument();
+      expect(screen.getByText(/manage locations/i)).toBeInTheDocument();
     });
 
-    it('renders TierUpgradePrompt for free vendors', () => {
-      const freeVendor = { ...mockVendor, tier: 'free' };
+    it('shows tier limit message when at max locations', () => {
+      const tier1Vendor = { ...mockVendor, tier: 'tier1' };
       useTierAccess.mockReturnValue({
-        hasAccess: false,
-        tier: 'free',
-        upgradePath: '/subscription/upgrade'
+        ...defaultMockTierAccess,
+        hasAccess: true,
+        tier: 'tier1',
+        upgradePath: 'tier2',
+        canAddLocation: jest.fn((count: number) => count < 1),
+        maxLocations: 1
       });
 
-      render(<LocationsManagerCard vendor={freeVendor} />);
+      render(<LocationsManagerCard vendor={tier1Vendor} />);
 
-      expect(screen.getByText(/upgrade to unlock/i)).toBeInTheDocument();
+      expect(screen.getByText(/you've reached the maximum of 1 location/i)).toBeInTheDocument();
     });
   });
 
   describe('Location List Display', () => {
     beforeEach(() => {
-      useTierAccess.mockReturnValue({
-        hasAccess: true,
-        tier: 'tier2',
-        upgradePath: null
-      });
+      useTierAccess.mockReturnValue(defaultMockTierAccess);
     });
 
     it('displays all vendor locations', () => {
@@ -100,11 +140,8 @@ describe('LocationsManagerCard', () => {
     it('shows HQ badge for headquarters location', () => {
       render(<LocationsManagerCard vendor={mockVendor} />);
 
-      // Check for HQ badge specifically (exact text match)
-      const hqBadges = screen.getAllByText(/headquarters/i);
-      expect(hqBadges.length).toBeGreaterThan(0);
-      // One should be the badge component
-      expect(hqBadges.some(el => el.classList.contains('inline-flex'))).toBe(true);
+      // Check for HQ badge
+      expect(screen.getByText('Headquarters')).toBeInTheDocument();
     });
 
     it('displays multiple locations correctly', () => {
@@ -133,11 +170,7 @@ describe('LocationsManagerCard', () => {
 
   describe('Add Location Workflow', () => {
     beforeEach(() => {
-      useTierAccess.mockReturnValue({
-        hasAccess: true,
-        tier: 'tier2',
-        upgradePath: null
-      });
+      useTierAccess.mockReturnValue(defaultMockTierAccess);
     });
 
     it('shows add location button', () => {
@@ -153,18 +186,14 @@ describe('LocationsManagerCard', () => {
       fireEvent.click(addButton);
 
       await waitFor(() => {
-        expect(screen.getByLabelText(/address/i)).toBeInTheDocument();
+        expect(screen.getByTestId('location-form-fields')).toBeInTheDocument();
       });
     });
   });
 
   describe('Edit Location Workflow', () => {
     beforeEach(() => {
-      useTierAccess.mockReturnValue({
-        hasAccess: true,
-        tier: 'tier2',
-        upgradePath: null
-      });
+      useTierAccess.mockReturnValue(defaultMockTierAccess);
     });
 
     it('shows edit button for each location', () => {
@@ -180,19 +209,15 @@ describe('LocationsManagerCard', () => {
       fireEvent.click(editButton);
 
       await waitFor(() => {
-        const addressInput = screen.getByDisplayValue('123 Main St');
-        expect(addressInput).toBeInTheDocument();
+        expect(screen.getByTestId('location-form-fields')).toBeInTheDocument();
+        expect(screen.getByDisplayValue('123 Main St')).toBeInTheDocument();
       });
     });
   });
 
   describe('Delete Location Workflow', () => {
     beforeEach(() => {
-      useTierAccess.mockReturnValue({
-        hasAccess: true,
-        tier: 'tier2',
-        upgradePath: null
-      });
+      useTierAccess.mockReturnValue(defaultMockTierAccess);
     });
 
     it('shows delete button for non-HQ locations', () => {
@@ -248,14 +273,10 @@ describe('LocationsManagerCard', () => {
 
   describe('HQ Designation Logic', () => {
     beforeEach(() => {
-      useTierAccess.mockReturnValue({
-        hasAccess: true,
-        tier: 'tier2',
-        upgradePath: null
-      });
+      useTierAccess.mockReturnValue(defaultMockTierAccess);
     });
 
-    it('only allows one HQ location', async () => {
+    it('only allows one HQ location', () => {
       render(<LocationsManagerCard vendor={mockVendor} />);
 
       // HQ designation uses radio button logic - tested in LocationFormFields
@@ -265,11 +286,7 @@ describe('LocationsManagerCard', () => {
 
   describe('Accessibility', () => {
     beforeEach(() => {
-      useTierAccess.mockReturnValue({
-        hasAccess: true,
-        tier: 'tier2',
-        upgradePath: null
-      });
+      useTierAccess.mockReturnValue(defaultMockTierAccess);
     });
 
     it('has accessible labels for buttons', () => {

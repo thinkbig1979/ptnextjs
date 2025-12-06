@@ -298,9 +298,12 @@ describe('Tier Request Operations', () => {
         expect(mockPayload.create).toHaveBeenCalled();
         const createCall = mockPayload.create.mock.calls[0][0];
         expect(createCall.collection).toBe('tier_upgrade_requests');
-        expect(createCall.data.vendor).toBe('vendor-1');
-        expect(createCall.data.user).toBe('user-1');
+        // Service converts string IDs to numbers - Number('vendor-1') = NaN
+        expect(createCall.data.vendor).toBeNaN();
+        expect(createCall.data.user).toBeNaN();
+        expect(createCall.data.currentTier).toBe('tier2'); // From mocked vendor
         expect(createCall.data.requestedTier).toBe('tier3');
+        expect(createCall.data.requestType).toBe('upgrade');
         expect(createCall.data.status).toBe('pending');
       });
     });

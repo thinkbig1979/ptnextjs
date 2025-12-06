@@ -70,11 +70,14 @@ describe('Dashboard Locations Workflow - Integration Tests', () => {
       });
     });
 
-    // Default: Tier 2 access granted
+    // Default: Tier 2 access granted with all required properties
     useTierAccess.mockReturnValue({
       hasAccess: true,
       tier: 'tier2',
       upgradePath: null,
+      feature: 'multipleLocations',
+      canAddLocation: jest.fn((currentCount: number) => currentCount < 5),
+      maxLocations: 5,
     });
   });
 

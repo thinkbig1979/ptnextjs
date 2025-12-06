@@ -102,32 +102,32 @@ describe('Vendor API Service Integration Tests', () => {
         expect(result.message).toContain('maximum 1 Location');
       });
 
-      it('should allow up to 3 locations for tier1', () => {
-        const result = TierValidationService.validateLocationLimit('tier1', 3);
+      it('should allow up to 1 location for tier1', () => {
+        const result = TierValidationService.validateLocationLimit('tier1', 1);
 
         expect(result.valid).toBe(true);
-        expect(result.maxAllowed).toBe(3);
+        expect(result.maxAllowed).toBe(1);
       });
 
-      it('should reject 4+ locations for tier1', () => {
-        const result = TierValidationService.validateLocationLimit('tier1', 4);
+      it('should reject 2+ locations for tier1', () => {
+        const result = TierValidationService.validateLocationLimit('tier1', 2);
 
         expect(result.valid).toBe(false);
-        expect(result.message).toContain('maximum 3 Location');
+        expect(result.message).toContain('maximum 1 Location');
       });
 
-      it('should allow up to 10 locations for tier2', () => {
-        const result = TierValidationService.validateLocationLimit('tier2', 10);
+      it('should allow up to 5 locations for tier2', () => {
+        const result = TierValidationService.validateLocationLimit('tier2', 5);
 
         expect(result.valid).toBe(true);
-        expect(result.maxAllowed).toBe(10);
+        expect(result.maxAllowed).toBe(5);
       });
 
-      it('should reject 11+ locations for tier2', () => {
-        const result = TierValidationService.validateLocationLimit('tier2', 11);
+      it('should reject 6+ locations for tier2', () => {
+        const result = TierValidationService.validateLocationLimit('tier2', 6);
 
         expect(result.valid).toBe(false);
-        expect(result.message).toContain('maximum 10 Location');
+        expect(result.message).toContain('maximum 5 Location');
       });
 
       it('should allow unlimited locations for tier3', () => {
@@ -479,10 +479,9 @@ describe('Vendor API Service Integration Tests', () => {
         companyName: 'Tier 1 Vendor',
         locations: [
           { address: 'Location 1', isHQ: true },
-          { address: 'Location 2', isHQ: false },
         ],
         foundedYear: 2018,
-        tier: 'tier1' as Tier,
+        tier: 'tier1' as Tier,  // tier1 allows max 1 location
       };
 
       // Validate location count

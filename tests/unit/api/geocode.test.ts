@@ -4,15 +4,33 @@
  */
 
 import { NextRequest } from 'next/server';
-import { GET, clearRateLimitForTesting } from '@/app/api/geocode/route';
+import { GET } from '@/app/api/geocode/route';
+
+// Mock fetch globally
+const mockFetch = jest.fn();
+global.fetch = mockFetch as any;
 
 describe('/api/geocode API Endpoint', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
+  // Track current time for rate limiting
+  let currentTime = 1000000000000; // Fixed starting point
+  let testCounter = 0;
+
+  beforeAll(() => {
+    // Mock Date.now to control time progression
+    jest.spyOn(Date, 'now').mockImplementation(() => currentTime);
   });
 
-  afterEach(() => {
-    clearRateLimitForTesting();
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockFetch.mockClear();
+    // Advance time by 2 minutes between tests to avoid rate limit
+    testCounter++;
+    currentTime = 1000000000000 + (testCounter * 120000);
+    (Date.now as jest.Mock).mockReturnValue(currentTime);
+  });
+
+  afterAll(() => {
+    jest.restoreAllMocks();
   });
 
   describe('Successful Geocoding', () => {
@@ -34,10 +52,10 @@ describe('/api/geocode API Endpoint', () => {
         ]
       };
 
-      global.fetch = jest.fn().mockResolvedValueOnce({
+      mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => mockPhotonResponse
-      });
+      } as any);
 
       const request = new NextRequest('http://localhost:3000/api/geocode?q=Monaco');
       const response = await GET(request);
@@ -65,10 +83,10 @@ describe('/api/geocode API Endpoint', () => {
         ]
       };
 
-      global.fetch = jest.fn().mockResolvedValueOnce({
+      mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => mockPhotonResponse
-      });
+      } as any);
 
       const request = new NextRequest('http://localhost:3000/api/geocode?q=Paris');
       const response = await GET(request);
@@ -80,10 +98,10 @@ describe('/api/geocode API Endpoint', () => {
     });
 
     it('should handle empty results', async () => {
-      global.fetch = jest.fn().mockResolvedValueOnce({
+      mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({ features: [] })
-      });
+      } as any);
 
       const request = new NextRequest('http://localhost:3000/api/geocode?q=NonexistentPlace');
       const response = await GET(request);
@@ -134,10 +152,10 @@ describe('/api/geocode API Endpoint', () => {
     });
 
     it('should return 503 for unavailable service', async () => {
-      global.fetch = jest.fn().mockResolvedValueOnce({
+      mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 503
-      });
+      } as any);
 
       const request = new NextRequest('http://localhost:3000/api/geocode?q=Monaco');
       const response = await GET(request);
@@ -148,10 +166,10 @@ describe('/api/geocode API Endpoint', () => {
     });
 
     it('should return 500 for service error', async () => {
-      global.fetch = jest.fn().mockResolvedValueOnce({
+      mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 500
-      });
+      } as any);
 
       const request = new NextRequest('http://localhost:3000/api/geocode?q=Monaco');
       const response = await GET(request);
@@ -162,10 +180,10 @@ describe('/api/geocode API Endpoint', () => {
     });
 
     it('should handle malformed response', async () => {
-      global.fetch = jest.fn().mockResolvedValueOnce({
+      mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({ invalid: 'structure' })
-      });
+      } as any);
 
       const request = new NextRequest('http://localhost:3000/api/geocode?q=Monaco');
       const response = await GET(request);
@@ -178,7 +196,7 @@ describe('/api/geocode API Endpoint', () => {
 
   describe('Response Format', () => {
     it('should validate response schema', async () => {
-      global.fetch = jest.fn().mockResolvedValueOnce({
+      mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({
           features: [{
@@ -187,7 +205,7 @@ describe('/api/geocode API Endpoint', () => {
             properties: { osm_id: 1, name: 'Monaco', country: 'Monaco', countrycode: 'MC', type: 'city' }
           }]
         })
-      });
+      } as any);
 
       const request = new NextRequest('http://localhost:3000/api/geocode?q=Monaco');
       const response = await GET(request);
@@ -202,7 +220,7 @@ describe('/api/geocode API Endpoint', () => {
     });
 
     it('should preserve coordinate format', async () => {
-      global.fetch = jest.fn().mockResolvedValueOnce({
+      mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({
           features: [{
@@ -211,7 +229,7 @@ describe('/api/geocode API Endpoint', () => {
             properties: { osm_id: 1, name: 'Monaco', country: 'Monaco', countrycode: 'MC', type: 'city' }
           }]
         })
-      });
+      } as any);
 
       const request = new NextRequest('http://localhost:3000/api/geocode?q=Monaco');
       const response = await GET(request);
@@ -228,7 +246,7 @@ describe('/api/geocode API Endpoint', () => {
 
   describe('Edge Cases', () => {
     it('should handle network error', async () => {
-      global.fetch = jest.fn().mockRejectedValueOnce(new Error('Network timeout'));
+      mockFetch.mockRejectedValueOnce(new Error('Network timeout'));
 
       const request = new NextRequest('http://localhost:3000/api/geocode?q=Monaco');
       const response = await GET(request);
@@ -243,10 +261,8 @@ describe('/api/geocode API Endpoint', () => {
       const response = await GET(request);
       const data = await response.json();
 
-      expect([200, 400]).toContain(response.status);
-      if (response.status === 400) {
-        expect(data.code).toBe('INVALID_QUERY');
-      }
+      expect(response.status).toBe(400);
+      expect(data.code).toBe('INVALID_QUERY');
     });
   });
 });

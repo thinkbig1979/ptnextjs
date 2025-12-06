@@ -5,7 +5,8 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import AdminDirectTierChange from '../AdminDirectTierChange';
 import { useToast } from '@/hooks/use-toast';
@@ -17,6 +18,29 @@ jest.mock('@/hooks/use-toast', () => ({
 
 // Mock fetch
 global.fetch = jest.fn();
+
+// Helper function to select a tier from the dropdown
+async function selectTier(user: ReturnType<typeof userEvent.setup>, tierLabel: string) {
+  const trigger = screen.getByRole('combobox');
+  await user.click(trigger);
+  // shadcn Select renders options in a portal - there will be multiple matches:
+  // 1. Hidden <option> element (for form submission)
+  // 2. Visible <span> in the portal
+  // We need to get all matches and click the visible one (not aria-hidden)
+  const options = await screen.findAllByText(
+    tierLabel,
+    {},
+    { timeout: 5000 }
+  );
+  // Find the visible option (not inside aria-hidden select element)
+  const visibleOption = options.find(
+    (el) => !el.closest('select[aria-hidden="true"]')
+  );
+  if (!visibleOption) {
+    throw new Error(`Could not find visible option for "${tierLabel}"`);
+  }
+  await user.click(visibleOption);
+}
 
 describe('AdminDirectTierChange', () => {
   const mockToast = jest.fn();
@@ -54,37 +78,26 @@ describe('AdminDirectTierChange', () => {
   });
 
   it('enables change button when different tier is selected', async () => {
+    const user = userEvent.setup();
     render(<AdminDirectTierChange {...defaultProps} />);
 
-    // Open select dropdown
-    const selectTrigger = screen.getByRole('combobox');
-    fireEvent.click(selectTrigger);
-
-    // Select a different tier
-    await waitFor(() => {
-      const tier2Option = screen.getByText(/Business - Business profile/i);
-      fireEvent.click(tier2Option);
-    });
+    // Select a different tier using helper function (tier2 = Business)
+    await selectTier(user, 'Business - Business profile with up to 10 locations and analytics');
 
     const changeButton = screen.getByRole('button', { name: /change tier/i });
     expect(changeButton).toBeEnabled();
   });
 
   it('shows confirmation dialog when change tier button is clicked', async () => {
+    const user = userEvent.setup();
     render(<AdminDirectTierChange {...defaultProps} />);
 
-    // Select a different tier
-    const selectTrigger = screen.getByRole('combobox');
-    fireEvent.click(selectTrigger);
-
-    await waitFor(() => {
-      const tier2Option = screen.getByText(/Business - Business profile/i);
-      fireEvent.click(tier2Option);
-    });
+    // Select a different tier (tier2 = Business)
+    await selectTier(user, 'Business - Business profile with up to 10 locations and analytics');
 
     // Click change tier button
     const changeButton = screen.getByRole('button', { name: /change tier/i });
-    fireEvent.click(changeButton);
+    await user.click(changeButton);
 
     // Confirmation dialog should appear
     await waitFor(() => {
@@ -94,20 +107,15 @@ describe('AdminDirectTierChange', () => {
   });
 
   it('shows downgrade warning when downgrading tier', async () => {
+    const user = userEvent.setup();
     render(<AdminDirectTierChange {...defaultProps} currentTier="tier3" />);
 
-    // Select a lower tier
-    const selectTrigger = screen.getByRole('combobox');
-    fireEvent.click(selectTrigger);
-
-    await waitFor(() => {
-      const tier1Option = screen.getByText(/Professional - Enhanced profile/i);
-      fireEvent.click(tier1Option);
-    });
+    // Select a lower tier (tier1 = Professional)
+    await selectTier(user, 'Professional - Enhanced profile with up to 3 locations');
 
     // Click change tier button
     const changeButton = screen.getByRole('button', { name: /change tier/i });
-    fireEvent.click(changeButton);
+    await user.click(changeButton);
 
     // Downgrade warning should appear
     await waitFor(() => {
@@ -119,20 +127,15 @@ describe('AdminDirectTierChange', () => {
   });
 
   it('shows upgrade confirmation when upgrading tier', async () => {
+    const user = userEvent.setup();
     render(<AdminDirectTierChange {...defaultProps} currentTier="tier1" />);
 
-    // Select a higher tier
-    const selectTrigger = screen.getByRole('combobox');
-    fireEvent.click(selectTrigger);
-
-    await waitFor(() => {
-      const tier2Option = screen.getByText(/Business - Business profile/i);
-      fireEvent.click(tier2Option);
-    });
+    // Select a higher tier (tier2 = Business)
+    await selectTier(user, 'Business - Business profile with up to 10 locations and analytics');
 
     // Click change tier button
     const changeButton = screen.getByRole('button', { name: /change tier/i });
-    fireEvent.click(changeButton);
+    await user.click(changeButton);
 
     // Upgrade confirmation should appear
     await waitFor(() => {
@@ -144,6 +147,7 @@ describe('AdminDirectTierChange', () => {
   });
 
   it('successfully updates tier via API', async () => {
+    const user = userEvent.setup();
     (global.fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => ({
@@ -159,23 +163,15 @@ describe('AdminDirectTierChange', () => {
     render(<AdminDirectTierChange {...defaultProps} />);
 
     // Select tier2
-    const selectTrigger = screen.getByRole('combobox');
-    fireEvent.click(selectTrigger);
-
-    await waitFor(() => {
-      const tier2Option = screen.getByText(/Business - Business profile/i);
-      fireEvent.click(tier2Option);
-    });
+    await selectTier(user, 'Business - Business profile with up to 10 locations and analytics');
 
     // Open confirmation dialog
     const changeButton = screen.getByRole('button', { name: /change tier/i });
-    fireEvent.click(changeButton);
+    await user.click(changeButton);
 
     // Confirm change
-    await waitFor(() => {
-      const confirmButton = screen.getByRole('button', { name: /confirm change/i });
-      fireEvent.click(confirmButton);
-    });
+    const confirmButton = await screen.findByRole('button', { name: /confirm change/i });
+    await user.click(confirmButton);
 
     // Wait for API call
     await waitFor(() => {
@@ -204,6 +200,7 @@ describe('AdminDirectTierChange', () => {
   });
 
   it('handles API errors gracefully', async () => {
+    const user = userEvent.setup();
     (global.fetch as jest.Mock).mockResolvedValueOnce({
       ok: false,
       json: async () => ({
@@ -214,22 +211,14 @@ describe('AdminDirectTierChange', () => {
     render(<AdminDirectTierChange {...defaultProps} />);
 
     // Select tier2
-    const selectTrigger = screen.getByRole('combobox');
-    fireEvent.click(selectTrigger);
-
-    await waitFor(() => {
-      const tier2Option = screen.getByText(/Business - Business profile/i);
-      fireEvent.click(tier2Option);
-    });
+    await selectTier(user, 'Business - Business profile with up to 10 locations and analytics');
 
     // Open confirmation dialog and confirm
     const changeButton = screen.getByRole('button', { name: /change tier/i });
-    fireEvent.click(changeButton);
+    await user.click(changeButton);
 
-    await waitFor(() => {
-      const confirmButton = screen.getByRole('button', { name: /confirm change/i });
-      fireEvent.click(confirmButton);
-    });
+    const confirmButton = await screen.findByRole('button', { name: /confirm change/i });
+    await user.click(confirmButton);
 
     // Error toast should be shown
     await waitFor(() => {
@@ -246,26 +235,19 @@ describe('AdminDirectTierChange', () => {
   });
 
   it('allows canceling confirmation dialog', async () => {
+    const user = userEvent.setup();
     render(<AdminDirectTierChange {...defaultProps} />);
 
     // Select tier2
-    const selectTrigger = screen.getByRole('combobox');
-    fireEvent.click(selectTrigger);
-
-    await waitFor(() => {
-      const tier2Option = screen.getByText(/Business - Business profile/i);
-      fireEvent.click(tier2Option);
-    });
+    await selectTier(user, 'Business - Business profile with up to 10 locations and analytics');
 
     // Open confirmation dialog
     const changeButton = screen.getByRole('button', { name: /change tier/i });
-    fireEvent.click(changeButton);
+    await user.click(changeButton);
 
     // Cancel
-    await waitFor(() => {
-      const cancelButton = screen.getByRole('button', { name: /cancel/i });
-      fireEvent.click(cancelButton);
-    });
+    const cancelButton = await screen.findByRole('button', { name: /cancel/i });
+    await user.click(cancelButton);
 
     // Dialog should close
     await waitFor(() => {

@@ -5,7 +5,7 @@ describe('ImportValidationService', () => {
   const validRow: ParsedVendorRow = {
     rowNumber: 2,
     data: {
-      name: 'Test Corp',
+      companyName: 'Test Corp',
       contactEmail: 'test@example.com',
       description: 'Test description',
       contactPhone: '+1-555-123-4567'
@@ -26,7 +26,7 @@ describe('ImportValidationService', () => {
     it('should validate multiple valid rows', async () => {
       const rows = [
         validRow,
-        { ...validRow, rowNumber: 3, data: { ...validRow.data, name: 'Test Corp 2' } }
+        { ...validRow, rowNumber: 3, data: { ...validRow.data, companyName: 'Test Corp 2' } }
       ];
 
       const result = await ImportValidationService.validate(rows, 0, 'vendor-1');
@@ -38,7 +38,7 @@ describe('ImportValidationService', () => {
   });
 
   describe('required field validation', () => {
-    it('should detect missing required field (name)', async () => {
+    it('should detect missing required field (companyName)', async () => {
       const invalidRow: ParsedVendorRow = {
         ...validRow,
         data: {
@@ -52,14 +52,14 @@ describe('ImportValidationService', () => {
       expect(result.valid).toBe(false);
       expect(result.summary.errorRows).toBe(1);
       expect(result.rows[0].errors.some(e => e.code === 'REQUIRED_FIELD_MISSING')).toBe(true);
-      expect(result.rows[0].errors.some(e => e.field === 'name')).toBe(true);
+      expect(result.rows[0].errors.some(e => e.field === 'companyName')).toBe(true);
     });
 
     it('should detect missing required field (contactEmail)', async () => {
       const invalidRow: ParsedVendorRow = {
         ...validRow,
         data: {
-          name: 'Test Corp',
+          companyName: 'Test Corp',
           description: 'Test description'
         }
       };
@@ -75,7 +75,7 @@ describe('ImportValidationService', () => {
       const invalidRow: ParsedVendorRow = {
         ...validRow,
         data: {
-          name: 'Test Corp',
+          companyName: 'Test Corp',
           contactEmail: 'test@example.com'
         }
       };
@@ -90,7 +90,7 @@ describe('ImportValidationService', () => {
     it('should detect multiple missing required fields', async () => {
       const invalidRow: ParsedVendorRow = {
         ...validRow,
-        data: { name: 'Test Corp' }
+        data: { companyName: 'Test Corp' }
       };
 
       const result = await ImportValidationService.validate([invalidRow], 0, 'vendor-1');
@@ -210,26 +210,26 @@ describe('ImportValidationService', () => {
       expect(result.rows[0].errors.filter(e => e.code === 'TIER_ACCESS_DENIED' && e.field === 'website').length).toBe(0);
     });
 
-    it('should reject TIER2 field for TIER1 tier', async () => {
-      const tier2Row: ParsedVendorRow = {
+    it('should reject TIER1 field for FREE tier (longDescription)', async () => {
+      const tier1Row: ParsedVendorRow = {
         ...validRow,
         data: { ...validRow.data, longDescription: 'A very long description here' }
       };
 
-      const result = await ImportValidationService.validate([tier2Row], 1, 'vendor-1');
+      const result = await ImportValidationService.validate([tier1Row], 0, 'vendor-1');
 
       expect(result.valid).toBe(false);
       expect(result.rows[0].errors.some(e => e.code === 'TIER_ACCESS_DENIED')).toBe(true);
       expect(result.rows[0].errors.some(e => e.field === 'longDescription')).toBe(true);
     });
 
-    it('should allow TIER2 field for TIER2 tier', async () => {
-      const tier2Row: ParsedVendorRow = {
+    it('should allow TIER1 field for TIER1 tier (longDescription)', async () => {
+      const tier1Row: ParsedVendorRow = {
         ...validRow,
         data: { ...validRow.data, longDescription: 'A very long description here' }
       };
 
-      const result = await ImportValidationService.validate([tier2Row], 2, 'vendor-1');
+      const result = await ImportValidationService.validate([tier1Row], 1, 'vendor-1');
 
       expect(result.rows[0].errors.filter(e => e.code === 'TIER_ACCESS_DENIED' && e.field === 'longDescription').length).toBe(0);
     });
@@ -327,13 +327,13 @@ describe('ImportValidationService', () => {
       expect(result.rows[0].errors.some(e => e.code === 'NUMBER_TOO_LARGE')).toBe(true);
     });
 
-    it('should validate percentage within 0-100 range', async () => {
+    it('should validate percentage within 0-10 range (clientSatisfactionScore)', async () => {
       const row: ParsedVendorRow = {
         ...validRow,
-        data: { ...validRow.data, clientSatisfactionScore: 95 }
+        data: { ...validRow.data, clientSatisfactionScore: 9 }
       };
 
-      const result = await ImportValidationService.validate([row], 2, 'vendor-1');
+      const result = await ImportValidationService.validate([row], 1, 'vendor-1');
 
       expect(result.rows[0].errors.filter(e => e.field === 'clientSatisfactionScore').length).toBe(0);
     });
@@ -371,7 +371,7 @@ describe('ImportValidationService', () => {
     it('should generate correct summary statistics', async () => {
       const rows = [
         validRow,
-        { ...validRow, rowNumber: 3, data: { name: 'Test' } }, // Missing required fields
+        { ...validRow, rowNumber: 3, data: { companyName: 'Test' } }, // Missing required fields
         { ...validRow, rowNumber: 4, data: { ...validRow.data, contactEmail: 'invalid' } } // Invalid email
       ];
 
@@ -414,7 +414,7 @@ describe('ImportValidationService', () => {
       const row: ParsedVendorRow = {
         ...validRow,
         data: {
-          name: 'Test Corp',
+          companyName: 'Test Corp',
           contactEmail: 'test@example.com',
           description: 'Test description'
           // contactPhone is optional and missing
@@ -430,7 +430,7 @@ describe('ImportValidationService', () => {
       const row: ParsedVendorRow = {
         ...validRow,
         data: {
-          name: 'Test Corp',
+          companyName: 'Test Corp',
           contactEmail: 'test@example.com',
           description: 'Test description',
           contactPhone: 'invalid-phone-abc' // Optional but invalid format
@@ -468,8 +468,8 @@ describe('ImportValidationService', () => {
     it('should handle mixed valid and invalid rows', async () => {
       const rows = [
         validRow,
-        { ...validRow, rowNumber: 3, data: { name: 'Invalid' } },
-        { ...validRow, rowNumber: 4, data: { ...validRow.data, name: 'Valid Corp 2' } }
+        { ...validRow, rowNumber: 3, data: { companyName: 'Invalid' } },
+        { ...validRow, rowNumber: 4, data: { ...validRow.data, companyName: 'Valid Corp 2' } }
       ];
 
       const result = await ImportValidationService.validate(rows, 0, 'vendor-1');

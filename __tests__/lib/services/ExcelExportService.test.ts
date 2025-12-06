@@ -99,8 +99,8 @@ describe('ExcelExportService', () => {
       expect(headers).toContain('LinkedIn URL');
       expect(headers).toContain('Founded Year');
 
-      // Should NOT include TIER2+ fields
-      expect(headers).not.toContain('Detailed Description');
+      // Detailed Description (longDescription) is a TIER1 field, so it SHOULD be included
+      expect(headers).toContain('Detailed Description');
     });
 
     it('should include tier-appropriate fields for TIER2', async () => {
@@ -115,11 +115,11 @@ describe('ExcelExportService', () => {
 
       const headers = worksheet.getRow(1).values as any[];
 
-      // Should include all tier fields up to TIER2
+      // Note: No TIER2-specific fields exist - tier 2 gets same fields as tier 1 (FREE + TIER1)
       expect(headers).toContain('Company Name');
       expect(headers).toContain('Website URL');
-      expect(headers).toContain('Detailed Description');
-      expect(headers).toContain('LinkedIn Followers');
+      expect(headers).toContain('Detailed Description'); // TIER1 field
+      expect(headers).toContain('LinkedIn Followers'); // TIER1 field
     });
 
     it('should populate vendor data correctly', async () => {

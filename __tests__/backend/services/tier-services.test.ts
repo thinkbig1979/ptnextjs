@@ -67,27 +67,25 @@ describe('TierValidationService', () => {
       expect(result.message).toContain('Location(s)');
     });
 
-    it('should allow tier1 up to 3 locations', () => {
+    it('should allow tier1 up to 1 location', () => {
       expect(TierValidationService.validateLocationLimit('tier1', 1).valid).toBe(true);
-      expect(TierValidationService.validateLocationLimit('tier1', 2).valid).toBe(true);
-      expect(TierValidationService.validateLocationLimit('tier1', 3).valid).toBe(true);
     });
 
-    it('should deny tier1 more than 3 locations', () => {
-      const result = TierValidationService.validateLocationLimit('tier1', 4);
+    it('should deny tier1 more than 1 location', () => {
+      const result = TierValidationService.validateLocationLimit('tier1', 2);
       expect(result.valid).toBe(false);
-      expect(result.maxAllowed).toBe(3);
+      expect(result.maxAllowed).toBe(1);
     });
 
-    it('should allow tier2 up to 10 locations', () => {
+    it('should allow tier2 up to 5 locations', () => {
+      expect(TierValidationService.validateLocationLimit('tier2', 1).valid).toBe(true);
       expect(TierValidationService.validateLocationLimit('tier2', 5).valid).toBe(true);
-      expect(TierValidationService.validateLocationLimit('tier2', 10).valid).toBe(true);
     });
 
-    it('should deny tier2 more than 10 locations', () => {
-      const result = TierValidationService.validateLocationLimit('tier2', 11);
+    it('should deny tier2 more than 5 locations', () => {
+      const result = TierValidationService.validateLocationLimit('tier2', 6);
       expect(result.valid).toBe(false);
-      expect(result.maxAllowed).toBe(10);
+      expect(result.maxAllowed).toBe(5);
     });
 
     it('should allow tier3 unlimited locations', () => {
@@ -174,8 +172,6 @@ describe('TierValidationService', () => {
         locations: [
           { city: 'Miami' },
           { city: 'Monaco' },
-          { city: 'Singapore' },
-          { city: 'London' },
         ],
       });
       expect(result.valid).toBe(false);
