@@ -14,27 +14,31 @@ import { getPayload } from 'payload';
 import config from '@/payload.config';
 import * as TierUpgradeRequestService from '@/lib/services/TierUpgradeRequestService';
 import { rateLimit } from '@/lib/middleware/rateLimit';
+import { authService } from '@/lib/services/auth-service';
 
 /**
  * Authenticate and authorize vendor access
  */
 async function authenticateVendor(request: NextRequest, vendorId: string) {
-  const payload = await getPayload({ config });
-
-  // Get user from cookie
-  const token = request.cookies.get('payload-token')?.value;
+  // Get token from cookie (same as other portal routes)
+  const token =
+    request.headers.get('authorization')?.replace('Bearer ', '') ||
+    request.cookies.get('access_token')?.value;
 
   if (!token) {
     return { error: 'UNAUTHORIZED', status: 401, message: 'Authentication required' };
   }
 
   try {
-    // Verify token and get user
-    const { user } = await payload.auth({ headers: request.headers });
+    // Verify token using authService (same as other portal routes)
+    const user = authService.validateToken(token);
 
     if (!user) {
       return { error: 'UNAUTHORIZED', status: 401, message: 'Invalid authentication token' };
     }
+
+    // Get Payload instance to fetch vendor
+    const payload = await getPayload({ config });
 
     // Check if user has vendor relationship
     const vendor = await payload.findByID({
@@ -47,7 +51,11 @@ async function authenticateVendor(request: NextRequest, vendorId: string) {
     }
 
     // Check if this user owns the vendor account
-    if (vendor.user !== user.id && user.role !== 'admin') {
+    const vendorUserId = typeof vendor.user === 'object' && vendor.user !== null
+      ? (vendor.user as { id: string | number }).id
+      : vendor.user;
+
+    if (vendorUserId?.toString() !== user.id.toString() && user.role !== 'admin') {
       return { error: 'FORBIDDEN', status: 403, message: 'Cannot access another vendor account' };
     }
 
