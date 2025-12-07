@@ -231,10 +231,23 @@ export async function PUT(
     // Parse request body
     const body = await request.json();
 
+    // DEBUG: Log received body for troubleshooting 400 errors
+    console.log('[VendorUpdate] Received body:', JSON.stringify(body, null, 2));
+
     // Validate input
     const validationResult = safeValidateVendorUpdate(body);
 
     if (!validationResult.success) {
+      // DEBUG: Log exact validation errors
+      console.error('[VendorUpdate] Validation FAILED:', {
+        receivedFields: Object.keys(body),
+        errors: validationResult.error.errors.map(e => ({
+          path: e.path.join('.'),
+          message: e.message,
+          code: e.code,
+        })),
+      });
+
       const fieldErrors: Record<string, string> = {};
       validationResult.error.errors.forEach((error) => {
         const field = error.path[0] as string;
@@ -449,10 +462,23 @@ export async function PATCH(
     // Parse request body
     const body = await request.json();
 
+    // DEBUG: Log received body for troubleshooting 400 errors
+    console.log('[VendorUpdate] Received body:', JSON.stringify(body, null, 2));
+
     // Validate input
     const validationResult = safeValidateVendorUpdate(body);
 
     if (!validationResult.success) {
+      // DEBUG: Log exact validation errors
+      console.error('[VendorUpdate] Validation FAILED:', {
+        receivedFields: Object.keys(body),
+        errors: validationResult.error.errors.map(e => ({
+          path: e.path.join('.'),
+          message: e.message,
+          code: e.code,
+        })),
+      });
+
       const fieldErrors: Record<string, string> = {};
       validationResult.error.errors.forEach((error) => {
         const field = error.path[0] as string;

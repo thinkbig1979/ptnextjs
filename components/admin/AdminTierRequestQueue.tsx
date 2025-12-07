@@ -40,8 +40,17 @@ interface ApiErrorResponse {
 }
 
 interface ApiSuccessResponse {
-  data?: TierUpgradeRequest[];
-  requests?: TierUpgradeRequest[];
+  success?: boolean;
+  data?: {
+    requests: TierUpgradeRequest[];
+    pagination?: {
+      page: number;
+      limit: number;
+      totalPages: number;
+      totalCount: number;
+    };
+  };
+  requests?: TierUpgradeRequest[]; // fallback for direct array response
 }
 
 /**
@@ -107,6 +116,35 @@ export default function AdminTierRequestQueue(): React.ReactElement {
 
   const { toast } = useToast();
 
+  // Rejection reason validation constants
+  const REJECTION_REASON_MIN_LENGTH = 10;
+  const REJECTION_REASON_MAX_LENGTH = 1000;
+
+  /**
+   * Check if rejection reason meets length requirements
+   */
+  const isRejectionReasonValid = (reason: string): boolean => {
+    const trimmed = reason.trim();
+    return trimmed.length >= REJECTION_REASON_MIN_LENGTH && trimmed.length <= REJECTION_REASON_MAX_LENGTH;
+  };
+
+  /**
+   * Get validation error message for rejection reason
+   */
+  const getRejectionReasonError = (reason: string): string | null => {
+    const trimmed = reason.trim();
+    if (trimmed.length === 0) {
+      return 'Please provide a reason for rejection.';
+    }
+    if (trimmed.length < REJECTION_REASON_MIN_LENGTH) {
+      return `Rejection reason must be at least ${REJECTION_REASON_MIN_LENGTH} characters.`;
+    }
+    if (trimmed.length > REJECTION_REASON_MAX_LENGTH) {
+      return `Rejection reason cannot exceed ${REJECTION_REASON_MAX_LENGTH} characters.`;
+    }
+    return null;
+  };
+
   /**
    * Fetch pending tier upgrade requests from API
    * Wrapped in useCallback to stabilize the function reference
@@ -136,7 +174,7 @@ export default function AdminTierRequestQueue(): React.ReactElement {
       }
 
       const data = (await response.json()) as ApiSuccessResponse;
-      setRequests(data.data || data.requests || []);
+      setRequests(data.data?.requests || data.requests || []);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to load pending tier requests';
       setError(message);
@@ -232,10 +270,11 @@ export default function AdminTierRequestQueue(): React.ReactElement {
     if (!selectedRequest) return;
 
     // Validate rejection reason
-    if (!rejectionReason.trim()) {
+    const validationError = getRejectionReasonError(rejectionReason);
+    if (validationError) {
       toast({
-        title: 'Error',
-        description: 'Please provide a reason for rejection.',
+        title: 'Validation Error',
+        description: validationError,
         variant: 'destructive',
       });
       return;
@@ -572,11 +611,21 @@ export default function AdminTierRequestQueue(): React.ReactElement {
               placeholder="Enter rejection reason (e.g., 'Please provide more details about your business needs')"
               value={rejectionReason}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setRejectionReason(e.target.value)}
+              maxLength={REJECTION_REASON_MAX_LENGTH}
               rows={4}
               className="w-full"
               aria-label="Rejection reason"
               aria-required="true"
             />
+            <div className="mt-2 flex justify-between text-sm">
+              <span className={rejectionReason.trim().length < REJECTION_REASON_MIN_LENGTH ? 'text-destructive' : 'text-muted-foreground'}>
+                {rejectionReason.trim().length < REJECTION_REASON_MIN_LENGTH &&
+                  `Minimum ${REJECTION_REASON_MIN_LENGTH} characters required`}
+              </span>
+              <span className={rejectionReason.length > REJECTION_REASON_MAX_LENGTH * 0.9 ? 'text-warning' : 'text-muted-foreground'}>
+                {rejectionReason.length}/{REJECTION_REASON_MAX_LENGTH}
+              </span>
+            </div>
           </div>
           <DialogFooter>
             <Button
@@ -589,7 +638,7 @@ export default function AdminTierRequestQueue(): React.ReactElement {
             <Button
               onClick={handleReject}
               variant="destructive"
-              disabled={actionLoading !== null}
+              disabled={actionLoading !== null || !isRejectionReasonValid(rejectionReason)}
             >
               {actionLoading ? (
                 <>

@@ -71,23 +71,14 @@ export function ProfileEditTabs({ vendor }: ProfileEditTabsProps) {
   /**
    * Wrapper function for form submissions
    * Updates vendor state and saves to backend
-   * Handles data transformation from form-specific types to Vendor type
    */
   const handleFormSave = async (data: any) => {
     console.log('[ProfileEditTabs] handleFormSave called with:', data);
 
-    // Transform form data to Vendor shape if needed
-    // BasicInfoForm uses 'companyName' field, but Vendor uses 'name'
-    const vendorUpdates: Partial<Vendor> = {
-      ...data,
-      // Map companyName to name if present (BasicInfoForm compatibility)
-      ...(data.companyName && { name: data.companyName }),
-    };
+    // Pass through form data as-is - API expects companyName field
+    const vendorUpdates: Partial<Vendor> = { ...data };
 
-    // Remove form-specific fields that aren't in Vendor type
-    delete (vendorUpdates as any).companyName;
-
-    console.log('[ProfileEditTabs] Transformed vendor updates:', vendorUpdates);
+    console.log('[ProfileEditTabs] Vendor updates:', vendorUpdates);
 
     // Merge updates with current vendor data to avoid stale closure issue
     const updatedVendor = { ...vendor, ...vendorUpdates };

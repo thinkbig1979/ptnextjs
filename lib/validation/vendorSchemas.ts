@@ -62,9 +62,28 @@ export const brandStorySchema = z.object({
   videoTitle: z.string().max(200).optional().nullable(),
   videoDescription: z.string().max(1000).optional().nullable(),
 
-  // Arrays - must be arrays (can be empty) for useFieldArray compatibility
-  serviceAreas: z.array(z.string()),
-  companyValues: z.array(z.string()),
+  // Arrays - accept both string arrays (form input) and object arrays (from Payload CMS)
+  serviceAreas: z.array(
+    z.union([
+      z.string(),
+      z.object({
+        id: z.string().optional(),
+        area: z.string().max(255).optional(),
+        description: z.string().max(1000).optional().nullable(),
+        icon: z.union([z.string(), z.number(), z.null()]).optional(),
+      }),
+    ])
+  ),
+  companyValues: z.array(
+    z.union([
+      z.string(),
+      z.object({
+        id: z.string().optional(),
+        value: z.string().max(255).optional(),
+        description: z.string().max(1000).optional().nullable(),
+      }),
+    ])
+  ),
 });
 
 export type BrandStoryFormData = z.infer<typeof brandStorySchema>;
@@ -125,7 +144,7 @@ export type CaseStudyFormData = z.infer<typeof caseStudySchema>;
 export const teamMemberSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters').max(200),
   role: z.string().min(2, 'Role must be at least 2 characters').max(200),
-  bio: z.string().max(1000).optional().nullable(),
+  bio: z.string().max(2000).optional().nullable(),
   photo: z.preprocess(
     (val) => (val === '' || val === null ? undefined : val),
     z.string().url('Invalid photo URL').optional()
@@ -140,16 +159,16 @@ export const teamMemberSchema = z.object({
 
 export type TeamMemberFormData = z.infer<typeof teamMemberSchema>;
 
-// Location Schema (reuse from existing)
+// Location Schema - matches vendor-update-schema.ts API contract
 export const locationSchema = z.object({
-  name: z.string().min(2).max(200).optional().nullable(),
+  id: z.string().optional(),
+  locationName: z.string().min(2).max(255).optional().nullable(),
   address: z.string().min(5, 'Address must be at least 5 characters').max(500),
-  city: z.string().min(2).max(100),
-  state: z.string().max(100).optional().nullable(),
+  city: z.string().min(2).max(255),
   postalCode: z.string().max(20).optional().nullable(),
-  country: z.string().min(2, 'Country is required').max(100),
-  latitude: z.number().min(-90).max(90),
-  longitude: z.number().min(-180).max(180),
+  country: z.string().min(2, 'Country is required').max(255),
+  latitude: z.number().min(-90).max(90).optional(),
+  longitude: z.number().min(-180).max(180).optional(),
   isHQ: z.boolean().optional().nullable(),
 });
 

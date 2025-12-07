@@ -466,9 +466,9 @@ const Vendors: CollectionConfig = {
       name: 'clientSatisfactionScore',
       type: 'number',
       min: 0,
-      max: 10,
+      max: 100,
       admin: {
-        description: 'Client satisfaction score (0-10) (Tier 1+ only)',
+        description: 'Client satisfaction score (0-100) (Tier 1+ only)',
         condition: (data) => ['tier1', 'tier2', 'tier3'].includes(data.tier),
       },      access: {
         read: () => true,
@@ -1158,6 +1158,16 @@ const Vendors: CollectionConfig = {
       },
       fields: [
         {
+          name: 'locationName',
+          type: 'text',
+          label: 'Location Name',
+          maxLength: 255,
+          admin: {
+            placeholder: 'e.g., Main Office, Miami Showroom',
+            description: 'Name or label for this location',
+          },
+        },
+        {
           name: 'address',
           type: 'text',
           label: 'Full Address',
@@ -1216,6 +1226,16 @@ const Vendors: CollectionConfig = {
           maxLength: 255,
           admin: {
             placeholder: 'e.g., United States',
+          },
+        },
+        {
+          name: 'postalCode',
+          type: 'text',
+          label: 'Postal Code',
+          maxLength: 20,
+          admin: {
+            placeholder: 'e.g., 33316',
+            description: 'Postal/ZIP code',
           },
         },
         {

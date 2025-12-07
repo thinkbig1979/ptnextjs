@@ -28,6 +28,42 @@ export interface ValidationResult {
   errors?: string[];
 }
 
+/**
+ * Transform serviceAreas/companyValues from string arrays to object arrays
+ *
+ * Frontend may send: ["Mediterranean", "Caribbean"]
+ * Payload expects:   [{area: "Mediterranean"}, {area: "Caribbean"}]
+ *
+ * Also handles already-object format (passthrough)
+ */
+function transformArrayFieldsForPayload(data: Record<string, unknown>): Record<string, unknown> {
+  const transformed = { ...data };
+
+  // Transform serviceAreas: string[] -> {area: string}[]
+  if (Array.isArray(transformed.serviceAreas)) {
+    transformed.serviceAreas = transformed.serviceAreas.map((item: unknown) => {
+      if (typeof item === 'string') {
+        return { area: item };
+      }
+      // Already an object, pass through
+      return item;
+    });
+  }
+
+  // Transform companyValues: string[] -> {value: string}[]
+  if (Array.isArray(transformed.companyValues)) {
+    transformed.companyValues = transformed.companyValues.map((item: unknown) => {
+      if (typeof item === 'string') {
+        return { value: item };
+      }
+      // Already an object, pass through
+      return item;
+    });
+  }
+
+  return transformed;
+}
+
 export class VendorProfileService {
   /**
    * Get vendor profile for public display
@@ -207,11 +243,14 @@ export class VendorProfileService {
       }
     }
 
+    // Transform array fields (serviceAreas, companyValues) from strings to objects
+    const transformedData = transformArrayFieldsForPayload(data);
+
     // Update vendor
     const updatedVendor = await payload.update({
       collection: 'vendors',
       id,
-      data,
+      data: transformedData,
     });
 
     // Enrich with computed fields

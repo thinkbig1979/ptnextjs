@@ -1,25 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPayload } from 'payload';
 import config from '@/payload.config';
-import { authService } from '@/lib/services/auth-service';
+import { authenticateAdmin } from '@/lib/utils/admin-auth';
 import type { VendorTier } from '@/lib/utils/tier-validator';
-
-/**
- * Extract and validate admin user
- */
-function extractAdminUser(request: NextRequest) {
-  const token =
-    request.cookies.get('access_token')?.value ||
-    request.headers.get('authorization')?.replace('Bearer ', '');
-  if (!token) {
-    throw new Error('Authentication required');
-  }
-  const user = authService.validateToken(token);
-  if (user.role !== 'admin') {
-    throw new Error('Admin access required');
-  }
-  return user;
-}
 
 /**
  * Validate tier value
@@ -56,7 +39,13 @@ export async function PUT(
 ): Promise<NextResponse> {
   try {
     // Verify admin authentication
-    extractAdminUser(request);
+    const auth = await authenticateAdmin(request);
+    if ('error' in auth) {
+      return NextResponse.json(
+        { error: auth.error, message: auth.message },
+        { status: auth.status }
+      );
+    }
 
     // Parse request body
     const body = await request.json();
@@ -134,15 +123,6 @@ export async function PUT(
   } catch (error) {
     console.error('[Admin Tier Update] Error:', error);
     const message = error instanceof Error ? error.message : 'Tier update failed';
-
-    if (message.includes('Admin access required')) {
-      return NextResponse.json({ error: message }, { status: 403 });
-    }
-
-    if (message.includes('Authentication required')) {
-      return NextResponse.json({ error: message }, { status: 401 });
-    }
-
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

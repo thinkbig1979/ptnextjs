@@ -1,27 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPayload } from 'payload';
 import config from '@/payload.config';
-import { authService } from '@/lib/services/auth-service';
-
-/**
- * Extract and validate admin user
- */
-function extractAdminUser(request: NextRequest) {
-  const token = request.cookies.get('access_token')?.value ||
-                request.headers.get('authorization')?.replace('Bearer ', '');
-
-  if (!token) {
-    throw new Error('Authentication required');
-  }
-
-  const user = authService.validateToken(token);
-
-  if (user.role !== 'admin') {
-    throw new Error('Admin access required');
-  }
-
-  return user;
-}
+import { authenticateAdmin } from '@/lib/utils/admin-auth';
 
 /**
  * POST /api/admin/vendors/[id]/approve - Approve vendor
@@ -31,7 +11,13 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse> {
   try {
-    extractAdminUser(request);
+    const auth = await authenticateAdmin(request);
+    if ('error' in auth) {
+      return NextResponse.json(
+        { error: auth.error, message: auth.message },
+        { status: auth.status }
+      );
+    }
 
     const resolvedParams = await params;
     const userId = resolvedParams.id;
@@ -91,15 +77,6 @@ export async function POST(
   } catch (error) {
     console.error('[Admin Approve] Error:', error);
     const message = error instanceof Error ? error.message : 'Approval action failed';
-
-    if (message.includes('Admin access required')) {
-      return NextResponse.json({ error: message }, { status: 403 });
-    }
-
-    if (message.includes('Authentication required')) {
-      return NextResponse.json({ error: message }, { status: 401 });
-    }
-
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
