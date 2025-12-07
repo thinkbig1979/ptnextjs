@@ -1,5 +1,6 @@
-# Agent OS Configuration v4.3.0
+# Agent OS Configuration v4.4.0
 # Clean configuration with sane defaults for compound engineering integration
+# v4.4.0: Quality Enforcement - Blocking gates, context verification, skill invocation checks
 # v4.3.0: Codebase Cleanup - Removed legacy/deprecated code, streamlined instructions
 # v4.2.0: Testing Alignment - Canonical standards, verification gates, clear ownership, failure classification
 # v4.1.0: Unified Execution Protocol - Beads-first orchestration with parallel specialist delegation
@@ -7,7 +8,7 @@
 # v4.0.0: Test Failure Handling Protocol - Orchestrated test execution with subagent delegation
 # v3.3.0: Test Execution Monitoring - Real-time streaming, hung test detection, test/code alignment
 
-agent_os_version: 4.3.0
+agent_os_version: 4.4.0
 
 # ================================================
 # CONFIGURATION HIERARCHY
@@ -324,9 +325,46 @@ quality_hooks:
     - lint_validator
     - import_validator
     - type_validator
+    - type_checking # v4.3.0: TypeScript type checking (tsc --noEmit)
     - security_validator
     - test_generator
     - test_standards # v2.9.0: Test infrastructure validation
+
+# ================================================
+# TYPESCRIPT TYPE CHECKING (v4.3.0+)
+# ================================================
+# Validates TypeScript types using tsc --noEmit
+# Fills the gap where syntax_check.js only validates JavaScript syntax
+#
+# Implementation: hooks/validators/type_checking.js
+# Pre-commit hook: setup/install-typescript-precommit.sh
+# Task verification: instructions/core/execute-tasks-unified.md (Step 4.2)
+
+typescript_checking:
+  enabled: true
+
+  # When to run type checking
+  triggers:
+    on_file_write: true # Run on every .ts/.tsx file write
+    on_task_completion: true # Mandatory check before task completion
+    pre_commit: true # Block commits with type errors
+
+  # Execution settings
+  execution:
+    command: "tsc --noEmit" # TypeScript check command
+    timeout: 60000 # 60 second timeout
+    cache_ttl: 5000 # 5 second cache per project (avoid running on every file)
+
+  # Error handling
+  error_handling:
+    block_on_error: true # Block task completion if type errors exist
+    show_full_output: true # Show all type errors, not just summary
+    group_by_file: true # Group errors by file for readability
+
+  # Pre-commit hook installation
+  pre_commit_hook:
+    install_script: "~/.agent-os/setup/install-typescript-precommit.sh"
+    bypass_flag: "--no-verify" # How to bypass (documented but discouraged)
 
 # ================================================
 # PROJECT TYPES

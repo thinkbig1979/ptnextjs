@@ -544,6 +544,56 @@ Use the task-orchestrator subagent to analyze the task, decompose for parallel e
     ```
   </mandatory_prompt_prefix>
 
+  <skill_invocation_block>
+    ADD this block to delegation prompts for phases requiring skills:
+
+    ```
+    ═══════════════════════════════════════════════════════════════════
+    MANDATORY SKILL INVOCATIONS
+    ═══════════════════════════════════════════════════════════════════
+
+    You MUST invoke these skills using the Skill() tool:
+
+    Required for this phase:
+      Skill(skill="agent-os-testing-standards")  # For test-related phases
+      [Additional skills based on phase - see config.yml]
+
+    These are TOOL CALLS, not just references. The orchestrator will
+    verify your response contains actual Skill() invocations.
+
+    Verbal confirmation ("I read the standards") is NOT sufficient.
+    You must make explicit Skill() tool calls that will appear in the
+    conversation history.
+
+    VERIFICATION: After you complete your work, the orchestrator will
+    parse your response for actual Skill() tool call patterns:
+      - 'Skill(skill="skill-name")'
+      - Tool invocation blocks
+
+    If required skills are not invoked, you will be asked to retry.
+    ═══════════════════════════════════════════════════════════════════
+    ```
+
+    **Required Skills by Phase**:
+    ```yaml
+    test_context_gathering (Step 2.0):
+      - agent-os-testing-standards (REQUIRED)
+      - agent-os-test-research (REQUIRED)
+      - agent-os-patterns (REQUIRED)
+    
+    test_design (Step 2.1):
+      - agent-os-testing-standards (REQUIRED)
+      - agent-os-patterns (RECOMMENDED)
+    
+    implementation (Step 2.2):
+      - agent-os-patterns (REQUIRED)
+      - agent-os-specialists (REQUIRED)
+    
+    security_review (Step 4.0):
+      - agent-os-specialists (REQUIRED)
+    ```
+  </skill_invocation_block>
+
   <test_specific_enforcement>
     FOR test-architect subagent delegations, ADD additional requirements:
 
@@ -1025,11 +1075,53 @@ These are REQUIRED tool invocations, not optional guidance. Do not proceed to te
       - [ ] Agent stated they read test-context-gatherer.md
       - [ ] Agent stated key constraints they will follow
 
-    skill_invocation:
-      - [ ] Skill(skill="agent-os-testing-standards") was called
-      - [ ] Skill(skill="agent-os-test-research") was called
-      - [ ] Skill(skill="agent-os-patterns") was called
-      - [ ] Project patterns checked first (if they exist)
+    skill_invocation_verification:
+      REQUIRED_SKILLS:
+        - agent-os-testing-standards
+        - agent-os-test-research
+        - agent-os-patterns
+      
+      VERIFICATION_LOGIC:
+        1. PARSE subagent response for Skill() tool calls
+        2. SEARCH for patterns:
+           - 'Skill(skill="[SKILL_NAME]")'
+           - 'Skill(skill=\'[SKILL_NAME]\')'
+           - Tool invocation block containing skill name
+        3. FOR each required_skill:
+             IF pattern NOT found:
+               ADD to MISSING_SKILLS list
+        4. IF MISSING_SKILLS not empty:
+             BLOCK with error message (see below)
+        5. ELSE:
+             LOG: "✅ Skill invocations verified: [LIST_FOUND_SKILLS]"
+      
+      BLOCKING_IF_MISSING:
+        ERROR: "❌ SKILL VERIFICATION FAILED
+        
+        Subagent did not invoke required skills:
+        Missing: [LIST MISSING_SKILLS]
+        
+        Required skills must be invoked as tool calls, not just mentioned.
+        Verbal confirmation like 'I read the standards' is NOT sufficient.
+        
+        ACTION OPTIONS:
+        1. RETRY: Re-delegate with explicit skill requirement
+        2. BLOCK: Refuse to proceed without skill invocations
+        3. OVERRIDE: User explicitly approves (logs warning)
+        
+        DEFAULT: RETRY with enhanced prompt:
+        'You MUST invoke these skills using the Skill() tool:
+         [LIST MISSING_SKILLS]
+         
+         Example: Skill(skill=\"agent-os-testing-standards\")
+         
+         Do NOT proceed until you have invoked all required skills.'"
+      
+      VERIFICATION_CHECKLIST:
+        - [ ] Skill(skill="agent-os-testing-standards") invoked ✓
+        - [ ] Skill(skill="agent-os-test-research") invoked ✓
+        - [ ] Skill(skill="agent-os-patterns") invoked ✓
+        - [ ] Project patterns checked first (if they exist) ✓
 
     output_files:
       - [ ] .agent-os/test-context/[TASK_ID].json EXISTS
@@ -1097,19 +1189,96 @@ These are REQUIRED tool invocations, not optional guidance. Do not proceed to te
 <step_2_0_completion_gate>
   ### Step 2.0 Completion Gate (BLOCKING)
 
-  BEFORE proceeding to Step 2.1 (test-architect), verify:
+  BEFORE proceeding to Step 2.1 (test-architect), VERIFY:
 
-  REQUIRED FILES:
-  - [ ] .agent-os/test-context/[TASK_ID].json EXISTS
-  - [ ] File contains: test_runner, e2e_framework (if applicable), patterns_extracted
+  STEP 1: SKILL INVOCATION VERIFICATION (MANDATORY)
+    
+    PARSE subagent response for actual Skill() tool calls
+    
+    REQUIRED_SKILLS:
+      - agent-os-testing-standards
+      - agent-os-test-research
+      - agent-os-patterns
+    
+    FOR each required_skill:
+      SEARCH response for patterns:
+        - 'Skill(skill="[SKILL_NAME]")'
+        - 'Skill(skill=\'[SKILL_NAME]\')'
+        - Tool invocation block containing skill name
+      
+      IF pattern NOT found:
+        ADD to MISSING_SKILLS list
+    
+    IF MISSING_SKILLS is not empty:
+      ❌ BLOCK: Required skills not invoked
+      
+      ERROR MESSAGE:
+        "❌ SKILL VERIFICATION FAILED
+        
+        Subagent did not invoke required skills:
+        Missing: [LIST MISSING_SKILLS]
+        
+        Required skills must be invoked as tool calls, not just mentioned.
+        Verbal confirmation like 'I read the standards' is NOT sufficient.
+        
+        The orchestrator verified your response and could not find explicit
+        Skill() tool invocations for the required skills.
+        
+        REQUIRED ACTION: Re-delegate with explicit skill requirement"
+      
+      RETRY PROMPT:
+        "You MUST invoke these skills using the Skill() tool:
+         [LIST MISSING_SKILLS]
+         
+         Example: Skill(skill='agent-os-testing-standards')
+         
+         These must be actual tool calls that appear in the conversation.
+         Do NOT proceed until you have invoked all required skills."
+      
+      DO NOT PROCEED until all skills invoked
+    
+    IF all skills found:
+      ✅ Skill invocations verified: [LIST FOUND_SKILLS]
+      PROCEED to Step 2 (file verification)
 
-  IF ANY FILE MISSING:
-    ❌ BLOCK: Cannot delegate to test-architect
-    ACTION: Re-execute test-context-gatherer
-    DO NOT PROCEED until gate passes
+  STEP 2: FILE VERIFICATION
+    
+    CHECK file exists: .agent-os/test-context/[TASK_ID].json
+    
+    EXECUTE verification:
+      FILE_PATH=".agent-os/test-context/${TASK_ID}.json"
+      
+      IF file does NOT exist:
+        ❌ BLOCK: Cannot delegate to test-architect
+        ERROR: "Test context file missing: ${FILE_PATH}"
+        ACTION: Re-execute Step 2.0 (test-context-gatherer)
+        
+        PROMPT user:
+          "Test context gathering did not complete. Options:
+           1. retry - Re-run test-context-gatherer
+           2. skip - Proceed without context (NOT RECOMMENDED)
+           3. abort - Stop task execution"
+        
+        DO NOT PROCEED until gate passes
 
-  IF ALL FILES EXIST:
-    ✅ PROCEED to Step 2.1
+      IF file exists:
+        ✅ Context file verified
+        READ file and verify contains required keys:
+          - test_runner (required)
+          - patterns_extracted (required)
+          - e2e_framework (optional, required if e2e tests)
+        
+        IF required keys missing:
+          ⚠️ WARN: Context file incomplete
+          LIST missing keys
+          PROMPT: "Continue with incomplete context? (y/n)"
+
+  VERIFICATION CHECKLIST:
+    - [ ] Skill(skill="agent-os-testing-standards") invoked ✓
+    - [ ] Skill(skill="agent-os-test-research") invoked ✓
+    - [ ] Skill(skill="agent-os-patterns") invoked ✓
+    - [ ] .agent-os/test-context/[TASK_ID].json exists ✓
+    - [ ] File contains required keys ✓
 
   GATE STATUS: __________ (BLOCKED/PASSED)
 </step_2_0_completion_gate>
@@ -1132,27 +1301,63 @@ These are REQUIRED tool invocations, not optional guidance. Do not proceed to te
 - Task requirements and acceptance criteria loaded
 
 <test_creation_workflow>
-  **Phase 0: Load Test Context (NEW)**
+  **Phase 0: Load Test Context (MANDATORY GATE)**
 
-  BEFORE creating tests, LOAD gathered context:
+  BEFORE creating tests, VERIFY and LOAD context:
 
-  ```
-  READ: .agent-os/test-context/[TASK_ID].json
-  EXTRACT:
-    - test_runner: name, version, config
-    - e2e_framework: name, version, config
-    - mocking_libraries: list
-    - patterns: framework-specific patterns
-    - anti_patterns: things to avoid
+  VERIFY context file exists:
+    FILE_PATH=".agent-os/test-context/[TASK_ID].json"
+    
+    IF NOT EXISTS:
+      ❌ HARD BLOCK: Cannot write tests without context
+      ERROR: "Context file missing - test-context-gatherer must run first"
+      HALT: Return control to orchestrator
+      
+      MESSAGE TO ORCHESTRATOR:
+        "Step 2.0 (test-context-gatherer) did not complete successfully.
+         Required file missing: ${FILE_PATH}
+         
+         test-architect cannot proceed without test context.
+         
+         Action required:
+         1. Verify Step 2.0 completion gate was checked
+         2. Re-run test-context-gatherer if needed
+         3. Ensure context file is created before delegating to test-architect"
 
-  READ: .agent-os/test-context/patterns/[TEST_RUNNER].md
-  EXTRACT:
-    - Mocking syntax for this framework
-    - Assertion API
-    - Lifecycle hooks
+  LOAD context:
+    READ: .agent-os/test-context/[TASK_ID].json
+    PARSE JSON
+    
+    EXTRACT and CONFIRM (state in response):
+      - Test Runner: [NAME] v[VERSION]
+      - E2E Framework: [NAME] v[VERSION] (if applicable)
+      - Mocking patterns: [LIST]
+      - Assertion API: [NAME]
+    
+    IF extraction fails:
+      ❌ BLOCK: Context file corrupt or incomplete
+      REPORT: "Context file exists but cannot be parsed"
+      DETAIL: [Error message from JSON parse or missing keys]
+      HALT: Return control to orchestrator
+
+  OPTIONAL context files:
+    READ: .agent-os/test-context/patterns/[TEST_RUNNER].md
+    EXTRACT:
+      - Mocking syntax for this framework
+      - Assertion API
+      - Lifecycle hooks
 
   APPLY: Use extracted patterns when writing tests
   AVOID: Documented anti-patterns
+  
+  CONFIRMATION OUTPUT:
+    "✅ Test context loaded successfully
+     - Test Runner: [NAME]@[VERSION]
+     - E2E Framework: [NAME]@[VERSION]
+     - Mocking: [APPROACH]
+     - Assertions: [LIBRARY]
+     
+     Proceeding to test creation with validated context..."
   ```
 
   **Phase 1: Delegate Test Creation to test-architect Agent**
@@ -2027,43 +2232,116 @@ These are REQUIRED tool invocations, not optional guidance. Do not proceed to te
 </skill_invocation_for_implementation>
 
 <step_2_1a_pattern_context_handoff>
-#### Step 2.1a: Pattern Context Handoff (v3.3.0+)
+#### Step 2.1a: Pattern Documentation Gate (v3.3.0+ - BLOCKING)
 
 **Execution Order**: AFTER RED phase validation (Step 2.1), BEFORE implementation
-**Purpose**: Ensure implementation-specialist has access to test patterns for alignment
+**Purpose**: BLOCKING gate to ensure test patterns are documented before implementation can proceed
 
-**CRITICAL**: This step prevents test/code misalignment by passing test patterns to implementation.
+**CRITICAL**: This step prevents test/code misalignment by requiring pattern documentation before implementation.
 
 <pattern_documentation_verification>
-  **Verify Pattern Documentation Exists**
+  **Verify Pattern Documentation Exists (BLOCKING)**
 
-  BEFORE proceeding to implementation:
+  BEFORE proceeding to implementation, this gate MUST pass:
 
-  1. CHECK for pattern documentation file:
-     ```
-     FILE: .agent-os/test-context/[TASK_ID]-patterns-used.json
-     ```
+  **REQUIRED VERIFICATION**:
+  ```
+  FILE_PATH=".agent-os/test-context/[TASK_ID]-patterns-used.json"
+  ```
 
-  2. IF file does NOT exist:
-     ```
-     ❌ BLOCK: Pattern documentation missing
+  **CHECK 1: File Existence (BLOCKING)**
+  
+  IF file does NOT exist:
+    ```
+    ❌ BLOCK: Cannot proceed to implementation phase
+    
+    ERROR: "Pattern documentation missing: ${FILE_PATH}"
+    
+    REASON: Test-architect did not create patterns-used.json.
+            This file is MANDATORY for test/code alignment.
+    
+    ACTION: Return to test-architect with explicit requirement:
+      "Test phase incomplete. You MUST create patterns-used.json with:
+       - patterns_used.mocking (approach and modules)
+       - patterns_used.assertions (library and patterns)
+       - patterns_used.async_handling (approach and patterns)
+       - patterns_used.e2e_patterns (locators, waiting, navigation - if applicable)
+       - critical_notes (implementation guidance)"
+    
+    DO NOT proceed to Step 2.2 until file exists.
+    
+    REFERENCE: @.agent-os/instructions/utilities/test-code-alignment-checklist.md
+    ```
+    
+    **GATE STATUS: BLOCKED**
+    **NEXT STEP: Fix pattern documentation, then retry this gate**
 
-     The test-architect did not create pattern documentation.
-     This is REQUIRED for test/code alignment.
+  **CHECK 2: Content Structure Validation**
+  
+  IF file exists:
+    READ file and VALIDATE content structure:
+    
+    REQUIRED sections (MUST be present):
+      - patterns_used.mocking ✓/✗
+      - patterns_used.assertions ✓/✗
+      - critical_notes ✓/✗
+    
+    RECOMMENDED sections (should be present):
+      - patterns_used.async_handling ✓/✗
+      - patterns_used.e2e_patterns ✓/✗ (if E2E tests exist)
+    
+    IF any REQUIRED section missing:
+      ```
+      ⚠️ WARN: Pattern file incomplete
+      
+      Missing required sections:
+      [LIST missing sections]
+      
+      Current file structure:
+      [SHOW what exists in file]
+      
+      PROMPT user: "Pattern file is incomplete. Options:
+                   1. return - Send back to test-architect to complete
+                   2. continue - Proceed with incomplete patterns (RISKY - may cause alignment issues)"
+      ```
+      
+      IF user chooses "return":
+        ❌ BLOCK: Return to test-architect
+        ACTION: Request completion of missing sections
+      
+      IF user chooses "continue":
+        ⚠️ PROCEED with warning
+        LOG: "Proceeding with incomplete pattern documentation - alignment issues may occur"
 
-     ACTION: Return to Step 2.1 and ensure test-architect creates:
-     .agent-os/test-context/[TASK_ID]-patterns-used.json
+  **CHECK 3: Pattern Content Validation**
+  
+  IF file exists and structure valid:
+    VALIDATE each pattern section has content:
+    
+    - mocking.approach: not empty ✓/✗
+    - mocking.modules_mocked: array with entries ✓/✗
+    - assertions.library: not empty ✓/✗
+    - assertions.patterns: array with entries ✓/✗
+    - critical_notes: not empty ✓/✗
+    
+    IF any section is empty/null:
+      ⚠️ WARN: Pattern sections exist but lack detail
+      LOG warning but do not block
 
-     REFERENCE: @.agent-os/instructions/utilities/test-code-alignment-checklist.md
-     ```
-
-  3. IF file EXISTS:
-     ```
-     ✅ Pattern documentation found
-
-     File: .agent-os/test-context/[TASK_ID]-patterns-used.json
-     ```
-     PROCEED to context handoff
+  **GATE PASSED**:
+  ```
+  ✅ Pattern documentation verified
+  
+  File: .agent-os/test-context/[TASK_ID]-patterns-used.json
+  
+  Verified sections:
+  - patterns_used.mocking ✓
+  - patterns_used.assertions ✓
+  - critical_notes ✓
+  
+  GATE STATUS: PASSED
+  PROCEED to context handoff
+  ```
 </pattern_documentation_verification>
 
 <context_handoff_to_implementation>
@@ -2098,10 +2376,76 @@ These are REQUIRED tool invocations, not optional guidance. Do not proceed to te
 </context_handoff_to_implementation>
 </step_2_1a_pattern_context_handoff>
 
+<step_2_2_prerequisite>
+### Step 2.2 Prerequisite: Pattern File Confirmation (MANDATORY)
+
+**BEFORE delegating to implementation-specialist, verify pattern documentation:**
+
+**Prerequisite Check**:
+
+1. **VERIFY patterns-used.json exists** (should have passed Step 2.1a):
+   ```
+   FILE: .agent-os/test-context/[TASK_ID]-patterns-used.json
+   
+   CHECK: File exists and passed Step 2.1a gate
+   
+   IF file does NOT exist:
+     ❌ CRITICAL ERROR: Step 2.1a gate was bypassed
+     ACTION: HALT implementation and return to Step 2.1a
+     MESSAGE: "Cannot proceed - pattern documentation gate not completed"
+   ```
+
+2. **READ the patterns file and extract key patterns**:
+   ```
+   READ: .agent-os/test-context/[TASK_ID]-patterns-used.json
+   
+   EXTRACT and PREPARE for delegation:
+   - MOCKING_APPROACH: patterns_used.mocking.approach
+   - MOCKING_MODULES: patterns_used.mocking.modules_mocked
+   - ASSERTION_LIBRARY: patterns_used.assertions.library
+   - ASSERTION_PATTERNS: patterns_used.assertions.patterns
+   - ASYNC_APPROACH: patterns_used.async_handling.approach (if present)
+   - E2E_PATTERNS: patterns_used.e2e_patterns (if present)
+   - CRITICAL_NOTES: critical_notes
+   ```
+
+3. **INCLUDE extracted patterns in delegation prompt** (see below):
+   The delegation prompt MUST include the pattern context section with
+   SPECIFIC patterns extracted from the file (not generic placeholders).
+
+**Prerequisite Verification Checklist**:
+- [ ] patterns-used.json file exists
+- [ ] File content has been read
+- [ ] Key patterns have been extracted
+- [ ] Patterns will be included in delegation prompt (see Phase 1 below)
+
+**IF VERIFICATION FAILS**:
+```
+❌ BLOCK: Cannot delegate to implementation-specialist
+
+Pattern documentation prerequisite not met.
+Step 2.1a must complete successfully before proceeding.
+
+REQUIRED ACTION:
+1. Ensure test-architect created patterns-used.json
+2. Verify Step 2.1a gate passed
+3. Retry Step 2.2 after prerequisite met
+```
+
+**IF VERIFICATION PASSES**:
+```
+✅ Prerequisites verified - proceeding to delegation
+
+Pattern file: .agent-os/test-context/[TASK_ID]-patterns-used.json
+Patterns extracted and ready for delegation
+```
+
+</step_2_2_prerequisite>
+
 <implementation_workflow>
   **Phase 1: Delegate Implementation to Specialist Agents**
 
-  After RED phase validation AND pattern context handoff (Step 2.1a):
+  After prerequisites verified (Step 2.2 prerequisite above):
 
   DELEGATE to appropriate specialist agents based on task type:
 
@@ -2110,25 +2454,59 @@ These are REQUIRED tool invocations, not optional guidance. Do not proceed to te
   REQUEST: "Implement minimal code to pass failing tests (TDD GREEN phase):
 
             ═══════════════════════════════════════════════════════════════════
-            MANDATORY CONTEXT LOADING - DO NOT SKIP
+            MANDATORY PATTERN READING - DO NOT SKIP
             ═══════════════════════════════════════════════════════════════════
-
-            Before writing ANY implementation code, you MUST:
-
-            1. READ @.agent-os/instructions/agents/implementation-specialist.md
-            2. READ .agent-os/test-context/[TASK_ID]-patterns-used.json
-            3. CONFIRM by stating:
-               'I have read patterns-used.json and understand:
-                - Mocking approach: [state the approach used in tests]
-                - Assertion patterns: [list key assertion patterns]
-                - Async handling: [state async patterns tests use]
-                - Server requirements: [list any server dependencies]
-                - Critical notes: [summarize implementation notes from file]'
-
-            4. PROCEED with implementation only AFTER confirmation
-
+            
+            BEFORE implementing, you MUST read and acknowledge the test patterns:
+            
+            Pattern File: .agent-os/test-context/[TASK_ID]-patterns-used.json
+            
+            Key patterns you MUST honor (extracted from patterns-used.json):
+            
+            **Mocking:**
+            - Approach: [MOCKING_APPROACH]
+            - Modules mocked: [MOCKING_MODULES]
+            - Clearing strategy: [from file if present]
+            
+            **Assertions:**
+            - Library: [ASSERTION_LIBRARY]
+            - Patterns used: [ASSERTION_PATTERNS]
+            
+            **Async Handling:**
+            - Approach: [ASYNC_APPROACH]
+            - Waiting patterns: [from file if present]
+            
+            **E2E Patterns (if applicable):**
+            - Locators: [E2E locator strategy from file]
+            - Waiting: [E2E waiting patterns from file]
+            - Navigation: [E2E navigation patterns from file]
+            
+            **Critical Implementation Notes:**
+            [CRITICAL_NOTES - these are specific constraints from test-architect]
+            
+            ═══════════════════════════════════════════════════════════════════
+            MANDATORY CONFIRMATION
+            ═══════════════════════════════════════════════════════════════════
+            
+            You MUST confirm understanding by stating:
+            
+            "I have read patterns-used.json and will:
+             - Use [MOCKING_APPROACH] for mocking
+             - Ensure code works with [ASSERTION_LIBRARY] assertions
+             - Use [ASYNC_APPROACH] for async operations
+             - Honor these critical constraints:
+               [LIST specific constraints from CRITICAL_NOTES]"
+            
             This confirmation is MANDATORY. You must demonstrate you understand
-            the test patterns before writing code that integrates with them.
+            the SPECIFIC patterns before writing code that integrates with them.
+            
+            ═══════════════════════════════════════════════════════════════════
+            ADDITIONAL READING
+            ═══════════════════════════════════════════════════════════════════
+            
+            Also READ:
+            1. @.agent-os/instructions/agents/implementation-specialist.md
+            2. @.agent-os/instructions/utilities/test-code-alignment-checklist.md
 
             ═══════════════════════════════════════════════════════════════════
             ALIGNMENT REQUIREMENT
@@ -2209,8 +2587,50 @@ These are REQUIRED tool invocations, not optional guidance. Do not proceed to te
             ═══════════════════════════════════════════════════════════════════
 
             After completion, orchestrator will verify:
-            - [ ] Pattern confirmation statement present with SPECIFIC patterns stated
-            - [ ] Implementation aligns with patterns-used.json
+            
+            **Pattern Acknowledgment (MANDATORY):**
+            - [ ] Confirmation statement present with SPECIFIC patterns stated
+            - [ ] Statement mentions SPECIFIC mocking approach (not generic)
+            - [ ] Statement mentions SPECIFIC assertion library (not generic)
+            - [ ] Statement lists critical constraints from patterns-used.json
+            
+            **Pattern Reference Check:**
+            - [ ] Response references patterns-used.json file
+            - [ ] Response mentions specific patterns from the file
+            - [ ] Response shows understanding of constraints
+            
+            **IF Pattern Acknowledgment MISSING:**
+            ```
+            ⚠️ WARN: Implementation may not align with tests
+            
+            Subagent did not confirm reading patterns-used.json or did not
+            state SPECIFIC patterns they will follow.
+            
+            RISK: Implementation may use different patterns than tests expect,
+                  causing alignment issues and test failures.
+            
+            ACTION OPTIONS:
+            1. Re-prompt subagent to read patterns-used.json and confirm
+            2. Continue with warning (monitor for alignment issues)
+            3. Review implementation manually for pattern alignment
+            
+            RECOMMENDED: Re-prompt for explicit pattern confirmation
+            ```
+            
+            **IF Pattern Acknowledgment PRESENT:**
+            ```
+            ✅ Pattern acknowledgment verified
+            
+            Subagent confirmed:
+            - Mocking approach: [approach from response]
+            - Assertion library: [library from response]
+            - Critical constraints: [listed constraints]
+            
+            Proceeding to alignment validation (Step 2.2a)
+            ```
+            
+            **Final Verification (Step 2.2a):**
+            - [ ] Implementation aligns with patterns-used.json (tested in Step 2.2a)
             - [ ] All tests pass (alignment validation in Step 2.2a)
             - [ ] No test bypasses or hardcoded shortcuts"
 

@@ -632,9 +632,42 @@ Before completing, verify all expected deliverables exist.
 
 </step>
 
-<step number="4.2" name="test_suite_execution">
+<step number="4.2" name="typescript_verification">
 
-### Step 4.2: Run Full Test Suite
+### Step 4.2: TypeScript Type Verification
+
+**MANDATORY for TypeScript projects.** Verify no type errors exist before completing task.
+
+<type_verification>
+  CHECK: Does project have tsconfig.json?
+
+  IF yes:
+    EXECUTE: pnpm tsc --noEmit (or npx tsc --noEmit)
+
+    IF type errors found:
+      REPORT all errors with file:line:column format
+      PROMPT user: "TypeScript errors detected. Options:
+                    1. fix - Fix type errors now (RECOMMENDED)
+                    2. investigate - Analyze errors first
+                    3. continue - Proceed anyway (NOT recommended)"
+
+      IF user selects "fix":
+        FIX type errors before proceeding
+        RE-RUN: pnpm tsc --noEmit
+        VERIFY: No errors remain
+
+    IF no errors:
+      CONFIRM: "✓ TypeScript type check passed"
+
+  IF no tsconfig.json:
+    SKIP: "No TypeScript configuration found"
+</type_verification>
+
+</step>
+
+<step number="4.3" name="test_suite_execution">
+
+### Step 4.3: Run Full Test Suite
 
 Execute all tests to verify implementation quality.
 
@@ -657,9 +690,9 @@ Execute all tests to verify implementation quality.
 
 </step>
 
-<step number="4.3" name="beads_completion">
+<step number="4.4" name="beads_completion">
 
-### Step 4.3: Complete Beads Tasks
+### Step 4.4: Complete Beads Tasks
 
 Close all completed beads tasks with proper documentation.
 
@@ -680,9 +713,9 @@ Close all completed beads tasks with proper documentation.
 
 </step>
 
-<step number="4.4" name="final_commit_and_summary">
+<step number="4.5" name="final_commit_and_summary">
 
-### Step 4.4: Final Commit and Summary
+### Step 4.5: Final Commit and Summary
 
 Create final commit and generate completion summary.
 

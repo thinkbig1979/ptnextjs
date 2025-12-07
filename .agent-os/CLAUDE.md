@@ -502,6 +502,48 @@ test_context_gathering:
       - websearch        # Priority 4: Fallback
 ```
 
+### TypeScript Type Checking (v4.3.0+)
+Mandatory TypeScript type verification to prevent type errors from entering the codebase.
+
+**Problem Solved**: TypeScript errors were accumulating because:
+- `syntax_check.js` only validates JavaScript syntax, not TypeScript types
+- No explicit directive for agents to run `tsc --noEmit`
+- No pre-commit hook to block commits with type errors
+
+**Solution**: Multi-layer type checking:
+
+| Layer | Implementation | When | What It Catches |
+|-------|---------------|------|-----------------|
+| Validator | `hooks/validators/type_checking.js` | Per-file write | Immediate errors |
+| Task Verification | `execute-tasks-unified.md` Step 4.2 | Before task completion | Accumulated errors |
+| Pre-commit Hook | `.git/hooks/pre-commit` | Before commit | Final safety net |
+
+**Key Commands**:
+```bash
+# Manual type check
+pnpm tsc --noEmit
+
+# Install pre-commit hook
+~/.agent-os/setup/install-typescript-precommit.sh
+
+# Add typecheck script to package.json
+npm pkg set scripts.typecheck="tsc --noEmit"
+```
+
+**Configuration** (`config.yml`):
+```yaml
+typescript_checking:
+  enabled: true
+  triggers:
+    on_file_write: true
+    on_task_completion: true
+    pre_commit: true
+  error_handling:
+    block_on_error: true
+```
+
+**MANDATORY**: Before completing ANY task in a TypeScript project, run `pnpm tsc --noEmit` and fix all errors.
+
 ### Validator Improvements (v3.0+)
 
 **Configurable Test Standards** (`hooks/validators/test_standards.js` v2.0):
@@ -538,6 +580,7 @@ test_context_gathering:
 
 Before marking task complete:
 - [ ] All files in deliverable manifest exist
+- [ ] **TypeScript type check passes** (`pnpm tsc --noEmit`) - MANDATORY for TS projects
 - [ ] All tests pass (`test:unit:ci`, `test:e2e:ci`)
 - [ ] No P1 security findings
 - [ ] Acceptance criteria verified with evidence
