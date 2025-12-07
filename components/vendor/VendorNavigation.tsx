@@ -10,7 +10,6 @@ import {
   LayoutDashboard,
   User,
   Package,
-  Settings,
   CreditCard,
   LogOut,
   Database,
@@ -59,12 +58,6 @@ export function VendorNavigation({ className }: VendorNavigationProps) {
       href: '/vendor/dashboard/subscription',
       label: 'Subscription',
       icon: CreditCard,
-      visible: true,
-    },
-    {
-      href: '/vendor/dashboard/settings',
-      label: 'Settings',
-      icon: Settings,
       visible: true,
     },
   ];
