@@ -1,0 +1,26 @@
+--- a/components/admin/AdminTierRequestQueue.tsx
++++ b/components/admin/AdminTierRequestQueue.tsx
+@@ -40,8 +40,12 @@ interface ApiErrorResponse {
+ }
+
+ interface ApiSuccessResponse {
+-  data?: TierUpgradeRequest[];
+-  requests?: TierUpgradeRequest[];
++  data: {
++    requests: TierUpgradeRequest[];
++    totalCount: number;
++    page: number;
++    totalPages: number;
++  };
+ }
+
+ /**
+@@ -136,7 +140,7 @@ export default function AdminTierRequestQueue(): React.ReactElement {
+       }
+
+       const data = (await response.json()) as ApiSuccessResponse;
+-      setRequests(data.data || data.requests || []);
++      setRequests(data.data.requests);
+     } catch (err) {
+       const message = err instanceof Error ? err.message : 'Failed to load pending tier requests';
+       setError(message);
