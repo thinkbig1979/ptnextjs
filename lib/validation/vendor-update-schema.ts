@@ -29,14 +29,16 @@ export const vendorUpdateSchema = z.object({
   description: z
     .string()
     .max(500, 'Description must not exceed 500 characters')
-    .optional(),
+    .optional()
+    .nullable(),
 
   logo: z
     .string()
     .url('Logo must be a valid URL')
     .max(500, 'Logo URL must not exceed 500 characters')
     .optional()
-    .or(z.literal('')), // Allow empty string to clear logo
+    .nullable()
+    .or(z.literal('')), // Allow empty string or null to clear logo
 
   contactEmail: z
     .string()
@@ -48,6 +50,7 @@ export const vendorUpdateSchema = z.object({
     .string()
     .max(50, 'Phone number must not exceed 50 characters')
     .optional()
+    .nullable()
     .refine(
       (val) => !val || /^[\d\s\-\+\(\)]+$/.test(val),
       'Invalid phone number format'
@@ -59,13 +62,15 @@ export const vendorUpdateSchema = z.object({
     .url('Website must be a valid URL')
     .max(500, 'Website URL must not exceed 500 characters')
     .optional()
-    .or(z.literal('')), // Allow empty string to clear website
+    .nullable()
+    .or(z.literal('')), // Allow empty string or null to clear website
 
   linkedinUrl: z
     .string()
     .url('LinkedIn URL must be a valid URL')
     .max(500, 'LinkedIn URL must not exceed 500 characters')
     .optional()
+    .nullable()
     .or(z.literal('')),
 
   twitterUrl: z
@@ -73,6 +78,7 @@ export const vendorUpdateSchema = z.object({
     .url('Twitter URL must be a valid URL')
     .max(500, 'Twitter URL must not exceed 500 characters')
     .optional()
+    .nullable()
     .or(z.literal('')),
 
   // Brand Story Fields (Tier 1+)
@@ -138,6 +144,7 @@ export const vendorUpdateSchema = z.object({
     .url('Video URL must be a valid URL')
     .max(500, 'Video URL must not exceed 500 characters')
     .optional()
+    .nullable()
     .or(z.literal('')),
 
   videoThumbnail: z
@@ -145,6 +152,7 @@ export const vendorUpdateSchema = z.object({
     .url('Thumbnail must be a valid URL')
     .max(500, 'Thumbnail URL must not exceed 500 characters')
     .optional()
+    .nullable()
     .or(z.literal('')),
 
   videoDuration: z
@@ -171,8 +179,8 @@ export const vendorUpdateSchema = z.object({
       z.union([
         z.string(),
         z.object({
-          id: z.string().optional(),
-          area: z.string().max(255).optional(),
+          id: z.string().optional().nullable(),
+          area: z.string().max(255).optional().nullable(),
           description: z.string().max(1000).optional().nullable(),
           icon: z.union([z.string(), z.number(), z.null()]).optional(), // Can be media ID or null
         }),
@@ -186,8 +194,8 @@ export const vendorUpdateSchema = z.object({
       z.union([
         z.string(),
         z.object({
-          id: z.string().optional(),
-          value: z.string().max(255).optional(),
+          id: z.string().optional().nullable(),
+          value: z.string().max(255).optional().nullable(),
           description: z.string().max(1000).optional().nullable(),
         }),
       ])
@@ -198,18 +206,19 @@ export const vendorUpdateSchema = z.object({
   certifications: z
     .string()
     .max(1000, 'Certifications must not exceed 1000 characters')
-    .optional(),
+    .optional()
+    .nullable(),
 
   // Multi-location support (Tier 2+)
   locations: z
     .array(
       z.object({
-        id: z.string().optional(),
-        locationName: z.string().max(255, 'Location name must not exceed 255 characters').optional(),
-        address: z.string().max(500, 'Address must not exceed 500 characters').optional(),
-        city: z.string().max(255, 'City must not exceed 255 characters').optional(),
-        country: z.string().max(255, 'Country must not exceed 255 characters').optional(),
-        postalCode: z.string().max(20, 'Postal code must not exceed 20 characters').optional(),
+        id: z.string().optional().nullable(),
+        locationName: z.string().max(255, 'Location name must not exceed 255 characters').optional().nullable(),
+        address: z.string().max(500, 'Address must not exceed 500 characters').optional().nullable(),
+        city: z.string().max(255, 'City must not exceed 255 characters').optional().nullable(),
+        country: z.string().max(255, 'Country must not exceed 255 characters').optional().nullable(),
+        postalCode: z.string().max(20, 'Postal code must not exceed 20 characters').optional().nullable(),
         latitude: z
           .number()
           .min(-90, 'Latitude must be between -90 and 90')
@@ -241,8 +250,8 @@ export const vendorUpdateSchema = z.object({
   caseStudies: z
     .array(
       z.object({
-        id: z.string().optional(),
-        title: z.string().max(200).optional(),
+        id: z.string().optional().nullable(),
+        title: z.string().max(200).optional().nullable(),
         yachtName: z.string().max(200).optional().nullable(),
         yacht: z.union([z.string(), z.number(), z.null()]).optional(), // Can be yacht ID
         projectDate: z.string().optional().nullable(),
@@ -262,7 +271,7 @@ export const vendorUpdateSchema = z.object({
             z.string().url(),
             z.number(),
             z.object({
-              id: z.string().optional(),
+              id: z.string().optional().nullable(),
               image: z.union([z.string(), z.number(), z.null()]).optional(),
             }),
           ])
@@ -277,9 +286,9 @@ export const vendorUpdateSchema = z.object({
   teamMembers: z
     .array(
       z.object({
-        id: z.string().optional(),
-        name: z.string().max(200).optional(),
-        role: z.string().max(200).optional(),
+        id: z.string().optional().nullable(),
+        name: z.string().max(200).optional().nullable(),
+        role: z.string().max(200).optional().nullable(),
         bio: z.string().max(2000).optional().nullable(), // Payload allows 2000 chars
         // Photo can be: URL string, media ID (number), or media object
         photo: z.preprocess(
