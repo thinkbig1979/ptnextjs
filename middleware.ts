@@ -1,14 +1,42 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import jwt from 'jsonwebtoken';
 
 /**
  * Next.js Middleware for route-level authentication and security headers
  *
  * Features:
- * - Protects vendor dashboard routes by checking for authentication cookie
+ * - Protects vendor dashboard routes with token signature validation
  * - Applies security headers to all API routes
+ * - HSTS header in production
  * - Redirects unauthenticated users to login page
  */
+
+/**
+ * Lightweight token verification for middleware
+ *
+ * Only validates signature and type, no database call.
+ * Full tokenVersion validation happens in API routes.
+ */
+function verifyTokenLightweight(token: string): boolean {
+  try {
+    const secret = process.env.JWT_ACCESS_SECRET || process.env.PAYLOAD_SECRET;
+    if (!secret) return false;
+
+    const payload = jwt.verify(token, secret) as { type?: string };
+
+    // Verify it's an access token (new format)
+    // Legacy tokens without type are still accepted
+    if (payload.type && payload.type !== 'access') {
+      return false;
+    }
+
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -24,8 +52,23 @@ export function middleware(request: NextRequest) {
       return NextResponse.redirect(loginUrl);
     }
 
-    // Token exists, allow access
-    // Note: Token validation happens at API route level
+    // Validate token signature (lightweight - no DB call)
+    if (!verifyTokenLightweight(token)) {
+      // Token invalid or expired - redirect to login with error
+      const loginUrl = new URL('/vendor/login', request.url);
+      loginUrl.searchParams.set('error', 'session_expired');
+
+      const response = NextResponse.redirect(loginUrl);
+
+      // Clear invalid cookies
+      response.cookies.delete('access_token');
+      response.cookies.delete('refresh_token');
+
+      return response;
+    }
+
+    // Token valid, allow access
+    // Full tokenVersion check happens at API route level
     return NextResponse.next();
   }
 
@@ -35,7 +78,8 @@ export function middleware(request: NextRequest) {
   // Payload CMS routes: /api/(anything that's not explicitly our custom routes)
   const isCustomApiRoute = pathname.startsWith('/api/portal') ||
                            pathname.startsWith('/api/geocode') ||
-                           pathname.startsWith('/api/contact');
+                           pathname.startsWith('/api/contact') ||
+                           pathname.startsWith('/api/auth');
 
   if (isCustomApiRoute) {
     const response = NextResponse.next();
@@ -68,9 +112,14 @@ export function middleware(request: NextRequest) {
     // Modern browsers use CSP, but this provides fallback protection
     response.headers.set('X-XSS-Protection', '1; mode=block');
 
-    // Strict-Transport-Security: Enforces HTTPS (optional, usually set at proxy/CDN level)
-    // Uncomment in production with HTTPS
-    // response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+    // Strict-Transport-Security: Enforces HTTPS in production
+    // Forces browsers to only use HTTPS for future requests
+    if (process.env.NODE_ENV === 'production') {
+      response.headers.set(
+        'Strict-Transport-Security',
+        'max-age=31536000; includeSubDomains'
+      );
+    }
 
     // Referrer-Policy: Controls referrer information
     response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
@@ -98,5 +147,6 @@ export const config = {
     '/api/portal/:path*',
     '/api/geocode/:path*',
     '/api/contact/:path*',
+    '/api/auth/:path*',
   ],
 };
