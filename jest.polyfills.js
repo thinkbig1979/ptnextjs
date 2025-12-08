@@ -7,6 +7,11 @@
  * @see https://jestjs.io/docs/configuration#setupfiles-array
  */
 
+// Set test environment variables before any imports
+process.env.PAYLOAD_SECRET = process.env.PAYLOAD_SECRET || 'test-secret-for-jest-tests-only';
+process.env.JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'test-access-secret-for-jest-tests';
+process.env.JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'test-refresh-secret-for-jest-tests';
+
 const { TextEncoder, TextDecoder } = require('util');
 
 // TextEncoder/TextDecoder polyfill for Node.js test environment

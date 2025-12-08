@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import { getPayload } from 'payload';
 import config from '@/payload.config';
-import { generateTokens, verifyToken, refreshAccessToken, type JWTPayload, type TokenPair } from '@/lib/utils/jwt';
+import { generateTokens, verifyToken, refreshAccessToken, type JWTPayload, type JWTPayloadBase, type LegacyJWTPayload, type TokenPair } from '@/lib/utils/jwt';
 
 const BCRYPT_ROUNDS = 12;
 
@@ -87,12 +87,14 @@ class AuthService {
       }
 
       // Generate JWT tokens
-      const jwtPayload: JWTPayload = {
+      // Note: generateTokens accepts JWTPayloadBase (without type/jti) and adds those
+      const jwtPayload: JWTPayloadBase = {
         id: user.id.toString(),
         email: user.email,
         role: user.role,
         tier,
         status: user.status,
+        tokenVersion: 0, // TODO: Get from user.tokenVersion once field is added
       };
 
       const tokens = generateTokens(jwtPayload);
@@ -116,8 +118,11 @@ class AuthService {
 
   /**
    * Validate JWT token and return decoded payload
+   *
+   * Note: Returns JWTPayload | LegacyJWTPayload to support both
+   * new tokens with type/jti and legacy tokens without.
    */
-  validateToken(token: string): JWTPayload {
+  validateToken(token: string): JWTPayload | LegacyJWTPayload {
     return verifyToken(token);
   }
 

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { authService } from '@/lib/services/auth-service';
-import type { JWTPayload } from '@/lib/utils/jwt';
+import type { JWTPayload, LegacyJWTPayload } from '@/lib/utils/jwt';
 
 export interface AuthenticatedRequest extends NextRequest {
   user?: JWTPayload;
@@ -189,8 +189,11 @@ export function requireTier(minTier: 'free' | 'tier1' | 'tier2') {
 
 /**
  * Extract user from request headers (set by auth middleware)
+ *
+ * Note: This returns a LegacyJWTPayload without the new token fields
+ * since headers only contain basic user info.
  */
-export function getUserFromRequest(request: NextRequest): JWTPayload | null {
+export function getUserFromRequest(request: NextRequest): LegacyJWTPayload | null {
   const id = request.headers.get('x-user-id');
   const email = request.headers.get('x-user-email');
   const role = request.headers.get('x-user-role') as 'admin' | 'vendor';

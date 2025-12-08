@@ -1,20 +1,24 @@
 /**
  * JWT Token Enhancement Test Suite
  *
- * TDD RED Phase: Tests for JWT token generation with:
+ * TDD GREEN Phase: Tests for JWT token generation with:
  * - Separate secrets for access/refresh tokens
  * - jti (unique ID) claims
  * - type claims (access vs refresh)
  * - tokenVersion support
  */
 import jwt from 'jsonwebtoken';
-
-// Note: These functions will be implemented in impl-jwt task
-// For now, tests will fail because the enhanced functions don't exist yet
+import {
+  generateTokens,
+  verifyAccessToken,
+  verifyRefreshToken,
+  rotateTokens,
+  type JWTPayloadBase,
+} from '@/lib/utils/jwt';
 
 describe('JWT Token Generation', () => {
   // Test payload following enhanced JWTPayload interface
-  const testPayload = {
+  const testPayload: JWTPayloadBase = {
     id: 'user-123',
     email: 'test@example.com',
     role: 'vendor' as const,
@@ -23,34 +27,8 @@ describe('JWT Token Generation', () => {
     tokenVersion: 0,
   };
 
-  // We'll import these after implementation exists
-  // For RED phase, we define what the API should look like
-  let generateTokens: (payload: typeof testPayload) => { accessToken: string; refreshToken: string };
-  let verifyAccessToken: (token: string) => typeof testPayload & { jti: string; type: 'access' };
-  let verifyRefreshToken: (token: string) => typeof testPayload & { jti: string; type: 'refresh' };
-  let rotateTokens: (refreshToken: string) => { accessToken: string; refreshToken: string };
-
-  beforeEach(async () => {
-    // Dynamic import to allow tests to run before/after implementation
-    try {
-      const jwtModule = await import('@/lib/utils/jwt');
-      generateTokens = jwtModule.generateTokens;
-      verifyAccessToken = jwtModule.verifyAccessToken;
-      verifyRefreshToken = jwtModule.verifyRefreshToken;
-      rotateTokens = jwtModule.rotateTokens;
-    } catch {
-      // Functions don't exist yet - expected in RED phase
-    }
-  });
-
   describe('generateTokens', () => {
     it('should generate access token with jti claim', () => {
-      // Skip if not implemented yet
-      if (!generateTokens || !verifyAccessToken) {
-        console.log('Skipping: generateTokens or verifyAccessToken not implemented');
-        return;
-      }
-
       const { accessToken } = generateTokens(testPayload);
       const decoded = verifyAccessToken(accessToken);
 
@@ -60,11 +38,6 @@ describe('JWT Token Generation', () => {
     });
 
     it('should generate unique jti for each token', () => {
-      if (!generateTokens || !verifyAccessToken) {
-        console.log('Skipping: generateTokens or verifyAccessToken not implemented');
-        return;
-      }
-
       const tokens1 = generateTokens(testPayload);
       const tokens2 = generateTokens(testPayload);
 
@@ -75,11 +48,6 @@ describe('JWT Token Generation', () => {
     });
 
     it('should generate access token with type: access', () => {
-      if (!generateTokens || !verifyAccessToken) {
-        console.log('Skipping: generateTokens or verifyAccessToken not implemented');
-        return;
-      }
-
       const { accessToken } = generateTokens(testPayload);
       const decoded = verifyAccessToken(accessToken);
 
@@ -87,11 +55,6 @@ describe('JWT Token Generation', () => {
     });
 
     it('should generate refresh token with type: refresh', () => {
-      if (!generateTokens || !verifyRefreshToken) {
-        console.log('Skipping: generateTokens or verifyRefreshToken not implemented');
-        return;
-      }
-
       const { refreshToken } = generateTokens(testPayload);
       const decoded = verifyRefreshToken(refreshToken);
 
@@ -99,11 +62,6 @@ describe('JWT Token Generation', () => {
     });
 
     it('should include tokenVersion in both tokens', () => {
-      if (!generateTokens || !verifyAccessToken || !verifyRefreshToken) {
-        console.log('Skipping: JWT functions not implemented');
-        return;
-      }
-
       const { accessToken, refreshToken } = generateTokens(testPayload);
 
       const accessDecoded = verifyAccessToken(accessToken);
@@ -114,11 +72,6 @@ describe('JWT Token Generation', () => {
     });
 
     it('should preserve all user payload fields', () => {
-      if (!generateTokens || !verifyAccessToken) {
-        console.log('Skipping: JWT functions not implemented');
-        return;
-      }
-
       const { accessToken } = generateTokens(testPayload);
       const decoded = verifyAccessToken(accessToken);
 
@@ -132,75 +85,40 @@ describe('JWT Token Generation', () => {
 
   describe('verifyAccessToken', () => {
     it('should reject refresh token when verifying as access token', () => {
-      if (!generateTokens || !verifyAccessToken) {
-        console.log('Skipping: JWT functions not implemented');
-        return;
-      }
-
       const { refreshToken } = generateTokens(testPayload);
 
       expect(() => verifyAccessToken(refreshToken)).toThrow();
     });
 
     it('should throw specific error message for refresh token rejection', () => {
-      if (!generateTokens || !verifyAccessToken) {
-        console.log('Skipping: JWT functions not implemented');
-        return;
-      }
-
       const { refreshToken } = generateTokens(testPayload);
 
-      expect(() => verifyAccessToken(refreshToken)).toThrow(/invalid.*token|token.*type/i);
+      expect(() => verifyAccessToken(refreshToken)).toThrow(/invalid.*token/i);
     });
 
     it('should reject malformed token', () => {
-      if (!verifyAccessToken) {
-        console.log('Skipping: verifyAccessToken not implemented');
-        return;
-      }
-
       expect(() => verifyAccessToken('not-a-valid-token')).toThrow();
     });
 
     it('should reject empty token', () => {
-      if (!verifyAccessToken) {
-        console.log('Skipping: verifyAccessToken not implemented');
-        return;
-      }
-
       expect(() => verifyAccessToken('')).toThrow();
     });
   });
 
   describe('verifyRefreshToken', () => {
     it('should reject access token when verifying as refresh token', () => {
-      if (!generateTokens || !verifyRefreshToken) {
-        console.log('Skipping: JWT functions not implemented');
-        return;
-      }
-
       const { accessToken } = generateTokens(testPayload);
 
       expect(() => verifyRefreshToken(accessToken)).toThrow();
     });
 
     it('should throw specific error message for access token rejection', () => {
-      if (!generateTokens || !verifyRefreshToken) {
-        console.log('Skipping: JWT functions not implemented');
-        return;
-      }
-
       const { accessToken } = generateTokens(testPayload);
 
-      expect(() => verifyRefreshToken(accessToken)).toThrow(/invalid.*token|token.*type/i);
+      expect(() => verifyRefreshToken(accessToken)).toThrow(/invalid.*token/i);
     });
 
     it('should successfully verify valid refresh token', () => {
-      if (!generateTokens || !verifyRefreshToken) {
-        console.log('Skipping: JWT functions not implemented');
-        return;
-      }
-
       const { refreshToken } = generateTokens(testPayload);
       const decoded = verifyRefreshToken(refreshToken);
 
@@ -211,11 +129,6 @@ describe('JWT Token Generation', () => {
 
   describe('rotateTokens', () => {
     it('should generate new token pair from valid refresh token', () => {
-      if (!generateTokens || !rotateTokens) {
-        console.log('Skipping: JWT functions not implemented');
-        return;
-      }
-
       const original = generateTokens(testPayload);
       const rotated = rotateTokens(original.refreshToken);
 
@@ -226,11 +139,6 @@ describe('JWT Token Generation', () => {
     });
 
     it('should preserve user data in rotated tokens', () => {
-      if (!generateTokens || !rotateTokens || !verifyAccessToken) {
-        console.log('Skipping: JWT functions not implemented');
-        return;
-      }
-
       const original = generateTokens(testPayload);
       const rotated = rotateTokens(original.refreshToken);
 
@@ -242,11 +150,6 @@ describe('JWT Token Generation', () => {
     });
 
     it('should generate new jti for rotated tokens', () => {
-      if (!generateTokens || !rotateTokens || !verifyAccessToken) {
-        console.log('Skipping: JWT functions not implemented');
-        return;
-      }
-
       const original = generateTokens(testPayload);
       const originalDecoded = verifyAccessToken(original.accessToken);
 
@@ -257,22 +160,12 @@ describe('JWT Token Generation', () => {
     });
 
     it('should reject access token for rotation', () => {
-      if (!generateTokens || !rotateTokens) {
-        console.log('Skipping: JWT functions not implemented');
-        return;
-      }
-
       const { accessToken } = generateTokens(testPayload);
 
       expect(() => rotateTokens(accessToken)).toThrow();
     });
 
     it('should preserve tokenVersion during rotation', () => {
-      if (!generateTokens || !rotateTokens || !verifyAccessToken) {
-        console.log('Skipping: JWT functions not implemented');
-        return;
-      }
-
       const payloadWithVersion = { ...testPayload, tokenVersion: 5 };
       const original = generateTokens(payloadWithVersion);
       const rotated = rotateTokens(original.refreshToken);
@@ -285,11 +178,6 @@ describe('JWT Token Generation', () => {
 
   describe('Token Expiration', () => {
     it('should set access token to expire in 1 hour', () => {
-      if (!generateTokens) {
-        console.log('Skipping: generateTokens not implemented');
-        return;
-      }
-
       const { accessToken } = generateTokens(testPayload);
       const decoded = jwt.decode(accessToken) as jwt.JwtPayload;
 
@@ -302,11 +190,6 @@ describe('JWT Token Generation', () => {
     });
 
     it('should set refresh token to expire in 7 days', () => {
-      if (!generateTokens) {
-        console.log('Skipping: generateTokens not implemented');
-        return;
-      }
-
       const { refreshToken } = generateTokens(testPayload);
       const decoded = jwt.decode(refreshToken) as jwt.JwtPayload;
 
@@ -321,11 +204,6 @@ describe('JWT Token Generation', () => {
 
   describe('Secret Separation', () => {
     it('should use different secrets for access and refresh tokens', () => {
-      if (!generateTokens || !verifyAccessToken || !verifyRefreshToken) {
-        console.log('Skipping: JWT functions not implemented');
-        return;
-      }
-
       // Generate tokens
       const { accessToken, refreshToken } = generateTokens(testPayload);
 
