@@ -1,6 +1,32 @@
 /**
  * Admin Authentication Utility
  *
+ * @deprecated This module is deprecated. Use `@/lib/auth` instead.
+ *
+ * Migration guide:
+ * ```typescript
+ * // Before:
+ * import { authenticateAdmin, isAuthError } from '@/lib/utils/admin-auth';
+ *
+ * // After:
+ * import { requireAdmin, isAuthError } from '@/lib/auth';
+ * ```
+ *
+ * This module is maintained for backward compatibility but will be removed
+ * in a future version.
+ */
+
+// Log deprecation warning on first import
+if (typeof console !== 'undefined') {
+  console.warn(
+    '[DEPRECATED] @/lib/utils/admin-auth is deprecated. ' +
+    'Use @/lib/auth instead. See the module documentation for migration guide.'
+  );
+}
+
+/**
+ * @deprecated Use `@/lib/auth` instead.
+ *
  * Provides standardized authentication for all admin API routes.
  * Uses Payload CMS authentication with support for both cookie and header tokens.
  *

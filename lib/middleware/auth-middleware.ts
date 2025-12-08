@@ -1,3 +1,29 @@
+/**
+ * Auth Middleware
+ *
+ * @deprecated This module is deprecated. Use `@/lib/auth` instead.
+ *
+ * Migration guide:
+ * ```typescript
+ * // Before:
+ * import { authMiddleware, requireRole, getUserFromRequest } from '@/lib/middleware/auth-middleware';
+ *
+ * // After:
+ * import { validateToken, requireRole, isAuthError } from '@/lib/auth';
+ * ```
+ *
+ * This module is maintained for backward compatibility but will be removed
+ * in a future version.
+ */
+
+// Log deprecation warning on first import
+if (typeof console !== 'undefined') {
+  console.warn(
+    '[DEPRECATED] @/lib/middleware/auth-middleware is deprecated. ' +
+    'Use @/lib/auth instead. See the module documentation for migration guide.'
+  );
+}
+
 import { NextRequest, NextResponse } from 'next/server';
 import { authService } from '@/lib/services/auth-service';
 import type { JWTPayload, LegacyJWTPayload } from '@/lib/utils/jwt';

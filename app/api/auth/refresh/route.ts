@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { rotateTokens } from '@/lib/utils/jwt';
+import { rotateTokens, decodeToken, verifyRefreshToken } from '@/lib/utils/jwt';
 import { rateLimit } from '@/lib/middleware/rateLimit';
+import { logTokenRefresh, logTokenRefreshFailed } from '@/lib/services/audit-service';
 
 // Rate limit: 10 requests per minute per IP
 const REFRESH_RATE_LIMIT = {
@@ -17,19 +18,36 @@ const REFRESH_RATE_LIMIT = {
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
   return rateLimit(request, async () => {
+    let user_email = 'unknown';
+
     try {
       // Extract refresh token from httpOnly cookie
-      const refreshToken = request.cookies.get('refresh_token')?.value;
+      const refresh_token = request.cookies.get('refresh_token')?.value;
 
-      if (!refreshToken) {
+      if (!refresh_token) {
         return NextResponse.json(
           { error: 'No refresh token provided' },
           { status: 401 }
         );
       }
 
+      // Try to decode to get user info for logging (even if verification might fail)
+      const old_decoded = decodeToken(refresh_token);
+      if (old_decoded) {
+        user_email = old_decoded.email;
+      }
+
       // Rotate both tokens (verifies and generates new pair)
-      const { accessToken, refreshToken: newRefreshToken } = rotateTokens(refreshToken);
+      const { accessToken, refreshToken: new_refresh_token } = rotateTokens(refresh_token);
+
+      // Decode the new access token to get the jti for audit logging
+      const new_decoded = decodeToken(accessToken);
+      const new_token_id = new_decoded?.jti || 'unknown';
+
+      // Log token refresh event (non-blocking)
+      if (old_decoded) {
+        logTokenRefresh(old_decoded.id, old_decoded.email, new_token_id, request);
+      }
 
       // Build success response
       const response = NextResponse.json({
@@ -46,7 +64,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       });
 
       // Set new refresh token cookie (rotation!)
-      response.cookies.set('refresh_token', newRefreshToken, {
+      response.cookies.set('refresh_token', new_refresh_token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
@@ -57,6 +75,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return response;
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Token refresh failed';
+
+      // Log failed refresh attempt (non-blocking)
+      logTokenRefreshFailed(user_email, message, request);
 
       if (message === 'Token expired') {
         return NextResponse.json(

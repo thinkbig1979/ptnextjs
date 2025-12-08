@@ -1,6 +1,32 @@
 /**
  * Vendor Portal Authentication Middleware
  *
+ * @deprecated This module is deprecated. Use `@/lib/auth` instead.
+ *
+ * Migration guide:
+ * ```typescript
+ * // Before:
+ * import { authenticateVendorPortal, isAuthError } from '@/lib/middleware/vendor-portal-auth';
+ *
+ * // After:
+ * import { requireVendorOwnership, isAuthError } from '@/lib/auth';
+ * ```
+ *
+ * This module is maintained for backward compatibility but will be removed
+ * in a future version.
+ */
+
+// Log deprecation warning on first import
+if (typeof console !== 'undefined') {
+  console.warn(
+    '[DEPRECATED] @/lib/middleware/vendor-portal-auth is deprecated. ' +
+    'Use @/lib/auth instead. See the module documentation for migration guide.'
+  );
+}
+
+/**
+ * @deprecated Use `@/lib/auth` instead.
+ *
  * Shared utility for authenticating and authorizing vendor portal API requests
  * using Payload CMS authentication.
  *

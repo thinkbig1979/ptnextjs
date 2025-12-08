@@ -4,6 +4,10 @@ import {
   sendUserApprovedEmail,
   sendUserRejectedEmail,
 } from '../../lib/services/EmailService';
+import {
+  logAccountStatusChange,
+  logPasswordChanged,
+} from '../../lib/services/audit-service';
 
 const Users: CollectionConfig = {
   slug: 'users',
@@ -187,6 +191,56 @@ const Users: CollectionConfig = {
       },
     ],
     afterChange: [
+      // Log audit events for password and status changes
+      async ({ doc, previousDoc, operation, req }) => {
+        // Only process update operations with previous doc
+        if (operation !== 'update' || !previousDoc) {
+          return doc;
+        }
+
+        try {
+          // Log password change if password field was modified
+          // Note: We detect this by checking if tokenVersion was incremented
+          // and the status wasn't changed to suspended/rejected (which also increments)
+          const was_status = previousDoc.status;
+          const is_status = doc.status;
+          const status_revokes = ['suspended', 'rejected'].includes(is_status);
+          const status_changed = was_status !== is_status;
+
+          // If tokenVersion increased but status didn't cause it, it was a password change
+          if (
+            doc.tokenVersion > (previousDoc.tokenVersion || 0) &&
+            !(status_changed && status_revokes)
+          ) {
+            logPasswordChanged(doc.id, doc.email);
+          }
+
+          // Log status changes
+          if (status_changed) {
+            // Get admin ID from request if available
+            const admin_id = req.user?.id;
+
+            if (is_status === 'suspended') {
+              logAccountStatusChange(doc.id, doc.email, 'suspended', admin_id);
+            } else if (is_status === 'approved') {
+              logAccountStatusChange(doc.id, doc.email, 'approved', admin_id);
+            } else if (is_status === 'rejected') {
+              logAccountStatusChange(
+                doc.id,
+                doc.email,
+                'rejected',
+                admin_id,
+                doc.rejectionReason
+              );
+            }
+          }
+        } catch (error) {
+          // Non-blocking - log and continue
+          console.error('[AuditService] Failed to log audit event:', error);
+        }
+
+        return doc;
+      },
       // Send email notifications on user approval/rejection
       async ({ doc, previousDoc, operation, req }) => {
         try {

@@ -1,11 +1,23 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { decodeToken } from '@/lib/utils/jwt';
+import { logLogout } from '@/lib/services/audit-service';
 
 /**
  * POST /api/auth/logout
  *
- * Clears authentication cookies
+ * Clears authentication cookies and logs the logout event
  */
-export async function POST(): Promise<NextResponse> {
+export async function POST(request: NextRequest): Promise<NextResponse> {
+  // Try to decode the access token to log the logout event
+  const access_token = request.cookies.get('access_token')?.value;
+  if (access_token) {
+    const decoded = decodeToken(access_token);
+    if (decoded) {
+      // Log logout event (non-blocking)
+      logLogout(decoded.id, decoded.email, request);
+    }
+  }
+
   const response = NextResponse.json({
     message: 'Logout successful',
   });

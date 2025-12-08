@@ -31,6 +31,13 @@ const mockPayload = {
 
 jest.mock('payload', () => ({
   getPayload: jest.fn(() => mockPayload),
+  buildConfig: jest.fn((config) => config),
+}));
+
+// Mock the payload config to prevent buildConfig errors
+jest.mock('@/payload.config', () => ({
+  default: {},
+  __esModule: true,
 }));
 
 describe('AuditService', () => {
