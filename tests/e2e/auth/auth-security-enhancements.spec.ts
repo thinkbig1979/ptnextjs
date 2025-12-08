@@ -14,7 +14,7 @@ import { test, expect, type Page, type APIRequestContext } from '@playwright/tes
  * @see .agent-os/specs/2025-12-07-auth-security-enhancements
  */
 
-const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3001';
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 
 // Test credentials
 const TEST_ADMIN = {

@@ -16,7 +16,7 @@ test.describe('Logout Functionality - UI Elements', () => {
     test('logout endpoint should exist and respond correctly', async ({ page }) => {
       // Test the logout endpoint responds
       const response = await page.evaluate(async () => {
-        const res = await fetch('http://localhost:3001/api/auth/logout', {
+        const res = await fetch('http://localhost:3000/api/auth/logout', {
           method: 'POST',
         });
         return {
@@ -36,7 +36,7 @@ test.describe('Logout Functionality - UI Elements', () => {
       // This is a smoke test to verify the component structure exists
       // A full test would require setting up test users
 
-      await page.goto('http://localhost:3001/vendor/login');
+      await page.goto('/vendor/login');
 
       // Verify login page loads
       await expect(page.locator('h1')).toContainText('Vendor Login');
@@ -51,7 +51,7 @@ test.describe('Logout Functionality - UI Elements', () => {
   test.describe('Admin Logout UI', () => {
     test('admin page should load without errors', async ({ page }) => {
       // Navigate to admin login to verify page structure
-      await page.goto('http://localhost:3001/admin/login');
+      await page.goto('/admin/login');
 
       // Verify admin login page loads
       await expect(page.locator('h1')).toContainText('Admin Login');

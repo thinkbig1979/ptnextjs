@@ -10,8 +10,8 @@ import { test, expect } from '@playwright/test';
  * to prevent interception of Payload CMS authentication requests.
  */
 test.describe('Dual Authentication System - 401 Error Fix', () => {
-  const ADMIN_LOGIN_URL = 'http://localhost:3001/admin/login';
-  const ADMIN_URL = 'http://localhost:3001/admin';
+  const ADMIN_LOGIN_URL = 'http://localhost:3000/admin/login';
+  const ADMIN_URL = 'http://localhost:3000/admin';
 
   test.describe('Test Suite 1: Admin Panel Accessibility', () => {
     test('Admin login page loads without 401 errors', async ({ page }) => {
@@ -44,7 +44,7 @@ test.describe('Dual Authentication System - 401 Error Fix', () => {
       console.log('TEST: CRITICAL - Verifying /api/vendors does not return 401...');
 
       const result = await page.evaluate(async () => {
-        const response = await fetch('http://localhost:3001/api/vendors');
+        const response = await fetch('http://localhost:3000/api/vendors');
         return {
           status: response.status,
           statusText: response.statusText,
@@ -60,7 +60,7 @@ test.describe('Dual Authentication System - 401 Error Fix', () => {
       console.log('TEST: Verifying /api/portal/vendors routes exist...');
 
       const result = await page.evaluate(async () => {
-        const response = await fetch('http://localhost:3001/api/portal/vendors/profile');
+        const response = await fetch('http://localhost:3000/api/portal/vendors/profile');
         return {
           status: response.status,
           notFound: response.status === 404,
@@ -77,7 +77,7 @@ test.describe('Dual Authentication System - 401 Error Fix', () => {
     test('Vendor login page is functional and separate', async ({ page }) => {
       console.log('TEST: Verifying vendor portal is accessible...');
 
-      const response = await page.goto('http://localhost:3001/vendor/login', {
+      const response = await page.goto('http://localhost:3000/vendor/login', {
         waitUntil: 'domcontentloaded',
         timeout: 30000
       });
@@ -98,13 +98,13 @@ test.describe('Dual Authentication System - 401 Error Fix', () => {
       const adminOk = adminResponse?.status() === 200;
 
       // Test vendor portal
-      const vendorResponse = await page.goto('http://localhost:3001/vendor/login', { waitUntil: 'domcontentloaded' });
+      const vendorResponse = await page.goto('http://localhost:3000/vendor/login', { waitUntil: 'domcontentloaded' });
       const vendorOk = vendorResponse?.status() !== 500;
 
       // Test API routes
       const routeResult = await page.evaluate(async () => {
-        const payloadApi = await fetch('http://localhost:3001/api/vendors');
-        const portalApi = await fetch('http://localhost:3001/api/portal/vendors/profile');
+        const payloadApi = await fetch('http://localhost:3000/api/vendors');
+        const portalApi = await fetch('http://localhost:3000/api/portal/vendors/profile');
         return {
           payloadStatus: payloadApi.status,
           portalStatus: portalApi.status,

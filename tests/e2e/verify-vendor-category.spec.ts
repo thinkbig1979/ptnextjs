@@ -7,7 +7,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Vendor Category Display', () => {
   test('should display category in Quick Info section', async ({ page }) => {
     // Navigate to a vendor detail page
-    await page.goto('http://localhost:3001/vendors/nautictech-solutions');
+    await page.goto('/vendors/nautictech-solutions');
 
     // Wait for the page to load
     await page.waitForLoadState('networkidle');
@@ -38,7 +38,7 @@ test.describe('Vendor Category Display', () => {
     ];
 
     for (const vendor of vendors) {
-      await page.goto(`http://localhost:3001/vendors/${vendor.slug}`);
+      await page.goto(`/vendors/${vendor.slug}`);
       await page.waitForLoadState('networkidle');
 
       // Find the Quick Info section
@@ -55,7 +55,7 @@ test.describe('Vendor Category Display', () => {
   });
 
   test('should display tags in Specializations section', async ({ page }) => {
-    await page.goto('http://localhost:3001/vendors/nautictech-solutions');
+    await page.goto('/vendors/nautictech-solutions');
     await page.waitForLoadState('networkidle');
 
     // Find the Specializations section

@@ -10,7 +10,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Free Tier Vendor Product Restrictions', () => {
   test('should NOT show product count on free tier vendor profile', async ({ page }) => {
     // Navigate to a free tier vendor (based on the script that assigned tiers)
-    await page.goto('http://localhost:3001/vendors/free-tier-test-vendor');
+    await page.goto('/vendors/free-tier-test-vendor');
     await page.waitForLoadState('networkidle');
 
     // Check VendorHero section - should NOT have product count
@@ -22,7 +22,7 @@ test.describe('Free Tier Vendor Product Restrictions', () => {
   });
 
   test('should NOT show product count in sidebar Quick Info for free tier vendor', async ({ page }) => {
-    await page.goto('http://localhost:3001/vendors/free-tier-test-vendor');
+    await page.goto('/vendors/free-tier-test-vendor');
     await page.waitForLoadState('networkidle');
 
     // Find the Quick Info section in the sidebar
@@ -36,7 +36,7 @@ test.describe('Free Tier Vendor Product Restrictions', () => {
   });
 
   test('should NOT show Products tab for free tier vendor', async ({ page }) => {
-    await page.goto('http://localhost:3001/vendors/free-tier-test-vendor');
+    await page.goto('/vendors/free-tier-test-vendor');
     await page.waitForLoadState('networkidle');
 
     // Check that Products tab doesn't exist
@@ -53,7 +53,7 @@ test.describe('Free Tier Vendor Product Restrictions', () => {
 
   test('should show product count for Tier 2+ vendor', async ({ page }) => {
     // Navigate to a tier 2 vendor
-    await page.goto('http://localhost:3001/vendors/tier-2-professional-vendor');
+    await page.goto('/vendors/tier-2-professional-vendor');
     await page.waitForLoadState('networkidle');
 
     // Check VendorHero section - SHOULD have product count
@@ -67,7 +67,7 @@ test.describe('Free Tier Vendor Product Restrictions', () => {
   });
 
   test('should show Products tab for Tier 2+ vendor', async ({ page }) => {
-    await page.goto('http://localhost:3001/vendors/tier-2-professional-vendor');
+    await page.goto('/vendors/tier-2-professional-vendor');
     await page.waitForLoadState('networkidle');
 
     // Check that Products tab exists
@@ -83,7 +83,7 @@ test.describe('Free Tier Vendor Product Restrictions', () => {
   });
 
   test('products page should NOT show products from free tier vendors', async ({ page }) => {
-    await page.goto('http://localhost:3001/products');
+    await page.goto('/products');
     await page.waitForLoadState('networkidle');
 
     // Wait for products to load
