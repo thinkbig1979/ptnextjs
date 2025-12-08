@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { refreshAccessToken } from '@/lib/utils/jwt';
+import { rotateTokens } from '@/lib/utils/jwt';
 import { rateLimit } from '@/lib/middleware/rateLimit';
 
 // Rate limit: 10 requests per minute per IP
@@ -12,7 +12,8 @@ const REFRESH_RATE_LIMIT = {
 /**
  * POST /api/auth/refresh
  *
- * Refreshes access token using refresh token from httpOnly cookie
+ * Rotates both access and refresh tokens (TR-4: Refresh Token Rotation)
+ * Security enhancement: Each refresh invalidates the old refresh token
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
   return rateLimit(request, async () => {
@@ -27,19 +28,29 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         );
       }
 
-      // Generate new access token
-      const newAccessToken = refreshAccessToken(refreshToken);
+      // Rotate both tokens (verifies and generates new pair)
+      const { accessToken, refreshToken: newRefreshToken } = rotateTokens(refreshToken);
 
-      // Set new access token cookie
+      // Build success response
       const response = NextResponse.json({
-        message: 'Token refreshed successfully',
+        message: 'Tokens refreshed successfully',
       });
 
-      response.cookies.set('access_token', newAccessToken, {
+      // Set new access token cookie
+      response.cookies.set('access_token', accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
         maxAge: 60 * 60, // 1 hour
+        path: '/',
+      });
+
+      // Set new refresh token cookie (rotation!)
+      response.cookies.set('refresh_token', newRefreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 60 * 60 * 24 * 7, // 7 days
         path: '/',
       });
 
