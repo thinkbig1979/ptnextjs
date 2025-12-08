@@ -289,9 +289,9 @@ export function requireVendorOwnership(
         success: true,
         user: result.user,
         vendor: {
+          ...vendor,
           id: String(vendor.id),
           user: vendor_user_id,
-          ...vendor,
         },
       };
     } catch (error) {
