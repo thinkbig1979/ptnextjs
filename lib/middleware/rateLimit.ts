@@ -193,6 +193,44 @@ export async function rateLimit(
 }
 
 /**
+ * Clear all rate limit entries
+ * Only available in development/test environments
+ */
+export function clearRateLimits(): boolean {
+  if (process.env.NODE_ENV === 'production') {
+    console.warn('[RateLimit] Cannot clear rate limits in production');
+    return false;
+  }
+
+  rateLimitStore.clear();
+  console.log('[RateLimit] All rate limit entries cleared');
+  return true;
+}
+
+/**
+ * Clear rate limit for a specific IP
+ * Only available in development/test environments
+ */
+export function clearRateLimitForIp(ip: string): boolean {
+  if (process.env.NODE_ENV === 'production') {
+    console.warn('[RateLimit] Cannot clear rate limits in production');
+    return false;
+  }
+
+  // Clear all entries for this IP (regardless of config)
+  const keysToDelete: string[] = [];
+  for (const key of rateLimitStore.keys()) {
+    if (key.startsWith(`${ip}:`)) {
+      keysToDelete.push(key);
+    }
+  }
+
+  keysToDelete.forEach(key => rateLimitStore.delete(key));
+  console.log(`[RateLimit] Cleared ${keysToDelete.length} rate limit entries for IP: ${ip}`);
+  return keysToDelete.length > 0;
+}
+
+/**
  * Export for testing purposes
  */
 export const _testing = {

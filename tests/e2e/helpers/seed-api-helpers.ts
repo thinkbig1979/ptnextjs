@@ -67,20 +67,33 @@ export async function seedVendors(
   page: Page,
   vendors: VendorSeedData[]
 ): Promise<string[]> {
+  console.log(`[seedVendors] Seeding ${vendors.length} vendors...`);
+
   const response = await page.request.post('/api/test/vendors/seed', {
     data: vendors,
   });
 
+  const responseBody = await response.text();
+
   if (!response.ok()) {
-    throw new Error(`Vendor seed API failed: ${response.status()}`);
+    console.error(`[seedVendors] API failed with status ${response.status()}:`, responseBody);
+    throw new Error(`Vendor seed API failed: ${response.status()} - ${responseBody}`);
   }
 
-  const data = (await response.json()) as SeedResponse;
+  let data: SeedResponse;
+  try {
+    data = JSON.parse(responseBody) as SeedResponse;
+  } catch (parseError) {
+    console.error('[seedVendors] Failed to parse response:', responseBody);
+    throw new Error(`Failed to parse seed API response: ${responseBody}`);
+  }
 
   if (!data.success || !data.vendorIds) {
-    throw new Error(`Failed to seed vendors: ${data.error || 'Unknown error'}`);
+    console.error('[seedVendors] Seed failed:', data.error, data.errors);
+    throw new Error(`Failed to seed vendors: ${data.error || JSON.stringify(data.errors) || 'Unknown error'}`);
   }
 
+  console.log(`[seedVendors] Successfully seeded ${data.vendorIds.length} vendors`);
   return data.vendorIds;
 }
 

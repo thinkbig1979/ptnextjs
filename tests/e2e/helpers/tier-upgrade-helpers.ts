@@ -91,7 +91,23 @@ export async function seedVendorWithUpgradeRequest(
 
     console.log(`[seedVendorWithUpgradeRequest] Vendor created: ${vendorId}`);
 
-    // Submit upgrade request
+    // Login as the vendor before submitting upgrade request
+    // The tier upgrade API requires authentication
+    console.log(`[seedVendorWithUpgradeRequest] Logging in as vendor: ${vendorData.email}`);
+    const loginResponse = await page.request.post(`${BASE_URL}/api/auth/login`, {
+      data: {
+        email: vendorData.email,
+        password: vendorData.password,
+      },
+    });
+
+    if (!loginResponse.ok()) {
+      const errorText = await loginResponse.text();
+      throw new Error(`Failed to login as vendor: ${loginResponse.status()} - ${errorText}`);
+    }
+    console.log(`[seedVendorWithUpgradeRequest] Vendor logged in successfully`);
+
+    // Submit upgrade request (now authenticated)
     const result = await submitUpgradeRequest(
       page,
       vendorId,
@@ -155,7 +171,23 @@ export async function seedVendorWithDowngradeRequest(
 
     console.log(`[seedVendorWithDowngradeRequest] Vendor created: ${vendorId}`);
 
-    // Submit downgrade request
+    // Login as the vendor before submitting downgrade request
+    // The tier downgrade API requires authentication
+    console.log(`[seedVendorWithDowngradeRequest] Logging in as vendor: ${vendorData.email}`);
+    const loginResponse = await page.request.post(`${BASE_URL}/api/auth/login`, {
+      data: {
+        email: vendorData.email,
+        password: vendorData.password,
+      },
+    });
+
+    if (!loginResponse.ok()) {
+      const errorText = await loginResponse.text();
+      throw new Error(`Failed to login as vendor: ${loginResponse.status()} - ${errorText}`);
+    }
+    console.log(`[seedVendorWithDowngradeRequest] Vendor logged in successfully`);
+
+    // Submit downgrade request (now authenticated)
     const result = await submitDowngradeRequest(
       page,
       vendorId,

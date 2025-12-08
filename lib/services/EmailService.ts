@@ -84,6 +84,35 @@ interface TierFeatures {
 }
 
 /**
+ * Check if emails should be sent
+ *
+ * Returns false if:
+ * - DISABLE_EMAILS environment variable is set to 'true'
+ * - E2E_TEST environment variable is set (Playwright sets this)
+ * - Running in test environment with NODE_ENV=test
+ *
+ * This prevents test runs from sending real emails.
+ */
+function shouldSendEmails(): boolean {
+  // Explicit disable flag
+  if (process.env.DISABLE_EMAILS === 'true') {
+    return false;
+  }
+
+  // E2E test environment (Playwright)
+  if (process.env.E2E_TEST === 'true' || process.env.PLAYWRIGHT_TEST === 'true') {
+    return false;
+  }
+
+  // Jest/Vitest test environment
+  if (process.env.NODE_ENV === 'test') {
+    return false;
+  }
+
+  return true;
+}
+
+/**
  * Initialize Resend client with API key
  */
 function getResendClient(): Resend {
@@ -96,11 +125,25 @@ function getResendClient(): Resend {
 
 /**
  * Validate required email configuration
+ *
+ * Also checks if emails are disabled for testing.
+ * Returns skipped=true if emails should not be sent.
  */
 function validateEmailConfig(): {
   valid: boolean;
   errors: string[];
+  skipped?: boolean;
 } {
+  // Check if emails are disabled (test environment)
+  if (!shouldSendEmails()) {
+    console.log('[EmailService] Emails disabled - test environment detected');
+    return {
+      valid: false,
+      errors: ['Emails disabled in test environment'],
+      skipped: true,
+    };
+  }
+
   const errors: string[] = [];
 
   if (!process.env.RESEND_API_KEY) {
@@ -234,6 +277,10 @@ export async function sendVendorRegisteredEmail(
   try {
     const config = validateEmailConfig();
     if (!config.valid) {
+      // If skipped due to test environment, return success
+      if (config.skipped) {
+        return { success: true };
+      }
       console.error('Email configuration invalid:', config.errors);
       return {
         success: false,
@@ -303,6 +350,10 @@ export async function sendProfilePublishedEmail(
   try {
     const config = validateEmailConfig();
     if (!config.valid) {
+      // If skipped due to test environment, return success
+      if (config.skipped) {
+        return { success: true };
+      }
       console.error('Email configuration invalid:', config.errors);
       return {
         success: false,
@@ -372,6 +423,10 @@ export async function sendVendorRejectedEmail(
   try {
     const config = validateEmailConfig();
     if (!config.valid) {
+      // If skipped due to test environment, return success
+      if (config.skipped) {
+        return { success: true };
+      }
       console.error('Email configuration invalid:', config.errors);
       return {
         success: false,
@@ -435,6 +490,10 @@ export async function sendTierUpgradeRequestedEmail(
   try {
     const config = validateEmailConfig();
     if (!config.valid) {
+      // If skipped due to test environment, return success
+      if (config.skipped) {
+        return { success: true };
+      }
       console.error('Email configuration invalid:', config.errors);
       return {
         success: false,
@@ -505,6 +564,10 @@ export async function sendTierUpgradeApprovedEmail(
   try {
     const config = validateEmailConfig();
     if (!config.valid) {
+      // If skipped due to test environment, return success
+      if (config.skipped) {
+        return { success: true };
+      }
       console.error('Email configuration invalid:', config.errors);
       return {
         success: false,
@@ -580,6 +643,10 @@ export async function sendTierUpgradeRejectedEmail(
   try {
     const config = validateEmailConfig();
     if (!config.valid) {
+      // If skipped due to test environment, return success
+      if (config.skipped) {
+        return { success: true };
+      }
       console.error('Email configuration invalid:', config.errors);
       return {
         success: false,
@@ -651,6 +718,10 @@ export async function sendTierDowngradeRequestedEmail(
   try {
     const config = validateEmailConfig();
     if (!config.valid) {
+      // If skipped due to test environment, return success
+      if (config.skipped) {
+        return { success: true };
+      }
       console.error('Email configuration invalid:', config.errors);
       return {
         success: false,
@@ -723,6 +794,10 @@ export async function sendTierDowngradeApprovedEmail(
   try {
     const config = validateEmailConfig();
     if (!config.valid) {
+      // If skipped due to test environment, return success
+      if (config.skipped) {
+        return { success: true };
+      }
       console.error('Email configuration invalid:', config.errors);
       return {
         success: false,
@@ -801,6 +876,10 @@ export async function sendTierDowngradeRejectedEmail(
   try {
     const config = validateEmailConfig();
     if (!config.valid) {
+      // If skipped due to test environment, return success
+      if (config.skipped) {
+        return { success: true };
+      }
       console.error('Email configuration invalid:', config.errors);
       return {
         success: false,
@@ -872,6 +951,10 @@ export async function sendUserApprovedEmail(
   try {
     const config = validateEmailConfig();
     if (!config.valid) {
+      // If skipped due to test environment, return success
+      if (config.skipped) {
+        return { success: true };
+      }
       console.error('Email configuration invalid:', config.errors);
       return {
         success: false,
@@ -934,6 +1017,10 @@ export async function sendUserRejectedEmail(
   try {
     const config = validateEmailConfig();
     if (!config.valid) {
+      // If skipped due to test environment, return success
+      if (config.skipped) {
+        return { success: true };
+      }
       console.error('Email configuration invalid:', config.errors);
       return {
         success: false,
@@ -1000,6 +1087,10 @@ export async function sendProfileSubmittedAdminEmail(
   try {
     const config = validateEmailConfig();
     if (!config.valid) {
+      // If skipped due to test environment, return success
+      if (config.skipped) {
+        return { success: true };
+      }
       console.error('Email configuration invalid:', config.errors);
       return {
         success: false,
@@ -1078,6 +1169,10 @@ export async function sendProfileSubmittedVendorEmail(
   try {
     const config = validateEmailConfig();
     if (!config.valid) {
+      // If skipped due to test environment, return success
+      if (config.skipped) {
+        return { success: true };
+      }
       console.error('Email configuration invalid:', config.errors);
       return {
         success: false,
