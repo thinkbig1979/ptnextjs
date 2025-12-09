@@ -148,27 +148,11 @@ export async function fillRegistrationForm(
 ): Promise<void> {
   console.log(`[Registration] Filling form for: ${data.email}`);
 
+  // Simplified registration form - only 4 fields + terms checkbox
   await page.getByPlaceholder('vendor@example.com').fill(data.email);
   await page.getByPlaceholder('Your Company Ltd').fill(data.companyName);
-  await page.getByPlaceholder('John Smith').fill(data.contactName || 'Test User');
-  await page.getByPlaceholder('+1 (555) 123-4567').fill(data.contactPhone || '+1-555-0123');
-
-  if (data.website) {
-    const websiteInput = page.getByPlaceholder('https://example.com');
-    if (await websiteInput.isVisible()) {
-      await websiteInput.fill(data.website);
-    }
-  }
-
   await page.getByPlaceholder('Enter strong password').fill(data.password);
   await page.getByPlaceholder('Re-enter password').fill(data.password);
-
-  if (data.description) {
-    const descInput = page.getByPlaceholder('Tell us about your company...');
-    if (await descInput.isVisible()) {
-      await descInput.fill(data.description);
-    }
-  }
 
   // Accept terms
   await page.getByRole('checkbox', { name: /agree.*terms/i }).check();
