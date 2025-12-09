@@ -141,8 +141,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           );
         }
 
-        // Verify hCaptcha if configured
-        if (process.env.HCAPTCHA_SECRET_KEY) {
+        // Verify hCaptcha if configured (skip if DISABLE_CAPTCHA is set for testing)
+        const captchaDisabled = process.env.DISABLE_CAPTCHA === 'true';
+        if (process.env.HCAPTCHA_SECRET_KEY && !captchaDisabled) {
           if (!data.captchaToken) {
             return NextResponse.json(
               {

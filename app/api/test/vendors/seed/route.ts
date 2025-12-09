@@ -81,6 +81,9 @@ export async function POST(request: NextRequest): Promise<NextResponse<SeedRespo
     const payload = await getPayload({ config });
     const createdVendorIds: string[] = [];
     const errors: Record<string, string> = {};
+    // Track which vendors already existed (for success response)
+    const existingVendorIds: string[] = [];
+
     // Create each vendor
     for (let i = 0; i < vendors.length; i++) {
       const vendorData = vendors[i] as TestVendorInput;
@@ -105,6 +108,31 @@ export async function POST(request: NextRequest): Promise<NextResponse<SeedRespo
         }
         // Use explicit slug if provided, otherwise generate from company name
         const slug = vendorData.slug || generateSlug(vendorData.companyName);
+
+        // Check if user already exists with this email
+        const existingUsers = await payload.find({
+          collection: 'users',
+          where: { email: { equals: vendorData.email } },
+          limit: 1,
+        });
+
+        if (existingUsers.docs.length > 0) {
+          // User exists - check if vendor also exists
+          const existingUser = existingUsers.docs[0];
+          const existingVendors = await payload.find({
+            collection: 'vendors',
+            where: { user: { equals: existingUser.id } },
+            limit: 1,
+          });
+
+          if (existingVendors.docs.length > 0) {
+            // Both user and vendor exist - skip creation, add to existing list
+            existingVendorIds.push(existingVendors.docs[0].id as string);
+            console.log(`[Vendor Seed] Vendor already exists: ${vendorData.companyName} (${vendorData.email})`);
+            continue;
+          }
+        }
+
         // First, create the user account (pass plain password - Payload hashes it)
         const createdUser = await payload.create({
           collection: 'users',
@@ -164,17 +192,23 @@ export async function POST(request: NextRequest): Promise<NextResponse<SeedRespo
         console.error('[Vendor Seed] Cache invalidation failed:', cacheError);
       }
     }
-    // Return response
+    // Return response - success if all vendors exist (created or pre-existing)
+    const totalVendors = createdVendorIds.length + existingVendorIds.length;
     const hasErrors = Object.keys(errors).length > 0;
+    const allVendorsAccountedFor = totalVendors === vendors.length;
+
     return NextResponse.json(
       {
-        success: !hasErrors || createdVendorIds.length > 0,
+        success: allVendorsAccountedFor || createdVendorIds.length > 0,
         vendorIds: createdVendorIds,
-        count: createdVendorIds.length,
+        existingVendorIds: existingVendorIds,
+        created: createdVendorIds.length,
+        existing: existingVendorIds.length,
+        count: totalVendors,
         ...(hasErrors && { errors }),
       },
       {
-        status: hasErrors && createdVendorIds.length === 0 ? 400 : 200,
+        status: allVendorsAccountedFor ? 200 : (hasErrors && createdVendorIds.length === 0 ? 400 : 200),
       }
     );
   } catch (error) {

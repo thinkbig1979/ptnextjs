@@ -148,8 +148,9 @@ export function VendorRegistrationForm() {
    * Handle form submission
    */
   const onSubmit = async (data: RegistrationFormData) => {
-    // Check hCaptcha if configured
-    if (process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY && !captchaToken) {
+    // Check hCaptcha if configured (skip in test mode)
+    const captchaDisabled = process.env.NEXT_PUBLIC_DISABLE_CAPTCHA === 'true';
+    if (process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY && !captchaDisabled && !captchaToken) {
       toast({
         title: 'Verification Required',
         description: 'Please complete the captcha challenge',
@@ -389,7 +390,8 @@ export function VendorRegistrationForm() {
         />
 
         {/* hCaptcha - Always use light theme for consistency across light/dark modes */}
-        {process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY && (
+        {/* Skip captcha in test mode (NEXT_PUBLIC_DISABLE_CAPTCHA=true) */}
+        {process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY && process.env.NEXT_PUBLIC_DISABLE_CAPTCHA !== 'true' && (
           <div className="flex justify-center" data-testid="hcaptcha-container">
             <HCaptcha
               sitekey={process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY}
@@ -407,7 +409,7 @@ export function VendorRegistrationForm() {
           className="w-full"
           disabled={
             isSubmitting ||
-            (!!process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY && !captchaToken)
+            (!!process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY && process.env.NEXT_PUBLIC_DISABLE_CAPTCHA !== 'true' && !captchaToken)
           }
           aria-label="Register"
         >
