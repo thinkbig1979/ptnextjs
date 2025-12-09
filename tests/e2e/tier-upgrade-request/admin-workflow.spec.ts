@@ -1,7 +1,7 @@
 import { test, expect, Page } from '@playwright/test';
 import { seedVendors } from '../helpers/seed-api-helpers';
 
-const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || `${BASE_URL}';
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 
 async function createUpgradeRequest(page: Page, vendorId: string, tier: string = 'tier1') {
   const resp = await page.request.post(`${BASE_URL}/api/portal/vendors/${vendorId}/tier-upgrade-request`, { data: { requestedTier: tier, vendorNotes: 'Test request' } });

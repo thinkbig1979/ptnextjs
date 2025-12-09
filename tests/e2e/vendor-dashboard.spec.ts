@@ -6,7 +6,7 @@ import { test, expect, type Page } from '@playwright/test';
 
 const TEST_VENDOR_EMAIL = 'testvendor@test.com';
 const TEST_VENDOR_PASSWORD = '123';
-const BASE_URL = `${BASE_URL}';
+const BASE_URL = 'http://localhost:3000';
 
 test.describe.serial('TEST-E2E-DASHBOARD: Vendor Dashboard Editing Workflow', () => {
 

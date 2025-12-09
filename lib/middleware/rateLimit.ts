@@ -114,6 +114,11 @@ export async function rateLimit(
   handler: () => Promise<NextResponse>,
   options?: RateLimitOptions
 ): Promise<NextResponse> {
+  // Allow completely disabling rate limiting in test environments
+  if (process.env.DISABLE_RATE_LIMIT === 'true') {
+    return handler();
+  }
+
   // Start cleanup timer on first use
   startCleanupTimer();
 

@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { registerVendor, generateUniqueVendorData } from '../helpers/vendor-onboarding-helpers';
 import { seedVendors } from '../helpers/seed-api-helpers';
 
-const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || `${BASE_URL}';
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 
 test.describe('VENDOR-ADMIN-P1: Admin Approval Workflow', () => {
   test.setTimeout(45000);

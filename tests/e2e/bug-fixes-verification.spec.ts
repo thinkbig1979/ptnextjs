@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Bug Fixes Verification', () => {
   test.beforeEach(async ({ page }) => {
     // Start from the home page
-    await page.goto(`${BASE_URL}');
+    await page.goto('http://localhost:3000');
   });
 
   test('should not have company info error in console', async ({ page }) => {

@@ -1,7 +1,7 @@
 import { test, expect, Page } from '@playwright/test';
 import { seedVendors } from '../helpers/seed-api-helpers';
 
-const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || `${BASE_URL}';
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 
 /**
  * Login helper for vendor users

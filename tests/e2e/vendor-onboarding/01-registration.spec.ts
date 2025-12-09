@@ -5,7 +5,7 @@ import {
   registerVendor,
 } from '../helpers/vendor-onboarding-helpers';
 
-const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || `${BASE_URL}';
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 
 test.describe('VENDOR-REG-P1: Registration Workflow', () => {
   test.setTimeout(30000);

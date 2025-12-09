@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 const TEST_VENDOR_EMAIL = 'testvendor@test.com';
 const TEST_VENDOR_PASSWORD = '123';
-const BASE_URL = `${BASE_URL}';
+const BASE_URL = 'http://localhost:3000';
 
 test.describe('Verify Single Form Instance', () => {
 

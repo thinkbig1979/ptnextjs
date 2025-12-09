@@ -9,7 +9,7 @@ import { test, expect } from '@playwright/test';
  * 3. The new image is displayed on both the /blog page and individual post page
  */
 
-const API_BASE = process.env.NEXT_PUBLIC_SERVER_URL || `${BASE_URL}';
+const API_BASE = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000';
 
 test.describe('Blog Image Cache Invalidation', () => {
   test('should display correct featured image after CMS update', async ({ page, request }) => {

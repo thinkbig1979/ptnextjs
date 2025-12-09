@@ -25,6 +25,7 @@ const STANDARD_TEST_VENDORS = [
     tier: 'free' as const,
     status: 'approved' as const,
     description: 'Free tier test vendor for E2E tests',
+    slug: 'testvendor-free', // Explicit slug matching test expectations
   },
   {
     companyName: 'Tier 1 Test Vendor',
@@ -33,6 +34,7 @@ const STANDARD_TEST_VENDORS = [
     tier: 'tier1' as const,
     status: 'approved' as const,
     description: 'Tier 1 test vendor for E2E tests',
+    slug: 'testvendor-tier1', // Explicit slug matching test expectations
   },
   {
     companyName: 'Tier 2 Professional Vendor',
@@ -41,6 +43,7 @@ const STANDARD_TEST_VENDORS = [
     tier: 'tier2' as const,
     status: 'approved' as const,
     description: 'Tier 2 test vendor for E2E tests',
+    slug: 'testvendor-tier2', // Explicit slug matching test expectations
   },
   {
     companyName: 'Tier 3 Premium Vendor',
@@ -49,6 +52,7 @@ const STANDARD_TEST_VENDORS = [
     tier: 'tier3' as const,
     status: 'approved' as const,
     description: 'Tier 3 test vendor for E2E tests',
+    slug: 'testvendor-tier3', // Explicit slug matching test expectations
   },
   {
     companyName: 'Mobile Test Vendor',
@@ -57,6 +61,7 @@ const STANDARD_TEST_VENDORS = [
     tier: 'tier1' as const,
     status: 'approved' as const,
     description: 'Mobile test vendor for E2E tests',
+    slug: 'testvendor-mobile', // Explicit slug matching test expectations
   },
   {
     companyName: 'Tablet Test Vendor',
@@ -65,6 +70,7 @@ const STANDARD_TEST_VENDORS = [
     tier: 'tier1' as const,
     status: 'approved' as const,
     description: 'Tablet test vendor for E2E tests',
+    slug: 'testvendor-tablet', // Explicit slug matching test expectations
   },
 ];
 

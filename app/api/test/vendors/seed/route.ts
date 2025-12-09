@@ -14,6 +14,7 @@ interface TestVendorInput {
   companyName: string;
   email: string;
   password: string;
+  slug?: string; // Optional explicit slug - if not provided, auto-generated from companyName
   tier?: 'free' | 'tier1' | 'tier2' | 'tier3';
   description?: string;
   contactPhone?: string;
@@ -102,8 +103,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<SeedRespo
           errors[`vendor_${i}_${vendorData.companyName}`] = 'Password must be at least 12 characters long';
           continue;
         }
-        // Generate slug
-        const slug = generateSlug(vendorData.companyName);
+        // Use explicit slug if provided, otherwise generate from company name
+        const slug = vendorData.slug || generateSlug(vendorData.companyName);
         // First, create the user account (pass plain password - Payload hashes it)
         const createdUser = await payload.create({
           collection: 'users',
