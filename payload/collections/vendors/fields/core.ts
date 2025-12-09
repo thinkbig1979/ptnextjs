@@ -6,7 +6,7 @@
  */
 
 import type { Field } from 'payload';
-import { isAdmin } from '../../access/rbac';
+import { isAdminFieldAccess } from '../../../access/rbac';
 import { adminOnlyUpdateAccess } from '../access/tier-access';
 
 export const coreFields: Field[] = [
@@ -23,8 +23,7 @@ export const coreFields: Field[] = [
       description: 'Associated user account',
     },
     access: {
-      // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
-      update: isAdmin, // Only admins can change user relationship
+      update: isAdminFieldAccess, // Only admins can change user relationship
     },
   },
 
@@ -45,8 +44,7 @@ export const coreFields: Field[] = [
       description: 'Subscription tier determines available features',
     },
     access: {
-      // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
-      update: isAdmin, // Only admins can change tier
+      update: isAdminFieldAccess, // Only admins can change tier
     },
   },
 

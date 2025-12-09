@@ -17,7 +17,6 @@ export const tier3PromotionFields: Field[] = [
     },
     access: {
       read: publicReadAccess,
-      // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
       update: tier3UpdateAccess,
     },
   },
@@ -31,7 +30,6 @@ export const tier3PromotionFields: Field[] = [
     },
     access: {
       read: publicReadAccess,
-      // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
       update: tier3UpdateAccess,
     },
   },
@@ -45,7 +43,6 @@ export const tier3PromotionFields: Field[] = [
     },
     access: {
       read: publicReadAccess,
-      // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
       update: tier3UpdateAccess,
     },
   },
@@ -59,7 +56,6 @@ export const tier3PromotionFields: Field[] = [
     },
     access: {
       read: publicReadAccess,
-      // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
       update: tier3UpdateAccess,
     },
   },
@@ -73,7 +69,6 @@ export const tier3PromotionFields: Field[] = [
     },
     access: {
       read: publicReadAccess,
-      // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
       update: tier3UpdateAccess,
     },
   },
@@ -87,7 +82,6 @@ export const tier3PromotionFields: Field[] = [
     },
     access: {
       read: publicReadAccess,
-      // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
       update: tier3UpdateAccess,
     },
   },
@@ -101,7 +95,6 @@ export const tier3PromotionFields: Field[] = [
     },
     access: {
       read: publicReadAccess,
-      // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
       update: tier3UpdateAccess,
     },
   },

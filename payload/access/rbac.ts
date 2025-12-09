@@ -1,4 +1,16 @@
-import type { Access } from 'payload';
+import type { Access, FieldAccess } from 'payload';
+
+/**
+ * Field-level access functions
+ * These return boolean only (no Where queries) for use in field access
+ */
+
+/**
+ * Field-level admin check - returns boolean for field access
+ */
+export const isAdminFieldAccess: FieldAccess = ({ req: { user } }) => {
+  return user?.role === 'admin';
+};
 
 /**
  * Check if user has admin role

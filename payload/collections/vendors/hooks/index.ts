@@ -16,9 +16,10 @@ export const afterCreateHook: CollectionAfterChangeHook = async ({ doc, req, ope
   if (operation === 'create') {
     // Send registration email to admin
     await sendVendorRegisteredEmail({
-      vendorName: doc.companyName,
-      vendorEmail: doc.contactEmail,
-      vendorId: doc.id,
+      companyName: doc.companyName,
+      contactEmail: doc.contactEmail,
+      tier: doc.tier || 'free',
+      vendorId: String(doc.id),
     });
   }
 };
@@ -41,19 +42,24 @@ export const afterChangeHook: CollectionAfterChangeHook = async ({
   // Registration approved
   if (prevStatus === 'pending' && newStatus === 'approved') {
     await sendProfilePublishedEmail({
-      vendorName: doc.companyName,
-      vendorEmail: doc.contactEmail,
-      profileUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/vendors/${doc.slug}`,
+      companyName: doc.companyName,
+      contactEmail: doc.contactEmail,
+      tier: doc.tier || 'free',
+      vendorId: String(doc.id),
     });
   }
 
   // Registration rejected
   if (prevStatus === 'pending' && newStatus === 'rejected') {
-    await sendVendorRejectedEmail({
-      vendorName: doc.companyName,
-      vendorEmail: doc.contactEmail,
-      rejectionReason: doc.rejectionReason || 'No reason provided',
-    });
+    await sendVendorRejectedEmail(
+      {
+        companyName: doc.companyName,
+        contactEmail: doc.contactEmail,
+        tier: doc.tier || 'free',
+        vendorId: String(doc.id),
+      },
+      doc.rejectionReason || 'No reason provided'
+    );
   }
 
   // Published status changed
@@ -61,9 +67,10 @@ export const afterChangeHook: CollectionAfterChangeHook = async ({
   const newPublished = doc.published;
   if (!prevPublished && newPublished && doc.registrationStatus === 'approved') {
     await sendProfilePublishedEmail({
-      vendorName: doc.companyName,
-      vendorEmail: doc.contactEmail,
-      profileUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/vendors/${doc.slug}`,
+      companyName: doc.companyName,
+      contactEmail: doc.contactEmail,
+      tier: doc.tier || 'free',
+      vendorId: String(doc.id),
     });
   }
 };

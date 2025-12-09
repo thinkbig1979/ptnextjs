@@ -7,7 +7,7 @@
 
 import type { Field } from 'payload';
 import { lexicalEditor } from '@payloadcms/richtext-lexical';
-import { isAdmin } from '../../access/rbac';
+import { isAdminFieldAccess } from '../../../access/rbac';
 
 export const metadataFields: Field[] = [
   // Publishing and Status
@@ -20,8 +20,7 @@ export const metadataFields: Field[] = [
       description: 'Publish this vendor profile (admin only)',
     },
     access: {
-      // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
-      update: isAdmin, // Only admins can publish
+      update: isAdminFieldAccess, // Only admins can publish
     },
   },
   {
@@ -33,8 +32,7 @@ export const metadataFields: Field[] = [
       description: 'Feature this vendor on homepage (admin only)',
     },
     access: {
-      // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
-      update: isAdmin, // Only admins can feature vendors
+      update: isAdminFieldAccess, // Only admins can feature vendors
     },
   },
   {
@@ -60,8 +58,7 @@ export const metadataFields: Field[] = [
       description: 'Vendor registration approval status',
     },
     access: {
-      // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
-      update: isAdmin, // Only admins can change registration status
+      update: isAdminFieldAccess, // Only admins can change registration status
     },
   },
   {
@@ -74,8 +71,7 @@ export const metadataFields: Field[] = [
       condition: (data) => data?.registrationStatus === 'rejected',
     },
     access: {
-      // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
-      update: isAdmin, // Only admins can set rejection reason
+      update: isAdminFieldAccess, // Only admins can set rejection reason
     },
   },
 
@@ -115,9 +111,8 @@ export const metadataFields: Field[] = [
       description: 'Internal admin notes (not visible to vendor or public)',
     },
     access: {
-      read: isAdmin,
-      // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
-      update: isAdmin,
+      read: isAdminFieldAccess,
+      update: isAdminFieldAccess,
     },
   },
 ];

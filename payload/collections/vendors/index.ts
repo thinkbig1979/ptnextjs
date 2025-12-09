@@ -6,7 +6,7 @@
  */
 
 import type { CollectionConfig } from 'payload';
-import { isAdmin } from '../access/rbac';
+import { isAdmin } from '../../access/rbac';
 
 // Field groups
 import { coreFields } from './fields/core';

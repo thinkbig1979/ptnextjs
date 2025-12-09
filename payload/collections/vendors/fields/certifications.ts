@@ -15,7 +15,6 @@ export const certificationsField: Field = {
   },
   access: {
     read: publicReadAccess,
-    // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
     update: tier1UpdateAccess,
   },
   fields: [

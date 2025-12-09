@@ -17,7 +17,6 @@ export const tier2Fields: Field[] = [
     },
     access: {
       read: publicReadAccess,
-      // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
       update: ({ req: { user } }) => user?.role === 'admin',
     },
   },
