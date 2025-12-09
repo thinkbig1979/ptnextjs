@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { TEST_VENDORS } from './helpers/test-vendors';
 
 /**
  * Enhanced Vendor Dashboard E2E Tests
@@ -7,9 +8,9 @@ import { test, expect } from '@playwright/test';
  * Tests cover authentication, UI components, tier-based features, and user interactions.
  */
 
-// Test credentials from temp/creds.md
-const TEST_VENDOR_EMAIL = 'testvendor@example.com';
-const TEST_VENDOR_PASSWORD = '123';
+// Test credentials from seeded test vendors
+const TEST_VENDOR_EMAIL = TEST_VENDORS.tier1.email;
+const TEST_VENDOR_PASSWORD = TEST_VENDORS.tier1.password;
 
 test.describe('Enhanced Vendor Dashboard', () => {
   test.beforeEach(async ({ page }) => {

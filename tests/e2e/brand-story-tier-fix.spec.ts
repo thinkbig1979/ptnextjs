@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { TEST_VENDORS } from './helpers/test-vendors';
 
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 
@@ -9,8 +10,8 @@ test.describe('Brand Story Tier Access Fix Verification', () => {
     // Step 1: Login
     console.log('Step 1: Login as testvendor...');
     await page.goto(`${BASE_URL}/vendor/login`);
-    await page.getByPlaceholder('vendor@example.com').fill('testvendor@example.com');
-    await page.getByPlaceholder('Enter your password').fill('123');
+    await page.getByPlaceholder('vendor@example.com').fill(TEST_VENDORS.tier1.email);
+    await page.getByPlaceholder('Enter your password').fill(TEST_VENDORS.tier1.password);
     await page.getByRole('button', { name: /login/i }).click();
     await page.waitForURL(/\/vendor\/dashboard/, { timeout: 10000 });
     console.log('[OK] Logged in successfully\n');

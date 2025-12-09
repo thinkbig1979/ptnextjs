@@ -1,8 +1,11 @@
 import { test, expect } from '@playwright/test';
+import { TEST_VENDORS } from './helpers/test-vendors';
+
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 
 const TEST_VENDOR = {
-  email: 'testvendor@example.com',
-  password: '123',
+  email: TEST_VENDORS.tier1.email,
+  password: TEST_VENDORS.tier1.password,
 };
 
 test.describe('Verify Form Save Fix', () => {

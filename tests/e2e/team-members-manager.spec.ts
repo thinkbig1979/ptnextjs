@@ -1,9 +1,10 @@
 import { test, expect } from '@playwright/test';
+import { TEST_VENDORS } from './helpers/test-vendors';
 
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 const CREDENTIALS = {
-  email: 'testvendor@example.com',
-  password: '123',
+  email: TEST_VENDORS.tier2.email,
+  password: TEST_VENDORS.tier2.password,
 };
 
 test.describe('TeamMembersManager Component', () => {

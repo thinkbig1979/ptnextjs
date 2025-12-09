@@ -1,8 +1,9 @@
 import { test, expect } from '@playwright/test';
+import { TEST_VENDORS } from './helpers/test-vendors';
 
 test.describe('PromotionPackForm Component Tests', () => {
-  const TEST_VENDOR_EMAIL = 'testvendor@example.com';
-  const TEST_VENDOR_PASSWORD = '123';
+  const TEST_VENDOR_EMAIL = TEST_VENDORS.tier3.email;
+  const TEST_VENDOR_PASSWORD = TEST_VENDORS.tier3.password;
 
   test.beforeEach(async ({ page }) => {
     await page.goto('/vendor/login');

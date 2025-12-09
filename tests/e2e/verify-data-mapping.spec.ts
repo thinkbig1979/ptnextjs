@@ -1,7 +1,9 @@
 import { test, expect } from '@playwright/test';
 import { exec } from 'child_process';
 import { promisify } from 'util';
+import { TEST_VENDORS } from './helpers/test-vendors';
 
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 const execAsync = promisify(exec);
 
 test.describe('Data Mapping Verification', () => {
@@ -16,8 +18,8 @@ test.describe('Data Mapping Verification', () => {
 
     // Login
     await page.goto(`${BASE_URL}/vendor/login`);
-    await page.fill('input[type="email"]', 'testvendor@example.com');
-    await page.fill('input[type="password"]', 'testpassword');
+    await page.fill('input[type="email"]', TEST_VENDORS.tier1.email);
+    await page.fill('input[type="password"]', TEST_VENDORS.tier1.password);
     await page.click('button[type="submit"]');
 
     // Wait for dashboard

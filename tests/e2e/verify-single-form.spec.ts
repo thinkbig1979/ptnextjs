@@ -1,8 +1,9 @@
 import { test, expect } from '@playwright/test';
+import { TEST_VENDORS } from './helpers/test-vendors';
 
-const TEST_VENDOR_EMAIL = 'testvendor@example.com';
-const TEST_VENDOR_PASSWORD = '123';
-const BASE_URL = 'http://localhost:3000';
+const TEST_VENDOR_EMAIL = TEST_VENDORS.tier1.email;
+const TEST_VENDOR_PASSWORD = TEST_VENDORS.tier1.password;
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 
 test.describe('Verify Single Form Instance', () => {
 
