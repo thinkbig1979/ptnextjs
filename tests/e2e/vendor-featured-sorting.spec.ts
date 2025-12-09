@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
 
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
+
 test.describe('Featured Vendors Sorting', () => {
   test('should display featured vendors at the top of the listing', async ({ page }) => {
     await page.goto(`${BASE_URL}/vendors`);

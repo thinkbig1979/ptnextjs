@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
 
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
+
 test.describe('Payload CMS Admin Panel', () => {
   test('should load /admin route without 500 error', async ({ page }) => {
     // Navigate to admin panel
@@ -18,7 +20,9 @@ test.describe('Payload CMS Admin Panel', () => {
     const bodyText = await page.textContent('body');
     expect(bodyText).not.toContain('Cannot destructure property');
     expect(bodyText).not.toContain('TypeError');
-    expect(bodyText).not.toContain('500');
+    // Check for HTTP 500 error indicators (not just "500" which appears in CSS)
+    expect(bodyText).not.toContain('Internal Server Error');
+    expect(bodyText).not.toContain('500 Error');
   });
 
   test('should load /admin/login route successfully', async ({ page }) => {

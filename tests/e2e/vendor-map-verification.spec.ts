@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
 
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
+
 test.describe('Vendor Map - Final Verification', () => {
   test('should display complete functional map with tiles and markers', async ({ page }) => {
     const consoleMessages: { type: string; text: string }[] = [];

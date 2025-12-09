@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
 
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
+
 test.describe('Location Search - Nantes France Debug', () => {
   test('should debug Nantes search issue', async ({ page }) => {
     // Listen to console messages

@@ -14,6 +14,8 @@ import { test, expect } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
 
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
+
 test.describe('Vendor Registration Integration', () => {
   const testEmail = `vendor-${Date.now()}@example.com`;
   const testCompany = `Test Company ${Date.now()}`;

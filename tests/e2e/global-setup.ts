@@ -179,7 +179,14 @@ async function seedTestVendors(baseURL: string): Promise<boolean> {
     const data = await response.json();
 
     if (response.ok && data.success) {
-      console.log(`[Global Setup] Seeded ${data.count || data.vendorIds?.length || 0} vendors`);
+      // Report what happened
+      if (data.existing > 0 && data.created > 0) {
+        console.log(`[Global Setup] Created ${data.created} vendors, ${data.existing} already existed`);
+      } else if (data.existing > 0) {
+        console.log(`[Global Setup] All ${data.existing} test vendors already exist (OK)`);
+      } else {
+        console.log(`[Global Setup] Seeded ${data.created || data.count || 0} vendors`);
+      }
       return true;
     }
 
@@ -187,7 +194,11 @@ async function seedTestVendors(baseURL: string): Promise<boolean> {
     if (data.errors) {
       const errorMessages = Object.values(data.errors) as string[];
       const allDuplicates = errorMessages.every(
-        (msg: string) => msg.includes('duplicate') || msg.includes('already exists') || msg.includes('unique')
+        (msg: string) =>
+          msg.includes('duplicate') ||
+          msg.includes('already exists') ||
+          msg.includes('unique') ||
+          msg.includes('email') // Payload returns "field is invalid: email" for duplicate emails
       );
 
       if (allDuplicates) {
