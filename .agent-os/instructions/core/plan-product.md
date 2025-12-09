@@ -10,7 +10,7 @@ encoding: UTF-8
 
 ## Overview
 
-Generate product docs for new projects: mission, tech-stack and roadmap files for AI agent consumption.
+Generate product docs for new projects: mission, tech-stack, roadmap for AI agent consumption.
 
 <pre_flight_check>
   EXECUTE: @.agent-os/instructions/meta/pre-flight.md
@@ -20,25 +20,21 @@ Generate product docs for new projects: mission, tech-stack and roadmap files fo
 
 <step number="0" name="detect_or_set_agent_os_root">
 
-### Step 0: Detect or Set Agent OS Root Directory
-
-Determine where to create the .agent-os directory, checking for existing installations in monorepo environments.
+### Step 0: Detect or Set Agent OS Root
 
 <detection_logic>
-  SEARCH for existing .agent-os directory:
-    1. Check current working directory for .agent-os/
-    2. If not found, walk up parent directories to check for existing .agent-os/
-    3. Store the result
+  SEARCH for .agent-os/:
+  1. Check current directory
+  2. Walk up parents
 
-  IF existing .agent-os found in parent directory:
-    SET AGENT_OS_ROOT = directory containing the existing .agent-os
-    INFORM user: "Found existing .agent-os at {AGENT_OS_ROOT}/.agent-os/
-                 Product files will be created there."
+  IF existing .agent-os in parent:
+    SET AGENT_OS_ROOT = parent directory
+    INFORM: "Found .agent-os at {ROOT}/.agent-os/ - files created there"
   ELSE:
-    SET AGENT_OS_ROOT = current working directory
-    INFORM user: "Creating new .agent-os installation in current directory."
+    SET AGENT_OS_ROOT = current directory
+    INFORM: "Creating new .agent-os in current directory"
 
-  USE AGENT_OS_ROOT as the base path for ALL subsequent file operations
+  USE AGENT_OS_ROOT for ALL file operations
 </detection_logic>
 
 </step>
@@ -47,24 +43,23 @@ Determine where to create the .agent-os directory, checking for existing install
 
 ### Step 1: Gather User Input
 
-Use the context-fetcher subagent to collect all required inputs from the user including main idea, key features (minimum 3), target users (minimum 1), and tech stack preferences with blocking validation before proceeding.
+Use context-fetcher subagent to collect required inputs with blocking validation.
 
 <data_sources>
-  <primary>user_direct_input</primary>
-  <fallback_sequence>
-    1. @.agent-os/standards/tech-stack.md
-    2. @.claude/CLAUDE.md
-    3. Cursor User Rules
-  </fallback_sequence>
+  PRIMARY: user_direct_input
+  FALLBACK:
+  1. @.agent-os/standards/tech-stack.md
+  2. @.claude/CLAUDE.md
+  3. Cursor User Rules
 </data_sources>
 
 <error_template>
-  Please provide the following missing information:
-  1. Main idea for the product
-  2. List of key features (minimum 3)
-  3. Target users and use cases (minimum 1)
+  Provide missing:
+  1. Main idea for product
+  2. Key features (minimum 3)
+  3. Target users/use cases (minimum 1)
   4. Tech stack preferences
-  5. Has the new application been initialized yet and we're inside the project folder? (yes/no)
+  5. Application initialized and in project folder? (yes/no)
 </error_template>
 
 </step>
@@ -73,13 +68,13 @@ Use the context-fetcher subagent to collect all required inputs from the user in
 
 ### Step 2: Create Documentation Structure
 
-Use the file-creator subagent to create the following file_structure at {AGENT_OS_ROOT} with validation for write permissions and protection against overwriting existing files:
+Use file-creator to create structure with write permission validation.
 
 <file_structure>
   {AGENT_OS_ROOT}/.agent-os/
   └── product/
-      ├── mission.md          # Product vision and purpose
-      ├── mission-lite.md     # Condensed mission for AI context
+      ├── mission.md          # Product vision
+      ├── mission-lite.md     # Condensed for AI
       ├── tech-stack.md       # Technical architecture
       └── roadmap.md          # Development phases
 </file_structure>
@@ -90,111 +85,41 @@ Use the file-creator subagent to create the following file_structure at {AGENT_O
 
 ### Step 3: Create mission.md
 
-Use the file-creator subagent to create the file: {AGENT_OS_ROOT}/.agent-os/product/mission.md and use the following template:
+File: {AGENT_OS_ROOT}/.agent-os/product/mission.md
 
-<file_template>
-  <header>
-    # Product Mission
-  </header>
-  <required_sections>
-    - Pitch
-    - Users
-    - The Problem
-    - Differentiators
-    - Key Features
-  </required_sections>
-</file_template>
+<sections>
+  **Pitch** (1-2 sentences, elevator pitch):
+  ```
+  [PRODUCT_NAME] is a [TYPE] that helps [TARGET_USERS] 
+  [SOLVE_PROBLEM] by providing [KEY_VALUE_PROP].
+  ```
 
-<section name="pitch">
-  <template>
-    ## Pitch
+  **Users**:
+  - Primary Customers: [SEGMENTS with descriptions]
+  - User Personas:
+    - [USER_TYPE] ([AGE_RANGE])
+    - Role: [JOB_TITLE]
+    - Context: [BUSINESS_CONTEXT]
+    - Pain Points: [LIST]
+    - Goals: [LIST]
 
-    [PRODUCT_NAME] is a [PRODUCT_TYPE] that helps [TARGET_USERS] [SOLVE_PROBLEM] by providing [KEY_VALUE_PROPOSITION].
-  </template>
-  <constraints>
-    - length: 1-2 sentences
-    - style: elevator pitch
-  </constraints>
-</section>
+  **The Problem** (2-4 problems):
+  ```
+  ### [PROBLEM_TITLE]
+  [DESCRIPTION]. [QUANTIFIABLE_IMPACT].
+  **Our Solution:** [SOLUTION_DESCRIPTION]
+  ```
 
-<section name="users">
-  <template>
-    ## Users
+  **Differentiators** (2-3):
+  ```
+  ### [DIFFERENTIATOR_TITLE]
+  Unlike [COMPETITOR], we provide [ADVANTAGE]. 
+  This results in [MEASURABLE_BENEFIT].
+  ```
 
-    ### Primary Customers
-
-    - [CUSTOMER_SEGMENT_1]: [DESCRIPTION]
-    - [CUSTOMER_SEGMENT_2]: [DESCRIPTION]
-
-    ### User Personas
-
-    **[USER_TYPE]** ([AGE_RANGE])
-    - **Role:** [JOB_TITLE]
-    - **Context:** [BUSINESS_CONTEXT]
-    - **Pain Points:** [PAIN_POINT_1], [PAIN_POINT_2]
-    - **Goals:** [GOAL_1], [GOAL_2]
-  </template>
-  <schema>
-    - name: string
-    - age_range: "XX-XX years old"
-    - role: string
-    - context: string
-    - pain_points: array[string]
-    - goals: array[string]
-  </schema>
-</section>
-
-<section name="problem">
-  <template>
-    ## The Problem
-
-    ### [PROBLEM_TITLE]
-
-    [PROBLEM_DESCRIPTION]. [QUANTIFIABLE_IMPACT].
-
-    **Our Solution:** [SOLUTION_DESCRIPTION]
-  </template>
-  <constraints>
-    - problems: 2-4
-    - description: 1-3 sentences
-    - impact: include metrics
-    - solution: 1 sentence
-  </constraints>
-</section>
-
-<section name="differentiators">
-  <template>
-    ## Differentiators
-
-    ### [DIFFERENTIATOR_TITLE]
-
-    Unlike [COMPETITOR_OR_ALTERNATIVE], we provide [SPECIFIC_ADVANTAGE]. This results in [MEASURABLE_BENEFIT].
-  </template>
-  <constraints>
-    - count: 2-3
-    - focus: competitive advantages
-    - evidence: required
-  </constraints>
-</section>
-
-<section name="features">
-  <template>
-    ## Key Features
-
-    ### Core Features
-
-    - **[FEATURE_NAME]:** [USER_BENEFIT_DESCRIPTION]
-
-    ### Collaboration Features
-
-    - **[FEATURE_NAME]:** [USER_BENEFIT_DESCRIPTION]
-  </template>
-  <constraints>
-    - total: 8-10 features
-    - grouping: by category
-    - description: user-benefit focused
-  </constraints>
-</section>
+  **Key Features** (8-10, grouped by category):
+  - **[FEATURE]:** [USER_BENEFIT_DESCRIPTION]
+</sections>
 
 </step>
 
@@ -202,59 +127,43 @@ Use the file-creator subagent to create the file: {AGENT_OS_ROOT}/.agent-os/prod
 
 ### Step 4: Create tech-stack.md
 
-Use the file-creator subagent to create the file: {AGENT_OS_ROOT}/.agent-os/product/tech-stack.md and use the following template:
-
-<file_template>
-  <header>
-    # Technical Stack
-  </header>
-</file_template>
+File: {AGENT_OS_ROOT}/.agent-os/product/tech-stack.md
 
 <required_items>
-  - application_framework: string + version
-  - database_system: string
-  - javascript_framework: string
-  - import_strategy: ["importmaps", "node"]
-  - css_framework: string + version
-  - ui_component_library: string
-  - fonts_provider: string
-  - icon_library: string
-  - application_hosting: string
-  - database_hosting: string
-  - asset_hosting: string
-  - deployment_solution: string
-  - code_repository_url: string
+  - application_framework (+ version)
+  - database_system
+  - javascript_framework
+  - import_strategy (importmaps/node)
+  - css_framework (+ version)
+  - ui_component_library
+  - fonts_provider
+  - icon_library
+  - application_hosting
+  - database_hosting
+  - asset_hosting
+  - deployment_solution
+  - code_repository_url
 </required_items>
 
 <data_resolution>
-  IF has_context_fetcher:
-    FOR missing tech stack items:
-      USE: @agent:context-fetcher
-      REQUEST: "Find [ITEM_NAME] from tech-stack.md"
-      PROCESS: Use found defaults
-  ELSE:
-    PROCEED: To manual resolution below
+  IF has context-fetcher:
+    FOR missing items:
+      REQUEST from tech-stack.md
+      USE found defaults
 
-  <manual_resolution>
-    <for_each item="required_items">
-      <if_not_in>user_input</if_not_in>
-      <then_check>
+  ELSE manual resolution:
+    FOR each required_item:
+      IF NOT in user_input:
+        CHECK:
         1. @.agent-os/standards/tech-stack.md
         2. @.claude/CLAUDE.md
         3. Cursor User Rules
-      </then_check>
-      <else>add_to_missing_list</else>
-    </for_each>
-  </manual_resolution>
+      ELSE add_to_missing_list
+
+  IF missing items:
+    PROMPT: "Provide tech stack details: [NUMBERED_LIST]
+            (respond with choice or 'n/a')"
 </data_resolution>
-
-<missing_items_template>
-  Please provide the following technical stack details:
-  [NUMBERED_LIST_OF_MISSING_ITEMS]
-
-  You can respond with the technology choice or "n/a" for each item.
-</missing_items_template>
-
 
 </step>
 
@@ -262,38 +171,28 @@ Use the file-creator subagent to create the file: {AGENT_OS_ROOT}/.agent-os/prod
 
 ### Step 5: Create mission-lite.md
 
-Use the file-creator subagent to create the file: {AGENT_OS_ROOT}/.agent-os/product/mission-lite.md for the purpose of establishing a condensed mission for efficient AI context usage.
+File: {AGENT_OS_ROOT}/.agent-os/product/mission-lite.md
 
-Use the following template:
-
-<file_template>
-  <header>
-    # Product Mission (Lite)
-  </header>
-</file_template>
+Condensed mission for efficient AI context.
 
 <content_structure>
-  <elevator_pitch>
-    - source: Step 3 mission.md pitch section
-    - format: single sentence
-  </elevator_pitch>
-  <value_summary>
-    - length: 1-3 sentences
-    - includes: value proposition, target users, key differentiator
-    - excludes: secondary users, secondary differentiators
-  </value_summary>
+  - Elevator pitch (from mission.md pitch)
+  - Value summary (1-3 sentences):
+    - Value proposition
+    - Target users
+    - Key differentiator
+  - Exclude: Secondary users, secondary differentiators
 </content_structure>
 
-<content_template>
-  [ELEVATOR_PITCH_FROM_MISSION_MD]
-
-  [1-3_SENTENCES_SUMMARIZING_VALUE_TARGET_USERS_AND_PRIMARY_DIFFERENTIATOR]
-</content_template>
-
 <example>
-  TaskFlow is a project management tool that helps remote teams coordinate work efficiently by providing real-time collaboration and automated workflow tracking.
+  TaskFlow is a project management tool that helps remote teams 
+  coordinate work efficiently by providing real-time collaboration 
+  and automated workflow tracking.
 
-  TaskFlow serves distributed software teams who need seamless task coordination across time zones. Unlike traditional project management tools, TaskFlow automatically syncs with development workflows and provides intelligent task prioritization based on team capacity and dependencies.
+  TaskFlow serves distributed software teams who need seamless task 
+  coordination across time zones. Unlike traditional tools, TaskFlow 
+  automatically syncs with development workflows and provides 
+  intelligent prioritization based on team capacity and dependencies.
 </example>
 
 </step>
@@ -302,48 +201,40 @@ Use the following template:
 
 ### Step 6: Create roadmap.md
 
-Use the file-creator subagent to create the following file: {AGENT_OS_ROOT}/.agent-os/product/roadmap.md using the following template:
-
-<file_template>
-  <header>
-    # Product Roadmap
-  </header>
-</file_template>
+File: {AGENT_OS_ROOT}/.agent-os/product/roadmap.md
 
 <phase_structure>
-  <phase_count>1-3</phase_count>
-  <features_per_phase>3-7</features_per_phase>
-  <phase_template>
-    ## Phase [NUMBER]: [NAME]
+  **Count**: 1-3 phases
+  **Features per phase**: 3-7
 
-    **Goal:** [PHASE_GOAL]
-    **Success Criteria:** [MEASURABLE_CRITERIA]
+  **Template**:
+  ```markdown
+  ## Phase [NUMBER]: [NAME]
 
-    ### Features
+  **Goal:** [PHASE_GOAL]
+  **Success Criteria:** [MEASURABLE_CRITERIA]
 
-    - [ ] [FEATURE] - [DESCRIPTION] `[EFFORT]`
+  ### Features
+  - [ ] [FEATURE] - [DESCRIPTION] `[EFFORT]`
 
-    ### Dependencies
+  ### Dependencies
+  - [DEPENDENCY]
+  ```
 
-    - [DEPENDENCY]
-  </phase_template>
-</phase_structure>
-
-<phase_guidelines>
-  - Phase 1: Core MVP functionality
+  **Guidelines**:
+  - Phase 1: Core MVP
   - Phase 2: Key differentiators
   - Phase 3: Scale and polish
   - Phase 4: Advanced features
   - Phase 5: Enterprise features
-</phase_guidelines>
 
-<effort_scale>
+  **Effort Scale**:
   - XS: 1 day
   - S: 2-3 days
   - M: 1 week
   - L: 2 weeks
   - XL: 3+ weeks
-</effort_scale>
+</phase_structure>
 
 </step>
 

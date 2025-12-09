@@ -77,4 +77,4 @@ Phase 4: Post-Execution
 
 ## Instructions
 
-@.agent-os/instructions/core/execute-tasks-unified.md
+@.agent-os/instructions/core/execute-tasks.md

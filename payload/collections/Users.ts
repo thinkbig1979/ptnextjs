@@ -212,21 +212,21 @@ const Users: CollectionConfig = {
             doc.tokenVersion > (previousDoc.tokenVersion || 0) &&
             !(status_changed && status_revokes)
           ) {
-            logPasswordChanged(doc.id, doc.email);
+            logPasswordChanged(String(doc.id), doc.email);
           }
 
           // Log status changes
           if (status_changed) {
-            // Get admin ID from request if available
-            const admin_id = req.user?.id;
+            // Get admin ID from request if available (convert to string for consistent typing)
+            const admin_id = req.user?.id ? String(req.user.id) : undefined;
 
             if (is_status === 'suspended') {
-              logAccountStatusChange(doc.id, doc.email, 'suspended', admin_id);
+              logAccountStatusChange(String(doc.id), doc.email, 'suspended', admin_id);
             } else if (is_status === 'approved') {
-              logAccountStatusChange(doc.id, doc.email, 'approved', admin_id);
+              logAccountStatusChange(String(doc.id), doc.email, 'approved', admin_id);
             } else if (is_status === 'rejected') {
               logAccountStatusChange(
-                doc.id,
+                String(doc.id),
                 doc.email,
                 'rejected',
                 admin_id,

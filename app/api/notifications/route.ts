@@ -31,8 +31,9 @@ export async function GET(request: NextRequest) {
 
     // Parse query parameters
     const searchParams = request.nextUrl.searchParams;
+    const userId = String(user.id);
     const filters: NotificationFilters = {
-      userId: user.id,
+      userId,
       type: searchParams.get('type') as any,
       read: searchParams.get('read') === 'true' ? true : searchParams.get('read') === 'false' ? false : undefined,
       limit: searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : 50,
@@ -40,7 +41,7 @@ export async function GET(request: NextRequest) {
     };
 
     // Get notifications
-    const result = await getUserNotifications(user.id, filters);
+    const result = await getUserNotifications(userId, filters);
 
     if (!result.success) {
       return NextResponse.json(

@@ -1,701 +1,201 @@
 ---
-# EXECUTION ROLE DEFINITION
-# This file provides guidance for the test context gathering workflow phase.
-# It is NOT a callable Claude Code agent.
-#
-# Usage: The general-purpose agent loads this file BEFORE test design begins
-# to gather library-specific documentation and patterns.
-
 role: test-context-gatherer
-description: "Pre-test research phase that gathers framework documentation and library patterns before test writing"
+description: "Pre-test research phase - gather framework docs and patterns before test writing"
 phase: test_context_research
 context_window: 16384
-specialization: [test-documentation, library-detection, framework-research, testing-patterns]
-version: 1.0
-encoding: UTF-8
+specialization: [test-documentation, library-detection, framework-research]
+version: 1.1
 ---
 
-# Test Context Gatherer Agent
+# Test Context Gatherer
 
-## Role and Purpose
+**Mission**: Gather testing library documentation BEFORE tests are written to prevent API misuse failures.
 
-You are a Test Context Research Specialist responsible for gathering comprehensive, up-to-date documentation for testing libraries and frameworks BEFORE any tests are written. Your research directly prevents test failures caused by incorrect API usage, outdated patterns, or framework-specific requirements.
-
-**Critical Mission**: Tests written without proper framework context often fail. Your job is to ensure test authors have the exact information they need to write correct tests the first time.
-
-## Mandatory Execution Order
+## Execution Order
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│ BEFORE test-architect runs, test-context-gatherer MUST run     │
-│                                                                 │
-│ 1. test-context-gatherer → Gathers library docs and patterns   │
-│ 2. test-architect → Designs tests using gathered context       │
-│ 3. test-runner → Executes tests                                │
-└─────────────────────────────────────────────────────────────────┘
+1. test-context-gatherer (THIS) → Gathers library docs/patterns
+2. test-architect → Designs tests using gathered context
+3. test-runner → Executes tests
 ```
-
-## Config Check Before Proceeding
-
-**FIRST ACTION**: Read config.yml → skills_integration section
-
-```yaml
-config_check:
-  IF skills_integration.enabled = false:
-    ACTION: "SKIP skill invocations in Phase 2.0"
-    PROCEED: "Directly to MCP/WebSearch documentation fetching"
-    LOG: "Skills disabled by config - using external sources only"
-
-  IF skills_integration.enabled = true:
-    ACTION: "PROCEED with mandatory skill invocations (Phase 2.0)"
-    REQUIRED: "MUST invoke agent-os-test-research and agent-os-patterns"
-```
-
-**Execute this check NOW before proceeding to Phase 1.**
 
 ## Phase 1: Library Detection
 
-### 1.1 Detect Testing Dependencies
+### 1.1 Scan Dependencies
 
-Analyze the project's dependency files to identify all testing-related libraries.
+| Source | File |
+|--------|------|
+| JavaScript | package.json, pnpm-lock.yaml |
+| Python | pyproject.toml, requirements-dev.txt |
+| Ruby | Gemfile |
 
-```yaml
-detection_sources:
-  javascript_typescript:
-    - package.json → devDependencies
-    - package-lock.json → version locks
-    - yarn.lock → version locks
-    - pnpm-lock.yaml → version locks
-
-  python:
-    - pyproject.toml → dev-dependencies
-    - requirements-dev.txt
-    - setup.py → extras_require["test"]
-    - Pipfile → [dev-packages]
-
-  ruby:
-    - Gemfile → group :test
-    - Gemfile.lock → version locks
-```
-
-### 1.2 Testing Library Categories
-
-Identify libraries in each category:
+### 1.2 Library Categories
 
 ```yaml
-library_categories:
-  test_runners:
-    javascript: [jest, vitest, mocha, ava, tap]
-    python: [pytest, unittest, nose2]
-    ruby: [rspec, minitest]
-
-  assertion_libraries:
-    javascript: [chai, expect, should.js, jest-expect]
-    python: [pytest assertions, assertpy, expects]
-    ruby: [rspec-expectations, shoulda-matchers]
-
-  mocking_libraries:
-    javascript: [jest.mock, sinon, testdouble, nock, msw]
-    python: [unittest.mock, pytest-mock, responses, httpretty]
-    ruby: [rspec-mocks, mocha, webmock, vcr]
-
-  e2e_frameworks:
-    javascript: [playwright, cypress, puppeteer, selenium-webdriver]
-    python: [playwright, selenium, splinter]
-    ruby: [capybara, selenium-webdriver]
-
-  backend_testing:
-    javascript: [supertest, node-test, convex-test]
-    python: [httpx, pytest-asyncio, pytest-django]
-    ruby: [rack-test, capybara, database_cleaner]
-
-  specialized:
-    - react-testing-library
-    - vue-test-utils
-    - @testing-library/*
-    - convex-test
-    - prisma (test client)
-    - drizzle-orm (test utilities)
+test_runners: [jest, vitest, mocha, pytest, rspec]
+assertion: [chai, expect, pytest-assertions]
+mocking: [jest.mock, sinon, msw, unittest.mock, rspec-mocks]
+e2e: [playwright, cypress, selenium]
+backend: [supertest, convex-test, pytest-asyncio]
+component: [testing-library/react, vue-test-utils]
 ```
 
-### 1.3 Version Detection Output
+### 1.3 Output
 
 ```yaml
 detected_libraries:
-  test_runner:
-    name: "vitest"
-    version: "1.6.0"
-    config_file: "vitest.config.ts"
-
-  e2e_framework:
-    name: "playwright"
-    version: "1.42.0"
-    config_file: "playwright.config.ts"
-
-  backend:
-    name: "convex-test"
-    version: "0.1.0"
-    related: ["convex@1.12.0"]
-
-  mocking:
-    name: "msw"
-    version: "2.2.0"
-
-  component_testing:
-    name: "@testing-library/react"
-    version: "14.2.0"
+  test_runner: { name: "vitest", version: "1.6.0", config: "vitest.config.ts" }
+  e2e: { name: "playwright", version: "1.42.0", config: "playwright.config.ts" }
+  mocking: { name: "msw", version: "2.2.0" }
 ```
 
 ## Phase 2: Documentation Fetching
 
-### 2.0 MANDATORY SKILL INVOCATIONS (YOUR RESPONSIBILITY)
+### 2.0 MANDATORY: Skill Invocations (YOUR Responsibility)
 
-**YOU (test-context-gatherer agent) MUST invoke these skills. The orchestrator will NOT invoke skills for you.**
-
-```yaml
-ownership:
-  who_invokes: "YOU (test-context-gatherer agent)"
-  not_the_orchestrator: true
-  your_responsibility: "Invoke skills explicitly using Skill() tool"
-
-execution_order:
-  STEP_1_project_patterns:
-    action: "CHECK .agent-os/patterns/testing/ for project-specific patterns"
-    why: "Project patterns take PRECEDENCE over all other sources"
-    if_exists: "READ and use as primary reference"
-
-  STEP_2_invoke_skills:
-    action: "INVOKE skills (MANDATORY - You own this)"
-    required_invocations:
-      - tool: "Skill(skill='agent-os-testing-standards')"
-        provides:
-          - Canonical test timeout values (unit/integration/e2e)
-          - Test file location conventions
-          - Assertion requirements
-          - Forbidden patterns (watch mode, .only(), etc.)
-          - Console statement limits
-          - Test standards validation rules
-
-      - tool: "Skill(skill='agent-os-test-research')"
-        provides:
-          - Library detection patterns
-          - Documentation source priority
-          - Fallback strategies
-
-      - tool: "Skill(skill='agent-os-patterns')"
-        provides:
-          - vitest.md → Unit testing patterns for Vitest
-          - playwright.md → E2E testing patterns
-          - convex.md → Convex backend testing
-          - test-strategies.md → General testing architecture
-
-    note: "These are YOUR responsibility to invoke, not the orchestrator's"
-
-  STEP_3_fill_gaps:
-    action: "Use MCPs/WebSearch only for gaps not covered by skills"
-    priority_order:
-      1: "Project-specific patterns (.agent-os/patterns/testing/)"
-      2: "Skills (agent-os-test-research, agent-os-patterns)"
-      3: "DocFork MCP (if available)"
-      4: "Context7 MCP (if available)"
-      5: "WebSearch/WebFetch (fallback)"
-
-why_you_invoke:
-  - "You have direct access to the context you need"
-  - "Skills provide framework-specific patterns for your work"
-  - "Orchestrator only verifies the OUTPUT (context file exists)"
-  - "Orchestrator does NOT verify you invoked skills"
-```
-
-**EXECUTE NOW** (if skills_integration.enabled = true in config.yml):
-```
-Skill(skill="agent-os-testing-standards")
-Skill(skill="agent-os-test-research")
-Skill(skill="agent-os-patterns")
-```
-
-**Confirm invocations by stating:**
-"I have invoked:
- - Skill(skill='agent-os-testing-standards')
- - Skill(skill='agent-os-test-research')
- - Skill(skill='agent-os-patterns')"
-
-**VERIFICATION**: The orchestrator will verify your work by checking that the context file exists at `.agent-os/test-context/[TASK_ID].json`. It will NOT check if you invoked skills - that's your responsibility.
-
-After invoking skills, check if the patterns satisfy requirements. Only proceed to external sources (Section 2.1 below) for gaps not covered by skills.
-
-### 2.1 Documentation Source Priority (For Gaps Not Covered by Skills)
-
-Fetch documentation in this order, using the FIRST available method:
+**YOU must invoke these skills - the orchestrator will NOT do it for you.**
 
 ```yaml
-documentation_sources:
-  priority_1_dockfork_mcp:
-    check: "mcp__dockfork__* tools available"
-    method: "MCP tool call to dockfork server"
-    benefits:
-      - Pre-indexed documentation
-      - Version-specific docs
-      - Structured API references
-      - Fast retrieval
-    usage: |
-      IF mcp__dockfork__get_documentation available:
-        CALL mcp__dockfork__get_documentation(
-          library: "vitest",
-          version: "1.6.0",
-          sections: ["mocking", "assertions", "configuration"]
-        )
+step_1_check_project_patterns:
+  action: "CHECK .agent-os/patterns/testing/ for project-specific patterns"
+  why: "Project patterns take PRECEDENCE"
 
-  priority_2_context7_mcp:
-    check: "mcp__context7__* tools available"
-    method: "MCP tool call to context7 server"
-    benefits:
-      - AI-optimized documentation
-      - Code examples included
-      - Version-aware
-    usage: |
-      IF mcp__context7__get_library_docs available:
-        CALL mcp__context7__get_library_docs(
-          library: "vitest",
-          topic: "testing patterns"
-        )
+step_2_invoke_skills:
+  required_invocations:
+    - "Skill(skill='agent-os-testing-standards')" # Timeouts, locations, rules
+    - "Skill(skill='agent-os-test-research')"     # Detection patterns
+    - "Skill(skill='agent-os-patterns')"          # vitest.md, playwright.md, convex.md
 
-  priority_3_websearch:
-    check: "WebSearch tool available"
-    method: "Web search for official documentation"
-    query_patterns:
-      - "{library} {version} testing documentation"
-      - "{library} official docs {feature}"
-      - "site:docs.{library}.dev {topic}"
-      - "site:github.com/{org}/{library} {topic}"
-    benefits:
-      - Always available
-      - Latest documentation
-      - Community patterns
-    usage: |
-      CALL WebSearch(
-        query: "vitest 1.6.0 mocking guide official documentation",
-        allowed_domains: ["vitest.dev", "github.com/vitest-dev"]
-      )
-
-  priority_4_webfetch:
-    check: "WebFetch tool available"
-    method: "Direct fetch of known documentation URLs"
-    urls:
-      vitest: "https://vitest.dev/api/"
-      playwright: "https://playwright.dev/docs/api/class-test"
-      jest: "https://jestjs.io/docs/api"
-      pytest: "https://docs.pytest.org/en/stable/"
-      convex: "https://docs.convex.dev/testing"
-    usage: |
-      CALL WebFetch(
-        url: "https://vitest.dev/api/",
-        prompt: "Extract mocking APIs, assertion methods, and test lifecycle hooks"
-      )
+step_3_fill_gaps:
+  priority:
+    1: "Project patterns (.agent-os/patterns/testing/)"
+    2: "Skills"
+    3: "DocFork MCP (if available)"
+    4: "Context7 MCP (if available)"
+    5: "WebSearch/WebFetch (fallback)"
 ```
 
-### 2.2 Documentation Availability Check
+**Confirm:** "I have invoked Skill('agent-os-testing-standards'), Skill('agent-os-test-research'), Skill('agent-os-patterns')"
 
-```javascript
-// Pseudocode for checking available documentation methods
-function check_documentation_sources() {
-  const available_sources = [];
-
-  // Check for DocFork MCP
-  if (tools_available.includes('mcp__dockfork__get_documentation')) {
-    available_sources.push({
-      name: 'dockfork',
-      priority: 1,
-      type: 'mcp'
-    });
-  }
-
-  // Check for Context7 MCP
-  if (tools_available.includes('mcp__context7__get_library_docs')) {
-    available_sources.push({
-      name: 'context7',
-      priority: 2,
-      type: 'mcp'
-    });
-  }
-
-  // WebSearch is built-in
-  if (tools_available.includes('WebSearch')) {
-    available_sources.push({
-      name: 'websearch',
-      priority: 3,
-      type: 'builtin'
-    });
-  }
-
-  // WebFetch is built-in
-  if (tools_available.includes('WebFetch')) {
-    available_sources.push({
-      name: 'webfetch',
-      priority: 4,
-      type: 'builtin'
-    });
-  }
-
-  return available_sources.sort((a, b) => a.priority - b.priority);
-}
-```
-
-### 2.3 Required Documentation Sections
-
-For each detected library, fetch:
+### 2.1 External Sources (For Gaps Only)
 
 ```yaml
-required_documentation:
-  test_runner:
-    - Test lifecycle hooks (beforeEach, afterAll, etc.)
-    - Test configuration options
-    - Assertion API reference
-    - Snapshot testing (if applicable)
-    - Coverage configuration
-    - Watch mode vs CI mode
-    - Timeout configuration
+dockfork_mcp:
+  check: "mcp__dockfork__* available"
+  usage: "mcp__dockfork__get_documentation(library, version, sections)"
 
-  mocking_library:
-    - Mock function creation
-    - Module mocking
-    - Spy functions
-    - Mock return values and implementations
-    - Mock clearing/resetting
-    - Async mocking patterns
+context7_mcp:
+  check: "mcp__context7__* available"
+  usage: "mcp__context7__get_library_docs(library, topic)"
 
-  e2e_framework:
-    - Page object patterns
-    - Locator strategies
-    - Waiting mechanisms
-    - Network interception
-    - Browser contexts
-    - Screenshot/video recording
-    - Parallel execution
+websearch:
+  queries:
+    - "{library} {version} testing documentation"
+    - "site:docs.{library}.dev {topic}"
 
-  backend_specific:
-    - Database test setup/teardown
-    - API mocking
-    - Authentication testing
-    - Transaction handling
-    - Fixture loading
+webfetch:
+  urls:
+    vitest: "https://vitest.dev/api/"
+    playwright: "https://playwright.dev/docs/api/class-test"
+    convex: "https://docs.convex.dev/testing"
 ```
+
+### 2.2 Required Documentation
+
+| Category | Sections |
+|----------|----------|
+| Test runner | Lifecycle hooks, assertions, config, timeout, coverage |
+| Mocking | Mock creation, module mocking, spies, reset |
+| E2E | Page objects, locators, waiting, network interception |
+| Backend | DB setup/teardown, API mocking, auth testing |
 
 ## Phase 3: Pattern Extraction
 
-### 3.1 Extract Framework-Specific Patterns
-
-From gathered documentation, extract concrete patterns:
+### 3.1 Extract Patterns
 
 ```yaml
-pattern_extraction:
-  vitest_patterns:
-    mock_module: |
-      // Vitest module mocking pattern
-      vi.mock('./module', () => ({
-        default: vi.fn(),
-        namedExport: vi.fn()
-      }));
+vitest:
+  mock_module: |
+    vi.mock('./module', () => ({ default: vi.fn() }))
+  async_test: |
+    it('async', async () => { await expect(asyncFn()).resolves.toBe(true) })
 
-    mock_partial: |
-      // Partial module mock (keep some real implementations)
-      vi.mock('./module', async (importOriginal) => {
-        const actual = await importOriginal();
-        return {
-          ...actual,
-          specificFunction: vi.fn()
-        };
-      });
+convex:
+  test_function: |
+    const t = convexTest(schema)
+    test('query', async () => { await t.run(async (ctx) => {...}) })
 
-    async_test: |
-      // Async test pattern
-      it('should handle async operations', async () => {
-        const result = await asyncOperation();
-        expect(result).toBeDefined();
-      });
-
-  convex_patterns:
-    test_convex_function: |
-      // Convex function testing pattern
-      import { convexTest } from "convex-test";
-      import { expect, test } from "vitest";
-      import { api } from "./_generated/api";
-      import schema from "./schema";
-
-      const t = convexTest(schema);
-
-      test("query returns data", async () => {
-        await t.run(async (ctx) => {
-          const result = await ctx.query(api.myQuery.default);
-          expect(result).toBeDefined();
-        });
-      });
-
-    mock_convex_auth: |
-      // Convex authentication testing
-      test("authenticated query", async () => {
-        await t.run(async (ctx) => {
-          // Set up authenticated user
-          const userId = await ctx.run(async (ctx) => {
-            return await ctx.db.insert("users", { name: "Test" });
-          });
-
-          // Run query as authenticated user
-          const result = await ctx.query(api.myQuery.default, {
-            // Convex test context provides auth
-          });
-          expect(result).toBeDefined();
-        });
-      });
-
-  playwright_patterns:
-    page_object: |
-      // Playwright Page Object pattern
-      class LoginPage {
-        constructor(private page: Page) {}
-
-        async goto() {
-          await this.page.goto('/login');
-        }
-
-        async login(email: string, password: string) {
-          await this.page.fill('[data-testid="email"]', email);
-          await this.page.fill('[data-testid="password"]', password);
-          await this.page.click('[data-testid="submit"]');
-        }
-      }
-
-    network_mock: |
-      // Network request interception
-      await page.route('**/api/users', (route) => {
-        route.fulfill({
-          status: 200,
-          body: JSON.stringify({ users: [] })
-        });
-      });
+playwright:
+  page_object: |
+    class LoginPage {
+      constructor(private page: Page) {}
+      async login(email, password) {...}
+    }
 ```
 
-### 3.2 Anti-Patterns to Avoid
-
-Document framework-specific anti-patterns:
+### 3.2 Document Anti-Patterns
 
 ```yaml
-anti_patterns:
-  vitest:
-    - name: "Using jest.mock instead of vi.mock"
-      wrong: "jest.mock('./module')"
-      correct: "vi.mock('./module')"
+vitest:
+  - wrong: "jest.mock('./module')"
+    correct: "vi.mock('./module')"
 
-    - name: "Missing await on async operations"
-      wrong: "expect(asyncFn()).resolves.toBe(true)"
-      correct: "await expect(asyncFn()).resolves.toBe(true)"
+convex:
+  - wrong: "const t = convexTest()"
+    correct: "const t = convexTest(schema)"
 
-  convex:
-    - name: "Direct database access without convex-test"
-      wrong: "await db.query(...)"
-      correct: "await t.run(async (ctx) => await ctx.query(...))"
-
-    - name: "Missing schema in convexTest"
-      wrong: "const t = convexTest();"
-      correct: "const t = convexTest(schema);"
-
-  playwright:
-    - name: "Using hard waits"
-      wrong: "await page.waitForTimeout(5000)"
-      correct: "await page.waitForSelector('[data-testid=\"loaded\"]')"
+playwright:
+  - wrong: "page.waitForTimeout(5000)"
+    correct: "page.waitForSelector('[data-testid=\"loaded\"]')"
 ```
 
-## Phase 4: Output Generation
+## Phase 4: Output
 
-### 4.1 Test Context Report Format
+### 4.1 File Structure
 
-Generate a structured report for test-architect:
+```
+.agent-os/test-context/
+├── [TASK_ID].json          # Full context report
+├── patterns/
+│   ├── vitest.md
+│   ├── playwright.md
+│   └── convex.md
+└── cache/library-docs.json # Cached docs (24h TTL)
+```
+
+### 4.2 Context Report
+
+```json
+{
+  "generated_at": "...",
+  "detected_libraries": {...},
+  "documentation_gathered": {...},
+  "patterns_extracted": { "count": 15 },
+  "anti_patterns": 8,
+  "recommendations": [...]
+}
+```
+
+## Handoff to Test-Architect
 
 ```yaml
-test_context_report:
-  generated_at: "2024-01-15T10:30:00Z"
-  project_path: "/path/to/project"
+required_before_test_design:
+  - Library detection complete
+  - Documentation fetched
+  - Patterns extracted
+  - Anti-patterns documented
 
-  detected_libraries:
-    test_runner:
-      name: "vitest"
-      version: "1.6.0"
-      documentation_source: "dockfork_mcp"
-
-    backend:
-      name: "convex-test"
-      version: "0.1.0"
-      documentation_source: "webfetch"
-
-    e2e:
-      name: "playwright"
-      version: "1.42.0"
-      documentation_source: "context7_mcp"
-
-  documentation_gathered:
-    vitest:
-      api_reference: true
-      mocking_guide: true
-      configuration: true
-
-    convex:
-      testing_guide: true
-      api_mocking: true
-      schema_testing: true
-
-  patterns_extracted:
-    count: 15
-    categories:
-      - unit_testing: 5
-      - integration_testing: 4
-      - e2e_testing: 3
-      - mocking: 3
-
-  anti_patterns_documented: 8
-
-  recommendations:
-    - "Use vi.mock for module mocking (not jest.mock)"
-    - "Always wrap Convex tests in convexTest(schema)"
-    - "Use page.waitForSelector instead of waitForTimeout"
-
-  context_file: ".agent-os/test-context/[TASK_ID].json"
-```
-
-### 4.2 Context File Storage
-
-Store gathered context for test-architect:
-
-```
-.agent-os/
-└── test-context/
-    ├── [TASK_ID].json          # Full context report
-    ├── patterns/
-    │   ├── vitest.md           # Vitest-specific patterns
-    │   ├── convex.md           # Convex-specific patterns
-    │   └── playwright.md       # Playwright-specific patterns
-    └── cache/
-        └── library-docs.json   # Cached documentation (TTL: 24h)
-```
-
-## Integration with Test-Architect
-
-### Handoff Protocol
-
-```yaml
-handoff_to_test_architect:
-  required_before_test_design:
-    - Library detection complete
-    - Documentation fetched
-    - Patterns extracted
-    - Anti-patterns documented
-
-  context_package:
-    - Test context report (JSON)
-    - Framework-specific pattern files
-    - Version-locked API references
-    - Known anti-patterns list
-
-  verification:
-    - Test-architect MUST acknowledge context receipt
-    - Test-architect MUST reference patterns in test design
-    - Test-architect MUST avoid documented anti-patterns
-```
-
-## Success Criteria
-
-```yaml
-success_criteria:
-  library_detection:
-    - All testing dependencies identified
-    - Versions correctly captured
-    - Config files located
-
-  documentation_quality:
-    - Official docs retrieved (not random blog posts)
-    - Version-appropriate documentation
-    - API references included
-
-  pattern_coverage:
-    - Patterns for each detected library
-    - Common use cases covered
-    - Anti-patterns documented
-
-  handoff_quality:
-    - Context report generated
-    - Patterns stored in accessible location
-    - Test-architect can reference all patterns
+verification:
+  - test-architect MUST read context file
+  - test-architect MUST reference patterns
+  - test-architect MUST avoid anti-patterns
 ```
 
 ## Error Handling
 
-```yaml
-error_handling:
-  no_mcp_available:
-    action: "Fall back to WebSearch + WebFetch"
-    warning: "MCP documentation sources unavailable, using web search"
-
-  documentation_not_found:
-    action: "Use cached patterns or generic framework docs"
-    warning: "Could not find documentation for {library}@{version}"
-
-  version_mismatch:
-    action: "Use closest available version documentation"
-    warning: "Docs for v{requested} not found, using v{available}"
-
-  fetch_timeout:
-    action: "Retry with backoff, then use cached"
-    max_retries: 3
-
-  complete_failure:
-    action: "Proceed with warning, document risk"
-    warning: "Test context gathering incomplete - tests may need revision"
-```
-
-## Example Execution
-
-```
-═══════════════════════════════════════════════════════════════════
-TEST CONTEXT GATHERING - STARTING
-═══════════════════════════════════════════════════════════════════
-
-📋 Phase 1: Library Detection
-   Scanning package.json...
-   ✓ vitest@1.6.0 (test runner)
-   ✓ convex-test@0.1.0 (backend testing)
-   ✓ playwright@1.42.0 (e2e framework)
-   ✓ @testing-library/react@14.2.0 (component testing)
-
-📋 Phase 2: Documentation Fetching
-   Checking available sources...
-   ✓ DocFork MCP: Available
-   ✓ Context7 MCP: Not available
-   ✓ WebSearch: Available (fallback)
-
-   Fetching documentation...
-   ✓ vitest: Retrieved from DocFork MCP
-   ✓ convex-test: Retrieved from WebFetch (docs.convex.dev)
-   ✓ playwright: Retrieved from DocFork MCP
-   ✓ @testing-library/react: Retrieved from WebSearch
-
-📋 Phase 3: Pattern Extraction
-   Extracting patterns...
-   ✓ Vitest mocking patterns (4)
-   ✓ Convex test patterns (3)
-   ✓ Playwright patterns (5)
-   ✓ React Testing Library patterns (3)
-
-   Documenting anti-patterns...
-   ✓ 8 anti-patterns documented
-
-📋 Phase 4: Output Generation
-   ✓ Context report: .agent-os/test-context/task-001.json
-   ✓ Pattern files: .agent-os/test-context/patterns/
-   ✓ Cache updated
-
-═══════════════════════════════════════════════════════════════════
-TEST CONTEXT GATHERING - COMPLETE
-═══════════════════════════════════════════════════════════════════
-
-Ready for test-architect to proceed with test design.
-Context available at: .agent-os/test-context/task-001.json
-```
+| Scenario | Action |
+|----------|--------|
+| No MCP available | Fall back to WebSearch |
+| Docs not found | Use cached or generic docs |
+| Version mismatch | Use closest version |
+| Complete failure | Proceed with warning, document risk |

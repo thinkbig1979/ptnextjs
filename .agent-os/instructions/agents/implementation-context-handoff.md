@@ -322,4 +322,4 @@ return { user: { id, name } };
 - Pattern documentation: `.agent-os/test-context/[TASK_ID]-patterns-used.json`
 - Alignment checklist: `@.agent-os/instructions/utilities/test-code-alignment-checklist.md`
 - Test architect guide: `@.agent-os/instructions/agents/test-architect.md`
-- Orchestration workflow: `@.agent-os/instructions/core/execute-task-orchestrated.md` (Step 2.1a)
+- Orchestration workflow: `@.agent-os/instructions/core/execute-tasks.md` (Step 2.1a)

@@ -21,49 +21,31 @@ encoding: UTF-8
 
 **Tests MUST be run DIRECTLY by the main agent**, not delegated to subagents.
 
-### Why Direct Execution?
+| Approach | User Experience | Use? |
+|----------|-----------------|------|
+| Main agent runs tests | User sees real-time streaming output | ✅ YES |
+| Subagent runs tests | User sees nothing for 5+ minutes | ❌ NO |
 
-| Approach | User Experience | Recommendation |
-|----------|-----------------|----------------|
-| Main agent runs tests | User sees real-time streaming output | ✅ USE THIS |
-| Subagent runs tests | User sees nothing for 5+ minutes | ❌ NEVER DO THIS |
+**What Gets Delegated:**
+- Running tests: **DIRECT** (main agent) - real-time visibility needed
+- Fixing failures: **DELEGATED** (subagent) - no real-time output needed
 
-**The streaming reporters (`[AGENT-OS-TEST]` markers) are designed for real-time visibility.**
-Delegating to a subagent defeats this purpose since Task tool doesn't stream intermediate output.
+**Canonical Reference**: `~/.agent-os/.claude/commands/run-tests.md`
 
-### What Gets Delegated?
+## Step 1: Determine Test Type
 
-| Action | Execution Model | Reason |
-|--------|-----------------|--------|
-| Running tests | DIRECT (main agent) | User needs real-time visibility |
-| Fixing failures | DELEGATED (subagent) | No real-time output needed |
+Confirm type: `unit` | `e2e` | `integration` | `specific`
 
-### Canonical Reference
+## Step 2: Server Pre-Flight (E2E/Integration ONLY)
 
-The authoritative protocol is in: `~/.agent-os/.claude/commands/run-tests.md`
-
----
-
-## Test Execution Protocol
-
-### Step 1: Determine Test Type
-
-Before running tests, confirm which type:
-- **unit** - Unit tests (Vitest/Jest)
-- **e2e** - E2E tests (Playwright/Cypress)
-- **integration** - Integration tests
-- **specific** - Specific test files
-
-### Step 2: Server Pre-Flight Check (E2E/Integration ONLY)
-
-**MANDATORY before ANY E2E or integration tests:**
+**MANDATORY before E2E or integration tests:**
 
 ```bash
 curl -sf --max-time 2 http://localhost:3000 && echo "Frontend: OK" || echo "Frontend: DOWN"
 curl -sf --max-time 2 http://localhost:3001 && echo "Backend: OK" || echo "Backend: DOWN"
 ```
 
-**Output format:**
+**Output:**
 ```
 ═══════════════════════════════════════════════════════════════════
 SERVER PRE-FLIGHT CHECK
@@ -73,65 +55,29 @@ Backend (localhost:3001):   ✅ Running | ❌ Not Running
 ═══════════════════════════════════════════════════════════════════
 ```
 
-**IF ANY server is down:**
-1. **STOP** - Do NOT proceed with tests
+**If ANY server is down:**
+1. **STOP** - Do NOT proceed
 2. Tell user which servers are down
 3. Ask user to start servers
-4. **NEVER auto-start servers** (causes port conflicts)
+4. **NEVER auto-start servers** (port conflicts)
 
-**IF all servers running:**
-- Proceed to test execution
+## Step 3: Execute Tests with Streaming Reporter
 
-### Step 3: Execute Tests with Streaming Reporter
+### Exact Commands (DO NOT MODIFY)
 
-#### Unit Tests (Vitest)
+| Framework | Command |
+|-----------|---------|
+| **Vitest** | `node ~/.agent-os/hooks/lib/test-monitor.js pnpm vitest run --reporter=./scripts/reporters/vitest-streaming.js` |
+| **Vitest (specific)** | `node ~/.agent-os/hooks/lib/test-monitor.js pnpm vitest run --reporter=./scripts/reporters/vitest-streaming.js path/to/test.test.ts` |
+| **Jest** | `node ~/.agent-os/hooks/lib/test-monitor.js pnpm jest --ci --reporters=default` |
+| **Playwright** | `node ~/.agent-os/hooks/lib/test-monitor.js pnpm playwright test --reporter=./scripts/reporters/playwright-streaming.ts` |
+| **Playwright (specific)** | `node ~/.agent-os/hooks/lib/test-monitor.js pnpm playwright test --reporter=./scripts/reporters/playwright-streaming.ts path/to/test.spec.ts` |
+| **Cypress** | `node ~/.agent-os/hooks/lib/test-monitor.js pnpm cypress run` |
+| **Pytest** | `pytest -v --tb=short` |
 
-**EXACT command - do not modify:**
-```bash
-node ~/.agent-os/hooks/lib/test-monitor.js pnpm vitest run --reporter=./scripts/reporters/vitest-streaming.js
-```
+## Step 4: Validate Output Format
 
-**For specific files:**
-```bash
-node ~/.agent-os/hooks/lib/test-monitor.js pnpm vitest run --reporter=./scripts/reporters/vitest-streaming.js path/to/test.test.ts
-```
-
-#### Unit Tests (Jest)
-
-**EXACT command:**
-```bash
-node ~/.agent-os/hooks/lib/test-monitor.js pnpm jest --ci --reporters=default
-```
-
-#### E2E Tests (Playwright)
-
-**EXACT command - do not modify:**
-```bash
-node ~/.agent-os/hooks/lib/test-monitor.js pnpm playwright test --reporter=./scripts/reporters/playwright-streaming.ts
-```
-
-**For specific files:**
-```bash
-node ~/.agent-os/hooks/lib/test-monitor.js pnpm playwright test --reporter=./scripts/reporters/playwright-streaming.ts path/to/test.spec.ts
-```
-
-#### E2E Tests (Cypress)
-
-**EXACT command:**
-```bash
-node ~/.agent-os/hooks/lib/test-monitor.js pnpm cypress run
-```
-
-#### Python Tests (Pytest)
-
-**EXACT command:**
-```bash
-pytest -v --tb=short
-```
-
-### Step 4: Validate Output Format
-
-**You MUST see `[AGENT-OS-TEST]` markers in the output:**
+**MUST see `[AGENT-OS-TEST]` markers:**
 
 ```
 {"type":"run_start",...}
@@ -142,98 +88,55 @@ pytest -v --tb=short
 [AGENT-OS-TEST] ✓ Summary: X/Y passed
 ```
 
-**IF you do NOT see `[AGENT-OS-TEST]` markers:**
-1. **STOP** - The streaming reporter is NOT working
-2. Check if reporters exist:
+**If NO `[AGENT-OS-TEST]` markers:**
+1. **STOP** - Reporter not working
+2. Check reporters exist:
    ```bash
    ls -la scripts/reporters/vitest-streaming.js
    ls -la scripts/reporters/playwright-streaming.ts
    ```
-3. If missing, install them:
-   ```bash
-   ~/.agent-os/setup/install-test-monitoring.sh --target .
-   ```
-4. Retry the test command
+3. Install if missing: `~/.agent-os/setup/install-test-monitoring.sh --target .`
+4. Retry test command
 
-### Step 5: Handle Hung Tests
+## Step 5: Handle Hung Tests
 
-The `test-monitor.js` wrapper automatically detects hung tests:
+Monitor wrapper auto-detects hung tests.
 
-**Timeouts (configurable via environment):**
-- `AGENT_OS_TEST_TIMEOUT` - Per-test timeout (default: 30000ms)
+**Timeouts (env vars):**
+- `AGENT_OS_TEST_TIMEOUT` - Per-test (default: 30000ms)
 - `AGENT_OS_IDLE_TIMEOUT` - Idle detection (default: 15000ms)
 - `AGENT_OS_ON_HUNG` - Action: `alert` | `kill` | `skip` (default: alert)
-
-**If hung test detected:**
-- Monitor will log warning with test name and duration
-- Action taken depends on `AGENT_OS_ON_HUNG` setting
-
----
 
 ## FORBIDDEN: Watch Mode
 
 **NEVER use watch mode. Tests MUST exit cleanly.**
 
-| Framework | Forbidden | Correct |
-|-----------|-----------|---------|
-| Vitest | `vitest` (default is watch) | `vitest run` |
+| Framework | ❌ Forbidden | ✅ Correct |
+|-----------|-------------|-----------|
+| Vitest | `vitest` | `vitest run` |
 | Jest | `jest --watch` | `jest --ci` |
 | Playwright | `playwright test --ui` | `playwright test` |
 
-**If you see a command without `run` for Vitest, ADD IT.**
-
----
-
 ## Failure Classification
 
-When tests fail, classify each failure:
-
-| Classification | Indicators | Typical Fix Location |
-|---------------|------------|---------------------|
+| Type | Indicators | Fix Location |
+|------|------------|--------------|
 | `assertion` | Expected vs actual mismatch | Test or implementation |
 | `timeout` | Test exceeded time limit | Async handling, server |
 | `environment` | Missing server, env var, dep | Environment setup |
 | `syntax` | Parse/compile error | Code fix |
 | `runtime` | Uncaught exception | Implementation |
 
----
+## Common Issues
 
-## Common Issues and Fixes
-
-### "Vitest cannot be imported in CommonJS"
-
-**Cause:** Playwright `testDir` includes unit test files
-
-**Fix:** Edit `playwright.config.ts`:
-```typescript
-testDir: './tests/e2e',  // NOT './tests'
-```
-
-### No per-test output (just final summary)
-
-**Cause:** Not using streaming reporter
-
-**Fix:** Use EXACT commands with `--reporter=./scripts/reporters/...`
-
-### "idle warnings" during Playwright
-
-**Cause:** Default reporter doesn't emit per-test events
-
-**Fix:** Must use `--reporter=./scripts/reporters/playwright-streaming.ts`
-
-### Tests hang indefinitely
-
-**Cause:** Watch mode enabled or missing `run` flag
-
-**Fix:** 
-- Vitest: Use `vitest run` not `vitest`
-- Ensure test-monitor.js wrapper is used
-
----
+| Issue | Cause | Fix |
+|-------|-------|-----|
+| "Vitest cannot be imported in CommonJS" | Playwright `testDir` includes unit tests | Edit `playwright.config.ts`: `testDir: './tests/e2e'` (NOT `'./tests'`) |
+| No per-test output | Not using streaming reporter | Use EXACT commands with `--reporter=./scripts/reporters/...` |
+| Idle warnings during Playwright | Default reporter doesn't emit per-test events | Must use `--reporter=./scripts/reporters/playwright-streaming.ts` |
+| Tests hang indefinitely | Watch mode or missing `run` | Use `vitest run` not `vitest`, ensure test-monitor.js wrapper |
 
 ## Protocol Compliance Checklist
-
-Before considering test execution complete, verify:
 
 - [ ] Test monitor wrapper used (`node ~/.agent-os/hooks/lib/test-monitor.js`)
 - [ ] Streaming reporter used (`--reporter=./scripts/reporters/...`)
@@ -243,21 +146,19 @@ Before considering test execution complete, verify:
 - [ ] All failures classified
 - [ ] Stack traces captured for failures
 
----
-
-## Quick Reference: Exact Commands
+## Quick Reference
 
 ```bash
-# Unit tests (Vitest)
+# Unit (Vitest)
 node ~/.agent-os/hooks/lib/test-monitor.js pnpm vitest run --reporter=./scripts/reporters/vitest-streaming.js
 
-# Unit tests (Jest)
+# Unit (Jest)
 node ~/.agent-os/hooks/lib/test-monitor.js pnpm jest --ci
 
-# E2E tests (Playwright) - After server pre-flight
+# E2E (Playwright) - After pre-flight
 node ~/.agent-os/hooks/lib/test-monitor.js pnpm playwright test --reporter=./scripts/reporters/playwright-streaming.ts
 
-# E2E tests (Cypress)
+# E2E (Cypress)
 node ~/.agent-os/hooks/lib/test-monitor.js pnpm cypress run
 
 # Install missing reporters

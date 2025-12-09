@@ -31,7 +31,7 @@ See: [docs/GLOSSARY.md](../docs/GLOSSARY.md) for terminology.
 ### Core Workflows
 | File | Purpose |
 |------|---------|
-| `execute-task-orchestrated.md` | Main task execution flow |
+| `execute-tasks.md` | Main task execution flow |
 | `create-spec.md` | Feature specification creation |
 | `create-tasks.md` | Task breakdown |
 | `validate-quality.md` | Quality validation |

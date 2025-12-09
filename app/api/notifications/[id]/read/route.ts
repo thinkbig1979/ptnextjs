@@ -10,8 +10,9 @@ import config from '@payload-config';
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const payloadCMS = await getPayload({ config });
 
@@ -31,10 +32,10 @@ export async function PUT(
       );
     }
 
-    const notificationId = params.id;
+    const notificationId = id;
 
     // Mark notification as read
-    const result = await markAsRead(notificationId, user.id);
+    const result = await markAsRead(notificationId, String(user.id));
 
     if (!result.success) {
       if (result.error?.includes('Unauthorized')) {
@@ -68,7 +69,7 @@ export async function PUT(
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    console.error(`[API] PUT /api/notifications/${params.id}/read failed:`, errorMessage);
+    console.error(`[API] PUT /api/notifications/${id}/read failed:`, errorMessage);
 
     return NextResponse.json(
       {

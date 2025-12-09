@@ -1,5 +1,5 @@
 ---
-description: Migration workflow for converting monolithic tasks.md files to optimized split structure
+description: Migration workflow for converting monolithic tasks.md to optimized split structure
 version: 1.0
 encoding: UTF-8
 ---
@@ -8,56 +8,33 @@ encoding: UTF-8
 
 ## Overview
 
-This workflow detects and migrates monolithic tasks.md files to Agent OS v2.1.0's optimized split structure, providing 90%+ context reduction while preserving all task details and completion status.
+Migrate monolithic tasks.md to Agent OS v2.1.0 split structure: 90%+ context reduction.
 
-### Benefits of Migration
-
-- **90%+ Context Reduction**: Master tasks.md reduced from 500-1000+ lines to ~50-100 lines
-- **Scalability**: Efficiently handle 50+, 100+, or 200+ tasks
-- **Performance**: Only load detailed requirements when executing specific tasks
-- **Maintainability**: Easier to update individual task details without reloading entire file
-- **Migration Recommended**: Split format is the standard; migration improves performance
+**Benefits**: 90%+ reduction, scalable (50-200+ tasks), only load details when needed, easier maintenance
 
 ## Detection Logic
 
-### Monolithic Format Indicators
-
 <detection_criteria>
-  **Primary Indicators** (any one triggers migration recommendation):
-  - [ ] tasks.md exists and is > 200 lines
-  - [ ] tasks/ subdirectory does NOT exist
-  - [ ] File contains detailed acceptance criteria inline (5+ bullet points per task)
-  - [ ] File contains "Testing Requirements" or "Evidence Required" sections inline
-  - [ ] File contains "Context Requirements" or "Quality Gates" sections inline
-
-  **Detection Algorithm**:
-  1. Check if tasks.md exists in spec folder
-  2. Count lines in tasks.md (if > 200 lines, likely monolithic)
-  3. Check if tasks/ subdirectory exists (if not, definitely monolithic)
-  4. Scan content for verbose acceptance criteria patterns
-  5. Look for inline testing/evidence/quality sections
+  **Monolithic Indicators** (any triggers migration):
+  - [ ] tasks.md > 200 lines
+  - [ ] tasks/ subdirectory missing
+  - [ ] Detailed acceptance criteria inline (5+ bullets per task)
+  - [ ] "Testing Requirements" / "Evidence Required" sections inline
+  - [ ] "Context Requirements" / "Quality Gates" sections inline
 
   **Decision Matrix**:
-  - IF tasks.md > 200 lines AND no tasks/ subdirectory: **MIGRATE (High Priority)**
-  - IF tasks.md contains verbose inline details: **MIGRATE (Medium Priority)**
-  - IF tasks/ subdirectory exists: **SKIP (Already optimized)**
-  - IF tasks.md < 100 lines: **SKIP (Already concise or minimal tasks)**
+  - tasks.md > 200 lines AND no tasks/: **MIGRATE (High Priority)**
+  - Verbose inline details: **MIGRATE (Medium Priority)**
+  - tasks/ exists: **SKIP (Already optimized)**
+  - tasks.md < 100 lines: **SKIP (Already concise/minimal)**
 </detection_criteria>
 
-### Split Format Verification
-
 <split_format_check>
-  **Indicators of Optimized Format**:
-  - [ ] tasks/ subdirectory exists with task-*.md files
-  - [ ] Master tasks.md contains links to task detail files
-  - [ ] Master tasks.md is concise (~50-100 lines for 10-20 tasks)
-  - [ ] Individual task files contain comprehensive details
-
-  **Verification Steps**:
-  1. Check for tasks/ subdirectory existence
-  2. Count task-*.md files in tasks/ directory
-  3. Verify master tasks.md has links to detail files
-  4. Confirm master tasks.md line count is reasonable
+  **Optimized Format Indicators**:
+  - [ ] tasks/ subdirectory with task-*.md files
+  - [ ] Master tasks.md links to detail files
+  - [ ] Master ~50-100 lines for 10-20 tasks
+  - [ ] Individual files contain comprehensive details
 </split_format_check>
 
 ## Migration Process
@@ -66,168 +43,91 @@ This workflow detects and migrates monolithic tasks.md files to Agent OS v2.1.0'
 
 <step number="1" name="backup_original_file">
 
-#### Step 1: Backup Original File
+**Step 1: Backup**
 
-Create a backup of the monolithic tasks.md file before any modifications.
+```bash
+cp tasks.md tasks.md.backup
+```
 
-<backup_instructions>
-  ACTION: Copy original tasks.md to tasks.md.backup
-  LOCATION: Same directory as tasks.md
-  NAMING: tasks.md.backup (append .backup extension)
-  VERIFY: Backup file created successfully with identical content
-  PURPOSE: Safety net for recovery if migration fails
-</backup_instructions>
-
-<instructions>
-  EXECUTE: cp tasks.md tasks.md.backup
-  VERIFY: Backup file exists and matches original
-  LOG: "Created backup: tasks.md.backup"
-</instructions>
-
+VERIFY: Backup created with identical content
 </step>
 
 <step number="2" name="parse_monolithic_file">
 
-#### Step 2: Parse Monolithic File
-
-Extract all tasks from the monolithic tasks.md file, identifying structure and content.
+**Step 2: Parse Monolithic File**
 
 <parsing_logic>
-  **Task Identification Patterns**:
-  - Task line format: `- [ ] **task-id** - Task Title` or `- [ ] 1.2 Task Title`
-  - Completed task: `- [x] **task-id** - Task Title`
-  - Subtask indentation: Two or more spaces before `- [ ]`
-  - Section headers: `##` or `###` followed by phase/category name
+  **Task Identification**:
+  - Format: `- [ ] **task-id** - Task Title` or `- [ ] 1.2 Task Title`
+  - Completed: `- [x] **task-id** - Task Title`
+  - Subtasks: Two+ spaces before `- [ ]`
+  - Sections: `##` or `###` followed by phase name
 
-  **Content Extraction**:
-  1. **Task ID**: Extract from bold text or numeric pattern
-  2. **Title**: Text after task ID and hyphen
-  3. **Status**: Check `[ ]` vs `[x]` checkbox
-  4. **Indentation Level**: Count leading spaces to determine hierarchy
-  5. **Details**: All indented content following task line until next task
-  6. **Agent**: Look for `- **Agent**:` pattern
-  7. **Time Estimate**: Look for `- **Estimated Time**:` pattern
-  8. **Dependencies**: Look for `- **Dependencies**:` pattern
-  9. **Specifics**: Extract detailed requirements
-  10. **Acceptance Criteria**: Extract `- [ ]` checklist items
-  11. **Testing Requirements**: Extract testing sections
-  12. **Evidence Required**: Extract evidence sections
-  13. **Context Requirements**: Extract context sections
-  14. **Quality Gates**: Extract quality gate sections
+  **Extract**:
+  1. Task ID (from bold/numeric)
+  2. Title (after ID and hyphen)
+  3. Status (`[ ]` vs `[x]`)
+  4. Indentation level (hierarchy)
+  5. Details (indented content until next task)
+  6. Agent, time estimate, dependencies
+  7. Specifics, acceptance criteria
+  8. Testing, evidence, context requirements
+  9. Quality gates
 
   **Data Structure**:
   ```
   Task {
-    id: string
-    title: string
-    status: 'complete' | 'incomplete'
-    phase: string
-    agent: string
-    time_estimate: string
-    dependencies: string[]
-    specifics: string[]
-    acceptance_criteria: string[]
-    testing_requirements: object
-    evidence_required: string[]
-    context_requirements: string[]
-    quality_gates: string[]
-    implementation_notes: string[]
-    related_files: string[]
-    indentation_level: number
-    original_content: string
+    id, title, status, phase, agent, time_estimate,
+    dependencies[], specifics[], acceptance_criteria[],
+    testing_requirements{}, evidence_required[],
+    context_requirements[], quality_gates[],
+    implementation_notes[], related_files[],
+    indentation_level, original_content
   }
   ```
 </parsing_logic>
 
-<parsing_instructions>
-  ACTION: Read entire tasks.md file
-  PARSE: Line by line, identifying tasks and their details
-  EXTRACT: All task metadata and content sections
-  STRUCTURE: Build task object array with complete information
-  VALIDATE: All tasks extracted successfully
-  COUNT: Total tasks found for verification
-</parsing_instructions>
-
+ACTION: Read file, parse line-by-line, extract metadata, build task array, count for verification
 </step>
 
 <step number="3" name="analyze_task_structure">
 
-#### Step 3: Analyze Task Structure
-
-Analyze the extracted tasks to identify phases, dependencies, and organization.
+**Step 3: Analyze Structure**
 
 <analysis_logic>
-  **Phase Detection**:
-  - Identify section headers (## or ###)
-  - Group tasks by phase/section
-  - Preserve phase ordering
-
-  **Dependency Mapping**:
-  - Extract explicit dependencies from task metadata
-  - Identify implicit dependencies from task ordering
-  - Validate no circular dependencies exist
-
-  **Hierarchy Analysis**:
-  - Map parent-child task relationships
-  - Preserve indentation structure
-  - Maintain task groupings
-
-  **Metadata Aggregation**:
-  - Count total tasks
-  - Calculate total estimated time
-  - Identify assigned agents
-  - Track completion status
+  **Phase Detection**: Identify section headers, group tasks, preserve ordering
+  **Dependency Mapping**: Extract explicit/implicit, validate no circular
+  **Hierarchy Analysis**: Map parent-child, preserve indentation, maintain groupings
+  **Metadata Aggregation**: Count total, calculate time, identify agents, track completion
 </analysis_logic>
 
-<instructions>
-  ANALYZE: Task structure and organization
-  MAP: Dependencies and relationships
-  AGGREGATE: Metadata for master file
-  VALIDATE: Structure integrity
-</instructions>
-
+ACTION: Analyze structure, map dependencies, aggregate metadata
 </step>
 
 ### Phase 2: File Generation
 
 <step number="4" name="create_directory_structure">
 
-#### Step 4: Create Directory Structure
+**Step 4: Create Directory**
 
-Create the tasks/ subdirectory for individual task detail files.
+```bash
+mkdir -p tasks/
+```
 
-<directory_instructions>
-  ACTION: Create tasks/ subdirectory in spec folder
-  LOCATION: Same directory as tasks.md
-  VERIFICATION: Directory exists and is writable
-  ERROR_HANDLING: If directory exists, verify it's empty or confirm overwrite
-</directory_instructions>
-
-<instructions>
-  EXECUTE: mkdir -p tasks/
-  VERIFY: tasks/ directory exists
-  LOG: "Created tasks/ directory"
-</instructions>
-
+VERIFY: Directory exists and writable
 </step>
 
 <step number="5" name="generate_individual_task_files">
 
-#### Step 5: Generate Individual Task Files
-
-Create detailed task files for each extracted task.
+**Step 5: Generate Individual Task Files**
 
 <individual_file_generation>
-  **Filename Convention**:
-  - Format: `task-[TASK_ID].md`
-  - Examples:
-    - task-pre-1.md
-    - task-impl-comp1-core.md
-    - task-test-1.md
-  - Sanitize task ID: Replace spaces, dots, special chars with hyphens
-  - Lowercase task ID for consistency
+  **Filename**: `task-[TASK_ID].md`
+  - Sanitize ID: Replace spaces/dots/special chars with hyphens
+  - Lowercase for consistency
+  - Examples: task-pre-1.md, task-impl-comp1-core.md
 
-  **File Content Template**:
+  **Template**:
   ```markdown
   # Task: [TASK_ID] - [TASK_TITLE]
 
@@ -240,65 +140,59 @@ Create detailed task files for each extracted task.
   - **Status**: [STATUS_CHECKBOX] [STATUS_TEXT]
 
   ## Task Description
-  [DETAILED_TASK_DESCRIPTION or TASK_TITLE if no description]
+  [DETAILED_DESCRIPTION or TITLE if none]
 
   ## Specifics
-  [EXTRACTED_SPECIFICS or "See acceptance criteria below"]
+  [EXTRACTED_SPECIFICS or "See acceptance criteria"]
 
   ## Acceptance Criteria
-  [EXTRACTED_ACCEPTANCE_CRITERIA]
+  [EXTRACTED_CRITERIA]
 
   ## Testing Requirements
-  [EXTRACTED_TESTING_REQUIREMENTS if present]
+  [EXTRACTED_TESTING if present]
 
   ## Evidence Required
-  [EXTRACTED_EVIDENCE_REQUIREMENTS if present]
+  [EXTRACTED_EVIDENCE if present]
 
   ## Context Requirements
-  [EXTRACTED_CONTEXT_REQUIREMENTS if present]
+  [EXTRACTED_CONTEXT if present]
 
   ## Implementation Notes
-  [EXTRACTED_IMPLEMENTATION_NOTES if present]
+  [EXTRACTED_NOTES if present]
 
   ## Quality Gates
-  [EXTRACTED_QUALITY_GATES if present]
+  [EXTRACTED_GATES if present]
 
   ## Related Files
   - Spec: ../../spec.md
   - Technical Spec: ../../technical-spec.md
   - Master Task List: ../tasks.md
-  [ADDITIONAL_RELATED_FILES if present]
+  [ADDITIONAL_FILES if present]
   ```
 
-  **Content Population Rules**:
-  1. If section has no content, omit section entirely
-  2. Preserve exact formatting from original
-  3. Maintain checkbox states for acceptance criteria
-  4. Include all subsections and bullet points
-  5. Keep original markdown formatting
+  **Rules**:
+  - Omit sections with no content
+  - Preserve exact formatting
+  - Maintain checkbox states
+  - Include all subsections/bullets
+  - Keep original markdown
 </individual_file_generation>
 
-<generation_instructions>
-  FOR each extracted task:
-    GENERATE: Filename from sanitized task ID
-    POPULATE: Template with extracted content
-    WRITE: File to tasks/ subdirectory
-    VERIFY: File created successfully
-  END FOR
+FOR each task:
+  GENERATE filename from sanitized ID
+  POPULATE template with extracted content
+  WRITE file to tasks/
+  VERIFY creation
 
-  LOG: "Generated [COUNT] individual task files"
-</generation_instructions>
-
+LOG: "Generated [COUNT] files"
 </step>
 
 <step number="6" name="generate_master_tasks_file">
 
-#### Step 6: Generate Master Tasks File
-
-Create lightweight master tasks.md with links to detail files.
+**Step 6: Generate Master tasks.md**
 
 <master_file_generation>
-  **Master File Template**:
+  **Template**:
   ```markdown
   # Spec Tasks
 
@@ -306,9 +200,9 @@ Create lightweight master tasks.md with links to detail files.
   - **Spec Name**: [SPEC_NAME]
   - **Generation Date**: [CURRENT_DATE]
   - **Total Tasks**: [TASK_COUNT]
-  - **Completed Tasks**: [COMPLETED_COUNT]/[TASK_COUNT]
+  - **Completed**: [COMPLETED_COUNT]/[TASK_COUNT]
   - **Estimated Total Time**: [TOTAL_TIME]
-  - **Migrated**: ✅ Migrated from monolithic to split structure on [MIGRATION_DATE]
+  - **Migrated**: ✅ Split structure on [MIGRATION_DATE]
 
   ## [PHASE_1_NAME]
 
@@ -317,281 +211,225 @@ Create lightweight master tasks.md with links to detail files.
     - **Estimated Time**: [TIME_ESTIMATE]
     - **Dependencies**: [DEPENDENCY_LIST]
 
-  [SUBTASKS with increased indentation if present]
+  [SUBTASKS with indentation]
 
   ## [PHASE_2_NAME]
-
-  - [STATUS] **[TASK_ID]** - [TASK_TITLE] → [details](tasks/task-[SANITIZED_ID].md)
-    - **Agent**: [AGENT_NAME]
-    - **Estimated Time**: [TIME_ESTIMATE]
-    - **Dependencies**: [DEPENDENCY_LIST]
+  ...
 
   ## Task Summary
-  - **Total Tasks**: [TOTAL_COUNT]
-  - **Completed**: [COMPLETED_COUNT] ([COMPLETION_PERCENTAGE]%)
+  - **Total**: [TOTAL_COUNT]
+  - **Completed**: [COMPLETED_COUNT] ([PERCENTAGE]%)
   - **Remaining**: [REMAINING_COUNT]
-  - **Total Estimated Time**: [TOTAL_TIME]
+  - **Total Time**: [TOTAL_TIME]
   ```
 
-  **Content Rules**:
-  - Each task: ONE line with ID, title, link
+  **Rules**:
+  - ONE line per task: ID, title, link
   - Indented lines: Agent, time, dependencies ONLY
-  - NO verbose acceptance criteria
-  - NO testing requirements inline
-  - NO evidence requirements inline
-  - Links format: `[details](tasks/task-[SANITIZED_ID].md)`
-  - Preserve task hierarchy with indentation
+  - NO verbose criteria, testing, evidence inline
+  - Links: `[details](tasks/task-[SANITIZED_ID].md)`
+  - Preserve hierarchy with indentation
   - Maintain phase organization
-  - Preserve completion status checkboxes
+  - Preserve completion checkboxes
 </master_file_generation>
 
-<generation_instructions>
-  BUILD: Master file from analyzed task structure
-  INCLUDE: Only essential metadata per task
-  LINK: Each task to its detail file
-  PRESERVE: Phase organization and hierarchy
-  CALCULATE: Aggregate statistics
-  WRITE: New tasks.md file (overwrite original)
-  VERIFY: File generated successfully
-  LOG: "Generated master tasks.md with [COUNT] tasks"
-</generation_instructions>
-
+ACTION: Build from analyzed structure, include only essential metadata, link to detail files, calculate statistics, write new tasks.md
 </step>
 
 ### Phase 3: Validation and Verification
 
 <step number="7" name="validate_migration">
 
-#### Step 7: Validate Migration
-
-Verify migration completed successfully and all content preserved.
+**Step 7: Validate Migration**
 
 <validation_checks>
-  **File Structure Validation**:
+  **Structure**:
   - [ ] tasks/ subdirectory exists
-  - [ ] Individual task files created (count matches original task count)
+  - [ ] Individual files created (count matches original)
   - [ ] Master tasks.md regenerated
   - [ ] Backup file exists (tasks.md.backup)
 
-  **Content Validation**:
-  - [ ] All tasks from original file present in new structure
-  - [ ] Task IDs match between master and detail files
-  - [ ] Completion status preserved (check [x] counts match)
-  - [ ] All acceptance criteria preserved in detail files
-  - [ ] All testing requirements preserved
-  - [ ] All evidence requirements preserved
+  **Content**:
+  - [ ] All tasks from original present
+  - [ ] Task IDs match master and details
+  - [ ] Completion status preserved ([x] counts match)
+  - [ ] All acceptance criteria in detail files
+  - [ ] All testing/evidence/context preserved
   - [ ] Phase organization maintained
   - [ ] Task hierarchy preserved
 
-  **Link Validation**:
-  - [ ] All links in master file point to existing detail files
-  - [ ] Link format correct: `[details](tasks/task-[ID].md)`
+  **Links**:
+  - [ ] All links point to existing files
+  - [ ] Format correct: `[details](tasks/task-[ID].md)`
   - [ ] No broken links
 
-  **Quality Validation**:
-  - [ ] Master file line count significantly reduced (should be ~50-100 lines)
-  - [ ] Detail files contain comprehensive information
-  - [ ] No content loss during migration
+  **Quality**:
+  - [ ] Master ~50-100 lines (significantly reduced)
+  - [ ] Detail files comprehensive
+  - [ ] No content loss
   - [ ] Formatting preserved
 
-  **Validation Algorithm**:
-  1. Count tasks in original backup file
-  2. Count tasks in new master file
-  3. Count task-*.md files in tasks/ directory
-  4. Compare counts (all should match)
-  5. Count [x] completed tasks in original
-  6. Count [x] completed tasks in new master
-  7. Compare completion counts (should match)
-  8. Verify all links resolve to existing files
-  9. Sample 3-5 detail files for content completeness
+  **Algorithm**:
+  1. Count tasks in backup
+  2. Count tasks in new master
+  3. Count task-*.md files
+  4. Compare counts (must match)
+  5. Count [x] completed in backup
+  6. Count [x] completed in master
+  7. Compare completion (must match)
+  8. Verify all links resolve
+  9. Sample 3-5 detail files for completeness
 </validation_checks>
 
-<validation_instructions>
-  VERIFY: Task count matches original
-  VERIFY: Completion status preserved
-  VERIFY: All links functional
-  VERIFY: Content preserved in detail files
-  REPORT: Validation results
-  ERROR: If validation fails, restore from backup
-</validation_instructions>
-
+ACTION: Verify counts, status, links, content; report results; restore if validation fails
 </step>
 
 <step number="8" name="migration_summary">
 
-#### Step 8: Migration Summary
-
-Generate migration report and present to user.
+**Step 8: Migration Summary**
 
 <migration_report>
-  **Migration Report Template**:
   ```
   ✅ Task Structure Migration Complete
 
   **Migration Details**:
-  - **Original File**: tasks.md ([ORIGINAL_LINE_COUNT] lines)
-  - **New Master File**: tasks.md ([NEW_LINE_COUNT] lines)
-  - **Context Reduction**: [REDUCTION_PERCENTAGE]% ([REDUCTION_LINE_COUNT] lines saved)
-  - **Detail Files Created**: [DETAIL_FILE_COUNT] files in tasks/ directory
-  - **Backup Created**: tasks.md.backup
+  - **Original**: tasks.md ([ORIGINAL_LINES] lines)
+  - **New Master**: tasks.md ([NEW_LINES] lines)
+  - **Context Reduction**: [REDUCTION_%]% ([LINES] saved)
+  - **Detail Files**: [COUNT] in tasks/
+  - **Backup**: tasks.md.backup
 
-  **Task Statistics**:
-  - **Total Tasks**: [TOTAL_TASK_COUNT]
-  - **Completed Tasks**: [COMPLETED_COUNT] ([COMPLETION_PERCENTAGE]%)
-  - **Remaining Tasks**: [REMAINING_COUNT]
+  **Statistics**:
+  - **Total**: [TOTAL] tasks
+  - **Completed**: [COMPLETED] ([%]%)
+  - **Remaining**: [REMAINING]
   - **Phases**: [PHASE_COUNT]
 
-  **Validation Results**:
-  - ✅ All tasks migrated successfully
+  **Validation**:
+  - ✅ All tasks migrated
   - ✅ Completion status preserved
-  - ✅ All content preserved in detail files
+  - ✅ Content preserved in details
   - ✅ All links functional
-  - ✅ No content loss detected
+  - ✅ No content loss
 
   **Next Steps**:
-  - Master tasks.md now optimized for quick overview
-  - Individual task details available in tasks/ subdirectory
-  - Use execute-tasks workflow with new structure
-  - 90%+ context savings when reviewing task list
-  - Original file preserved as tasks.md.backup for reference
+  - Master optimized for quick overview
+  - Details in tasks/ subdirectory
+  - Use execute-tasks workflow
+  - 90%+ context savings
+  - Original preserved in tasks.md.backup
 
-  **Benefits Achieved**:
-  - 🚀 [REDUCTION_PERCENTAGE]% faster task list loading
-  - 📊 Scalable structure for large task lists
-  - 🎯 Context-efficient task execution
-  - 🔄 Easier task status updates
+  **Benefits**:
+  - 🚀 [%]% faster loading
+  - 📊 Scalable for large lists
+  - 🎯 Context-efficient execution
+  - 🔄 Easier status updates
   ```
 </migration_report>
 
-<instructions>
-  GENERATE: Migration report with statistics
-  CALCULATE: Context reduction percentage
-  SUMMARIZE: Migration outcomes
-  PRESENT: Report to user
-  CONFIRM: Migration successful
-</instructions>
-
+ACTION: Generate report with statistics, summarize outcomes, present to user
 </step>
 
 ## Error Handling
 
-### Migration Failures
-
 <error_handling>
   **Backup Restoration**:
-  - IF migration fails at any step:
-    - RESTORE: tasks.md from tasks.md.backup
-    - REMOVE: tasks/ directory if partially created
-    - LOG: Error details and failure point
-    - NOTIFY: User of migration failure and restoration
+  - IF migration fails: Restore from backup, remove tasks/, log error, notify user
 
   **Common Errors**:
-  1. **Parse Failure**: Unable to extract tasks from monolithic file
-     - Cause: Unexpected format or structure
-     - Solution: Manual review and format correction needed
-     - Action: Provide detailed error about parsing issue
+  1. **Parse Failure**: Unexpected format
+     - Solution: Manual review, format correction
+     - Action: Detailed error about parsing issue
 
-  2. **File Creation Failure**: Unable to create tasks/ directory or detail files
-     - Cause: Permission issues or disk space
-     - Solution: Check permissions and disk space
-     - Action: Restore backup and notify user
+  2. **File Creation Failure**: Permission/disk issues
+     - Solution: Check permissions, disk space
+     - Action: Restore backup, notify
 
-  3. **Validation Failure**: Task count mismatch or content loss
-     - Cause: Parsing logic error or incomplete extraction
-     - Solution: Restore backup and review extraction logic
-     - Action: Notify user with specific validation failures
+  3. **Validation Failure**: Count mismatch, content loss
+     - Solution: Restore backup, review extraction
+     - Action: Notify with specific failures
 
-  4. **Link Generation Failure**: Broken links in master file
-     - Cause: Filename sanitization issue or path error
-     - Solution: Fix sanitization logic and regenerate
-     - Action: Restore backup and retry with fixes
+  4. **Link Generation Failure**: Broken links
+     - Solution: Fix sanitization, regenerate
+     - Action: Restore backup, retry
 </error_handling>
 
-### Recovery Process
-
 <recovery_instructions>
-  IF migration fails:
-    1. STOP immediately at failure point
-    2. PRESERVE error information and logs
-    3. RESTORE original tasks.md from backup
-    4. REMOVE partially created tasks/ directory
-    5. NOTIFY user with error details
-    6. PROVIDE manual migration guidance if needed
+  IF failure:
+  1. STOP at failure point
+  2. PRESERVE error info and logs
+  3. RESTORE tasks.md from backup
+  4. REMOVE partial tasks/ directory
+  5. NOTIFY user with error details
+  6. PROVIDE manual migration guidance if needed
 </recovery_instructions>
 
 ## Migration Skip Scenarios
 
 <skip_scenarios>
-  **When to Skip Migration**:
-  1. **Already Optimized**: tasks/ subdirectory exists and structure is correct
+  **Skip When**:
+  1. **Already Optimized**: tasks/ exists, structure correct
   2. **Minimal Tasks**: tasks.md < 100 lines (already concise)
-  3. **No tasks.md**: File doesn't exist (nothing to migrate)
-  4. **User Preference**: User explicitly requests to skip migration
-  5. **Custom Format**: Non-standard task format requiring manual review
+  3. **No tasks.md**: File doesn't exist
+  4. **User Preference**: Explicit skip request
+  5. **Custom Format**: Non-standard requiring manual review
 
   **Skip Message**:
   ```
   ℹ️ Task structure migration skipped
 
   **Reason**: [SKIP_REASON]
-
-  **Current Structure**:
-  - [STRUCTURE_DESCRIPTION]
-
-  **Recommendation**: [RECOMMENDATION if applicable]
+  **Current**: [STRUCTURE_DESCRIPTION]
+  **Recommendation**: [IF_APPLICABLE]
   ```
 </skip_scenarios>
 
 ## Best Practices
 
-### Migration Timing
-
 <best_practices>
-  **Optimal Migration Timing**:
+  **Optimal Timing**:
   - Before starting new task execution
   - During spec enhancement workflow
-  - When task list grows beyond 20 tasks
-  - When context consumption becomes noticeable
+  - When task list > 20 tasks
+  - When context consumption noticeable
 
   **Pre-Migration Checklist**:
-  - [ ] Commit any pending changes to tasks.md
-  - [ ] Verify no active task execution in progress
-  - [ ] Ensure spec directory is writable
-  - [ ] Confirm adequate disk space available
+  - [ ] Commit pending changes to tasks.md
+  - [ ] No active task execution in progress
+  - [ ] Spec directory writable
+  - [ ] Adequate disk space
 
   **Post-Migration Verification**:
-  - [ ] Review master tasks.md for accuracy
-  - [ ] Spot-check 3-5 detail files for completeness
-  - [ ] Verify all links work correctly
-  - [ ] Test execute-tasks workflow with new structure
-  - [ ] Archive backup file after successful verification
+  - [ ] Review master tasks.md
+  - [ ] Spot-check 3-5 detail files
+  - [ ] Verify links work
+  - [ ] Test execute-tasks workflow
+  - [ ] Archive backup after verification
 </best_practices>
 
 ## Integration with Agent OS Workflows
 
-### Execute-Tasks Integration
-
 <workflow_integration>
-  **No Workflow Changes Required**:
-  - execute-tasks.md already supports split structure
+  **No Changes Required**:
+  - execute-tasks.md supports split structure
   - Automatically detects and uses detail files
-  - Falls back to monolithic if detail files not present
-  - Migration is transparent to execution workflow
+  - Falls back to monolithic if not present
+  - Migration transparent to execution
 
   **Enhanced Performance**:
-  - Task selection: Only loads master tasks.md
-  - Task execution: Only loads specific detail file needed
-  - Progress tracking: Uses lightweight master file
-  - Context savings: 90%+ reduction in repeated context consumption
+  - Task selection: Only loads master
+  - Task execution: Only loads specific detail
+  - Progress tracking: Uses lightweight master
+  - Context savings: 90%+ reduction
 </workflow_integration>
 
 ## Conclusion
 
-The migration process is designed to be:
+Migration designed to be:
 - **Safe**: Automatic backup and validation
 - **Reliable**: Comprehensive error handling and recovery
 - **Transparent**: Clear reporting and verification
-- **Efficient**: 90%+ context reduction achieved
-- **Migration Recommended**: Split format is the standard for optimal performance
+- **Efficient**: 90%+ context reduction
+- **Recommended**: Split format is standard for optimal performance
 
-Migration transforms large, unwieldy task files into efficient, scalable structures that support Agent OS's orchestrated execution model while maintaining all original content and completion status.
+Transforms large task files into efficient, scalable structures supporting Agent OS orchestrated execution while maintaining all content and completion status.

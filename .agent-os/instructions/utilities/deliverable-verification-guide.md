@@ -553,14 +553,14 @@ Use this checklist for EVERY task:
 
 ## Integration with Orchestrated Execution
 
-This verification guide integrates into execute-task-orchestrated.md at these points:
+This verification guide integrates into execute-tasks.md at these points:
 
 1. **Step 1 (Orchestration Setup)**: Create deliverable manifest
 2. **Step 2 (Parallel Execution)**: Share manifest, track progress
 3. **Step 3 (Integration and Validation)**: Perform comprehensive verification
 4. **Step 4 (Task Completion)**: Only complete if verification passes
 
-See execute-task-orchestrated.md for the updated workflow.
+See execute-tasks.md for the updated workflow.
 
 ---
 

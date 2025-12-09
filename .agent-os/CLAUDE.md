@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Agent OS v4.3.0 - Structured workflows for AI agents to build products systematically.
+Agent OS v4.5.0 - Structured workflows for AI agents to build products systematically.
 
 ## Quick Reference
 
@@ -119,7 +119,7 @@ Prevents hung tests, CI failures, and test sprawl.
 
 **Mandatory Protocols**:
 
-1. **Instruction Loading** (Step 1.9 in execute-task-orchestrated.md)
+1. **Instruction Loading** (Step 1.9 in execute-tasks.md)
    - Subagents MUST read their instruction file before work
    - Agent type validated against task requirements
 
@@ -178,7 +178,7 @@ Pre-test research phase that gathers library documentation BEFORE test writing.
 - `~/.claude/skills/agent-os-test-research/` - Test research skill (v3.2+)
 - `~/.claude/skills/agent-os-patterns/` - Testing patterns skill (v3.2+)
 
-**Workflow Integration**: Step 2.0 in `execute-task-orchestrated.md` (before test-architect)
+**Workflow Integration**: Step 2.0 in `execute-tasks.md` (before test-architect)
 
 ### Skills Integration (v3.2+)
 Claude Code skills provide progressive-disclosure documentation without network dependencies.
@@ -387,7 +387,7 @@ BLOCKERS: [any issues]
 - Execution plan confirmation before starting
 
 **Key Files**:
-- `instructions/core/execute-tasks-unified.md` - Full protocol
+- `instructions/core/execute-tasks.md` - Full protocol
 - `.claude/commands/execute-tasks.md` - Command entry point
 
 **Configuration** (`config.yml`):
@@ -397,8 +397,145 @@ unified_execution:
   beads_first: true
   context_limit: 0.75
   parallel_waves: true
-  confirm_execution_plan: true
 ```
+
+### Test Integrity Maintenance (v4.5.0+)
+Proactive analysis of existing tests BEFORE implementation to prevent test rot.
+
+**Problem Solved**: Tests become outdated silently when implementation changes but tests aren't updated. This leads to:
+- Tests that "pass" but test wrong behavior
+- Misleading coverage metrics
+- Bugs that slip through "passing" test suites
+- Invisible technical debt accumulation
+
+**Solution**: Analyze existing tests BEFORE building, create explicit update tasks:
+
+```
+Phase 1.5: Test Integrity Analysis (NEW)
+├─ Identify files being modified
+├─ Discover all tests that touch those files
+├─ Categorize by impact (critical/high/medium)
+├─ Create Beads tasks for test updates
+└─ Link updates to implementation (dependencies)
+```
+
+**How It Works**:
+1. **Scope Analysis**: Extract files/functions being modified from task spec
+2. **Test Discovery**: Search for tests that:
+   - Directly test modified files (`login.test.ts` for `login.ts`)
+   - Mock modified modules (`vi.mock('./auth/login')`)
+   - Use related fixtures (if schema changes)
+   - Cover affected E2E routes
+3. **Impact Categorization**:
+   - `critical`: Directly tests modified code
+   - `high`: Mocks the modified module
+   - `medium`: Indirect consumer or fixture user
+4. **Task Creation**: Auto-create Beads tasks for test updates
+5. **Dependency Linking**: Test updates depend on implementation completion
+
+**Key Files**:
+- `instructions/agents/test-integrity-analyzer.md` - Analysis phase instructions
+- `instructions/core/execute-tasks.md` (Phase 1.5) - Workflow integration
+
+**Discovery Strategies**:
+```yaml
+# Direct test files
+GLOB: "**/{filename}.test.{ts,tsx,js}"
+GLOB: "**/{filename}.spec.{ts,tsx,js}"
+
+# Mock references
+GREP: "vi.mock.*{module_path}"
+GREP: "jest.mock.*{module_path}"
+
+# Import references in tests
+GREP: "import.*from.*{module_path}"
+SCOPE: "**/*.test.*, **/*.spec.*"
+
+# E2E route tests
+GREP: "page.goto.*{affected_route}"
+SCOPE: "tests/e2e/**"
+```
+
+**Output Example**:
+```
+TEST INTEGRITY ANALYSIS - COMPLETE
+
+Change Scope: 3 files, 5 functions
+
+Affected Tests: 8
+   Critical: 2 (must update)
+   High: 3 (check signatures)
+   Medium: 3 (verify behavior)
+
+Test Update Tasks Created:
+   beads-abc: Update auth tests (depends on beads-impl-001)
+   beads-def: Verify login E2E (depends on beads-impl-001)
+
+Report: .agent-os/test-integrity/TASK-001-analysis.json
+```
+
+**Enforcement Modes**:
+| Mode | Behavior |
+|------|----------|
+| `advisory` | Log findings, create tasks, continue (default) |
+| `warning` | Show warnings, require acknowledgment |
+| `blocking` | Cannot proceed with unaddressed critical tests |
+
+**Configuration** (`config.yml`):
+```yaml
+test_integrity_maintenance:
+  enabled: true
+  triggers:
+    before_every_task: true
+    on_file_modification: true
+  task_creation:
+    auto_create_beads_tasks: true
+    add_dependencies: true
+  enforcement:
+    mode: "advisory"
+```
+
+### TypeScript Type Checking (v4.3.0+)
+Mandatory TypeScript type verification to prevent type errors from entering the codebase.
+
+**Problem Solved**: TypeScript errors were accumulating because:
+- `syntax_check.js` only validates JavaScript syntax, not TypeScript types
+- No explicit directive for agents to run `tsc --noEmit`
+- No pre-commit hook to block commits with type errors
+
+**Solution**: Multi-layer type checking:
+
+| Layer | Implementation | When | What It Catches |
+|-------|---------------|------|-----------------|
+| Validator | `hooks/validators/type_checking.js` | Per-file write | Immediate errors |
+| Task Verification | `execute-tasks.md` Step 4.2 | Before task completion | Accumulated errors |
+| Pre-commit Hook | `.git/hooks/pre-commit` | Before commit | Final safety net |
+
+**Key Commands**:
+```bash
+# Manual type check
+pnpm tsc --noEmit
+
+# Install pre-commit hook
+~/.agent-os/setup/install-typescript-precommit.sh
+
+# Add typecheck script to package.json
+npm pkg set scripts.typecheck="tsc --noEmit"
+```
+
+**Configuration** (`config.yml`):
+```yaml
+typescript_checking:
+  enabled: true
+  triggers:
+    on_file_write: true
+    on_task_completion: true
+    pre_commit: true
+  error_handling:
+    block_on_error: true
+```
+
+**MANDATORY**: Before completing ANY task in a TypeScript project, run `pnpm tsc --noEmit` and fix all errors.
 
 **Key Files**:
 - `.claude/commands/run-tests.md` - Full protocol (v4.1)
@@ -416,7 +553,7 @@ Ensures tests and implementation code remain aligned throughout TDD cycle.
 **Key Files**:
 - `instructions/utilities/test-code-alignment-checklist.md` - Full alignment guide
 - `instructions/agents/implementation-context-handoff.md` - GREEN phase guidance
-- `execute-task-orchestrated.md` (Steps 2.1a, 2.2a) - Workflow integration
+- `execute-tasks.md` (Steps 2.1a, 2.2a) - Workflow integration
 
 **Workflow**:
 1. **RED Phase (2.1)**: test-architect documents patterns used
@@ -468,7 +605,7 @@ Ensures mandatory instructions, skills, and context are passed to subagents in o
 
 **Key Files**:
 - `instructions/utilities/subagent-delegation-template.md` - Copy-paste template for Task() prompts
-- `instructions/core/execute-task-orchestrated.md` (Step 1.9a) - Template reference
+- `instructions/core/execute-tasks.md` (Step 1.9a) - Template reference
 - `instructions/core/create-spec.md` - Subagent delegation guidance section
 - `instructions/agents/test-context-gatherer.md` (Section 2.0) - Mandatory skill invocations
 
@@ -515,7 +652,7 @@ Mandatory TypeScript type verification to prevent type errors from entering the 
 | Layer | Implementation | When | What It Catches |
 |-------|---------------|------|-----------------|
 | Validator | `hooks/validators/type_checking.js` | Per-file write | Immediate errors |
-| Task Verification | `execute-tasks-unified.md` Step 4.2 | Before task completion | Accumulated errors |
+| Task Verification | `execute-tasks.md` Step 4.2 | Before task completion | Accumulated errors |
 | Pre-commit Hook | `.git/hooks/pre-commit` | Before commit | Final safety net |
 
 **Key Commands**:
@@ -571,7 +708,7 @@ typescript_checking:
 - Priority-based execution ordering
 - Configuration-driven enable/disable
 
-**Standalone Execution** (`instructions/core/execute-task-standalone.md`):
+**Standalone Execution** (`instructions/core/execute-tasks.md`):
 - Execute tasks without Beads dependency
 - Simplified workflow for prototyping
 - Full TDD state integration (optional)
@@ -582,6 +719,7 @@ Before marking task complete:
 - [ ] All files in deliverable manifest exist
 - [ ] **TypeScript type check passes** (`pnpm tsc --noEmit`) - MANDATORY for TS projects
 - [ ] All tests pass (`test:unit:ci`, `test:e2e:ci`)
+- [ ] **Existing tests verified** - Test integrity analysis completed (v4.5.0+)
 - [ ] No P1 security findings
 - [ ] Acceptance criteria verified with evidence
 - [ ] Integration points tested
@@ -630,7 +768,10 @@ Use consistent references for traceability:
 ## Configuration
 
 All features toggled in `config.yml`:
-- `skills_integration.enabled: true` - v3.2 skills-based context (NEW)
+- `test_integrity_maintenance.enabled: true` - v4.5 proactive test analysis (NEW)
+- `typescript_checking.enabled: true` - v4.3 TypeScript type verification
+- `unified_execution.enabled: true` - v4.1 Beads-first orchestration
+- `skills_integration.enabled: true` - v3.2 skills-based context
 - `test_infrastructure.enabled: true` - v2.9 test reliability
 - `tdd_enforcement.enabled: true` - Test-first workflow
 - `beads.enabled: true` - Git-backed task tracking

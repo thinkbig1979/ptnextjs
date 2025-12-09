@@ -135,7 +135,8 @@ export async function authenticateAdmin(request: NextRequest): Promise<AuthResul
       };
     }
 
-    return { user };
+    // We've verified the user has the admin role, cast to AuthSuccess type
+    return { user: user as unknown as AuthSuccess['user'] };
   } catch (error) {
     console.error('[Admin Auth] Authentication error:', error);
     return {

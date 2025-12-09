@@ -7,6 +7,8 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
   testDir: './tests/e2e',
+  /* Global setup - runs once before all tests to seed data and clear rate limits */
+  globalSetup: require.resolve('./tests/e2e/global-setup.ts'),
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -68,14 +70,22 @@ export default defineConfig({
     // },
   ],
 
-  /* Run your local dev server before starting the tests */
-  webServer: {
-    command: 'DISABLE_EMAILS=true npm run dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: true,
-    timeout: 120 * 1000,
-    env: {
-      DISABLE_EMAILS: 'true',
-    },
-  },
+  /*
+   * Web server configuration DISABLED
+   *
+   * Tests expect an externally-managed dev server to be running.
+   * Start the dev server manually before running tests:
+   *   DISABLE_EMAILS=true npm run dev
+   *
+   * This prevents port conflicts and ensures the .next folder is properly built.
+   */
+  // webServer: {
+  //   command: 'DISABLE_EMAILS=true npm run dev',
+  //   url: 'http://localhost:3000',
+  //   reuseExistingServer: true,
+  //   timeout: 120 * 1000,
+  //   env: {
+  //     DISABLE_EMAILS: 'true',
+  //   },
+  // },
 });

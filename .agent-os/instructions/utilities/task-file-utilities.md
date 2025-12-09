@@ -185,10 +185,10 @@ Generates both master and detail files automatically
 ### execute-tasks.md
 Reads master for overview, references detail files during execution
 
-### execute-task.md
+### execute-tasks.md
 Loads specific detail file for comprehensive task requirements
 
-### execute-task-orchestrated.md
+### execute-tasks.md
 Uses detail files for specialist agent context packages
 
 ## Troubleshooting

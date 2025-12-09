@@ -466,7 +466,7 @@ TDD enforcement is integrated throughout Agent OS workflows:
 - Test-first requirements propagated to task definitions
 - TDD validator hook configured for task execution
 
-**Task Execution** (`execute-task-orchestrated.md`):
+**Task Execution** (`execute-tasks.md`):
 - Orchestrator validates TDD phases during implementation
 - Tests verified before marking tasks complete
 - Coverage targets enforced based on enforcement level
@@ -1801,7 +1801,7 @@ Test-Driven Development is a disciplined approach to building software with comp
 **Integration with Agent OS**:
 - TDD sections in all specifications (via `create-spec.md` Step 4.5)
 - TDD acceptance criteria in tasks (via `create-tasks.md`)
-- TDD validation during execution (via `execute-task-orchestrated.md`)
+- TDD validation during execution (via `execute-tasks.md`)
 - Automatic quality enforcement (via TDD validator hook)
 
 **Resources**:

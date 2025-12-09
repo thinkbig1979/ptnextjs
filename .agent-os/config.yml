@@ -1,5 +1,7 @@
-# Agent OS Configuration v4.4.0
+# Agent OS Configuration v4.6.0
 # Clean configuration with sane defaults for compound engineering integration
+# v4.6.0: File consolidation - Single execute-tasks.md, removed redundant protocols
+# v4.5.0: Test Integrity Maintenance - Proactive existing test analysis and update tasks
 # v4.4.0: Quality Enforcement - Blocking gates, context verification, skill invocation checks
 # v4.3.0: Codebase Cleanup - Removed legacy/deprecated code, streamlined instructions
 # v4.2.0: Testing Alignment - Canonical standards, verification gates, clear ownership, failure classification
@@ -8,7 +10,7 @@
 # v4.0.0: Test Failure Handling Protocol - Orchestrated test execution with subagent delegation
 # v3.3.0: Test Execution Monitoring - Real-time streaming, hung test detection, test/code alignment
 
-agent_os_version: 4.4.0
+agent_os_version: 4.6.0
 
 # ================================================
 # CONFIGURATION HIERARCHY
@@ -281,7 +283,7 @@ compound_engineering:
     pause_resume: true
 
   # Security scanning
-  # Enforced in: instructions/core/execute-task-orchestrated.md (Step 4.3)
+  # Enforced in: instructions/core/execute-tasks.md (Step 4.3)
   # Checked by: hooks/validators/security_scan.js
   security:
     enabled: true
@@ -338,7 +340,7 @@ quality_hooks:
 #
 # Implementation: hooks/validators/type_checking.js
 # Pre-commit hook: setup/install-typescript-precommit.sh
-# Task verification: instructions/core/execute-tasks-unified.md (Step 4.2)
+# Task verification: instructions/core/execute-tasks.md (Step 4.2)
 
 typescript_checking:
   enabled: true
@@ -601,7 +603,7 @@ test_infrastructure:
 #
 # Implementation: instructions/agents/test-context-gatherer.md
 # Utilities: hooks/lib/detect-test-libraries.js, hooks/lib/fetch-test-documentation.js
-# Workflow: execute-task-orchestrated.md Step 2.0
+# Workflow: execute-tasks.md Step 2.0
 
 test_context_gathering:
   enabled: true
@@ -807,7 +809,7 @@ skills_integration:
 #   - scripts/reporters/vitest-streaming.js - Vitest reporter
 #   - scripts/reporters/playwright-streaming.ts - Playwright reporter
 #
-# Workflow: execute-task-orchestrated.md Steps 2.1, 2.2, 3.0
+# Workflow: execute-tasks.md Steps 2.1, 2.2, 3.0
 
 test_execution_monitoring:
   enabled: true
@@ -863,7 +865,7 @@ test_execution_monitoring:
 #   - Pattern documentation created by test-architect
 #   - Context handoff read by implementation-specialist
 #
-# Workflow: execute-task-orchestrated.md Steps 2.1, 2.2, 2.2a
+# Workflow: execute-tasks.md Steps 2.1, 2.2, 2.2a
 
 test_code_alignment:
   enabled: true
@@ -912,7 +914,7 @@ test_code_alignment:
 # Combines Context-Aware Execution + Orchestrated Parallel Execution
 # Core Principle: Beads-first task creation, then parallel specialist delegation
 #
-# Implementation: instructions/core/execute-tasks-unified.md
+# Implementation: instructions/core/execute-tasks.md
 # Command: commands/execute-tasks.md
 
 unified_execution:
@@ -1029,3 +1031,161 @@ test_failure_handling:
       must_confirm_analysis: true
       must_not_run_tests: true
       must_not_fix_unrelated: true
+
+# ================================================
+# TEST INTEGRITY MAINTENANCE (v4.5.0+)
+# ================================================
+# Proactive analysis of existing tests before implementation begins.
+# Identifies tests that will be affected by planned changes and creates
+# Beads tasks to update them, preventing test rot and stale tests.
+#
+# The Problem:
+#   Tests become outdated when implementation changes but tests aren't updated.
+#   This leads to tests that "pass" but test the wrong behavior.
+#
+# The Solution:
+#   BEFORE building, analyze what existing tests touch the affected code.
+#   Create explicit tasks to update those tests alongside implementation.
+#
+# Implementation:
+#   - instructions/agents/test-integrity-analyzer.md
+#   - Phase 1.5 in execute-tasks.md
+#
+# Workflow:
+#   1. Phase 1: Create implementation Beads tasks
+#   2. Phase 1.5: Analyze existing tests, create update tasks (NEW)
+#   3. Phase 2: Execute implementation + test updates together
+#   4. Phase 3: Verify all tests pass
+
+test_integrity_maintenance:
+  enabled: true
+
+  # When to run test integrity analysis
+  triggers:
+    before_every_task: true # Run for all tasks (recommended)
+    on_file_modification: true # Trigger when modifying existing files
+    on_api_changes: true # Extra attention when APIs change
+    on_schema_changes: true # Database/type schema changes
+    skip_for_new_features: false # Even new features may affect existing tests
+
+  # Test discovery strategies
+  discovery:
+    # Search for tests that directly test modified files
+    search_direct_tests: true
+    patterns:
+      direct:
+        ["**/{filename}.test.{ts,tsx,js}", "**/{filename}.spec.{ts,tsx,js}"]
+      co_located: ["**/__tests__/{filename}.{ts,tsx,js}"]
+
+    # Search for tests that mock modified modules
+    search_mock_references: true
+    mock_patterns:
+      vitest: ["vi.mock\\(['\"].*{module}"]
+      jest: ["jest.mock\\(['\"].*{module}"]
+
+    # Search for tests that use related fixtures
+    search_fixture_references: true
+    fixture_locations: ["fixtures/", "__fixtures__/", "test-data/"]
+
+    # Search for E2E tests on affected routes
+    search_e2e_routes: true
+    e2e_directories: ["tests/e2e/", "e2e/", "playwright/"]
+
+    # Trace import dependencies to find indirect consumers
+    trace_import_dependencies: true
+    max_dependency_depth: 3 # Limit recursion depth
+
+  # Impact analysis configuration
+  analysis:
+    # Detect breaking changes that REQUIRE test updates
+    detect_breaking_changes: true
+    breaking_change_types:
+      - function_signature_change
+      - return_type_change
+      - api_contract_change
+      - component_props_change
+      - side_effect_change
+
+    # Risk categorization
+    categories:
+      directly_affected:
+        priority: critical
+        action: must_update
+      mock_dependent:
+        priority: high
+        action: check_signatures
+      fixture_dependent:
+        priority: medium
+        action: verify_schema
+      indirect_consumers:
+        priority: medium
+        action: verify_behavior
+      e2e_affected:
+        priority: high
+        action: full_verification
+
+  # Automatic Beads task creation
+  task_creation:
+    auto_create_beads_tasks: true # Create tasks for test updates
+    group_related_tests: true # Combine related tests into one task
+    max_tests_per_task: 5 # Split if too many tests affected
+
+    # Dependency configuration
+    add_dependencies: true # Test updates depend on implementation
+    dependency_direction: "test_after_impl" # Implementation first, then update tests
+
+    # Task naming
+    task_title_template: "Update tests: {description}"
+    task_type: "task"
+
+  # Enforcement modes
+  enforcement:
+    # Advisory: Log findings, create tasks, but don't block
+    # Warning: Show warnings, require acknowledgment
+    # Blocking: Cannot proceed without addressing critical tests
+    mode: "advisory" # "advisory" | "warning" | "blocking"
+
+    # Block if critical-priority tests are affected and unaddressed
+    block_on_critical_tests: false
+
+    # Require explicit test update plan before implementation
+    require_test_update_plan: false
+
+    # In blocking mode, these test counts trigger blocks
+    blocking_thresholds:
+      critical_tests: 1 # Block if ANY critical tests unaddressed
+      high_priority_tests: 5 # Block if 5+ high-priority unaddressed
+      total_tests: 20 # Block if 20+ total tests unaddressed
+
+  # Output and reporting
+  output:
+    save_report: true
+    report_directory: ".agent-os/test-integrity"
+    report_file_pattern: "{task_id}-analysis.json"
+
+    # Include summary in task execution output
+    include_in_task_summary: true
+
+    # Generate markdown summary for PR descriptions
+    generate_pr_summary: true
+
+  # Integration with other features
+  integration:
+    # Use test-context-gatherer for pattern detection
+    leverage_test_context: true
+
+    # Update test-code-alignment files when tests are updated
+    update_alignment_docs: true
+
+    # Include in compound engineering review
+    include_in_security_review: false # Security usually doesn't need test updates
+    include_in_quality_review: true
+
+  # Scope limits to prevent analysis paralysis
+  limits:
+    max_tests_to_analyze: 100 # Stop if too many tests affected
+    max_files_to_trace: 50 # Limit dependency tracing
+    analysis_timeout_seconds: 120 # Hard timeout for analysis phase
+
+    # If limits exceeded, suggest scope reduction
+    on_limit_exceeded: "warn_and_continue" # "warn_and_continue" | "stop_and_ask"

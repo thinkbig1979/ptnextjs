@@ -367,7 +367,7 @@ If any are missing, the delegation prompt may need adjustment.
 ## Integration Points
 
 This template is referenced by:
-- `instructions/core/execute-task-orchestrated.md` (Step 1.9a)
+- `instructions/core/execute-tasks.md` (Step 1.9a)
 - `instructions/core/create-spec.md` (subagent delegation)
 - `instructions/core/create-tasks.md` (subagent delegation)
 

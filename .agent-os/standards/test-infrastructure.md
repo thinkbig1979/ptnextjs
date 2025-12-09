@@ -520,7 +520,7 @@ STANDARDS REFERENCE:
 | `@standards/testing-standards.md` | Canonical values (REFERENCE THIS FIRST) |
 | `@instructions/agents/test-architect.md` | Test creation workflow |
 | `@instructions/agents/test-runner.md` | Test execution workflow |
-| `@instructions/core/execute-task-orchestrated.md` | Orchestration flow |
+| `@instructions/core/execute-tasks.md` | Orchestration flow |
 
 ---
 

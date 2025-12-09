@@ -9,7 +9,7 @@
 ## Invocation Context
 
 This protocol is used by:
-- `@instructions/core/execute-task-orchestrated.md` - Step 2.1 RED phase validation
+- `@instructions/core/execute-tasks.md` - Step 2.1 RED phase validation
 - `@.claude/commands/run-tests.md` - Standalone test execution command
 
 ---
@@ -226,7 +226,7 @@ Save test failure analysis to: `.agent-os/test-failures/[run-id].json`
 | File | Relationship |
 |------|--------------|
 | `@standards/testing-standards.md` | Canonical testing values |
-| `@instructions/core/execute-task-orchestrated.md` | Orchestration flow |
+| `@instructions/core/execute-tasks.md` | Orchestration flow |
 | `@.claude/commands/run-tests.md` | Standalone test command |
 | `@instructions/agents/test-runner.md` | Test execution agent guidance |
 

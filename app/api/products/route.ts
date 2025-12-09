@@ -16,9 +16,9 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { ProductRepository } from '@/lib/repositories/ProductRepository_new';
-import { CacheService } from '@/lib/cache';
+import { InMemoryCacheService } from '@/lib/cache';
 
-const cache = new CacheService();
+const cache = new InMemoryCacheService();
 const productRepo = new ProductRepository(cache);
 
 export async function GET(request: NextRequest) {

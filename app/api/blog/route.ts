@@ -15,9 +15,9 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { BlogRepository } from '@/lib/repositories/BlogRepository_new';
-import { CacheService } from '@/lib/cache';
+import { InMemoryCacheService } from '@/lib/cache';
 
-const cache = new CacheService();
+const cache = new InMemoryCacheService();
 const blogRepo = new BlogRepository(cache);
 
 export async function GET(request: NextRequest) {

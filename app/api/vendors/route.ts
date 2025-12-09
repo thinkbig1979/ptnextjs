@@ -16,9 +16,9 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { VendorRepository } from '@/lib/repositories/VendorRepository_new';
-import { CacheService } from '@/lib/cache';
+import { InMemoryCacheService } from '@/lib/cache';
 
-const cache = new CacheService();
+const cache = new InMemoryCacheService();
 const vendorRepo = new VendorRepository(cache);
 
 export async function GET(request: NextRequest) {

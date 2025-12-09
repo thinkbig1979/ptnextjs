@@ -50,6 +50,7 @@
     "**/*.test.tsx",
     "jest.config.js",
     "test-setup.js",
-    "backups/**/*"
+    "backups/**/*",
+    "Supporting-Docs/**/*"
   ]
 }

@@ -244,7 +244,7 @@ export async function notifyAdminOfTierRequest(
       const action = requestType === 'upgrade' ? 'Upgrade' : 'Downgrade';
 
       await createNotification({
-        userId: admin.id,
+        userId: String(admin.id),
         type: requestType === 'upgrade' ? 'tier_upgrade_submitted' : 'tier_downgrade_submitted',
         title: `New Tier ${action} Request`,
         message: `${vendorName} has requested to ${requestType} from ${currentTier} to ${requestedTier}.`,

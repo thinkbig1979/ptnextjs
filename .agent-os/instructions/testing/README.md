@@ -16,7 +16,7 @@
 | Run tests | `@.claude/commands/run-tests.md` |
 | Understand test execution protocol | `@instructions/utilities/test-execution-protocol.md` |
 | Validate test/code alignment | `@instructions/utilities/test-code-alignment-checklist.md` |
-| Understand orchestration flow | `@instructions/core/execute-task-orchestrated.md` |
+| Understand orchestration flow | `@instructions/core/execute-tasks.md` |
 | Check test infrastructure standards | `@standards/test-infrastructure.md` |
 
 ---
@@ -41,7 +41,7 @@
          │    ┌──────────────┘
          ▼    ▼
 ┌─────────────────────────────────────────┐
-│     execute-task-orchestrated.md        │
+│     execute-tasks.md        │
 │              (orchestration)            │
 │                                         │
 │  Step 2.0 → test-context-gatherer       │
@@ -56,7 +56,7 @@
 │         (shared execution steps)        │
 │                                         │
 │  Used by:                               │
-│  - execute-task-orchestrated.md         │
+│  - execute-tasks.md         │
 │  - run-tests.md (standalone command)    │
 └─────────────────────────────────────────┘
 ```

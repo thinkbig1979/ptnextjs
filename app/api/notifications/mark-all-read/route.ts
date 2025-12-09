@@ -29,7 +29,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Mark all notifications as read
-    const result = await markAllAsRead(user.id);
+    const result = await markAllAsRead(String(user.id));
 
     if (!result.success) {
       return NextResponse.json(

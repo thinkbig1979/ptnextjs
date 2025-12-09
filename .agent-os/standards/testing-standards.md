@@ -506,7 +506,7 @@ node ~/.agent-os/hooks/lib/test-monitor.js pnpm playwright test --reporter=./scr
 | `@standards/test-infrastructure.md` | Implementation details, scripts |
 | `@instructions/agents/test-architect.md` | Test creation workflow |
 | `@instructions/agents/test-context-gatherer.md` | Context gathering workflow |
-| `@instructions/core/execute-task-orchestrated.md` | Orchestration flow |
+| `@instructions/core/execute-tasks.md` | Orchestration flow |
 | `@.claude/commands/run-tests.md` | Test execution command |
 | `@config.yml` | Feature toggles |
 
