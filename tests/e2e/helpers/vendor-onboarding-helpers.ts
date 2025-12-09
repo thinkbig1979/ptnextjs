@@ -7,7 +7,7 @@
 
 import { Page, BrowserContext, Cookie } from '@playwright/test';
 
-const API_BASE = process.env.BASE_URL || 'http://localhost:3000';
+const API_BASE = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 
 // ============================================================================
 // Type Definitions

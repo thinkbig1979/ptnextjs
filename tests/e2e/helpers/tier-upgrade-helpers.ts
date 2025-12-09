@@ -8,7 +8,7 @@
 import { Page } from '@playwright/test';
 import { seedVendors, VendorSeedData } from './seed-api-helpers';
 
-const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 
 /**
  * Configuration for creating an upgrade request

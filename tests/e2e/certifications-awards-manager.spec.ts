@@ -1,8 +1,11 @@
 import { test, expect } from '@playwright/test';
 
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
+
 test.describe('CertificationsAwardsManager Tests', () => {
-  const EMAIL = 'testvendor@example.com';
-  const PASS = '123';
+  // Use seeded test vendor from global-setup.ts (Tier 1 for certifications access)
+  const EMAIL = 'testvendor-tier1@example.com';
+  const PASS = 'TestVendor123!Tier1';
 
   async function login(page: any) {
     await page.goto(`${BASE_URL}/vendor/dashboard/profile`);

@@ -16,10 +16,10 @@ import { test, expect, type Page, type APIRequestContext } from '@playwright/tes
 
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 
-// Test credentials
-const TEST_ADMIN = {
-  email: 'admin@paulthames.com',
-  password: 'Admin123!@#$', // Test environment password
+// Test credentials - use seeded test vendor from global-setup.ts
+const TEST_VENDOR = {
+  email: 'testvendor-tier1@example.com',
+  password: 'TestVendor123!Tier1', // Matches global-setup.ts
 };
 
 test.describe('Auth Security Enhancements E2E', () => {
@@ -31,8 +31,8 @@ test.describe('Auth Security Enhancements E2E', () => {
       await page.goto(`${BASE_URL}/vendor/login`);
 
       // Fill in credentials (using a test vendor if available)
-      await page.fill('input[name="email"], input[type="email"]', TEST_ADMIN.email);
-      await page.fill('input[name="password"], input[type="password"]', TEST_ADMIN.password);
+      await page.fill('input[name="email"], input[type="email"]', TEST_VENDOR.email);
+      await page.fill('input[name="password"], input[type="password"]', TEST_VENDOR.password);
 
       // Submit form
       await page.click('button[type="submit"]');
@@ -90,8 +90,8 @@ test.describe('Auth Security Enhancements E2E', () => {
     test('logout clears authentication cookies', async ({ page, context }) => {
       // First login
       await page.goto(`${BASE_URL}/vendor/login`);
-      await page.fill('input[name="email"], input[type="email"]', TEST_ADMIN.email);
-      await page.fill('input[name="password"], input[type="password"]', TEST_ADMIN.password);
+      await page.fill('input[name="email"], input[type="email"]', TEST_VENDOR.email);
+      await page.fill('input[name="password"], input[type="password"]', TEST_VENDOR.password);
       await page.click('button[type="submit"]');
       await page.waitForLoadState('networkidle');
 
@@ -121,8 +121,8 @@ test.describe('Auth Security Enhancements E2E', () => {
     test('refresh endpoint rotates both tokens', async ({ page, context }) => {
       // First login to get tokens
       await page.goto(`${BASE_URL}/vendor/login`);
-      await page.fill('input[name="email"], input[type="email"]', TEST_ADMIN.email);
-      await page.fill('input[name="password"], input[type="password"]', TEST_ADMIN.password);
+      await page.fill('input[name="email"], input[type="email"]', TEST_VENDOR.email);
+      await page.fill('input[name="password"], input[type="password"]', TEST_VENDOR.password);
       await page.click('button[type="submit"]');
       await page.waitForLoadState('networkidle');
 
@@ -170,8 +170,8 @@ test.describe('Auth Security Enhancements E2E', () => {
     test('authenticated request to protected API succeeds', async ({ page, context }) => {
       // Login first
       await page.goto(`${BASE_URL}/vendor/login`);
-      await page.fill('input[name="email"], input[type="email"]', TEST_ADMIN.email);
-      await page.fill('input[name="password"], input[type="password"]', TEST_ADMIN.password);
+      await page.fill('input[name="email"], input[type="email"]', TEST_VENDOR.email);
+      await page.fill('input[name="password"], input[type="password"]', TEST_VENDOR.password);
       await page.click('button[type="submit"]');
       await page.waitForLoadState('networkidle');
 

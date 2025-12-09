@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
 
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
+
 test.describe('Bug Fixes Verification', () => {
   test.beforeEach(async ({ page }) => {
     // Start from the home page
@@ -67,10 +69,10 @@ test.describe('Bug Fixes Verification', () => {
     await page.goto(`${BASE_URL}/vendors`);
     await page.waitForLoadState('networkidle');
 
-    // Click on the first vendor card
+    // Click on the first vendor card (the card itself is wrapped in a Link, so just click the card)
     const firstVendorCard = page.locator('[data-testid="vendor-card"]').first();
     await expect(firstVendorCard).toBeVisible();
-    await firstVendorCard.locator('a').first().click();
+    await firstVendorCard.click();
 
     // Wait for vendor profile page to load
     await page.waitForLoadState('networkidle');
@@ -123,9 +125,9 @@ test.describe('Bug Fixes Verification', () => {
     await page.goto(`${BASE_URL}/vendors`);
     await page.waitForLoadState('networkidle');
 
-    // Click on the first vendor
-    const firstVendorLink = page.locator('[data-testid="vendor-card"] a').first();
-    await firstVendorLink.click();
+    // Click on the first vendor card (the card is wrapped in a Link)
+    const firstVendorCard = page.locator('[data-testid="vendor-card"]').first();
+    await firstVendorCard.click();
     await page.waitForLoadState('networkidle');
 
     // Check if there are products
@@ -161,9 +163,9 @@ test.describe('Bug Fixes Verification', () => {
     await page.goto(`${BASE_URL}/vendors`);
     await page.waitForLoadState('networkidle');
 
-    // Click on the first vendor
-    const firstVendorLink = page.locator('[data-testid="vendor-card"] a').first();
-    await firstVendorLink.click();
+    // Click on the first vendor card (the card is wrapped in a Link)
+    const firstVendorCard = page.locator('[data-testid="vendor-card"]').first();
+    await firstVendorCard.click();
     await page.waitForLoadState('networkidle');
 
     // Check if there are products
