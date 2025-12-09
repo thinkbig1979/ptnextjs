@@ -9,17 +9,17 @@ test.describe('Brand Story Tier Access Fix Verification', () => {
     // Step 1: Login
     console.log('Step 1: Login as testvendor...');
     await page.goto(`${BASE_URL}/vendor/login`);
-    await page.getByPlaceholder('vendor@example.com').fill('testvendor@test.com');
+    await page.getByPlaceholder('vendor@example.com').fill('testvendor@example.com');
     await page.getByPlaceholder('Enter your password').fill('123');
     await page.getByRole('button', { name: /login/i }).click();
     await page.waitForURL(/\/vendor\/dashboard/, { timeout: 10000 });
-    console.log('✓ Logged in successfully\n');
+    console.log('[OK] Logged in successfully\n');
 
     // Step 2: Navigate to Profile
     console.log('Step 2: Navigate to Profile page...');
     await page.goto(`${BASE_URL}/vendor/dashboard/profile`);
     await page.waitForLoadState('networkidle');
-    console.log('✓ Profile page loaded\n');
+    console.log('[OK] Profile page loaded\n');
 
     // Step 3: Click Brand Story tab
     console.log('Step 3: Click Brand Story tab...');
@@ -27,7 +27,7 @@ test.describe('Brand Story Tier Access Fix Verification', () => {
     await expect(brandStoryTab).toBeVisible({ timeout: 5000 });
     await brandStoryTab.click();
     await page.waitForTimeout(1000);
-    console.log('✓ Brand Story tab clicked\n');
+    console.log('[OK] Brand Story tab clicked\n');
 
     // Step 4: Verify form is visible (NOT upgrade prompt)
     console.log('Step 4: Verifying form visibility...');
@@ -57,18 +57,18 @@ test.describe('Brand Story Tier Access Fix Verification', () => {
       path: '/tmp/brand-story-test-result.png',
       fullPage: true
     });
-    console.log('✓ Screenshot saved to /tmp/brand-story-test-result.png\n');
+    console.log('[OK] Screenshot saved to /tmp/brand-story-test-result.png\n');
 
     // Assert: Form should be visible AND no upgrade prompt
     if (hasUpgradePrompt) {
       throw new Error(
-        '❌ FAILURE: Upgrade prompt detected! The tier field is not being passed correctly. ' +
+        '[FAIL] FAILURE: Upgrade prompt detected! The tier field is not being passed correctly. ' +
         'VendorDashboardContext fetcher may not be extracting vendor data from API response.'
       );
     }
 
     expect(formVisible).toBe(true);
-    console.log('✅ SUCCESS: Brand Story form is accessible for tier1 vendor!');
-    console.log('✅ The VendorDashboardContext fix is working correctly!\n');
+    console.log('[OK] SUCCESS: Brand Story form is accessible for tier1 vendor!');
+    console.log('[OK] The VendorDashboardContext fix is working correctly!\n');
   });
 });

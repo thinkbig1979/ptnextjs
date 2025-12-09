@@ -26,7 +26,7 @@ test.describe('Product Reviews Display', () => {
     const reviewsSection = page.locator('[data-testid*="review"], .review, [class*="review"]').first();
 
     if (await reviewsSection.isVisible()) {
-      console.log('✅ Reviews section found and visible');
+      console.log('[OK] Reviews section found and visible');
 
       // Check for review content
       const hasReviewerName = await page.locator('text=/David Martinez|Sarah Chen|Mike Roberts/i').isVisible();
@@ -37,7 +37,7 @@ test.describe('Product Reviews Display', () => {
 
       expect(hasReviewerName || hasRating).toBeTruthy();
     } else {
-      console.log('⚠️  No reviews section visible - checking if ownerReviews are being passed to component');
+      console.log('[WARN]️  No reviews section visible - checking if ownerReviews are being passed to component');
 
       // Check the page source for review data
       const content = await page.content();
@@ -47,9 +47,9 @@ test.describe('Product Reviews Display', () => {
                            content.includes('ownerReview');
 
       if (hasReviewData) {
-        console.log('⚠️  Review data exists in page but not rendered in UI');
+        console.log('[WARN]️  Review data exists in page but not rendered in UI');
       } else {
-        console.log('❌ Review data not found in page at all - data service may not be passing ownerReviews');
+        console.log('[FAIL] Review data not found in page at all - data service may not be passing ownerReviews');
       }
     }
   });
@@ -70,7 +70,7 @@ test.describe('Product Reviews Display', () => {
     console.log('  - Contains review data:', hasReviewData);
 
     if (!hasReviewerName && !hasReviewData) {
-      console.log('❌ ISSUE FOUND: Product reviews not in SSG page data');
+      console.log('[FAIL] ISSUE FOUND: Product reviews not in SSG page data');
       console.log('   This indicates transformPayloadProduct may not be including ownerReviews in return object');
     }
   });

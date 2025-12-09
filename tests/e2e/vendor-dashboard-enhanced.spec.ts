@@ -8,7 +8,7 @@ import { test, expect } from '@playwright/test';
  */
 
 // Test credentials from temp/creds.md
-const TEST_VENDOR_EMAIL = 'testvendor@test.com';
+const TEST_VENDOR_EMAIL = 'testvendor@example.com';
 const TEST_VENDOR_PASSWORD = '123';
 
 test.describe('Enhanced Vendor Dashboard', () => {
@@ -367,7 +367,7 @@ test.describe('Enhanced Vendor Dashboard', () => {
   test.describe('Error Handling', () => {
     test('should handle auth errors gracefully', async ({ page }) => {
       // Try to login with wrong credentials
-      await page.fill('input[type="email"]', 'wrong@test.com');
+      await page.fill('input[type="email"]', 'wrong@example.com');
       await page.fill('input[type="password"]', 'wrongpassword');
       await page.click('button[type="submit"]');
 

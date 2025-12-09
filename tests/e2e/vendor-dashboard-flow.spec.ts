@@ -16,8 +16,10 @@
 import { test, expect, type Response } from '@playwright/test';
 import path from 'path';
 
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
+
 test.describe('Vendor Dashboard and Profile Edit Flow', () => {
-  const testEmail = `approved-vendor-${Date.now()}@test.com`;
+  const testEmail = `approved-vendor-${Date.now()}@example.com`;
   const testCompany = `Approved Company ${Date.now()}`;
   const testPassword = 'SecurePass123!@#';
   let vendorId: string;
@@ -27,7 +29,7 @@ test.describe('Vendor Dashboard and Profile Edit Flow', () => {
     console.log('Creating approved vendor for test...');
 
     // Step 1: Register vendor
-    await page.goto(`${BASE_URL}/vendor/register/');
+    await page.goto(`${BASE_URL}/vendor/register/`);
     await page.getByPlaceholder('vendor@example.com').fill(testEmail);
     await page.getByPlaceholder('Your Company Ltd').fill(testCompany);
     await page.getByPlaceholder('John Smith').fill('Dashboard Test User');
@@ -48,7 +50,7 @@ test.describe('Vendor Dashboard and Profile Edit Flow', () => {
     const responseBody = await apiResponse.json();
     vendorId = responseBody.data.vendorId;
 
-    console.log(`✅ Vendor registered with ID: ${vendorId}`);
+    console.log(`[OK] Vendor registered with ID: ${vendorId}`);
 
     // Step 2: Approve vendor via API (simulating admin approval)
     // NOTE: In production, this would be done through Payload admin UI
@@ -58,9 +60,9 @@ test.describe('Vendor Dashboard and Profile Edit Flow', () => {
       return { approved: true, email };
     }, { email: testEmail });
 
-    console.log('⚠️  Note: Vendor approval requires manual database update or admin UI');
-    console.log('⚠️  For this test, we assume the vendor is in pending state');
-    console.log('⚠️  Full test requires admin approval implementation');
+    console.log('[WARN]️  Note: Vendor approval requires manual database update or admin UI');
+    console.log('[WARN]️  For this test, we assume the vendor is in pending state');
+    console.log('[WARN]️  Full test requires admin approval implementation');
 
     return vendorId;
   }
@@ -72,7 +74,7 @@ test.describe('Vendor Dashboard and Profile Edit Flow', () => {
     console.log('Step 1: Testing vendor login...');
 
     // Navigate to login page
-    await page.goto(`${BASE_URL}/vendor/login/');
+    await page.goto(`${BASE_URL}/vendor/login/`);
     await expect(page.locator('h2')).toContainText('Vendor Login');
 
     // Fill login form
@@ -91,9 +93,9 @@ test.describe('Vendor Dashboard and Profile Edit Flow', () => {
 
     // Check if login succeeded (status 200) or failed due to pending (status 403)
     if (loginResponse.status() === 403) {
-      console.log('⚠️  Login blocked - account pending approval');
-      console.log('⚠️  Test requires vendor to be approved first');
-      console.log('⚠️  Skipping dashboard tests');
+      console.log('[WARN]️  Login blocked - account pending approval');
+      console.log('[WARN]️  Test requires vendor to be approved first');
+      console.log('[WARN]️  Skipping dashboard tests');
 
       // Take screenshot of login error
       const evidenceDir = path.join(__dirname, '../../.agent-os/specs/2025-10-11-payload-cms-vendor-enrollment/evidence');
@@ -113,7 +115,7 @@ test.describe('Vendor Dashboard and Profile Edit Flow', () => {
     expect(loginBody.success).toBe(true);
     expect(loginBody.data?.user).toBeDefined();
 
-    console.log('✅ Login successful');
+    console.log('[OK] Login successful');
 
     // Should redirect to vendor dashboard
     await page.waitForURL(/\/vendor\/dashboard\/?/, { timeout: 5000 });
@@ -131,7 +133,7 @@ test.describe('Vendor Dashboard and Profile Edit Flow', () => {
     // Verify Edit Profile button exists
     await expect(page.getByRole('button', { name: 'Edit Profile' })).toBeVisible();
 
-    console.log('✅ Dashboard loaded correctly');
+    console.log('[OK] Dashboard loaded correctly');
 
     // Take screenshot of dashboard
     const evidenceDir = path.join(__dirname, '../../.agent-os/specs/2025-10-11-payload-cms-vendor-enrollment/evidence');
@@ -147,7 +149,7 @@ test.describe('Vendor Dashboard and Profile Edit Flow', () => {
 
     console.log('Step 1: Logging in...');
 
-    await page.goto(`${BASE_URL}/vendor/login/');
+    await page.goto(`${BASE_URL}/vendor/login/`);
     await page.getByPlaceholder('vendor@example.com').fill(testEmail);
     await page.getByPlaceholder('Enter your password').fill(testPassword);
 
@@ -161,7 +163,7 @@ test.describe('Vendor Dashboard and Profile Edit Flow', () => {
 
     // Skip if pending
     if (loginResponse.status() === 403) {
-      console.log('⚠️  Account pending - skipping profile edit test');
+      console.log('[WARN]️  Account pending - skipping profile edit test');
       test.skip();
       return;
     }
@@ -177,7 +179,7 @@ test.describe('Vendor Dashboard and Profile Edit Flow', () => {
     await page.waitForURL(/\/vendor\/dashboard\/profile\/?/, { timeout: 5000 });
     await expect(page.locator('h1')).toContainText('Edit Profile');
 
-    console.log('✅ Profile editor loaded');
+    console.log('[OK] Profile editor loaded');
 
     // Wait for form to load
     await expect(page.getByLabel('Company Name')).toBeVisible({ timeout: 5000 });
@@ -202,7 +204,7 @@ test.describe('Vendor Dashboard and Profile Edit Flow', () => {
     await descriptionInput.fill('');
     await descriptionInput.fill(updatedDescription);
 
-    console.log('✅ Fields edited');
+    console.log('[OK] Fields edited');
 
     // Take screenshot before save
     const evidenceDir = path.join(__dirname, '../../.agent-os/specs/2025-10-11-payload-cms-vendor-enrollment/evidence');
@@ -228,12 +230,12 @@ test.describe('Vendor Dashboard and Profile Edit Flow', () => {
     const saveBody = await saveResponse.json();
     expect(saveBody.success).toBe(true);
 
-    console.log('✅ Profile saved');
+    console.log('[OK] Profile saved');
 
     // Wait for success toast
     await expect(page.locator('.sonner-toast, [role="status"]').first()).toBeVisible({ timeout: 3000 });
 
-    console.log('✅ Success toast displayed');
+    console.log('[OK] Success toast displayed');
 
     console.log('Step 5: Verifying changes persisted...');
 
@@ -248,7 +250,7 @@ test.describe('Vendor Dashboard and Profile Edit Flow', () => {
     await expect(page.getByLabel('Contact Phone')).toHaveValue(updatedPhone);
     await expect(page.getByLabel('Description')).toHaveValue(updatedDescription);
 
-    console.log('✅ Changes persisted correctly');
+    console.log('[OK] Changes persisted correctly');
 
     // Take screenshot after reload
     await page.screenshot({
@@ -256,7 +258,7 @@ test.describe('Vendor Dashboard and Profile Edit Flow', () => {
       fullPage: true,
     });
 
-    console.log('✅ Profile edit flow test completed');
+    console.log('[OK] Profile edit flow test completed');
   });
 
   test('should handle validation errors in profile form', async ({ page }) => {
@@ -264,7 +266,7 @@ test.describe('Vendor Dashboard and Profile Edit Flow', () => {
 
     console.log('Testing profile validation...');
 
-    await page.goto(`${BASE_URL}/vendor/login/');
+    await page.goto(`${BASE_URL}/vendor/login/`);
     await page.getByPlaceholder('vendor@example.com').fill(testEmail);
     await page.getByPlaceholder('Enter your password').fill(testPassword);
     await page.getByRole('button', { name: 'Login' }).click();
@@ -274,7 +276,7 @@ test.describe('Vendor Dashboard and Profile Edit Flow', () => {
     );
 
     if (loginResponse.status() === 403) {
-      console.log('⚠️  Account pending - skipping validation test');
+      console.log('[WARN]️  Account pending - skipping validation test');
       test.skip();
       return;
     }
@@ -294,7 +296,7 @@ test.describe('Vendor Dashboard and Profile Edit Flow', () => {
     // Should show validation error
     await expect(page.locator('text=/Invalid email/i')).toBeVisible({ timeout: 3000 });
 
-    console.log('✅ Validation error displayed correctly');
+    console.log('[OK] Validation error displayed correctly');
 
     // Take screenshot
     const evidenceDir = path.join(__dirname, '../../.agent-os/specs/2025-10-11-payload-cms-vendor-enrollment/evidence');

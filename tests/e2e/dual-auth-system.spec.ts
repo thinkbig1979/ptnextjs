@@ -27,7 +27,7 @@ test.describe('Dual Authentication System - 401 Error Fix', () => {
       expect(response?.status()).not.toBe(401);
       expect(response?.status()).not.toBe(500);
 
-      console.log(`✓ Admin login page loaded: HTTP ${response?.status()}`);
+      console.log(`[OK] Admin login page loaded: HTTP ${response?.status()}`);
     });
 
     test('Admin panel dashboard is accessible', async ({ page }) => {
@@ -39,7 +39,7 @@ test.describe('Dual Authentication System - 401 Error Fix', () => {
       expect(response?.status()).not.toBe(401);
       expect(response?.status()).not.toBe(500);
 
-      console.log(`✓ Admin dashboard accessible: HTTP ${response?.status()}`);
+      console.log(`[OK] Admin dashboard accessible: HTTP ${response?.status()}`);
     });
   });
 
@@ -53,7 +53,7 @@ test.describe('Dual Authentication System - 401 Error Fix', () => {
 
       // CRITICAL: Before fix this would be 401, after fix it should not be
       expect(status).not.toBe(401);
-      console.log(`✓ CRITICAL FIX VERIFIED: /api/vendors returns ${status} (NOT 401)`);
+      console.log(`[OK] CRITICAL FIX VERIFIED: /api/vendors returns ${status} (NOT 401)`);
     });
 
     test('/api/portal/vendors routes exist and are separate', async ({ page }) => {
@@ -65,7 +65,7 @@ test.describe('Dual Authentication System - 401 Error Fix', () => {
 
       // Should exist (may be 401 without auth, but NOT 404)
       expect(status).not.toBe(404);
-      console.log(`✓ /api/portal/vendors/profile exists: HTTP ${status}`);
+      console.log(`[OK] /api/portal/vendors/profile exists: HTTP ${status}`);
     });
   });
 
@@ -81,7 +81,7 @@ test.describe('Dual Authentication System - 401 Error Fix', () => {
       expect(response?.status()).not.toBe(500);
       expect(response?.status()).not.toBe(401);
 
-      console.log(`✓ Vendor login page accessible: HTTP ${response?.status()}`);
+      console.log(`[OK] Vendor login page accessible: HTTP ${response?.status()}`);
     });
   });
 
@@ -105,10 +105,10 @@ test.describe('Dual Authentication System - 401 Error Fix', () => {
       const routesSeparated = portalApiResponse.status() !== 404;
 
       console.log('RESULTS:');
-      console.log(`  ${adminOk ? '✓' : '✗'} Admin panel accessible`);
-      console.log(`  ${vendorOk ? '✓' : '✗'} Vendor portal accessible`);
-      console.log(`  ${routesSeparated ? '✓' : '✗'} Routes separated`);
-      console.log(`  ${no401Error ? '✓' : '✗'} No 401 errors on /api/vendors (CRITICAL FIX)`);
+      console.log(`  ${adminOk ? '[OK]' : '[FAIL]'} Admin panel accessible`);
+      console.log(`  ${vendorOk ? '[OK]' : '[FAIL]'} Vendor portal accessible`);
+      console.log(`  ${routesSeparated ? '[OK]' : '[FAIL]'} Routes separated`);
+      console.log(`  ${no401Error ? '[OK]' : '[FAIL]'} No 401 errors on /api/vendors (CRITICAL FIX)`);
       console.log('\n========================================\n');
 
       expect(adminOk).toBe(true);

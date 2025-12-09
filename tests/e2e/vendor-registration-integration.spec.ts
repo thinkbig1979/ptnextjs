@@ -20,7 +20,7 @@ test.describe('Vendor Registration Integration', () => {
 
   test('should complete full registration flow', async ({ page }) => {
     // Navigate to registration page
-    await page.goto(`${BASE_URL}/vendor/register/');
+    await page.goto(`${BASE_URL}/vendor/register/`);
 
     // Wait for form to load
     await expect(page.locator('h1')).toContainText('Vendor Registration');
@@ -82,14 +82,14 @@ test.describe('Vendor Registration Integration', () => {
       fullPage: true
     });
 
-    console.log(`✅ Registration successful for: ${testEmail}`);
-    console.log(`✅ Company: ${testCompany}`);
-    console.log(`✅ Vendor ID: ${responseBody.data.vendorId}`);
-    console.log(`✅ Status: ${responseBody.data.status}`);
+    console.log(`[OK] Registration successful for: ${testEmail}`);
+    console.log(`[OK] Company: ${testCompany}`);
+    console.log(`[OK] Vendor ID: ${responseBody.data.vendorId}`);
+    console.log(`[OK] Status: ${responseBody.data.status}`);
   });
 
   test('should show validation errors for invalid data', async ({ page }) => {
-    await page.goto(`${BASE_URL}/vendor/register/');
+    await page.goto(`${BASE_URL}/vendor/register/`);
 
     // Try to submit empty form
     await page.click('button[type="submit"]');
@@ -105,7 +105,7 @@ test.describe('Vendor Registration Integration', () => {
   test('should handle duplicate email error', async ({ page }) => {
     const duplicateEmail = 'existing@example.com';
 
-    await page.goto(`${BASE_URL}/vendor/register/');
+    await page.goto(`${BASE_URL}/vendor/register/`);
 
     // Fill form with duplicate email
     await page.getByPlaceholder('vendor@example.com').fill(duplicateEmail);
@@ -129,12 +129,12 @@ test.describe('Vendor Registration Integration', () => {
     if (apiResponse.status() === 409) {
       // Wait for error toast to appear
       await expect(page.locator('.sonner-toast, [role="status"]')).toBeVisible({ timeout: 3000 });
-      console.log('✅ Duplicate email error handled correctly');
+      console.log('[OK] Duplicate email error handled correctly');
     }
   });
 
   test('should disable submit button during submission', async ({ page }) => {
-    await page.goto(`${BASE_URL}/vendor/register/');
+    await page.goto(`${BASE_URL}/vendor/register/`);
 
     // Fill minimal form
     await page.getByPlaceholder('vendor@example.com').fill(`test-${Date.now()}@example.com`);

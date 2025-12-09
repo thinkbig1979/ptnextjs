@@ -9,8 +9,10 @@
 
 import { test, expect } from '@playwright/test';
 
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
+
 test.describe('Product Review Submission', () => {
-  const testProductUrl = `${BASE_URL}/products/superyacht-integration-solutions-intelligent-lighting-control-system';
+  const testProductUrl = `${BASE_URL}/products/superyacht-integration-solutions-intelligent-lighting-control-system`;
 
   test.beforeEach(async ({ page }) => {
     await page.goto(testProductUrl);
@@ -74,17 +76,17 @@ test.describe('Product Review Submission', () => {
 
     // Verify NO page reload occurred
     expect(navigationOccurred).toBe(false);
-    console.log('✅ No page reload occurred');
+    console.log('[OK] No page reload occurred');
 
     // Verify the new review appears in the list
     const updatedReviewCount = await page.locator('[data-testid="review-card"]').count();
     expect(updatedReviewCount).toBe(initialReviewCount + 1);
-    console.log(`✅ New review added. Updated count: ${updatedReviewCount}`);
+    console.log(`[OK] New review added. Updated count: ${updatedReviewCount}`);
 
     // Verify the review content is visible
     await expect(page.locator(`text=${reviewData.name}`)).toBeVisible();
     await expect(page.locator(`text=${reviewData.review}`).first()).toBeVisible();
-    console.log('✅ Review content is visible');
+    console.log('[OK] Review content is visible');
   });
 
   test('should filter reviews by rating', async ({ page }) => {
@@ -132,7 +134,7 @@ test.describe('Product Review Submission', () => {
 
     const allReviewsAgain = await page.locator('[data-testid="review-card"]').count();
     expect(allReviewsAgain).toBe(totalReviews);
-    console.log('✅ Filter reset to show all reviews');
+    console.log('[OK] Filter reset to show all reviews');
   });
 
   test('should NOT show search box (search feature removed)', async ({ page }) => {
@@ -143,12 +145,12 @@ test.describe('Product Review Submission', () => {
     // Verify NO search input exists
     const searchInputs = page.locator('input[type="search"], input[placeholder*="search" i]');
     await expect(searchInputs).toHaveCount(0);
-    console.log('✅ No search box found (as expected)');
+    console.log('[OK] No search box found (as expected)');
 
     // Verify rating filter IS present
     const ratingFilter = page.locator('select:has(option:has-text("All ratings"))');
     await expect(ratingFilter).toBeVisible();
-    console.log('✅ Rating filter is present');
+    console.log('[OK] Rating filter is present');
   });
 
   test('should display review statistics', async ({ page }) => {
@@ -169,7 +171,7 @@ test.describe('Product Review Submission', () => {
     console.log(`Statistics sections found: ${statsCount}`);
 
     if (statsCount > 0) {
-      console.log('✅ Review statistics are displayed');
+      console.log('[OK] Review statistics are displayed');
     } else {
       console.log('ℹ️ No statistics displayed (may require minimum reviews)');
     }
@@ -183,7 +185,7 @@ test.describe('Product Review Submission', () => {
     // Verify modal is NOT visible initially
     const modal = page.locator('[role="dialog"]');
     await expect(modal).not.toBeVisible();
-    console.log('✅ Modal is hidden initially');
+    console.log('[OK] Modal is hidden initially');
 
     // Click "Write a Review" button
     const writeReviewButton = page.locator('button:has-text("Write a Review")');
@@ -192,12 +194,12 @@ test.describe('Product Review Submission', () => {
     // Verify modal appears
     await expect(modal).toBeVisible();
     await expect(page.locator('[role="dialog"] >> text=Write a Review')).toBeVisible();
-    console.log('✅ Modal opened with form');
+    console.log('[OK] Modal opened with form');
 
     // Verify form fields are present in modal
     await expect(page.locator('[role="dialog"] input[placeholder*="name"]')).toBeVisible();
     await expect(page.locator('[role="dialog"] textarea[placeholder*="review"]')).toBeVisible();
-    console.log('✅ Form fields are visible in modal');
+    console.log('[OK] Form fields are visible in modal');
 
     // Click cancel button
     const cancelButton = page.locator('[role="dialog"] button:has-text("Cancel")');
@@ -205,10 +207,10 @@ test.describe('Product Review Submission', () => {
 
     // Verify modal closes
     await expect(modal).not.toBeVisible();
-    console.log('✅ Modal closes when Cancel is clicked');
+    console.log('[OK] Modal closes when Cancel is clicked');
 
     // Verify we're still on the Reviews tab (no navigation occurred)
     await expect(page.locator('[data-testid="owner-reviews"]')).toBeVisible();
-    console.log('✅ User stays on Reviews tab after closing modal');
+    console.log('[OK] User stays on Reviews tab after closing modal');
   });
 });

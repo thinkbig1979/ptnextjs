@@ -5,37 +5,37 @@
 
 export const TEST_VENDORS = {
   free: {
-    email: 'testvendor-free@test.com',
+    email: 'testvendor-free@example.com',
     password: 'TestVendor123!Free',
     slug: 'testvendor-free',
     name: 'Free Tier Test Vendor',
   },
   tier1: {
-    email: 'testvendor-tier1@test.com',
+    email: 'testvendor-tier1@example.com',
     password: 'TestVendor123!Tier1',
     slug: 'testvendor-tier1',
     name: 'Tier 1 Test Vendor',
   },
   tier2: {
-    email: 'testvendor-tier2@test.com',
+    email: 'testvendor-tier2@example.com',
     password: 'TestVendor123!Tier2',
     slug: 'testvendor-tier2',
     name: 'Tier 2 Professional Vendor',
   },
   tier3: {
-    email: 'testvendor-tier3@test.com',
+    email: 'testvendor-tier3@example.com',
     password: 'TestVendor123!Tier3',
     slug: 'testvendor-tier3',
     name: 'Tier 3 Premium Vendor',
   },
   mobile: {
-    email: 'testvendor-mobile@test.com',
+    email: 'testvendor-mobile@example.com',
     password: 'TestVendor123!Mobile',
     slug: 'testvendor-mobile',
     name: 'Mobile Test Vendor',
   },
   tablet: {
-    email: 'testvendor-tablet@test.com',
+    email: 'testvendor-tablet@example.com',
     password: 'TestVendor123!Tablet',
     slug: 'testvendor-tablet',
     name: 'Tablet Test Vendor',
@@ -48,7 +48,7 @@ const INITIAL_VENDOR_STATE: Record<string, Record<string, any>> = {
   'testvendor-free': {
     companyName: 'Free Tier Test Vendor',
     description: '',
-    contactEmail: 'testvendor-free@test.com',
+    contactEmail: 'testvendor-free@example.com',
     contactPhone: '',
     foundedYear: null,
     website: '',
@@ -56,7 +56,7 @@ const INITIAL_VENDOR_STATE: Record<string, Record<string, any>> = {
   'testvendor-tier1': {
     companyName: 'Tier 1 Test Vendor',
     description: '',
-    contactEmail: 'testvendor-tier1@test.com',
+    contactEmail: 'testvendor-tier1@example.com',
     contactPhone: '',
     foundedYear: null,
     website: '',
@@ -64,7 +64,7 @@ const INITIAL_VENDOR_STATE: Record<string, Record<string, any>> = {
   'testvendor-tier2': {
     companyName: 'Tier 2 Professional Vendor',
     description: '',
-    contactEmail: 'testvendor-tier2@test.com',
+    contactEmail: 'testvendor-tier2@example.com',
     contactPhone: '',
     foundedYear: null,
     website: '',
@@ -72,7 +72,7 @@ const INITIAL_VENDOR_STATE: Record<string, Record<string, any>> = {
   'testvendor-tier3': {
     companyName: 'Tier 3 Premium Vendor',
     description: '',
-    contactEmail: 'testvendor-tier3@test.com',
+    contactEmail: 'testvendor-tier3@example.com',
     contactPhone: '',
     foundedYear: null,
     website: '',
@@ -80,7 +80,7 @@ const INITIAL_VENDOR_STATE: Record<string, Record<string, any>> = {
   'testvendor-mobile': {
     companyName: 'Mobile Test Vendor',
     description: '',
-    contactEmail: 'testvendor-mobile@test.com',
+    contactEmail: 'testvendor-mobile@example.com',
     contactPhone: '',
     foundedYear: null,
     website: '',
@@ -88,7 +88,7 @@ const INITIAL_VENDOR_STATE: Record<string, Record<string, any>> = {
   'testvendor-tablet': {
     companyName: 'Tablet Test Vendor',
     description: '',
-    contactEmail: 'testvendor-tablet@test.com',
+    contactEmail: 'testvendor-tablet@example.com',
     contactPhone: '',
     foundedYear: null,
     website: '',

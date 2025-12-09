@@ -20,7 +20,7 @@ const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 const STANDARD_TEST_VENDORS = [
   {
     companyName: 'Free Tier Test Vendor',
-    email: 'testvendor-free@test.com',
+    email: 'testvendor-free@example.com',
     password: 'TestVendor123!Free',
     tier: 'free' as const,
     status: 'approved' as const,
@@ -29,7 +29,7 @@ const STANDARD_TEST_VENDORS = [
   },
   {
     companyName: 'Tier 1 Test Vendor',
-    email: 'testvendor-tier1@test.com',
+    email: 'testvendor-tier1@example.com',
     password: 'TestVendor123!Tier1',
     tier: 'tier1' as const,
     status: 'approved' as const,
@@ -38,7 +38,7 @@ const STANDARD_TEST_VENDORS = [
   },
   {
     companyName: 'Tier 2 Professional Vendor',
-    email: 'testvendor-tier2@test.com',
+    email: 'testvendor-tier2@example.com',
     password: 'TestVendor123!Tier2',
     tier: 'tier2' as const,
     status: 'approved' as const,
@@ -47,7 +47,7 @@ const STANDARD_TEST_VENDORS = [
   },
   {
     companyName: 'Tier 3 Premium Vendor',
-    email: 'testvendor-tier3@test.com',
+    email: 'testvendor-tier3@example.com',
     password: 'TestVendor123!Tier3',
     tier: 'tier3' as const,
     status: 'approved' as const,
@@ -56,7 +56,7 @@ const STANDARD_TEST_VENDORS = [
   },
   {
     companyName: 'Mobile Test Vendor',
-    email: 'testvendor-mobile@test.com',
+    email: 'testvendor-mobile@example.com',
     password: 'TestVendor123!Mobile',
     tier: 'tier1' as const,
     status: 'approved' as const,
@@ -65,7 +65,7 @@ const STANDARD_TEST_VENDORS = [
   },
   {
     companyName: 'Tablet Test Vendor',
-    email: 'testvendor-tablet@test.com',
+    email: 'testvendor-tablet@example.com',
     password: 'TestVendor123!Tablet',
     tier: 'tier1' as const,
     status: 'approved' as const,

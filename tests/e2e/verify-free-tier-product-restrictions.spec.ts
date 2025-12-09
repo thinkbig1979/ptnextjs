@@ -18,7 +18,7 @@ test.describe('Free Tier Vendor Product Restrictions', () => {
     const productCountInHero = heroSection.locator('text=/\\d+ Products/');
     await expect(productCountInHero).not.toBeVisible();
 
-    console.log('✅ Product count NOT shown in hero section for free tier vendor');
+    console.log('[OK] Product count NOT shown in hero section for free tier vendor');
   });
 
   test('should NOT show product count in sidebar Quick Info for free tier vendor', async ({ page }) => {
@@ -32,7 +32,7 @@ test.describe('Free Tier Vendor Product Restrictions', () => {
     const productsRow = quickInfoSection.locator('span:has-text("Products:")');
     await expect(productsRow).not.toBeVisible();
 
-    console.log('✅ Product count NOT shown in sidebar for free tier vendor');
+    console.log('[OK] Product count NOT shown in sidebar for free tier vendor');
   });
 
   test('should NOT show Products tab for free tier vendor', async ({ page }) => {
@@ -48,7 +48,7 @@ test.describe('Free Tier Vendor Product Restrictions', () => {
     const tabCount = await tabs.count();
     expect(tabCount).toBe(2);
 
-    console.log('✅ Products tab NOT shown for free tier vendor');
+    console.log('[OK] Products tab NOT shown for free tier vendor');
   });
 
   test('should show product count for Tier 2+ vendor', async ({ page }) => {
@@ -63,7 +63,7 @@ test.describe('Free Tier Vendor Product Restrictions', () => {
     // May or may not be visible depending on if this vendor actually has products
     // So we just check it exists in the DOM
     const exists = await productCountInHero.count() > 0;
-    console.log(`✅ Product count element exists for tier 2 vendor: ${exists}`);
+    console.log(`[OK] Product count element exists for tier 2 vendor: ${exists}`);
   });
 
   test('should show Products tab for Tier 2+ vendor', async ({ page }) => {
@@ -79,7 +79,7 @@ test.describe('Free Tier Vendor Product Restrictions', () => {
     const tabCount = await tabs.count();
     expect(tabCount).toBe(3);
 
-    console.log('✅ Products tab shown for tier 2 vendor');
+    console.log('[OK] Products tab shown for tier 2 vendor');
   });
 
   test('products page should NOT show products from free tier vendors', async ({ page }) => {
@@ -91,7 +91,7 @@ test.describe('Free Tier Vendor Product Restrictions', () => {
       timeout: 10000,
     }).catch(() => {
       // Products might not be loaded yet or use different selectors
-      console.log('⚠️  Product cards selector not found, checking page content');
+      console.log('[WARN]️  Product cards selector not found, checking page content');
     });
 
     // Get all visible vendor names/badges on the products page
@@ -101,6 +101,6 @@ test.describe('Free Tier Vendor Product Restrictions', () => {
     const hasFreeVendor = pageContent.includes('Free Tier Test Vendor');
     expect(hasFreeVendor).toBe(false);
 
-    console.log('✅ Free tier vendor products NOT shown on products page');
+    console.log('[OK] Free tier vendor products NOT shown on products page');
   });
 });

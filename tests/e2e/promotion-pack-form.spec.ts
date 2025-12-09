@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('PromotionPackForm Component Tests', () => {
-  const TEST_VENDOR_EMAIL = 'testvendor@test.com';
+  const TEST_VENDOR_EMAIL = 'testvendor@example.com';
   const TEST_VENDOR_PASSWORD = '123';
 
   test.beforeEach(async ({ page }) => {
@@ -58,7 +58,7 @@ test.describe('PromotionPackForm Component Tests', () => {
     for (const id of checkboxes) {
       const checkbox = page.locator(`input[id="${id}"]`);
       expect(await checkbox.isVisible()).toBe(true);
-      console.log(`✓ ${id} checkbox visible`);
+      console.log(`[OK] ${id} checkbox visible`);
     }
 
     const duration = Date.now() - startTime;
@@ -88,7 +88,7 @@ test.describe('PromotionPackForm Component Tests', () => {
 
     await promotionTab.click();
     await page.waitForSelector('text=Editorial Content', { timeout: 10000 });
-    console.log('✓ Editorial Content section loaded');
+    console.log('[OK] Editorial Content section loaded');
 
     const duration = Date.now() - startTime;
     console.log(`Test 3 completed in ${duration}ms`);
@@ -119,7 +119,7 @@ test.describe('PromotionPackForm Component Tests', () => {
 
     const contactButton = page.locator('button:has-text("Contact Sales")');
     expect(await contactButton.isVisible()).toBe(true);
-    console.log('✓ Contact Sales button visible');
+    console.log('[OK] Contact Sales button visible');
 
     const duration = Date.now() - startTime;
     console.log(`Test 4 completed in ${duration}ms`);

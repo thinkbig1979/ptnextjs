@@ -14,7 +14,7 @@ test.describe('Excel Template Download', () => {
     // Login as a vendor user (adjust based on your auth setup)
     await page.goto('/auth/login');
     // TODO: Implement actual login flow
-    // await page.fill('[name="email"]', 'vendor@test.com');
+    // await page.fill('[name="email"]', 'vendor@example.com');
     // await page.fill('[name="password"]', 'password');
     // await page.click('button[type="submit"]');
 

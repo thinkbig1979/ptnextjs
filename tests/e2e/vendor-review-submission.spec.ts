@@ -69,7 +69,7 @@ test.describe('Vendor Review Submission Feature', () => {
       const dialogVisible = await dialog.isVisible().catch(() => false);
 
       if (dialogVisible) {
-        console.log('✅ SUCCESS: Modal opened');
+        console.log('[OK] SUCCESS: Modal opened');
 
         // Screenshot: Modal
         await page.screenshot({
@@ -77,7 +77,7 @@ test.describe('Vendor Review Submission Feature', () => {
           fullPage: false,
         });
       } else {
-        console.log('❌ FAILURE: Modal did not open');
+        console.log('[FAIL] FAILURE: Modal did not open');
 
         // Check for any dialogs in DOM
         const allDialogs = page.locator('[role="dialog"], .dialog, [class*="Dialog"]');
@@ -94,7 +94,7 @@ test.describe('Vendor Review Submission Feature', () => {
         }
       }
     } else {
-      console.log('❌ No Write Review button found');
+      console.log('[FAIL] No Write Review button found');
     }
   });
 

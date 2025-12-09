@@ -16,7 +16,7 @@ test.describe('Product Reviews Visual Verification', () => {
     await reviewsTab.click();
     await page.waitForTimeout(1000);
 
-    console.log('📍 Step 1: On Reviews tab');
+    console.log('[PIN] Step 1: On Reviews tab');
 
     // Scroll down to see review cards
     await page.evaluate(() => window.scrollBy(0, 600));
@@ -27,7 +27,7 @@ test.describe('Product Reviews Visual Verification', () => {
       path: 'test-results/product-reviews-step1-top.png',
       fullPage: false
     });
-    console.log('📸 Screenshot 1 saved: test-results/product-reviews-step1-top.png');
+    console.log('[PHOTO] Screenshot 1 saved: test-results/product-reviews-step1-top.png');
 
     // Scroll more to see individual review cards
     await page.evaluate(() => window.scrollBy(0, 400));
@@ -37,7 +37,7 @@ test.describe('Product Reviews Visual Verification', () => {
       path: 'test-results/product-reviews-step2-cards.png',
       fullPage: false
     });
-    console.log('📸 Screenshot 2 saved: test-results/product-reviews-step2-cards.png');
+    console.log('[PHOTO] Screenshot 2 saved: test-results/product-reviews-step2-cards.png');
 
     // Check page content for review data
     const content = await page.content();
@@ -51,9 +51,9 @@ test.describe('Product Reviews Visual Verification', () => {
       'reviewText': content.includes('reviewText') || content.includes('review_text'),
     };
 
-    console.log('\n📊 Page Content Analysis:');
+    console.log('\n[CHART] Page Content Analysis:');
     Object.entries(checks).forEach(([key, found]) => {
-      console.log(`  ${found ? '✅' : '❌'} ${key}: ${found}`);
+      console.log(`  ${found ? '[OK]' : '[FAIL]'} ${key}: ${found}`);
     });
 
     // Count visible review elements
@@ -63,15 +63,15 @@ test.describe('Product Reviews Visual Verification', () => {
     // Look for specific reviewer names in visible text
     const visibleText = await page.locator('body').textContent();
     const reviewerMatches = (visibleText || '').match(/David Martinez|Mike Roberts|Sarah Chen/gi);
-    console.log(`👤 Found ${reviewerMatches?.length || 0} reviewer name mentions in visible text`);
+    console.log(`[USER] Found ${reviewerMatches?.length || 0} reviewer name mentions in visible text`);
 
     // Final full page screenshot
     await page.screenshot({
       path: 'test-results/product-reviews-fullpage.png',
       fullPage: true
     });
-    console.log('📸 Full page screenshot saved: test-results/product-reviews-fullpage.png');
+    console.log('[PHOTO] Full page screenshot saved: test-results/product-reviews-fullpage.png');
 
-    console.log('\n✅ Visual verification complete - check screenshots');
+    console.log('\n[OK] Visual verification complete - check screenshots');
   });
 });

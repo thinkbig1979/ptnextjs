@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('CertificationsAwardsManager Tests', () => {
-  const EMAIL = 'testvendor@test.com';
+  const EMAIL = 'testvendor@example.com';
   const PASS = '123';
 
   async function login(page: any) {
-    await page.goto(`${BASE_URL}/vendor/dashboard/profile');
+    await page.goto(`${BASE_URL}/vendor/dashboard/profile`);
     await page.waitForLoadState('networkidle');
     await page.getByPlaceholder('vendor@example.com').fill(EMAIL);
     await page.getByPlaceholder('Enter your password').fill(PASS);
@@ -15,7 +15,7 @@ test.describe('CertificationsAwardsManager Tests', () => {
   }
 
   async function goToCerts(page: any) {
-    await page.goto(`${BASE_URL}/vendor/dashboard/profile');
+    await page.goto(`${BASE_URL}/vendor/dashboard/profile`);
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(800);
     const tab = page.locator('button[role="tab"]').filter({ hasText: /Certifications/i });

@@ -18,7 +18,7 @@ test.describe('Product Review Modal Fix', () => {
       await page.waitForTimeout(500);
     }
 
-    console.log('📍 Step 1: Looking for Write Review button');
+    console.log('[PIN] Step 1: Looking for Write Review button');
 
     // Look for the "Write the First Review" or "Write a Review" button
     const writeReviewButton = page.locator('button').filter({
@@ -29,7 +29,7 @@ test.describe('Product Review Modal Fix', () => {
     console.log('  - Button visible:', buttonVisible);
 
     if (!buttonVisible) {
-      console.log('❌ ERROR: Write Review button not found');
+      console.log('[FAIL] ERROR: Write Review button not found');
       throw new Error('Write Review button not found');
     }
 
@@ -37,7 +37,7 @@ test.describe('Product Review Modal Fix', () => {
     console.log('  - Button text:', buttonText);
 
     // Click the button
-    console.log('\n📍 Step 2: Clicking Write Review button');
+    console.log('\n[PIN] Step 2: Clicking Write Review button');
     await writeReviewButton.click();
     await page.waitForTimeout(1000);
 
@@ -47,7 +47,7 @@ test.describe('Product Review Modal Fix', () => {
     console.log('  - Dialog visible:', dialogVisible);
 
     if (!dialogVisible) {
-      console.log('❌ ERROR: Dialog did not appear after clicking button');
+      console.log('[FAIL] ERROR: Dialog did not appear after clicking button');
       await page.screenshot({
         path: 'test-results/product-review-modal-failed.png',
         fullPage: true
@@ -55,14 +55,14 @@ test.describe('Product Review Modal Fix', () => {
       throw new Error('Dialog did not open');
     }
 
-    console.log('\n✅ SUCCESS: Modal opened!');
+    console.log('\n[OK] SUCCESS: Modal opened!');
 
     // Verify modal contains review form elements
     const modalTitle = await page.locator('[role="dialog"]').getByText('Write a Review').isVisible();
     const ratingSelect = await page.locator('[role="dialog"]').locator('select, [role="combobox"]').first().isVisible();
     const nameInput = await page.locator('[role="dialog"]').getByPlaceholder(/captain|name/i).isVisible();
 
-    console.log('\n📋 Modal Form Elements:');
+    console.log('\n[LIST] Modal Form Elements:');
     console.log('  - Title "Write a Review":', modalTitle);
     console.log('  - Rating selector:', ratingSelect);
     console.log('  - Name input:', nameInput);
@@ -75,6 +75,6 @@ test.describe('Product Review Modal Fix', () => {
       path: 'test-results/product-review-modal-success.png',
       fullPage: false
     });
-    console.log('\n📸 Screenshot saved: test-results/product-review-modal-success.png');
+    console.log('\n[PHOTO] Screenshot saved: test-results/product-review-modal-success.png');
   });
 });

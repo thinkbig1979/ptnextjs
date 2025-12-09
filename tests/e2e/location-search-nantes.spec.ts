@@ -10,7 +10,7 @@ test.describe('Location Search - Nantes France Debug', () => {
       console.log('BROWSER:', text);
     });
 
-    await page.goto(`${BASE_URL}/vendors');
+    await page.goto(`${BASE_URL}/vendors`);
     await page.waitForLoadState('networkidle');
 
     // Scroll to location filter
@@ -73,7 +73,7 @@ test.describe('Location Search - Nantes France Debug', () => {
 
   test('should check vendor coordinates in database', async ({ page }) => {
     // Add a script to check vendor data
-    await page.goto(`${BASE_URL}/vendors');
+    await page.goto(`${BASE_URL}/vendors`);
     await page.waitForLoadState('networkidle');
 
     const vendorData = await page.evaluate(() => {

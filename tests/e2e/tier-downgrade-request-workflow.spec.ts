@@ -44,7 +44,7 @@ async function loginAsVendor(
 // Helper to authenticate as admin
 async function loginAsAdmin(page: Page): Promise<boolean> {
   // Navigate to admin login
-  await page.goto(`${BASE_URL}/admin/login');
+  await page.goto(`${BASE_URL}/admin/login`);
 
   // Fill admin credentials (assuming default admin exists)
   await page.fill('input[name="email"]', 'admin@example.com');
@@ -105,7 +105,7 @@ test.describe('Suite 1: Vendor Downgrade Request Submission', () => {
     expect(data.data.status).toBe('pending');
     expect(data.data.vendorNotes).toContain('reduce costs');
 
-    console.log('✅ Downgrade request submitted successfully');
+    console.log('[OK] Downgrade request submitted successfully');
   });
 
   test('1.2: Verify downgrade warnings are displayed', async ({ page }) => {
@@ -125,7 +125,7 @@ test.describe('Suite 1: Vendor Downgrade Request Submission', () => {
     expect(data.data?.currentTier).toBe('tier2');
     expect(data.data?.requestedTier).toBe('tier1');
 
-    console.log('✅ Downgrade request metadata correct');
+    console.log('[OK] Downgrade request metadata correct');
   });
 
   test('1.3: Cannot request upgrade via downgrade endpoint (validation)', async ({ page }) => {
@@ -149,7 +149,7 @@ test.describe('Suite 1: Vendor Downgrade Request Submission', () => {
     expect(data.success).toBe(false);
     expect(data.error).toContain('VALIDATION');
 
-    console.log('✅ Upgrade via downgrade endpoint blocked');
+    console.log('[OK] Upgrade via downgrade endpoint blocked');
   });
 
   test('1.4: Cannot submit duplicate pending downgrade request', async ({ page }) => {
@@ -173,7 +173,7 @@ test.describe('Suite 1: Vendor Downgrade Request Submission', () => {
     expect(data.success).toBe(false);
     expect(data.message).toContain('pending');
 
-    console.log('✅ Duplicate pending request blocked');
+    console.log('[OK] Duplicate pending request blocked');
   });
 });
 
@@ -216,7 +216,7 @@ test.describe('Suite 2: Admin Downgrade Approval', () => {
     // Login as admin
     const adminAuth = await loginAsAdmin(page);
     if (!adminAuth) {
-      console.log('⚠️  Admin authentication not available - skipping test');
+      console.log('[WARN]️  Admin authentication not available - skipping test');
       test.skip();
       return;
     }
@@ -241,14 +241,14 @@ test.describe('Suite 2: Admin Downgrade Approval', () => {
     expect(downgradeRequest.currentTier).toBe('tier3');
     expect(downgradeRequest.requestedTier).toBe('tier2');
 
-    console.log('✅ Admin can view downgrade request details');
+    console.log('[OK] Admin can view downgrade request details');
   });
 
   test('2.2: Admin approves downgrade - tier updated', async ({ page }) => {
     // Login as admin
     const adminAuth = await loginAsAdmin(page);
     if (!adminAuth) {
-      console.log('⚠️  Admin authentication not available - skipping test');
+      console.log('[WARN]️  Admin authentication not available - skipping test');
       test.skip();
       return;
     }
@@ -268,12 +268,12 @@ test.describe('Suite 2: Admin Downgrade Approval', () => {
     if (vendorResponse.ok()) {
       const vendorData = await vendorResponse.json();
       expect(vendorData.data?.tier).toBe('tier2');
-      console.log('✅ Vendor tier updated to tier2 after downgrade approval');
+      console.log('[OK] Vendor tier updated to tier2 after downgrade approval');
     } else {
-      console.log('⚠️  Could not verify tier update - vendor API may not exist');
+      console.log('[WARN]️  Could not verify tier update - vendor API may not exist');
     }
 
-    console.log('✅ Admin downgrade approval successful');
+    console.log('[OK] Admin downgrade approval successful');
   });
 
   test('2.3: Admin rejects downgrade - reason required', async ({ page }) => {
@@ -305,7 +305,7 @@ test.describe('Suite 2: Admin Downgrade Approval', () => {
     // Login as admin
     const adminAuth = await loginAsAdmin(page);
     if (!adminAuth) {
-      console.log('⚠️  Admin authentication not available - skipping test');
+      console.log('[WARN]️  Admin authentication not available - skipping test');
       test.skip();
       return;
     }
@@ -334,7 +334,7 @@ test.describe('Suite 2: Admin Downgrade Approval', () => {
     const rejectData = await rejectWithReason.json();
     expect(rejectData.success).toBe(true);
 
-    console.log('✅ Admin rejection requires reason');
+    console.log('[OK] Admin rejection requires reason');
   });
 });
 
@@ -411,7 +411,7 @@ test.describe('Suite 3: Data Handling on Downgrade', () => {
     // Admin approves (assuming admin auth works)
     const adminAuth = await loginAsAdmin(page);
     if (!adminAuth) {
-      console.log('⚠️  Admin authentication not available - skipping test');
+      console.log('[WARN]️  Admin authentication not available - skipping test');
       test.skip();
       return;
     }
@@ -422,8 +422,8 @@ test.describe('Suite 3: Data Handling on Downgrade', () => {
     // In production, only 1 location should be visible (HQ), others hidden
     // This would require checking the vendor profile API
 
-    console.log('✅ Downgrade approved - excess data should be hidden');
-    console.log('⚠️  Note: Data hiding verification requires vendor profile API endpoint');
+    console.log('[OK] Downgrade approved - excess data should be hidden');
+    console.log('[WARN]️  Note: Data hiding verification requires vendor profile API endpoint');
   });
 
   test('3.2: Data reappears after re-upgrade', async ({ page }) => {
@@ -442,7 +442,7 @@ test.describe('Suite 3: Data Handling on Downgrade', () => {
     );
 
     if (!upgradeResponse.ok()) {
-      console.log('⚠️  Upgrade request failed - may need to cancel pending downgrade');
+      console.log('[WARN]️  Upgrade request failed - may need to cancel pending downgrade');
       // Try to get and cancel any pending requests first
     }
 
@@ -450,7 +450,7 @@ test.describe('Suite 3: Data Handling on Downgrade', () => {
     const upgradeRequestId = upgradeData.data?.id;
 
     if (!upgradeRequestId) {
-      console.log('⚠️  Could not create upgrade request');
+      console.log('[WARN]️  Could not create upgrade request');
       test.skip();
       return;
     }
@@ -458,15 +458,15 @@ test.describe('Suite 3: Data Handling on Downgrade', () => {
     // Admin approves upgrade
     const adminAuth = await loginAsAdmin(page);
     if (!adminAuth) {
-      console.log('⚠️  Admin authentication not available - skipping test');
+      console.log('[WARN]️  Admin authentication not available - skipping test');
       test.skip();
       return;
     }
 
     await page.request.put(`/api/admin/tier-upgrade-requests/${upgradeRequestId}/approve`);
 
-    console.log('✅ Re-upgrade approved - all data should reappear');
-    console.log('⚠️  Note: Data restoration verification requires vendor profile API endpoint');
+    console.log('[OK] Re-upgrade approved - all data should reappear');
+    console.log('[WARN]️  Note: Data restoration verification requires vendor profile API endpoint');
   });
 
   test('3.3: Tier restrictions enforced after downgrade', async ({ page }) => {
@@ -510,7 +510,7 @@ test.describe('Suite 3: Data Handling on Downgrade', () => {
     if (vendorCheck.ok()) {
       const vendorData = await vendorCheck.json();
       expect(vendorData.data?.tier).toBe('tier1');
-      console.log('✅ Tier restrictions should now apply for tier1');
+      console.log('[OK] Tier restrictions should now apply for tier1');
     }
   });
 });
@@ -554,8 +554,8 @@ test.describe('Suite 4: Edge Cases', () => {
     const data = await response.json();
     expect(data.success).toBe(true);
 
-    console.log('✅ Downgrade request accepted even with excess locations');
-    console.log('⚠️  Admin should see warning about excess data');
+    console.log('[OK] Downgrade request accepted even with excess locations');
+    console.log('[WARN]️  Admin should see warning about excess data');
   });
 
   test('4.2: Cancel pending downgrade request', async ({ page }) => {
@@ -602,7 +602,7 @@ test.describe('Suite 4: Edge Cases', () => {
     const getData = await getResponse.json();
     expect(getData.data).toBeNull(); // No pending request
 
-    console.log('✅ Downgrade request cancelled successfully');
+    console.log('[OK] Downgrade request cancelled successfully');
   });
 
   test('4.3: Concurrent upgrade and downgrade request prevention', async ({ page }) => {
@@ -646,8 +646,8 @@ test.describe('Suite 4: Edge Cases', () => {
     // per the API design (separate request types)
     expect(downgradeResponse.status()).toBe(201);
 
-    console.log('✅ System allows concurrent upgrade and downgrade requests');
-    console.log('⚠️  Note: This behavior may need to be restricted in production');
+    console.log('[OK] System allows concurrent upgrade and downgrade requests');
+    console.log('[WARN]️  Note: This behavior may need to be restricted in production');
   });
 
   test('4.4: Invalid tier validation', async ({ page }) => {
@@ -677,7 +677,7 @@ test.describe('Suite 4: Edge Cases', () => {
     const data = await response.json();
     expect(data.success).toBe(false);
 
-    console.log('✅ Invalid tier rejected');
+    console.log('[OK] Invalid tier rejected');
   });
 
   test('4.5: Cannot downgrade to same tier', async ({ page }) => {
@@ -708,7 +708,7 @@ test.describe('Suite 4: Edge Cases', () => {
     expect(data.success).toBe(false);
     expect(data.error).toContain('VALIDATION');
 
-    console.log('✅ Same tier downgrade rejected');
+    console.log('[OK] Same tier downgrade rejected');
   });
 });
 
@@ -746,7 +746,7 @@ test.describe('Suite 5: Integration Tests', () => {
     console.log('Step 2: Admin approves request...');
     const adminAuth = await loginAsAdmin(page);
     if (!adminAuth) {
-      console.log('⚠️  Admin authentication not available - skipping approval');
+      console.log('[WARN]️  Admin authentication not available - skipping approval');
       test.skip();
       return;
     }
@@ -775,7 +775,7 @@ test.describe('Suite 5: Integration Tests', () => {
       expect(requestData.data?.status).toBe('approved');
     }
 
-    console.log('✅ Complete downgrade lifecycle successful');
+    console.log('[OK] Complete downgrade lifecycle successful');
   });
 
   test('5.2: Complete rejection lifecycle (submit → reject → verify)', async ({ page }) => {
@@ -808,7 +808,7 @@ test.describe('Suite 5: Integration Tests', () => {
     console.log('Step 2: Admin rejects request...');
     const adminAuth = await loginAsAdmin(page);
     if (!adminAuth) {
-      console.log('⚠️  Admin authentication not available - skipping rejection');
+      console.log('[WARN]️  Admin authentication not available - skipping rejection');
       test.skip();
       return;
     }
@@ -840,6 +840,6 @@ test.describe('Suite 5: Integration Tests', () => {
     const requestData = await requestCheck.json();
     expect(requestData.data).toBeNull(); // No pending request after rejection
 
-    console.log('✅ Complete rejection lifecycle successful');
+    console.log('[OK] Complete rejection lifecycle successful');
   });
 });

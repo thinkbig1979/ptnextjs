@@ -15,17 +15,17 @@ test.describe('Data Mapping Verification', () => {
     });
 
     // Login
-    await page.goto(`${BASE_URL}/vendor/login');
-    await page.fill('input[type="email"]', 'testvendor@test.com');
+    await page.goto(`${BASE_URL}/vendor/login`);
+    await page.fill('input[type="email"]', 'testvendor@example.com');
     await page.fill('input[type="password"]', 'testpassword');
     await page.click('button[type="submit"]');
 
     // Wait for dashboard
     await page.waitForURL('**/vendor/dashboard');
-    console.log('✓ Logged in successfully');
+    console.log('[OK] Logged in successfully');
 
     // Navigate to profile
-    await page.goto(`${BASE_URL}/vendor/dashboard/profile');
+    await page.goto(`${BASE_URL}/vendor/dashboard/profile`);
     await page.waitForLoadState('networkidle');
 
     // Wait for vendor data to load
@@ -51,12 +51,12 @@ test.describe('Data Mapping Verification', () => {
     console.log('Value:', companyNameValue);
 
     if (!companyNameValue || companyNameValue === '') {
-      console.log('\n❌ FAILURE: Company name field is EMPTY!');
+      console.log('\n[FAIL] FAILURE: Company name field is EMPTY!');
       console.log('This means vendor.name is not populated');
       throw new Error('Company name field is empty - data mapping failed');
     }
 
-    console.log('✓ Company name field is populated:', companyNameValue);
+    console.log('[OK] Company name field is populated:', companyNameValue);
 
     // Get original database value
     const { stdout: beforeUpdate } = await execAsync(
@@ -90,7 +90,7 @@ test.describe('Data Mapping Verification', () => {
     const errorMessages = await page.locator('[role="alert"]').count();
     if (errorMessages > 0) {
       const errorText = await page.locator('[role="alert"]').first().textContent();
-      console.log('\n❌ ERROR MESSAGE FOUND:', errorText);
+      console.log('\n[FAIL] ERROR MESSAGE FOUND:', errorText);
     }
 
     // Get updated database value
@@ -117,7 +117,7 @@ test.describe('Data Mapping Verification', () => {
 
     // Verify the save actually happened
     if (afterDescription === beforeDescription && afterTimestamp === beforeTimestamp) {
-      console.log('\n❌ SAVE FAILED: Database was NOT updated!');
+      console.log('\n[FAIL] SAVE FAILED: Database was NOT updated!');
       console.log('Description unchanged:', afterDescription);
       console.log('Timestamp unchanged:', afterTimestamp);
 
@@ -133,7 +133,7 @@ test.describe('Data Mapping Verification', () => {
       throw new Error('Save operation failed - database not updated');
     }
 
-    console.log('\n✅ SUCCESS: Database was updated!');
+    console.log('\n[OK] SUCCESS: Database was updated!');
     expect(afterDescription).toBe(newDescription);
     expect(afterTimestamp).not.toBe(beforeTimestamp);
   });

@@ -29,7 +29,7 @@ test.describe('Integration Seeded Data Verification', () => {
         // Check for System Requirements section with seeded data
         const systemReqSection = page.locator('h3:has-text("System Requirements")');
         if (await systemReqSection.count() > 0) {
-          console.log('✅ System Requirements section found');
+          console.log('[OK] System Requirements section found');
 
           // Check for specific seeded values
           const powerSupply = page.locator('text=/12V\/24V DC/i');
@@ -37,27 +37,27 @@ test.describe('Integration Seeded Data Verification', () => {
           const certification = page.locator('text=/CE/i');
 
           if (await powerSupply.count() > 0) {
-            console.log('  ✓ Power Supply data found');
+            console.log('  [OK] Power Supply data found');
             await expect(powerSupply.first()).toBeVisible();
           }
 
           if (await ipRating.count() > 0) {
-            console.log('  ✓ IP Rating data found');
+            console.log('  [OK] IP Rating data found');
             await expect(ipRating.first()).toBeVisible();
           }
 
           if (await certification.count() > 0) {
-            console.log('  ✓ Certification data found');
+            console.log('  [OK] Certification data found');
             await expect(certification.first()).toBeVisible();
           }
         } else {
-          console.log('⚠️ System Requirements section not found');
+          console.log('[WARN]️ System Requirements section not found');
         }
 
         // Check for Compatibility Matrix with seeded data
         const compatMatrix = page.locator('h3:has-text("Compatibility Details")');
         if (await compatMatrix.count() > 0) {
-          console.log('\n✅ Compatibility Details section found');
+          console.log('\n[OK] Compatibility Details section found');
 
           // Check for specific system names from seeded data
           const garminSystem = page.locator('text=/Garmin/i');
@@ -68,23 +68,23 @@ test.describe('Integration Seeded Data Verification', () => {
           const systems = [];
           if (await garminSystem.count() > 0) {
             systems.push('Garmin');
-            console.log('  ✓ Garmin system compatibility found');
+            console.log('  [OK] Garmin system compatibility found');
           }
           if (await raymarineSystem.count() > 0) {
             systems.push('Raymarine');
-            console.log('  ✓ Raymarine system compatibility found');
+            console.log('  [OK] Raymarine system compatibility found');
           }
           if (await maretronSystem.count() > 0) {
             systems.push('Maretron');
-            console.log('  ✓ Maretron system compatibility found');
+            console.log('  [OK] Maretron system compatibility found');
           }
           if (await victronSystem.count() > 0) {
             systems.push('Victron');
-            console.log('  ✓ Victron system compatibility found');
+            console.log('  [OK] Victron system compatibility found');
           }
 
           if (systems.length > 0) {
-            console.log(`  📊 Found ${systems.length} system compatibilities: ${systems.join(', ')}`);
+            console.log(`  [CHART] Found ${systems.length} system compatibilities: ${systems.join(', ')}`);
             expect(systems.length).toBeGreaterThan(0);
           }
 
@@ -99,22 +99,22 @@ test.describe('Integration Seeded Data Verification', () => {
             adapter: await adapterCompat.count(),
           };
 
-          console.log(`  🎯 Compatibility indicators: ${indicators.full} full, ${indicators.partial} partial, ${indicators.adapter} adapter`);
+          console.log(`  [TARGET] Compatibility indicators: ${indicators.full} full, ${indicators.partial} partial, ${indicators.adapter} adapter`);
 
           if (indicators.full > 0) {
             await expect(fullCompat.first()).toBeVisible();
-            console.log('  ✓ Full compatibility indicator visible');
+            console.log('  [OK] Full compatibility indicator visible');
           }
         } else {
-          console.log('\n⚠️ Compatibility Details section not found');
+          console.log('\n[WARN]️ Compatibility Details section not found');
         }
 
-        console.log('\n✅ Integration seeded data verification complete!\n');
+        console.log('\n[OK] Integration seeded data verification complete!\n');
       } else {
-        console.log('⚠️ Integration tab not found');
+        console.log('[WARN]️ Integration tab not found');
       }
     } else {
-      console.log('⚠️ "Complete System Integration" product not found');
+      console.log('[WARN]️ "Complete System Integration" product not found');
     }
   });
 
@@ -142,19 +142,19 @@ test.describe('Integration Seeded Data Verification', () => {
         const crestronSystem = page.locator('text=/Crestron/i');
 
         if (await sonosSystem.count() > 0) {
-          console.log('✅ Sonos compatibility found (entertainment template)');
+          console.log('[OK] Sonos compatibility found (entertainment template)');
           await expect(sonosSystem.first()).toBeVisible();
         }
 
         if (await fusionSystem.count() > 0) {
-          console.log('✅ Fusion compatibility found (entertainment template)');
+          console.log('[OK] Fusion compatibility found (entertainment template)');
         }
 
         if (await crestronSystem.count() > 0) {
-          console.log('✅ Crestron compatibility found (entertainment template)');
+          console.log('[OK] Crestron compatibility found (entertainment template)');
         }
 
-        console.log('\n✅ Entertainment product integration data verified!\n');
+        console.log('\n[OK] Entertainment product integration data verified!\n');
       }
     }
   });
@@ -177,7 +177,7 @@ test.describe('Integration Seeded Data Verification', () => {
         // Check if search box is available
         const searchInput = page.locator('input[placeholder*="Search integrations"]');
         if (await searchInput.count() > 0) {
-          console.log('✅ Integration search functionality available');
+          console.log('[OK] Integration search functionality available');
 
           // Try searching for a common system
           await searchInput.fill('Garmin');
@@ -185,7 +185,7 @@ test.describe('Integration Seeded Data Verification', () => {
 
           const garminResults = page.locator('text=/Garmin/i');
           if (await garminResults.count() > 0) {
-            console.log('✅ Search filtering works - Garmin results shown');
+            console.log('[OK] Search filtering works - Garmin results shown');
           }
 
           // Clear search

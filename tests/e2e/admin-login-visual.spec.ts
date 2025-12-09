@@ -72,7 +72,7 @@ test.describe('Payload CMS Admin Login - Visual Verification', () => {
     });
 
     // Navigate to admin login page
-    await page.goto(`${baseURL}/admin/login`, { waitUntil: 'networkidle' });
+    await page.goto(`${baseURL}/admin/login`, { waitUntil: `networkidle` });
 
     // Wait a bit for any async errors to appear
     await page.waitForTimeout(3000);

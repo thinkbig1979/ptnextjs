@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Product Description Rendering', () => {
   test('should not show HTML tags in product card descriptions', async ({ page }) => {
-    await page.goto(`${BASE_URL}/products');
+    await page.goto(`${BASE_URL}/products`);
     await page.waitForLoadState('networkidle');
 
     // Get all product cards
@@ -24,7 +24,7 @@ test.describe('Product Description Rendering', () => {
 
   test('should not show HTML tags in product detail page description', async ({ page }) => {
     // Navigate to the specific product mentioned in the issue
-    await page.goto(`${BASE_URL}/products/maritime-technology-partners-intelligent-lighting-control-system');
+    await page.goto(`${BASE_URL}/products/maritime-technology-partners-intelligent-lighting-control-system`);
     await page.waitForLoadState('networkidle');
 
     // Get the product description
@@ -45,7 +45,7 @@ test.describe('Product Description Rendering', () => {
   });
 
   test('should render clean text in product list', async ({ page }) => {
-    await page.goto(`${BASE_URL}/products');
+    await page.goto(`${BASE_URL}/products`);
     await page.waitForLoadState('networkidle');
 
     // Search for a specific product to make the test more reliable
@@ -68,7 +68,7 @@ test.describe('Product Description Rendering', () => {
   });
 
   test('should handle different product descriptions correctly', async ({ page }) => {
-    await page.goto(`${BASE_URL}/products');
+    await page.goto(`${BASE_URL}/products`);
     await page.waitForLoadState('networkidle');
 
     const productCards = page.locator('[data-testid="product-card"]');
@@ -90,7 +90,7 @@ test.describe('Product Description Rendering', () => {
   });
 
   test('should display readable descriptions without JSON objects', async ({ page }) => {
-    await page.goto(`${BASE_URL}/products');
+    await page.goto(`${BASE_URL}/products`);
     await page.waitForLoadState('networkidle');
 
     const productCards = page.locator('[data-testid="product-card"]');

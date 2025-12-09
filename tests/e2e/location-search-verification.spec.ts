@@ -32,7 +32,7 @@ test.describe('Location Name Search Feature E2E - Phase 4 Validation', () => {
     const resultText = await resultCount.textContent();
     expect(resultText).toContain('km');
 
-    console.log('✅ PASSED: Monaco auto-applied');
+    console.log('[OK] PASSED: Monaco auto-applied');
   });
 
   test('CRITICAL #2: Ambiguous search workflow - Paris dialog selection', async ({ page }) => {
@@ -65,7 +65,7 @@ test.describe('Location Name Search Feature E2E - Phase 4 Validation', () => {
     const resultCount = page.locator('[data-testid="result-count"]');
     await expect(resultCount).toBeVisible({ timeout: 5000 });
 
-    console.log('✅ PASSED: Paris dialog shown and filter applied');
+    console.log('[OK] PASSED: Paris dialog shown and filter applied');
   });
 
   test('CRITICAL #3: Reset workflow - Clear all filters', async ({ page }) => {
@@ -91,7 +91,7 @@ test.describe('Location Name Search Feature E2E - Phase 4 Validation', () => {
     const distanceText = await distanceValue.textContent();
     expect(distanceText).toContain('160');
 
-    console.log('✅ PASSED: Reset workflow works');
+    console.log('[OK] PASSED: Reset workflow works');
   });
 
   test('CRITICAL #4: Error handling - No locations found message', async ({ page }) => {
@@ -107,7 +107,7 @@ test.describe('Location Name Search Feature E2E - Phase 4 Validation', () => {
     const errorText = await errorMessage.textContent();
     expect(errorText?.toLowerCase()).toContain('no locations found');
 
-    console.log('✅ PASSED: Error handling works');
+    console.log('[OK] PASSED: Error handling works');
   });
 
   // ============================================================
@@ -139,7 +139,7 @@ test.describe('Location Name Search Feature E2E - Phase 4 Validation', () => {
       expect(newDistance).toContain('320');
     }
 
-    console.log('✅ PASSED: Distance slider works');
+    console.log('[OK] PASSED: Distance slider works');
   });
 
   test('IMPORTANT: Advanced coordinates - Manual lat/lon entry', async ({ page }) => {
@@ -166,6 +166,6 @@ test.describe('Location Name Search Feature E2E - Phase 4 Validation', () => {
       }
     }
 
-    console.log('✅ PASSED: Advanced coordinates tested');
+    console.log('[OK] PASSED: Advanced coordinates tested');
   });
 });

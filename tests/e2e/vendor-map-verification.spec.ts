@@ -17,7 +17,7 @@ test.describe('Vendor Map - Final Verification', () => {
     });
 
     // Navigate to vendor page with coordinates
-    await page.goto(`${BASE_URL}/vendors/alfa-laval/');
+    await page.goto(`${BASE_URL}/vendors/alfa-laval/`);
     await page.waitForLoadState('networkidle');
 
     // Wait for map container
@@ -113,7 +113,7 @@ test.describe('Vendor Map - Final Verification', () => {
 
   test('should display map on another vendor page', async ({ page }) => {
     // Test with a different vendor to ensure it works across the site
-    await page.goto(`${BASE_URL}/vendors/');
+    await page.goto(`${BASE_URL}/vendors/`);
     await page.waitForLoadState('networkidle');
 
     // Find a vendor card with coordinates and click it

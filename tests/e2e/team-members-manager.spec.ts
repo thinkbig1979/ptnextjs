@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 const BASE_URL = 'http://localhost:3000';
 const CREDENTIALS = {
-  email: 'testvendor@test.com',
+  email: 'testvendor@example.com',
   password: '123',
 };
 

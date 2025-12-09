@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 const TEST_VENDOR = {
-  email: 'testvendor@test.com',
+  email: 'testvendor@example.com',
   password: '123',
 };
 
@@ -43,7 +43,7 @@ test.describe('Verify Form Save Fix', () => {
     });
 
     console.log('Step 1: Navigate to login page');
-    await page.goto(`${BASE_URL}/vendor/login');
+    await page.goto(`${BASE_URL}/vendor/login`);
     await page.waitForLoadState('networkidle');
 
     console.log('Step 2: Login');
@@ -74,7 +74,7 @@ test.describe('Verify Form Save Fix', () => {
     console.log('Save button disabled?', isDisabled);
 
     if (isDisabled) {
-      console.error('❌ FAILURE: Save button is still disabled after edit!');
+      console.error('[FAIL] FAILURE: Save button is still disabled after edit!');
 
       // Check validation state
       const validationLogs = consoleLogs.filter(log =>
@@ -103,7 +103,7 @@ test.describe('Verify Form Save Fix', () => {
     );
 
     if (validationErrors.length > 0) {
-      console.error('❌ VALIDATION ERRORS FOUND:');
+      console.error('[FAIL] VALIDATION ERRORS FOUND:');
       validationErrors.forEach(err => console.error(err));
     }
 
@@ -143,14 +143,14 @@ test.describe('Verify Form Save Fix', () => {
     // Assertions
     console.log('\n=== ASSERTIONS ===\n');
 
-    expect(validationErrors.length, '❌ No validation errors should occur').toBe(0);
-    expect(handlerLogs.length, '✅ Handler should be called').toBeGreaterThan(0);
-    expect(putRequests.length, '✅ PUT request should be made').toBeGreaterThan(0);
+    expect(validationErrors.length, '[FAIL] No validation errors should occur').toBe(0);
+    expect(handlerLogs.length, '[OK] Handler should be called').toBeGreaterThan(0);
+    expect(putRequests.length, '[OK] PUT request should be made').toBeGreaterThan(0);
 
     if (putResponses.length > 0) {
-      expect(putResponses[0].status, '✅ PUT should return 200').toBe(200);
+      expect(putResponses[0].status, '[OK] PUT should return 200').toBe(200);
     }
 
-    console.log('✅ ALL CHECKS PASSED!');
+    console.log('[OK] ALL CHECKS PASSED!');
   });
 });

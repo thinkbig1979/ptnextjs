@@ -43,7 +43,7 @@ test.describe('E2E-P2: End-to-End Happy Path', () => {
     });
 
     await seedVendors(page, [vendorData]);
-    console.log('✓ Vendor registered successfully');
+    console.log('[OK] Vendor registered successfully');
 
     console.log('========================================');
     console.log('STEP 2-3: Login to dashboard');
@@ -51,7 +51,7 @@ test.describe('E2E-P2: End-to-End Happy Path', () => {
 
     await loginAsVendor(page, vendorEmail, vendorPassword);
     expect(page.url()).toContain('/vendor/dashboard');
-    console.log('✓ Successfully logged in to dashboard');
+    console.log('[OK] Successfully logged in to dashboard');
 
     console.log('========================================');
     console.log('STEP 4: Free tier profile setup');
@@ -71,7 +71,7 @@ test.describe('E2E-P2: End-to-End Happy Path', () => {
         await page.waitForTimeout(2000);
       }
     }
-    console.log('✓ Free tier profile setup complete');
+    console.log('[OK] Free tier profile setup complete');
 
     console.log('========================================');
     console.log('STEP 5: Upgrade to Tier 1');
@@ -83,7 +83,7 @@ test.describe('E2E-P2: End-to-End Happy Path', () => {
     }).catch(() => null);
 
     if (upgradeResponse) {
-      console.log('✓ Upgraded to Tier 1 via API');
+      console.log('[OK] Upgraded to Tier 1 via API');
     } else {
       console.log('ℹ Tier upgrade API not available - continuing with free tier');
     }
@@ -110,7 +110,7 @@ test.describe('E2E-P2: End-to-End Happy Path', () => {
         await foundedInput.fill('2010');
       }
 
-      console.log('✓ Brand story filled');
+      console.log('[OK] Brand story filled');
     }
 
     // Add certification
@@ -131,7 +131,7 @@ test.describe('E2E-P2: End-to-End Happy Path', () => {
         await certSaveBtn.click();
         await page.waitForTimeout(1000);
 
-        console.log('✓ Certification added');
+        console.log('[OK] Certification added');
       }
     }
 
@@ -161,7 +161,7 @@ test.describe('E2E-P2: End-to-End Happy Path', () => {
         await teamSaveBtn.click();
         await page.waitForTimeout(1000);
 
-        console.log('✓ Team member added');
+        console.log('[OK] Team member added');
       }
     }
 
@@ -182,7 +182,7 @@ test.describe('E2E-P2: End-to-End Happy Path', () => {
         await caseSaveBtn.click();
         await page.waitForTimeout(1000);
 
-        console.log('✓ Case study added');
+        console.log('[OK] Case study added');
       }
     }
 
@@ -195,7 +195,7 @@ test.describe('E2E-P2: End-to-End Happy Path', () => {
     }).catch(() => null);
 
     if (tier2Upgrade) {
-      console.log('✓ Upgraded to Tier 2 via API');
+      console.log('[OK] Upgraded to Tier 2 via API');
       await page.reload();
       await page.waitForLoadState('networkidle');
     }
@@ -237,7 +237,7 @@ test.describe('E2E-P2: End-to-End Happy Path', () => {
         await locSaveBtn.click();
         await page.waitForTimeout(1000);
 
-        console.log('✓ Headquarters location added');
+        console.log('[OK] Headquarters location added');
 
         // Add second location
         if (await addLocationBtn.isVisible({ timeout: 1000 }).catch(() => false)) {
@@ -256,7 +256,7 @@ test.describe('E2E-P2: End-to-End Happy Path', () => {
           await loc2SaveBtn.click();
           await page.waitForTimeout(1000);
 
-          console.log('✓ Second location added');
+          console.log('[OK] Second location added');
         }
       }
     }
@@ -282,7 +282,7 @@ test.describe('E2E-P2: End-to-End Happy Path', () => {
         await productSaveBtn.click();
         await page.waitForTimeout(2000);
 
-        console.log('✓ Product added');
+        console.log('[OK] Product added');
       }
     }
 
@@ -295,7 +295,7 @@ test.describe('E2E-P2: End-to-End Happy Path', () => {
     }).catch(() => null);
 
     if (tier3Upgrade) {
-      console.log('✓ Upgraded to Tier 3 via API');
+      console.log('[OK] Upgraded to Tier 3 via API');
       await page.reload();
       await page.waitForLoadState('networkidle');
     }
@@ -312,7 +312,7 @@ test.describe('E2E-P2: End-to-End Happy Path', () => {
       const featuredToggle = page.locator('input[type="checkbox"][name*="featured"]').first();
       if (await featuredToggle.isVisible({ timeout: 2000 }).catch(() => false)) {
         await featuredToggle.check();
-        console.log('✓ Featured placement enabled');
+        console.log('[OK] Featured placement enabled');
       }
     }
 
@@ -327,30 +327,30 @@ test.describe('E2E-P2: End-to-End Happy Path', () => {
     // Verify company name is visible
     const publicHeading = page.locator('h1').first();
     await expect(publicHeading).toBeVisible({ timeout: 5000 });
-    console.log('✓ Public profile page loaded');
+    console.log('[OK] Public profile page loaded');
 
     // Verify description is visible
     const publicDesc = page.locator('text=/superyacht technology provider/i').first();
     const descVisible = await publicDesc.isVisible({ timeout: 3000 }).catch(() => false);
-    console.log('✓ Description visible:', descVisible);
+    console.log('[OK] Description visible:', descVisible);
 
     // Verify locations section (tier 2+)
     const locationsSection = page.locator('text=/Location|Monaco/i').first();
     const locationsVisible = await locationsSection.isVisible({ timeout: 3000 }).catch(() => false);
-    console.log('✓ Locations section visible:', locationsVisible);
+    console.log('[OK] Locations section visible:', locationsVisible);
 
     // Verify team section (tier 1+)
     const teamSection = page.locator('text=/Captain John Smith|Team/i').first();
     const teamVisible = await teamSection.isVisible({ timeout: 3000 }).catch(() => false);
-    console.log('✓ Team section visible:', teamVisible);
+    console.log('[OK] Team section visible:', teamVisible);
 
     // Verify tier badge
     const tierBadge = page.locator('text=/Tier|Enterprise|Premium/i').first();
     const badgeVisible = await tierBadge.isVisible({ timeout: 3000 }).catch(() => false);
-    console.log('✓ Tier badge visible:', badgeVisible);
+    console.log('[OK] Tier badge visible:', badgeVisible);
 
     console.log('========================================');
-    console.log('✅ END-TO-END HAPPY PATH COMPLETE');
+    console.log('[OK] END-TO-END HAPPY PATH COMPLETE');
     console.log('========================================');
     console.log('Vendor journey from registration to tier 3 verified successfully');
     console.log('All major features tested in sequence');

@@ -29,7 +29,7 @@ test.describe('Tier-Based Access Control', () => {
   ): Promise<string> {
     console.log(`Creating ${tier} vendor: ${email}`);
 
-    await page.goto(`${BASE_URL}/vendor/register/');
+    await page.goto(`${BASE_URL}/vendor/register/`);
     await page.getByPlaceholder('vendor@example.com').fill(email);
     await page.getByPlaceholder('Your Company Ltd').fill(company);
     await page.getByPlaceholder('John Smith').fill(`${tier} Test User`);
@@ -48,7 +48,7 @@ test.describe('Tier-Based Access Control', () => {
     const responseBody = await apiResponse.json();
     const vendorId = responseBody.data.vendorId;
 
-    console.log(`✅ ${tier} vendor created with ID: ${vendorId}`);
+    console.log(`[OK] ${tier} vendor created with ID: ${vendorId}`);
 
     // NOTE: In production, we would need to:
     // 1. Approve the vendor (change user.status to 'active')
@@ -60,7 +60,7 @@ test.describe('Tier-Based Access Control', () => {
 
   // Helper function to login
   async function loginVendor(page: any, email: string): Promise<boolean> {
-    await page.goto(`${BASE_URL}/vendor/login/');
+    await page.goto(`${BASE_URL}/vendor/login/`);
     await page.getByPlaceholder('vendor@example.com').fill(email);
     await page.getByPlaceholder('Enter your password').fill(testPassword);
 
@@ -73,12 +73,12 @@ test.describe('Tier-Based Access Control', () => {
     const loginResponse = await loginResponsePromise;
 
     if (loginResponse.status() === 403) {
-      console.log('⚠️  Login blocked - account pending approval');
+      console.log('[WARN]️  Login blocked - account pending approval');
       return false;
     }
 
     if (loginResponse.status() !== 200) {
-      console.log(`⚠️  Login failed with status: ${loginResponse.status()}`);
+      console.log(`[WARN]️  Login failed with status: ${loginResponse.status()}`);
       return false;
     }
 
@@ -87,7 +87,7 @@ test.describe('Tier-Based Access Control', () => {
   }
 
   test('free tier vendor should not see tier1+ fields', async ({ page }) => {
-    const freeEmail = `free-tier-${Date.now()}@test.com`;
+    const freeEmail = `free-tier-${Date.now()}@example.com`;
     const freeCompany = `Free Tier Company ${Date.now()}`;
 
     // Create free tier vendor
@@ -97,8 +97,8 @@ test.describe('Tier-Based Access Control', () => {
     const loginSuccess = await loginVendor(page, freeEmail);
 
     if (!loginSuccess) {
-      console.log('⚠️  Cannot test tier restrictions - vendor not approved');
-      console.log('⚠️  Test requires vendor approval implementation');
+      console.log('[WARN]️  Cannot test tier restrictions - vendor not approved');
+      console.log('[WARN]️  Test requires vendor approval implementation');
 
       // Take screenshot of login error
       const evidenceDir = path.join(__dirname, '../../.agent-os/specs/2025-10-11-payload-cms-vendor-enrollment/evidence');
@@ -126,7 +126,7 @@ test.describe('Tier-Based Access Control', () => {
     await expect(page.getByLabel('Contact Email')).toBeVisible();
     await expect(page.getByLabel('Contact Phone')).toBeVisible();
 
-    console.log('✅ Free tier fields are visible');
+    console.log('[OK] Free tier fields are visible');
 
     console.log('Step 3: Checking tier1+ field visibility...');
 
@@ -136,7 +136,7 @@ test.describe('Tier-Based Access Control', () => {
     const isEnhancedProfileVisible = await enhancedProfileCard.isVisible().catch(() => false);
 
     if (isEnhancedProfileVisible) {
-      console.log('⚠️  Enhanced Profile card is visible for free tier - TierGate may not be working');
+      console.log('[WARN]️  Enhanced Profile card is visible for free tier - TierGate may not be working');
 
       // Check if tier1+ fields are disabled instead
       const websiteInput = page.getByLabel('Website');
@@ -145,10 +145,10 @@ test.describe('Tier-Based Access Control', () => {
       if (isWebsitePresent > 0) {
         const isDisabled = await websiteInput.isDisabled();
         expect(isDisabled).toBe(true);
-        console.log('✅ Tier1+ fields are disabled');
+        console.log('[OK] Tier1+ fields are disabled');
       }
     } else {
-      console.log('✅ Enhanced Profile card is hidden (TierGate working correctly)');
+      console.log('[OK] Enhanced Profile card is hidden (TierGate working correctly)');
     }
 
     // Tier2 product management should also not be visible
@@ -156,7 +156,7 @@ test.describe('Tier-Based Access Control', () => {
     const isProductManagementVisible = await productManagementCard.isVisible().catch(() => false);
     expect(isProductManagementVisible).toBe(false);
 
-    console.log('✅ Tier2 features are hidden');
+    console.log('[OK] Tier2 features are hidden');
 
     // Take screenshot
     const evidenceDir = path.join(__dirname, '../../.agent-os/specs/2025-10-11-payload-cms-vendor-enrollment/evidence');
@@ -194,27 +194,27 @@ test.describe('Tier-Based Access Control', () => {
 
     // Should be rejected with 403 or validation error
     if (apiResult.status === 403) {
-      console.log('✅ Tier restriction enforced at API level (403 Forbidden)');
+      console.log('[OK] Tier restriction enforced at API level (403 Forbidden)');
     } else if (apiResult.status === 400) {
-      console.log('✅ Tier restriction enforced at validation level (400 Bad Request)');
+      console.log('[OK] Tier restriction enforced at validation level (400 Bad Request)');
     } else {
-      console.log(`⚠️  Unexpected status: ${apiResult.status}`);
-      console.log('⚠️  API-level tier restrictions may not be fully enforced');
+      console.log(`[WARN]️  Unexpected status: ${apiResult.status}`);
+      console.log('[WARN]️  API-level tier restrictions may not be fully enforced');
     }
 
-    console.log('✅ Free tier restriction test completed');
+    console.log('[OK] Free tier restriction test completed');
   });
 
   test('tier1 vendor should access tier1 fields', async ({ page }) => {
-    const tier1Email = `tier1-vendor-${Date.now()}@test.com`;
+    const tier1Email = `tier1-vendor-${Date.now()}@example.com`;
     const tier1Company = `Tier1 Company ${Date.now()}`;
 
     // Create tier1 vendor
     const vendorId = await createVendorWithTier(page, tier1Email, tier1Company, 'tier1');
 
-    console.log('⚠️  Note: Vendor created as free tier with pending status');
-    console.log('⚠️  In production, admin would approve and upgrade to tier1');
-    console.log('⚠️  This test will verify the UI pattern assuming tier1 access');
+    console.log('[WARN]️  Note: Vendor created as free tier with pending status');
+    console.log('[WARN]️  In production, admin would approve and upgrade to tier1');
+    console.log('[WARN]️  This test will verify the UI pattern assuming tier1 access');
 
     // For now, we can test the UI behavior by mocking the tier
     // NOTE: This requires the vendor to be approved and upgraded to tier1
@@ -222,7 +222,7 @@ test.describe('Tier-Based Access Control', () => {
     const loginSuccess = await loginVendor(page, tier1Email);
 
     if (!loginSuccess) {
-      console.log('⚠️  Cannot test tier1 access - vendor not approved');
+      console.log('[WARN]️  Cannot test tier1 access - vendor not approved');
       test.skip();
       return;
     }
@@ -236,8 +236,8 @@ test.describe('Tier-Based Access Control', () => {
     const isEnhancedProfileVisible = await enhancedProfileCard.isVisible().catch(() => false);
 
     if (!isEnhancedProfileVisible) {
-      console.log('⚠️  Enhanced Profile not visible - vendor may still be free tier');
-      console.log('⚠️  Full test requires tier upgrade implementation');
+      console.log('[WARN]️  Enhanced Profile not visible - vendor may still be free tier');
+      console.log('[WARN]️  Full test requires tier upgrade implementation');
 
       // Take screenshot showing free tier state
       const evidenceDir = path.join(__dirname, '../../.agent-os/specs/2025-10-11-payload-cms-vendor-enrollment/evidence');
@@ -250,7 +250,7 @@ test.describe('Tier-Based Access Control', () => {
       return;
     }
 
-    console.log('✅ Enhanced Profile card visible for tier1 vendor');
+    console.log('[OK] Enhanced Profile card visible for tier1 vendor');
 
     // Verify tier1 fields are editable
     await expect(page.getByLabel('Website')).toBeVisible();
@@ -259,7 +259,7 @@ test.describe('Tier-Based Access Control', () => {
     await expect(page.getByLabel('Twitter URL')).toBeVisible();
     await expect(page.getByLabel('Certifications')).toBeVisible();
 
-    console.log('✅ Tier1 fields are accessible');
+    console.log('[OK] Tier1 fields are accessible');
 
     // Edit tier1 field
     const websiteInput = page.getByLabel('Website');
@@ -278,7 +278,7 @@ test.describe('Tier-Based Access Control', () => {
     const saveResponse = await saveResponsePromise;
     expect(saveResponse.status()).toBe(200);
 
-    console.log('✅ Tier1 fields saved successfully');
+    console.log('[OK] Tier1 fields saved successfully');
 
     // Take screenshot
     const evidenceDir = path.join(__dirname, '../../.agent-os/specs/2025-10-11-payload-cms-vendor-enrollment/evidence');
@@ -289,18 +289,18 @@ test.describe('Tier-Based Access Control', () => {
   });
 
   test('tier2 vendor should see product management section', async ({ page }) => {
-    const tier2Email = `tier2-vendor-${Date.now()}@test.com`;
+    const tier2Email = `tier2-vendor-${Date.now()}@example.com`;
     const tier2Company = `Tier2 Company ${Date.now()}`;
 
     // Create tier2 vendor
     await createVendorWithTier(page, tier2Email, tier2Company, 'tier2');
 
-    console.log('⚠️  Note: This test requires tier2 vendor approval and upgrade');
+    console.log('[WARN]️  Note: This test requires tier2 vendor approval and upgrade');
 
     const loginSuccess = await loginVendor(page, tier2Email);
 
     if (!loginSuccess) {
-      console.log('⚠️  Cannot test tier2 features - vendor not approved');
+      console.log('[WARN]️  Cannot test tier2 features - vendor not approved');
       test.skip();
       return;
     }
@@ -314,13 +314,13 @@ test.describe('Tier-Based Access Control', () => {
     const isProductManagementVisible = await productManagementCard.isVisible().catch(() => false);
 
     if (!isProductManagementVisible) {
-      console.log('⚠️  Product Management not visible - vendor may not be tier2');
-      console.log('⚠️  Full test requires tier2 upgrade implementation');
+      console.log('[WARN]️  Product Management not visible - vendor may not be tier2');
+      console.log('[WARN]️  Full test requires tier2 upgrade implementation');
       test.skip();
       return;
     }
 
-    console.log('✅ Product Management section visible for tier2 vendor');
+    console.log('[OK] Product Management section visible for tier2 vendor');
 
     // Verify Manage Products button
     await expect(page.getByRole('button', { name: /Manage Products/i })).toBeVisible();
@@ -332,21 +332,21 @@ test.describe('Tier-Based Access Control', () => {
       fullPage: true,
     });
 
-    console.log('✅ Tier2 feature visibility test completed');
+    console.log('[OK] Tier2 feature visibility test completed');
   });
 
   test('should display tier badge correctly for each tier', async ({ page }) => {
     console.log('Testing tier badge display...');
 
     // Create free tier vendor
-    const freeEmail = `badge-free-${Date.now()}@test.com`;
+    const freeEmail = `badge-free-${Date.now()}@example.com`;
     const freeCompany = `Badge Free ${Date.now()}`;
     await createVendorWithTier(page, freeEmail, freeCompany, 'free');
 
     const loginSuccess = await loginVendor(page, freeEmail);
 
     if (!loginSuccess) {
-      console.log('⚠️  Cannot test tier badges - vendor not approved');
+      console.log('[WARN]️  Cannot test tier badges - vendor not approved');
       test.skip();
       return;
     }
@@ -354,7 +354,7 @@ test.describe('Tier-Based Access Control', () => {
     // Check dashboard for tier badge
     await expect(page.locator('text=/free|Free|FREE/i').first()).toBeVisible({ timeout: 5000 });
 
-    console.log('✅ Free tier badge displayed on dashboard');
+    console.log('[OK] Free tier badge displayed on dashboard');
 
     // Take screenshot
     const evidenceDir = path.join(__dirname, '../../.agent-os/specs/2025-10-11-payload-cms-vendor-enrollment/evidence');
@@ -363,6 +363,6 @@ test.describe('Tier-Based Access Control', () => {
       fullPage: true,
     });
 
-    console.log('✅ Tier badge test completed');
+    console.log('[OK] Tier badge test completed');
   });
 });

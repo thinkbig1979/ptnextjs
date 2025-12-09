@@ -21,7 +21,7 @@ test.describe('Bug Fixes Verification', () => {
     });
 
     // Navigate to a page that would load company info
-    await page.goto(`${BASE_URL}/about');
+    await page.goto(`${BASE_URL}/about`);
     await page.waitForLoadState('networkidle');
 
     // Check that there are no "Company info not found" errors
@@ -64,7 +64,7 @@ test.describe('Bug Fixes Verification', () => {
 
   test('vendor profile product cards should have clickable images, names, and Learn More buttons', async ({ page }) => {
     // Navigate to a vendor profile page
-    await page.goto(`${BASE_URL}/vendors');
+    await page.goto(`${BASE_URL}/vendors`);
     await page.waitForLoadState('networkidle');
 
     // Click on the first vendor card
@@ -120,7 +120,7 @@ test.describe('Bug Fixes Verification', () => {
 
   test('product image click should navigate to product detail page', async ({ page }) => {
     // Navigate to vendors page
-    await page.goto(`${BASE_URL}/vendors');
+    await page.goto(`${BASE_URL}/vendors`);
     await page.waitForLoadState('networkidle');
 
     // Click on the first vendor
@@ -158,7 +158,7 @@ test.describe('Bug Fixes Verification', () => {
 
   test('product name click should navigate to product detail page', async ({ page }) => {
     // Navigate to vendors page
-    await page.goto(`${BASE_URL}/vendors');
+    await page.goto(`${BASE_URL}/vendors`);
     await page.waitForLoadState('networkidle');
 
     // Click on the first vendor

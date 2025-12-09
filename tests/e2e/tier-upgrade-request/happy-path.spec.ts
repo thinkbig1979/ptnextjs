@@ -247,7 +247,7 @@ test.describe('TIER-UPGRADE-HAPPY-PATH: End-to-End Happy Path Tests', () => {
     expect(finalPendingRequest).toBeFalsy();
     console.log('[STEP 11] Complete upgrade flow verified successfully');
 
-    console.log('\n[TEST 3.1] ✓ PASSED - Complete upgrade flow (free → tier1 → tier2)\n');
+    console.log('\n[TEST 3.1] [OK] PASSED - Complete upgrade flow (free → tier1 → tier2)\n');
   });
 
   test('Test 3.2: Complete upgrade flow with rejection and retry', async ({ page }) => {
@@ -356,7 +356,7 @@ test.describe('TIER-UPGRADE-HAPPY-PATH: End-to-End Happy Path Tests', () => {
     expect(finalPendingRequest).toBeFalsy();
     console.log('[STEP 11] Rejection and retry flow verified successfully');
 
-    console.log('\n[TEST 3.2] ✓ PASSED - Complete upgrade flow with rejection and retry\n');
+    console.log('\n[TEST 3.2] [OK] PASSED - Complete upgrade flow with rejection and retry\n');
   });
 
   test('Test 3.3: Multi-tier progression (free → tier1 → tier2 → tier3)', async ({ page }) => {
@@ -424,7 +424,7 @@ test.describe('TIER-UPGRADE-HAPPY-PATH: End-to-End Happy Path Tests', () => {
 
       vendor = await getVendor(page, vendorId);
       expect(vendor.tier).toBe(targetTier);
-      console.log(`[STEP ${stepOffset + 2}] ✓ Tier upgraded to ${targetTier}`);
+      console.log(`[STEP ${stepOffset + 2}] [OK] Tier upgraded to ${targetTier}`);
     }
 
     // Final verification
@@ -435,7 +435,7 @@ test.describe('TIER-UPGRADE-HAPPY-PATH: End-to-End Happy Path Tests', () => {
     const pendingRequest = await getUpgradeRequestStatus(page, vendorId);
     expect(pendingRequest).toBeFalsy();
 
-    console.log('\n[TEST 3.3] ✓ PASSED - Multi-tier progression (free → tier1 → tier2 → tier3)\n');
+    console.log('\n[TEST 3.3] [OK] PASSED - Multi-tier progression (free → tier1 → tier2 → tier3)\n');
   });
 
   test('Test 3.4: Request cancellation and resubmission workflow', async ({ page }) => {
@@ -516,7 +516,7 @@ test.describe('TIER-UPGRADE-HAPPY-PATH: End-to-End Happy Path Tests', () => {
     expect(vendor.tier).toBe('tier2');
     console.log('[STEP 8] Tier upgraded to tier2');
 
-    console.log('\n[TEST 3.4] ✓ PASSED - Request cancellation and resubmission workflow\n');
+    console.log('\n[TEST 3.4] [OK] PASSED - Request cancellation and resubmission workflow\n');
   });
 
   test('Test 3.5: Rapid tier progression with validation', async ({ page }) => {
@@ -598,6 +598,6 @@ test.describe('TIER-UPGRADE-HAPPY-PATH: End-to-End Happy Path Tests', () => {
       console.log('[STEP 8] Invalid tier validation working');
     }
 
-    console.log('\n[TEST 3.5] ✓ PASSED - Rapid tier progression with validation\n');
+    console.log('\n[TEST 3.5] [OK] PASSED - Rapid tier progression with validation\n');
   });
 });

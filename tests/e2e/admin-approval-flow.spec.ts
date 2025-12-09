@@ -16,7 +16,7 @@ import { test, expect } from '@playwright/test';
 import path from 'path';
 
 test.describe('Admin Vendor Approval Flow', () => {
-  const testEmail = `pending-vendor-${Date.now()}@test.com`;
+  const testEmail = `pending-vendor-${Date.now()}@example.com`;
   const testCompany = `Pending Company ${Date.now()}`;
   const testPassword = 'SecurePass123!@#';
   let vendorId: string;
@@ -31,7 +31,7 @@ test.describe('Admin Vendor Approval Flow', () => {
     // Step 1: Register a new vendor (will be in pending state)
     console.log('Step 1: Creating pending vendor via registration...');
 
-    await page.goto(`${BASE_URL}/vendor/register/');
+    await page.goto(`${BASE_URL}/vendor/register/`);
     await expect(page.locator('h1')).toContainText('Vendor Registration');
 
     // Fill registration form
@@ -59,14 +59,14 @@ test.describe('Admin Vendor Approval Flow', () => {
     expect(responseBody.data.status).toBe('pending');
     vendorId = responseBody.data.vendorId;
 
-    console.log(`✅ Vendor created with ID: ${vendorId}`);
-    console.log(`✅ Email: ${testEmail}`);
-    console.log(`✅ Status: pending`);
+    console.log(`[OK] Vendor created with ID: ${vendorId}`);
+    console.log(`[OK] Email: ${testEmail}`);
+    console.log(`[OK] Status: pending`);
 
     // Step 2: Verify vendor cannot login (account pending)
     console.log('Step 2: Verifying vendor cannot login (pending status)...');
 
-    await page.goto(`${BASE_URL}/vendor/login/');
+    await page.goto(`${BASE_URL}/vendor/login/`);
     await page.getByPlaceholder('vendor@example.com').fill(testEmail);
     await page.getByPlaceholder('Enter your password').fill(testPassword);
 
@@ -87,7 +87,7 @@ test.describe('Admin Vendor Approval Flow', () => {
     // Should show error toast
     await expect(page.locator('.sonner-toast, [role="status"]').first()).toBeVisible({ timeout: 3000 });
 
-    console.log('✅ Login correctly rejected for pending account');
+    console.log('[OK] Login correctly rejected for pending account');
 
     // Step 3: Approve vendor via direct database manipulation
     // NOTE: Since Payload admin UI is complex and requires proper admin authentication,
@@ -99,7 +99,7 @@ test.describe('Admin Vendor Approval Flow', () => {
       try {
         // In a real scenario, admin would do this through Payload admin UI
         // For testing, we'll use the Payload REST API directly
-        const response = await fetch(`${BASE_URL}/api/admin/approve-vendor', {
+        const response = await fetch(`${BASE_URL}/api/admin/approve-vendor`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -124,8 +124,8 @@ test.describe('Admin Vendor Approval Flow', () => {
     // NOTE: Since we don't have an admin approval endpoint yet, we'll document this
     // as a limitation and skip to the verification step
     if (!approvalResult.success) {
-      console.log('⚠️  Admin approval endpoint not available - test will verify pending state only');
-      console.log('⚠️  In a full implementation, admin would approve via Payload admin UI');
+      console.log('[WARN]  Admin approval endpoint not available - test will verify pending state only');
+      console.log('[WARN]  In a full implementation, admin would approve via Payload admin UI');
 
       // Take screenshot of current state
       const evidenceDir = path.join(__dirname, '../../.agent-os/specs/2025-10-11-payload-cms-vendor-enrollment/evidence');
@@ -141,7 +141,7 @@ test.describe('Admin Vendor Approval Flow', () => {
     // Step 4: Verify vendor can now login after approval
     console.log('Step 4: Verifying approved vendor can login...');
 
-    await page.goto(`${BASE_URL}/vendor/login/');
+    await page.goto(`${BASE_URL}/vendor/login/`);
     await page.getByPlaceholder('vendor@example.com').fill(testEmail);
     await page.getByPlaceholder('Enter your password').fill(testPassword);
 
@@ -162,7 +162,7 @@ test.describe('Admin Vendor Approval Flow', () => {
     await page.waitForURL(/\/vendor\/dashboard\/?/);
     await expect(page.locator('h1')).toContainText('Welcome');
 
-    console.log('✅ Approved vendor successfully logged in');
+    console.log('[OK] Approved vendor successfully logged in');
 
     // Take screenshot of dashboard
     const evidenceDir = path.join(__dirname, '../../.agent-os/specs/2025-10-11-payload-cms-vendor-enrollment/evidence');
@@ -171,7 +171,7 @@ test.describe('Admin Vendor Approval Flow', () => {
       fullPage: true,
     });
 
-    console.log('✅ Admin approval flow test completed');
+    console.log('[OK] Admin approval flow test completed');
   });
 
   test('should show pending status banner for pending vendors', async ({ page }) => {
@@ -181,11 +181,11 @@ test.describe('Admin Vendor Approval Flow', () => {
     // NOTE: This test requires a pending vendor to exist
     // Since the previous test might have approved the vendor,
     // we'll create a new pending vendor
-    const pendingEmail = `ui-pending-${Date.now()}@test.com`;
+    const pendingEmail = `ui-pending-${Date.now()}@example.com`;
     const pendingCompany = `UI Pending ${Date.now()}`;
 
     // Register new pending vendor
-    await page.goto(`${BASE_URL}/vendor/register/');
+    await page.goto(`${BASE_URL}/vendor/register/`);
     await page.getByPlaceholder('vendor@example.com').fill(pendingEmail);
     await page.getByPlaceholder('Your Company Ltd').fill(pendingCompany);
     await page.getByPlaceholder('John Smith').fill('UI Test User');
@@ -203,7 +203,7 @@ test.describe('Admin Vendor Approval Flow', () => {
     await expect(page.locator('h1')).toContainText('Registration Successful');
     await expect(page.locator('text=/pending approval|awaiting approval/i')).toBeVisible();
 
-    console.log('✅ Pending status UI test completed');
+    console.log('[OK] Pending status UI test completed');
 
     // Take screenshot
     const evidenceDir = path.join(__dirname, '../../.agent-os/specs/2025-10-11-payload-cms-vendor-enrollment/evidence');

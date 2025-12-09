@@ -23,7 +23,7 @@ test.describe('Vendor Review Display', () => {
     const statistics = page.locator('[data-testid="review-statistics"]');
     if (await statistics.isVisible()) {
       const avgRating = await page.locator('text=/Average Rating/').textContent();
-      console.log(`✓ Found rating summary: ${avgRating}`);
+      console.log(`[OK] Found rating summary: ${avgRating}`);
     }
 
     // Look for the reviewer name "Tester"
@@ -31,7 +31,7 @@ test.describe('Vendor Review Display', () => {
     const reviewerVisible = await reviewerName.isVisible().catch(() => false);
 
     if (reviewerVisible) {
-      console.log('✅ SUCCESS: Review is displayed on the page');
+      console.log('[OK] SUCCESS: Review is displayed on the page');
 
       // Check for review content
       const reviewText = page.locator('text=/All good, lovely and such/');
@@ -50,7 +50,7 @@ test.describe('Vendor Review Display', () => {
 
       expect(reviewerVisible).toBe(true);
     } else {
-      console.log('❌ FAILURE: Review not visible on page');
+      console.log('[FAIL] FAILURE: Review not visible on page');
 
       // Debug: Check what's on the page
       const noReviewsMessage = page.locator('text=/No reviews available/');

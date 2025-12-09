@@ -4,7 +4,7 @@ import { test, expect, type Page } from '@playwright/test';
  * TEST-E2E-DASHBOARD: Comprehensive E2E Tests for Vendor Dashboard Editing Workflow
  */
 
-const TEST_VENDOR_EMAIL = 'testvendor@test.com';
+const TEST_VENDOR_EMAIL = 'testvendor@example.com';
 const TEST_VENDOR_PASSWORD = '123';
 const BASE_URL = 'http://localhost:3000';
 
@@ -80,7 +80,7 @@ test.describe.serial('TEST-E2E-DASHBOARD: Vendor Dashboard Editing Workflow', ()
     console.log(`User tier: ${tierText}`);
 
     await expect(page.locator('aside').first()).toBeVisible();
-    console.log('✓ Test 1 PASSED\n');
+    console.log('[OK] Test 1 PASSED\n');
   });
 
   test('Test 2: Edit Basic Info and Verify Save', async ({ page }) => {
@@ -134,7 +134,7 @@ test.describe.serial('TEST-E2E-DASHBOARD: Vendor Dashboard Editing Workflow', ()
     expect(reloadedName).toBe(newName);
     expect(reloadedDescription).toBe(newDescription);
 
-    console.log('✓ Test 2 PASSED\n');
+    console.log('[OK] Test 2 PASSED\n');
   });
 
   test('Test 3: Locations Tab with Tier Limit', async ({ page }) => {
@@ -151,7 +151,7 @@ test.describe.serial('TEST-E2E-DASHBOARD: Vendor Dashboard Editing Workflow', ()
     const locationsManager = page.locator('text=/location|Location/i').first();
     await expect(locationsManager).toBeVisible({ timeout: 5000 });
 
-    console.log(`✓ Test 3 PASSED (Tier: ${tierText})\n`);
+    console.log(`[OK] Test 3 PASSED (Tier: ${tierText})\n`);
   });
 
   test('Test 4: Brand Story with Founded Year', async ({ page }) => {
@@ -168,7 +168,7 @@ test.describe.serial('TEST-E2E-DASHBOARD: Vendor Dashboard Editing Workflow', ()
       if (tierText.includes('Free')) {
         const upgradePrompt = page.locator('text=/upgrade|unlock/i').first();
         await expect(upgradePrompt).toBeVisible({ timeout: 5000 });
-        console.log('✓ Free tier sees upgrade prompt\n');
+        console.log('[OK] Free tier sees upgrade prompt\n');
         return;
       }
     }
@@ -194,7 +194,7 @@ test.describe.serial('TEST-E2E-DASHBOARD: Vendor Dashboard Editing Workflow', ()
       const yearsInBusiness = page.locator('text=/Years in Business/i').first();
       const yearsVisible = await yearsInBusiness.isVisible({ timeout: 3000 }).catch(() => false);
       if (yearsVisible) {
-        console.log('✓ Years in Business computed field visible\n');
+        console.log('[OK] Years in Business computed field visible\n');
       }
 
       const saveButton = page.locator('button[type="submit"]').filter({ hasText: /Save|Update/ }).first();
@@ -220,7 +220,7 @@ test.describe.serial('TEST-E2E-DASHBOARD: Vendor Dashboard Editing Workflow', ()
       }
     }
 
-    console.log('✓ Test 4 PASSED\n');
+    console.log('[OK] Test 4 PASSED\n');
   });
 
   test('Test 5: Certifications Operations', async ({ page }) => {
@@ -237,14 +237,14 @@ test.describe.serial('TEST-E2E-DASHBOARD: Vendor Dashboard Editing Workflow', ()
       if (tierText.includes('Free')) {
         const upgradePrompt = page.locator('text=/upgrade|unlock/i').first();
         await expect(upgradePrompt).toBeVisible({ timeout: 5000 });
-        console.log('✓ Free tier sees upgrade prompt\n');
+        console.log('[OK] Free tier sees upgrade prompt\n');
         return;
       }
     }
 
     const addButton = page.locator('button').filter({ hasText: /Add.*Certification/i }).first();
     if (!await addButton.isVisible({ timeout: 5000 }).catch(() => false)) {
-      console.log('✓ Test 5 PASSED (button not available)\n');
+      console.log('[OK] Test 5 PASSED (button not available)\n');
       return;
     }
 
@@ -285,7 +285,7 @@ test.describe.serial('TEST-E2E-DASHBOARD: Vendor Dashboard Editing Workflow', ()
       await expect(certList.first()).toBeVisible({ timeout: 5000 });
     }
 
-    console.log('✓ Test 5 PASSED\n');
+    console.log('[OK] Test 5 PASSED\n');
   });
 
   test('Test 6: Form Validation', async ({ page }) => {
@@ -303,7 +303,7 @@ test.describe.serial('TEST-E2E-DASHBOARD: Vendor Dashboard Editing Workflow', ()
       await page.waitForTimeout(300);
     }
 
-    console.log('✓ Test 6 PASSED\n');
+    console.log('[OK] Test 6 PASSED\n');
   });
 
   test('Test 7: Free Tier Upgrade Prompts', async ({ page }) => {
@@ -315,7 +315,7 @@ test.describe.serial('TEST-E2E-DASHBOARD: Vendor Dashboard Editing Workflow', ()
     const tierText = await getCurrentTier(page);
 
     if (!tierText.includes('Free')) {
-      console.log(`✓ User is ${tierText} - skipping\n`);
+      console.log(`[OK] User is ${tierText} - skipping\n`);
       return;
     }
 
@@ -325,11 +325,11 @@ test.describe.serial('TEST-E2E-DASHBOARD: Vendor Dashboard Editing Workflow', ()
       if (switched) {
         const upgradePrompt = page.locator('text=/upgrade|unlock/i').first();
         const isVisible = await upgradePrompt.isVisible({ timeout: 3000 }).catch(() => false);
-        console.log(`${isVisible ? '✓' : '⚠'} ${tabName}: ${isVisible ? 'upgrade prompt' : 'no prompt'}`);
+        console.log(`${isVisible ? '[OK]' : '[WARN]'} ${tabName}: ${isVisible ? 'upgrade prompt' : 'no prompt'}`);
       }
     }
 
-    console.log('✓ Test 7 PASSED\n');
+    console.log('[OK] Test 7 PASSED\n');
   });
 
   test('Test 8: Logout', async ({ page }) => {
@@ -349,7 +349,7 @@ test.describe.serial('TEST-E2E-DASHBOARD: Vendor Dashboard Editing Workflow', ()
       expect(page.url()).toContain('/vendor/login');
     }
 
-    console.log('✓ Test 8 PASSED\n');
+    console.log('[OK] Test 8 PASSED\n');
   });
 
   test('Test 9: Sidebar Navigation', async ({ page }) => {
@@ -364,7 +364,7 @@ test.describe.serial('TEST-E2E-DASHBOARD: Vendor Dashboard Editing Workflow', ()
     const tierBadge = page.locator('aside span').filter({ hasText: /Free|Tier/ }).first();
     await expect(tierBadge).toBeVisible({ timeout: 5000 });
 
-    console.log('✓ Test 9 PASSED\n');
+    console.log('[OK] Test 9 PASSED\n');
   });
 
   test('Test 10: Profile Completion Status', async ({ page }) => {
@@ -377,6 +377,6 @@ test.describe.serial('TEST-E2E-DASHBOARD: Vendor Dashboard Editing Workflow', ()
     const isVisible = await completionIndicator.isVisible({ timeout: 5000 }).catch(() => false);
     console.log(`Completion indicator: ${isVisible ? 'visible' : 'not visible'}`);
 
-    console.log('✓ Test 10 PASSED\n');
+    console.log('[OK] Test 10 PASSED\n');
   });
 });

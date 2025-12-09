@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const TEST_VENDOR_EMAIL = 'testvendor@test.com';
+const TEST_VENDOR_EMAIL = 'testvendor@example.com';
 const TEST_VENDOR_PASSWORD = '123';
 const BASE_URL = 'http://localhost:3000';
 
@@ -49,6 +49,6 @@ test.describe('Verify Single Form Instance', () => {
     // Take a screenshot
     await page.screenshot({ path: 'test-results/single-form-verified.png', fullPage: true });
 
-    console.log('✅ SUCCESS: All form fields have exactly ONE instance');
+    console.log('[OK] SUCCESS: All form fields have exactly ONE instance');
   });
 });

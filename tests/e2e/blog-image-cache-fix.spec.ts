@@ -80,9 +80,9 @@ test.describe('Blog Image Cache Invalidation', () => {
       if (blogPost.featuredImage?.url) {
         const expectedFilename = blogPost.featuredImage.url.split('/').pop();
         if (imgSrc && imgSrc.includes(expectedFilename)) {
-          console.log('✅ Image on page matches database record');
+          console.log('[OK] Image on page matches database record');
         } else {
-          console.log('⚠️ Image mismatch - may indicate stale cache');
+          console.log('[WARN]️ Image mismatch - may indicate stale cache');
           console.log(`  Expected filename: ${expectedFilename}`);
           console.log(`  Actual src: ${imgSrc}`);
         }
@@ -116,7 +116,7 @@ test.describe('Blog Image Cache Invalidation', () => {
 
     // Verify page loaded successfully
     expect(page.url()).toContain('/blog/');
-    console.log('\n✅ Test completed successfully');
+    console.log('\n[OK] Test completed successfully');
   });
 
   test('should verify afterChange hook is being called', async ({ request }) => {
@@ -143,7 +143,7 @@ test.describe('Blog Image Cache Invalidation', () => {
     console.log('\nTo verify the afterChange hook is working:');
     console.log('1. Make a change to any blog post in the CMS admin at /admin');
     console.log('2. Check the server console for "[BlogPosts] afterChange triggered" message');
-    console.log('3. Check for "[Cache] ✓ Deleted" messages');
+    console.log('3. Check for "[Cache] [OK] Deleted" messages');
     console.log('4. Check for "[BlogPosts] ISR revalidation triggered" message');
     console.log('\nThe fix adds hooks that:');
     console.log('- Clear the in-memory cache (payloadCMSDataService.clearBlogCache)');

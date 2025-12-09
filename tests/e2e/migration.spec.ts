@@ -63,7 +63,7 @@ test.describe('1. Navigation Testing', () => {
       await page.waitForLoadState('networkidle');
 
       expect(errors.length).toBe(0);
-      console.log(`✅ Route ${route.path} loaded successfully`);
+      console.log(`[OK] Route ${route.path} loaded successfully`);
     }
   });
 
@@ -132,7 +132,7 @@ test.describe('1. Navigation Testing', () => {
 
       // Should navigate to vendor detail
       await expect(page).toHaveURL(/\/vendors\/[^/]+/);
-      console.log('✅ Product → Vendor navigation working');
+      console.log('[OK] Product → Vendor navigation working');
     }
   });
 });
@@ -158,7 +158,7 @@ test.describe('2. Content Display Testing', () => {
       fullPage: true,
     });
 
-    console.log('✅ Homepage displays featured content');
+    console.log('[OK] Homepage displays featured content');
   });
 
   test('should display all vendors on /vendors page', async ({ page }) => {
@@ -170,7 +170,7 @@ test.describe('2. Content Display Testing', () => {
     const count = await vendorCards.count();
     expect(count).toBeGreaterThan(0);
 
-    console.log(`✅ Vendors page displays ${count} vendors`);
+    console.log(`[OK] Vendors page displays ${count} vendors`);
 
     // Take screenshot
     await page.screenshot({
@@ -188,7 +188,7 @@ test.describe('2. Content Display Testing', () => {
     const count = await productCards.count();
     expect(count).toBeGreaterThan(0);
 
-    console.log(`✅ Products page displays ${count} products`);
+    console.log(`[OK] Products page displays ${count} products`);
 
     // Take screenshot
     await page.screenshot({
@@ -206,7 +206,7 @@ test.describe('2. Content Display Testing', () => {
     const count = await yachtCards.count();
     expect(count).toBeGreaterThan(0);
 
-    console.log(`✅ Yachts page displays ${count} yachts`);
+    console.log(`[OK] Yachts page displays ${count} yachts`);
 
     // Take screenshot
     await page.screenshot({
@@ -224,7 +224,7 @@ test.describe('2. Content Display Testing', () => {
     const count = await postCards.count();
     expect(count).toBeGreaterThan(0);
 
-    console.log(`✅ Blog page displays ${count} posts`);
+    console.log(`[OK] Blog page displays ${count} posts`);
   });
 
   test('should display team members on /team page', async ({ page }) => {
@@ -236,7 +236,7 @@ test.describe('2. Content Display Testing', () => {
     const count = await teamCards.count();
     expect(count).toBeGreaterThan(0);
 
-    console.log(`✅ Team page displays ${count} team members`);
+    console.log(`[OK] Team page displays ${count} team members`);
   });
 
   test('should display company info on /about page', async ({ page }) => {
@@ -247,7 +247,7 @@ test.describe('2. Content Display Testing', () => {
     const hasCompanyName = await page.locator('h1, h2').first().isVisible();
     expect(hasCompanyName).toBeTruthy();
 
-    console.log('✅ About page displays company info');
+    console.log('[OK] About page displays company info');
   });
 });
 
@@ -264,9 +264,9 @@ test.describe('3. Relationship Testing', () => {
     const hasVendorSection = await page.locator('[data-testid="product-vendor"]').isVisible();
 
     if (hasVendorSection) {
-      console.log('✅ Product detail shows vendor relationship');
+      console.log('[OK] Product detail shows vendor relationship');
     } else {
-      console.log('⚠️  Vendor relationship not displayed on product detail');
+      console.log('[WARN]️  Vendor relationship not displayed on product detail');
     }
   });
 
@@ -279,9 +279,9 @@ test.describe('3. Relationship Testing', () => {
     const hasProductsSection = await page.locator('[data-testid="vendor-products"]').isVisible();
 
     if (hasProductsSection) {
-      console.log('✅ Vendor detail shows related products');
+      console.log('[OK] Vendor detail shows related products');
     } else {
-      console.log('⚠️  Products not displayed on vendor detail');
+      console.log('[WARN]️  Products not displayed on vendor detail');
     }
   });
 
@@ -294,7 +294,7 @@ test.describe('3. Relationship Testing', () => {
     const hasSupplierMap = await page.locator('[data-testid="supplier-map"]').isVisible();
 
     if (hasSupplierMap) {
-      console.log('✅ Yacht detail shows supplier map');
+      console.log('[OK] Yacht detail shows supplier map');
 
       // Take screenshot
       await page.screenshot({
@@ -302,7 +302,7 @@ test.describe('3. Relationship Testing', () => {
         fullPage: true,
       });
     } else {
-      console.log('⚠️  Supplier map not displayed on yacht detail');
+      console.log('[WARN]️  Supplier map not displayed on yacht detail');
     }
   });
 });
@@ -320,9 +320,9 @@ test.describe('4. Enhanced Fields Testing', () => {
     const hasCertifications = await page.locator('[data-testid="certifications"]').isVisible();
 
     if (hasCertifications) {
-      console.log('✅ Vendor certifications displayed');
+      console.log('[OK] Vendor certifications displayed');
     } else {
-      console.log('⚠️  Certifications section not found');
+      console.log('[WARN]️  Certifications section not found');
     }
   });
 
@@ -335,9 +335,9 @@ test.describe('4. Enhanced Fields Testing', () => {
     const hasAwards = await page.locator('[data-testid="awards"]').isVisible();
 
     if (hasAwards) {
-      console.log('✅ Vendor awards displayed');
+      console.log('[OK] Vendor awards displayed');
     } else {
-      console.log('⚠️  Awards section not found');
+      console.log('[WARN]️  Awards section not found');
     }
   });
 
@@ -350,9 +350,9 @@ test.describe('4. Enhanced Fields Testing', () => {
     const hasCaseStudies = await page.locator('[data-testid="case-studies"]').isVisible();
 
     if (hasCaseStudies) {
-      console.log('✅ Vendor case studies displayed');
+      console.log('[OK] Vendor case studies displayed');
     } else {
-      console.log('⚠️  Case studies section not found');
+      console.log('[WARN]️  Case studies section not found');
     }
   });
 
@@ -365,9 +365,9 @@ test.describe('4. Enhanced Fields Testing', () => {
     const hasComparisonMetrics = await page.locator('[data-testid="comparison-metrics"]').isVisible();
 
     if (hasComparisonMetrics) {
-      console.log('✅ Product comparison metrics displayed');
+      console.log('[OK] Product comparison metrics displayed');
     } else {
-      console.log('⚠️  Comparison metrics section not found');
+      console.log('[WARN]️  Comparison metrics section not found');
     }
   });
 
@@ -380,9 +380,9 @@ test.describe('4. Enhanced Fields Testing', () => {
     const hasOwnerReviews = await page.locator('[data-testid="owner-reviews"]').isVisible();
 
     if (hasOwnerReviews) {
-      console.log('✅ Product owner reviews displayed');
+      console.log('[OK] Product owner reviews displayed');
     } else {
-      console.log('⚠️  Owner reviews section not found');
+      console.log('[WARN]️  Owner reviews section not found');
     }
   });
 
@@ -395,7 +395,7 @@ test.describe('4. Enhanced Fields Testing', () => {
     const hasTimeline = await page.locator('[data-testid="yacht-timeline"]').isVisible();
 
     if (hasTimeline) {
-      console.log('✅ Yacht timeline displayed');
+      console.log('[OK] Yacht timeline displayed');
 
       // Take screenshot
       await page.screenshot({
@@ -403,7 +403,7 @@ test.describe('4. Enhanced Fields Testing', () => {
         fullPage: true,
       });
     } else {
-      console.log('⚠️  Timeline section not found');
+      console.log('[WARN]️  Timeline section not found');
     }
   });
 
@@ -416,9 +416,9 @@ test.describe('4. Enhanced Fields Testing', () => {
     const hasSustainability = await page.locator('[data-testid="sustainability"]').isVisible();
 
     if (hasSustainability) {
-      console.log('✅ Yacht sustainability metrics displayed');
+      console.log('[OK] Yacht sustainability metrics displayed');
     } else {
-      console.log('⚠️  Sustainability section not found');
+      console.log('[WARN]️  Sustainability section not found');
     }
   });
 });
@@ -440,7 +440,7 @@ test.describe('5. Rich Text Testing', () => {
       const text = await description.textContent();
       expect(text).not.toBeNull();
       expect(text!.length).toBeGreaterThan(0);
-      console.log('✅ Vendor description renders correctly');
+      console.log('[OK] Vendor description renders correctly');
     }
   });
 
@@ -457,7 +457,7 @@ test.describe('5. Rich Text Testing', () => {
       const text = await description.textContent();
       expect(text).not.toBeNull();
       expect(text!.length).toBeGreaterThan(0);
-      console.log('✅ Product description renders correctly');
+      console.log('[OK] Product description renders correctly');
     }
   });
 
@@ -474,7 +474,7 @@ test.describe('5. Rich Text Testing', () => {
       const text = await content.textContent();
       expect(text).not.toBeNull();
       expect(text!.length).toBeGreaterThan(0);
-      console.log('✅ Blog post content renders correctly');
+      console.log('[OK] Blog post content renders correctly');
     }
   });
 });
@@ -497,7 +497,7 @@ test.describe('6. Media Testing', () => {
       const naturalWidth = await firstLogo.evaluate((img: HTMLImageElement) => img.naturalWidth);
       expect(naturalWidth).toBeGreaterThan(0);
 
-      console.log(`✅ Vendor logos load correctly (${count} logos)`);
+      console.log(`[OK] Vendor logos load correctly (${count} logos)`);
     }
   });
 
@@ -515,7 +515,7 @@ test.describe('6. Media Testing', () => {
       const naturalWidth = await firstImage.evaluate((img: HTMLImageElement) => img.naturalWidth);
       expect(naturalWidth).toBeGreaterThan(0);
 
-      console.log(`✅ Product images load correctly (${count} images)`);
+      console.log(`[OK] Product images load correctly (${count} images)`);
     }
   });
 
@@ -533,7 +533,7 @@ test.describe('6. Media Testing', () => {
       const naturalWidth = await firstImage.evaluate((img: HTMLImageElement) => img.naturalWidth);
       expect(naturalWidth).toBeGreaterThan(0);
 
-      console.log(`✅ Yacht images load correctly (${count} images)`);
+      console.log(`[OK] Yacht images load correctly (${count} images)`);
     }
   });
 
@@ -551,7 +551,7 @@ test.describe('6. Media Testing', () => {
       const naturalWidth = await firstPhoto.evaluate((img: HTMLImageElement) => img.naturalWidth);
       expect(naturalWidth).toBeGreaterThan(0);
 
-      console.log(`✅ Team member photos load correctly (${count} photos)`);
+      console.log(`[OK] Team member photos load correctly (${count} photos)`);
     }
   });
 
@@ -573,7 +573,7 @@ test.describe('6. Media Testing', () => {
     }
 
     expect(brokenCount).toBe(0);
-    console.log(`✅ Homepage has no broken images (${count} images checked)`);
+    console.log(`[OK] Homepage has no broken images (${count} images checked)`);
   });
 });
 
@@ -602,10 +602,10 @@ test.describe('7. Search and Filter Testing', () => {
 
         // Check filtered results
         const filteredCount = await page.locator('[data-testid="product-card"]').count();
-        console.log(`✅ Category filter works (${initialCount} → ${filteredCount} products)`);
+        console.log(`[OK] Category filter works (${initialCount} → ${filteredCount} products)`);
       }
     } else {
-      console.log('⚠️  Category filter not found');
+      console.log('[WARN]️  Category filter not found');
     }
   });
 
@@ -618,9 +618,9 @@ test.describe('7. Search and Filter Testing', () => {
     const hasFilter = await categoryFilter.isVisible();
 
     if (hasFilter) {
-      console.log('✅ Blog category filter exists');
+      console.log('[OK] Blog category filter exists');
     } else {
-      console.log('⚠️  Blog category filter not found');
+      console.log('[WARN]️  Blog category filter not found');
     }
   });
 
@@ -632,7 +632,7 @@ test.describe('7. Search and Filter Testing', () => {
     const hasFeaturedContent = await page.locator('[data-featured="true"], [data-testid*="featured"]').count() > 0;
 
     if (hasFeaturedContent) {
-      console.log('✅ Featured content filtering works');
+      console.log('[OK] Featured content filtering works');
     }
   });
 });
@@ -663,7 +663,7 @@ test.describe('8. Error Detection', () => {
     }
 
     if (allErrors.length > 0) {
-      console.log('⚠️  Console errors found:');
+      console.log('[WARN]️  Console errors found:');
       allErrors.forEach(({ route, errors }) => {
         console.log(`  ${route}: ${errors.length} errors`);
         errors.forEach(err => console.log(`    - ${err}`));
@@ -685,6 +685,6 @@ test.describe('8. Error Detection', () => {
     }
 
     expect(notFoundRoutes.length).toBe(0);
-    console.log('✅ No 404 errors on major pages');
+    console.log('[OK] No 404 errors on major pages');
   });
 });

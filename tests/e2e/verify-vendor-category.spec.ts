@@ -27,7 +27,7 @@ test.describe('Vendor Category Display', () => {
     expect(categoryValue).toBeTruthy();
     expect(categoryValue?.trim()).not.toBe('');
 
-    console.log(`✅ Category displayed: ${categoryValue}`);
+    console.log(`[OK] Category displayed: ${categoryValue}`);
   });
 
   test('should display different categories for different vendors', async ({ page }) => {
@@ -50,7 +50,7 @@ test.describe('Vendor Category Display', () => {
 
       // Verify the category matches expected
       expect(categoryValue?.trim()).toBe(vendor.expectedCategory);
-      console.log(`✅ ${vendor.slug}: ${categoryValue}`);
+      console.log(`[OK] ${vendor.slug}: ${categoryValue}`);
     }
   });
 
@@ -69,7 +69,7 @@ test.describe('Vendor Category Display', () => {
     const count = await tagBadges.count();
 
     expect(count).toBeGreaterThan(0);
-    console.log(`✅ Found ${count} specialization tags`);
+    console.log(`[OK] Found ${count} specialization tags`);
 
     // Log the tag names
     for (let i = 0; i < count; i++) {

@@ -36,7 +36,7 @@ test.describe('VENDOR-AUTH-P1: Authentication Workflow', () => {
 
   test('Test 3.2: Login with invalid credentials', async ({ page }) => {
     await page.goto(`${BASE_URL}/vendor/login/`);
-    await page.getByPlaceholder('vendor@example.com').fill('nonexistent@test.com');
+    await page.getByPlaceholder('vendor@example.com').fill('nonexistent@example.com');
     await page.getByPlaceholder(/password/i).fill('WrongPass123!');
 
     const response = await page.waitForResponse(

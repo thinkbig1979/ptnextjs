@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Featured Vendors Priority', () => {
   test('should show featured vendors before non-featured vendors', async ({ page }) => {
-    await page.goto(`${BASE_URL}/vendors');
+    await page.goto(`${BASE_URL}/vendors`);
     await page.waitForLoadState('networkidle');
 
     // Get all vendor cards
@@ -31,7 +31,7 @@ test.describe('Featured Vendors Priority', () => {
   });
 
   test('should maintain featured priority with name search', async ({ page }) => {
-    await page.goto(`${BASE_URL}/vendors');
+    await page.goto(`${BASE_URL}/vendors`);
     await page.waitForLoadState('networkidle');
 
     // Search for "yacht" or "superyacht" which should match featured vendors
@@ -56,7 +56,7 @@ test.describe('Featured Vendors Priority', () => {
   });
 
   test('should show featured badge with correct styling', async ({ page }) => {
-    await page.goto(`${BASE_URL}/vendors');
+    await page.goto(`${BASE_URL}/vendors`);
     await page.waitForLoadState('networkidle');
 
     // Find a featured badge
@@ -75,7 +75,7 @@ test.describe('Featured Vendors Priority', () => {
   });
 
   test('featured vendors should be sorted before non-featured regardless of name', async ({ page }) => {
-    await page.goto(`${BASE_URL}/vendors');
+    await page.goto(`${BASE_URL}/vendors`);
     await page.waitForLoadState('networkidle');
 
     const vendorCards = page.locator('[data-testid="vendor-card"]');
