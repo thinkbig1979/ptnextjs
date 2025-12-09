@@ -44,7 +44,7 @@ async function loginAsVendor(
 // Helper to authenticate as admin
 async function loginAsAdmin(page: Page): Promise<boolean> {
   // Navigate to admin login
-  await page.goto('http://localhost:3000/admin/login');
+  await page.goto(`${BASE_URL}/admin/login');
 
   // Fill admin credentials (assuming default admin exists)
   await page.fill('input[name="email"]', 'admin@example.com');

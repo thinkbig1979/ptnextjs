@@ -10,7 +10,7 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Product Review Submission', () => {
-  const testProductUrl = 'http://localhost:3000/products/superyacht-integration-solutions-intelligent-lighting-control-system';
+  const testProductUrl = `${BASE_URL}/products/superyacht-integration-solutions-intelligent-lighting-control-system';
 
   test.beforeEach(async ({ page }) => {
     await page.goto(testProductUrl);

@@ -1,7 +1,7 @@
 import { test } from '@playwright/test';
 
 test('Visual check of vendor search UX - Name mode', async ({ page }) => {
-  await page.goto('http://localhost:3000/vendors');
+  await page.goto(`${BASE_URL}/vendors');
   await page.waitForLoadState('networkidle');
 
   // Take screenshot of name search mode (default)
@@ -12,7 +12,7 @@ test('Visual check of vendor search UX - Name mode', async ({ page }) => {
 });
 
 test('Visual check of vendor search UX - Location mode', async ({ page }) => {
-  await page.goto('http://localhost:3000/vendors');
+  await page.goto(`${BASE_URL}/vendors');
   await page.waitForLoadState('networkidle');
 
   // Switch to location mode
@@ -29,7 +29,7 @@ test('Visual check of vendor search UX - Location mode', async ({ page }) => {
 });
 
 test('Visual check of vendor search UX - With dropdown results', async ({ page }) => {
-  await page.goto('http://localhost:3000/vendors');
+  await page.goto(`${BASE_URL}/vendors');
   await page.waitForLoadState('networkidle');
 
   // Switch to location mode

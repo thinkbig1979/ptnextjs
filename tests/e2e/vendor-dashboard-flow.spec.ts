@@ -27,7 +27,7 @@ test.describe('Vendor Dashboard and Profile Edit Flow', () => {
     console.log('Creating approved vendor for test...');
 
     // Step 1: Register vendor
-    await page.goto('http://localhost:3000/vendor/register/');
+    await page.goto(`${BASE_URL}/vendor/register/');
     await page.getByPlaceholder('vendor@example.com').fill(testEmail);
     await page.getByPlaceholder('Your Company Ltd').fill(testCompany);
     await page.getByPlaceholder('John Smith').fill('Dashboard Test User');
@@ -72,7 +72,7 @@ test.describe('Vendor Dashboard and Profile Edit Flow', () => {
     console.log('Step 1: Testing vendor login...');
 
     // Navigate to login page
-    await page.goto('http://localhost:3000/vendor/login/');
+    await page.goto(`${BASE_URL}/vendor/login/');
     await expect(page.locator('h2')).toContainText('Vendor Login');
 
     // Fill login form
@@ -147,7 +147,7 @@ test.describe('Vendor Dashboard and Profile Edit Flow', () => {
 
     console.log('Step 1: Logging in...');
 
-    await page.goto('http://localhost:3000/vendor/login/');
+    await page.goto(`${BASE_URL}/vendor/login/');
     await page.getByPlaceholder('vendor@example.com').fill(testEmail);
     await page.getByPlaceholder('Enter your password').fill(testPassword);
 
@@ -264,7 +264,7 @@ test.describe('Vendor Dashboard and Profile Edit Flow', () => {
 
     console.log('Testing profile validation...');
 
-    await page.goto('http://localhost:3000/vendor/login/');
+    await page.goto(`${BASE_URL}/vendor/login/');
     await page.getByPlaceholder('vendor@example.com').fill(testEmail);
     await page.getByPlaceholder('Enter your password').fill(testPassword);
     await page.getByRole('button', { name: 'Login' }).click();

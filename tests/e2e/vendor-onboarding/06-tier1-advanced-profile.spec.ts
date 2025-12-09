@@ -1,7 +1,7 @@
 import { test, expect, Page } from '@playwright/test';
 import { seedVendors, createTestVendor } from '../helpers/seed-api-helpers';
 
-const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || `${BASE_URL}';
 
 async function loginAsVendor(page: Page, email: string, password: string) {
   await page.goto(`${BASE_URL}/vendor/login/`);

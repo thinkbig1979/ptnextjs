@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Featured Vendors Sorting', () => {
   test('should display featured vendors at the top of the listing', async ({ page }) => {
-    await page.goto('http://localhost:3000/vendors');
+    await page.goto(`${BASE_URL}/vendors');
     await page.waitForLoadState('networkidle');
 
     // Get all vendor cards
@@ -30,7 +30,7 @@ test.describe('Featured Vendors Sorting', () => {
   });
 
   test('should maintain featured sorting with search filter', async ({ page }) => {
-    await page.goto('http://localhost:3000/vendors');
+    await page.goto(`${BASE_URL}/vendors');
     await page.waitForLoadState('networkidle');
 
     // Search for something that should include featured vendors
@@ -48,7 +48,7 @@ test.describe('Featured Vendors Sorting', () => {
   });
 
   test('should maintain featured sorting with category filter', async ({ page }) => {
-    await page.goto('http://localhost:3000/vendors');
+    await page.goto(`${BASE_URL}/vendors');
     await page.waitForLoadState('networkidle');
 
     // Select a category
@@ -76,7 +76,7 @@ test.describe('Featured Vendors Sorting', () => {
 
   test('should show featured vendors in API response', async ({ page, request }) => {
     // Make direct API call to vendors endpoint
-    const response = await request.get('http://localhost:3000/api/vendors');
+    const response = await request.get(`${BASE_URL}/api/vendors');
 
     if (response.ok()) {
       const data = await response.json();
@@ -92,7 +92,7 @@ test.describe('Featured Vendors Sorting', () => {
   });
 
   test('should verify featured field is passed to client component', async ({ page }) => {
-    await page.goto('http://localhost:3000/vendors');
+    await page.goto(`${BASE_URL}/vendors');
     await page.waitForLoadState('networkidle');
 
     // Check the HTML for featured indicators

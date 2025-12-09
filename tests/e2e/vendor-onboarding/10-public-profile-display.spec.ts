@@ -1,7 +1,7 @@
 import { test, expect, Page } from '@playwright/test';
 import { seedVendors, createTestVendor } from '../helpers/seed-api-helpers';
 
-const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || `${BASE_URL}';
 
 test.describe('PUBLIC-P2: Public Profile Display', () => {
   test.setTimeout(60000); // 60 seconds timeout

@@ -31,7 +31,7 @@ test.describe('Admin Vendor Approval Flow', () => {
     // Step 1: Register a new vendor (will be in pending state)
     console.log('Step 1: Creating pending vendor via registration...');
 
-    await page.goto('http://localhost:3000/vendor/register/');
+    await page.goto(`${BASE_URL}/vendor/register/');
     await expect(page.locator('h1')).toContainText('Vendor Registration');
 
     // Fill registration form
@@ -66,7 +66,7 @@ test.describe('Admin Vendor Approval Flow', () => {
     // Step 2: Verify vendor cannot login (account pending)
     console.log('Step 2: Verifying vendor cannot login (pending status)...');
 
-    await page.goto('http://localhost:3000/vendor/login/');
+    await page.goto(`${BASE_URL}/vendor/login/');
     await page.getByPlaceholder('vendor@example.com').fill(testEmail);
     await page.getByPlaceholder('Enter your password').fill(testPassword);
 
@@ -99,7 +99,7 @@ test.describe('Admin Vendor Approval Flow', () => {
       try {
         // In a real scenario, admin would do this through Payload admin UI
         // For testing, we'll use the Payload REST API directly
-        const response = await fetch('http://localhost:3000/api/admin/approve-vendor', {
+        const response = await fetch(`${BASE_URL}/api/admin/approve-vendor', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -141,7 +141,7 @@ test.describe('Admin Vendor Approval Flow', () => {
     // Step 4: Verify vendor can now login after approval
     console.log('Step 4: Verifying approved vendor can login...');
 
-    await page.goto('http://localhost:3000/vendor/login/');
+    await page.goto(`${BASE_URL}/vendor/login/');
     await page.getByPlaceholder('vendor@example.com').fill(testEmail);
     await page.getByPlaceholder('Enter your password').fill(testPassword);
 
@@ -185,7 +185,7 @@ test.describe('Admin Vendor Approval Flow', () => {
     const pendingCompany = `UI Pending ${Date.now()}`;
 
     // Register new pending vendor
-    await page.goto('http://localhost:3000/vendor/register/');
+    await page.goto(`${BASE_URL}/vendor/register/');
     await page.getByPlaceholder('vendor@example.com').fill(pendingEmail);
     await page.getByPlaceholder('Your Company Ltd').fill(pendingCompany);
     await page.getByPlaceholder('John Smith').fill('UI Test User');

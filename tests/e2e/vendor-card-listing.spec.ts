@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('VendorCard Listing Component - E2E Tests', () => {
-  const BASE_URL = 'http://localhost:3000';
+  const BASE_URL = `${BASE_URL}';
 
   test('Test 1: Navigate to vendors listing page and verify cards display (max 30s)', async ({ page }) => {
     console.log('\n===== TEST 1: Vendors Listing Page Navigation =====');

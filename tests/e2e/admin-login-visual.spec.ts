@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Payload CMS Admin Login - Visual Verification', () => {
-  test('should render login page with all required elements', async ({ page }) => {
+  test('should render login page with all required elements', async ({ page, baseURL }) => {
     // Navigate to admin login page
-    const response = await page.goto('http://localhost:3000/admin/login');
+    const response = await page.goto(`${baseURL}/admin/login`);
 
     // Verify HTTP 200 response (not 500 error)
     expect(response?.status()).toBe(200);
@@ -55,7 +55,7 @@ test.describe('Payload CMS Admin Login - Visual Verification', () => {
     expect(title).toContain('Login');
   });
 
-  test('should not have JavaScript console errors', async ({ page }) => {
+  test('should not have JavaScript console errors', async ({ page, baseURL }) => {
     const consoleErrors: string[] = [];
     const pageErrors: string[] = [];
 
@@ -72,7 +72,7 @@ test.describe('Payload CMS Admin Login - Visual Verification', () => {
     });
 
     // Navigate to admin login page
-    await page.goto('http://localhost:3000/admin/login', { waitUntil: 'networkidle' });
+    await page.goto(`${baseURL}/admin/login`, { waitUntil: 'networkidle' });
 
     // Wait a bit for any async errors to appear
     await page.waitForTimeout(3000);
@@ -96,8 +96,8 @@ test.describe('Payload CMS Admin Login - Visual Verification', () => {
     expect(hasCriticalError).toBe(false);
   });
 
-  test('should render without HTTP 500 status code', async ({ page }) => {
-    const response = await page.goto('http://localhost:3000/admin/login');
+  test('should render without HTTP 500 status code', async ({ page, baseURL }) => {
+    const response = await page.goto(`${baseURL}/admin/login`);
 
     // The key test - verify NOT a 500 error
     expect(response?.status()).not.toBe(500);

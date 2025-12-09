@@ -20,7 +20,7 @@ test.describe('Vendor Registration Integration', () => {
 
   test('should complete full registration flow', async ({ page }) => {
     // Navigate to registration page
-    await page.goto('http://localhost:3000/vendor/register/');
+    await page.goto(`${BASE_URL}/vendor/register/');
 
     // Wait for form to load
     await expect(page.locator('h1')).toContainText('Vendor Registration');
@@ -89,7 +89,7 @@ test.describe('Vendor Registration Integration', () => {
   });
 
   test('should show validation errors for invalid data', async ({ page }) => {
-    await page.goto('http://localhost:3000/vendor/register/');
+    await page.goto(`${BASE_URL}/vendor/register/');
 
     // Try to submit empty form
     await page.click('button[type="submit"]');
@@ -105,7 +105,7 @@ test.describe('Vendor Registration Integration', () => {
   test('should handle duplicate email error', async ({ page }) => {
     const duplicateEmail = 'existing@example.com';
 
-    await page.goto('http://localhost:3000/vendor/register/');
+    await page.goto(`${BASE_URL}/vendor/register/');
 
     // Fill form with duplicate email
     await page.getByPlaceholder('vendor@example.com').fill(duplicateEmail);
@@ -134,7 +134,7 @@ test.describe('Vendor Registration Integration', () => {
   });
 
   test('should disable submit button during submission', async ({ page }) => {
-    await page.goto('http://localhost:3000/vendor/register/');
+    await page.goto(`${BASE_URL}/vendor/register/');
 
     // Fill minimal form
     await page.getByPlaceholder('vendor@example.com').fill(`test-${Date.now()}@example.com`);

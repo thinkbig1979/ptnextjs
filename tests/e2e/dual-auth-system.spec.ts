@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
 
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || `${BASE_URL}';
+
 /**
  * Comprehensive Dual Authentication System Test
  *
@@ -10,8 +12,10 @@ import { test, expect } from '@playwright/test';
  * to prevent interception of Payload CMS authentication requests.
  */
 test.describe('Dual Authentication System - 401 Error Fix', () => {
-  const ADMIN_LOGIN_URL = 'http://localhost:3000/admin/login';
-  const ADMIN_URL = 'http://localhost:3000/admin';
+  // Rate limits are cleared in global-setup.ts, no need for beforeAll here
+
+  const ADMIN_LOGIN_URL = `${BASE_URL}/admin/login`;
+  const ADMIN_URL = `${BASE_URL}/admin`;
 
   test.describe('Test Suite 1: Admin Panel Accessibility', () => {
     test('Admin login page loads without 401 errors', async ({ page }) => {
@@ -43,33 +47,25 @@ test.describe('Dual Authentication System - 401 Error Fix', () => {
     test('CRITICAL - /api/vendors route is NOT returning 401', async ({ page }) => {
       console.log('TEST: CRITICAL - Verifying /api/vendors does not return 401...');
 
-      const result = await page.evaluate(async () => {
-        const response = await fetch('http://localhost:3000/api/vendors');
-        return {
-          status: response.status,
-          statusText: response.statusText,
-        };
-      });
+      // Use page.request instead of page.evaluate for API calls
+      const response = await page.request.get(`${BASE_URL}/api/vendors`);
+      const status = response.status();
 
       // CRITICAL: Before fix this would be 401, after fix it should not be
-      expect(result.status).not.toBe(401);
-      console.log(`✓ CRITICAL FIX VERIFIED: /api/vendors returns ${result.status} (NOT 401)`);
+      expect(status).not.toBe(401);
+      console.log(`✓ CRITICAL FIX VERIFIED: /api/vendors returns ${status} (NOT 401)`);
     });
 
     test('/api/portal/vendors routes exist and are separate', async ({ page }) => {
       console.log('TEST: Verifying /api/portal/vendors routes exist...');
 
-      const result = await page.evaluate(async () => {
-        const response = await fetch('http://localhost:3000/api/portal/vendors/profile');
-        return {
-          status: response.status,
-          notFound: response.status === 404,
-        };
-      });
+      // Use page.request instead of page.evaluate for API calls
+      const response = await page.request.get(`${BASE_URL}/api/portal/vendors/profile`);
+      const status = response.status();
 
       // Should exist (may be 401 without auth, but NOT 404)
-      expect(result.notFound).toBe(false);
-      console.log(`✓ /api/portal/vendors/profile exists: HTTP ${result.status}`);
+      expect(status).not.toBe(404);
+      console.log(`✓ /api/portal/vendors/profile exists: HTTP ${status}`);
     });
   });
 
@@ -77,7 +73,7 @@ test.describe('Dual Authentication System - 401 Error Fix', () => {
     test('Vendor login page is functional and separate', async ({ page }) => {
       console.log('TEST: Verifying vendor portal is accessible...');
 
-      const response = await page.goto('http://localhost:3000/vendor/login', {
+      const response = await page.goto(`${BASE_URL}/vendor/login`, {
         waitUntil: 'domcontentloaded',
         timeout: 30000
       });
@@ -98,21 +94,15 @@ test.describe('Dual Authentication System - 401 Error Fix', () => {
       const adminOk = adminResponse?.status() === 200;
 
       // Test vendor portal
-      const vendorResponse = await page.goto('http://localhost:3000/vendor/login', { waitUntil: 'domcontentloaded' });
+      const vendorResponse = await page.goto(`${BASE_URL}/vendor/login`, { waitUntil: 'domcontentloaded' });
       const vendorOk = vendorResponse?.status() !== 500;
 
-      // Test API routes
-      const routeResult = await page.evaluate(async () => {
-        const payloadApi = await fetch('http://localhost:3000/api/vendors');
-        const portalApi = await fetch('http://localhost:3000/api/portal/vendors/profile');
-        return {
-          payloadStatus: payloadApi.status,
-          portalStatus: portalApi.status,
-        };
-      });
+      // Test API routes using page.request instead of page.evaluate
+      const payloadApiResponse = await page.request.get(`${BASE_URL}/api/vendors`);
+      const portalApiResponse = await page.request.get(`${BASE_URL}/api/portal/vendors/profile`);
 
-      const no401Error = routeResult.payloadStatus !== 401;
-      const routesSeparated = routeResult.portalStatus !== 404;
+      const no401Error = payloadApiResponse.status() !== 401;
+      const routesSeparated = portalApiResponse.status() !== 404;
 
       console.log('RESULTS:');
       console.log(`  ${adminOk ? '✓' : '✗'} Admin panel accessible`);

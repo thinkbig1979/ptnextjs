@@ -43,7 +43,7 @@ test.describe('Verify Form Save Fix', () => {
     });
 
     console.log('Step 1: Navigate to login page');
-    await page.goto('http://localhost:3000/vendor/login');
+    await page.goto(`${BASE_URL}/vendor/login');
     await page.waitForLoadState('networkidle');
 
     console.log('Step 2: Login');

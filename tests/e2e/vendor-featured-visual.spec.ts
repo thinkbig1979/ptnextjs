@@ -1,7 +1,7 @@
 import { test } from '@playwright/test';
 
 test('Visual verification of featured vendor badges', async ({ page }) => {
-  await page.goto('http://localhost:3000/vendors');
+  await page.goto(`${BASE_URL}/vendors');
   await page.waitForLoadState('networkidle');
 
   // Wait for content to load

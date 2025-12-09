@@ -15,6 +15,8 @@
 import { test, expect, type Response } from '@playwright/test';
 import path from 'path';
 
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
+
 test.describe('Tier-Based Access Control', () => {
   const testPassword = 'SecurePass123!@#';
 
@@ -27,7 +29,7 @@ test.describe('Tier-Based Access Control', () => {
   ): Promise<string> {
     console.log(`Creating ${tier} vendor: ${email}`);
 
-    await page.goto('http://localhost:3000/vendor/register/');
+    await page.goto(`${BASE_URL}/vendor/register/');
     await page.getByPlaceholder('vendor@example.com').fill(email);
     await page.getByPlaceholder('Your Company Ltd').fill(company);
     await page.getByPlaceholder('John Smith').fill(`${tier} Test User`);
@@ -58,7 +60,7 @@ test.describe('Tier-Based Access Control', () => {
 
   // Helper function to login
   async function loginVendor(page: any, email: string): Promise<boolean> {
-    await page.goto('http://localhost:3000/vendor/login/');
+    await page.goto(`${BASE_URL}/vendor/login/');
     await page.getByPlaceholder('vendor@example.com').fill(email);
     await page.getByPlaceholder('Enter your password').fill(testPassword);
 
@@ -166,9 +168,10 @@ test.describe('Tier-Based Access Control', () => {
     console.log('Step 4: Attempting to save tier1+ field via API...');
 
     // Try to directly call API with tier1+ fields (should be rejected)
-    const apiResult = await page.evaluate(async ({ vendorId }) => {
+    const vendorId = await page.evaluate(() => window.location.pathname.split('/').pop());
+    const apiResult = await page.evaluate(async ({ vendorId, baseUrl }) => {
       try {
-        const response = await fetch(`http://localhost:3000/api/vendors/${vendorId}`, {
+        const response = await fetch(`${baseUrl}/api/vendors/${vendorId}`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
@@ -185,7 +188,7 @@ test.describe('Tier-Based Access Control', () => {
       } catch (error) {
         return { error: error instanceof Error ? error.message : 'Unknown error' };
       }
-    }, { vendorId: await page.evaluate(() => window.location.pathname.split('/').pop()) });
+    }, { vendorId, baseUrl: BASE_URL });
 
     console.log('API result:', apiResult);
 

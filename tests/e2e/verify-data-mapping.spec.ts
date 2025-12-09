@@ -15,7 +15,7 @@ test.describe('Data Mapping Verification', () => {
     });
 
     // Login
-    await page.goto('http://localhost:3000/vendor/login');
+    await page.goto(`${BASE_URL}/vendor/login');
     await page.fill('input[type="email"]', 'testvendor@test.com');
     await page.fill('input[type="password"]', 'testpassword');
     await page.click('button[type="submit"]');
@@ -25,7 +25,7 @@ test.describe('Data Mapping Verification', () => {
     console.log('✓ Logged in successfully');
 
     // Navigate to profile
-    await page.goto('http://localhost:3000/vendor/dashboard/profile');
+    await page.goto(`${BASE_URL}/vendor/dashboard/profile');
     await page.waitForLoadState('networkidle');
 
     // Wait for vendor data to load

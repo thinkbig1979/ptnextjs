@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Vendor Search UX Improvements', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:3000/vendors');
+    await page.goto(`${BASE_URL}/vendors');
     await page.waitForLoadState('networkidle');
   });
 

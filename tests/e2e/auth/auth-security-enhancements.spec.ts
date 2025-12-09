@@ -14,7 +14,7 @@ import { test, expect, type Page, type APIRequestContext } from '@playwright/tes
  * @see .agent-os/specs/2025-12-07-auth-security-enhancements
  */
 
-const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || `${BASE_URL}';
 
 // Test credentials
 const TEST_ADMIN = {
@@ -23,6 +23,8 @@ const TEST_ADMIN = {
 };
 
 test.describe('Auth Security Enhancements E2E', () => {
+  // Rate limits are cleared in global-setup.ts
+
   test.describe('Login Flow', () => {
     test('successful login sets httpOnly cookies', async ({ page, context }) => {
       // Navigate to login

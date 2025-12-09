@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Payload CMS Admin Panel', () => {
   test('should load /admin route without 500 error', async ({ page }) => {
     // Navigate to admin panel
-    const response = await page.goto('http://localhost:3000/admin');
+    const response = await page.goto(`${BASE_URL}/admin');
 
     // Verify the response is not a 500 error
     expect(response?.status()).not.toBe(500);
@@ -23,7 +23,7 @@ test.describe('Payload CMS Admin Panel', () => {
 
   test('should load /admin/login route successfully', async ({ page }) => {
     // Navigate to admin login page
-    const response = await page.goto('http://localhost:3000/admin/login');
+    const response = await page.goto(`${BASE_URL}/admin/login');
 
     // Verify successful response
     expect(response?.status()).toBe(200);
@@ -64,7 +64,7 @@ test.describe('Payload CMS Admin Panel', () => {
     });
 
     // Navigate to admin panel
-    await page.goto('http://localhost:3000/admin/login', { waitUntil: 'networkidle' });
+    await page.goto(`${BASE_URL}/admin/login', { waitUntil: 'networkidle' });
 
     // Give some time for any errors to appear
     await page.waitForTimeout(2000);

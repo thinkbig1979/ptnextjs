@@ -1,12 +1,14 @@
 import { test, expect } from '@playwright/test';
 
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
+
 test.describe('Brand Story Tier Access Fix Verification', () => {
   test('testvendor (tier1) should see Brand Story form, NOT upgrade prompt', async ({ page }) => {
     console.log('\n=== Testing Brand Story Tier Access Fix ===\n');
 
     // Step 1: Login
     console.log('Step 1: Login as testvendor...');
-    await page.goto('http://localhost:3002/vendor/login');
+    await page.goto(`${BASE_URL}/vendor/login`);
     await page.getByPlaceholder('vendor@example.com').fill('testvendor@test.com');
     await page.getByPlaceholder('Enter your password').fill('123');
     await page.getByRole('button', { name: /login/i }).click();
@@ -15,7 +17,7 @@ test.describe('Brand Story Tier Access Fix Verification', () => {
 
     // Step 2: Navigate to Profile
     console.log('Step 2: Navigate to Profile page...');
-    await page.goto('http://localhost:3002/vendor/dashboard/profile');
+    await page.goto(`${BASE_URL}/vendor/dashboard/profile`);
     await page.waitForLoadState('networkidle');
     console.log('✓ Profile page loaded\n');
 

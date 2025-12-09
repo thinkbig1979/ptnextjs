@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { seedVendors } from '../helpers/seed-api-helpers';
 
-const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || `${BASE_URL}';
 
 test.describe('VENDOR-AUTH-P1: Authentication Workflow', () => {
   test.setTimeout(45000);

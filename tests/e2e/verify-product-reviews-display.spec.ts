@@ -4,6 +4,8 @@
  */
 import { test, expect } from '@playwright/test';
 
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
+
 test.describe('Product Reviews Display', () => {
   const productUrl = '/products/nautictech-solutions-complete-system-integration';
 
@@ -54,7 +56,7 @@ test.describe('Product Reviews Display', () => {
 
   test('02 - Check API endpoint returns reviews', async ({ request }) => {
     // First, let's check if there's a reviews API endpoint
-    const productResponse = await request.get(`http://localhost:3000${productUrl}`);
+    const productResponse = await request.get(`${BASE_URL}${productUrl}`);
     expect(productResponse.ok()).toBeTruthy();
 
     const html = await productResponse.text();

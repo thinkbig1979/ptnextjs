@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Product Detail Page - Simplified Tabs', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:3000/products/maritime-technology-partners-intelligent-lighting-control-system');
+    await page.goto(`${BASE_URL}/products/maritime-technology-partners-intelligent-lighting-control-system');
     await page.waitForLoadState('networkidle');
   });
 

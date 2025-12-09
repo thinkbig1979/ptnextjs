@@ -16,7 +16,7 @@ test.describe('Logout Functionality - UI Elements', () => {
     test('logout endpoint should exist and respond correctly', async ({ page }) => {
       // Test the logout endpoint responds
       const response = await page.evaluate(async () => {
-        const res = await fetch('http://localhost:3000/api/auth/logout', {
+        const res = await fetch(`${BASE_URL}/api/auth/logout', {
           method: 'POST',
         });
         return {
