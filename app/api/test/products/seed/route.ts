@@ -5,8 +5,13 @@ import config from '@/payload.config';
 /**
  * Convert plain text to Lexical JSON format
  * Required for richText fields in Payload CMS
+ *
+ * Note: Empty text still needs valid Lexical structure with at least one paragraph
  */
 function textToLexical(text: string) {
+  // Ensure we have valid text - Payload requires non-empty richText content
+  const safeText = text && text.trim() ? text : 'Product description';
+
   return {
     root: {
       type: 'root',
@@ -26,7 +31,7 @@ function textToLexical(text: string) {
               detail: 0,
               mode: 'normal',
               style: '',
-              text: text,
+              text: safeText,
               version: 1,
             },
           ],
@@ -36,6 +41,20 @@ function textToLexical(text: string) {
       direction: 'ltr',
     },
   };
+}
+
+/**
+ * Generate URL-friendly slug from product name with uniqueness suffix
+ */
+function generateProductSlug(name: string): string {
+  const baseSlug = name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  // Add timestamp + random suffix to ensure uniqueness
+  const timestamp = Date.now();
+  const random = Math.random().toString(36).substring(2, 6);
+  return `${baseSlug}-${timestamp}-${random}`;
 }
 
 /**
@@ -108,6 +127,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<SeedRespo
         // Prepare product data
         const createData: {
           name: string;
+          slug: string;
           description: unknown;
           category: string;
           manufacturer?: string;
@@ -118,6 +138,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<SeedRespo
           specifications?: Record<string, unknown>;
         } = {
           name: productData.name,
+          // Generate unique slug to avoid conflicts
+          slug: generateProductSlug(productData.name),
           // Convert description to Lexical format (richText field requirement)
           description: productData.description
             ? textToLexical(productData.description)
