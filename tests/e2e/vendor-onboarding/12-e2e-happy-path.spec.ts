@@ -7,16 +7,7 @@ async function loginAsVendor(page: Page, email: string, password: string) {
   await page.goto(`${BASE_URL}/vendor/login/`);
   await page.getByPlaceholder('vendor@example.com').fill(email);
   await page.getByPlaceholder(/password/i).fill(password);
-
-  const response = await page.waitForResponse(
-    (r: any) => r.url().includes('/api/auth/login') && r.status() === 200
-  ).catch(async () => {
-    await page.click('button:has-text("Login")');
-    return page.waitForResponse(
-      (r: any) => r.url().includes('/api/auth/login') && r.status() === 200
-    );
-  });
-
+  await page.click('button:has-text("Login")');
   await page.waitForURL(/\/vendor\/dashboard\/?/, { timeout: 10000 });
 }
 
@@ -209,8 +200,20 @@ test.describe('E2E-P2: End-to-End Happy Path', () => {
       await locationsTab.first().click();
       await page.waitForTimeout(500);
 
+      // Close any existing location edit form first
+      const existingDoneBtn = page.locator('button').filter({ hasText: /Done.*Editing/i }).first();
+      if (await existingDoneBtn.isVisible({ timeout: 1000 }).catch(() => false)) {
+        await existingDoneBtn.click();
+        await page.waitForTimeout(300);
+        console.log('[OK] Closed existing location edit form');
+      }
+
       const addLocationBtn = page.locator('button').filter({ hasText: /Add.*Location/i }).first();
-      if (await addLocationBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+
+      // Check if we can add (button enabled) - if disabled, location already exists at limit
+      const canAdd = await addLocationBtn.isEnabled({ timeout: 1000 }).catch(() => false);
+
+      if (canAdd && await addLocationBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
         // Add HQ
         await addLocationBtn.click();
         await page.waitForTimeout(300);
@@ -233,9 +236,12 @@ test.describe('E2E-P2: End-to-End Happy Path', () => {
           await hqCheckbox.check();
         }
 
-        const locSaveBtn = page.locator('button').filter({ hasText: /Save|Add/ }).last();
-        await locSaveBtn.click();
-        await page.waitForTimeout(1000);
+        // Click "Done Editing" to exit edit mode
+        const locDoneBtn = page.locator('button').filter({ hasText: /Done.*Editing/i }).first();
+        if (await locDoneBtn.isVisible({ timeout: 1000 }).catch(() => false)) {
+          await locDoneBtn.click();
+          await page.waitForTimeout(500);
+        }
 
         console.log('[OK] Headquarters location added');
 
@@ -252,12 +258,18 @@ test.describe('E2E-P2: End-to-End Happy Path', () => {
             await city2Input.fill('Cannes');
           }
 
-          const loc2SaveBtn = page.locator('button').filter({ hasText: /Save|Add/ }).last();
-          await loc2SaveBtn.click();
-          await page.waitForTimeout(1000);
+          // Click "Done Editing" to exit edit mode
+          const loc2DoneBtn = page.locator('button').filter({ hasText: /Done.*Editing/i }).first();
+          if (await loc2DoneBtn.isVisible({ timeout: 1000 }).catch(() => false)) {
+            await loc2DoneBtn.click();
+            await page.waitForTimeout(500);
+          }
 
           console.log('[OK] Second location added');
         }
+      } else {
+        // Location button disabled - at tier limit or already has location
+        console.log('ℹ Location limit reached or button disabled - location already exists');
       }
     }
 

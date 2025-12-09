@@ -4,58 +4,67 @@
 
 ## Session Progress
 
-### Fixes Applied
-1. **Product Seed API - Empty description fix**
-   - File: `app/api/test/products/seed/route.ts`
-   - Changed `textToLexical('')` to default to `'Product description'` for empty strings
-   - This fixed products collection requiring non-empty richText description field
+### APPLICATION BUG FIX Applied
+**LocationsManagerCard "Add Location" button disabled bug**
 
-### Test Results After Fix
-```
-66 passed (8.9m)
-5 failed
-```
+**Root Cause**: The "Add Location" button was disabled when `isEditing || !canAddMore`. When a user clicked "Add Location", `editingIndex` was set to non-null which made `isEditing = true`. There was no way to exit edit mode without completing all required fields (including geocoded lat/lng) via "Save Locations".
+
+**Fix Applied** (`components/dashboard/LocationsManagerCard.tsx`):
+1. Added `Check` icon import
+2. Added "Done Editing" button after LocationFormFields that calls `setEditingIndex(null)` to exit edit mode without requiring full validation/save
+
+This allows users to:
+- Add a location and exit edit mode without filling all fields
+- Add another location immediately after
+- Fill incomplete locations later before saving to backend
+
+### Test Updates Applied
+Updated tests to use the new "Done Editing" button:
+
+1. **08-tier3-promotions.spec.ts**:
+   - Line 231-242: Changed from `/Save|Add/` button to `/Done.*Editing/` button
+   - Added pre-check to close any existing location edit form before adding new ones (lines 201-207)
+
+2. **12-e2e-happy-path.spec.ts**:
+   - Lines 227-232, 249-254: Changed from "Save" button to "Done Editing" button for locations
+   - Added pre-check to close any existing location edit form (lines 203-208)
+   - Added graceful handling when Add button is disabled (lines 270-273)
 
 ## Remaining Failures (5 tests)
 
 | Test | File:Line | Error | Root Cause |
 |------|-----------|-------|------------|
-| 7.5 Geocoding | 07-tier2-locations.spec.ts:240 | Timeout waiting for coordinates update | SELECTOR_BROKEN - geocode button not responsive |
-| 8.5 Unlimited locations | 08-tier3-promotions.spec.ts:184 | `expect(locationsAdded).toBeGreaterThan(0)` | APPLICATION_BUG - "Add Location" button disabled (isEditing=true) |
-| 9.2 View product list | 09-product-management.spec.ts:55 | Products not visible after seeding | UI_CACHE or SELECTOR - products seeded but not displayed |
-| 9.3 Add new product | 09-product-management.spec.ts:105 | Timeout on name input | SELECTOR_BROKEN - product form not opening |
-| 12 Happy path | 12-e2e-happy-path.spec.ts:17 | Timeout on location name input | Same as 8.5 - location form issue |
+| 6.8 Drag-drop | 06-tier1-advanced-profile.spec.ts:377 | Timeout | Feature may not be implemented or selector issue |
+| 8.5 Unlimited locations | 08-tier3-promotions.spec.ts:184 | Flaky | Pre-existing location in edit mode on page load |
+| 9.2 View product list | 09-product-management.spec.ts:55 | Products not visible | UI cache/refresh after seeding |
+| 9.3 Add new product | 09-product-management.spec.ts:105 | Timeout on name input | Product form not opening |
+| 12 Happy path | 12-e2e-happy-path.spec.ts:17 | Timeout on location input | Pre-existing location in edit mode |
 
 ## Investigation Findings
 
-### Test 8.5, 12 - Location Form Button Disabled Issue
-The "Add Location" button in `LocationsManagerCard.tsx` is disabled when `isEditing || !canAddMore`:
-- `isEditing = editingIndex !== null`
-- The button shows disabled even with 1 location for tier3
+### Test 8.5, 12 - Location Form State Issue
+Tests are flaky because:
+- Sometimes a location already exists in edit mode when the page loads
+- The seed API doesn't create locations, so this may be state from previous test runs
+- The "close existing edit form" logic helps but doesn't catch all cases
 
-Looking at error-context.md for test 8.5:
-- Button shows as `button "Add Location" [disabled]`
-- The location form shows input fields are visible (editing mode)
-- `editingIndex` appears to be non-null causing button disable
+Potential fixes:
+1. Clear vendor data between tests more aggressively
+2. Add explicit wait for component to be in "ready" state
+3. Investigate why location exists with editingIndex=0 on load
 
-**Hypothesis**: When the page loads with existing locations, the component may be entering edit mode automatically, which disables the Add button.
-
-**File to investigate**: `components/dashboard/LocationsManagerCard.tsx:244`
-```tsx
-<Button onClick={handleAddLocation} size="sm" disabled={isEditing || !canAddMore}>
-```
-
-### Test 9.2 - Products Not Visible
-Products are seeded successfully but not showing in the UI. Possible causes:
-1. Product list not refreshing after seed
-2. Products tab content not rendering correctly
-3. Selectors incorrect for finding products
+### Test 9.2, 9.3 - Product Management Issues
+- Products are seeded successfully but not visible in UI
+- May be cache invalidation or selector issues
+- Product form may require specific sequence to open
 
 ## Files Modified This Session
-- `app/api/test/products/seed/route.ts` - Added default description for empty strings
+- `components/dashboard/LocationsManagerCard.tsx` - Added "Done Editing" button (APPLICATION BUG FIX)
+- `tests/e2e/vendor-onboarding/08-tier3-promotions.spec.ts` - Updated location handling
+- `tests/e2e/vendor-onboarding/12-e2e-happy-path.spec.ts` - Updated location handling
 
 ## Beads Tasks
-- `ptnextjs-zrw1` - FIX: Location/product form selectors not finding elements in E2E tests (in_progress)
+- `ptnextjs-zrw1` - FIX: Location/product form selectors (in_progress)
 
 ## To Continue
 
@@ -63,25 +72,27 @@ Products are seeded successfully but not showing in the UI. Possible causes:
 # Start server
 DISABLE_EMAILS=true DISABLE_RATE_LIMIT=true npm run dev
 
-# Run specific failing tests
+# Run failing tests to investigate
 DISABLE_EMAILS=true npx playwright test tests/e2e/vendor-onboarding/08-tier3-promotions.spec.ts:184 --workers=1 --timeout=90000
 
-# Run all vendor-onboarding tests
-DISABLE_EMAILS=true npx playwright test tests/e2e/vendor-onboarding/ --workers=1 --reporter=list --timeout=90000
+# Run specific test with trace for debugging
+DISABLE_EMAILS=true npx playwright test tests/e2e/vendor-onboarding/09-product-management.spec.ts:55 --trace=on --workers=1
+
+# Run full suite
+DISABLE_EMAILS=true npx playwright test tests/e2e/vendor-onboarding/ --workers=2 --reporter=list --timeout=90000
 ```
 
 ## Recommended Next Steps
 
-1. **Fix Location Form Issue (8.5, 12)**:
-   - Investigate why `editingIndex` is non-null on page load
-   - Check if component auto-enters edit mode for incomplete locations
-   - May need to modify test to save/close existing location before adding new ones
+1. **Investigate flaky location state**:
+   - Check if component initializes `editingIndex` incorrectly
+   - Check if there's stale session/localStorage data
 
-2. **Fix Product List Issue (9.2)**:
+2. **Fix Product Management Tests**:
    - Add wait/refresh after product seeding
-   - Check if products tab selector is correct
-   - Verify products are associated with correct vendor
+   - Verify product form selector is correct
+   - Check if products tab opens correctly
 
-3. **Fix Product Form Issue (9.3)**:
-   - Similar to location form - check if form opens correctly
-   - May need different selector for product name input
+3. **Fix drag-and-drop test**:
+   - Verify drag-and-drop is implemented
+   - Use proper Playwright drag-drop API

@@ -12,7 +12,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Plus, Edit, Loader2, Trash2 } from 'lucide-react';
+import { MapPin, Plus, Edit, Loader2, Trash2, Check } from 'lucide-react';
 import { toast } from 'sonner';
 import { VendorLocation } from '@/lib/types';
 import { useTierAccess } from '@/hooks/useTierAccess';
@@ -295,13 +295,26 @@ export function LocationsManagerCard({ vendor, onUpdate }: LocationsManagerCardP
 
                   {/* Location Display or Edit Form */}
                   {editingIndex === index ? (
-                    <LocationFormFields
-                      location={location}
-                      isHQ={location.isHQ || false}
-                      onChange={(updated) => handleUpdateLocation(index, updated)}
-                      onDelete={() => handleDeleteLocation(index)}
-                      canEdit={true}
-                    />
+                    <div className="space-y-3">
+                      <LocationFormFields
+                        location={location}
+                        isHQ={location.isHQ || false}
+                        onChange={(updated) => handleUpdateLocation(index, updated)}
+                        onDelete={() => handleDeleteLocation(index)}
+                        canEdit={true}
+                      />
+                      <div className="flex justify-end">
+                        <Button
+                          onClick={() => setEditingIndex(null)}
+                          variant="outline"
+                          size="sm"
+                          className="gap-1"
+                        >
+                          <Check className="h-4 w-4" />
+                          Done Editing
+                        </Button>
+                      </div>
+                    </div>
                   ) : (
                     <div className="p-4 bg-muted dark:bg-muted rounded-lg text-sm space-y-1">
                       {location.address && (

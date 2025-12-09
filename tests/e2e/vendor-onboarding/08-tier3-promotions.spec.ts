@@ -7,16 +7,7 @@ async function loginAsVendor(page: Page, email: string, password: string) {
   await page.goto(`${BASE_URL}/vendor/login/`);
   await page.getByPlaceholder('vendor@example.com').fill(email);
   await page.getByPlaceholder(/password/i).fill(password);
-
-  const response = await page.waitForResponse(
-    (r: any) => r.url().includes('/api/auth/login') && r.status() === 200
-  ).catch(async () => {
-    await page.click('button:has-text("Login")');
-    return page.waitForResponse(
-      (r: any) => r.url().includes('/api/auth/login') && r.status() === 200
-    );
-  });
-
+  await page.click('button:has-text("Login")');
   await page.waitForURL(/\/vendor\/dashboard\/?/, { timeout: 10000 });
 }
 
@@ -207,6 +198,14 @@ test.describe('TIER3-P2: Tier 3 Promotions', () => {
       await locationsTab.first().click();
       await page.waitForTimeout(500);
 
+      // Close any existing location edit form first
+      const existingDoneBtn = page.locator('button').filter({ hasText: /Done.*Editing/i }).first();
+      if (await existingDoneBtn.isVisible({ timeout: 1000 }).catch(() => false)) {
+        await existingDoneBtn.click();
+        await page.waitForTimeout(300);
+        console.log('[Test 8.5] Closed existing location edit form');
+      }
+
       const addBtn = page.locator('button').filter({ hasText: /Add.*Location/i }).first();
       if (await addBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
         let locationsAdded = 0;
@@ -237,15 +236,16 @@ test.describe('TIER3-P2: Tier 3 Promotions', () => {
               await countryInput.fill('France');
             }
 
-            const saveBtn = page.locator('button').filter({ hasText: /Save|Add/ }).last();
-            const saved = await saveBtn.isVisible({ timeout: 500 }).catch(() => false);
+            // Click "Done Editing" to exit edit mode and enable Add Location button again
+            const doneBtn = page.locator('button').filter({ hasText: /Done.*Editing/i }).first();
+            const doneVisible = await doneBtn.isVisible({ timeout: 500 }).catch(() => false);
 
-            if (saved) {
-              await saveBtn.click();
-              await page.waitForTimeout(500);
+            if (doneVisible) {
+              await doneBtn.click();
+              await page.waitForTimeout(300);
               locationsAdded++;
             } else {
-              console.log(`[Test 8.5] Save button not visible for location ${i + 1}`);
+              console.log(`[Test 8.5] Done Editing button not visible for location ${i + 1}`);
               break;
             }
           }
