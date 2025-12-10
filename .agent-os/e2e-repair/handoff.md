@@ -1,98 +1,163 @@
 # E2E Test Repair Handoff
 
-## Current State: 66/71 tests passing (93.0%)
+**Date**: 2025-12-09 (Updated)
+**Pass Rate**: 65/71 tests (91.5%) in vendor-onboarding suite
+**Status**: PAUSED - Ready for continuation
 
-## Session Progress
+---
 
-### APPLICATION BUG FIX Applied
-**LocationsManagerCard "Add Location" button disabled bug**
+## Current State Summary
 
-**Root Cause**: The "Add Location" button was disabled when `isEditing || !canAddMore`. When a user clicked "Add Location", `editingIndex` was set to non-null which made `isEditing = true`. There was no way to exit edit mode without completing all required fields (including geocoded lat/lng) via "Save Locations".
+The E2E test suite for vendor-onboarding is at **91.5% pass rate** with 6 remaining failures. All product management tests (9.2-9.6) fail with product seed API 400 errors, and test 10.4 has an assertion failure for tier 3 badge.
 
-**Fix Applied** (`components/dashboard/LocationsManagerCard.tsx`):
-1. Added `Check` icon import
-2. Added "Done Editing" button after LocationFormFields that calls `setEditingIndex(null)` to exit edit mode without requiring full validation/save
+### Previously Fixed
+1. **ApplicationBug**: Added "Done Editing" button to `LocationsManagerCard.tsx` - commit `08cff1e`
+2. **Infrastructure**: Product seed API handles empty description for richText field - commit `800184c`
+3. **Test Updates**: Updated location tests to use "Done Editing" button
 
-This allows users to:
-- Add a location and exit edit mode without filling all fields
-- Add another location immediately after
-- Fill incomplete locations later before saving to backend
+---
 
-### Test Updates Applied
-Updated tests to use the new "Done Editing" button:
+## Latest Test Results (Most Recent Run)
 
-1. **08-tier3-promotions.spec.ts**:
-   - Line 231-242: Changed from `/Save|Add/` button to `/Done.*Editing/` button
-   - Added pre-check to close any existing location edit form before adding new ones (lines 201-207)
+```
+65 passed, 6 failed (91.5% pass rate)
+```
 
-2. **12-e2e-happy-path.spec.ts**:
-   - Lines 227-232, 249-254: Changed from "Save" button to "Done Editing" button for locations
-   - Added pre-check to close any existing location edit form (lines 203-208)
-   - Added graceful handling when Add button is disabled (lines 270-273)
+### Passing Tests (65 total)
+- 01-registration.spec.ts: 8/8 passed
+- 02-admin-approval.spec.ts: 5/5 passed
+- 03-authentication.spec.ts: 6/6 passed
+- 04-free-tier-profile.spec.ts: 5/5 passed
+- 05-tier-upgrade.spec.ts: 6/6 passed
+- 06-tier1-advanced-profile.spec.ts: 9/9 passed (including drag-drop!)
+- 07-tier2-locations.spec.ts: 7/7 passed
+- 08-tier3-promotions.spec.ts: 5/5 passed
+- 09-product-management.spec.ts: 2/7 passed
+- 10-public-profile-display.spec.ts: 5/6 passed
+- 11-security-access-control.spec.ts: 6/6 passed
+- 12-e2e-happy-path.spec.ts: 1/1 passed
 
-## Remaining Failures (5 tests)
+---
 
-| Test | File:Line | Error | Root Cause |
-|------|-----------|-------|------------|
-| 6.8 Drag-drop | 06-tier1-advanced-profile.spec.ts:377 | Timeout | Feature may not be implemented or selector issue |
-| 8.5 Unlimited locations | 08-tier3-promotions.spec.ts:184 | Flaky | Pre-existing location in edit mode on page load |
-| 9.2 View product list | 09-product-management.spec.ts:55 | Products not visible | UI cache/refresh after seeding |
-| 9.3 Add new product | 09-product-management.spec.ts:105 | Timeout on name input | Product form not opening |
-| 12 Happy path | 12-e2e-happy-path.spec.ts:17 | Timeout on location input | Pre-existing location in edit mode |
+## Remaining Failures (6 tests)
 
-## Investigation Findings
+### Category: PRODUCT_SEED_API_FAILURE (5 tests)
 
-### Test 8.5, 12 - Location Form State Issue
-Tests are flaky because:
-- Sometimes a location already exists in edit mode when the page loads
-- The seed API doesn't create locations, so this may be state from previous test runs
-- The "close existing edit form" logic helps but doesn't catch all cases
+**Root Cause**: Product seed API returns 400 error
 
-Potential fixes:
-1. Clear vendor data between tests more aggressively
-2. Add explicit wait for component to be in "ready" state
-3. Investigate why location exists with editingIndex=0 on load
+| Test | File:Line | Error |
+|------|-----------|-------|
+| 9.2 View product list | 09-product-management.spec.ts:55 | `Product seed API failed: 400` |
+| 9.3 Add new product | 09-product-management.spec.ts:105 | Login timeout after vendor seed |
+| 9.4 Edit product | 09-product-management.spec.ts:170 | `Product seed API failed: 400` |
+| 9.5 Delete product | 09-product-management.spec.ts:219 | `Product seed API failed: 400` |
+| 9.6 Publish toggle | 09-product-management.spec.ts:268 | `Product seed API failed: 400` |
 
-### Test 9.2, 9.3 - Product Management Issues
-- Products are seeded successfully but not visible in UI
-- May be cache invalidation or selector issues
-- Product form may require specific sequence to open
+**Investigation Notes**:
+- Product seed API at `app/api/test/products/seed/route.ts` exists
+- API returns 400 when vendor ID cannot be found
+- Test passes vendor ID from `seedVendors()` return value
+- Likely issue: The vendor ID is being passed as string but needs to be numeric, OR the vendor lookup is failing
 
-## Files Modified This Session
-- `components/dashboard/LocationsManagerCard.tsx` - Added "Done Editing" button (APPLICATION BUG FIX)
-- `tests/e2e/vendor-onboarding/08-tier3-promotions.spec.ts` - Updated location handling
-- `tests/e2e/vendor-onboarding/12-e2e-happy-path.spec.ts` - Updated location handling
+**Probable Fix**:
+1. Debug what's being passed to the product seed API
+2. Check vendor ID type conversion in product seed API lines 153-200
+3. May need to improve error logging in the seed API to show why it fails
 
-## Beads Tasks
-- `ptnextjs-zrw1` - FIX: Location/product form selectors (in_progress)
+### Category: ASSERTION_FAILURE (1 test)
 
-## To Continue
+| Test | File:Line | Error |
+|------|-----------|-------|
+| 10.4 Tier 3 featured badge | 10-public-profile-display.spec.ts:136 | Badge not visible |
+
+**Investigation Notes**:
+- Test expects a "Featured" or "Tier 3" badge on public profile
+- Logs: `Tier 3 badge visible: false`, `Featured badge visible: false`
+- Vendor IS marked as `featured: true` in seed data
+
+**Probable Fix**:
+1. Check if public profile page renders badges for tier 3/featured vendors
+2. Verify the badge component exists and CSS is correct
+3. May need to implement the badge display feature
+
+---
+
+## Related Beads Issues
 
 ```bash
-# Start server
-DISABLE_EMAILS=true DISABLE_RATE_LIMIT=true npm run dev
+ptnextjs-pgym [P1] [bug] open - Tier-upgrade admin tests need authentication before API calls
+ptnextjs-fhlp [P1] [bug] open - Auth tests - Login not setting cookies in browser context
+```
 
-# Run failing tests to investigate
-DISABLE_EMAILS=true npx playwright test tests/e2e/vendor-onboarding/08-tier3-promotions.spec.ts:184 --workers=1 --timeout=90000
+These are in OTHER test suites, separate from vendor-onboarding failures.
 
-# Run specific test with trace for debugging
+---
+
+## Files to Examine for Fixes
+
+### Product Seed Issue
+1. `app/api/test/products/seed/route.ts` - Lines 153-200 (vendor lookup)
+2. `tests/e2e/helpers/seed-api-helpers.ts` - Lines 103-122 (seedProducts function)
+3. `tests/e2e/vendor-onboarding/09-product-management.spec.ts` - Tests 9.2-9.6
+
+### Featured Badge Issue
+1. `tests/e2e/vendor-onboarding/10-public-profile-display.spec.ts:136` - Test 10.4
+2. `app/vendors/[slug]/page.tsx` - Public profile page
+3. Look for badge component in `components/vendors/`
+
+---
+
+## Server State
+
+**Server is currently DOWN** - Start before resuming:
+```bash
+DISABLE_EMAILS=true npm run dev
+```
+
+---
+
+## Commands to Resume
+
+```bash
+# 1. Start the dev server
+cd /home/edwin/development/ptnextjs
+DISABLE_EMAILS=true npm run dev &
+
+# 2. Wait for server
+sleep 15 && curl -sf http://localhost:3000/ && echo "Ready"
+
+# 3. Clear rate limits
+curl -X POST http://localhost:3000/api/test/rate-limit/clear
+
+# 4. Debug product seed issue
 DISABLE_EMAILS=true npx playwright test tests/e2e/vendor-onboarding/09-product-management.spec.ts:55 --trace=on --workers=1
 
-# Run full suite
-DISABLE_EMAILS=true npx playwright test tests/e2e/vendor-onboarding/ --workers=2 --reporter=list --timeout=90000
+# 5. Run full suite
+DISABLE_EMAILS=true npx playwright test tests/e2e/vendor-onboarding/ --reporter=list --timeout=60000
 ```
+
+---
 
 ## Recommended Next Steps
 
-1. **Investigate flaky location state**:
-   - Check if component initializes `editingIndex` incorrectly
-   - Check if there's stale session/localStorage data
+1. **Debug Product Seed API** (Priority: HIGH, affects 5 tests)
+   - Add console.log in seed API to see what vendor ID is received
+   - Check if vendor exists with that ID
+   - Fix vendor lookup if needed
 
-2. **Fix Product Management Tests**:
-   - Add wait/refresh after product seeding
-   - Verify product form selector is correct
-   - Check if products tab opens correctly
+2. **Fix Featured Badge** (Priority: MEDIUM, affects 1 test)
+   - Verify tier 3/featured badge is rendered on public profile
+   - Check component and CSS
 
-3. **Fix drag-and-drop test**:
-   - Verify drag-and-drop is implemented
-   - Use proper Playwright drag-drop API
+3. **Run Full Suite** after fixes to verify 100% pass rate
+
+---
+
+## Git Status
+
+Branch: `auth-security-enhancements`
+
+**Recent Commits**:
+- `08cff1e` - fix(dashboard): add Done Editing button to LocationsManagerCard
+- `800184c` - fix(test): product seed API handles empty description for richText field
+- `b283ab5` - fix(e2e): repair test infrastructure and fix broken selectors

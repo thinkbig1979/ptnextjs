@@ -492,7 +492,12 @@ export async function cancelRequest(
       return { success: false, error: 'Request not found' };
     }
 
-    if (request.vendor !== vendorId) {
+    // Handle populated relationship (object) or ID reference (string/number)
+    const requestVendorId = typeof request.vendor === 'object' && request.vendor !== null
+      ? (request.vendor as { id: string | number }).id?.toString()
+      : request.vendor?.toString();
+
+    if (requestVendorId !== vendorId.toString()) {
       return { success: false, error: 'Request does not belong to vendor' };
     }
 

@@ -1,0 +1,85 @@
+# Fix for Publish Route - user.userId Error
+
+## File to Fix
+`/home/edwin/development/ptnextjs/app/api/portal/vendors/[id]/products/[productId]/publish/route.ts`
+
+## Line 143
+
+### Current (Incorrect)
+```typescript
+      user.userId,
+```
+
+### Should Be (Correct)
+```typescript
+      user.id.toString(),
+```
+
+## Full Context (Lines 138-145)
+
+### Before:
+```typescript
+    // Toggle product publish status using ProductService
+    // This will verify ownership and throw appropriate errors
+    const product = await ProductService.togglePublish(
+      productId,
+      published,
+      user.userId,
+      user.role === 'admin'
+    );
+```
+
+### After:
+```typescript
+    // Toggle product publish status using ProductService
+    // This will verify ownership and throw appropriate errors
+    const product = await ProductService.togglePublish(
+      productId,
+      published,
+      user.id.toString(),
+      user.role === 'admin'
+    );
+```
+
+## Why This Fix is Needed
+
+The `user` object returned from either:
+- `getUserFromRequest(request)` - returns `LegacyJWTPayload`
+- `authService.validateToken(token)` - returns `JWTPayload`
+
+Both interfaces have an `id` property (not `userId`):
+
+```typescript
+// From lib/utils/jwt.ts
+export interface LegacyJWTPayload {
+  id: string;  // ✅ This exists
+  email: string;
+  role: 'admin' | 'vendor';
+  tier?: 'free' | 'tier1' | 'tier2';
+  status?: 'pending' | 'approved' | 'rejected' | 'suspended';
+}
+```
+
+Using `user.userId` will cause:
+1. TypeScript compilation error
+2. Runtime error if the code somehow runs
+
+## How to Apply
+
+Run this command from the project root:
+
+```bash
+sed -i 's/user\.userId,/user.id.toString(),/g' \
+  app/api/portal/vendors/\[id\]/products/\[productId\]/publish/route.ts
+```
+
+Or manually edit line 143 in the file.
+
+## Verification After Fix
+
+Run TypeScript check to confirm no errors:
+```bash
+npm run type-check
+```
+
+Expected result: No errors related to user.userId

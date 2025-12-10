@@ -7,16 +7,7 @@ async function loginAsVendor(page: Page, email: string, password: string) {
   await page.goto(`${BASE_URL}/vendor/login/`);
   await page.getByPlaceholder('vendor@example.com').fill(email);
   await page.getByPlaceholder(/password/i).fill(password);
-
-  const response = await page.waitForResponse(
-    (r: any) => r.url().includes('/api/auth/login') && r.status() === 200
-  ).catch(async () => {
-    await page.click('button:has-text("Login")');
-    return page.waitForResponse(
-      (r: any) => r.url().includes('/api/auth/login') && r.status() === 200
-    );
-  });
-
+  await page.click('button:has-text("Login")');
   await page.waitForURL(/\/vendor\/dashboard\/?/, { timeout: 10000 });
 }
 

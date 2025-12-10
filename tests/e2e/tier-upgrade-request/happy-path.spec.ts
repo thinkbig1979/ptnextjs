@@ -11,8 +11,15 @@ async function loginAsVendor(page: Page, email: string, password: string) {
   await page.goto(`${BASE_URL}/vendor/login/`);
   await page.getByPlaceholder('vendor@example.com').fill(email);
   await page.getByPlaceholder(/password/i).fill(password);
-  await page.getByRole('button', { name: /sign in|login/i }).click();
-  await page.waitForLoadState('networkidle');
+  // Use Promise.all to click button and wait for response simultaneously
+  await Promise.all([
+    page.waitForResponse(
+      (r) => r.url().includes('/api/auth/login') && r.status() === 200,
+      { timeout: 15000 }
+    ),
+    page.getByRole('button', { name: /sign in|login/i }).click(),
+  ]);
+  await page.waitForURL(/\/vendor\/dashboard\/?/, { timeout: 15000 });
   console.log(`[LOGIN] Successfully logged in as: ${email}`);
 }
 
@@ -146,6 +153,14 @@ async function getUpgradeRequestStatus(page: Page, vendorId: string) {
 
 test.describe('TIER-UPGRADE-HAPPY-PATH: End-to-End Happy Path Tests', () => {
   test.setTimeout(120000);
+  // Run tests serially to avoid rate limit interference
+  test.describe.configure({ mode: 'serial' });
+
+  // Clear rate limits before each test
+  test.beforeEach(async ({ request }) => {
+    const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
+    await request.post(`${BASE_URL}/api/test/rate-limit/clear`);
+  });
 
   test('Test 3.1: Complete upgrade flow (free → tier1 → tier2)', async ({ page }) => {
     console.log('\n========== TEST 3.1: Complete upgrade flow (free → tier1 → tier2) ==========\n');
@@ -477,11 +492,14 @@ test.describe('TIER-UPGRADE-HAPPY-PATH: End-to-End Happy Path Tests', () => {
     expect(cancelResponse.ok()).toBe(true);
     console.log('[STEP 4] Request cancelled successfully');
 
-    // Step 5: Verify no pending request
-    console.log('[STEP 5] Verifying no pending request');
-    let pendingRequest = await getUpgradeRequestStatus(page, vendorId);
-    expect(pendingRequest).toBeFalsy();
-    console.log('[STEP 5] No pending request confirmed');
+    // Step 5: Verify request is cancelled (API returns most recent request, not necessarily null)
+    console.log('[STEP 5] Verifying request is cancelled');
+    let recentRequest = await getUpgradeRequestStatus(page, vendorId);
+    // After cancellation, we either get no request or the cancelled request
+    if (recentRequest) {
+      expect(recentRequest.status).toBe('cancelled');
+    }
+    console.log('[STEP 5] Request status verified (cancelled or no pending)');
 
     // Step 6: Vendor submits new request for tier2 instead
     console.log('[STEP 6] Submitting new request for tier2');
@@ -546,7 +564,7 @@ test.describe('TIER-UPGRADE-HAPPY-PATH: End-to-End Happy Path Tests', () => {
 
     // Step 4: Request tier2
     console.log('[STEP 4] Requesting tier2');
-    const tier2Request = await createUpgradeRequest(page, vendorId, 'tier2', 'Quick growth');
+    const tier2Request = await createUpgradeRequest(page, vendorId, 'tier2', 'Quick growth - expanding business operations to serve more clients');
     expect(tier2Request.currentTier).toBe('tier1');
     expect(tier2Request.requestedTier).toBe('tier2');
     console.log('[STEP 4] Tier2 request created');
@@ -570,7 +588,7 @@ test.describe('TIER-UPGRADE-HAPPY-PATH: End-to-End Happy Path Tests', () => {
 
     // Step 6: Immediately request tier3
     console.log('[STEP 6] Immediately requesting tier3');
-    const tier3Request = await createUpgradeRequest(page, vendorId, 'tier3', 'Continued growth');
+    const tier3Request = await createUpgradeRequest(page, vendorId, 'tier3', 'Continued growth - need additional features for enterprise clients');
     expect(tier3Request.currentTier).toBe('tier2');
     expect(tier3Request.requestedTier).toBe('tier3');
     console.log('[STEP 6] Tier3 request created');

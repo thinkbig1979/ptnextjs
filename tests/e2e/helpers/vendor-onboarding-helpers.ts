@@ -141,6 +141,14 @@ export function generateCertificationData(
 
 /**
  * Fill vendor registration form
+ *
+ * NOTE: The registration form has been simplified to only 4 required fields:
+ * - Company Name
+ * - Email
+ * - Password
+ * - Confirm Password
+ *
+ * There is NO terms checkbox or additional contact fields in the current form.
  */
 export async function fillRegistrationForm(
   page: Page,
@@ -148,14 +156,11 @@ export async function fillRegistrationForm(
 ): Promise<void> {
   console.log(`[Registration] Filling form for: ${data.email}`);
 
-  // Simplified registration form - only 4 fields + terms checkbox
-  await page.getByPlaceholder('vendor@example.com').fill(data.email);
+  // Simplified registration form - only 4 fields (no terms checkbox)
   await page.getByPlaceholder('Your Company Ltd').fill(data.companyName);
+  await page.getByPlaceholder('vendor@example.com').fill(data.email);
   await page.getByPlaceholder('Enter strong password').fill(data.password);
   await page.getByPlaceholder('Re-enter password').fill(data.password);
-
-  // Accept terms
-  await page.getByRole('checkbox', { name: /agree.*terms/i }).check();
 
   console.log(`[Registration] Form filled successfully`);
 }

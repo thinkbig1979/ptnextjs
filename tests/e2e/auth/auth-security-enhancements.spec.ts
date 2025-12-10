@@ -23,7 +23,15 @@ const TEST_VENDOR = {
 };
 
 test.describe('Auth Security Enhancements E2E', () => {
-  // Rate limits are cleared in global-setup.ts
+  // Run tests serially to avoid rate limit interference between tests
+  // The rate limiting test (Test 10) makes 10 rapid requests which would
+  // exhaust the shared IP-based rate limit for parallel tests
+  test.describe.configure({ mode: 'serial' });
+
+  // Clear rate limits before each test to ensure clean state
+  test.beforeEach(async ({ request }) => {
+    await request.post(`${BASE_URL}/api/test/rate-limit/clear`);
+  });
 
   test.describe('Login Flow', () => {
     test('successful login sets httpOnly cookies', async ({ page, context }) => {
@@ -34,13 +42,23 @@ test.describe('Auth Security Enhancements E2E', () => {
       await page.fill('input[name="email"], input[type="email"]', TEST_VENDOR.email);
       await page.fill('input[name="password"], input[type="password"]', TEST_VENDOR.password);
 
-      // Submit form
-      await page.click('button[type="submit"]');
+      // Submit form and wait for login API response
+      const [loginResponse] = await Promise.all([
+        page.waitForResponse(
+          (response) =>
+            response.url().includes('/api/auth/login') && response.status() === 200,
+          { timeout: 15000 }
+        ),
+        page.click('button[type="submit"]'),
+      ]);
 
-      // Wait for navigation or response
-      await page.waitForLoadState('networkidle');
+      // Verify login API returned success
+      expect(loginResponse.status()).toBe(200);
 
-      // Check cookies are set
+      // Wait for successful navigation to dashboard (indicates cookies worked)
+      await page.waitForURL(/\/vendor\/dashboard/, { timeout: 15000 });
+
+      // Check cookies are set after successful navigation
       const cookies = await context.cookies();
       const access_token = cookies.find((c) => c.name === 'access_token');
       const refresh_token = cookies.find((c) => c.name === 'refresh_token');
@@ -92,8 +110,20 @@ test.describe('Auth Security Enhancements E2E', () => {
       await page.goto(`${BASE_URL}/vendor/login`);
       await page.fill('input[name="email"], input[type="email"]', TEST_VENDOR.email);
       await page.fill('input[name="password"], input[type="password"]', TEST_VENDOR.password);
-      await page.click('button[type="submit"]');
-      await page.waitForLoadState('networkidle');
+
+      // Submit and wait for successful login
+      const [loginResponse] = await Promise.all([
+        page.waitForResponse(
+          (response) =>
+            response.url().includes('/api/auth/login') && response.status() === 200,
+          { timeout: 15000 }
+        ),
+        page.click('button[type="submit"]'),
+      ]);
+      expect(loginResponse.status()).toBe(200);
+
+      // Wait for redirect to dashboard
+      await page.waitForURL(/\/vendor\/dashboard/, { timeout: 15000 });
 
       // Verify cookies exist after login
       let cookies = await context.cookies();
@@ -123,8 +153,20 @@ test.describe('Auth Security Enhancements E2E', () => {
       await page.goto(`${BASE_URL}/vendor/login`);
       await page.fill('input[name="email"], input[type="email"]', TEST_VENDOR.email);
       await page.fill('input[name="password"], input[type="password"]', TEST_VENDOR.password);
-      await page.click('button[type="submit"]');
-      await page.waitForLoadState('networkidle');
+
+      // Submit and wait for successful login
+      const [loginResponse] = await Promise.all([
+        page.waitForResponse(
+          (response) =>
+            response.url().includes('/api/auth/login') && response.status() === 200,
+          { timeout: 15000 }
+        ),
+        page.click('button[type="submit"]'),
+      ]);
+      expect(loginResponse.status()).toBe(200);
+
+      // Wait for redirect to dashboard
+      await page.waitForURL(/\/vendor\/dashboard/, { timeout: 15000 });
 
       // Get initial cookies
       const initial_cookies = await context.cookies();
@@ -172,8 +214,20 @@ test.describe('Auth Security Enhancements E2E', () => {
       await page.goto(`${BASE_URL}/vendor/login`);
       await page.fill('input[name="email"], input[type="email"]', TEST_VENDOR.email);
       await page.fill('input[name="password"], input[type="password"]', TEST_VENDOR.password);
-      await page.click('button[type="submit"]');
-      await page.waitForLoadState('networkidle');
+
+      // Submit and wait for successful login
+      const [loginResponse] = await Promise.all([
+        page.waitForResponse(
+          (response) =>
+            response.url().includes('/api/auth/login') && response.status() === 200,
+          { timeout: 15000 }
+        ),
+        page.click('button[type="submit"]'),
+      ]);
+      expect(loginResponse.status()).toBe(200);
+
+      // Wait for redirect to dashboard
+      await page.waitForURL(/\/vendor\/dashboard/, { timeout: 15000 });
 
       // Make authenticated request using page context (includes cookies)
       const response = await page.request.get(`${BASE_URL}/api/portal/me`);

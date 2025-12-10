@@ -70,6 +70,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return response;
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Authentication failed';
+      console.error('[Login API] Error:', error);
 
       // Log failed login attempt (non-blocking)
       if (email_attempt) {
@@ -77,7 +78,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       }
 
       // Return appropriate error status
-      if (message.includes('Invalid credentials') || message.includes('pending approval')) {
+      if (message.includes('Invalid credentials') || message.includes('pending approval') || message.includes('suspended') || message.includes('rejected') || message.includes('not approved')) {
         return NextResponse.json({ error: message }, { status: 401 });
       }
 

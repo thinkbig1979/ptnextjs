@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import jwt from 'jsonwebtoken';
+import { jwtVerify } from 'jose';
 
 /**
  * Next.js Middleware for route-level authentication and security headers
@@ -10,20 +10,27 @@ import jwt from 'jsonwebtoken';
  * - Applies security headers to all API routes
  * - HSTS header in production
  * - Redirects unauthenticated users to login page
+ *
+ * Note: Uses 'jose' library instead of 'jsonwebtoken' for Edge Runtime compatibility.
+ * The 'jsonwebtoken' library relies on Node.js crypto APIs which are not available
+ * in Edge Runtime where Next.js middleware runs.
  */
 
 /**
- * Lightweight token verification for middleware
+ * Lightweight token verification for middleware (Edge Runtime compatible)
  *
  * Only validates signature and type, no database call.
  * Full tokenVersion validation happens in API routes.
  */
-function verifyTokenLightweight(token: string): boolean {
+async function verifyTokenLightweight(token: string): Promise<boolean> {
   try {
     const secret = process.env.JWT_ACCESS_SECRET || process.env.PAYLOAD_SECRET;
     if (!secret) return false;
 
-    const payload = jwt.verify(token, secret) as { type?: string };
+    // Convert secret to Uint8Array for jose library
+    const secretKey = new TextEncoder().encode(secret);
+
+    const { payload } = await jwtVerify(token, secretKey);
 
     // Verify it's an access token (new format)
     // Legacy tokens without type are still accepted
@@ -37,7 +44,7 @@ function verifyTokenLightweight(token: string): boolean {
   }
 }
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Check if accessing vendor dashboard routes
@@ -53,7 +60,8 @@ export function middleware(request: NextRequest) {
     }
 
     // Validate token signature (lightweight - no DB call)
-    if (!verifyTokenLightweight(token)) {
+    const isValidToken = await verifyTokenLightweight(token);
+    if (!isValidToken) {
       // Token invalid or expired - redirect to login with error
       const loginUrl = new URL('/vendor/login', request.url);
       loginUrl.searchParams.set('error', 'session_expired');

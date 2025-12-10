@@ -147,15 +147,21 @@ test.describe('PUBLIC-P2: Public Profile Display', () => {
     await page.goto(`${BASE_URL}/vendors/${slug}/`);
     await page.waitForLoadState('networkidle');
 
-    // Look for tier 3 / enterprise badge
-    const tier3Badge = page.locator('text=/Tier 3|Enterprise|Premium/i, [data-tier="3"]').first();
-    const badgeVisible = await tier3Badge.isVisible({ timeout: 3000 }).catch(() => false);
+    // Look for tier 3 / enterprise badge - TierBadge component renders "Tier 3"
+    const tier3Badge = page.locator('text=/Tier.?3/i').first();
+    const badgeVisible = await tier3Badge.isVisible({ timeout: 5000 }).catch(() => false);
     console.log('[Test 10.4] Tier 3 badge visible:', badgeVisible);
 
-    // Look for featured indicator
-    const featuredBadge = page.locator('text=/Featured|Featured.*Partner|Featured.*Vendor/i, [data-featured="true"]').first();
-    const featuredVisible = await featuredBadge.isVisible({ timeout: 3000 }).catch(() => false);
+    // Look for featured indicator - VendorHero renders "Featured Vendor"
+    const featuredBadge = page.locator('text=/Featured Vendor/i').first();
+    const featuredVisible = await featuredBadge.isVisible({ timeout: 5000 }).catch(() => false);
     console.log('[Test 10.4] Featured badge visible:', featuredVisible);
+
+    // Debug: Log page content for troubleshooting
+    if (!badgeVisible && !featuredVisible) {
+      const badges = await page.locator('.inline-flex').allTextContents();
+      console.log('[Test 10.4] All badges found:', badges);
+    }
 
     // At least one of tier or featured badge should be visible
     expect(badgeVisible || featuredVisible).toBeTruthy();

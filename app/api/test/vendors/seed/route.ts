@@ -126,9 +126,32 @@ export async function POST(request: NextRequest): Promise<NextResponse<SeedRespo
           });
 
           if (existingVendors.docs.length > 0) {
-            // Both user and vendor exist - skip creation, add to existing list
+            // Both user and vendor exist - update password and status to ensure test consistency
+            await payload.update({
+              collection: 'users',
+              id: existingUser.id,
+              data: {
+                password: vendorData.password, // Reset to expected password
+                status: vendorData.status || 'approved', // Ensure status matches requested
+              },
+            });
+            // Also update vendor tier and featured flag if specified
+            const vendorUpdateData: Record<string, unknown> = {};
+            if (vendorData.tier) {
+              vendorUpdateData.tier = vendorData.tier;
+            }
+            if (vendorData.featured !== undefined) {
+              vendorUpdateData.featured = vendorData.featured;
+            }
+            if (Object.keys(vendorUpdateData).length > 0) {
+              await payload.update({
+                collection: 'vendors',
+                id: existingVendors.docs[0].id,
+                data: vendorUpdateData,
+              });
+            }
             existingVendorIds.push(existingVendors.docs[0].id as string);
-            console.log(`[Vendor Seed] Vendor already exists: ${vendorData.companyName} (${vendorData.email})`);
+            console.log(`[Vendor Seed] Vendor exists, password/status/tier updated: ${vendorData.companyName} (${vendorData.email}) - status: ${vendorData.status || 'approved'}, tier: ${vendorData.tier || 'unchanged'}`);
             continue;
           }
         }
@@ -197,10 +220,14 @@ export async function POST(request: NextRequest): Promise<NextResponse<SeedRespo
     const hasErrors = Object.keys(errors).length > 0;
     const allVendorsAccountedFor = totalVendors === vendors.length;
 
+    // Combine both created and existing vendor IDs for backward compatibility
+    // The helper expects all IDs in vendorIds array
+    const allVendorIds = [...createdVendorIds, ...existingVendorIds];
+
     return NextResponse.json(
       {
         success: allVendorsAccountedFor || createdVendorIds.length > 0,
-        vendorIds: createdVendorIds,
+        vendorIds: allVendorIds, // Return all IDs (created + existing) for backward compatibility
         existingVendorIds: existingVendorIds,
         created: createdVendorIds.length,
         existing: existingVendorIds.length,

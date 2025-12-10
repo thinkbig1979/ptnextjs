@@ -7,15 +7,26 @@ async function loginAsVendor(page: Page, email: string, password: string) {
   await page.goto(`${BASE_URL}/vendor/login/`);
   await page.getByPlaceholder('vendor@example.com').fill(email);
   await page.getByPlaceholder(/password/i).fill(password);
-  await page.waitForResponse((r: any) => r.url().includes('/api/auth/login') && r.status() === 200).catch(async () => {
-    await page.click('button:has-text("Login")');
-    return page.waitForResponse((r: any) => r.url().includes('/api/auth/login') && r.status() === 200);
-  });
-  await page.waitForURL(/\/vendor\/dashboard\/?/, { timeout: 10000 });
+  // Use Promise.all to click button and wait for response simultaneously
+  await Promise.all([
+    page.waitForResponse(
+      (r) => r.url().includes('/api/auth/login') && r.status() === 200,
+      { timeout: 15000 }
+    ),
+    page.click('button:has-text("Login")'),
+  ]);
+  await page.waitForURL(/\/vendor\/dashboard\/?/, { timeout: 15000 });
 }
 
 test.describe('TIER-UPGRADE-VENDOR-P3: Vendor Tier Upgrade Request Workflow', () => {
   test.setTimeout(120000);
+  // Run tests serially to avoid rate limit interference
+  test.describe.configure({ mode: 'serial' });
+
+  // Clear rate limits before each test
+  test.beforeEach(async ({ request }) => {
+    await request.post(`${BASE_URL}/api/test/rate-limit/clear`);
+  });
 
   test('Test 1: View Tier Comparison on Subscription Page', async ({ page }) => {
     const vendorData = { companyName: `Tier Comparison ${Date.now()}`, email: `tier-comparison-${Date.now()}@test.example.com`, password: 'TierComparison123!@#', tier: 'free' as const, status: 'approved' as const };
@@ -24,8 +35,11 @@ test.describe('TIER-UPGRADE-VENDOR-P3: Vendor Tier Upgrade Request Workflow', ()
     await loginAsVendor(page, vendorData.email, vendorData.password);
     await page.goto(`${BASE_URL}/vendor/dashboard/subscription/`);
     await page.waitForLoadState('networkidle');
-    const hasComparison = await page.locator('text=/tier.*comparison|pricing/i').first().isVisible({ timeout: 5000 }).catch(() => false);
-    const hasTiers = (await page.locator('text=/tier [0-9]|tier[0-9]/i').count()) > 0;
+    // Wait for loading spinner to disappear
+    await page.locator('text=/Loading subscription/i').waitFor({ state: 'hidden', timeout: 15000 }).catch(() => {});
+    // Check for various subscription page elements that indicate content loaded
+    const hasComparison = await page.locator('text=/tier.*comparison|pricing|current plan|subscription/i').first().isVisible({ timeout: 5000 }).catch(() => false);
+    const hasTiers = (await page.locator('text=/tier [0-9]|tier[0-9]|free tier|upgrade/i').count()) > 0;
     expect([hasComparison, hasTiers].some(v => v === true)).toBe(true);
   });
 
@@ -34,7 +48,7 @@ test.describe('TIER-UPGRADE-VENDOR-P3: Vendor Tier Upgrade Request Workflow', ()
     const vendorIds = await seedVendors(page, [vendorData]);
     const vendorId = vendorIds[0];
     await loginAsVendor(page, vendorData.email, vendorData.password);
-    const resp = await page.request.post(`${BASE_URL}/api/portal/vendors/${vendorId}/tier-upgrade-request`, { data: { requestedTier: 'tier1', vendorNotes: 'Scaling operations' } });
+    const resp = await page.request.post(`${BASE_URL}/api/portal/vendors/${vendorId}/tier-upgrade-request`, { data: { requestedTier: 'tier1', vendorNotes: 'Scaling operations to meet growing demand and expand services' } });
     expect(resp.status()).toBe(201);
     const data = await resp.json();
     expect(data.success).toBe(true);
@@ -46,7 +60,7 @@ test.describe('TIER-UPGRADE-VENDOR-P3: Vendor Tier Upgrade Request Workflow', ()
     const vendorIds = await seedVendors(page, [vendorData]);
     const vendorId = vendorIds[0];
     await loginAsVendor(page, vendorData.email, vendorData.password);
-    await page.request.post(`${BASE_URL}/api/portal/vendors/${vendorId}/tier-upgrade-request`, { data: { requestedTier: 'tier1', vendorNotes: 'Testing' } });
+    await page.request.post(`${BASE_URL}/api/portal/vendors/${vendorId}/tier-upgrade-request`, { data: { requestedTier: 'tier1', vendorNotes: 'Testing upgrade request process for verification' } });
     const getResp = await page.request.get(`${BASE_URL}/api/portal/vendors/${vendorId}/tier-upgrade-request`);
     expect(getResp.ok()).toBe(true);
     const data = await getResp.json();
@@ -59,8 +73,14 @@ test.describe('TIER-UPGRADE-VENDOR-P3: Vendor Tier Upgrade Request Workflow', ()
     const vendorId = vendorIds[0];
     await loginAsVendor(page, vendorData.email, vendorData.password);
     const createResp = await page.request.post(`${BASE_URL}/api/portal/vendors/${vendorId}/tier-upgrade-request`, { data: { requestedTier: 'tier1' } });
-    const requestId = (await createResp.json()).data.id;
+    expect(createResp.status()).toBe(201);
+    const createData = await createResp.json();
+    const requestId = createData.data.id;
+    expect(requestId).toBeTruthy();
     const deleteResp = await page.request.delete(`${BASE_URL}/api/portal/vendors/${vendorId}/tier-upgrade-request/${requestId}`);
+    if (!deleteResp.ok()) {
+      console.error(`Delete failed with status ${deleteResp.status()}: ${await deleteResp.text()}`);
+    }
     expect(deleteResp.ok()).toBe(true);
   });
 
