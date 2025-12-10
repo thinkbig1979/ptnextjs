@@ -798,12 +798,14 @@ export interface Product {
   slug?: string;
   name: string;
   description: string;
+  shortDescription?: string;
   price?: string;
   image?: string; // TinaCMS uses direct string paths
   createdAt?: string;
   updatedAt?: string;
   publishedAt?: string;
-  
+  published?: boolean; // Used by vendor portal for publish status
+
   // TinaCMS simplified relations
   vendorId?: string; // Resolved vendor ID
   vendorName?: string; // Resolved vendor name
@@ -1048,3 +1050,74 @@ export type DateRange = {
   from: Date | undefined
   to: Date | undefined
 }
+
+// ===== Product API Types =====
+
+/**
+ * API Error Response - shared across all product API endpoints
+ */
+export interface ProductApiErrorResponse {
+  success: false;
+  error: {
+    code: 'VALIDATION_ERROR' | 'UNAUTHORIZED' | 'FORBIDDEN' | 'NOT_FOUND' | 'SERVER_ERROR';
+    message: string;
+    fields?: Record<string, string>;
+    details?: string;
+  };
+}
+
+/**
+ * Product API Success Response - base type for all success responses
+ */
+export interface ProductApiSuccessResponse<T> {
+  success: true;
+  data: T;
+}
+
+/**
+ * GET /api/portal/vendors/[id]/products response
+ * Returns array of products directly (not paginated)
+ */
+export type GetVendorProductsResponse = ProductApiSuccessResponse<Product[]>;
+
+/**
+ * GET /api/portal/vendors/[id]/products/[productId] response
+ * Returns single product
+ */
+export type GetProductResponse = ProductApiSuccessResponse<Product>;
+
+/**
+ * POST /api/portal/vendors/[id]/products response
+ * Returns created product
+ */
+export type CreateProductResponse = ProductApiSuccessResponse<Product>;
+
+/**
+ * PUT /api/portal/vendors/[id]/products/[productId] response
+ * Returns updated product
+ */
+export type UpdateProductResponse = ProductApiSuccessResponse<Product>;
+
+/**
+ * DELETE /api/portal/vendors/[id]/products/[productId] response
+ * Returns success message
+ */
+export type DeleteProductResponse = ProductApiSuccessResponse<{ message: string }>;
+
+/**
+ * PATCH /api/portal/vendors/[id]/products/[productId]/publish response
+ * Returns updated product
+ */
+export type TogglePublishResponse = ProductApiSuccessResponse<Product>;
+
+/**
+ * Union type for all Product API responses
+ */
+export type ProductApiResponse =
+  | GetVendorProductsResponse
+  | GetProductResponse
+  | CreateProductResponse
+  | UpdateProductResponse
+  | DeleteProductResponse
+  | TogglePublishResponse
+  | ProductApiErrorResponse;

@@ -1,65 +1,98 @@
 'use client';
 
-import React from 'react';
-import { useAuth } from '@/lib/context/AuthContext';
+import { useVendorDashboard } from '@/lib/context/VendorDashboardContext';
+import { useTierAccess } from '@/hooks/useTierAccess';
+import { ProductList } from '@/components/dashboard/ProductList';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Package, Plus } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Lock, ArrowUpRight } from 'lucide-react';
+import Link from 'next/link';
 
 /**
- * Product Management Page
+ * Products Page
  *
- * Allows Tier 2+ vendors to manage their product listings.
- * This is a placeholder implementation that will be expanded with full CRUD functionality.
+ * Vendor dashboard page for managing product listings.
+ * Only available for Tier 2+ vendors.
  */
-export default function ProductManagementPage() {
-  const { tier } = useAuth();
+export default function ProductsPage() {
+  const { vendor, isLoading } = useVendorDashboard();
+  const vendorTier = (vendor as any)?.tier || 'free';
+  const { hasAccess, tier } = useTierAccess('productManagement', vendorTier);
 
-  // Check if user has access to product management
-  if (!tier || tier === 'free') {
+  // Loading state
+  if (isLoading) {
     return (
-      <div className="container max-w-4xl py-8">
-        <Alert>
-          <Package className="h-4 w-4" />
+      <div className="container max-w-6xl py-8">
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 w-48 bg-muted rounded" />
+          <div className="h-4 w-96 bg-muted rounded" />
+        </div>
+      </div>
+    );
+  }
+
+  // Tier restriction - show upgrade prompt
+  if (!hasAccess) {
+    return (
+      <div className="container max-w-6xl py-8">
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <Lock className="h-5 w-5 text-muted-foreground" />
+              <CardTitle>Product Management</CardTitle>
+            </div>
+            <CardDescription>
+              Showcase your products and services to potential customers.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Alert>
+              <AlertTitle>Upgrade Required</AlertTitle>
+              <AlertDescription className="mt-2">
+                <p className="mb-4">
+                  Product management is available for Tier 2 and above vendors.
+                  Your current tier is <strong>{tier || 'Free'}</strong>.
+                </p>
+                <Button asChild>
+                  <Link href="/vendor/dashboard/subscription">
+                    Upgrade Your Plan
+                    <ArrowUpRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </AlertDescription>
+            </Alert>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // No vendor data
+  if (!vendor?.id) {
+    return (
+      <div className="container max-w-6xl py-8">
+        <Alert variant="destructive">
+          <AlertTitle>Error</AlertTitle>
           <AlertDescription>
-            Product management is available for Tier 2+ vendors. Please upgrade your subscription to access this feature.
+            Unable to load vendor information. Please refresh the page or contact support.
           </AlertDescription>
         </Alert>
       </div>
     );
   }
 
+  // Main content for Tier 2+ vendors
   return (
     <div className="container max-w-6xl py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Product Management</h1>
         <p className="text-muted-foreground">
-          Manage your product listings and showcase your offerings to potential customers.
+          Manage your product catalog. Add, edit, or remove products to showcase your offerings.
         </p>
       </div>
 
-      <div className="mb-6">
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Add New Product
-        </Button>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Your Products</CardTitle>
-          <CardDescription>
-            View and manage all your product listings
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center py-12 text-muted-foreground">
-            <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p>No products yet. Click "Add New Product" to get started.</p>
-          </div>
-        </CardContent>
-      </Card>
+      <ProductList vendorId={vendor.id} />
     </div>
   );
 }

@@ -1,17 +1,49 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { getPayload } from 'payload';
 import config from '@/payload.config';
 
 /**
- * Convert plain text to Lexical JSON format
- * Required for richText fields in Payload CMS
+ * Test Product Seed API
+ * POST /api/test/products/seed
  *
- * Note: Empty text still needs valid Lexical structure with at least one paragraph
+ * Bulk product creation endpoint for E2E tests.
+ * Only available in test/development environments for performance.
  */
-function textToLexical(text: string) {
-  // Ensure we have valid text - Payload requires non-empty richText content
-  const safeText = text && text.trim() ? text : 'Product description';
+interface TestProductInput {
+  name: string;
+  vendor: string; // Vendor ID
+  description?: string;
+  shortDescription?: string;
+  slug?: string;
+  category?: string;
+  price?: number;
+  published?: boolean;
+}
 
+interface SeedResponse {
+  success: boolean;
+  productIds?: string[];
+  count?: number;
+  error?: string;
+  errors?: Record<string, string>;
+}
+
+/**
+ * Generate URL-friendly slug from product name
+ */
+function generateSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+/**
+ * Convert plain text to Lexical JSON format
+ */
+function textToLexical(text: string): object {
+  const safeText = text && text.trim() ? text : 'Product description';
   return {
     root: {
       type: 'root',
@@ -44,46 +76,6 @@ function textToLexical(text: string) {
 }
 
 /**
- * Generate URL-friendly slug from product name with uniqueness suffix
- */
-function generateProductSlug(name: string): string {
-  const baseSlug = name
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-  // Add timestamp + random suffix to ensure uniqueness
-  const timestamp = Date.now();
-  const random = Math.random().toString(36).substring(2, 6);
-  return `${baseSlug}-${timestamp}-${random}`;
-}
-
-/**
- * Test Product Seed API
- * POST /api/test/products/seed
- *
- * Bulk product creation endpoint for E2E tests.
- * Only available in test/development environments for performance.
- * Bypasses validation and creates products with vendor relationships.
- */
-interface TestProductInput {
-  name: string;
-  description?: string;
-  category?: string;
-  manufacturer?: string;
-  model?: string;
-  price?: number;
-  vendor?: string; // vendor ID or slug
-  published?: boolean;
-  specifications?: Record<string, unknown>;
-}
-interface SeedResponse {
-  success: boolean;
-  productIds?: string[];
-  count?: number;
-  error?: string;
-  errors?: Record<string, string>;
-}
-/**
  * POST /api/test/products/seed
  * Bulk create products for E2E testing
  */
@@ -98,9 +90,11 @@ export async function POST(request: NextRequest): Promise<NextResponse<SeedRespo
       { status: 403 }
     );
   }
+
   try {
     // Parse request body
     const body = await request.json();
+
     // Ensure it's an array
     const products = Array.isArray(body) ? body : body.products || [];
     if (!Array.isArray(products) || products.length === 0) {
@@ -112,125 +106,125 @@ export async function POST(request: NextRequest): Promise<NextResponse<SeedRespo
         { status: 400 }
       );
     }
+
     const payload = await getPayload({ config });
     const createdProductIds: string[] = [];
+    const existingProductIds: string[] = [];
     const errors: Record<string, string> = {};
+
     // Create each product
     for (let i = 0; i < products.length; i++) {
       const productData = products[i] as TestProductInput;
+
       try {
         // Validate required fields
         if (!productData.name) {
           errors[`product_${i}`] = 'name is required';
           continue;
         }
-        // Prepare product data
-        const createData: {
-          name: string;
-          slug: string;
-          description: unknown;
-          category: string;
-          manufacturer?: string;
-          model?: string;
-          price?: number;
-          published: boolean;
-          vendor?: string | number;
-          specifications?: Record<string, unknown>;
-        } = {
-          name: productData.name,
-          // Generate unique slug to avoid conflicts
-          slug: generateProductSlug(productData.name),
-          // Convert description to Lexical format (richText field requirement)
-          description: productData.description
-            ? textToLexical(productData.description)
-            : textToLexical(''),
-          category: productData.category || 'General',
-          manufacturer: productData.manufacturer,
-          model: productData.model,
-          price: productData.price,
-          published: productData.published !== false,
-        };
-        // Handle vendor relationship if provided with validation
-        if (productData.vendor) {
-          console.log(`[Product ${i}] Validating vendor: ${productData.vendor}`);
-          // Try to find vendor by ID first, then by slug
-          // Note: Payload CMS relationship fields require numeric IDs
-          let vendorId: number | null = null;
-          try {
-            // Try as direct ID
-            const vendorCheck = await payload.findByID({
-              collection: 'vendors',
-              id: productData.vendor,
+        if (!productData.vendor) {
+          errors[`product_${i}`] = 'vendor is required';
+          continue;
+        }
+
+        // Generate slug if not provided
+        const slug = productData.slug || generateSlug(productData.name);
+
+        // Check if product already exists with this slug and vendor
+        const existingProducts = await payload.find({
+          collection: 'products',
+          where: {
+            and: [
+              { slug: { equals: slug } },
+              { vendor: { equals: productData.vendor } },
+            ],
+          },
+          limit: 1,
+        });
+
+        if (existingProducts.docs.length > 0) {
+          // Product exists - update if needed
+          const existingProduct = existingProducts.docs[0];
+          const updateData: Record<string, unknown> = {};
+
+          if (productData.published !== undefined) {
+            updateData.published = productData.published;
+          }
+          if (productData.name) {
+            updateData.name = productData.name;
+          }
+
+          if (Object.keys(updateData).length > 0) {
+            await payload.update({
+              collection: 'products',
+              id: existingProduct.id,
+              data: updateData,
             });
-            if (vendorCheck) {
-              vendorId = vendorCheck.id as number;
-              console.log(`[Product ${i}] Found vendor by ID: ${vendorId}`);
-            }
-          } catch (idError) {
-            console.log(`[Product ${i}] Vendor ID lookup failed, trying slug lookup`);
-            // If ID lookup fails, try by slug
-            try {
-              const vendorBySlug = await payload.find({
-                collection: 'vendors',
-                where: {
-                  slug: {
-                    equals: productData.vendor,
-                  },
-                },
-              });
-              if (vendorBySlug.docs && vendorBySlug.docs.length > 0) {
-                vendorId = vendorBySlug.docs[0].id as number;
-                console.log(`[Product ${i}] Found vendor by slug: ${vendorId}`);
-              }
-            } catch (slugError) {
-              console.error(
-                `[Product ${i}] Failed to find vendor by slug:`,
-                slugError
-              );
-            }
           }
-          if (vendorId) {
-            createData.vendor = vendorId;
-            console.log(`[Product ${i}] Vendor validated and assigned: ${vendorId}`);
-          } else {
-            console.warn(
-              `[Product ${i}] Vendor "${productData.vendor}" not found in system - proceeding without vendor`
-            );
-          }
+
+          existingProductIds.push(existingProduct.id as string);
+          console.log(`[Product Seed] Product exists, updated: ${productData.name} (${slug})`);
+          continue;
         }
-        // Add specifications if provided
-        if (productData.specifications) {
-          createData.specifications = productData.specifications;
-        }
-        // Create product in Payload
+
+        // Create the product
         const createdProduct = await payload.create({
           collection: 'products',
-          data: createData,
+          data: {
+            name: productData.name,
+            slug,
+            vendor: productData.vendor,
+            description: textToLexical(productData.description || 'Product description'),
+            shortDescription: productData.shortDescription || productData.description?.slice(0, 200) || '',
+            published: productData.published !== undefined ? productData.published : true,
+          },
         });
+
         createdProductIds.push(createdProduct.id as string);
-        console.log(`[Product ${i}] Successfully created: ${createdProduct.id}`);
+        console.log(`[Product Seed] Created product: ${productData.name} (${slug})`);
       } catch (productError) {
         const errorMessage = productError instanceof Error ? productError.message : 'Unknown error';
         errors[`product_${i}_${productData.name}`] = errorMessage;
         console.error(`Failed to create product ${productData.name}:`, productError);
       }
     }
+
+    // Invalidate cache for newly created products
+    if (createdProductIds.length > 0) {
+      try {
+        console.log('[Product Seed] Invalidating cache for product pages...');
+        revalidatePath('/products/');
+        revalidatePath('/');
+        console.log('[Product Seed] Cache invalidation complete');
+      } catch (cacheError) {
+        console.error('[Product Seed] Cache invalidation failed:', cacheError);
+      }
+    }
+
     // Return response
+    const totalProducts = createdProductIds.length + existingProductIds.length;
     const hasErrors = Object.keys(errors).length > 0;
+    const allProductsAccountedFor = totalProducts === products.length;
+
+    // Combine both created and existing product IDs
+    const allProductIds = [...createdProductIds, ...existingProductIds];
+
     return NextResponse.json(
       {
-        success: !hasErrors || createdProductIds.length > 0,
-        productIds: createdProductIds,
-        count: createdProductIds.length,
+        success: allProductsAccountedFor || createdProductIds.length > 0,
+        productIds: allProductIds,
+        existingProductIds: existingProductIds,
+        created: createdProductIds.length,
+        existing: existingProductIds.length,
+        count: totalProducts,
         ...(hasErrors && { errors }),
       },
       {
-        status: hasErrors && createdProductIds.length === 0 ? 400 : 200,
+        status: allProductsAccountedFor ? 200 : (hasErrors && createdProductIds.length === 0 ? 400 : 200),
       }
     );
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error('[Seed API] Fatal error:', errorMessage);
     return NextResponse.json(
       {
         success: false,

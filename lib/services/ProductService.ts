@@ -17,69 +17,69 @@ export interface ProductFilters {
 
 export interface CreateProductData {
   name: string;
-  slug?: string;
+  slug?: string | null;
   description: string | object;
-  shortDescription?: string;
+  shortDescription?: string | null;
   images?: Array<{
     url: string;
-    altText?: string;
-    isMain?: boolean;
-    caption?: string;
-  }>;
-  categories?: string[];
+    altText?: string | null;
+    isMain?: boolean | null;
+    caption?: string | null;
+  }> | null;
+  categories?: string[] | null;
   specifications?: Array<{
     label: string;
     value: string;
-  }>;
-  published?: boolean;
-  tags?: string[];
-  price?: string;
+  }> | null;
+  published?: boolean | null;
+  tags?: string[] | null;
+  price?: string | null;
   pricing?: {
-    displayText?: string;
-    subtitle?: string;
-    showContactForm?: boolean;
-    currency?: string;
-  };
+    displayText?: string | null;
+    subtitle?: string | null;
+    showContactForm?: boolean | null;
+    currency?: string | null;
+  } | null;
   features?: Array<{
     title: string;
-    description?: string;
-    icon?: string;
-    order?: number;
-  }>;
+    description?: string | null;
+    icon?: string | null;
+    order?: number | null;
+  }> | null;
   benefits?: Array<{
     benefit: string;
-    icon?: string;
-    order?: number;
-  }>;
+    icon?: string | null;
+    order?: number | null;
+  }> | null;
   services?: Array<{
     title: string;
     description: string;
-    icon?: string;
-    order?: number;
-  }>;
+    icon?: string | null;
+    order?: number | null;
+  }> | null;
   actionButtons?: Array<{
     label: string;
     type: 'primary' | 'secondary' | 'outline';
     action: 'contact' | 'quote' | 'download' | 'external_link' | 'video';
-    actionData?: string;
-    icon?: string;
-    order?: number;
-  }>;
+    actionData?: string | null;
+    icon?: string | null;
+    order?: number | null;
+  }> | null;
   badges?: Array<{
     label: string;
     type: 'secondary' | 'outline' | 'success' | 'warning' | 'info';
-    icon?: string;
-    order?: number;
-  }>;
+    icon?: string | null;
+    order?: number | null;
+  }> | null;
   comparisonMetrics?: Array<{
     metricName: string;
     value: string;
-    numericValue?: number;
-    unit?: string;
+    numericValue?: number | null;
+    unit?: string | null;
     category?: 'performance' | 'physical' | 'power' | 'capacity' | 'quality' | 'environmental';
-    compareHigherBetter?: boolean;
-    industryAverage?: string;
-  }>;
+    compareHigherBetter?: boolean | null;
+    industryAverage?: string | null;
+  }> | null;
 }
 
 export interface UpdateProductData extends Partial<CreateProductData> {}

@@ -1,0 +1,235 @@
+'use client';
+
+import { useState, useCallback } from 'react';
+import { Package, Plus } from 'lucide-react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { ProductCard } from './ProductCard';
+import { ProductForm } from './ProductForm';
+import { ProductDeleteDialog } from './ProductDeleteDialog';
+import { useVendorProducts } from '@/hooks/useVendorProducts';
+import { toast } from '@/components/ui/sonner';
+import type { Product } from '@/lib/types';
+
+interface ProductListProps {
+  vendorId: string;
+}
+
+/**
+ * ProductList
+ *
+ * Container component for managing vendor products.
+ * Handles loading, empty, and error states.
+ * Orchestrates product CRUD operations via child components.
+ *
+ * @param vendorId - The vendor ID to fetch products for
+ */
+export function ProductList({ vendorId }: ProductListProps) {
+  const { products, isLoading, isError, mutate } = useVendorProducts(vendorId);
+
+  // State for modals
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [publishingProductId, setPublishingProductId] = useState<string | null>(null);
+
+  // Handlers
+  const handleAddClick = useCallback(() => {
+    setSelectedProduct(null);
+    setIsFormOpen(true);
+  }, []);
+
+  const handleEditClick = useCallback((product: Product) => {
+    setSelectedProduct(product);
+    setIsFormOpen(true);
+  }, []);
+
+  const handleDeleteClick = useCallback((product: Product) => {
+    setSelectedProduct(product);
+    setIsDeleteDialogOpen(true);
+  }, []);
+
+  const handleFormSuccess = useCallback(() => {
+    setIsFormOpen(false);
+    setSelectedProduct(null);
+    mutate();
+  }, [mutate]);
+
+  const handleFormCancel = useCallback(() => {
+    setIsFormOpen(false);
+    setSelectedProduct(null);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!selectedProduct) return;
+
+    setIsDeleting(true);
+    try {
+      const response = await fetch(
+        `/api/portal/vendors/${vendorId}/products/${selectedProduct.id}`,
+        { method: 'DELETE' }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error?.message || 'Failed to delete product');
+      }
+
+      toast.success('Product deleted successfully');
+      setIsDeleteDialogOpen(false);
+      setSelectedProduct(null);
+      mutate();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to delete');
+    } finally {
+      setIsDeleting(false);
+    }
+  }, [selectedProduct, vendorId, mutate]);
+
+  const handleDeleteCancel = useCallback(() => {
+    setIsDeleteDialogOpen(false);
+    setSelectedProduct(null);
+  }, []);
+
+  const handlePublishToggle = useCallback(
+    async (product: Product, published: boolean) => {
+      setPublishingProductId(product.id);
+      try {
+        const response = await fetch(
+          `/api/portal/vendors/${vendorId}/products/${product.id}/publish`,
+          {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ published }),
+          }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error?.message || 'Failed to update status');
+        }
+
+        toast.success(published ? 'Product published' : 'Product unpublished');
+        mutate();
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : 'Failed to update');
+      } finally {
+        setPublishingProductId(null);
+      }
+    },
+    [vendorId, mutate]
+  );
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-end">
+          <Skeleton className="h-10 w-40" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3].map((i) => (
+            <Card key={i}>
+              <CardHeader>
+                <Skeleton className="h-6 w-3/4" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-4 w-full mb-2" />
+                <Skeleton className="h-4 w-2/3" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (isError) {
+    return (
+      <Alert variant="destructive">
+        <AlertDescription className="flex items-center justify-between">
+          <span>Failed to load products. Please try again.</span>
+          <Button variant="outline" size="sm" onClick={() => mutate()}>
+            Retry
+          </Button>
+        </AlertDescription>
+      </Alert>
+    );
+  }
+
+  // Empty state
+  if (products.length === 0) {
+    return (
+      <>
+        <Card className="text-center py-12">
+          <CardContent>
+            <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <p className="text-muted-foreground mb-4">No products yet</p>
+            <Button onClick={handleAddClick}>
+              <Plus className="mr-2 h-4 w-4" />
+              Add Your First Product
+            </Button>
+          </CardContent>
+        </Card>
+
+        <ProductForm
+          vendorId={vendorId}
+          open={isFormOpen}
+          onSuccess={handleFormSuccess}
+          onCancel={handleFormCancel}
+        />
+      </>
+    );
+  }
+
+  // Products grid
+  return (
+    <>
+      <div className="space-y-6">
+        <div className="flex justify-end">
+          <Button onClick={handleAddClick}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add New Product
+          </Button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {products.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              onEdit={handleEditClick}
+              onDelete={handleDeleteClick}
+              onPublishToggle={handlePublishToggle}
+              isPublishing={publishingProductId === product.id}
+            />
+          ))}
+        </div>
+      </div>
+
+      <ProductForm
+        product={selectedProduct || undefined}
+        vendorId={vendorId}
+        open={isFormOpen}
+        onSuccess={handleFormSuccess}
+        onCancel={handleFormCancel}
+      />
+
+      <ProductDeleteDialog
+        product={selectedProduct}
+        open={isDeleteDialogOpen}
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+        isDeleting={isDeleting}
+      />
+    </>
+  );
+}
+
+export default ProductList;

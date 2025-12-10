@@ -110,7 +110,7 @@ export function ProductForm({
       }
 
       toast.success(isEdit ? 'Product updated successfully' : 'Product created successfully');
-      onSuccess(result.data.product);
+      onSuccess(result.data);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'An error occurred');
     }

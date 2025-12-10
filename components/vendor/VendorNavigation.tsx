@@ -52,7 +52,7 @@ export function VendorNavigation({ className }: VendorNavigationProps) {
       href: '/vendor/dashboard/products',
       label: 'Products',
       icon: Package,
-      visible: tier === 'tier2', // Only visible for tier2 vendors
+      visible: tier === 'tier2', // Visible for tier2+ vendors
     },
     {
       href: '/vendor/dashboard/subscription',

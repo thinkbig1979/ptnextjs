@@ -140,7 +140,7 @@ export async function PATCH(
     const product = await ProductService.togglePublish(
       productId,
       published,
-      user.userId,
+      user.id,
       user.role === 'admin'
     );
 
