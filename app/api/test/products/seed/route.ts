@@ -30,13 +30,16 @@ interface SeedResponse {
 }
 
 /**
- * Generate URL-friendly slug from product name
+ * Generate URL-friendly unique slug from product name
+ * Appends timestamp to ensure uniqueness for test products
  */
 function generateSlug(name: string): string {
-  return name
+  const baseSlug = name
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
+  // Append timestamp for uniqueness
+  return `${baseSlug}-${Date.now()}`;
 }
 
 /**
