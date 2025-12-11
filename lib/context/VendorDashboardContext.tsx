@@ -9,9 +9,13 @@ import { toast } from 'sonner';
 /**
  * Fields that are allowed to be updated via the API
  * This is a safelist of fields that can be sent in update requests
+ *
+ * NOTE: 'name' is NOT included because:
+ * 1. It's a computed field that mirrors 'companyName' (added by VendorComputedFieldsService)
+ * 2. The API/database only uses 'companyName'
+ * 3. If both are present, Object.entries iteration order could cause 'name' to overwrite 'companyName'
  */
 const ALLOWED_UPDATE_FIELDS = new Set([
-  'name',
   'companyName',
   'slug',
   'description',
@@ -44,8 +48,9 @@ const ALLOWED_UPDATE_FIELDS = new Set([
  * Filter vendor payload to only include updatable fields
  * and convert empty strings to undefined for optional fields
  *
- * CRITICAL FIX: Maps 'name' field to 'companyName' for Payload CMS compatibility.
- * The Vendor interface uses 'name', but Payload collection schema uses 'companyName'.
+ * NOTE: The 'name' field is excluded from ALLOWED_UPDATE_FIELDS because it's
+ * a computed field that mirrors 'companyName'. Only 'companyName' should be sent
+ * to the API to ensure updates persist correctly.
  */
 function filterVendorPayload(vendor: any): Record<string, any> {
   const filtered: Record<string, any> = {};
@@ -55,10 +60,6 @@ function filterVendorPayload(vendor: any): Record<string, any> {
     if (!ALLOWED_UPDATE_FIELDS.has(key)) {
       return;
     }
-
-    // CRITICAL FIX: Map 'name' to 'companyName' for Payload CMS
-    // This ensures data sent to Payload matches the database schema
-    const payloadFieldName = key === 'name' ? 'companyName' : key;
 
     // Convert empty strings, null, and empty arrays to undefined for optional fields
     // Don't include undefined values or empty arrays in payload - let backend tier validation handle it
@@ -72,7 +73,7 @@ function filterVendorPayload(vendor: any): Record<string, any> {
     }
 
     // Include the field
-    filtered[payloadFieldName] = value;
+    filtered[key] = value;
   });
 
   return filtered;

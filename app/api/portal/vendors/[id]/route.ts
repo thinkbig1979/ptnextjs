@@ -7,6 +7,10 @@ import { safeValidateVendorUpdate } from '@/lib/validation/vendor-update-schema'
 import { filterFieldsByTier, type VendorTier } from '@/lib/utils/tier-validator';
 import { VendorProfileService } from '@/lib/services/VendorProfileService';
 
+// Force dynamic rendering - disable Next.js route caching
+// This ensures fresh database reads on every request
+export const dynamic = 'force-dynamic';
+
 interface RouteContext {
   params: Promise<{
     id: string;
