@@ -1,5 +1,6 @@
 import { buildConfig } from 'payload';
 import { sqliteAdapter } from '@payloadcms/db-sqlite';
+import { postgresAdapter } from '@payloadcms/db-postgres';
 import { lexicalEditor } from '@payloadcms/richtext-lexical';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -41,6 +42,32 @@ import AuditLogs from './payload/collections/AuditLogs';
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
+// Database adapter configuration
+// USE_POSTGRES=true -> PostgreSQL (recommended for production-like dev)
+// USE_POSTGRES=false or unset -> SQLite (quick local development)
+const usePostgres = process.env.USE_POSTGRES === 'true';
+
+const dbAdapter = usePostgres
+  ? postgresAdapter({
+      pool: {
+        connectionString: process.env.DATABASE_URL || 'postgresql://ptnextjs:ptnextjs_dev_password@localhost:5432/ptnextjs',
+      },
+      migrationDir: path.resolve(dirname, 'migrations'),
+      push: true,
+    })
+  : sqliteAdapter({
+      client: {
+        url: process.env.DATABASE_URL || 'file:./data/payload.db',
+      },
+      migrationDir: path.resolve(dirname, 'migrations'),
+      push: true,
+    });
+
+// Log which database is being used
+if (process.env.NODE_ENV === 'development') {
+  console.log(`📦 Database: ${usePostgres ? 'PostgreSQL' : 'SQLite'}`);
+}
+
 export default buildConfig({
   // Server URL configuration
   // In development, use the actual port Next.js is running on
@@ -62,16 +89,8 @@ export default buildConfig({
     },
   },
 
-  // Database adapter configuration
-  // SQLite for all environments (zero-configuration, file-based)
-  // Note: For production PostgreSQL deployment, update this configuration
-  db: sqliteAdapter({
-    client: {
-      url: process.env.DATABASE_URL || 'file:./data/payload.db',
-    },
-    migrationDir: path.resolve(dirname, 'migrations'),
-    push: true, // Auto-push schema changes to create tables
-  }),
+  // Database adapter (configured above based on USE_POSTGRES env var)
+  db: dbAdapter,
 
   // Rich Text Editor configuration
   editor: lexicalEditor({}),
