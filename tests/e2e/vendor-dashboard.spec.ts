@@ -126,12 +126,19 @@ test.describe.serial('TEST-E2E-DASHBOARD: Vendor Dashboard Editing Workflow', ()
 
     await page.reload();
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(2000); // Wait for hydration after reload
+    await page.waitForTimeout(3000); // Wait for hydration after reload
 
     await switchToTab(page, 'Basic Info'); // Re-navigate to the tab
+    await page.waitForTimeout(1000); // Wait for tab content to load
 
-    const reloadedName = await companyNameField.inputValue();
-    const reloadedDescription = await descriptionField.inputValue();
+    // Re-locate the fields after reload (DOM may have changed)
+    const reloadedNameField = page.locator('input[name="companyName"], input[id="companyName"]').first();
+    const reloadedDescriptionField = page.locator('textarea[name="description"], textarea[id="description"]').first();
+
+    await expect(reloadedNameField).toBeVisible({ timeout: 5000 });
+
+    const reloadedName = await reloadedNameField.inputValue();
+    const reloadedDescription = await reloadedDescriptionField.inputValue();
     expect(reloadedName).toBe(newName);
     expect(reloadedDescription).toBe(newDescription);
 

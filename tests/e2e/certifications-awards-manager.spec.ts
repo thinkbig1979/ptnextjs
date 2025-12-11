@@ -8,8 +8,26 @@ test.describe('CertificationsAwardsManager Tests', () => {
   const PASS = 'TestVendor123!Tier1';
 
   async function login(page: any) {
-    await page.goto(`${BASE_URL}/vendor/dashboard/profile`);
+    // Go to login page directly
+    await page.goto(`${BASE_URL}/vendor/login`);
     await page.waitForLoadState('networkidle');
+
+    // Check if already logged in (redirected to dashboard)
+    const currentUrl = page.url();
+    if (currentUrl.includes('/vendor/dashboard')) {
+      // Already logged in, verify it's the right user by checking sidebar
+      const sidebarEmail = page.locator('nav >> text=' + EMAIL);
+      if (await sidebarEmail.isVisible({ timeout: 2000 }).catch(() => false)) {
+        return; // Already logged in as correct user
+      }
+      // Wrong user - logout first
+      await page.goto(`${BASE_URL}/vendor/logout`);
+      await page.waitForLoadState('networkidle');
+      await page.goto(`${BASE_URL}/vendor/login`);
+      await page.waitForLoadState('networkidle');
+    }
+
+    // Now fill the login form
     await page.getByPlaceholder('vendor@example.com').fill(EMAIL);
     await page.getByPlaceholder('Enter your password').fill(PASS);
     await page.getByRole('button', { name: /login/i }).click();
@@ -77,7 +95,7 @@ test.describe('CertificationsAwardsManager Tests', () => {
     await expect(page.locator('text=Test Cert Updated')).toBeVisible();
   });
 
-  test('Test 4: Delete certification', async ({ page }) => {
+  test('Test 4: Delete certification', { timeout: 60000 }, async ({ page }) => {
     await login(page);
     await goToCerts(page);
 

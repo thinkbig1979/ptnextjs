@@ -50,8 +50,11 @@ test.describe('Vendor Public Profile - Tier-Based Display', () => {
       // Verify Locations tab is accessible
       await expect(page.getByRole('tab', { name: /Locations/i })).toBeVisible();
 
-      // Verify Products tab is accessible
-      await expect(page.getByRole('tab', { name: /Products/i })).toBeVisible();
+      // Note: Products tab is NOT accessible for free tier vendors (tier2+ feature)
+      // Verify Products tab is NOT visible for free tier
+      const productsTab = page.getByRole('tab', { name: /Products/i });
+      const isProductsVisible = await productsTab.isVisible().catch(() => false);
+      expect(isProductsVisible).toBe(false); // Free tier should NOT have Products tab
     });
   });
 
@@ -281,7 +284,7 @@ test.describe('Vendor Public Profile - Tier-Based Display', () => {
 
       // Verify tabs are accessible
       await expect(page.getByRole('tab', { name: /Locations/i })).toBeVisible();
-      await expect(page.getByRole('tab', { name: /Products/i })).toBeVisible();
+      // Note: Products tab only visible for tier2+ vendors; mobile vendor is tier1
 
       // Test tab switching on mobile
       await page.getByRole('tab', { name: /Locations/i }).click();
@@ -319,7 +322,7 @@ test.describe('Vendor Public Profile - Tier-Based Display', () => {
       // Verify tabs with full text are visible
       await expect(page.getByRole('tab', { name: /About/i })).toBeVisible();
       await expect(page.getByRole('tab', { name: /Locations/i })).toBeVisible();
-      await expect(page.getByRole('tab', { name: /Products/i })).toBeVisible();
+      // Note: Products tab only visible for tier2+ vendors; tablet vendor is tier1
 
       // Verify sidebar is visible (contact card)
       const contactCard = page.getByRole('heading', { name: /Contact/i }).first();

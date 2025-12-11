@@ -43,15 +43,15 @@ export const TEST_VENDORS = {
 };
 
 // Initial clean state for each vendor - reset data back to this between tests
-// IMPORTANT: Include ALL fields that tests might modify to ensure clean state
+// IMPORTANT: Include only tier-appropriate fields for each vendor
+// Free tier cannot update: website, foundedYear, longDescription (tier-restricted)
 const INITIAL_VENDOR_STATE: Record<string, Record<string, any>> = {
   'testvendor-free': {
     companyName: 'Free Tier Test Vendor',
     description: '',
     contactEmail: 'testvendor-free@example.com',
     contactPhone: '',
-    foundedYear: null,
-    website: '',
+    // NOTE: website and foundedYear excluded - not accessible for free tier
   },
   'testvendor-tier1': {
     companyName: 'Tier 1 Test Vendor',
