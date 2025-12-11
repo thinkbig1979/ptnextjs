@@ -7,9 +7,10 @@ test.describe('VENDOR-AUTH-P1: Authentication Workflow', () => {
   test.setTimeout(45000);
 
   test('Test 3.1: Login with valid credentials', async ({ page }) => {
+    const uniqueId = `${Date.now()}-${Math.random().toString(36).substring(7)}`;
     const vendorData = {
-      companyName: `Auth Test ${Date.now()}`,
-      email: `auth-${Date.now()}@test.example.com`,
+      companyName: `Auth Test ${uniqueId}`,
+      email: `auth-${uniqueId}@test.example.com`,
       password: 'AuthTest123!@#',
       status: 'approved' as const,
     };
@@ -51,9 +52,10 @@ test.describe('VENDOR-AUTH-P1: Authentication Workflow', () => {
   });
 
   test('Test 3.3: Logout functionality', async ({ page }) => {
+    const uniqueId = `${Date.now()}-${Math.random().toString(36).substring(7)}`;
     const vendorData = {
-      companyName: `Logout Test ${Date.now()}`,
-      email: `logout-${Date.now()}@test.example.com`,
+      companyName: `Logout Test ${uniqueId}`,
+      email: `logout-${uniqueId}@test.example.com`,
       password: 'LogoutTest123!@#',
       status: 'approved' as const,
     };
@@ -80,9 +82,10 @@ test.describe('VENDOR-AUTH-P1: Authentication Workflow', () => {
   });
 
   test('Test 3.4: Session persistence across page reloads', async ({ page, context }) => {
+    const uniqueId = `${Date.now()}-${Math.random().toString(36).substring(7)}`;
     const vendorData = {
-      companyName: `Session Test ${Date.now()}`,
-      email: `session-${Date.now()}@test.example.com`,
+      companyName: `Session Test ${uniqueId}`,
+      email: `session-${uniqueId}@test.example.com`,
       password: 'SessionTest123!@#',
       status: 'approved' as const,
     };
@@ -118,9 +121,10 @@ test.describe('VENDOR-AUTH-P1: Authentication Workflow', () => {
   });
 
   test('Test 3.6: Token refresh behavior', async ({ page }) => {
+    const uniqueId = `${Date.now()}-${Math.random().toString(36).substring(7)}`;
     const vendorData = {
-      companyName: `Token Test ${Date.now()}`,
-      email: `token-${Date.now()}@test.example.com`,
+      companyName: `Token Test ${uniqueId}`,
+      email: `token-${uniqueId}@test.example.com`,
       password: 'TokenTest123!@#',
       status: 'approved' as const,
     };

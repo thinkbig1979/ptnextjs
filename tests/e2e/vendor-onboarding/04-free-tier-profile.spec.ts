@@ -15,9 +15,10 @@ test.describe('FREE-TIER-P1: Free Tier Profile', () => {
   test.setTimeout(60000);
 
   test('Test 4.1: View dashboard as free tier vendor', async ({ page }) => {
+    const uniqueId = `${Date.now()}-${Math.random().toString(36).substring(7)}`;
     const vendorData = {
-      companyName: `Free Dashboard ${Date.now()}`,
-      email: `free-dash-${Date.now()}@test.example.com`,
+      companyName: `Free Dashboard ${uniqueId}`,
+      email: `free-dash-${uniqueId}@test.example.com`,
       password: 'FreePass123!@#',
       tier: 'free' as const,
       status: 'approved' as const,
@@ -32,9 +33,10 @@ test.describe('FREE-TIER-P1: Free Tier Profile', () => {
   });
 
   test('Test 4.2: Edit basic info (company name, contact, description)', async ({ page }) => {
+    const uniqueId = `${Date.now()}-${Math.random().toString(36).substring(7)}`;
     const vendorData = {
-      companyName: `Edit Info ${Date.now()}`,
-      email: `edit-${Date.now()}@test.example.com`,
+      companyName: `Edit Info ${uniqueId}`,
+      email: `edit-${uniqueId}@test.example.com`,
       password: 'EditPass123!@#',
       tier: 'free' as const,
       status: 'approved' as const,
@@ -84,9 +86,10 @@ test.describe('FREE-TIER-P1: Free Tier Profile', () => {
   });
 
   test('Test 4.3: Verify tier restrictions (no advanced features)', async ({ page }) => {
+    const uniqueId = `${Date.now()}-${Math.random().toString(36).substring(7)}`;
     const vendorData = {
-      companyName: `Tier Restrict ${Date.now()}`,
-      email: `restrict-${Date.now()}@test.example.com`,
+      companyName: `Tier Restrict ${uniqueId}`,
+      email: `restrict-${uniqueId}@test.example.com`,
       password: 'RestrictPass123!@#',
       tier: 'free' as const,
       status: 'approved' as const,
@@ -119,9 +122,10 @@ test.describe('FREE-TIER-P1: Free Tier Profile', () => {
   });
 
   test('Test 4.4: View public profile as free tier', async ({ page }) => {
+    const uniqueId = `${Date.now()}-${Math.random().toString(36).substring(7)}`;
     const vendorData = {
-      companyName: `Public Profile ${Date.now()}`,
-      email: `public-${Date.now()}@test.example.com`,
+      companyName: `Public Profile ${uniqueId}`,
+      email: `public-${uniqueId}@test.example.com`,
       password: 'PublicPass123!@#',
       tier: 'free' as const,
       status: 'approved' as const,
@@ -139,9 +143,10 @@ test.describe('FREE-TIER-P1: Free Tier Profile', () => {
   });
 
   test('Test 4.5: Upgrade prompts appear for free tier', async ({ page }) => {
+    const uniqueId = `${Date.now()}-${Math.random().toString(36).substring(7)}`;
     const vendorData = {
-      companyName: `Upgrade Prompt ${Date.now()}`,
-      email: `upgrade-${Date.now()}@test.example.com`,
+      companyName: `Upgrade Prompt ${uniqueId}`,
+      email: `upgrade-${uniqueId}@test.example.com`,
       password: 'UpgradePass123!@#',
       tier: 'free' as const,
       status: 'approved' as const,
