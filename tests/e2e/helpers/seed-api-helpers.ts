@@ -267,3 +267,101 @@ export async function waitForSeedData(
     `Timeout waiting for seeded data to become available (timeout: ${timeout}ms)`
   );
 }
+
+// ============================================================================
+// Test Admin Helpers (bypasses authentication for E2E testing)
+// ============================================================================
+
+/**
+ * Approve a tier upgrade/downgrade request via test API
+ * This bypasses admin authentication for E2E testing
+ */
+export async function adminApproveTierRequest(
+  page: Page,
+  requestId: string
+): Promise<{ success: boolean; error?: string }> {
+  console.log(`[Test Admin] Approving tier request: ${requestId}`);
+
+  const response = await page.request.post('/api/test/admin/tier-requests/approve', {
+    data: { requestId },
+  });
+
+  const data = await response.json();
+
+  if (!response.ok()) {
+    console.error(`[Test Admin] Approval failed:`, data.error);
+    return { success: false, error: data.error };
+  }
+
+  console.log(`[Test Admin] Tier request approved successfully`);
+  return { success: true };
+}
+
+/**
+ * Reject a tier upgrade/downgrade request via test API
+ * This bypasses admin authentication for E2E testing
+ */
+export async function adminRejectTierRequest(
+  page: Page,
+  requestId: string,
+  rejectionReason: string
+): Promise<{ success: boolean; error?: string }> {
+  console.log(`[Test Admin] Rejecting tier request: ${requestId}`);
+
+  const response = await page.request.post('/api/test/admin/tier-requests/reject', {
+    data: { requestId, rejectionReason },
+  });
+
+  const data = await response.json();
+
+  if (!response.ok()) {
+    console.error(`[Test Admin] Rejection failed:`, data.error);
+    return { success: false, error: data.error };
+  }
+
+  console.log(`[Test Admin] Tier request rejected successfully`);
+  return { success: true };
+}
+
+/**
+ * List tier requests via test API
+ * This bypasses admin authentication for E2E testing
+ */
+export async function adminListTierRequests(
+  page: Page,
+  filters?: {
+    status?: 'pending' | 'approved' | 'rejected' | 'cancelled';
+    requestType?: 'upgrade' | 'downgrade';
+    vendorId?: string;
+  }
+): Promise<{
+  success: boolean;
+  requests?: Array<{
+    id: string;
+    vendor: string;
+    currentTier: string;
+    requestedTier: string;
+    requestType: string;
+    status: string;
+    vendorNotes?: string;
+    rejectionReason?: string;
+    requestedAt: string;
+  }>;
+  error?: string;
+}> {
+  const params = new URLSearchParams();
+  if (filters?.status) params.set('status', filters.status);
+  if (filters?.requestType) params.set('requestType', filters.requestType);
+  if (filters?.vendorId) params.set('vendorId', filters.vendorId);
+
+  const url = `/api/test/admin/tier-requests${params.toString() ? `?${params.toString()}` : ''}`;
+
+  const response = await page.request.get(url);
+  const data = await response.json();
+
+  if (!response.ok()) {
+    return { success: false, error: data.error };
+  }
+
+  return { success: true, requests: data.data?.requests || [] };
+}
