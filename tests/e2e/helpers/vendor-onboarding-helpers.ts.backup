@@ -179,24 +179,17 @@ export async function registerVendor(
   await page.goto('/vendor/register/');
   await fillRegistrationForm(page, vendorData);
 
-  // Wait for API response - using Promise.all to coordinate click and waitForResponse
-  // Accept ANY status code to avoid timeout if API returns error (429, 409, etc.)
-  const [apiResponse] = await Promise.all([
-    page.waitForResponse(
-      (response) => response.url().includes('/api/portal/vendors/register'),
-      { timeout: 15000 }
-    ),
-    page.click('button[type="submit"]')
-  ]);
+  // Wait for API response
+  const apiResponsePromise = page.waitForResponse(
+    (response) =>
+      response.url().includes('/api/portal/vendors/register') &&
+      (response.status() === 201 || response.status() === 200)
+  );
 
+  await page.click('button[type="submit"]');
+
+  const apiResponse = await apiResponsePromise;
   const responseBody = await apiResponse.json();
-
-  // Check if registration was successful
-  if (apiResponse.status() !== 200 && apiResponse.status() !== 201) {
-    throw new Error(
-      `Registration failed with status ${apiResponse.status()}: ${JSON.stringify(responseBody)}`
-    );
-  }
 
   if (!responseBody.success || !responseBody.data?.vendorId) {
     throw new Error(

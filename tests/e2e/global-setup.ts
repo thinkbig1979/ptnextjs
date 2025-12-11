@@ -10,6 +10,7 @@
  */
 
 import { FullConfig } from '@playwright/test';
+import http from 'http';
 
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 
@@ -72,6 +73,64 @@ const STANDARD_TEST_VENDORS = [
     description: 'Tablet test vendor for E2E tests',
     slug: 'testvendor-tablet', // Explicit slug matching test expectations
   },
+  // Location mapping test vendors
+  {
+    companyName: 'Alfa Laval',
+    email: 'alfa-laval@test.example.com',
+    password: 'TestVendor123!AlfaLaval',
+    tier: 'tier2' as const,
+    status: 'approved' as const,
+    description: 'Alfa Laval - World leader in heat transfer and fluid handling',
+    slug: 'alfa-laval',
+    locations: [
+      {
+        name: 'Alfa Laval HQ',
+        city: 'Lund',
+        country: 'Sweden',
+        latitude: 55.7058,
+        longitude: 13.1932,
+        isHQ: true,
+      },
+    ],
+  },
+  {
+    companyName: 'Caterpillar Marine',
+    email: 'caterpillar-marine@test.example.com',
+    password: 'TestVendor123!CatMarine',
+    tier: 'tier2' as const,
+    status: 'approved' as const,
+    description: 'Caterpillar Marine - Marine propulsion and power solutions',
+    slug: 'caterpillar-marine',
+    locations: [
+      {
+        name: 'Caterpillar Marine HQ',
+        city: 'Peoria',
+        country: 'United States',
+        latitude: 40.6936,
+        longitude: -89.5890,
+        isHQ: true,
+      },
+    ],
+  },
+  {
+    companyName: 'Crestron Electronics',
+    email: 'crestron@test.example.com',
+    password: 'TestVendor123!Crestron',
+    tier: 'tier2' as const,
+    status: 'approved' as const,
+    description: 'Crestron - Automation and control solutions for yachts',
+    slug: 'crestron',
+    locations: [
+      {
+        name: 'Crestron HQ',
+        city: 'Rockleigh',
+        country: 'United States',
+        latitude: 41.0198,
+        longitude: -74.0291,
+        isHQ: true,
+      },
+    ],
+  },
 ];
 
 async function globalSetup(config: FullConfig): Promise<void> {
@@ -84,7 +143,7 @@ async function globalSetup(config: FullConfig): Promise<void> {
 
   // Step 1: Wait for server to be ready
   console.log('\n[Global Setup] Step 1: Checking server availability...');
-  const serverReady = await waitForServer(baseURL, 30000);
+  const serverReady = await waitForServer(baseURL, 60000);
   if (!serverReady) {
     throw new Error(
       `Server not available at ${baseURL}. Please start the dev server with: DISABLE_EMAILS=true npm run dev`
@@ -116,20 +175,29 @@ async function globalSetup(config: FullConfig): Promise<void> {
 }
 
 /**
- * Wait for the server to be available
+ * Wait for the server to be available using http module
+ * This is more reliable than fetch in Playwright's execution environment
  */
 async function waitForServer(baseURL: string, timeout: number): Promise<boolean> {
   const startTime = Date.now();
-  const pollInterval = 1000;
+  const pollInterval = 500; // Check more frequently
 
   while (Date.now() - startTime < timeout) {
     try {
-      const response = await fetch(baseURL, {
-        method: 'GET',
-        signal: AbortSignal.timeout(5000),
+      const isReady = await new Promise<boolean>((resolve) => {
+        const req = http.get(baseURL, { timeout: 5000 }, (res) => {
+          resolve(res.statusCode === 200 || res.statusCode === 304);
+          res.resume(); // Consume response data to free up memory
+        });
+
+        req.on('error', () => resolve(false));
+        req.on('timeout', () => {
+          req.destroy();
+          resolve(false);
+        });
       });
 
-      if (response.ok || response.status === 200 || response.status === 304) {
+      if (isReady) {
         return true;
       }
     } catch {

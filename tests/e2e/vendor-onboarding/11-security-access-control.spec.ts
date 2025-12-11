@@ -7,8 +7,18 @@ async function loginAsVendor(page: Page, email: string, password: string) {
   await page.goto(`${BASE_URL}/vendor/login/`);
   await page.getByPlaceholder('vendor@example.com').fill(email);
   await page.getByPlaceholder(/password/i).fill(password);
-  await page.click('button:has-text("Login")');
-  await page.waitForURL(/\/vendor\/dashboard\/?/, { timeout: 10000 });
+
+  // Wait for API response before navigation to prevent race condition
+  const [loginResponse] = await Promise.all([
+    page.waitForResponse(
+      (response) => response.url().includes('/api/auth/login') && response.status() === 200,
+      { timeout: 15000 }
+    ),
+    page.click('button:has-text("Login")'),
+  ]);
+
+  expect(loginResponse.status()).toBe(200);
+  await page.waitForURL(/\/vendor\/dashboard\/?/, { timeout: 15000 });
 }
 
 test.describe('SECURITY-P1: Security & Access Control', () => {
