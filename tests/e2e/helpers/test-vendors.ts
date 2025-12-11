@@ -82,16 +82,14 @@ const INITIAL_VENDOR_STATE: Record<string, Record<string, any>> = {
     description: '',
     contactEmail: 'testvendor-mobile@example.com',
     contactPhone: '',
-    foundedYear: null,
-    website: '',
+    // NOTE: foundedYear/website excluded - mobile vendor is tier1, these fields may not be accessible
   },
   'testvendor-tablet': {
     companyName: 'Tablet Test Vendor',
     description: '',
     contactEmail: 'testvendor-tablet@example.com',
     contactPhone: '',
-    foundedYear: null,
-    website: '',
+    // NOTE: foundedYear/website excluded - tablet vendor is tier1, these fields may not be accessible
   },
 };
 

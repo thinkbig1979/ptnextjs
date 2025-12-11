@@ -257,11 +257,10 @@ test.describe('Vendor Public Profile - Tier-Based Display', () => {
       // Login with dedicated mobile vendor
       const vendorId = await loginVendor(page, TEST_VENDORS.mobile.email, TEST_VENDORS.mobile.password);
 
-      // Set vendor to tier2 for testing
+      // Set vendor data (mobile vendor is tier1, avoid tier-restricted fields)
       await updateVendorData(page, vendorId, {
         companyName: 'Mobile Test Vendor',
         description: 'Testing responsive layout.',
-        foundedYear: 2015,
       });
 
       // Wait briefly for cache clearing and revalidation (on-demand via API)
@@ -299,11 +298,10 @@ test.describe('Vendor Public Profile - Tier-Based Display', () => {
       // Login with dedicated tablet vendor
       const vendorId = await loginVendor(page, TEST_VENDORS.tablet.email, TEST_VENDORS.tablet.password);
 
-      // Set vendor to tier1
+      // Set vendor data (tablet vendor is tier1, avoid tier-restricted fields)
       await updateVendorData(page, vendorId, {
         companyName: 'Tablet Test Vendor',
         description: 'Testing tablet responsive layout.',
-        foundedYear: 2012,
       });
 
       // Wait briefly for cache clearing and revalidation (on-demand via API)
