@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
-import { TEST_VENDORS, loginVendor } from './helpers/test-vendors';
+import { TEST_VENDORS, loginVendor, clearRateLimits } from './helpers/test-vendors';
 
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 
@@ -12,17 +12,21 @@ const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 
 const VALID_FIXTURE = path.join(__dirname, '../test-fixtures/valid-vendor-data.xlsx');
 
-// QUARANTINED: Excel Import feature not available on data-management page
-// Issue: File input not found - feature may have been removed or relocated
-// Tracking: See .agent-os/e2e-repair/session-state.json for repair status
-test.describe.skip('Excel Import - Happy Path', () => {
+// FIXED: Tests now properly login with tier2 vendor and wait for VendorDashboardContext to load
+test.describe('Excel Import - Happy Path', () => {
   test.beforeEach(async ({ page }) => {
+    // Clear rate limits to prevent 429 errors when running many tests
+    await clearRateLimits(page);
+
     // Login as tier2 vendor (has access to data management features)
     await loginVendor(page, TEST_VENDORS.tier2.email, TEST_VENDORS.tier2.password);
 
     // Navigate to data management page
     await page.goto(`${BASE_URL}/vendor/dashboard/data-management`);
     await page.waitForLoadState('networkidle');
+
+    // Wait for vendor context to load - Export Data button only appears when vendor is loaded
+    await expect(page.getByRole('button', { name: /Export Data|Export vendor data/i })).toBeVisible({ timeout: 15000 });
   });
 
   test('should complete full import workflow successfully', async ({ page }) => {
@@ -181,15 +185,21 @@ test.describe.skip('Excel Import - Happy Path', () => {
   });
 });
 
-// QUARANTINED: Excel Import File Selection - same issue as main import tests
-test.describe.skip('Excel Import - File Selection', () => {
+// FIXED: Tests now properly login with tier2 vendor and wait for VendorDashboardContext to load
+test.describe('Excel Import - File Selection', () => {
   test.beforeEach(async ({ page }) => {
+    // Clear rate limits to prevent 429 errors when running many tests
+    await clearRateLimits(page);
+
     // Login as tier2 vendor (has access to data management features)
     await loginVendor(page, TEST_VENDORS.tier2.email, TEST_VENDORS.tier2.password);
 
     // Navigate to data management page
     await page.goto(`${BASE_URL}/vendor/dashboard/data-management`);
     await page.waitForLoadState('networkidle');
+
+    // Wait for vendor context to load - Export Data button only appears when vendor is loaded
+    await expect(page.getByRole('button', { name: /Export Data|Export vendor data/i })).toBeVisible({ timeout: 15000 });
   });
 
   test('should accept file via browse button', async ({ page }) => {

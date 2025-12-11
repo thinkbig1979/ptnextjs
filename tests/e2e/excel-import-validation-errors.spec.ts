@@ -1,5 +1,8 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
+import { TEST_VENDORS, loginVendor, clearRateLimits } from './helpers/test-vendors';
+
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 
 /**
  * E2E tests for Excel import with validation errors
@@ -10,17 +13,21 @@ import path from 'path';
 
 const INVALID_FIXTURE = path.join(__dirname, '../test-fixtures/invalid-vendor-data.xlsx');
 
-// QUARANTINED: Excel Import validation tests need VendorDashboardContext to load vendor data
-// Issue: Page requires VendorDashboardProvider which needs proper auth context setup
-// The page/components exist at /vendor/dashboard/data-management but require:
-// 1. Proper login with tier2+ vendor
-// 2. VendorDashboardProvider to provide vendor context
-// Tracking: beads task ptnextjs-p19a
-test.describe.skip('Excel Import - Validation Errors', () => {
+// FIXED: Tests now properly login with tier2 vendor and wait for VendorDashboardContext to load
+test.describe('Excel Import - Validation Errors', () => {
   test.beforeEach(async ({ page }) => {
-    // Login and navigate to data management page
-    await page.goto('/vendor/dashboard/data-management');
+    // Clear rate limits to prevent 429 errors when running many tests
+    await clearRateLimits(page);
+
+    // Login as tier2 vendor (has access to data management features)
+    await loginVendor(page, TEST_VENDORS.tier2.email, TEST_VENDORS.tier2.password);
+
+    // Navigate to data management page
+    await page.goto(`${BASE_URL}/vendor/dashboard/data-management`);
     await page.waitForLoadState('networkidle');
+
+    // Wait for vendor context to load - Export Data button only appears when vendor is loaded
+    await expect(page.getByRole('button', { name: /Export Data|Export vendor data/i })).toBeVisible({ timeout: 15000 });
   });
 
   test('should display validation errors in preview dialog', async ({ page }) => {
@@ -240,12 +247,26 @@ test.describe.skip('Excel Import - Validation Errors', () => {
   });
 });
 
-// QUARANTINED: Same issue as main suite - needs VendorDashboardContext
-test.describe.skip('Excel Import - Mixed Valid and Invalid Data', () => {
+// FIXED: Tests now properly login with tier2 vendor and wait for VendorDashboardContext to load
+test.describe('Excel Import - Mixed Valid and Invalid Data', () => {
+  test.beforeEach(async ({ page }) => {
+    // Clear rate limits to prevent 429 errors when running many tests
+    await clearRateLimits(page);
+
+    // Login as tier2 vendor (has access to data management features)
+    await loginVendor(page, TEST_VENDORS.tier2.email, TEST_VENDORS.tier2.password);
+
+    // Navigate to data management page
+    await page.goto(`${BASE_URL}/vendor/dashboard/data-management`);
+    await page.waitForLoadState('networkidle');
+
+    // Wait for vendor context to load
+    await expect(page.getByRole('button', { name: /Export Data/i })).toBeVisible({ timeout: 15000 });
+  });
+
   test('should show both valid and error row counts', async ({ page }) => {
     // This test would need a fixture with mixed valid/invalid data
     // For now, use the invalid fixture
-    await page.goto('/vendor/dashboard/data-management');
 
     const fileInput = page.locator('input[type="file"]').first();
     await fileInput.setInputFiles(INVALID_FIXTURE);
@@ -260,8 +281,6 @@ test.describe.skip('Excel Import - Mixed Valid and Invalid Data', () => {
   });
 
   test('should still block import if any errors exist', async ({ page }) => {
-    await page.goto('/vendor/dashboard/data-management');
-
     const fileInput = page.locator('input[type="file"]').first();
     await fileInput.setInputFiles(INVALID_FIXTURE);
     await page.getByRole('button', { name: /upload and validate/i }).click();

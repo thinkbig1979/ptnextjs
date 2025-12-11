@@ -1,26 +1,8 @@
 import { test, expect } from '@playwright/test';
-import path from 'path';
 import fs from 'fs';
-import { seedVendors, createTestVendor, VendorSeedData } from './helpers/seed-api-helpers';
+import { TEST_VENDORS, loginVendor, clearRateLimits } from './helpers/test-vendors';
 
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
-
-// Helper to login as a vendor
-async function loginAsVendor(page: any, email: string, password: string) {
-  const response = await page.request.post(`${BASE_URL}/api/auth/login`, {
-    data: { email, password },
-  });
-
-  const data = await response.json();
-  if (response.ok() && data.success) {
-    // Store the token and redirect
-    await page.context().addCookies([
-      { name: 'payload-token', value: data.token, domain: 'localhost', path: '/' },
-    ]);
-    return true;
-  }
-  return false;
-}
 
 /**
  * E2E tests for Excel template download functionality
@@ -29,34 +11,21 @@ async function loginAsVendor(page: any, email: string, password: string) {
  * from the vendor dashboard.
  */
 
-// QUARANTINED: Excel Template Download tests need VendorDashboardContext to load vendor data
-// Issue: Page requires VendorDashboardProvider which needs proper auth context setup
-// The page/components exist at /vendor/dashboard/data-management but require:
-// 1. Proper auth token with VendorDashboardProvider wrapping
-// 2. Vendor API to return vendor data for useVendorDashboard hook
-// Tracking: beads task ptnextjs-p19a
-test.describe.skip('Excel Template Download', () => {
-  let testVendor: VendorSeedData;
-  const vendorPassword = 'SecureTestPass123!@#';
-
+// FIXED: Tests now properly login with tier2 vendor and wait for VendorDashboardContext to load
+test.describe('Excel Template Download', () => {
   test.beforeEach(async ({ page }) => {
-    // Create a tier2 vendor for testing (tier2+ has access to data management)
-    testVendor = createTestVendor({
-      tier: 'tier2',
-      status: 'approved',
-      password: vendorPassword,
-    });
+    // Clear rate limits to prevent 429 errors when running many tests
+    await clearRateLimits(page);
 
-    await seedVendors(page, [testVendor]);
-
-    // Login as the test vendor
-    await loginAsVendor(page, testVendor.email, vendorPassword);
+    // Login as tier2 vendor (has access to data management features)
+    await loginVendor(page, TEST_VENDORS.tier2.email, TEST_VENDORS.tier2.password);
 
     // Navigate to data management page
     await page.goto(`${BASE_URL}/vendor/dashboard/data-management`);
-
-    // Wait for page to load
     await page.waitForLoadState('networkidle');
+
+    // Wait for vendor context to load - Export Data button only appears when vendor is loaded
+    await expect(page.getByRole('button', { name: /Export Data|Export vendor data/i })).toBeVisible({ timeout: 15000 });
   });
 
   test('should display Excel Export card with download template button', async ({ page }) => {
@@ -165,11 +134,24 @@ test.describe.skip('Excel Template Download', () => {
   });
 });
 
-// QUARANTINED: Same issue as main suite - needs VendorDashboardContext
-test.describe.skip('Excel Template Download - Accessibility', () => {
-  test('should be keyboard accessible', async ({ page }) => {
-    await page.goto('/vendor/dashboard/data-management');
+// FIXED: Tests now properly login with tier2 vendor and wait for VendorDashboardContext to load
+test.describe('Excel Template Download - Accessibility', () => {
+  test.beforeEach(async ({ page }) => {
+    // Clear rate limits to prevent 429 errors when running many tests
+    await clearRateLimits(page);
+
+    // Login as tier2 vendor (has access to data management features)
+    await loginVendor(page, TEST_VENDORS.tier2.email, TEST_VENDORS.tier2.password);
+
+    // Navigate to data management page
+    await page.goto(`${BASE_URL}/vendor/dashboard/data-management`);
     await page.waitForLoadState('networkidle');
+
+    // Wait for vendor context to load
+    await expect(page.getByRole('button', { name: /Export Data/i })).toBeVisible({ timeout: 15000 });
+  });
+
+  test('should be keyboard accessible', async ({ page }) => {
 
     // Tab to the download button
     await page.keyboard.press('Tab');
@@ -188,8 +170,6 @@ test.describe.skip('Excel Template Download - Accessibility', () => {
   });
 
   test('should have proper ARIA labels', async ({ page }) => {
-    await page.goto('/vendor/dashboard/data-management');
-
     const downloadButton = page.getByRole('button', { name: /download template/i });
     await expect(downloadButton).toHaveAttribute('type', 'button');
   });
