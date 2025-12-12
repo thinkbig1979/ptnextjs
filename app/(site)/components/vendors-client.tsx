@@ -315,20 +315,25 @@ export function VendorsClient({
       </motion.div>
 
       {/* Vendors Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+      <ul
+        role="list"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12 list-none p-0 m-0"
+        aria-label="Vendors list"
+      >
         {paginatedVendors.map((vendor) => {
           const isHighlighted = highlightedVendor === vendor?.name;
 
           return (
-            <VendorCard
-              key={vendor?.id}
-              vendor={vendor}
-              featured={vendor?.featured || isHighlighted}
-              showTierBadge={true}
-            />
+            <li key={vendor?.id} className="list-none">
+              <VendorCard
+                vendor={vendor}
+                featured={vendor?.featured || isHighlighted}
+                showTierBadge={true}
+              />
+            </li>
           );
         })}
-      </div>
+      </ul>
 
       {/* No Results */}
       {filteredVendors.length === 0 && (

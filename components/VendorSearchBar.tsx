@@ -285,7 +285,11 @@ export function VendorSearchBar({
           {/* Category Filter */}
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <Select value={selectedCategory} onValueChange={onCategoryChange}>
-              <SelectTrigger className="w-full sm:w-[200px]" data-testid="category-filter">
+              <SelectTrigger
+                className="w-full sm:w-[200px]"
+                data-testid="category-filter"
+                aria-label="Filter by category"
+              >
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
               <SelectContent>
@@ -318,8 +322,9 @@ export function VendorSearchBar({
                 size="icon"
                 className="absolute right-1 top-1/2 transform -translate-y-1/2 h-8 w-8"
                 onClick={() => onSearchChange('')}
+                aria-label="Clear search"
               >
-                <X className="h-4 w-4" />
+                <X className="h-4 w-4" aria-hidden="true" />
               </Button>
             )}
           </div>
@@ -444,8 +449,9 @@ export function VendorSearchBar({
                   onClick={handleLocationReset}
                   className="h-12 w-12 shrink-0"
                   data-testid="location-reset-button"
+                  aria-label="Clear location search"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-4 w-4" aria-hidden="true" />
                 </Button>
               )}
             </div>
