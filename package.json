@@ -41,6 +41,7 @@
   "author": "Paul Thames Superyacht Technology",
   "license": "UNLICENSED",
   "devDependencies": {
+    "@axe-core/playwright": "^4.11.0",
     "@next/swc-wasm-nodejs": "13.5.1",
     "@playwright/test": "^1.55.0",
     "@testing-library/dom": "^10.4.1",
