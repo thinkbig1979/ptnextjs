@@ -70,10 +70,11 @@ async function createVendorWithRelatedData(page: Page): Promise<{
 
 /**
  * Helper to check if a vendor exists via API
+ * Uses the public vendors endpoint to avoid auth requirements
  */
 async function vendorExists(page: Page, vendorId: string): Promise<boolean> {
   try {
-    const response = await page.request.get(`${BASE_URL}/api/portal/vendors/${vendorId}`);
+    const response = await page.request.get(`${BASE_URL}/api/vendors/${vendorId}`);
     return response.ok();
   } catch {
     return false;
@@ -158,9 +159,8 @@ test.describe('Data Integrity: Vendor Cascade Delete', () => {
     // (depends on business logic - this test verifies no orphaned references)
     await page.waitForTimeout(500);
 
-    // Verify no API errors when querying
-    const vendorResponse = await page.request.get(`${BASE_URL}/api/portal/vendors/${vendorId}`);
-    expect(vendorResponse.ok()).toBe(false); // Vendor should not exist
+    // Verify vendor no longer exists using public endpoint
+    expect(await vendorExists(page, vendorId)).toBe(false);
   });
 
   test('CASCADE-03: Partial delete failure rolls back transaction', async ({ page }) => {

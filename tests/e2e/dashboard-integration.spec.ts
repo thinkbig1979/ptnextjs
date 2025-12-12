@@ -44,10 +44,12 @@ test.describe('INTEG-FRONTEND-BACKEND: Dashboard Integration Tests', () => {
 
     await page.waitForSelector('h1', { timeout: 5000 });
 
-    const tierBadge = page.locator('aside span').filter({ hasText: /Free|Tier [1-4]/ }).first();
+    // TierBadge renders as <Badge><Icon /><span>{label}</span></Badge>
+    // Labels are: "Free", "Tier 1", "Tier 2", "Tier 3"
+    const tierBadge = page.getByText(/^(Free|Tier [1-3])$/).first();
     await expect(tierBadge).toBeVisible({ timeout: 5000 });
     const tierText = await tierBadge.textContent();
-    expect(tierText).toMatch(/Free|Tier [1-4]/);
+    expect(tierText).toMatch(/^(Free|Tier [1-3])$/);
 
     const profileStatus = page.locator('text=Profile Status').first();
     await expect(profileStatus).toBeVisible({ timeout: 5000 });
@@ -140,9 +142,10 @@ test.describe('INTEG-FRONTEND-BACKEND: Dashboard Integration Tests', () => {
     const startTime = Date.now();
 
     await loginAsTestVendor(page);
-    const tierBadge = page.locator('aside span').filter({ hasText: /Free|Tier/ }).first();
+    const tierBadge = page.getByText(/^(Free|Tier [1-3])$/).first();
+    await expect(tierBadge).toBeVisible({ timeout: 5000 });
     const tierText = await tierBadge.textContent();
-    expect(tierText).toMatch(/Free|Tier/);
+    expect(tierText).toMatch(/^(Free|Tier [1-3])$/);
 
     if (tierText?.includes('Free')) {
       const certTab = page.locator('button[role="tab"]').filter({ hasText: /Certification/ }).first();
@@ -164,7 +167,8 @@ test.describe('INTEG-FRONTEND-BACKEND: Dashboard Integration Tests', () => {
     const startTime = Date.now();
 
     await loginAsTestVendor(page);
-    const tierBadge = page.locator('aside span').filter({ hasText: /Free|Tier/ }).first();
+    const tierBadge = page.getByText(/^(Free|Tier [1-3])$/).first();
+    await expect(tierBadge).toBeVisible({ timeout: 5000 });
     const tierText = await tierBadge.textContent();
     if (tierText?.includes('Free')) { test.skip(); }
 
