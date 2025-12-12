@@ -25,7 +25,7 @@ export function Footer({ companyInfo }: FooterProps): React.JSX.Element {
 
           {/* Quick Links */}
           <div className="space-y-4">
-            <h3 className="font-poppins-medium text-sm font-semibold">Quick Links</h3>
+            <h2 className="font-poppins-medium text-sm font-semibold">Quick Links</h2>
             <div className="space-y-2">
               <Link href="/vendors" className="block font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors">
                 Vendors
@@ -41,7 +41,7 @@ export function Footer({ companyInfo }: FooterProps): React.JSX.Element {
 
           {/* Contact */}
           <div className="space-y-4">
-            <h3 className="font-poppins-medium text-sm font-semibold">Contact</h3>
+            <h2 className="font-poppins-medium text-sm font-semibold">Contact</h2>
             <div className="space-y-2">
               <div className="flex items-center space-x-2 font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors cursor-pointer">
                 <Mail className="h-4 w-4" />
@@ -60,7 +60,7 @@ export function Footer({ companyInfo }: FooterProps): React.JSX.Element {
 
           {/* Resources */}
           <div className="space-y-4">
-            <h3 className="font-poppins-medium text-sm font-semibold">Resources</h3>
+            <h2 className="font-poppins-medium text-sm font-semibold">Resources</h2>
             <div className="space-y-2">
               <Link href="/blog" className="block font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors">
                 Blog

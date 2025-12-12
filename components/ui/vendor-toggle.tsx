@@ -45,6 +45,7 @@ export function VendorToggle({
         onCheckedChange={(checked) => onValueChange(checked ? "all" : "partners")}
         disabled={isLoading}
         className="data-[state=checked]:bg-accent data-[state=unchecked]:bg-muted-foreground/30 scale-110 border-2 border-accent/30"
+        aria-label={`Toggle between ${partnersLabel} and ${allLabel}. Currently showing ${value === "all" ? allLabel : partnersLabel}`}
       />
 
       <Label

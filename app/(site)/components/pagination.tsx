@@ -59,8 +59,9 @@ export function Pagination({ currentPage, totalPages, onPageChange, className }:
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
         className="h-8 w-8 p-0"
+        aria-label="Go to previous page"
       >
-        <ChevronLeft className="h-4 w-4" />
+        <ChevronLeft className="h-4 w-4" aria-hidden="true" />
       </Button>
       
       {generatePageNumbers().map((page, index) => (
@@ -73,6 +74,8 @@ export function Pagination({ currentPage, totalPages, onPageChange, className }:
               size="sm"
               onClick={() => onPageChange(page as number)}
               className="h-8 w-8 p-0"
+              aria-label={`Go to page ${page}`}
+              aria-current={currentPage === page ? "page" : undefined}
             >
               {page}
             </Button>
@@ -86,8 +89,9 @@ export function Pagination({ currentPage, totalPages, onPageChange, className }:
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
         className="h-8 w-8 p-0"
+        aria-label="Go to next page"
       >
-        <ChevronRight className="h-4 w-4" />
+        <ChevronRight className="h-4 w-4" aria-hidden="true" />
       </Button>
     </div>
   );
