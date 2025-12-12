@@ -366,11 +366,17 @@ test.describe.serial('TEST-E2E-DASHBOARD: Vendor Dashboard Editing Workflow', ()
 
     await loginAsTestVendor(page);
 
+    // Verify sidebar is visible (on desktop)
     const sidebar = page.locator('aside').first();
     await expect(sidebar).toBeVisible({ timeout: 5000 });
 
-    const tierBadge = page.locator('aside span').filter({ hasText: /Free|Tier/ }).first();
-    await expect(tierBadge).toBeVisible({ timeout: 5000 });
+    // Verify sidebar navigation contains expected links
+    const dashboardLink = sidebar.locator('a[href="/vendor/dashboard"]');
+    await expect(dashboardLink).toBeVisible({ timeout: 5000 });
+
+    // Verify logout button exists in sidebar
+    const logoutButton = sidebar.locator('button', { hasText: 'Logout' });
+    await expect(logoutButton).toBeVisible({ timeout: 5000 });
 
     console.log('[OK] Test 9 PASSED\n');
   });
