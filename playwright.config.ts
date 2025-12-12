@@ -52,18 +52,6 @@ function getTestFiles(): string[] {
   }
 }
 
-// Configure reporter based on environment
-const reporter = isCI
-  ? [
-      ['github'],
-      ['html', { outputFolder: 'playwright-report', open: 'never' }],
-      ['json', { outputFile: 'test-results/results.json' }],
-    ]
-  : [
-      ['list'],
-      ['html', { outputFolder: 'playwright-report', open: 'on-failure' }],
-    ];
-
 export default defineConfig({
   testDir: './tests/e2e',
 
@@ -86,8 +74,17 @@ export default defineConfig({
   // Workers: auto-detect locally, limit in CI
   workers: isCI ? 4 : undefined,
 
-  // Reporter configuration
-  reporter,
+  // Reporter configuration based on environment
+  reporter: isCI
+    ? [
+        ['github'] as ['github'],
+        ['html', { outputFolder: 'playwright-report', open: 'never' }] as ['html', { outputFolder: string; open: string }],
+        ['json', { outputFile: 'test-results/results.json' }] as ['json', { outputFile: string }],
+      ]
+    : [
+        ['list'] as ['list'],
+        ['html', { outputFolder: 'playwright-report', open: 'on-failure' }] as ['html', { outputFolder: string; open: string }],
+      ],
 
   // Global settings
   use: {
