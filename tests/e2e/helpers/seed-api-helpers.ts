@@ -7,6 +7,8 @@
 
 import { Page } from '@playwright/test';
 
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
+
 /**
  * Vendor seed request data
  */
@@ -69,7 +71,7 @@ export async function seedVendors(
 ): Promise<string[]> {
   console.log(`[seedVendors] Seeding ${vendors.length} vendors...`);
 
-  const response = await page.request.post('/api/test/vendors/seed', {
+  const response = await page.request.post(`${BASE_URL}/api/test/vendors/seed`, {
     data: vendors,
   });
 
@@ -104,7 +106,7 @@ export async function seedProducts(
   page: Page,
   products: ProductSeedData[]
 ): Promise<string[]> {
-  const response = await page.request.post('/api/test/products/seed', {
+  const response = await page.request.post(`${BASE_URL}/api/test/products/seed`, {
     data: products,
   });
 
@@ -282,7 +284,7 @@ export async function adminApproveTierRequest(
 ): Promise<{ success: boolean; error?: string }> {
   console.log(`[Test Admin] Approving tier request: ${requestId}`);
 
-  const response = await page.request.post('/api/test/admin/tier-requests/approve', {
+  const response = await page.request.post(`${BASE_URL}/api/test/admin/tier-requests/approve`, {
     data: { requestId },
   });
 
@@ -308,7 +310,7 @@ export async function adminRejectTierRequest(
 ): Promise<{ success: boolean; error?: string }> {
   console.log(`[Test Admin] Rejecting tier request: ${requestId}`);
 
-  const response = await page.request.post('/api/test/admin/tier-requests/reject', {
+  const response = await page.request.post(`${BASE_URL}/api/test/admin/tier-requests/reject`, {
     data: { requestId, rejectionReason },
   });
 
