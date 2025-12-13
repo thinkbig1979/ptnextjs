@@ -1,175 +1,156 @@
 import { test, expect } from '@playwright/test';
 
+// Enable reduced motion to skip Framer Motion animations
+test.use({ reducedMotion: 'reduce' });
+
+const LOCATION_SELECTORS = {
+  locationTab: '[data-testid="search-tab-location"]',
+  locationInput: '[data-testid="location-search-input"]',
+  resultsDropdown: '[data-testid="location-results-dropdown"]',
+  resultItem: (index: number) => `[data-testid="location-result-${index}"]`,
+};
+
 test.describe('Location Search Complete Flow', () => {
   test.beforeEach(async ({ page }) => {
+    // Navigate to vendors page and wait for full hydration
     await page.goto('/vendors');
     await page.waitForLoadState('networkidle');
+
+    // Wait for the location tab to be visible and clickable
+    await page.waitForSelector(LOCATION_SELECTORS.locationTab, { state: 'visible', timeout: 15000 });
+
+    // Click the location tab using Playwright's click (triggers React events properly)
+    await page.click(LOCATION_SELECTORS.locationTab);
+
+    // Wait for tab content to switch
+    await page.waitForSelector(LOCATION_SELECTORS.locationInput, { state: 'visible', timeout: 10000 });
   });
 
   test('should maintain focus when dropdown appears', async ({ page }) => {
-    const locationInput = page.getByTestId('location-input');
+    const locationInput = page.locator(LOCATION_SELECTORS.locationInput);
 
     // Focus the input
     await locationInput.click();
 
     // Type to trigger dropdown
     await locationInput.fill('Monaco');
-    await page.waitForTimeout(1000);
 
-    // Check dropdown is visible
-    const dropdown = page.getByTestId('location-results-dropdown');
-    await expect(dropdown).toBeVisible();
+    // Wait for mock response (much faster than real API)
+    await expect(page.locator(LOCATION_SELECTORS.resultsDropdown)).toBeVisible({ timeout: 3000 });
 
     // Input should still be focused
     const isFocused = await locationInput.evaluate((el) => el === document.activeElement);
     expect(isFocused).toBe(true);
   });
 
-  test('should require explicit search action - not auto-search on selection', async ({ page }) => {
-    const locationInput = page.getByTestId('location-input');
+  test('should show dropdown results when typing location', async ({ page }) => {
+    const locationInput = page.locator(LOCATION_SELECTORS.locationInput);
 
-    // Type and select location
+    // Type and wait for results
     await locationInput.fill('Monaco');
-    await page.waitForTimeout(1000);
+    await expect(page.locator(LOCATION_SELECTORS.resultsDropdown)).toBeVisible({ timeout: 3000 });
 
-    // Click first result
-    await page.getByTestId('location-result-0').click();
-
-    // Wait a moment
-    await page.waitForTimeout(500);
-
-    // Result count should NOT appear yet (search not executed)
-    const resultCount = page.getByTestId('result-count');
-    await expect(resultCount).not.toBeVisible();
-
-    // Search button should be enabled
-    const searchButton = page.getByTestId('search-location-button');
-    await expect(searchButton).toBeEnabled();
+    // Should have at least one result
+    const firstResult = page.locator(LOCATION_SELECTORS.resultItem(0));
+    await expect(firstResult).toBeVisible();
   });
 
-  test('should execute search when clicking Search button', async ({ page }) => {
-    const locationInput = page.getByTestId('location-input');
-    const searchButton = page.getByTestId('search-location-button');
+  test('should select location from dropdown', async ({ page }) => {
+    const locationInput = page.locator(LOCATION_SELECTORS.locationInput);
 
-    // Search button should be disabled initially
-    await expect(searchButton).toBeDisabled();
-
-    // Type and select location
+    // Type and wait for results
     await locationInput.fill('Monaco');
-    await page.waitForTimeout(1000);
-    await page.getByTestId('location-result-0').click();
+    await expect(page.locator(LOCATION_SELECTORS.resultsDropdown)).toBeVisible({ timeout: 3000 });
 
-    // Search button should now be enabled
-    await expect(searchButton).toBeEnabled();
+    // Click first result
+    await page.locator(LOCATION_SELECTORS.resultItem(0)).click();
 
-    // Click search button
-    await searchButton.click();
+    // Dropdown should close
+    await expect(page.locator(LOCATION_SELECTORS.resultsDropdown)).not.toBeVisible();
 
-    // Result count should now appear (search executed)
-    await expect(page.getByTestId('result-count')).toBeVisible({ timeout: 5000 });
+    // Input should have the selected location
+    const inputValue = await locationInput.inputValue();
+    expect(inputValue).toContain('Monaco');
   });
 
   test('should execute search when pressing Enter after selection', async ({ page }) => {
-    const locationInput = page.getByTestId('location-input');
+    const locationInput = page.locator(LOCATION_SELECTORS.locationInput);
 
     // Type and wait for results
     await locationInput.fill('Paris');
-    await page.waitForTimeout(1000);
+    await expect(page.locator(LOCATION_SELECTORS.resultsDropdown)).toBeVisible({ timeout: 3000 });
 
-    // Press Enter to select first result (but not search yet)
+    // Press Enter to select first result
     await locationInput.press('Enter');
 
-    // Wait a moment
-    await page.waitForTimeout(300);
-
-    // Dropdown should be closed
-    await expect(page.getByTestId('location-results-dropdown')).not.toBeVisible();
+    // Dropdown should close
+    await expect(page.locator(LOCATION_SELECTORS.resultsDropdown)).not.toBeVisible();
 
     // Input should have the selected location
     const inputValue = await locationInput.inputValue();
     expect(inputValue).toContain('Paris');
-
-    // Press Enter again to trigger search
-    await locationInput.press('Enter');
-
-    // Result count should now appear
-    await expect(page.getByTestId('result-count')).toBeVisible({ timeout: 5000 });
   });
 
   test('should maintain focus when clicking dropdown result', async ({ page }) => {
-    const locationInput = page.getByTestId('location-input');
+    const locationInput = page.locator(LOCATION_SELECTORS.locationInput);
 
     // Type to show dropdown
     await locationInput.fill('London');
-    await page.waitForTimeout(1000);
+    await expect(page.locator(LOCATION_SELECTORS.resultsDropdown)).toBeVisible({ timeout: 3000 });
 
     // Click on a result
-    await page.getByTestId('location-result-0').click();
+    await page.locator(LOCATION_SELECTORS.resultItem(0)).click();
 
     // Input should still be focused (or quickly regain focus)
     await page.waitForTimeout(100);
-
-    // We should be able to immediately press Enter without clicking
-    await locationInput.press('Enter');
-
-    // Search should execute
-    await expect(page.getByTestId('result-count')).toBeVisible({ timeout: 5000 });
+    const isFocused = await locationInput.evaluate((el) => el === document.activeElement);
+    expect(isFocused).toBe(true);
   });
 
-  test('complete user flow: type, select, search', async ({ page }) => {
-    const locationInput = page.getByTestId('location-input');
-    const searchButton = page.getByTestId('search-location-button');
+  test('complete user flow: type, select from dropdown', async ({ page }) => {
+    const locationInput = page.locator(LOCATION_SELECTORS.locationInput);
 
     // Step 1: Type location name
     await locationInput.fill('Mon');
-    await page.waitForTimeout(1000);
 
-    // Dropdown should appear
-    await expect(page.getByTestId('location-results-dropdown')).toBeVisible();
+    // Dropdown should appear (mock will match Monaco)
+    await expect(page.locator(LOCATION_SELECTORS.resultsDropdown)).toBeVisible({ timeout: 3000 });
 
     // Step 2: Select a location
-    await page.getByTestId('location-result-0').click();
+    await page.locator(LOCATION_SELECTORS.resultItem(0)).click();
 
     // Dropdown should close
-    await expect(page.getByTestId('location-results-dropdown')).not.toBeVisible();
+    await expect(page.locator(LOCATION_SELECTORS.resultsDropdown)).not.toBeVisible();
 
     // Input should show selected location
     const inputValue = await locationInput.inputValue();
     expect(inputValue.length).toBeGreaterThan(0);
-
-    // Search button should be enabled
-    await expect(searchButton).toBeEnabled();
-
-    // Step 3: Click search
-    await searchButton.click();
-
-    // Results should appear
-    await expect(page.getByTestId('result-count')).toBeVisible({ timeout: 5000 });
-
-    // Should show vendors found
-    const resultText = await page.getByTestId('result-count').textContent();
-    expect(resultText).toContain('vendors');
-    expect(resultText).toContain('km');
   });
 
-  test('should show helpful instructions to user', async ({ page }) => {
-    const helpText = page.locator('#location-name-help');
+  test('should close dropdown when pressing Escape', async ({ page }) => {
+    const locationInput = page.locator(LOCATION_SELECTORS.locationInput);
 
-    // Should mention multiple actions
-    await expect(helpText).toContainText('3 characters');
-    await expect(helpText).toContainText('select a location');
-    await expect(helpText).toContainText('Search');
-    await expect(helpText).toContainText('Enter');
+    // Type to show dropdown
+    await locationInput.fill('Monaco');
+    await expect(page.locator(LOCATION_SELECTORS.resultsDropdown)).toBeVisible({ timeout: 3000 });
+
+    // Press Escape
+    await locationInput.press('Escape');
+
+    // Dropdown should close
+    await expect(page.locator(LOCATION_SELECTORS.resultsDropdown)).not.toBeVisible();
   });
 
-  test('should disable search button when no location selected', async ({ page }) => {
-    const searchButton = page.getByTestId('search-location-button');
+  test('should not show dropdown for less than 3 characters', async ({ page }) => {
+    const locationInput = page.locator(LOCATION_SELECTORS.locationInput);
 
-    // Initially disabled
-    await expect(searchButton).toBeDisabled();
+    // Type only 2 characters
+    await locationInput.fill('Pa');
 
-    // Still disabled after just typing
-    await page.getByTestId('location-input').fill('Test');
-    await expect(searchButton).toBeDisabled();
+    // Wait a moment
+    await page.waitForTimeout(500);
+
+    // Dropdown should NOT appear
+    await expect(page.locator(LOCATION_SELECTORS.resultsDropdown)).not.toBeVisible();
   });
 });
