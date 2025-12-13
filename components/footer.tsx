@@ -40,23 +40,31 @@ export function Footer({ companyInfo }: FooterProps): React.JSX.Element {
           </div>
 
           {/* Contact */}
-          <div className="space-y-4">
+          <address className="space-y-4 not-italic">
             <h2 className="font-poppins-medium text-sm font-semibold">Contact</h2>
             <div className="space-y-2">
-              <div className="flex items-center space-x-2 font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors cursor-pointer">
+              <a
+                href={`mailto:${companyInfo?.email || "contact@paulthames.com"}`}
+                className="flex items-center space-x-2 font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors"
+                aria-label={`Email us at ${companyInfo?.email || "contact@paulthames.com"}`}
+              >
                 <Mail className="h-4 w-4" />
                 <span>{companyInfo?.email || "contact@paulthames.com"}</span>
-              </div>
-              <div className="flex items-center space-x-2 font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors cursor-pointer">
+              </a>
+              <a
+                href={`tel:${(companyInfo?.phone || "+31 20 123 4567").replace(/[\s\-\(\)]/g, '')}`}
+                className="flex items-center space-x-2 font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors"
+                aria-label={`Call us at ${companyInfo?.phone || "+31 20 123 4567"}`}
+              >
                 <Phone className="h-4 w-4" />
                 <span>{companyInfo?.phone || "+31 20 123 4567"}</span>
-              </div>
-              <div className="flex items-center space-x-2 font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors">
+              </a>
+              <div className="flex items-center space-x-2 font-poppins-light text-sm text-muted-foreground">
                 <MapPin className="h-4 w-4" />
                 <span>Amsterdam, Netherlands</span>
               </div>
             </div>
-          </div>
+          </address>
 
           {/* Resources */}
           <div className="space-y-4">
