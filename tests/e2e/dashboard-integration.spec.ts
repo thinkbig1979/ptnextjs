@@ -1,21 +1,9 @@
-import { test, expect, Page } from '@playwright/test';
-import { TEST_VENDORS } from './helpers/test-vendors';
+import { testWithUniqueVendor as test, expect, loginAsUniqueVendor } from './fixtures/test-fixtures';
+import { type Page } from '@playwright/test';
 
-const TEST_VENDOR_EMAIL = TEST_VENDORS.tier1.email;
-const TEST_VENDOR_PASSWORD = TEST_VENDORS.tier1.password;
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 
 test.describe('INTEG-FRONTEND-BACKEND: Dashboard Integration Tests', () => {
-
-  async function loginAsTestVendor(page: Page) {
-    await page.goto(`${BASE_URL}/vendor/login`);
-    await page.getByPlaceholder('vendor@example.com').fill(TEST_VENDOR_EMAIL);
-    await page.getByPlaceholder('Enter your password').fill(TEST_VENDOR_PASSWORD);
-    const loginPromise = page.waitForResponse((response: any) => response.url().includes('/api/auth/login') && response.status() === 200);
-    await page.getByRole('button', { name: /login/i }).click();
-    await loginPromise;
-    await page.waitForURL(`${BASE_URL}/vendor/dashboard`, { timeout: 10000 });
-  }
 
   async function navigateToEditProfile(page: Page) {
     // Click "Edit Profile" button to get to the tabbed interface (use first one from Quick Actions)
@@ -24,15 +12,15 @@ test.describe('INTEG-FRONTEND-BACKEND: Dashboard Integration Tests', () => {
     await page.waitForTimeout(1000); // Wait for profile edit page to load
   }
 
-  test('Test 1: Authentication and Dashboard Load', async ({ page }) => {
+  test('Test 1: Authentication and Dashboard Load', async ({ page, uniqueVendor }) => {
     test.setTimeout(60000);
     const startTime = Date.now();
 
     await page.goto(`${BASE_URL}/vendor/login`);
     expect(page.url()).toContain('/vendor/login');
 
-    await page.getByPlaceholder('vendor@example.com').fill(TEST_VENDOR_EMAIL);
-    await page.getByPlaceholder('Enter your password').fill(TEST_VENDOR_PASSWORD);
+    await page.getByPlaceholder('vendor@example.com').fill(uniqueVendor.email);
+    await page.getByPlaceholder('Enter your password').fill(uniqueVendor.password);
 
     const loginPromise = page.waitForResponse(response => response.url().includes('/api/auth/login') && response.status() === 200);
     await page.getByRole('button', { name: /login/i }).click();
@@ -59,11 +47,11 @@ test.describe('INTEG-FRONTEND-BACKEND: Dashboard Integration Tests', () => {
     expect(elapsed).toBeLessThan(60000);
   });
 
-  test('Test 2: Basic Info Form Save', async ({ page }) => {
+  test('Test 2: Basic Info Form Save', async ({ page, uniqueVendor }) => {
     test.setTimeout(60000);
     const startTime = Date.now();
 
-    await loginAsTestVendor(page);
+    await loginAsUniqueVendor(page, uniqueVendor);
     await navigateToEditProfile(page);
 
     const basicInfoTab = page.locator('button[role="tab"]').filter({ hasText: /Basic Info|Profile/ }).first();
@@ -99,11 +87,11 @@ test.describe('INTEG-FRONTEND-BACKEND: Dashboard Integration Tests', () => {
     expect(elapsed).toBeLessThan(60000);
   });
 
-  test('Test 3: Brand Story - Founded Year & Computed Field', async ({ page }) => {
+  test('Test 3: Brand Story - Founded Year & Computed Field', async ({ page, uniqueVendor }) => {
     test.setTimeout(60000);
     const startTime = Date.now();
 
-    await loginAsTestVendor(page);
+    await loginAsUniqueVendor(page, uniqueVendor);
     await navigateToEditProfile(page);
 
     const brandStoryTab = page.locator('button[role="tab"]').filter({ hasText: /Brand Story/ }).first();
@@ -137,11 +125,11 @@ test.describe('INTEG-FRONTEND-BACKEND: Dashboard Integration Tests', () => {
     expect(elapsed).toBeLessThan(60000);
   });
 
-  test('Test 4: Tier Validation Error Display', async ({ page }) => {
+  test('Test 4: Tier Validation Error Display', async ({ page, uniqueVendor }) => {
     test.setTimeout(60000);
     const startTime = Date.now();
 
-    await loginAsTestVendor(page);
+    await loginAsUniqueVendor(page, uniqueVendor);
     const tierBadge = page.getByText(/^(Free|Tier [1-3])$/).first();
     await expect(tierBadge).toBeVisible({ timeout: 5000 });
     const tierText = await tierBadge.textContent();
@@ -162,11 +150,11 @@ test.describe('INTEG-FRONTEND-BACKEND: Dashboard Integration Tests', () => {
     expect(elapsed).toBeLessThan(60000);
   });
 
-  test('Test 5: Certifications Manager Save', async ({ page }) => {
+  test('Test 5: Certifications Manager Save', async ({ page, uniqueVendor }) => {
     test.setTimeout(75000);
     const startTime = Date.now();
 
-    await loginAsTestVendor(page);
+    await loginAsUniqueVendor(page, uniqueVendor);
     const tierBadge = page.getByText(/^(Free|Tier [1-3])$/).first();
     await expect(tierBadge).toBeVisible({ timeout: 5000 });
     const tierText = await tierBadge.textContent();
@@ -213,11 +201,11 @@ test.describe('INTEG-FRONTEND-BACKEND: Dashboard Integration Tests', () => {
     expect(elapsed).toBeLessThan(75000);
   });
 
-  test('Test 6: Optimistic Update & Error Handling', async ({ page }) => {
+  test('Test 6: Optimistic Update & Error Handling', async ({ page, uniqueVendor }) => {
     test.setTimeout(60000);
     const startTime = Date.now();
 
-    await loginAsTestVendor(page);
+    await loginAsUniqueVendor(page, uniqueVendor);
     await navigateToEditProfile(page);
 
     const basicTab = page.locator('button[role="tab"]').filter({ hasText: /Basic Info/ }).first();

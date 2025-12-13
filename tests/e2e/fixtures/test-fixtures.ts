@@ -24,7 +24,7 @@ const API_BASE = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
  * This prevents parallel tests from interfering with each other
  */
 export interface UniqueTestVendor {
-  id: string;
+  id: number;
   email: string;
   password: string;
   companyName: string;

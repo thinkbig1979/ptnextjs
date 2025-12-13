@@ -4,12 +4,12 @@ import { getPayload } from 'payload';
 import config from '@/payload.config';
 
 /**
- * Test Admin Vendor DELETE API
- * DELETE /api/test/admin/vendors/[id]
+ * Test Admin Vendor API
+ * PATCH /api/test/admin/vendors/[id] - Update vendor data (for E2E tests)
+ * DELETE /api/test/admin/vendors/[id] - Delete vendor with cascade
  *
- * Admin endpoint for deleting vendors with cascade deletion of related data.
+ * Admin endpoint for managing vendors in test/development environments.
  * Only available in test/development environments for E2E testing.
- * Used by cascade delete tests to verify data integrity.
  */
 
 interface DeleteResponse {
@@ -145,6 +145,92 @@ export async function DELETE(
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('[Admin Vendor Delete] Error:', errorMessage);
+    return NextResponse.json(
+      {
+        success: false,
+        error: errorMessage,
+      },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * PATCH /api/test/admin/vendors/[id]
+ * Update a vendor's profile data without authentication (for E2E tests)
+ */
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+): Promise<NextResponse> {
+  // NODE_ENV guard - only allow in test/development
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Test endpoints are not available in production',
+      },
+      { status: 403 }
+    );
+  }
+
+  try {
+    const { id: vendorId } = await params;
+
+    if (!vendorId) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Vendor ID is required',
+        },
+        { status: 400 }
+      );
+    }
+
+    const body = await request.json();
+    const payload = await getPayload({ config });
+
+    // Verify the vendor exists
+    const existingVendor = await payload.findByID({
+      collection: 'vendors',
+      id: vendorId,
+    }).catch(() => null);
+
+    if (!existingVendor) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: `Vendor not found: ${vendorId}`,
+        },
+        { status: 404 }
+      );
+    }
+
+    // Update the vendor
+    const updatedVendor = await payload.update({
+      collection: 'vendors',
+      id: vendorId,
+      data: body,
+    });
+
+    // Invalidate cache
+    try {
+      revalidatePath(`/vendors/${existingVendor.slug}`);
+      revalidatePath('/vendors/');
+      revalidatePath('/');
+    } catch (cacheError) {
+      console.error('[Admin Vendor Update] Cache invalidation failed:', cacheError);
+    }
+
+    console.log(`[Admin Vendor Update] Updated vendor ${vendorId}`);
+
+    return NextResponse.json({
+      success: true,
+      vendor: updatedVendor,
+    });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('[Admin Vendor Update] Error:', errorMessage);
     return NextResponse.json(
       {
         success: false,

@@ -1,52 +1,13 @@
-import { test, expect, type Page } from '@playwright/test';
-import { TEST_VENDORS } from './helpers/test-vendors';
+import { testWithUniqueVendor as test, expect, loginAsUniqueVendor } from './fixtures/test-fixtures';
+import { type Page } from '@playwright/test';
 
 /**
  * TEST-E2E-DASHBOARD: Comprehensive E2E Tests for Vendor Dashboard Editing Workflow
  */
 
-const TEST_VENDOR_EMAIL = TEST_VENDORS.tier1.email;
-const TEST_VENDOR_PASSWORD = TEST_VENDORS.tier1.password;
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 
 test.describe.serial('TEST-E2E-DASHBOARD: Vendor Dashboard Editing Workflow', () => {
-
-  async function loginAsTestVendor(page: Page) {
-    console.log('Logging in as test vendor...');
-    await page.goto(`${BASE_URL}/vendor/login`);
-
-    // Wait for React hydration - look for the form to be interactive
-    await page.waitForLoadState('networkidle');
-
-    const emailInput = page.getByPlaceholder('vendor@example.com');
-    const passwordInput = page.getByPlaceholder('Enter your password');
-
-    // Wait for inputs to be visible and enabled (replaces hardcoded waitForTimeout)
-    await emailInput.waitFor({ state: 'visible', timeout: 5000 });
-    await passwordInput.waitFor({ state: 'visible', timeout: 5000 });
-    // Ensure form is ready for input
-    await page.waitForFunction(
-      () => !document.querySelector('input[disabled]'),
-      { timeout: 3000 }
-    ).catch(() => {});
-
-    await emailInput.fill(TEST_VENDOR_EMAIL);
-    await passwordInput.fill(TEST_VENDOR_PASSWORD);
-
-    const loginPromise = page.waitForResponse(
-      response => response.url().includes('/api/auth/login') && response.status() === 200
-    );
-    await page.getByRole('button', { name: /login/i }).click();
-    await loginPromise;
-    await page.waitForURL(`${BASE_URL}/vendor/dashboard`, { timeout: 10000 });
-
-    // Wait for dashboard to hydrate - look for dashboard content instead of hardcoded wait
-    await page.waitForLoadState('networkidle');
-    await page.locator('h1, [data-testid="dashboard"], nav').first().waitFor({
-      state: 'visible',
-      timeout: 5000
-    }).catch(() => {});
-  }
 
   async function navigateToDashboardProfile(page: Page) {
     await page.goto(`${BASE_URL}/vendor/dashboard/profile`);
@@ -79,11 +40,11 @@ test.describe.serial('TEST-E2E-DASHBOARD: Vendor Dashboard Editing Workflow', ()
     }
   }
 
-  test('Test 1: Authentication and Dashboard Access', async ({ page }) => {
+  test('Test 1: Authentication and Dashboard Access', async ({ page, uniqueVendor }) => {
     test.setTimeout(60000);
     console.log('\n=== Test 1: Authentication ===\n');
 
-    await loginAsTestVendor(page);
+    await loginAsUniqueVendor(page, uniqueVendor);
 
     // Check for dashboard heading (use first() to avoid strict mode violation)
     await expect(page.locator('h1').first()).toBeVisible({ timeout: 5000 });
@@ -95,11 +56,11 @@ test.describe.serial('TEST-E2E-DASHBOARD: Vendor Dashboard Editing Workflow', ()
     console.log('[OK] Test 1 PASSED\n');
   });
 
-  test('Test 2: Edit Basic Info and Verify Save', async ({ page }) => {
+  test('Test 2: Edit Basic Info and Verify Save', async ({ page, uniqueVendor }) => {
     test.setTimeout(90000);
     console.log('\n=== Test 2: Edit Basic Info ===\n');
 
-    await loginAsTestVendor(page);
+    await loginAsUniqueVendor(page, uniqueVendor);
     await navigateToDashboardProfile(page);
     await switchToTab(page, 'Basic Info');
 
@@ -156,11 +117,11 @@ test.describe.serial('TEST-E2E-DASHBOARD: Vendor Dashboard Editing Workflow', ()
     console.log('[OK] Test 2 PASSED\n');
   });
 
-  test('Test 3: Locations Tab with Tier Limit', async ({ page }) => {
+  test('Test 3: Locations Tab with Tier Limit', async ({ page, uniqueVendor }) => {
     test.setTimeout(90000);
     console.log('\n=== Test 3: Locations Tab ===\n');
 
-    await loginAsTestVendor(page);
+    await loginAsUniqueVendor(page, uniqueVendor);
     await navigateToDashboardProfile(page);
     const tierText = await getCurrentTier(page);
 
@@ -173,11 +134,11 @@ test.describe.serial('TEST-E2E-DASHBOARD: Vendor Dashboard Editing Workflow', ()
     console.log(`[OK] Test 3 PASSED (Tier: ${tierText})\n`);
   });
 
-  test('Test 4: Brand Story with Founded Year', async ({ page }) => {
+  test('Test 4: Brand Story with Founded Year', async ({ page, uniqueVendor }) => {
     test.setTimeout(90000);
     console.log('\n=== Test 4: Brand Story ===\n');
 
-    await loginAsTestVendor(page);
+    await loginAsUniqueVendor(page, uniqueVendor);
     await navigateToDashboardProfile(page);
     const tierText = await getCurrentTier(page);
 
@@ -242,11 +203,11 @@ test.describe.serial('TEST-E2E-DASHBOARD: Vendor Dashboard Editing Workflow', ()
     console.log('[OK] Test 4 PASSED\n');
   });
 
-  test('Test 5: Certifications Operations', async ({ page }) => {
+  test('Test 5: Certifications Operations', async ({ page, uniqueVendor }) => {
     test.setTimeout(120000);
     console.log('\n=== Test 5: Certifications ===\n');
 
-    await loginAsTestVendor(page);
+    await loginAsUniqueVendor(page, uniqueVendor);
     await navigateToDashboardProfile(page);
     const tierText = await getCurrentTier(page);
 
@@ -307,11 +268,11 @@ test.describe.serial('TEST-E2E-DASHBOARD: Vendor Dashboard Editing Workflow', ()
     console.log('[OK] Test 5 PASSED\n');
   });
 
-  test('Test 6: Form Validation', async ({ page }) => {
+  test('Test 6: Form Validation', async ({ page, uniqueVendor }) => {
     test.setTimeout(90000);
     console.log('\n=== Test 6: Form Validation ===\n');
 
-    await loginAsTestVendor(page);
+    await loginAsUniqueVendor(page, uniqueVendor);
     await navigateToDashboardProfile(page);
     await switchToTab(page, 'Basic Info');
 
@@ -325,11 +286,11 @@ test.describe.serial('TEST-E2E-DASHBOARD: Vendor Dashboard Editing Workflow', ()
     console.log('[OK] Test 6 PASSED\n');
   });
 
-  test('Test 7: Free Tier Upgrade Prompts', async ({ page }) => {
+  test('Test 7: Free Tier Upgrade Prompts', async ({ page, uniqueVendor }) => {
     test.setTimeout(60000);
     console.log('\n=== Test 7: Upgrade Prompts ===\n');
 
-    await loginAsTestVendor(page);
+    await loginAsUniqueVendor(page, uniqueVendor);
     await navigateToDashboardProfile(page);
     const tierText = await getCurrentTier(page);
 
@@ -351,11 +312,11 @@ test.describe.serial('TEST-E2E-DASHBOARD: Vendor Dashboard Editing Workflow', ()
     console.log('[OK] Test 7 PASSED\n');
   });
 
-  test('Test 8: Logout', async ({ page }) => {
+  test('Test 8: Logout', async ({ page, uniqueVendor }) => {
     test.setTimeout(60000);
     console.log('\n=== Test 8: Logout ===\n');
 
-    await loginAsTestVendor(page);
+    await loginAsUniqueVendor(page, uniqueVendor);
 
     const logoutButton = page.locator('button').filter({ hasText: /Logout|Log out/i }).first();
     if (await logoutButton.isVisible({ timeout: 5000 }).catch(() => false)) {
@@ -371,11 +332,11 @@ test.describe.serial('TEST-E2E-DASHBOARD: Vendor Dashboard Editing Workflow', ()
     console.log('[OK] Test 8 PASSED\n');
   });
 
-  test('Test 9: Sidebar Navigation', async ({ page }) => {
+  test('Test 9: Sidebar Navigation', async ({ page, uniqueVendor }) => {
     test.setTimeout(60000);
     console.log('\n=== Test 9: Sidebar Navigation ===\n');
 
-    await loginAsTestVendor(page);
+    await loginAsUniqueVendor(page, uniqueVendor);
 
     // Verify sidebar is visible (on desktop)
     const sidebar = page.locator('aside').first();
@@ -392,11 +353,11 @@ test.describe.serial('TEST-E2E-DASHBOARD: Vendor Dashboard Editing Workflow', ()
     console.log('[OK] Test 9 PASSED\n');
   });
 
-  test('Test 10: Profile Completion Status', async ({ page }) => {
+  test('Test 10: Profile Completion Status', async ({ page, uniqueVendor }) => {
     test.setTimeout(60000);
     console.log('\n=== Test 10: Profile Status ===\n');
 
-    await loginAsTestVendor(page);
+    await loginAsUniqueVendor(page, uniqueVendor);
 
     const completionIndicator = page.locator('text=/completion|complete/i').first();
     const isVisible = await completionIndicator.isVisible({ timeout: 5000 }).catch(() => false);
