@@ -39,7 +39,9 @@ const nextConfig = {
   transpilePackages: ['clsx', 'tailwind-merge', 'class-variance-authority'],
 
   // External packages that should not be bundled (server-side only)
-  serverExternalPackages: ['payload', '@payloadcms/db-sqlite', '@payloadcms/db-postgres'],
+  // Note: resend and svix added to fix webpack chunk corruption during hot reload
+  // (Error: Cannot find module './vendor-chunks/svix.js')
+  serverExternalPackages: ['payload', '@payloadcms/db-sqlite', '@payloadcms/db-postgres', 'resend', 'svix'],
 
   // Webpack configuration
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
