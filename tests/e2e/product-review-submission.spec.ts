@@ -12,6 +12,8 @@ import { test, expect } from '@playwright/test';
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 
 test.describe('Product Review Submission', () => {
+  // Serial mode: review submissions modify database state
+  test.describe.configure({ mode: 'serial' });
   const testProductUrl = `${BASE_URL}/products/superyacht-integration-solutions-intelligent-lighting-control-system`;
 
   test.beforeEach(async ({ page }) => {

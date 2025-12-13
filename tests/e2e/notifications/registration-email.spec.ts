@@ -28,6 +28,8 @@ import { EmailMock, setupEmailMock } from '../helpers/email-mock-helpers';
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 
 test.describe('Email Notifications: Vendor Registration', () => {
+  // Serial mode: registration tests create vendors sequentially
+  test.describe.configure({ mode: 'serial' });
   test.setTimeout(60000);
 
   let emailMock: EmailMock;

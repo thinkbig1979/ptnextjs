@@ -14,6 +14,8 @@ const VALID_FIXTURE = path.join(__dirname, '../test-fixtures/valid-vendor-data.x
 
 // FIXED: Tests now properly login with tier2 vendor and wait for VendorDashboardContext to load
 test.describe('Excel Import - Happy Path', () => {
+  // Serial mode: file uploads and imports modify database state
+  test.describe.configure({ mode: 'serial' });
   test.beforeEach(async ({ page }) => {
     // Clear rate limits to prevent 429 errors when running many tests
     await clearRateLimits(page);

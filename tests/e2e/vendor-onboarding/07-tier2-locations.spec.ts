@@ -12,6 +12,8 @@ async function loginAsVendor(page: Page, email: string, password: string) {
 }
 
 test.describe('TIER2-P2: Tier 2 Location Management', () => {
+  // Serial mode: location CRUD operations and geocoding must not race
+  test.describe.configure({ mode: 'serial' });
   test.setTimeout(90000); // 90 seconds for longer tests
 
   test('Test 7.1: Add first location as headquarters with HQ flag', async ({ page }) => {

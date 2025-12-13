@@ -5,6 +5,8 @@ import { seedVendors } from '../helpers/seed-api-helpers';
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 
 test.describe('VENDOR-ADMIN-P1: Admin Approval Workflow', () => {
+  // Serial mode: tests seed and modify vendor state sequentially
+  test.describe.configure({ mode: 'serial' });
   test.setTimeout(45000);
 
   test('Test 2.1: Admin login and navigation to pending vendors', async ({ page }) => {

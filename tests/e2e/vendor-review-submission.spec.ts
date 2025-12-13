@@ -19,6 +19,8 @@ test.beforeAll(() => {
 });
 
 test.describe('Vendor Review Submission Feature', () => {
+  // Serial mode: review submissions and modal interactions must not race
+  test.describe.configure({ mode: 'serial' });
   // Use tier2 vendor that is seeded in global-setup.ts
   const vendorUrl = '/vendors/testvendor-tier2';
 

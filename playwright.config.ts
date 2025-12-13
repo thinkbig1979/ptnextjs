@@ -71,8 +71,10 @@ export default defineConfig({
   // Local: 1 retry for network issues, CI: 2 retries for full resilience
   retries: isCI ? 2 : 1,
 
-  // Workers: auto-detect locally, limit in CI
-  workers: isCI ? 4 : undefined,
+  // Workers: balanced parallelism
+  // - Local: 3 workers (leaves headroom for server + OS on 8-core systems)
+  // - CI: 4 workers
+  workers: isCI ? 4 : 3,
 
   // Reporter configuration based on environment
   reporter: isCI
@@ -117,8 +119,14 @@ export default defineConfig({
   // Output directory for test artifacts
   outputDir: 'test-results/',
 
-  /*
-   * Web server configuration DISABLED
-   * Start the dev server manually: DISABLE_EMAILS=true npm run dev
-   */
+  // Web server configuration
+  // - reuseExistingServer: true means Playwright will use an existing server if running
+  // - Only starts a new server if none is running on baseURL
+  // - Prevents multiple server instances and resource exhaustion
+  webServer: {
+    command: 'DISABLE_EMAILS=true npm run dev',
+    url: 'http://localhost:3000',
+    reuseExistingServer: true,
+    timeout: 120000, // 2 minutes for server startup
+  },
 });

@@ -19,6 +19,8 @@ import {
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 
 test.describe('Vendor Registration Integration', () => {
+  // Serial mode: registration creates vendors and tests duplicate email detection
+  test.describe.configure({ mode: 'serial' });
   test.setTimeout(60000);
 
   test('should complete full registration flow', async ({ page }) => {

@@ -70,6 +70,8 @@ async function getVendorProfile(
 }
 
 test.describe('Data Integrity: Concurrent Updates', () => {
+  // Serial mode: concurrent update tests must not overlap with other write tests
+  test.describe.configure({ mode: 'serial' });
   test.setTimeout(90000);
 
   test('CONCURRENT-01: Simultaneous profile updates resolve without corruption', async ({

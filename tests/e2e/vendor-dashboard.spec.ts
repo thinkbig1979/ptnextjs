@@ -17,14 +17,18 @@ test.describe.serial('TEST-E2E-DASHBOARD: Vendor Dashboard Editing Workflow', ()
 
     // Wait for React hydration - look for the form to be interactive
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1500); // Extra wait for hydration
 
     const emailInput = page.getByPlaceholder('vendor@example.com');
     const passwordInput = page.getByPlaceholder('Enter your password');
 
-    // Wait for inputs to be visible and enabled
+    // Wait for inputs to be visible and enabled (replaces hardcoded waitForTimeout)
     await emailInput.waitFor({ state: 'visible', timeout: 5000 });
     await passwordInput.waitFor({ state: 'visible', timeout: 5000 });
+    // Ensure form is ready for input
+    await page.waitForFunction(
+      () => !document.querySelector('input[disabled]'),
+      { timeout: 3000 }
+    ).catch(() => {});
 
     await emailInput.fill(TEST_VENDOR_EMAIL);
     await passwordInput.fill(TEST_VENDOR_PASSWORD);
@@ -36,15 +40,22 @@ test.describe.serial('TEST-E2E-DASHBOARD: Vendor Dashboard Editing Workflow', ()
     await loginPromise;
     await page.waitForURL(`${BASE_URL}/vendor/dashboard`, { timeout: 10000 });
 
-    // Wait for dashboard to hydrate
+    // Wait for dashboard to hydrate - look for dashboard content instead of hardcoded wait
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1500);
+    await page.locator('h1, [data-testid="dashboard"], nav').first().waitFor({
+      state: 'visible',
+      timeout: 5000
+    }).catch(() => {});
   }
 
   async function navigateToDashboardProfile(page: Page) {
     await page.goto(`${BASE_URL}/vendor/dashboard/profile`);
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(2000); // Wait for React hydration
+    // Wait for profile form to be ready instead of hardcoded wait
+    await page.locator('input, textarea, button[role="tab"]').first().waitFor({
+      state: 'visible',
+      timeout: 5000
+    }).catch(() => {});
   }
 
   async function switchToTab(page: Page, tabName: string) {

@@ -12,6 +12,8 @@ async function loginAsVendor(page: Page, email: string, password: string) {
 }
 
 test.describe('TIER1-P2: Tier 1 Advanced Profile', () => {
+  // Serial mode: tests add/edit/delete certifications, awards, and team members
+  test.describe.configure({ mode: 'serial' });
   test.setTimeout(90000); // 90 seconds for longer tests
 
   test('Test 6.1: Fill brand story (website, social links, founded year)', async ({ page }) => {

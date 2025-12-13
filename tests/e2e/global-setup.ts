@@ -191,7 +191,7 @@ async function globalSetup(config: FullConfig): Promise<void> {
   console.log('========================================');
   console.log(`Base URL: ${baseURL}`);
 
-  // Step 1: Wait for server to be ready
+  // Step 1: Wait for server to be ready (basic HTTP check)
   console.log('\n[Global Setup] Step 1: Checking server availability...');
   const serverReady = await waitForServer(baseURL, 60000);
   if (!serverReady) {
@@ -199,7 +199,17 @@ async function globalSetup(config: FullConfig): Promise<void> {
       `Server not available at ${baseURL}. Please start the dev server with: DISABLE_EMAILS=true npm run dev`
     );
   }
-  console.log('[Global Setup] Server is ready!');
+  console.log('[Global Setup] Server is responding!');
+
+  // Step 1.5: Health check - verify database and test endpoints are ready
+  console.log('\n[Global Setup] Step 1.5: Performing comprehensive health check...');
+  const healthCheck = await checkHealth(baseURL, 30000);
+  if (!healthCheck.ready) {
+    throw new Error(
+      `Server health check failed:\n${healthCheck.details}\nPlease ensure the database is running and accessible.`
+    );
+  }
+  console.log('[Global Setup] Health check passed! Database and test endpoints ready.');
 
   // Step 2: Clear rate limits
   console.log('\n[Global Setup] Step 2: Clearing rate limits...');
@@ -219,6 +229,11 @@ async function globalSetup(config: FullConfig): Promise<void> {
     console.log('[Global Setup] Test vendors seeded successfully!');
   }
 
+  // Step 3.5: Wait for vendor transactions to commit
+  // This small delay ensures all vendor records are fully committed before product seeding
+  console.log('\n[Global Setup] Step 3.5: Waiting for vendor transactions to settle...');
+  await new Promise((resolve) => setTimeout(resolve, 500));
+
   // Step 4: Seed test products for tier2+ vendors
   console.log('\n[Global Setup] Step 4: Seeding test products for tier2+ vendors...');
   const productsSeeded = await seedTestProducts(baseURL);
@@ -231,6 +246,58 @@ async function globalSetup(config: FullConfig): Promise<void> {
   console.log('\n========================================');
   console.log('  GLOBAL SETUP COMPLETE');
   console.log('========================================\n');
+}
+
+/**
+ * Check server health - database connection and test API readiness
+ * This goes beyond a simple HTTP check to verify the system is ready for tests
+ */
+async function checkHealth(
+  baseURL: string,
+  timeout: number
+): Promise<{ ready: boolean; details: string }> {
+  const startTime = Date.now();
+  const pollInterval = 1000;
+
+  while (Date.now() - startTime < timeout) {
+    try {
+      const response = await fetch(`${baseURL}/api/test/health`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.readyForTests) {
+        const checkSummary = [
+          `  Database: ${data.checks.database.ok ? '✓' : '✗'} ${data.checks.database.message}`,
+          `  Vendors: ${data.checks.vendorsTable.ok ? '✓' : '✗'} ${data.checks.vendorsTable.message}`,
+          `  Products: ${data.checks.productsTable.ok ? '✓' : '✗'} ${data.checks.productsTable.message}`,
+          `  Test APIs: ${data.checks.testEndpoints.ok ? '✓' : '✗'} ${data.checks.testEndpoints.message}`,
+        ].join('\n');
+        return { ready: true, details: checkSummary };
+      }
+
+      // Not ready yet, log what's failing
+      if (data.checks) {
+        const failingChecks = Object.entries(data.checks)
+          .filter(([, check]) => !(check as { ok: boolean }).ok)
+          .map(([name, check]) => `${name}: ${(check as { message: string }).message}`)
+          .join(', ');
+        console.log(`[Global Setup] Health check pending: ${failingChecks}`);
+      }
+    } catch (error) {
+      // Health endpoint not responding yet
+      console.log(`[Global Setup] Waiting for health endpoint... (${Math.round((Date.now() - startTime) / 1000)}s)`);
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, pollInterval));
+  }
+
+  return {
+    ready: false,
+    details: 'Health check timed out. Database may not be connected.',
+  };
 }
 
 /**
