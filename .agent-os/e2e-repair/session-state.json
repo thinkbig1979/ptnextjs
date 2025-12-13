@@ -1,18 +1,39 @@
 {
   "version": "1.0",
-  "lastUpdatedAt": "2025-12-13T14:30:00Z",
-  "phase": "verification",
+  "lastUpdatedAt": "2025-12-13T16:00:00Z",
+  "phase": "analysis",
   "progress": {
     "locationSearchTests": {
       "passed": 43,
       "failed": 0,
       "skipped": 2
+    },
+    "databaseFixes": {
+      "orphanProductsBadges": 104,
+      "orphanCompatMatrix": 123,
+      "orphanProductsBenefits": 69,
+      "orphanProductsComparison": 78,
+      "orphanProductsFeatures": 197,
+      "orphanProductsServices": 134,
+      "orphanProductsSpecs": 240,
+      "orphanProductsRels": 291,
+      "orphanProductsReviews": 93,
+      "orphanProductsWarranty": 108,
+      "orphanVendorsAwards": 12,
+      "orphanVendorsCerts": 16,
+      "orphanVendorsValues": 23,
+      "orphanVendorsLocations": 13,
+      "orphanVendorsServiceAreas": 25,
+      "orphanVendorsTeam": 10,
+      "orphanVendorsRels": 21,
+      "deletedOrphanVendors": 7,
+      "deletedOrphanProducts": 32
     }
   },
   "rootCauses": {
-    "identified": ["RC-2", "RC-3"],
-    "fixed": ["RC-2"],
-    "remaining": ["RC-3"]
+    "identified": ["RC-2", "RC-3", "RC-4", "RC-5"],
+    "fixed": ["RC-2", "RC-DB"],
+    "remaining": ["RC-3", "RC-4", "RC-5"]
   },
   "fixHistory": [
     {
@@ -31,17 +52,42 @@
       ],
       "result": "success",
       "testsFixed": 43
+    },
+    {
+      "rootCause": "RC-DB",
+      "description": "Database orphan records causing FK violations - PostgreSQL migration data integrity",
+      "action": "Deleted orphan records from products_badges, compat_matrix, vendors_*, and products tables",
+      "result": "success",
+      "recordsDeleted": 1500
     }
   ],
   "quarantined": [
     "location-search-ux.spec.ts:175 (3 char hint - feature not implemented)",
     "location-search-nantes.spec.ts:6 (debug test)"
   ],
+  "remainingIssues": {
+    "RC-3": {
+      "description": "Migration tests timeout - DATA ISSUE: Products page shows 0 products because getAllProducts() filters to tier2+ vendors only, and no tier2+ vendors have products",
+      "impact": "~27 tests",
+      "type": "DATA_ISSUE",
+      "fix": "Need to create products for tier2+ vendors OR modify filter logic"
+    },
+    "RC-4": {
+      "description": "Write Review button missing on product pages",
+      "impact": "~10 tests",
+      "type": "UI_MISSING_ELEMENT"
+    },
+    "RC-5": {
+      "description": "Some tier upgrade tests have API timeouts during vendor seeding",
+      "impact": "~15 tests",
+      "type": "TIMEOUT"
+    }
+  },
   "notes": [
-    "Geocode mock now intercepts local /api/geocode endpoint",
-    "Added data-testid='result-count' to vendors-client.tsx",
-    "Added data-testid='distance-value' to VendorSearchBar.tsx",
-    "Changed data-testid='location-reset-button' to 'reset-button' for consistency",
-    "Fixed test selectors from location-results to location-results-dropdown"
+    "Server was returning 500 errors due to FK constraint violations during schema sync",
+    "Orphan records were created during SQLite→PostgreSQL migration",
+    "Products page shows 0 products due to tier2+ filter in getAllProducts()",
+    "Tier tests create their own test data and mostly pass",
+    "Location search tests all pass after RC-2 fix"
   ]
 }
