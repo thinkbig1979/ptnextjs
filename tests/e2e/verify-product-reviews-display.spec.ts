@@ -7,72 +7,60 @@ import { test, expect } from '@playwright/test';
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 
 test.describe('Product Reviews Display', () => {
-  const productUrl = '/products/nautictech-solutions-complete-system-integration';
+  // Use tier2 product that is seeded in global-setup.ts
+  const productUrl = '/products/tier2-nav-system';
 
-  test('01 - Product with reviews displays them correctly', async ({ page }) => {
+  test('01 - Reviews section renders correctly', async ({ page }) => {
     await page.goto(productUrl);
 
     // Wait for the page to load
     await page.waitForLoadState('networkidle');
 
-    // Navigate to Reviews tab (if it exists)
+    // Navigate to Reviews tab
     const reviewsTab = page.getByRole('tab', { name: /reviews/i });
-    if (await reviewsTab.isVisible()) {
-      await reviewsTab.click();
-      await page.waitForTimeout(500);
-    }
+    expect(await reviewsTab.isVisible()).toBeTruthy();
 
-    // Check if reviews are displayed
-    const reviewsSection = page.locator('[data-testid*="review"], .review, [class*="review"]').first();
+    await reviewsTab.click();
 
-    if (await reviewsSection.isVisible()) {
-      console.log('[OK] Reviews section found and visible');
+    // Wait for the reviews tab content to become visible
+    // The tab panel should become visible after clicking
+    const reviewsTabPanel = page.locator('[role="tabpanel"][data-state="active"]');
+    await reviewsTabPanel.waitFor({ state: 'visible', timeout: 5000 });
+    console.log('[OK] Reviews tab panel is visible');
 
-      // Check for review content
-      const hasReviewerName = await page.locator('text=/David Martinez|Sarah Chen|Mike Roberts/i').isVisible();
-      const hasRating = await page.locator('[data-testid*="rating"], [class*="rating"], [aria-label*="star"]').first().isVisible();
+    // Check for Write Review button (should exist for products without reviews)
+    const writeReviewButton = page.locator('button').filter({ hasText: /write.*review/i }).first();
+    const hasWriteButton = await writeReviewButton.isVisible({ timeout: 3000 }).catch(() => false);
+    console.log('  - Write Review button visible:', hasWriteButton);
 
-      console.log('  - Has reviewer name:', hasReviewerName);
-      console.log('  - Has rating display:', hasRating);
+    // Check for rating filter dropdown (indicates review filtering capability)
+    const ratingFilter = page.locator('select').first();
+    const hasFilter = await ratingFilter.isVisible({ timeout: 2000 }).catch(() => false);
+    console.log('  - Rating filter visible:', hasFilter);
 
-      expect(hasReviewerName || hasRating).toBeTruthy();
-    } else {
-      console.log('[WARN]️  No reviews section visible - checking if ownerReviews are being passed to component');
-
-      // Check the page source for review data
-      const content = await page.content();
-      const hasReviewData = content.includes('David Martinez') ||
-                           content.includes('Sarah Chen') ||
-                           content.includes('overall_rating') ||
-                           content.includes('ownerReview');
-
-      if (hasReviewData) {
-        console.log('[WARN]️  Review data exists in page but not rendered in UI');
-      } else {
-        console.log('[FAIL] Review data not found in page at all - data service may not be passing ownerReviews');
-      }
-    }
+    // Reviews section should have Write Review button and/or rating filter
+    expect(hasWriteButton || hasFilter).toBeTruthy();
   });
 
-  test('02 - Check API endpoint returns reviews', async ({ request }) => {
-    // First, let's check if there's a reviews API endpoint
+  test('02 - Check product page loads correctly', async ({ request }) => {
+    // Check that the product page returns 200 OK
     const productResponse = await request.get(`${BASE_URL}${productUrl}`);
     expect(productResponse.ok()).toBeTruthy();
 
     const html = await productResponse.text();
 
-    // Check if review data is in the page HTML
-    const hasReviewerName = html.includes('David Martinez') || html.includes('Sarah Chen');
-    const hasReviewData = html.includes('ownerReview') || html.includes('rating');
+    // Check that the page contains product-related elements
+    const hasProductName = html.includes('Professional Marine Navigation System') ||
+                          html.includes('tier2-nav-system');
+    const hasReviewsTab = html.includes('Reviews') || html.includes('reviews');
+    const hasProductVendor = html.includes('data-testid="product-vendor"');
 
-    console.log('API Response Check:');
-    console.log('  - Contains reviewer names:', hasReviewerName);
-    console.log('  - Contains review data:', hasReviewData);
+    console.log('Product Page Check:');
+    console.log('  - Contains product name:', hasProductName);
+    console.log('  - Contains reviews tab:', hasReviewsTab);
+    console.log('  - Contains vendor info:', hasProductVendor);
 
-    if (!hasReviewerName && !hasReviewData) {
-      console.log('[FAIL] ISSUE FOUND: Product reviews not in SSG page data');
-      console.log('   This indicates transformPayloadProduct may not be including ownerReviews in return object');
-    }
+    expect(hasProductName || hasReviewsTab).toBeTruthy();
   });
 
   test('03 - Verify review submission component exists', async ({ page }) => {

@@ -10,7 +10,7 @@
  */
 
 import { FullConfig } from '@playwright/test';
-import http from 'http';
+import * as http from 'http';
 
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 
@@ -133,6 +133,56 @@ const STANDARD_TEST_VENDORS = [
   },
 ];
 
+/**
+ * Standard test products for tier2 vendors
+ * These products will be displayed on the products page (tier2+ filter)
+ */
+interface TestProductInput {
+  name: string;
+  vendorSlug: string; // We'll look up the vendor ID by slug
+  description: string;
+  slug: string;
+  published: boolean;
+}
+
+const STANDARD_TEST_PRODUCTS: TestProductInput[] = [
+  {
+    name: 'Professional Marine Navigation System',
+    vendorSlug: 'testvendor-tier2',
+    description: 'Advanced navigation system with GPS, radar, and chartplotter integration',
+    slug: 'tier2-nav-system',
+    published: true,
+  },
+  {
+    name: 'Yacht Communication Suite',
+    vendorSlug: 'testvendor-tier2',
+    description: 'Complete communication solution including satellite, VHF, and cellular connectivity',
+    slug: 'tier2-comm-suite',
+    published: true,
+  },
+  {
+    name: 'Marine Entertainment System',
+    vendorSlug: 'testvendor-tier2',
+    description: 'High-end audio and video entertainment system for luxury yachts',
+    slug: 'tier2-entertainment',
+    published: true,
+  },
+  {
+    name: 'Premium Yacht Control System',
+    vendorSlug: 'testvendor-tier3',
+    description: 'Complete yacht automation and control solution',
+    slug: 'tier3-control-system',
+    published: true,
+  },
+  {
+    name: 'Luxury Interior Lighting Package',
+    vendorSlug: 'testvendor-tier3',
+    description: 'Customizable LED lighting for yacht interiors',
+    slug: 'tier3-lighting',
+    published: true,
+  },
+];
+
 async function globalSetup(config: FullConfig): Promise<void> {
   const baseURL = config.projects[0]?.use?.baseURL || BASE_URL;
 
@@ -167,6 +217,15 @@ async function globalSetup(config: FullConfig): Promise<void> {
     console.warn('[Global Setup] Warning: Some test vendors may not have been seeded.');
   } else {
     console.log('[Global Setup] Test vendors seeded successfully!');
+  }
+
+  // Step 4: Seed test products for tier2+ vendors
+  console.log('\n[Global Setup] Step 4: Seeding test products for tier2+ vendors...');
+  const productsSeeded = await seedTestProducts(baseURL);
+  if (!productsSeeded) {
+    console.warn('[Global Setup] Warning: Some test products may not have been seeded.');
+  } else {
+    console.log('[Global Setup] Test products seeded successfully!');
   }
 
   console.log('\n========================================');
@@ -280,6 +339,82 @@ async function seedTestVendors(baseURL: string): Promise<boolean> {
     return data.success !== false;
   } catch (error) {
     console.error('[Global Setup] Error seeding test vendors:', error);
+    return false;
+  }
+}
+
+/**
+ * Seed test products for tier2+ vendors
+ * Products are required for the products page tests (tier2+ filter)
+ */
+async function seedTestProducts(baseURL: string): Promise<boolean> {
+  try {
+    // First, get vendor IDs by slug
+    const vendorIds: Record<string, number> = {};
+    const uniqueSlugs = Array.from(new Set(STANDARD_TEST_PRODUCTS.map((p) => p.vendorSlug)));
+
+    for (const slug of uniqueSlugs) {
+      try {
+        const response = await fetch(`${baseURL}/api/vendors?where[slug][equals]=${slug}&limit=1`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.docs && data.docs.length > 0) {
+            vendorIds[slug] = data.docs[0].id;
+          }
+        }
+      } catch {
+        console.warn(`[Global Setup] Could not find vendor with slug: ${slug}`);
+      }
+    }
+
+    // Check if we have all required vendors
+    const missingVendors = uniqueSlugs.filter((slug) => !vendorIds[slug]);
+    if (missingVendors.length > 0) {
+      console.warn(`[Global Setup] Missing vendors for products: ${missingVendors.join(', ')}`);
+      // Still continue - some products can be seeded
+    }
+
+    // Prepare products with vendor IDs
+    const productsToSeed = STANDARD_TEST_PRODUCTS.filter((p) => vendorIds[p.vendorSlug]).map((p) => ({
+      name: p.name,
+      vendor: vendorIds[p.vendorSlug],
+      description: p.description,
+      slug: p.slug,
+      published: p.published,
+    }));
+
+    if (productsToSeed.length === 0) {
+      console.warn('[Global Setup] No products to seed (missing vendor IDs)');
+      return false;
+    }
+
+    // Seed products
+    const response = await fetch(`${baseURL}/api/test/products/seed`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(productsToSeed),
+    });
+
+    const data = await response.json();
+
+    if (response.ok && data.success) {
+      if (data.existing > 0 && data.created > 0) {
+        console.log(`[Global Setup] Created ${data.created} products, ${data.existing} already existed`);
+      } else if (data.existing > 0) {
+        console.log(`[Global Setup] All ${data.existing} test products already exist (OK)`);
+      } else {
+        console.log(`[Global Setup] Seeded ${data.created || data.count || 0} products`);
+      }
+      return true;
+    }
+
+    if (data.errors) {
+      console.warn('[Global Setup] Some product seeding errors:', data.errors);
+    }
+
+    return data.success !== false;
+  } catch (error) {
+    console.error('[Global Setup] Error seeding test products:', error);
     return false;
   }
 }

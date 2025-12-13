@@ -19,7 +19,8 @@ test.beforeAll(() => {
 });
 
 test.describe('Vendor Review Submission Feature', () => {
-  const vendorUrl = '/vendors/test-vendor-1762171312643';
+  // Use tier2 vendor that is seeded in global-setup.ts
+  const vendorUrl = '/vendors/testvendor-tier2';
 
   test('01 - Click button and verify modal opens', async ({ page }) => {
     console.log('\n=== Testing Vendor Review Modal ===\n');
