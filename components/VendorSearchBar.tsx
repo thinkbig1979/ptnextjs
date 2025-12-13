@@ -272,11 +272,11 @@ export function VendorSearchBar({
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
           {/* Search Mode Tabs */}
           <TabsList className="grid w-full sm:w-[240px] grid-cols-2">
-            <TabsTrigger value="name" className="gap-2">
+            <TabsTrigger value="name" className="gap-2" data-testid="search-tab-name">
               <Search className="h-4 w-4" />
               Name
             </TabsTrigger>
-            <TabsTrigger value="location" className="gap-2">
+            <TabsTrigger value="location" className="gap-2" data-testid="search-tab-location">
               <MapPin className="h-4 w-4" />
               Location
             </TabsTrigger>
@@ -409,6 +409,7 @@ export function VendorSearchBar({
                         <button
                           key={result.properties.osm_id || index}
                           type="button"
+                          data-testid={`location-result-${index}`}
                           onMouseDown={(e) => {
                             e.preventDefault();
                             handleLocationSelect(result);
