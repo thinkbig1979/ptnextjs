@@ -5,10 +5,18 @@ test.describe('Location Search Focus Management', () => {
     // geocodeMock is automatically set up via fixture
     await page.goto('/vendors');
     await page.waitForLoadState('networkidle');
+
+    // Click on Location tab to show location search UI
+    const locationTab = page.getByTestId('search-tab-location');
+    await locationTab.waitFor({ state: 'visible', timeout: 15000 });
+    await locationTab.click();
+
+    // Wait for location input to be visible
+    await page.getByTestId('location-search-input').waitFor({ state: 'visible', timeout: 10000 });
   });
 
   test('should keep focus in input when suggestions appear', async ({ page }) => {
-    const locationInput = page.getByTestId('location-input');
+    const locationInput = page.getByTestId('location-search-input');
 
     // Focus the input
     await locationInput.focus();
@@ -27,7 +35,7 @@ test.describe('Location Search Focus Management', () => {
   });
 
   test('should allow typing to continue after suggestions appear', async ({ page }) => {
-    const locationInput = page.getByTestId('location-input');
+    const locationInput = page.getByTestId('location-search-input');
 
     // Start typing
     await locationInput.type('Mon');
@@ -47,7 +55,7 @@ test.describe('Location Search Focus Management', () => {
   });
 
   test('should support arrow key navigation without losing focus', async ({ page }) => {
-    const locationInput = page.getByTestId('location-input');
+    const locationInput = page.getByTestId('location-search-input');
 
     // Type to show suggestions
     await locationInput.type('Paris');
@@ -77,7 +85,7 @@ test.describe('Location Search Focus Management', () => {
   });
 
   test('should maintain focus when hovering over suggestions with mouse', async ({ page }) => {
-    const locationInput = page.getByTestId('location-input');
+    const locationInput = page.getByTestId('location-search-input');
 
     // Type to show suggestions
     await locationInput.type('London');
@@ -95,7 +103,7 @@ test.describe('Location Search Focus Management', () => {
   });
 
   test('should refocus input after clicking a suggestion', async ({ page }) => {
-    const locationInput = page.getByTestId('location-input');
+    const locationInput = page.getByTestId('location-search-input');
 
     // Type to show suggestions
     await locationInput.type('Monaco');
@@ -118,7 +126,7 @@ test.describe('Location Search Focus Management', () => {
   });
 
   test('complete keyboard flow without mouse', async ({ page }) => {
-    const locationInput = page.getByTestId('location-input');
+    const locationInput = page.getByTestId('location-search-input');
 
     // Step 1: Type location
     await locationInput.type('Paris');
@@ -144,7 +152,7 @@ test.describe('Location Search Focus Management', () => {
   });
 
   test('should handle rapid typing without focus issues', async ({ page }) => {
-    const locationInput = page.getByTestId('location-input');
+    const locationInput = page.getByTestId('location-search-input');
 
     // Type rapidly
     await locationInput.type('New York', { delay: 50 });

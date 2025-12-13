@@ -15,8 +15,13 @@ test.describe('Location Search - Nantes France Debug', () => {
     await page.goto(`${BASE_URL}/vendors`);
     await page.waitForLoadState('networkidle');
 
-    // Scroll to location filter
-    await page.locator('[data-testid="location-search-filter"]').scrollIntoViewIfNeeded();
+    // Click on Location tab to show location search UI
+    const locationTab = page.getByTestId('search-tab-location');
+    await locationTab.waitFor({ state: 'visible', timeout: 15000 });
+    await locationTab.click();
+
+    // Wait for location input to be visible
+    await page.getByTestId('location-search-input').waitFor({ state: 'visible', timeout: 10000 });
 
     console.log('\n=== SEARCHING FOR NANTES ===\n');
 

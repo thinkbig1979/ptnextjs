@@ -5,10 +5,18 @@ test.describe('Location Search - Improved UX', () => {
     // geocodeMock is automatically set up via fixture
     await page.goto('/vendors');
     await page.waitForLoadState('networkidle');
+
+    // Click on Location tab to show location search UI
+    const locationTab = page.getByTestId('search-tab-location');
+    await locationTab.waitFor({ state: 'visible', timeout: 15000 });
+    await locationTab.click();
+
+    // Wait for location input to be visible
+    await page.getByTestId('location-search-input').waitFor({ state: 'visible', timeout: 10000 });
   });
 
   test('should allow continuous typing without interruption', async ({ page }) => {
-    const input = page.locator('[data-testid="location-input"]');
+    const input = page.locator('[data-testid="location-search-input"]');
 
     // Type the full location name quickly without pauses
     await input.fill('Leiden');
@@ -28,7 +36,7 @@ test.describe('Location Search - Improved UX', () => {
   });
 
   test('should show loading indicator after debounce period', async ({ page }) => {
-    const input = page.locator('[data-testid="location-input"]');
+    const input = page.locator('[data-testid="location-search-input"]');
 
     // Type 3 characters
     await input.fill('Lei');
@@ -46,7 +54,7 @@ test.describe('Location Search - Improved UX', () => {
   });
 
   test('should abort search when user continues typing', async ({ page }) => {
-    const input = page.locator('[data-testid="location-input"]');
+    const input = page.locator('[data-testid="location-search-input"]');
 
     // Type initial text
     await input.fill('Lei');
@@ -67,7 +75,7 @@ test.describe('Location Search - Improved UX', () => {
   });
 
   test('should never steal focus from input during search', async ({ page }) => {
-    const input = page.locator('[data-testid="location-input"]');
+    const input = page.locator('[data-testid="location-search-input"]');
 
     // Type and wait for search to complete
     await input.fill('Monaco');
@@ -88,7 +96,7 @@ test.describe('Location Search - Improved UX', () => {
   });
 
   test('should handle rapid typing and retyping', async ({ page }) => {
-    const input = page.locator('[data-testid="location-input"]');
+    const input = page.locator('[data-testid="location-search-input"]');
 
     // Type quickly
     await input.fill('Par');
@@ -110,7 +118,7 @@ test.describe('Location Search - Improved UX', () => {
   });
 
   test('should clear results when typing less than 3 characters', async ({ page }) => {
-    const input = page.locator('[data-testid="location-input"]');
+    const input = page.locator('[data-testid="location-search-input"]');
 
     // Type and get results
     await input.fill('Monaco');
@@ -130,7 +138,7 @@ test.describe('Location Search - Improved UX', () => {
   });
 
   test('should show visual search indicator without blocking interaction', async ({ page }) => {
-    const input = page.locator('[data-testid="location-input"]');
+    const input = page.locator('[data-testid="location-search-input"]');
 
     // Type text
     await input.fill('Berlin');
@@ -148,7 +156,7 @@ test.describe('Location Search - Improved UX', () => {
   });
 
   test('should handle complete typing flow naturally', async ({ page }) => {
-    const input = page.locator('[data-testid="location-input"]');
+    const input = page.locator('[data-testid="location-search-input"]');
     const searchButton = page.locator('button:has-text("Search")');
 
     // User types full location name in one go
@@ -182,7 +190,7 @@ test.describe('Location Search - Improved UX', () => {
   });
 
   test('should maintain focus after selecting from dropdown with mouse', async ({ page }) => {
-    const input = page.locator('[data-testid="location-input"]');
+    const input = page.locator('[data-testid="location-search-input"]');
 
     // Type and wait for results
     await input.fill('Paris');

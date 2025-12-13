@@ -5,10 +5,18 @@ test.describe('Location Search - Instant Execution on Selection', () => {
     // geocodeMock is automatically set up via fixture
     await page.goto('/vendors');
     await page.waitForLoadState('networkidle');
+
+    // Click on Location tab to show location search UI
+    const locationTab = page.getByTestId('search-tab-location');
+    await locationTab.waitFor({ state: 'visible', timeout: 15000 });
+    await locationTab.click();
+
+    // Wait for location input to be visible
+    await page.getByTestId('location-search-input').waitFor({ state: 'visible', timeout: 10000 });
   });
 
   test('should execute search immediately after selecting location with Enter key', async ({ page }) => {
-    const input = page.locator('[data-testid="location-input"]');
+    const input = page.locator('[data-testid="location-search-input"]');
 
     // Type location
     await input.fill('Leiden');
@@ -35,7 +43,7 @@ test.describe('Location Search - Instant Execution on Selection', () => {
   });
 
   test('should execute search immediately after clicking on a result', async ({ page }) => {
-    const input = page.locator('[data-testid="location-input"]');
+    const input = page.locator('[data-testid="location-search-input"]');
 
     // Type location
     await input.fill('Monaco');
@@ -56,7 +64,7 @@ test.describe('Location Search - Instant Execution on Selection', () => {
   });
 
   test('should NOT show suggestions again after selecting a location', async ({ page }) => {
-    const input = page.locator('[data-testid="location-input"]');
+    const input = page.locator('[data-testid="location-search-input"]');
 
     // Type and select location
     await input.fill('Paris');
@@ -78,7 +86,7 @@ test.describe('Location Search - Instant Execution on Selection', () => {
   });
 
   test('should allow searching for a new location after selection', async ({ page }) => {
-    const input = page.locator('[data-testid="location-input"]');
+    const input = page.locator('[data-testid="location-search-input"]');
 
     // First search
     await input.fill('London');

@@ -5,10 +5,18 @@ test.describe('Location Search UX Improvements', () => {
     // geocodeMock is automatically set up via fixture
     await page.goto('/vendors');
     await page.waitForLoadState('networkidle');
+
+    // Click on Location tab to show location search UI
+    const locationTab = page.getByTestId('search-tab-location');
+    await locationTab.waitFor({ state: 'visible', timeout: 15000 });
+    await locationTab.click();
+
+    // Wait for location input to be visible
+    await page.getByTestId('location-search-input').waitFor({ state: 'visible', timeout: 10000 });
   });
 
   test('should require 3 characters before showing dropdown', async ({ page }) => {
-    const locationInput = page.getByTestId('location-input');
+    const locationInput = page.getByTestId('location-search-input');
     const dropdown = page.getByTestId('location-results-dropdown');
 
     // Type only 2 characters
@@ -28,7 +36,7 @@ test.describe('Location Search UX Improvements', () => {
   });
 
   test('should use inline dropdown instead of modal', async ({ page }) => {
-    const locationInput = page.getByTestId('location-input');
+    const locationInput = page.getByTestId('location-search-input');
 
     // Type location name
     await locationInput.fill('Monaco');
@@ -51,7 +59,7 @@ test.describe('Location Search UX Improvements', () => {
   });
 
   test('should close dropdown when clicking outside', async ({ page }) => {
-    const locationInput = page.getByTestId('location-input');
+    const locationInput = page.getByTestId('location-search-input');
 
     // Type location name to show dropdown
     await locationInput.fill('Paris');
@@ -67,7 +75,7 @@ test.describe('Location Search UX Improvements', () => {
   });
 
   test('should close dropdown when pressing Escape', async ({ page }) => {
-    const locationInput = page.getByTestId('location-input');
+    const locationInput = page.getByTestId('location-search-input');
 
     // Type location name to show dropdown
     await locationInput.fill('London');
@@ -83,7 +91,7 @@ test.describe('Location Search UX Improvements', () => {
   });
 
   test('should select location and update input when clicking result', async ({ page }) => {
-    const locationInput = page.getByTestId('location-input');
+    const locationInput = page.getByTestId('location-search-input');
 
     // Type location name
     await locationInput.fill('Monaco');
@@ -107,7 +115,7 @@ test.describe('Location Search UX Improvements', () => {
   });
 
   test('should select first result when pressing Enter', async ({ page }) => {
-    const locationInput = page.getByTestId('location-input');
+    const locationInput = page.getByTestId('location-search-input');
 
     // Type location name
     await locationInput.fill('Paris');
@@ -127,7 +135,7 @@ test.describe('Location Search UX Improvements', () => {
   });
 
   test('should have debounce delay for better typing experience', async ({ page }) => {
-    const locationInput = page.getByTestId('location-input');
+    const locationInput = page.getByTestId('location-search-input');
 
     // Start typing
     await locationInput.fill('Lon');
@@ -143,7 +151,7 @@ test.describe('Location Search UX Improvements', () => {
   });
 
   test('should allow continuing to type without popup interference', async ({ page }) => {
-    const locationInput = page.getByTestId('location-input');
+    const locationInput = page.getByTestId('location-search-input');
 
     // Type quickly without waiting for results
     await locationInput.fill('New');

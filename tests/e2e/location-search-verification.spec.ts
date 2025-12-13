@@ -7,8 +7,14 @@ test.describe('Location Name Search Feature E2E - Phase 4 Validation', () => {
     // geocodeMock is automatically set up via fixture
     await page.goto('/vendors');
     await page.waitForLoadState('networkidle');
-    const locationFilter = page.locator('[data-testid="location-search-filter"]');
-    await expect(locationFilter).toBeVisible({ timeout: 10000 });
+
+    // Click on Location tab to show location search UI
+    const locationTab = page.getByTestId('search-tab-location');
+    await locationTab.waitFor({ state: 'visible', timeout: 15000 });
+    await locationTab.click();
+
+    // Wait for location input to be visible
+    await page.getByTestId('location-search-input').waitFor({ state: 'visible', timeout: 10000 });
   });
 
   // ============================================================
@@ -18,7 +24,7 @@ test.describe('Location Name Search Feature E2E - Phase 4 Validation', () => {
   test('CRITICAL #1: Simple search workflow - Monaco auto-applies', async ({ page }) => {
     console.log('\n=== TEST: Simple Search (Monaco) ===');
 
-    const locationInput = page.locator('[data-testid="location-input"]');
+    const locationInput = page.locator('[data-testid="location-search-input"]');
     await locationInput.fill('Monaco');
 
     // Wait for dropdown to appear (mock responds quickly)
@@ -44,7 +50,7 @@ test.describe('Location Name Search Feature E2E - Phase 4 Validation', () => {
   test('CRITICAL #2: Multiple results - Paris shows dropdown', async ({ page }) => {
     console.log('\n=== TEST: Multiple Results (Paris) ===');
 
-    const locationInput = page.locator('[data-testid="location-input"]');
+    const locationInput = page.locator('[data-testid="location-search-input"]');
     await locationInput.fill('Paris');
 
     // Wait for dropdown
@@ -77,7 +83,7 @@ test.describe('Location Name Search Feature E2E - Phase 4 Validation', () => {
     console.log('\n=== TEST: Reset Workflow ===');
 
     // Apply filter
-    const locationInput = page.locator('[data-testid="location-input"]');
+    const locationInput = page.locator('[data-testid="location-search-input"]');
     await locationInput.fill('Monaco');
     await expect(page.locator('[data-testid="location-results-dropdown"]')).toBeVisible({ timeout: 3000 });
     await page.locator('[data-testid="location-result-0"]').click();
@@ -106,7 +112,7 @@ test.describe('Location Name Search Feature E2E - Phase 4 Validation', () => {
     // Configure mock to return empty results for invalid location
     geocodeMock.addMockResponse('XYZ123InvalidLocation999', []);
 
-    const locationInput = page.locator('[data-testid="location-input"]');
+    const locationInput = page.locator('[data-testid="location-search-input"]');
     await locationInput.fill('XYZ123InvalidLocation999');
     await page.waitForTimeout(1000);
 
@@ -131,7 +137,7 @@ test.describe('Location Name Search Feature E2E - Phase 4 Validation', () => {
     console.log('\n=== TEST: Distance Slider ===');
 
     // Apply filter
-    const locationInput = page.locator('[data-testid="location-input"]');
+    const locationInput = page.locator('[data-testid="location-search-input"]');
     await locationInput.fill('Monaco');
     await expect(page.locator('[data-testid="location-results-dropdown"]')).toBeVisible({ timeout: 3000 });
     await page.locator('[data-testid="location-result-0"]').click();
