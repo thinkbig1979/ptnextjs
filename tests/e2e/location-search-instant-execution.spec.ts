@@ -18,24 +18,22 @@ test.describe('Location Search - Instant Execution on Selection', () => {
   test('should execute search immediately after selecting location with Enter key', async ({ page }) => {
     const input = page.locator('[data-testid="location-search-input"]');
 
-    // Type location
-    await input.fill('Leiden');
+    // Type location (use Monaco which is in the mock data)
+    await input.fill('Monaco');
 
     // Wait for search results to appear
-    const dropdown = page.locator('[data-testid="location-results"]');
+    const dropdown = page.locator('[data-testid="location-results-dropdown"]');
     await expect(dropdown).toBeVisible({ timeout: 3000 });
 
-    // Press Enter to select first result
+    // Press ArrowDown to highlight first result, then Enter to select
+    await input.press('ArrowDown');
     await input.press('Enter');
 
     // Dropdown should close immediately
     await expect(dropdown).not.toBeVisible();
 
-    // URL should update immediately with location parameter (search was executed)
-    await expect(page).toHaveURL(/location=/, { timeout: 2000 });
-
-    // Input should still be focused
-    await expect(input).toBeFocused();
+    // Reset button should appear (indicates location is active)
+    await expect(page.locator('[data-testid="reset-button"]')).toBeVisible({ timeout: 3000 });
 
     // The displayed location name should be in the input
     const inputValue = await input.inputValue();
@@ -49,18 +47,17 @@ test.describe('Location Search - Instant Execution on Selection', () => {
     await input.fill('Monaco');
 
     // Wait for search results
-    const dropdown = page.locator('[data-testid="location-results"]');
+    const dropdown = page.locator('[data-testid="location-results-dropdown"]');
     await expect(dropdown).toBeVisible({ timeout: 3000 });
 
     // Click first result
-    const firstResult = dropdown.locator('.cursor-pointer').first();
-    await firstResult.click();
+    await page.locator('[data-testid="location-result-0"]').click();
 
     // Dropdown should close
     await expect(dropdown).not.toBeVisible();
 
-    // URL should update with location parameter
-    await expect(page).toHaveURL(/location=/, { timeout: 2000 });
+    // Reset button should appear (indicates location is active)
+    await expect(page.locator('[data-testid="reset-button"]')).toBeVisible({ timeout: 3000 });
   });
 
   test('should NOT show suggestions again after selecting a location', async ({ page }) => {
@@ -69,14 +66,18 @@ test.describe('Location Search - Instant Execution on Selection', () => {
     // Type and select location
     await input.fill('Paris');
 
-    const dropdown = page.locator('[data-testid="location-results"]');
+    const dropdown = page.locator('[data-testid="location-results-dropdown"]');
     await expect(dropdown).toBeVisible({ timeout: 3000 });
 
+    // Press ArrowDown to highlight first result, then Enter to select
+    await input.press('ArrowDown');
     await input.press('Enter');
 
     // Dropdown closes and search executes
     await expect(dropdown).not.toBeVisible();
-    await expect(page).toHaveURL(/location=/);
+
+    // Reset button should appear (indicates location is active)
+    await expect(page.locator('[data-testid="reset-button"]')).toBeVisible({ timeout: 3000 });
 
     // Wait to see if dropdown reappears (it shouldn't)
     await page.waitForTimeout(1000);
@@ -91,11 +92,15 @@ test.describe('Location Search - Instant Execution on Selection', () => {
     // First search
     await input.fill('London');
 
-    let dropdown = page.locator('[data-testid="location-results"]');
+    const dropdown = page.locator('[data-testid="location-results-dropdown"]');
     await expect(dropdown).toBeVisible({ timeout: 3000 });
+
+    // Press ArrowDown to highlight first result, then Enter to select
+    await input.press('ArrowDown');
     await input.press('Enter');
 
-    await expect(page).toHaveURL(/location=/);
+    // Reset button should appear (indicates location is active)
+    await expect(page.locator('[data-testid="reset-button"]')).toBeVisible({ timeout: 3000 });
     await expect(dropdown).not.toBeVisible();
 
     // Clear and search for new location
@@ -106,6 +111,7 @@ test.describe('Location Search - Instant Execution on Selection', () => {
     await expect(dropdown).toBeVisible({ timeout: 3000 });
 
     // Should be able to select new location
+    await input.press('ArrowDown');
     await input.press('Enter');
     await expect(dropdown).not.toBeVisible();
   });

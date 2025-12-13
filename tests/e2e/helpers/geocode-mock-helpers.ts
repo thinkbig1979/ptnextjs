@@ -403,9 +403,13 @@ export class GeocodeMock {
       return;
     }
 
-    // Only intercept external Photon API calls
-    // The local /api/geocode route will call this, so mocking here is sufficient
-    // Use a specific pattern to avoid intercepting other requests
+    // Intercept the LOCAL /api/geocode endpoint (what the frontend actually calls)
+    // This bypasses the server-side call to Photon entirely
+    await this.page.route('**/api/geocode*', async (route: Route) => {
+      await this.handleLocalGeocodeRequest(route);
+    });
+
+    // Also intercept external Photon API calls as fallback
     await this.page.route('https://photon.komoot.io/api*', async (route: Route) => {
       await this.handlePhotonRequest(route);
     });
@@ -413,7 +417,7 @@ export class GeocodeMock {
     this.isSetup = true;
 
     if (this.options.verbose) {
-      console.log('[GeocodeMock] Setup complete - intercepting Photon API calls');
+      console.log('[GeocodeMock] Setup complete - intercepting local /api/geocode and Photon API calls');
     }
   }
 

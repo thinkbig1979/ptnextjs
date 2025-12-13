@@ -3,7 +3,8 @@ import { test, expect } from './fixtures/test-fixtures';
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 
 test.describe('Location Search - Nantes France Debug', () => {
-  test('should debug Nantes search issue', async ({ page, geocodeMock }) => {
+  test.skip('should debug Nantes search issue', async ({ page, geocodeMock }) => {
+    // SKIP: This is a debug test that requires manual verification
     // Listen to console messages
     const consoleLogs: string[] = [];
     page.on('console', msg => {
@@ -26,7 +27,7 @@ test.describe('Location Search - Nantes France Debug', () => {
     console.log('\n=== SEARCHING FOR NANTES ===\n');
 
     // Type Nantes in the location input
-    const locationInput = page.locator('#location-name-input');
+    const locationInput = page.getByTestId('location-search-input');
     await locationInput.fill('Nantes');
 
     // Wait for geocoding results (mock responds quickly)

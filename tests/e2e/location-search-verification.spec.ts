@@ -38,11 +38,17 @@ test.describe('Location Name Search Feature E2E - Phase 4 Validation', () => {
     const isDialogVisible = await dialog.isVisible().catch(() => false);
     expect(isDialogVisible).toBeFalsy();
 
-    // Verify result count appears
+    // Verify result count appears and shows filtered results
     const resultCount = page.locator('[data-testid="result-count"]');
     await expect(resultCount).toBeVisible({ timeout: 5000 });
     const resultText = await resultCount.textContent();
-    expect(resultText).toContain('km');
+    expect(resultText).toContain('vendors');
+
+    // Verify distance value is shown
+    const distanceValue = page.locator('[data-testid="distance-value"]');
+    await expect(distanceValue).toBeVisible();
+    const distanceText = await distanceValue.textContent();
+    expect(distanceText).toContain('km');
 
     console.log('[OK] PASSED: Monaco auto-applied');
   });

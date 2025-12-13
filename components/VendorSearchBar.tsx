@@ -449,7 +449,7 @@ export function VendorSearchBar({
                   size="icon"
                   onClick={handleLocationReset}
                   className="h-12 w-12 shrink-0"
-                  data-testid="location-reset-button"
+                  data-testid="reset-button"
                   aria-label="Clear location search"
                 >
                   <X className="h-4 w-4" aria-hidden="true" />
@@ -461,7 +461,7 @@ export function VendorSearchBar({
             <div className="space-y-2 px-1">
               <div className="flex items-center justify-between">
                 <Label className="text-sm font-medium">Search Radius</Label>
-                <span className="text-sm font-medium text-muted-foreground">
+                <span className="text-sm font-medium text-muted-foreground" data-testid="distance-value">
                   {distance} km
                 </span>
               </div>

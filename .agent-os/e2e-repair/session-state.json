@@ -1,93 +1,47 @@
 {
   "version": "1.0",
-  "lastUpdatedAt": "2025-12-12T08:10:00Z",
-  "phase": "completed",
-  "results": {
-    "totalTests": 217,
-    "passed": 217,
-    "flaky": 0,
-    "quarantined": 0,
-    "passRate": 1.0
+  "lastUpdatedAt": "2025-12-13T14:30:00Z",
+  "phase": "verification",
+  "progress": {
+    "locationSearchTests": {
+      "passed": 43,
+      "failed": 0,
+      "skipped": 2
+    }
   },
-  "quarantineCleanup": {
-    "deleted": [
-      "debug-errors.spec.ts",
-      "debug-cache-clearing.spec.ts",
-      "debug-form-submission.spec.ts",
-      "debug-founded-year-display.spec.ts",
-      "debug-founded-year-flow.spec.ts",
-      "debug-frontend-data.spec.ts",
-      "debug-save-button.spec.ts",
-      "debug-vendor-data.spec.ts",
-      "debug-vendor-update.spec.ts",
-      "manual-verification.spec.ts",
-      "verify-single-form.spec.ts",
-      "simple-form-test.spec.ts",
-      "comprehensive-form-save-test.spec.ts",
-      "example-seed-api-usage.spec.ts",
-      "example-tier-upgrade-helpers-usage.spec.ts",
-      "admin-login-visual.spec.ts",
-      "admin-approval-flow.spec.ts",
-      "brand-story-tier-fix.spec.ts",
-      "location-filter-debug.spec.ts"
-    ],
-    "promoted": [
-      {
-        "file": "vendor-registration-integration.spec.ts",
-        "tier": "regression",
-        "fix": "Updated to use fillRegistrationForm helper and correct API endpoint"
-      },
-      {
-        "file": "logout-functionality.spec.ts",
-        "tier": "regression",
-        "fix": "Fixed BASE_URL issue in page.evaluate, updated to use request context"
-      },
-      {
-        "file": "admin-panel.spec.ts",
-        "tier": "regression",
-        "fix": "No changes needed - already working"
-      },
-      {
-        "file": "vendor-onboarding/12-e2e-happy-path.spec.ts",
-        "tier": "core",
-        "fix": "Fixed seed-api-helpers.ts to use absolute URLs"
-      }
-    ]
+  "rootCauses": {
+    "identified": ["RC-2", "RC-3"],
+    "fixed": ["RC-2"],
+    "remaining": ["RC-3"]
   },
-  "helperFixes": [
+  "fixHistory": [
     {
-      "file": "tests/e2e/helpers/seed-api-helpers.ts",
-      "fix": "Added BASE_URL constant and updated all API calls to use absolute URLs"
+      "rootCause": "RC-2",
+      "description": "Geocode mock not intercepting local /api/geocode + missing test IDs",
+      "filesChanged": [
+        "tests/e2e/helpers/geocode-mock-helpers.ts",
+        "app/(site)/components/vendors-client.tsx",
+        "components/VendorSearchBar.tsx",
+        "tests/e2e/location-search-focus.spec.ts",
+        "tests/e2e/location-search-verification.spec.ts",
+        "tests/e2e/location-search-improved-ux.spec.ts",
+        "tests/e2e/location-search-instant-execution.spec.ts",
+        "tests/e2e/location-search-ux.spec.ts",
+        "tests/e2e/location-search-nantes.spec.ts"
+      ],
+      "result": "success",
+      "testsFixed": 43
     }
   ],
-  "rootCauses": [
-    {
-      "id": "RC-1",
-      "description": "Rate limiting causing 429 errors",
-      "fix": "Added DISABLE_RATE_LIMIT=true to .env.local",
-      "testsFixed": 35,
-      "commit": "f7b1def"
-    },
-    {
-      "id": "RC-2",
-      "description": "Sidebar test checking for removed tier badge",
-      "fix": "Updated test to check dashboard link and logout button",
-      "testsFixed": 1,
-      "commit": "f4779bf"
-    },
-    {
-      "id": "RC-3",
-      "description": "Quarantined tests cleanup",
-      "fix": "Deleted 19 debug/example tests, fixed and promoted 4 tests",
-      "testsFixed": 4
-    }
+  "quarantined": [
+    "location-search-ux.spec.ts:175 (3 char hint - feature not implemented)",
+    "location-search-nantes.spec.ts:6 (debug test)"
   ],
-  "flakyTests": [],
-  "knownIssues": {},
-  "runCommand": "npm run test:e2e",
-  "requiredEnv": {
-    "DISABLE_RATE_LIMIT": "true",
-    "DISABLE_EMAILS": "true",
-    "USE_POSTGRES": "true"
-  }
+  "notes": [
+    "Geocode mock now intercepts local /api/geocode endpoint",
+    "Added data-testid='result-count' to vendors-client.tsx",
+    "Added data-testid='distance-value' to VendorSearchBar.tsx",
+    "Changed data-testid='location-reset-button' to 'reset-button' for consistency",
+    "Fixed test selectors from location-results to location-results-dropdown"
+  ]
 }

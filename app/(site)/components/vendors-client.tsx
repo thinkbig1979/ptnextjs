@@ -306,7 +306,7 @@ export function VendorsClient({
         transition={{ duration: 0.4, delay: 0.4 }}
         className="mb-8"
       >
-        <p className="text-muted-foreground font-poppins-light">
+        <p className="text-muted-foreground font-poppins-light" data-testid="result-count">
           Showing {paginatedVendors.length} of {filteredVendors.length}{" "}
           {pageTitle}
           {vendorView === "partners" ? " (partners only)" : " (all vendors)"}
