@@ -169,7 +169,11 @@ test.describe('INTEG-FRONTEND-BACKEND: Dashboard Integration Tests', () => {
     const tierBadge = page.getByText(/^(Free|Tier [1-3])$/).first();
     await expect(tierBadge).toBeVisible({ timeout: 5000 });
     const tierText = await tierBadge.textContent();
-    if (tierText?.includes('Free')) { test.skip(); }
+    // Certifications feature requires Tier 2+ (skip for Free and Tier 1)
+    if (tierText?.includes('Free') || tierText?.includes('Tier 1')) {
+      console.log(`Skipping Test 5: Certifications not available for ${tierText}`);
+      test.skip();
+    }
 
     await navigateToEditProfile(page);
 
@@ -217,14 +221,17 @@ test.describe('INTEG-FRONTEND-BACKEND: Dashboard Integration Tests', () => {
     expect(putResponse.status()).toBe(200);
 
     await page.reload();
+    await page.waitForLoadState('networkidle');
+
+    // After reload, re-query and navigate back to Certifications tab
+    const certTabAfterReload = page.locator('button[role="tab"]').filter({ hasText: /Certification/ }).first();
+    await expect(certTabAfterReload).toBeVisible({ timeout: 10000 });
+    await certTabAfterReload.click();
     await page.waitForTimeout(1000);
 
-    // After reload, navigate back to Certifications tab
-    await expect(certTab).toBeVisible({ timeout: 10000 });
-    await certTab.click();
-    await page.waitForTimeout(500);
-
-    await expect(certList.first()).toBeVisible({ timeout: 5000 });
+    // Re-query the certification list after reload
+    const certListAfterReload = page.locator(`text=${certName}`);
+    await expect(certListAfterReload.first()).toBeVisible({ timeout: 5000 });
 
     const elapsed = Date.now() - startTime;
     console.log(`Test 5: ${elapsed}ms`);
