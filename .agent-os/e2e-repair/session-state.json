@@ -1,8 +1,16 @@
 {
   "version": "1.0",
-  "lastUpdatedAt": "2025-12-13T20:30:00Z",
-  "phase": "verification",
+  "lastUpdatedAt": "2025-12-13T19:10:00Z",
+  "phase": "analysis",
   "progress": {
+    "fullSuiteRun": {
+      "date": "2025-12-13",
+      "passed": 309,
+      "failed": 213,
+      "skipped": 73,
+      "total": 612,
+      "passRate": "~52% (including retries, ~65% unique tests)"
+    },
     "locationSearchTests": {
       "passed": 43,
       "failed": 0,
@@ -11,38 +19,12 @@
     "productReviewTests": {
       "passed": 5,
       "failed": 0
-    },
-    "vendorProductsTests": {
-      "passed": 79,
-      "failed": 6,
-      "skipped": 22
-    },
-    "databaseFixes": {
-      "orphanProductsBadges": 104,
-      "orphanCompatMatrix": 123,
-      "orphanProductsBenefits": 69,
-      "orphanProductsComparison": 78,
-      "orphanProductsFeatures": 197,
-      "orphanProductsServices": 134,
-      "orphanProductsSpecs": 240,
-      "orphanProductsRels": 291,
-      "orphanProductsReviews": 93,
-      "orphanProductsWarranty": 108,
-      "orphanVendorsAwards": 12,
-      "orphanVendorsCerts": 16,
-      "orphanVendorsValues": 23,
-      "orphanVendorsLocations": 13,
-      "orphanVendorsServiceAreas": 25,
-      "orphanVendorsTeam": 10,
-      "orphanVendorsRels": 21,
-      "deletedOrphanVendors": 7,
-      "deletedOrphanProducts": 32
     }
   },
   "rootCauses": {
-    "identified": ["RC-2", "RC-3", "RC-4", "RC-5", "RC-DB"],
+    "identified": ["RC-2", "RC-3", "RC-4", "RC-5", "RC-DB", "RC-6", "RC-7", "RC-8"],
     "fixed": ["RC-2", "RC-3", "RC-4", "RC-DB"],
-    "remaining": ["RC-5"]
+    "remaining": ["RC-5", "RC-6", "RC-7", "RC-8"]
   },
   "fixHistory": [
     {
@@ -72,10 +54,8 @@
     {
       "rootCause": "RC-3",
       "description": "Products page shows 0 products because getAllProducts() filters to tier2+ vendors only",
-      "filesChanged": [
-        "tests/e2e/global-setup.ts"
-      ],
-      "action": "Added seedTestProducts() to global-setup.ts to create products for tier2 vendors (testvendor-tier2 and testvendor-tier3)",
+      "filesChanged": ["tests/e2e/global-setup.ts"],
+      "action": "Added seedTestProducts() to global-setup.ts to create products for tier2 vendors",
       "result": "success",
       "productsSeeded": 5
     },
@@ -92,33 +72,52 @@
       "testsFixed": 6
     }
   ],
+  "remainingIssues": {
+    "RC-5": {
+      "description": "Product seeding failures in global-setup - Vendor field invalid",
+      "impact": "~10 tests depending on seeded products",
+      "type": "SEEDING",
+      "status": "needs_investigation",
+      "errorMessage": "The following field is invalid: Vendor"
+    },
+    "RC-6": {
+      "description": "Vendor dashboard tests timing out (2.2m)",
+      "impact": "~30 tests",
+      "type": "TIMEOUT",
+      "status": "needs_investigation",
+      "tests": [
+        "vendor-dashboard-enhanced.spec.ts",
+        "vendor-dashboard.spec.ts",
+        "vendor-card-listing.spec.ts"
+      ]
+    },
+    "RC-7": {
+      "description": "Tier restriction flow tests failing - vendor creation timing issues",
+      "impact": "~10 tests",
+      "type": "AUTH/SETUP",
+      "status": "needs_investigation",
+      "tests": ["tier-restriction-flow.spec.ts"]
+    },
+    "RC-8": {
+      "description": "Product tabs and review submission tests timing out at 30s+",
+      "impact": "~15 tests",
+      "type": "TIMEOUT",
+      "status": "needs_investigation",
+      "tests": [
+        "product-tabs-simplified.spec.ts",
+        "product-review-submission.spec.ts"
+      ]
+    }
+  },
   "quarantined": [
     "location-search-ux.spec.ts:175 (3 char hint - feature not implemented)",
     "location-search-nantes.spec.ts:6 (debug test)"
   ],
-  "remainingIssues": {
-    "RC-5": {
-      "description": "Some tier upgrade tests have API timeouts during vendor seeding",
-      "impact": "~15 tests",
-      "type": "TIMEOUT",
-      "status": "deferred"
-    },
-    "MAP_TESTS": {
-      "description": "Vendor map tile tests fail - likely network/infrastructure issue",
-      "impact": "3 tests",
-      "type": "INFRASTRUCTURE"
-    },
-    "CREDENTIAL_TESTS": {
-      "description": "Some vendor login tests fail with 401 - credentials not synced",
-      "impact": "~2 tests",
-      "type": "AUTH"
-    }
-  },
   "notes": [
-    "Session 2: Fixed RC-3 and RC-4",
-    "Products page now shows tier2+ products after global-setup seeding",
-    "Product review tests now use tier2 products that are seeded in global-setup.ts",
-    "Vendor review tests now use testvendor-tier2 which is seeded in global-setup.ts",
-    "79 vendor/product tests passing, 6 failing (mostly map/network related)"
+    "Session 3: Ran full E2E suite - 309 passed, 213 failed, 73 skipped",
+    "Global setup product seeding has 'invalid Vendor' error - needs vendor ID fix",
+    "Many vendor-dashboard tests timing out - likely auth/login issue",
+    "Tier restriction tests need fresh vendor creation for each run",
+    "Product tabs tests navigating to non-existent products (tier2+ products not visible)"
   ]
 }

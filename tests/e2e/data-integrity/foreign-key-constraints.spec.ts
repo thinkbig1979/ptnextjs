@@ -105,8 +105,9 @@ async function getProductVendorReference(
     // Check if vendor reference is valid
     if (vendorRef) {
       const vendorId = typeof vendorRef === 'object' ? vendorRef.id : vendorRef;
+      // Use public vendors API (not portal which requires auth)
       const vendorResponse = await page.request.get(
-        `${BASE_URL}/api/portal/vendors/${vendorId}`
+        `${BASE_URL}/api/vendors/${vendorId}`
       );
 
       return {

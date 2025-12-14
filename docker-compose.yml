@@ -10,7 +10,7 @@ services:
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
-      - ./postgres-data:/var/lib/postgresql/data
+      - ptnextjs-postgres-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ptnextjs} -d ${POSTGRES_DB:-ptnextjs}"]
       interval: 10s
@@ -34,3 +34,6 @@ services:
         condition: service_healthy
     profiles:
       - tools
+
+volumes:
+  ptnextjs-postgres-data:

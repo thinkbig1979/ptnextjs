@@ -75,3 +75,4 @@ backups/
 # Temporary files and directories
 temp/
 creds.md
+postgres-data/

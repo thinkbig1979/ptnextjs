@@ -45,6 +45,11 @@ const nextConfig = {
 
   // Webpack configuration
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+    // Exclude postgres-data directory from scanning
+    config.watchOptions = {
+      ...config.watchOptions,
+      ignored: /postgres-data/
+    };
     // Bundle analyzer for development
     if (process.env.ANALYZE === 'true' && !dev && !isServer) {
       const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');

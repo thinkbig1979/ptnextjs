@@ -26,8 +26,10 @@ async function updateVendorProfile(
   data: Record<string, unknown>
 ): Promise<{ success: boolean; data?: unknown; error?: string }> {
   try {
+    // Note: Use vendor ID directly without byUserId flag
+    // byUserId=true expects a user ID, not a vendor ID
     const response = await page.request.put(
-      `${BASE_URL}/api/portal/vendors/${vendorId}?byUserId=true`,
+      `${BASE_URL}/api/portal/vendors/${vendorId}`,
       { data }
     );
 
@@ -54,8 +56,10 @@ async function getVendorProfile(
   vendorId: number
 ): Promise<{ success: boolean; data?: Record<string, unknown>; error?: string }> {
   try {
+    // Note: Use vendor ID directly without byUserId flag
+    // byUserId=true expects a user ID, not a vendor ID
     const response = await page.request.get(
-      `${BASE_URL}/api/portal/vendors/${vendorId}?byUserId=true`
+      `${BASE_URL}/api/portal/vendors/${vendorId}`
     );
 
     if (!response.ok()) {
@@ -63,7 +67,8 @@ async function getVendorProfile(
     }
 
     const data = await response.json();
-    return { success: true, data: data.data?.vendor || data.vendor || data };
+    // API returns { success: true, data: <vendor_object> }
+    return { success: true, data: data.data || data };
   } catch (error) {
     return { success: false, error: String(error) };
   }
