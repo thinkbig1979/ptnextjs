@@ -45,19 +45,23 @@ test.describe('Logout Functionality - UI Elements', () => {
 
   test.describe('Admin Logout UI', () => {
     test('admin login page should be accessible', async ({ page }) => {
-      await page.goto(`${BASE_URL}/admin/login`);
-      await page.waitForLoadState('networkidle');
+      // Payload CMS admin routes can be slow to initialize - use longer timeout
+      test.setTimeout(60000);
+
+      await page.goto(`${BASE_URL}/admin/login`, { timeout: 45000 });
+      await page.waitForLoadState('domcontentloaded');
 
       // Verify login form elements are present (Payload CMS login page)
+      // Payload uses form#login-form or a form with login inputs
       const loginForm = page.locator('form');
-      await expect(loginForm).toBeVisible({ timeout: 10000 });
+      await expect(loginForm).toBeVisible({ timeout: 20000 });
 
       // Verify email and password inputs exist
       const emailInput = page.locator('input[type="email"], input[name="email"]');
       const passwordInput = page.locator('input[type="password"], input[name="password"]');
 
-      await expect(emailInput).toBeVisible();
-      await expect(passwordInput).toBeVisible();
+      await expect(emailInput).toBeVisible({ timeout: 10000 });
+      await expect(passwordInput).toBeVisible({ timeout: 10000 });
     });
   });
 });
