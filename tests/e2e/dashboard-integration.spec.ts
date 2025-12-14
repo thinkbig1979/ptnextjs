@@ -69,7 +69,9 @@ test.describe('INTEG-FRONTEND-BACKEND: Dashboard Integration Tests', () => {
     const saveButton = page.locator('button[type="submit"]').filter({ hasText: /Save Changes/ });
     await expect(saveButton).toBeEnabled({ timeout: 5000 });
 
-    const putPromise: Promise<any> = page.waitForResponse(response => response.url().includes('/api/portal/vendors/') && (response as any).method() === 'PUT');
+    const putPromise = page.waitForResponse(response =>
+      response.url().includes('/api/portal/vendors/') && response.request().method() === 'PUT'
+    );
     await saveButton.click();
     const putResponse = await putPromise;
     expect(putResponse.status()).toBe(200);
@@ -111,12 +113,21 @@ test.describe('INTEG-FRONTEND-BACKEND: Dashboard Integration Tests', () => {
     await expect(yearsInBusiness.first()).toBeVisible({ timeout: 5000 });
 
     const saveButton = page.locator('button').filter({ hasText: /Save|Update/ }).first();
-    const putPromise: Promise<any> = page.waitForResponse(response => response.url().includes('/api/portal/vendors/') && (response as any).method() === 'PUT');
+    const putPromise = page.waitForResponse(response =>
+      response.url().includes('/api/portal/vendors/') && response.request().method() === 'PUT'
+    );
     await saveButton.click();
     const putResponse = await putPromise;
     expect(putResponse.status()).toBe(200);
 
+    // After reload, just click the Brand Story tab again (we're still on Edit Profile page)
     await page.reload();
+    await page.waitForTimeout(1000);
+    // Wait for the tab to be available again
+    await expect(brandStoryTab).toBeVisible({ timeout: 10000 });
+    await brandStoryTab.click();
+    await page.waitForTimeout(500);
+
     const reloadedValue = await foundedYearField.inputValue();
     expect(reloadedValue).toBe(String(newYear));
 
@@ -174,26 +185,45 @@ test.describe('INTEG-FRONTEND-BACKEND: Dashboard Integration Tests', () => {
     await addBtn.click();
     await page.waitForTimeout(800);
 
-    const certName = `Test ${Date.now()}`;
-    const nameInput = page.locator('role=dialog').first().locator('input').first();
-    if (await nameInput.isVisible()) { await nameInput.fill(certName); }
+    const certName = `Test Cert ${Date.now()}`;
+    const dialog = page.locator('role=dialog').first();
 
-    const dialogSave = page.locator('role=dialog').first().locator('button').filter({ hasText: /Save|Add/ }).first();
-    await dialogSave.click();
+    // Fill Certification Name (required)
+    const nameInput = dialog.getByLabel(/Certification Name/i);
+    await nameInput.fill(certName);
+
+    // Fill Issuing Organization (required)
+    const issuerInput = dialog.getByLabel(/Issuing Organization/i);
+    await issuerInput.fill('Test Organization');
+
     await page.waitForTimeout(300);
+
+    const dialogSave = dialog.locator('button').filter({ hasText: /Add Certification/i });
+    await dialogSave.click();
+    await page.waitForTimeout(500);
 
     const certList = page.locator(`text=${certName}`);
     await expect(certList.first()).toBeVisible({ timeout: 5000 });
 
-    const mainSave = page.locator('button').filter({ hasText: /Save Profile/ }).first();
-    if (await mainSave.isVisible()) {
-      const putPromise: Promise<any> = page.waitForResponse(response => response.url().includes('/api/portal/vendors/') && (response as any).method() === 'PUT');
-      await mainSave.click();
-      await putPromise;
-    }
+    // Click the main Save Changes button to persist to database
+    const mainSave = page.locator('button').filter({ hasText: /Save Changes/i }).first();
+    await expect(mainSave).toBeEnabled({ timeout: 5000 });
+
+    const putPromise = page.waitForResponse(response =>
+      response.url().includes('/api/portal/vendors/') && response.request().method() === 'PUT'
+    );
+    await mainSave.click();
+    const putResponse = await putPromise;
+    expect(putResponse.status()).toBe(200);
 
     await page.reload();
     await page.waitForTimeout(1000);
+
+    // After reload, navigate back to Certifications tab
+    await expect(certTab).toBeVisible({ timeout: 10000 });
+    await certTab.click();
+    await page.waitForTimeout(500);
+
     await expect(certList.first()).toBeVisible({ timeout: 5000 });
 
     const elapsed = Date.now() - startTime;
@@ -208,17 +238,22 @@ test.describe('INTEG-FRONTEND-BACKEND: Dashboard Integration Tests', () => {
     await loginAsUniqueVendor(page, uniqueVendor);
     await navigateToEditProfile(page);
 
-    const basicTab = page.locator('button[role="tab"]').filter({ hasText: /Basic Info/ }).first();
+    const basicTab = page.locator('button[role="tab"]').filter({ hasText: /Basic Info|Profile/ }).first();
     await basicTab.click();
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(1000); // Wait for form to initialize
 
-    const field = page.locator('input[type="text"]').first();
-    const testValue = `Test ${Date.now()}`;
+    // Use the description textarea (same as Test 2)
+    const field = page.locator('textarea[id="description"]');
+    const testValue = `Test description ${Date.now()}`;
+    await field.clear();
     await field.fill(testValue);
+    await page.waitForTimeout(500); // Wait for isDirty to update
     expect(await field.inputValue()).toBe(testValue);
 
-    const saveBtn = page.locator('button').filter({ hasText: /Save/ }).first();
-    const putPromise: Promise<any> = page.waitForResponse(response => response.url().includes('/api/portal/vendors/') && (response as any).method() === 'PUT');
+    const saveBtn = page.locator('button[type="submit"]').filter({ hasText: /Save Changes/ });
+    const putPromise = page.waitForResponse(response =>
+      response.url().includes('/api/portal/vendors/') && response.request().method() === 'PUT'
+    );
     await saveBtn.click();
     const putResponse = await putPromise;
 
