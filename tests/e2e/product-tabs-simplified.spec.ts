@@ -4,7 +4,7 @@ const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 
 test.describe('Product Detail Page - Simplified Tabs', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(`${BASE_URL}/products/maritime-technology-partners-intelligent-lighting-control-system`);
+    await page.goto(`${BASE_URL}/products/tier2-entertainment`);
     await page.waitForLoadState('networkidle');
   });
 

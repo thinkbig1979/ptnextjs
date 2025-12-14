@@ -14,7 +14,7 @@ const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 test.describe('Product Review Submission', () => {
   // Serial mode: review submissions modify database state
   test.describe.configure({ mode: 'serial' });
-  const testProductUrl = `${BASE_URL}/products/superyacht-integration-solutions-intelligent-lighting-control-system`;
+  const testProductUrl = `${BASE_URL}/products/tier2-entertainment`;
 
   test.beforeEach(async ({ page }) => {
     await page.goto(testProductUrl);
@@ -23,15 +23,16 @@ test.describe('Product Review Submission', () => {
 
   test('should submit a review and display it immediately without page reload', async ({ page }) => {
     // Navigate to Reviews tab
-    await page.click('button[value="reviews"]');
-    await expect(page.locator('[data-testid="owner-reviews"]')).toBeVisible();
+    await page.getByRole('tab', { name: /reviews/i }).click();
+    // Wait for Reviews tab content to be visible
+    await expect(page.getByRole('heading', { name: /owner reviews/i })).toBeVisible();
 
     // Count initial reviews
     const initialReviewCount = await page.locator('[data-testid="review-card"]').count();
     console.log(`Initial review count: ${initialReviewCount}`);
 
-    // Click "Write a Review" button
-    const writeReviewButton = page.locator('button:has-text("Write a Review")');
+    // Click "Write a Review" button (may be "Write a Review" or "Write the First Review")
+    const writeReviewButton = page.locator('button:has-text("Write a Review"), button:has-text("Write the First Review")').first();
     await expect(writeReviewButton).toBeVisible();
     await writeReviewButton.click();
 
@@ -41,7 +42,7 @@ test.describe('Product Review Submission', () => {
       title: 'Yacht Captain',
       yachtName: 'M/Y Test Yacht',
       rating: 5,
-      review: 'This is an excellent product! The lighting control system works flawlessly and integrates perfectly with our yacht systems.'
+      review: 'This is an excellent product! The entertainment system works flawlessly and integrates perfectly with our yacht systems.'
     };
 
     // Wait for modal dialog to appear
@@ -93,8 +94,9 @@ test.describe('Product Review Submission', () => {
 
   test('should filter reviews by rating', async ({ page }) => {
     // Navigate to Reviews tab
-    await page.click('button[value="reviews"]');
-    await expect(page.locator('[data-testid="owner-reviews"]')).toBeVisible();
+    await page.getByRole('tab', { name: /reviews/i }).click();
+    // Wait for Reviews tab content to be visible
+    await expect(page.getByRole('heading', { name: /owner reviews/i })).toBeVisible();
 
     // Wait for reviews to load
     await page.waitForTimeout(1000);
@@ -141,8 +143,9 @@ test.describe('Product Review Submission', () => {
 
   test('should NOT show search box (search feature removed)', async ({ page }) => {
     // Navigate to Reviews tab
-    await page.click('button[value="reviews"]');
-    await expect(page.locator('[data-testid="owner-reviews"]')).toBeVisible();
+    await page.getByRole('tab', { name: /reviews/i }).click();
+    // Wait for Reviews tab content to be visible
+    await expect(page.getByRole('heading', { name: /owner reviews/i })).toBeVisible();
 
     // Verify NO search input exists
     const searchInputs = page.locator('input[type="search"], input[placeholder*="search" i]');
@@ -157,8 +160,9 @@ test.describe('Product Review Submission', () => {
 
   test('should display review statistics', async ({ page }) => {
     // Navigate to Reviews tab
-    await page.click('button[value="reviews"]');
-    await expect(page.locator('[data-testid="owner-reviews"]')).toBeVisible();
+    await page.getByRole('tab', { name: /reviews/i }).click();
+    // Wait for Reviews tab content to be visible
+    await expect(page.getByRole('heading', { name: /owner reviews/i })).toBeVisible();
 
     // Wait for statistics to load
     await page.waitForTimeout(1000);
@@ -181,8 +185,9 @@ test.describe('Product Review Submission', () => {
 
   test('should open review form in a modal dialog', async ({ page }) => {
     // Navigate to Reviews tab
-    await page.click('button[value="reviews"]');
-    await expect(page.locator('[data-testid="owner-reviews"]')).toBeVisible();
+    await page.getByRole('tab', { name: /reviews/i }).click();
+    // Wait for Reviews tab content to be visible
+    await expect(page.getByRole('heading', { name: /owner reviews/i })).toBeVisible();
 
     // Verify modal is NOT visible initially
     const modal = page.locator('[role="dialog"]');
