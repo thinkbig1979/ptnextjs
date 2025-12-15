@@ -277,6 +277,7 @@ async function loginAsUniqueVendor(
 export type UniqueVendorFixture = {
   uniqueVendor: UniqueTestVendor;
   uniqueVendorTier2: UniqueTestVendor;
+  uniqueVendorTier3: UniqueTestVendor;
   uniqueVendorFree: UniqueTestVendor;
 };
 
@@ -300,6 +301,11 @@ export const testWithUniqueVendor = base.extend<UniqueVendorFixture>({
   },
   uniqueVendorTier2: async ({ page }, use, testInfo) => {
     const vendor = await createUniqueTestVendor(page, testInfo, { tier: 'tier2' });
+    await use(vendor);
+    await vendor.cleanup();
+  },
+  uniqueVendorTier3: async ({ page }, use, testInfo) => {
+    const vendor = await createUniqueTestVendor(page, testInfo, { tier: 'tier3' });
     await use(vendor);
     await vendor.cleanup();
   },

@@ -146,27 +146,24 @@ test.describe('Vendor Public Profile - Tier-Based Display', () => {
   });
 
   test.describe('Test 4: Tier 3 Vendor Profile', () => {
-    test('should display featured badge and editorial content for tier 3', async ({ page, uniqueVendor }) => {
-      // Note: Using uniqueVendor (tier1) for tier3 test - in production, would need uniqueVendorTier3 fixture
-      // For now, we'll use tier1 and update it to test tier3 features
-      // TODO: Add uniqueVendorTier3 fixture to test-fixtures.ts
+    test('should display featured badge and editorial content for tier 3', async ({ page, uniqueVendorTier3 }) => {
+      // Using uniqueVendorTier3 fixture for tier3 test
 
-      // Update vendor to tier3 with premium features
-      await updateVendorData(page, uniqueVendor.id, {
+      // Update vendor with premium features
+      await updateVendorData(page, uniqueVendorTier3.id, {
         companyName: 'Tier 3 Premium Vendor',
         description: 'A premium featured vendor with full editorial capabilities.',
         contactEmail: 'tier3@testvendor.com',
         website: 'https://tier3.example.com',
         foundedYear: 2005,
         longDescription: 'We are a tier 3 premium vendor with featured status and editorial content.',
-        // Note: certifications field removed due to schema mismatch
       });
 
       // Wait briefly for cache clearing and revalidation (on-demand via API)
       await page.waitForTimeout(2000);
 
       // Visit public profile for this vendor
-      await page.goto(`${API_BASE}/vendors/${uniqueVendor.slug}`);
+      await page.goto(`${API_BASE}/vendors/${uniqueVendorTier3.slug}`);
       await page.waitForLoadState('networkidle');
 
       // Verify page loaded
@@ -191,9 +188,7 @@ test.describe('Vendor Public Profile - Tier-Based Display', () => {
       // Verify long description is visible
       await expect(page.getByText(/featured status and editorial content/i)).toBeVisible();
 
-      // Note: Certifications assertions removed (schema expects array, tests sent string)
-
-      // Verify products section is available
+      // Verify products section is available (tier2+ feature)
       await page.getByRole('tab', { name: /Products/i }).click();
       await page.waitForTimeout(500);
       const productsHeading = page.getByRole('heading', { name: /Products/i }).or(page.getByText(/products/i)).first();
