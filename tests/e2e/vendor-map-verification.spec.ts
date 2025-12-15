@@ -22,9 +22,17 @@ test.describe('Vendor Map - Final Verification', () => {
     await page.goto(`${BASE_URL}/vendors/alfa-laval/`);
     await page.waitForLoadState('networkidle');
 
-    // Wait for map container
-    const mapContainer = page.locator('[data-testid="vendor-map"]');
-    await expect(mapContainer).toBeVisible({ timeout: 10000 });
+    // Click on "Locations" tab to reveal the map
+    // The map is in a tabbed interface and defaults to "About" tab
+    const locationsTab = page.getByRole('tab', { name: /locations/i });
+    await expect(locationsTab).toBeVisible({ timeout: 10000 });
+    await locationsTab.click();
+
+    // Wait for map container (dynamically loaded after tab switch)
+    // The map is inside a region with aria-label="Locations map"
+    // Use .leaflet-container class since MapContainer generates this
+    const mapContainer = page.locator('.leaflet-container');
+    await expect(mapContainer).toBeVisible({ timeout: 15000 });
 
     // Wait for tiles to fully load
     await page.waitForTimeout(5000);
