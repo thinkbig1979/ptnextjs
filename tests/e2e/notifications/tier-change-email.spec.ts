@@ -307,7 +307,7 @@ test.describe('Email Notifications: Tier Change via UI', () => {
           // Intercept API call
           const responsePromise = page.waitForResponse(
             (r) => r.url().includes('/tier-requests'),
-            { timeout: 10000 }
+            { timeout: 30000 }
           );
 
           await submitBtn.first().click();

@@ -54,11 +54,11 @@ test.describe('Email Notifications: Vendor Registration', () => {
     // Clear any previous mock emails before submit
     emailMock.clear();
 
-    // Submit and wait for response
+    // Submit and wait for response (longer timeout for cold compilation on first run)
     const [response] = await Promise.all([
       page.waitForResponse(
         (r) => r.url().includes('/api/portal/vendors/register'),
-        { timeout: 10000 }
+        { timeout: 30000 }
       ),
       page.click('button[type="submit"]'),
     ]);
@@ -66,7 +66,7 @@ test.describe('Email Notifications: Vendor Registration', () => {
     expect(response.status()).toBeLessThan(300);
 
     // Wait for redirect to confirm registration completed
-    await page.waitForURL(/\/vendor\/registration-pending\/?/, { timeout: 10000 });
+    await page.waitForURL(/\/vendor\/registration-pending\/?/, { timeout: 30000 });
 
     // Allow async email processing
     await page.waitForTimeout(1000);
@@ -103,13 +103,13 @@ test.describe('Email Notifications: Vendor Registration', () => {
     const [response] = await Promise.all([
       page.waitForResponse(
         (r) => r.url().includes('/api/portal/vendors/register'),
-        { timeout: 10000 }
+        { timeout: 30000 }
       ),
       page.click('button[type="submit"]'),
     ]);
 
     expect(response.status()).toBeLessThan(300);
-    await page.waitForURL(/\/vendor\/registration-pending\/?/, { timeout: 10000 });
+    await page.waitForURL(/\/vendor\/registration-pending\/?/, { timeout: 30000 });
 
     // Allow async processing
     await page.waitForTimeout(1000);
@@ -143,7 +143,7 @@ test.describe('Email Notifications: Vendor Registration', () => {
     const [response] = await Promise.all([
       page.waitForResponse(
         (r) => r.url().includes('/api/portal/vendors/register'),
-        { timeout: 10000 }
+        { timeout: 30000 }
       ),
       page.click('button[type="submit"]'),
     ]);
@@ -152,7 +152,7 @@ test.describe('Email Notifications: Vendor Registration', () => {
     expect(response.status()).toBeLessThan(300);
 
     // User should be redirected to pending page
-    await page.waitForURL(/\/vendor\/registration-pending\/?/, { timeout: 10000 });
+    await page.waitForURL(/\/vendor\/registration-pending\/?/, { timeout: 30000 });
     console.log('✓ Registration completed successfully');
   });
 
@@ -167,13 +167,13 @@ test.describe('Email Notifications: Vendor Registration', () => {
     await Promise.all([
       page.waitForResponse(
         (r) => r.url().includes('/api/portal/vendors/register') && r.status() < 300,
-        { timeout: 10000 }
+        { timeout: 30000 }
       ),
       page.click('button[type="submit"]'),
     ]);
 
     // Wait for redirect to pending page
-    await page.waitForURL(/\/vendor\/registration-pending\/?/, { timeout: 10000 });
+    await page.waitForURL(/\/vendor\/registration-pending\/?/, { timeout: 30000 });
 
     // Should show confirmation message about email/pending/review
     const confirmationMessage = page.locator(
@@ -185,8 +185,8 @@ test.describe('Email Notifications: Vendor Registration', () => {
   });
 
   test('EMAIL-REG-05: Multiple registrations each trigger separate processes', async ({ page }) => {
-    // Register first vendor
-    const vendor1 = generateUniqueVendorData({ companyName: 'Multi Reg Test 1' });
+    // Register first vendor with unique name (don't override company name)
+    const vendor1 = generateUniqueVendorData();
     await page.goto(`${BASE_URL}/vendor/register`);
     await fillRegistrationForm(page, vendor1);
 
@@ -195,27 +195,27 @@ test.describe('Email Notifications: Vendor Registration', () => {
     await Promise.all([
       page.waitForResponse(
         (r) => r.url().includes('/api/portal/vendors/register') && r.status() < 300,
-        { timeout: 10000 }
+        { timeout: 30000 }
       ),
       page.click('button[type="submit"]'),
     ]);
-    await page.waitForURL(/\/vendor\/registration-pending\/?/, { timeout: 10000 });
+    await page.waitForURL(/\/vendor\/registration-pending\/?/, { timeout: 30000 });
 
     const emailsAfterFirst = emailMock.getEmailCount();
 
-    // Register second vendor
-    const vendor2 = generateUniqueVendorData({ companyName: 'Multi Reg Test 2' });
+    // Register second vendor with unique name (don't override company name)
+    const vendor2 = generateUniqueVendorData();
     await page.goto(`${BASE_URL}/vendor/register`);
     await fillRegistrationForm(page, vendor2);
 
     await Promise.all([
       page.waitForResponse(
         (r) => r.url().includes('/api/portal/vendors/register') && r.status() < 300,
-        { timeout: 10000 }
+        { timeout: 30000 }
       ),
       page.click('button[type="submit"]'),
     ]);
-    await page.waitForURL(/\/vendor\/registration-pending\/?/, { timeout: 10000 });
+    await page.waitForURL(/\/vendor\/registration-pending\/?/, { timeout: 30000 });
 
     // Both registrations should succeed
     console.log(`✓ Multiple registrations completed (${emailMock.getEmailCount()} emails captured)`);
@@ -242,7 +242,7 @@ test.describe('Email Notifications: Registration Edge Cases', () => {
     await page.goto(`${BASE_URL}/vendor/register`);
     await fillRegistrationForm(page, vendor);
     await page.click('button[type="submit"]');
-    await page.waitForURL(/\/vendor\/registration-pending\/?/, { timeout: 10000 });
+    await page.waitForURL(/\/vendor\/registration-pending\/?/, { timeout: 30000 });
 
     // Clear email log after first registration
     emailMock.clear();
@@ -254,7 +254,7 @@ test.describe('Email Notifications: Registration Edge Cases', () => {
     const [response] = await Promise.all([
       page.waitForResponse(
         (r) => r.url().includes('/api/portal/vendors/register'),
-        { timeout: 10000 }
+        { timeout: 30000 }
       ),
       page.click('button[type="submit"]'),
     ]);
@@ -285,7 +285,7 @@ test.describe('Email Notifications: Registration Edge Cases', () => {
     await Promise.all([
       page.waitForResponse(
         (r) => r.url().includes('/api/portal/vendors/register') && r.status() < 300,
-        { timeout: 15000 }
+        { timeout: 30000 } // Allow longer for cold compilation
       ),
       page.click('button[type="submit"]'),
     ]);
@@ -293,9 +293,11 @@ test.describe('Email Notifications: Registration Edge Cases', () => {
     const duration = Date.now() - startTime;
 
     // Registration should complete in reasonable time (email is async/non-blocking)
-    expect(duration).toBeLessThan(10000);
+    // Note: First run may take longer due to cold compilation (~10-15s), subsequent runs <2s
+    // We use 20s threshold to account for cold starts while still detecting blocking behavior
+    expect(duration).toBeLessThan(20000);
 
-    await page.waitForURL(/\/vendor\/registration-pending\/?/, { timeout: 10000 });
+    await page.waitForURL(/\/vendor\/registration-pending\/?/, { timeout: 15000 });
     console.log(`✓ Registration completed in ${duration}ms`);
   });
 
@@ -313,7 +315,7 @@ test.describe('Email Notifications: Registration Edge Cases', () => {
     const [response] = await Promise.all([
       page.waitForResponse(
         (r) => r.url().includes('/api/portal/vendors/register'),
-        { timeout: 10000 }
+        { timeout: 30000 }
       ),
       page.click('button[type="submit"]'),
     ]);
@@ -321,7 +323,7 @@ test.describe('Email Notifications: Registration Edge Cases', () => {
     // Registration should still succeed even if email "fails"
     // (EmailService uses try/catch and never throws)
     expect(response.status()).toBeLessThan(300);
-    await page.waitForURL(/\/vendor\/registration-pending\/?/, { timeout: 10000 });
+    await page.waitForURL(/\/vendor\/registration-pending\/?/, { timeout: 30000 });
     console.log('✓ Registration succeeded despite email failure');
   });
 });
