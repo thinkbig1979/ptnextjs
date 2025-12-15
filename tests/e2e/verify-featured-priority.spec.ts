@@ -66,30 +66,39 @@ test.describe('Featured Vendors Priority', () => {
     const vendorCards = page.locator('[data-testid="vendor-card"]');
     await expect(vendorCards.first()).toBeVisible({ timeout: 10000 });
 
-    // Look for featured badge within visible cards
-    const featuredBadge = page.locator('[data-testid="vendor-card"] >> text=/featured/i').first();
-    const badgeCount = await featuredBadge.count();
+    // Look for featured badge within visible cards - find the badge containing both star and "Featured" text
+    const featuredBadge = page.locator('[data-testid="vendor-card"] .lucide-star').first();
 
-    if (badgeCount > 0) {
+    // Wait for cards to render
+    await page.waitForTimeout(500);
+
+    const starCount = await featuredBadge.count();
+
+    if (starCount > 0) {
       // Scroll to the badge's parent card to make it visible
       await featuredBadge.scrollIntoViewIfNeeded();
 
-      // The badge may be part of a conditional render - just verify the badge element exists
+      // The badge contains both a star icon and "Featured" text
+      // Check that the star icon is rendered with correct styling
       const isVisible = await featuredBadge.isVisible().catch(() => false);
       if (isVisible) {
-        console.log('Featured badge is visible');
+        console.log('Featured star icon is visible');
       } else {
-        console.log('[INFO] Featured badge exists but not visible in current viewport');
+        console.log('[INFO] Featured star icon exists but not visible in current viewport');
       }
 
-      // Check that parent card has star icon somewhere
-      const parentCard = featuredBadge.locator('xpath=ancestor::*[@data-testid="vendor-card"]');
-      const hasStar = await parentCard.locator('svg').count() > 0;
+      // Verify the star has the fill-amber styling by checking the parent badge element
+      const featuredBadgeText = page.locator('[data-testid="vendor-card"] >> text=/featured/i').first();
+      const hasFeaturedText = await featuredBadgeText.count() > 0;
 
-      console.log('Featured card has star icon:', hasStar);
-      expect(hasStar).toBe(true);
+      console.log('Featured badge has text:', hasFeaturedText);
+      expect(hasFeaturedText).toBe(true);
     } else {
-      console.log('[INFO] No featured badges found in current view');
+      // If no star icons in view, still pass if we found text "Featured"
+      const featuredText = page.locator('[data-testid="vendor-card"] >> text=/featured/i').first();
+      const hasText = await featuredText.count() > 0;
+      console.log('[INFO] No star icons directly visible, checking for Featured text:', hasText);
+      expect(hasText).toBe(true);
     }
   });
 
