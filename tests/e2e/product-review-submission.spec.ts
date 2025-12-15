@@ -197,17 +197,18 @@ test.describe('Product Review Submission', () => {
   test('should open review form in a modal dialog', async ({ page }) => {
     // Navigate to Reviews tab
     await page.getByRole('tab', { name: /reviews/i }).click();
-    // Wait for Reviews tab content to be visible
-    await expect(page.getByRole('heading', { name: /owner reviews/i })).toBeVisible();
+    // Wait for Reviews tab content to be visible - may show "Owner Reviews" heading or empty state
+    await page.waitForLoadState('networkidle');
+    await expect(page.locator('[data-testid="owner-reviews"]').first()).toBeVisible();
 
     // Verify modal is NOT visible initially
     const modal = page.locator('[role="dialog"]');
     await expect(modal).not.toBeVisible();
     console.log('[OK] Modal is hidden initially');
 
-    // Click "Write a Review" button
-    const writeReviewButton = page.locator('button:has-text("Write a Review")');
-    await writeReviewButton.click();
+    // Click review button - could be "Write a Review" or "Write the First Review"
+    const writeReviewButton = page.locator('button:has-text("Write a Review"), button:has-text("Write the First Review")');
+    await writeReviewButton.first().click();
 
     // Verify modal appears
     await expect(modal).toBeVisible();
@@ -228,7 +229,7 @@ test.describe('Product Review Submission', () => {
     console.log('[OK] Modal closes when Cancel is clicked');
 
     // Verify we're still on the Reviews tab (no navigation occurred)
-    await expect(page.locator('[data-testid="owner-reviews"]')).toBeVisible();
+    await expect(page.locator('[data-testid="owner-reviews"]').first()).toBeVisible();
     console.log('[OK] User stays on Reviews tab after closing modal');
   });
 });
