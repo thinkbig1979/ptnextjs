@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Agent OS v4.5.0 - Structured workflows for AI agents to build products systematically.
+Agent OS v4.6.0 - Structured workflows for AI agents to build products systematically.
 
 ## Quick Reference
 
@@ -115,18 +115,18 @@ bd sync                     # Commit to git (critical at session end)
 ### Test Infrastructure Reliability (v2.9+)
 Prevents hung tests, CI failures, and test sprawl.
 
-**CANONICAL REFERENCE**: See `@standards/testing-standards.md` for all canonical values (timeouts, file locations, etc.)
+**Reference**: See `@standards/testing-standards.md` for canonical values (timeouts, file locations, etc.)
 
-**Mandatory Protocols**:
+**Core Protocols** (ensure reliable test execution):
 
 1. **Instruction Loading** (Step 1.9 in execute-tasks.md)
-   - Subagents MUST read their instruction file before work
+   - Subagents should read their instruction file to ensure proper task context
    - Agent type validated against task requirements
 
 2. **Server Pre-Flight** (before E2E tests)
    - Health check required servers (2s timeout each)
    - Block test execution if servers down
-   - Never auto-start servers (causes conflicts)
+   - Avoid auto-starting servers (test scripts should declare requirements)
 
 3. **Watch Mode Prevention**
    - Detect and block: `vitest` (use `vitest run`), `jest --watch`, `playwright --ui`
@@ -147,10 +147,10 @@ Prevents hung tests, CI failures, and test sprawl.
    - Debug scripts go to `scripts/debug/`, not test directories
    - Archive location: `tests/_archive/`
 
-7. **Framework Directory Isolation** (CRITICAL - See `@standards/testing-standards.md` Section 3)
-   - Playwright `testDir` MUST be `./tests/e2e` (NEVER `./tests`)
-   - Vitest must exclude E2E directories
-   - Prevents "Vitest cannot be imported" errors
+7. **Framework Directory Isolation** (prevents import conflicts - See `@standards/testing-standards.md` Section 3)
+   - Playwright `testDir` should be `./tests/e2e` (not `./tests`) to prevent scanning unit tests
+   - Vitest should exclude E2E directories
+   - This separation prevents "Vitest cannot be imported" errors
 
 **Required package.json scripts**:
 ```json
@@ -183,7 +183,7 @@ Pre-test research phase that gathers library documentation BEFORE test writing.
 ### Skills Integration (v3.2+)
 Claude Code skills provide progressive-disclosure documentation without network dependencies.
 
-**Pattern Lookup Hierarchy** (CANONICAL - See `@standards/testing-standards.md` Section 4):
+**Pattern Lookup Hierarchy** (See `@standards/testing-standards.md` Section 4):
 ```
 1. FIRST:  .agent-os/patterns/  (project-specific - HIGHEST PRIORITY)
 2. SECOND: Skills               (agent-os-patterns, agent-os-test-research)
@@ -205,9 +205,10 @@ The orchestrator does NOT invoke skills directly - it delegates to test-context-
 | `agent-os-patterns` | Testing & code style | vitest.md, playwright.md, convex.md, test-strategies.md, coding-style.md |
 | `agent-os-specialists` | Development guidance | backend-nodejs.md, frontend-react.md, implementation.md |
 | `agent-os-test-research` | Pre-test research | Detection patterns, documentation sources |
+| `e2e-test-repair` | **E2E test suite repair** (v4.6.0+) | failure-categories.md, fix-patterns.md, test-runner-agent.md, fix-agent.md, handoff-protocol.md |
 
-**IMPORTANT - Explicit Skill Invocation Required** (v4.2.0+):
-Skills must be explicitly invoked using `Skill(skill="skill-name")`. Agents cannot assume they have access to skill content - they MUST invoke the skill explicitly.
+**Skill Invocation Pattern** (v4.2.0+):
+To access skill content, explicitly invoke skills using `Skill(skill="skill-name")`. Skills are not automatically loaded - they must be requested when needed.
 
 **Required Skill Invocations by Phase**:
 | Phase | Required Skills | Invocation |
@@ -242,7 +243,7 @@ implementation: Step 2.2 → Check .agent-os/patterns/, then skills
 4. Project patterns OVERRIDE skill patterns where both exist
 ```
 
-**IMPORTANT**: Instruction files have explicit pattern lookup steps that check project-specific patterns FIRST, then fall back to global skills.
+**Note**: Instruction files have explicit pattern lookup steps that check project-specific patterns first, then fall back to global skills.
 
 ### Test Execution Monitoring (v3.3.0+)
 Real-time test visibility with hung test detection and streaming reporters.
@@ -321,6 +322,53 @@ MAIN AGENT
 - Survives context, enables resume
 - Tracks fix history across iterations
 - Groups failures by root cause
+
+### E2E Test Suite Repair (v4.6.0+)
+Multi-agent orchestration for systematically repairing E2E test suites.
+
+**Problem Solved**: E2E test suites with many failures need systematic repair, not one-off fixes.
+
+**Solution**: Failure categorization + strategic batching + parallel fix implementation.
+
+**Orchestration Flow**:
+```
+Phase 0: Pre-Flight     → Verify server, clear rate limits
+Phase 1: Discovery      → Run test batches in parallel, collect failures
+Phase 2: Analysis       → Categorize failures by root cause
+Phase 3: Fix            → Fix ONE category at a time
+Phase 4: Verification   → Re-run affected tests, confirm >80% pass
+Phase 5: Iterate        → Repeat until pass rate >90%
+```
+
+**Failure Categories**:
+| Category | Indicators | Priority |
+|----------|------------|----------|
+| `AUTH_FAILURE` | 401, Invalid credentials | P0 |
+| `RATE_LIMIT` | 429, Too many requests | P0 |
+| `SERVER_ERROR` | 500, ECONNREFUSED | P0 |
+| `DATA_MISSING` | Test data not found | P1 |
+| `SELECTOR_BROKEN` | Element not found | P2 |
+| `LOGIC_ERROR` | Assertion failures | P2 |
+| `HANG` | No progress >30s | P3 |
+
+**Operational Constraints** (prevent resource exhaustion):
+- Batch size: Max 5 test files per sub-agent (enables faster feedback)
+- Stop threshold: 3 consecutive OR 5 total failures (early detection of systemic issues)
+- Timeout: Hard 30s limit (surfaces hanging tests immediately)
+- Fix order: Highest impact first (maximizes pass rate improvement)
+
+**Key Files**:
+- `.claude/commands/fix-e2e-tests.md` - Slash command entry point
+- `~/.claude/skills/e2e-test-repair/` - Skill with reference files
+
+**Usage**: `/fix-e2e-tests` or `/fix-e2e-tests --resume`
+
+**Skill References**:
+- `failure-categories.md` - Detailed category definitions
+- `fix-patterns.md` - Proven fixes per category
+- `test-runner-agent.md` - Sub-agent prompt for test execution
+- `fix-agent.md` - Sub-agent prompt for fix implementation
+- `handoff-protocol.md` - Context-aware session management
 
 ### Unified Execution Protocol (v4.1.0+)
 Beads-first orchestration with parallel specialist delegation.
@@ -535,7 +583,7 @@ typescript_checking:
     block_on_error: true
 ```
 
-**MANDATORY**: Before completing ANY task in a TypeScript project, run `pnpm tsc --noEmit` and fix all errors.
+Before completing any task in a TypeScript project, run `pnpm tsc --noEmit` and fix all errors.
 
 **Key Files**:
 - `.claude/commands/run-tests.md` - Full protocol (v4.1)
@@ -679,7 +727,7 @@ typescript_checking:
     block_on_error: true
 ```
 
-**MANDATORY**: Before completing ANY task in a TypeScript project, run `pnpm tsc --noEmit` and fix all errors.
+Before completing any task in a TypeScript project, run `pnpm tsc --noEmit` and fix all errors.
 
 ### Validator Improvements (v3.0+)
 
@@ -717,7 +765,7 @@ typescript_checking:
 
 Before marking task complete:
 - [ ] All files in deliverable manifest exist
-- [ ] **TypeScript type check passes** (`pnpm tsc --noEmit`) - MANDATORY for TS projects
+- [ ] **TypeScript type check passes** (`pnpm tsc --noEmit`) - important for TypeScript projects
 - [ ] All tests pass (`test:unit:ci`, `test:e2e:ci`)
 - [ ] **Existing tests verified** - Test integrity analysis completed (v4.5.0+)
 - [ ] No P1 security findings
@@ -727,7 +775,7 @@ Before marking task complete:
 
 ## Checklist: Test Creation
 
-**CANONICAL REFERENCE**: See `@standards/testing-standards.md` for all test creation requirements.
+**Reference**: See `@standards/testing-standards.md` for test creation requirements.
 
 Before creating tests:
 - [ ] Read `@standards/testing-standards.md` (canonical reference)

@@ -445,10 +445,34 @@ BEFORE work:
 2. INTERNALIZE key constraints
 3. CONFIRM understanding
 4. INVOKE required skills: ${SKILL_INVOCATIONS}
-5. CHECK patterns:
+5. CONFIRM: "Skills loaded: [list invoked skills]"
+6. CHECK patterns:
    FIRST:  .agent-os/patterns/ (project-specific)
    SECOND: Skills (generic)
    THIRD:  WebSearch (fallback)
+
+═══════════════════════════════════════════════════════════
+E2E TEST CREATION PROTOCOL (if creating E2E tests)
+═══════════════════════════════════════════════════════════
+
+BEFORE writing any E2E test:
+1. Skill(skill="e2e-test-organization")
+2. READ references/coverage-analysis.md
+3. COMPLETE Step 0 (coverage analysis):
+   - existing_tests_reviewed: true
+   - gap_identified: [what gap this fills]
+   - not_redundant_because: [justification]
+4. IF redundant: SKIP test creation, document why
+5. READ references/placement-checklist.md
+6. COMPLETE placement decision (Steps 1-6):
+   - Tier: [smoke|core|regression|quarantine]
+   - Feature group: [group name]
+   - Filename: [name].spec.ts
+   - Rationale: [why this tier]
+7. CONFIRM placement with orchestrator
+8. CREATE test file
+9. UPDATE test-inventory.ts with new test
+10. VERIFY: npm run test:e2e:list shows updated counts
 
 ═══════════════════════════════════════════════════════════
 TASK ASSIGNMENT
@@ -781,11 +805,42 @@ bd sync --from-main
 
 | Role | Required Skills |
 |------|-----------------|
-| test-context-gatherer | agent-os-test-research, agent-os-patterns |
-| test-architect | agent-os-patterns (vitest, playwright) |
+| test-context-gatherer | agent-os-testing-standards, agent-os-test-research, agent-os-patterns |
+| test-architect | agent-os-testing-standards, agent-os-patterns, e2e-test-organization |
 | implementation-specialist | agent-os-patterns, agent-os-specialists |
 | frontend-specialist | agent-os-patterns, agent-os-specialists |
 | security-sentinel | agent-os-specialists |
+| e2e-repair | e2e-test-repair, e2e-test-organization |
+
+### Skill Enforcement Protocol (v4.8.0)
+
+**MANDATORY**: Subagents MUST invoke required skills and confirm.
+
+When dispatching ANY subagent with test responsibilities:
+
+1. **Include skill requirements in prompt**:
+   ```
+   MANDATORY FIRST ACTIONS:
+   1. Skill(skill="agent-os-testing-standards")
+   2. Skill(skill="e2e-test-organization")  # if E2E work
+   3. Read references/canonical-values.md
+   4. Confirm: "Skills loaded: [list]"
+   
+   DO NOT proceed without skill confirmation.
+   ```
+
+2. **Verify in response**:
+   - Response MUST contain "Skills loaded:" confirmation
+   - If missing, prompt subagent or fail task
+
+3. **E2E test creation additional requirements**:
+   ```
+   FOR E2E tests:
+   1. Skill(skill="e2e-test-organization")
+   2. Read references/placement-checklist.md
+   3. Complete placement decision BEFORE writing test
+   4. Add test to test-inventory.ts
+   ```
 
 ### Configuration
 

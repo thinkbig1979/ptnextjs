@@ -1,39 +1,45 @@
 ---
-description: Systematically repair E2E test suites through failure categorization, strategic batching, and parallel fix implementation. Detects and fixes application bugs before test infrastructure fixes.
+description: Systematically repair E2E test suites through failure categorization, strategic batching, and parallel fix implementation. Optimized for 500+ test suites with minimal context consumption.
 globs:
 alwaysApply: false
-version: 1.1
+version: 2.0
 encoding: UTF-8
 ---
 
-# Fix E2E Tests (Agent OS Protocol)
+# Fix E2E Tests (Agent OS Protocol v2.0 - Parallel Execution)
 
 ## Overview: Multi-Agent Orchestration for E2E Test Repair
 
 You are the ORCHESTRATOR AGENT responsible for systematically repairing the E2E test suite. You coordinate sub-agents and synthesize their findings into strategic repair plans.
 
-**CRITICAL PRINCIPLE: Never work around application bugs. Fix them first.**
+**KEY CHANGES IN v2.0:**
+- Uses parallel-runner.ts for discovery (500+ tests in minutes)
+- Minimal context consumption via aggregated JSON
+- Dynamic shard calculation to avoid empty shards
+- Single subagent for discovery instead of N batch subagents
+
+**Core Principle**: Fix application bugs in the source code, not by modifying tests (tests should reveal true behavior).
 
 ```
-ORCHESTRATOR (You)
+ORCHESTRATOR (You - minimal context)
 |
-+-- Phase 0: Pre-Flight - Verify infrastructure
-+-- Phase 1: Discovery - Dispatch test-runner sub-agents (parallel batches)
-+-- Phase 2: Analysis - Categorize failures, DETECT APPLICATION BUGS
-+-- Phase 2.5: Bug Fixing - If APPLICATION_BUG found, STOP and fix app first
-+-- Phase 3: Fix - Dispatch fix sub-agents (one category at a time)
-+-- Phase 4: Verification - Re-run affected tests
++-- Phase 0: Pre-Flight - Verify infrastructure, detect parallel-runner
++-- Phase 1: Discovery - ONE subagent runs parallel-runner.ts (returns aggregated.json)
++-- Phase 2: Analysis - Parse aggregated.json, categorize failures
++-- Phase 2.5: Bug Fixing - If APPLICATION_BUG found, pause and fix app first
++-- Phase 3: Fix - Dispatch fix sub-agents (parallel by category)
++-- Phase 4: Verification - Re-run affected files via parallel-runner
 +-- Phase 5: Iterate - Repeat until pass rate exceeds 90%
 +-- Context Handoff - Save state if context reaches 85%
 ```
 
 ---
 
-## CRITICAL: Application Bug Handling
+## Application Bug Handling
 
 ### The Golden Rule
 
-**If a test fails because the APPLICATION is wrong, you MUST fix the application - NEVER modify the test to accept wrong behavior.**
+**Fix application bugs directly rather than working around them in tests.** When a test fails because the application has incorrect behavior, fixing the application ensures all users benefit from the correction.
 
 ### Detection
 
@@ -44,58 +50,35 @@ During Phase 2 (Analysis), for each failure ask:
 
 If test expectation is CORRECT but app behavior is WRONG = APPLICATION_BUG
 
-### Mandatory Protocol for APPLICATION_BUG
+### Required Protocol for APPLICATION_BUG
 
-```
-1. STOP all test repair work
-2. Create Beads bug task:
-   bd create --title="BUG: [description]" --type=bug
-
-3. Document the bug:
-   bd update BEADS-XXX --body="
-   Expected: [correct behavior]
-   Actual: [what app does]
-   Evidence: [test output]
-   Location: [likely app file]
-   Affected tests: [list]
-   "
-
-4. Dispatch bug fix subagent:
-   Task(subagent_type="general-purpose", prompt="Fix APPLICATION bug...")
-
+1. Pause test repair work temporarily
+2. Create Beads bug task: bd create --title="BUG: [description]" --type=bug
+3. Document the bug with expected vs actual behavior
+4. Dispatch bug fix subagent
 5. WAIT for fix to complete
-
-6. Verify fix:
-   Run affected tests with ORIGINAL expectations
-   All must pass
-
-7. Close bug task:
-   bd close BEADS-XXX --reason="Fixed: [description]"
-
+6. Verify fix with ORIGINAL test expectations
+7. Close bug task
 8. ONLY THEN resume test repair work
-```
 
-### FORBIDDEN Actions
+### Patterns to Avoid
 
 - Writing tests that expect buggy behavior
 - Adding workarounds in test helpers
 - Skipping tests because app is broken
 - Changing assertions to match wrong output
-- Adding TODO comments and moving on
 
 ---
 
-## STEP 0: Load Skill and Check for Resume
+## STEP 0: Load Skill and Check Infrastructure
 
 ### 0a: Invoke the E2E Test Repair Skill
-
-Invoke the skill to load patterns and reference material:
 
 ```
 Skill(skill="e2e-test-repair")
 ```
 
-This loads failure categories (including APPLICATION_BUG), fix patterns, and sub-agent templates.
+This loads failure categories, fix patterns, and sub-agent templates.
 
 ### 0b: Check for Resume Flag
 
@@ -106,172 +89,182 @@ If user invoked with `--resume`:
 
 ### 0c: Detect Project Configuration
 
-Detect E2E test configuration:
-
 ```bash
-# Find Playwright config
-ls playwright.config.ts playwright.config.js 2>/dev/null
+# Find test directory and count files
+TEST_DIR=$(ls -d tests/e2e/ e2e/ test/e2e/ 2>/dev/null | head -1)
+TEST_COUNT=$(find ${TEST_DIR} -name "*.spec.ts" -o -name "*.spec.js" 2>/dev/null | wc -l)
 
-# Find test directory
-ls -d tests/e2e/ e2e/ test/e2e/ 2>/dev/null | head -1
+# Get base URL
+BASE_URL=$(grep -o 'baseURL.*localhost:[0-9]*' playwright.config.* 2>/dev/null | head -1 | grep -o 'localhost:[0-9]*' || echo "localhost:3000")
 
-# Get base URL from config
-grep -o 'baseURL.*localhost:[0-9]*' playwright.config.* 2>/dev/null | head -1
+# Check for parallel-runner.ts
+PARALLEL_RUNNER=".agent-os/scripts/e2e-parallel/parallel-runner.ts"
+ls ${PARALLEL_RUNNER} 2>/dev/null && echo "PARALLEL_RUNNER: FOUND" || echo "PARALLEL_RUNNER: NOT_FOUND"
 ```
 
-Store detected values:
-- TEST_DIR: detected test directory
-- BASE_URL: detected base URL (default: http://localhost:3000)
-- CONFIG_FILE: playwright config path
+### 0d: Calculate Optimal Shard Count
+
+**Dynamic shard calculation prevents empty shards:**
+
+```
+shard_count = min(8, max(2, ceil(test_file_count / 25)))
+```
+
+| Test Files | Shards | Reasoning |
+|------------|--------|-----------|
+| 1-50       | 2      | Minimum parallelism |
+| 51-100     | 4      | Standard |
+| 101-150    | 6      | More parallelism |
+| 151+       | 8      | Maximum (server limit) |
+
+Store: SHARD_COUNT based on TEST_COUNT
 
 ---
 
 ## STEP 1: Pre-Flight Verification (Phase 0)
 
-Before running any tests, verify infrastructure is ready.
-
 ### 1a: Server Health Check
 
 ```bash
-# Check server is running
-curl -sf --max-time 5 ${BASE_URL}/health && echo "Server: OK" || echo "Server: DOWN"
-curl -sf --max-time 5 ${BASE_URL} && echo "Base URL: OK" || echo "Base URL: DOWN"
+curl -sf --max-time 5 http://${BASE_URL}/health && echo "Server: OK" || echo "Server: DOWN"
 ```
 
-If server is down:
-1. STOP - Do not proceed
-2. Tell user which server(s) are down
-3. Ask them to start servers
-4. Wait for confirmation
+If server is down: STOP, tell user, wait for confirmation.
 
 ### 1b: Clear Rate Limits
 
 ```bash
-curl -X POST ${BASE_URL}/api/test/rate-limit/clear 2>/dev/null || echo "No rate limit endpoint"
+curl -X POST http://${BASE_URL}/api/test/rate-limit/clear 2>/dev/null || true
 ```
 
-### 1c: Verify Test Data
+### 1c: Check Parallel Runner
 
 ```bash
-curl -sf ${BASE_URL}/api/test/vendors/status 2>/dev/null || echo "No vendor status endpoint"
+ls .agent-os/scripts/e2e-parallel/parallel-runner.ts 2>/dev/null
 ```
 
-### 1d: Check Build (Next.js)
+If NOT found:
+1. Run Agent OS update to install missing scripts:
+   ```bash
+   ~/.agent-os/setup/update-agent-os.sh --target ./.agent-os
+   ```
+2. If update unavailable, fall back to sequential batch mode (slower)
+
+### 1d: Verify Dependencies
 
 ```bash
-ls -la .next/ 2>/dev/null | head -3 || echo "No .next build found"
+# Check tsx is available (for parallel-runner.ts)
+npx tsx --version 2>/dev/null || echo "tsx not found - install with: npm i -D tsx"
 ```
-
-If ANY critical check fails, report to user and ask how to proceed.
 
 ---
 
-## STEP 2: Discovery Phase (Phase 1)
+## STEP 2: Discovery Phase (Phase 1) - PARALLEL
 
-Dispatch test-runner sub-agents in parallel to discover failures.
+### 2a: Dispatch Single Parallel Discovery Agent
 
-### 2a: Discover Test Files
-
-```bash
-find ${TEST_DIR} -name "*.spec.ts" -o -name "*.spec.js" | head -50
-```
-
-### 2b: Create Test Batches
-
-Group test files into batches of maximum 5 files each:
-
-1. **auth batch**: `${TEST_DIR}/auth/*.spec.ts`
-2. **onboarding batch**: `${TEST_DIR}/vendor-onboarding/*.spec.ts`
-3. **verify batch**: `${TEST_DIR}/verify-*.spec.ts`
-4. **remaining**: Other files grouped by directory
-
-### 2c: Dispatch Parallel Test Runners
-
-For each batch, dispatch a general-purpose sub-agent with the test-runner prompt:
+Dispatch ONE subagent that runs the parallel test suite:
 
 ```
 Task(
   subagent_type="general-purpose",
   prompt="""
-You are a TEST EXECUTION agent. Run this batch and report failures.
+You are a PARALLEL TEST EXECUTION agent.
 
-Read the test-runner template from the e2e-test-repair skill:
-  ~/.claude/skills/e2e-test-repair/references/test-runner-agent.md
+Read the parallel-runner template:
+  ~/.claude/skills/e2e-test-repair/references/parallel-runner-agent.md
 
-BATCH: {batch_name}
 PROJECT_DIR: {project_dir}
-TEST_FILES: {test_files}
+SHARD_COUNT: {shard_count}
+MODE: discovery
 
-Execute using:
-cd {project_dir} && DISABLE_EMAILS=true npx playwright test {test_files} --reporter=list --timeout=30000 2>&1 | head -200
+Execute:
+cd {project_dir} && npx tsx .agent-os/scripts/e2e-parallel/parallel-runner.ts \
+  --shards={shard_count} \
+  --timeout=30000 \
+  --output=./test-results/parallel
 
-STOP CONDITIONS:
-- After 5 total failures
-- After 3 consecutive failures
-- After 2 minutes no output
+After completion:
+1. Read ./test-results/parallel/aggregated.json
+2. Categorize each failure (AUTH_FAILURE, RATE_LIMIT, etc.)
+3. Flag any potential APPLICATION_BUG
 
-Return JSON report with categorized failures.
+Return ONLY:
+- stats (total, passed, failed, skipped)
+- failures array with category for each
+- shard distribution (for imbalance detection)
+- duration
 
-IMPORTANT: If you detect an APPLICATION_BUG (app behavior wrong, not test wrong),
-flag it clearly in your report. Do NOT suggest test modifications for app bugs.
+DO NOT return raw test output - only the structured JSON.
+""",
+  description="Parallel discovery: {shard_count} shards, {test_count} tests"
+)
+```
+
+### 2b: Fallback to Sequential (if no parallel-runner)
+
+If parallel-runner not available:
+
+```
+Task(
+  subagent_type="general-purpose",
+  prompt="""
+You are a TEST EXECUTION agent. Run tests in batches.
+
+Read: ~/.claude/skills/e2e-test-repair/references/test-runner-agent.md
+
+TEST_FILES: {batch of 5 files}
+PROJECT_DIR: {project_dir}
+
+Run: npx playwright test {files} --reporter=list --timeout=30000
+
+STOP after 5 failures or 3 consecutive failures.
+Return categorized failures only.
 """,
   description="Test batch: {batch_name}"
 )
 ```
 
-Dispatch ALL batches in a SINGLE message with multiple Task invocations for parallel execution.
+Dispatch multiple batch agents in parallel.
 
-### 2d: Collect Results
+### 2c: Collect Discovery Results
 
-Use AgentOutputTool to collect results from all test-runner sub-agents.
-Merge all failure reports into a unified failure database.
+Use AgentOutputTool to get results from the discovery agent(s).
+
+**For parallel mode**: Parse the aggregated.json structure directly.
+**For sequential mode**: Merge batch results.
 
 ---
 
 ## STEP 3: Analysis Phase (Phase 2)
 
-Analyze collected failures to identify root causes.
+### 3a: Parse Aggregated Results
 
-### 3a: Categorize All Failures
+From the discovery agent response, extract:
 
-Load category definitions:
 ```
-~/.claude/skills/e2e-test-repair/references/failure-categories.md
+stats:
+  total: 500
+  passed: 400
+  failed: 100
+  skipped: 0
+
+failures: [array of {file, title, error, category}]
 ```
 
-For each failure, determine category using this priority:
+### 3b: Categorize and Count
 
-1. **APPLICATION_BUG** - Is app behavior wrong? (BLOCKING)
-2. AUTH_FAILURE - 401, credentials
-3. RATE_LIMIT - 429, too many requests
-4. SERVER_ERROR - 500, connection refused
-5. DATA_MISSING - test data not found
-6. SELECTOR_BROKEN - element not found
-7. LOGIC_ERROR - test logic wrong (NOT app wrong)
-8. HANG - no progress
-
-### 3b: Check for Application Bugs FIRST
-
-**Before proceeding, explicitly check:**
-
-For each LOGIC_ERROR or assertion failure:
-- Read the test expectation
-- Check documentation/specs for intended behavior
-- If test expectation matches intended behavior but app does different = APPLICATION_BUG
-
-**Reclassify any misclassified bugs before continuing.**
-
-### 3c: Count by Category
+Group failures by category:
 
 ```
 FAILURE ANALYSIS COMPLETE
-========================
-Total Failures: N
+=========================
+Total: 500 tests | Passed: 400 | Failed: 100 | Pass Rate: 80%
 
-BLOCKING (must fix before continuing):
+BLOCKING (fix before continuing):
   APPLICATION_BUG: N tests - FIX APP FIRST!
 
-By Category:
+By Category (priority order):
   AUTH_FAILURE:    N tests (NN%)
   RATE_LIMIT:      N tests (NN%)
   SERVER_ERROR:    N tests (NN%)
@@ -281,141 +274,66 @@ By Category:
   HANG:            N tests (NN%)
 ```
 
-### 3d: If APPLICATION_BUG Found - Execute Phase 2.5
+### 3c: Check for Application Bugs FIRST
 
-**Do NOT proceed to Phase 3 if any APPLICATION_BUG detected.**
+For each LOGIC_ERROR or assertion failure:
+- Is the test expectation correct per specs?
+- Does the app do something different?
+
+If yes = APPLICATION_BUG. Reclassify before proceeding.
+
+### 3d: If APPLICATION_BUG Found
+
+**Do NOT proceed to Phase 3 until all APPLICATION_BUGs are fixed.**
 
 ---
 
 ## STEP 3.5: Bug Fixing Phase (Phase 2.5)
 
-**This phase is MANDATORY if any APPLICATION_BUG was detected.**
+**Required if any APPLICATION_BUG detected.**
 
 ### 3.5a: Create Bug Tasks
 
-For each APPLICATION_BUG, create a Beads task:
-
 ```bash
-bd create --title="BUG: [clear description of wrong behavior]" --type=bug
+bd create --title="BUG: [description]" --type=bug
 ```
 
-### 3.5b: Document Each Bug
-
-```bash
-bd update BEADS-XXX --body="
-## Bug Description
-[What is broken in the application]
-
-## Expected Behavior
-[What should happen according to specs/documentation]
-
-## Actual Behavior  
-[What the application actually does]
-
-## Evidence
-- Test file: [path]
-- Error: [message]
-- Stack trace: [relevant lines]
-
-## Affected Tests
-- [test1.spec.ts]
-- [test2.spec.ts]
-
-## Likely Location
-[File and function in app code]
-"
-```
-
-### 3.5c: Dispatch Bug Fix Subagent
-
-For each bug (or group of related bugs):
+### 3.5b: Dispatch Bug Fix Subagent
 
 ```
 Task(
   subagent_type="general-purpose",
   prompt="""
-You are fixing an APPLICATION BUG discovered during E2E test repair.
+You are fixing an APPLICATION BUG.
 
-CRITICAL: Fix the APPLICATION CODE, not the tests.
-NEVER modify tests to accept wrong behavior.
+Important: Fix the application source code rather than modifying tests.
 
-BUG TASK: BEADS-XXX
+BUG: [description]
+EXPECTED: [correct behavior]
+ACTUAL: [what app does]
+EVIDENCE: [test output]
+LOCATION: [likely app file]
 
-EXPECTED BEHAVIOR:
-[what should happen]
-
-ACTUAL BEHAVIOR:
-[what app does]
-
-EVIDENCE:
-- Test: [test file]
-- Error: [error message]
-
-LIKELY LOCATION:
-[app file and function]
-
-YOUR TASK:
-1. Read the failing test to understand expected behavior
-2. Find the bug in the application code
-3. Fix the application code
-4. Run affected tests to verify (with ORIGINAL expectations)
-5. Report what you changed
-
-RULES:
-- Fix the APP, not the test
-- Do not change test expectations
-- Do not add workarounds
-- If cannot find bug, report back
-
-VERIFICATION - Run these tests after fixing:
-[list of affected test files]
-
-All must pass with ORIGINAL expectations.
+Fix the app, then verify with affected tests.
+Report what you changed.
 """,
-  description="Fix bug: BEADS-XXX"
+  description="Fix bug: {bug_id}"
 )
 ```
 
-### 3.5d: Verify Bug Fixes
+### 3.5c: Verify and Close
 
-After each bug fix subagent completes:
-
-1. Run affected tests:
-   ```bash
-   npx playwright test [affected_tests] --reporter=list --timeout=30000
-   ```
-
-2. Check results:
-   - If tests pass: Close bug task and continue
-   - If tests fail with same error: Bug not fixed, iterate
-   - If tests fail with different error: New issue, analyze
-
-3. Close completed bugs:
-   ```bash
-   bd close BEADS-XXX --reason="Fixed: [brief description]"
-   ```
-
-### 3.5e: Repeat Until All Bugs Fixed
-
-**Do NOT proceed to Phase 3 until ALL APPLICATION_BUGs are resolved.**
+Run affected tests. If pass, close bug task. If fail, iterate.
 
 ---
 
-## STEP 4: Fix Phase (Phase 3)
+## STEP 4: Fix Phase (Phase 3) - PARALLEL BY CATEGORY
 
-Fix ONE category at a time, verify, then proceed to next.
+### 4a: Group Fixes by Category
 
-**Note: Only reach this phase after all APPLICATION_BUGs are fixed.**
+Group all failures by category. Dispatch fix subagents in parallel for independent categories.
 
-### 4a: Load Fix Patterns
-
-```
-~/.claude/skills/e2e-test-repair/references/fix-patterns.md
-```
-
-### 4b: Dispatch Fix Sub-Agent
-
-For the highest-priority category, dispatch a fix sub-agent:
+### 4b: Dispatch Parallel Fix Subagents
 
 ```
 Task(
@@ -423,88 +341,81 @@ Task(
   prompt="""
 You are a FIX IMPLEMENTATION agent.
 
-Read the fix-agent template from the e2e-test-repair skill:
-  ~/.claude/skills/e2e-test-repair/references/fix-agent.md
-
-Also read fix patterns:
-  ~/.claude/skills/e2e-test-repair/references/fix-patterns.md
+Read: ~/.claude/skills/e2e-test-repair/references/fix-patterns.md
 
 CATEGORY: {category}
-ROOT_CAUSE: {root_cause}
-AFFECTED_TESTS: {count}
-SAMPLE_ERROR: {sample_error}
-FILES_TO_EXAMINE: {file_list}
-PROJECT_DIR: {project_dir}
+AFFECTED_FILES: {file_list}
+SAMPLE_ERRORS: {samples}
 
-CRITICAL: Before fixing, verify this is NOT an APPLICATION_BUG.
-If you discover the app behavior is wrong, STOP and report back.
-Do NOT modify tests to work around app bugs.
+Apply the standard fix pattern for {category}.
+Verify with 2-3 affected tests.
+Report what you changed.
 
-Implement the fix and verify with 2-3 affected tests.
-Return JSON report with fix details and verification result.
+Note: If you discover the application behavior is wrong rather than the test setup, pause and report back so we can address the root cause.
 """,
-  description="Fix: {category}"
+  description="Fix: {category} ({count} tests)"
 )
 ```
 
-### 4c: Handle APPLICATION_BUG Discovery
+Dispatch fix agents for AUTH_FAILURE, RATE_LIMIT, SERVER_ERROR in parallel (they're independent).
 
-If fix sub-agent reports APPLICATION_BUG discovered:
-1. Return to Phase 2.5
-2. Create bug task
-3. Fix the app
-4. Then resume Phase 3
+### 4c: Wait and Collect
 
-### 4d: Collect Fix Report
-
-Wait for fix sub-agent to complete.
-Review the fix applied and verification result.
+Use AgentOutputTool to collect all fix results.
 
 ---
 
-## STEP 5: Verification Phase (Phase 4)
+## STEP 5: Verification Phase (Phase 4) - PARALLEL
 
-After each fix, verify it worked.
+### 5a: Build Affected File List
 
-### 5a: Run Affected Tests
+Collect all test files that had fixes applied.
 
-Run ONLY the tests that were failing in the fixed category:
+### 5b: Run Targeted Verification
 
-```bash
-npx playwright test {affected_test_files} --reporter=list --timeout=30000
+If parallel-runner available and file count > 10:
+
+```
+Task(
+  subagent_type="general-purpose",
+  prompt="""
+Run verification on affected files.
+
+PROJECT_DIR: {project_dir}
+AFFECTED_FILES: {file_list}
+
+cd {project_dir} && npx tsx .agent-os/scripts/e2e-parallel/parallel-runner.ts \
+  --shards=2 \
+  --timeout=30000 \
+  -- {affected_files}
+
+Return stats and any remaining failures.
+""",
+  description="Verify fixes: {file_count} files"
+)
 ```
 
-### 5b: Calculate Pass Rate
+If file count <= 10, run directly:
+```bash
+npx playwright test {files} --reporter=list --timeout=30000
+```
+
+### 5c: Calculate New Pass Rate
 
 ```
 VERIFICATION RESULTS
 ====================
-Category: {category}
 Tests Run: {count}
 Passed: {passed}
 Failed: {failed}
-Pass Rate: {rate}%
+New Pass Rate: {rate}%
 ```
-
-### 5c: Decision
-
-- If pass rate >= 80%: Mark category as RESOLVED, proceed to next category
-- If pass rate < 80%: Analyze remaining failures
-  - Check for APPLICATION_BUG misclassification
-  - Report to user, ask how to proceed
 
 ---
 
 ## STEP 6: Iteration (Phase 5)
 
-Repeat phases 3-4 until:
-- All high-impact categories are resolved
-- Remaining failures are isolated edge cases
-- Test pass rate exceeds 90%
-
 ### 6a: Update Progress Table
-
-Maintain running tally:
 
 ```
 | CATEGORY        | TOTAL | FIXED | REMAINING | STATUS      |
@@ -512,13 +423,14 @@ Maintain running tally:
 | APPLICATION_BUG | 5     | 5     | 0         | RESOLVED    |
 | AUTH_FAILURE    | 45    | 42    | 3         | RESOLVED    |
 | RATE_LIMIT      | 30    | 30    | 0         | RESOLVED    |
-| SERVER_ERROR    | 15    | 0     | 15        | PENDING     |
 | ...             |       |       |           |             |
+
+Overall: 450/500 passing (90%)
 ```
 
 ### 6b: Check Success Criteria
 
-- Pass rate >= 95%: SUCCESS - Report final state and exit
+- Pass rate >= 95%: SUCCESS
 - Pass rate >= 90% after 3 cycles: SUCCESS with caveats
 - Pass rate < 70% after 2 cycles: ESCALATE to human
 
@@ -526,118 +438,78 @@ Maintain running tally:
 
 ## STEP 7: Context Management
 
-Monitor context usage throughout the session.
-
-### 7a: Check Context Periodically
+### 7a: Check Periodically
 
 After each major phase:
-- If context < 70%: Continue normally
-- If context 70-85%: Prepare handoff state
-- If context >= 85%: Execute handoff immediately
+- Context < 70%: Continue
+- Context 70-85%: Prepare handoff
+- Context >= 85%: Execute handoff immediately
 
 ### 7b: Create Handoff
 
-Load handoff protocol:
-```
-~/.claude/skills/e2e-test-repair/references/handoff-protocol.md
-```
-
-Save state to:
-- `.agent-os/e2e-repair/handoff.json`
-- `.agent-os/e2e-repair/handoff.md`
+Save state to `.agent-os/e2e-repair/handoff.json`:
+- Current phase
+- Failures remaining by category
+- Fixes applied
+- Pass rate history
 
 ### 7c: Report to User
 
 ```
 E2E REPAIR SESSION PAUSED
 =========================
-Context limit reached (NN%)
+Context limit reached.
 
-Progress: X/Y failures fixed (ZZ% pass rate)
-Current: [current phase and task]
-Pending bugs: [any unresolved APPLICATION_BUGs]
+Progress: 400/500 passing (80%)
+Current Phase: Fix - SERVER_ERROR
+Remaining: 100 failures in 3 categories
 
-State saved to: .agent-os/e2e-repair/handoff.json
-
-TO RESUME:
-  /fix-e2e-tests --resume
-
-Or start fresh:
-  /fix-e2e-tests
+TO RESUME: /fix-e2e-tests --resume
 ```
 
 ---
 
-## Escalation Triggers
+## Critical Rules (v2.0)
 
-Stop and ask user when:
-- Application bug detected - MUST fix before continuing
-- Server will not start - infrastructure issue
-- Database schema changes needed
-- Test requires unavailable external service
-- Same fix attempted 3x without success
-- Unclear if test or app behavior is wrong - ASK, do not guess
-- Context reaches 85%
-
----
-
-## Critical Rules
-
-1. **APPLICATION_BUG is blocking** - Fix app before any test fixes
-2. **NEVER work around bugs** - No test modifications for app bugs
-3. **Batch Size**: Maximum 5 test files per sub-agent
-4. **Stop Threshold**: Stop after 3 consecutive OR 5 total failures per batch
-5. **Timeout**: Hard 30s limit - NO increases allowed
-6. **Fix Order**: APPLICATION_BUG first, then AUTH, RATE_LIMIT, SERVER, rest
-7. **One Category at a Time**: Fix and verify before moving to next
-8. **Parallel Discovery**: Run test batches in parallel
-9. **Sequential Fixes**: Apply fixes sequentially with verification
-10. **Context Aware**: Handoff before exceeding 90% context
-11. **User Decisions**: Ask before major actions
-12. **When in doubt**: Ask user if behavior is test issue or app bug
+1. **APPLICATION_BUG is blocking** - Fix app before test fixes
+2. **Parallel Discovery** - Use parallel-runner.ts for discovery
+3. **Dynamic Shards** - Calculate based on test count to avoid empty shards
+4. **Minimal Context** - Only pass aggregated.json, not raw output
+5. **Single Worker Per Shard** - Prevent server overload
+6. **Parallel Fixes** - Group by category, dispatch in parallel
+7. **Targeted Verification** - Re-run only affected files
 
 ---
 
 ## Sub-Agent Types
 
-All sub-agents use `subagent_type="general-purpose"` with role-specific prompts:
+All use `subagent_type="general-purpose"` with role-specific prompts:
 
-- **Test Runner**: Executes test batches, reports failures, flags potential app bugs
-- **Fix Implementer**: Implements test/infrastructure fixes, detects app bugs
-- **Bug Fixer**: Fixes application code (dispatched only for APPLICATION_BUG)
-
-Sub-agents receive templates from skill references:
-- `references/test-runner-agent.md`
-- `references/fix-agent.md`
+- **Parallel Discovery**: Runs parallel-runner.ts, returns aggregated.json
+- **Fix Implementer**: Applies fixes by category
+- **Bug Fixer**: Fixes application code (for APPLICATION_BUG only)
 
 ---
 
-## Beads Integration
+## Performance Expectations
 
-Create tasks for all significant work:
+| Test Count | Discovery Time | Total Time (est) |
+|------------|----------------|------------------|
+| 100        | ~3 min         | ~15 min          |
+| 250        | ~7 min         | ~30 min          |
+| 500        | ~15 min        | ~45 min          |
 
-```bash
-# For application bugs (REQUIRED)
-bd create --title="BUG: [description]" --type=bug
-
-# For test infrastructure fixes (optional but recommended)
-bd create --title="Fix: [category] - [root cause]" --type=task
-
-# Track progress
-bd update BEADS-XXX --status=in_progress
-bd close BEADS-XXX --reason="[completion note]"
-```
+(Assuming 4-8 shards, single dev server)
 
 ---
 
 ## Quick Start
 
-1. User invokes: `/fix-e2e-tests`
-2. Skill loads failure patterns
-3. Pre-flight checks infrastructure
-4. Discovery finds all failures (parallel batches)
-5. Analysis categorizes by root cause, **IDENTIFIES APPLICATION BUGS**
-6. **Bug fixing: Fix ALL application bugs first** (Phase 2.5)
-7. Test/infrastructure fixes applied one category at a time
-8. Verification after each fix
-9. Iterate until 90%+ pass rate or user stops
+1. `/fix-e2e-tests` - Invoke command
+2. Skill loads, pre-flight checks
+3. Parallel discovery (one subagent, N shards)
+4. Analysis: categorize failures from aggregated.json
+5. Fix APPLICATION_BUGs first (if any)
+6. Parallel fixes by category
+7. Targeted verification
+8. Iterate until 90%+ pass rate

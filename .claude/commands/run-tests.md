@@ -27,7 +27,7 @@ MAIN AGENT (You)
 
 ---
 
-## STEP 1: Ask User Which Tests to Run (MANDATORY)
+## STEP 1: Ask User Which Tests to Run
 
 **BEFORE doing anything else, ASK the user:**
 
@@ -77,7 +77,7 @@ node ~/.agent-os/hooks/lib/test-monitor.js pnpm vitest run --reporter=./scripts/
 
 ### 2c: Validate Output Format
 
-**You MUST see `[AGENT-OS-TEST]` markers in the output:**
+**Expected: You should see `[AGENT-OS-TEST]` markers in the output:**
 
 ```
 {"type":"run_start",...}
@@ -385,14 +385,14 @@ testDir: './tests/e2e',  // NOT './tests'
 
 ---
 
-## CRITICAL RULES
+## Key Rules
 
 1. **You RUN TESTS DIRECTLY** - User sees real-time streaming output
 2. **You DELEGATE FIXES to subagents** - They don't need output visibility
-3. **NEVER run tests without the streaming reporter**
-4. **NEVER run E2E tests without checking servers first**
-5. **ALWAYS use the test-monitor wrapper**
-6. **ALWAYS wait for user to specify test type**
-7. **ALWAYS persist analysis to `.agent-os/test-failures/`**
-8. **If you don't see `[AGENT-OS-TEST]` output, the reporter is broken - fix it before continuing**
+3. **Always use the streaming reporter** (provides real-time test visibility)
+4. **Always verify server health before E2E tests** (prevents failures due to missing servers)
+5. **Use the test-monitor wrapper** (enables hung test detection)
+6. **Wait for user to specify test type** (prevents running wrong suite)
+7. **Persist analysis to `.agent-os/test-failures/`** (enables resume after context loss)
+8. **If you don't see `[AGENT-OS-TEST]` output, the reporter needs to be fixed** (install it before continuing)
 9. **Fix decisions are informed by analysis, not blind attempts**

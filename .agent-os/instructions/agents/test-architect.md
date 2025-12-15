@@ -122,6 +122,29 @@ test_design_patterns:
   equivalence_partitioning: "Valid/invalid inputs, boundary values"
 ```
 
+## E2E Suite Analysis (MANDATORY before E2E test creation)
+
+**BEFORE creating any E2E test:**
+
+1. Invoke: `Skill(skill="e2e-test-organization")`
+2. Read: `references/coverage-analysis.md`
+3. Complete Step 0 of `references/placement-checklist.md`
+4. Document: Why this test is needed (not redundant)
+
+**Add to Pre-Creation Checklist step_1:**
+```yaml
+existing_tests_reviewed: true
+gap_identified: "[what gap this fills]"
+not_redundant_because: "[justification]"
+```
+
+**Skip E2E test creation if:**
+- Existing test covers the same user journey
+- >80% assertion overlap with existing test
+- Can be added as a case to an existing test file
+
+---
+
 ## Pre-Creation Checklist (MANDATORY GATE)
 
 **BLOCK test creation until ALL fields completed:**

@@ -32,14 +32,36 @@ test.describe('Payload CMS Admin Panel', () => {
     // Verify successful response
     expect(response?.status()).toBe(200);
 
-    // Wait for page to be fully loaded
+    // Wait for page to be fully loaded (Payload CMS uses RSC, may take time to hydrate)
     await page.waitForLoadState('networkidle');
 
-    // Verify login page elements are present
-    // Look for common Payload CMS login elements
-    const hasEmailField = await page.locator('input[type="email"], input[name="email"]').count() > 0;
-    const hasPasswordField = await page.locator('input[type="password"], input[name="password"]').count() > 0;
-    const hasLoginButton = await page.locator('button[type="submit"]').count() > 0;
+    // Payload CMS login page uses accessible names. Wait for the login form to hydrate.
+    // Use getByRole which works with accessible names, more reliable than CSS selectors
+    const emailField = page.getByRole('textbox', { name: /email/i });
+    const passwordField = page.getByRole('textbox', { name: /password/i });
+    const loginButton = page.getByRole('button', { name: /login/i });
+
+    // Wait for at least one element to be visible (hydration complete)
+    try {
+      await Promise.race([
+        emailField.waitFor({ state: 'visible', timeout: 10000 }),
+        passwordField.waitFor({ state: 'visible', timeout: 10000 }),
+        loginButton.waitFor({ state: 'visible', timeout: 10000 })
+      ]);
+    } catch (e) {
+      // If role-based selectors fail, try CSS selectors as fallback
+      console.log('Falling back to CSS selectors for Payload login form');
+    }
+
+    // Verify login page elements are present using multiple strategies
+    const hasEmailByRole = await emailField.count() > 0;
+    const hasPasswordByRole = await passwordField.count() > 0;
+    const hasLoginButtonByRole = await loginButton.count() > 0;
+
+    // Fallback CSS selectors for older Payload versions
+    const hasEmailField = hasEmailByRole || await page.locator('input[type="email"], input[name="email"], input[id*="email"]').count() > 0;
+    const hasPasswordField = hasPasswordByRole || await page.locator('input[type="password"], input[name="password"], input[id*="password"]').count() > 0;
+    const hasLoginButton = hasLoginButtonByRole || await page.locator('button[type="submit"], button:has-text("Login")').count() > 0;
 
     // At least one of these should be true if the admin panel loaded correctly
     const isLoginPageRendered = hasEmailField || hasPasswordField || hasLoginButton;
