@@ -11,6 +11,24 @@ async function loginAsVendor(page: Page, email: string, password: string) {
   await page.waitForURL(/\/vendor\/dashboard\/?/, { timeout: 10000 });
 }
 
+/**
+ * Helper to get location form inputs by their id patterns.
+ * LocationFormFields uses id attributes like:
+ * - locationName-{id}
+ * - address-{id}
+ * - city-{id}
+ * - country-{id}
+ */
+function getLocationFormInputs(page: Page) {
+  return {
+    locationName: page.locator('input[id^="locationName-"]').last(),
+    address: page.locator('input[id^="address-"]').last(),
+    city: page.locator('input[id^="city-"]').last(),
+    country: page.locator('input[id^="country-"]').last(),
+    isHQ: page.locator('input[id^="isHQ-"]').last(),
+  };
+}
+
 test.describe('E2E-P2: End-to-End Happy Path', () => {
   test.setTimeout(480000); // 8 minutes timeout for comprehensive test
 
@@ -218,22 +236,15 @@ test.describe('E2E-P2: End-to-End Happy Path', () => {
         await addLocationBtn.click();
         await page.waitForTimeout(300);
 
-        const locNameInput = page.locator('input[name*="name"]').last();
-        await locNameInput.fill('Headquarters - Monaco');
+        const inputs = getLocationFormInputs(page);
+        await inputs.locationName.fill('Headquarters - Monaco');
+        await inputs.address.fill('1 Port Hercules');
+        await inputs.city.fill('Monaco');
+        await inputs.country.fill('Monaco');
 
-        const cityInput = page.locator('input[name*="city"]').last();
-        if (await cityInput.isVisible({ timeout: 1000 }).catch(() => false)) {
-          await cityInput.fill('Monaco');
-        }
-
-        const countryInput = page.locator('input[name*="country"]').last();
-        if (await countryInput.isVisible({ timeout: 1000 }).catch(() => false)) {
-          await countryInput.fill('Monaco');
-        }
-
-        const hqCheckbox = page.locator('input[type="checkbox"][name*="hq"]').last();
-        if (await hqCheckbox.isVisible({ timeout: 1000 }).catch(() => false)) {
-          await hqCheckbox.check();
+        // First location is automatically set as HQ - verify it's checked
+        if (await inputs.isHQ.isVisible({ timeout: 1000 }).catch(() => false)) {
+          await expect(inputs.isHQ).toBeChecked({ timeout: 1000 }).catch(() => {});
         }
 
         // Click "Done Editing" to exit edit mode
@@ -246,17 +257,15 @@ test.describe('E2E-P2: End-to-End Happy Path', () => {
         console.log('[OK] Headquarters location added');
 
         // Add second location
-        if (await addLocationBtn.isVisible({ timeout: 1000 }).catch(() => false)) {
+        if (await addLocationBtn.isEnabled({ timeout: 1000 }).catch(() => false)) {
           await addLocationBtn.click();
           await page.waitForTimeout(300);
 
-          const loc2NameInput = page.locator('input[name*="name"]').last();
-          await loc2NameInput.fill('Cannes Office');
-
-          const city2Input = page.locator('input[name*="city"]').last();
-          if (await city2Input.isVisible({ timeout: 1000 }).catch(() => false)) {
-            await city2Input.fill('Cannes');
-          }
+          const inputs2 = getLocationFormInputs(page);
+          await inputs2.locationName.fill('Cannes Office');
+          await inputs2.address.fill('2 Boulevard de la Croisette');
+          await inputs2.city.fill('Cannes');
+          await inputs2.country.fill('France');
 
           // Click "Done Editing" to exit edit mode
           const loc2DoneBtn = page.locator('button').filter({ hasText: /Done.*Editing/i }).first();

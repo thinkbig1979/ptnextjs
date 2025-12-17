@@ -396,17 +396,31 @@ test.describe('TIER1-P2: Tier 1 Advanced Profile', () => {
       // Add two team members first
       const addBtn = page.locator('button').filter({ hasText: /Add.*Team|Add.*Member/i }).first();
       if (await addBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
-        // Add first member
+        // Add first member - fill all required fields
         await addBtn.click();
         await page.waitForTimeout(300);
         await page.locator('input[name*="name"]').last().fill('Alice First');
+        // Role/Title is required
+        const roleInput1 = page.locator('input[name*="role"], input[placeholder*="Chief Engineer"]').last();
+        if (await roleInput1.isVisible({ timeout: 1000 }).catch(() => false)) {
+          await roleInput1.fill('Chief Technology Officer');
+        }
         await page.locator('button').filter({ hasText: /Save|Add/ }).last().click();
         await page.waitForTimeout(1000);
 
-        // Add second member
+        // Wait for modal/dialog to close before adding second member
+        const dialog = page.locator('[role="dialog"]');
+        await dialog.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
+
+        // Add second member - fill all required fields
         await addBtn.click();
         await page.waitForTimeout(300);
         await page.locator('input[name*="name"]').last().fill('Bob Second');
+        // Role/Title is required
+        const roleInput2 = page.locator('input[name*="role"], input[placeholder*="Chief Engineer"]').last();
+        if (await roleInput2.isVisible({ timeout: 1000 }).catch(() => false)) {
+          await roleInput2.fill('Sales Director');
+        }
         await page.locator('button').filter({ hasText: /Save|Add/ }).last().click();
         await page.waitForTimeout(1000);
 

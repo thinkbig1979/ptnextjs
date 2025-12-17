@@ -11,6 +11,23 @@ async function loginAsVendor(page: Page, email: string, password: string) {
   await page.waitForURL(/\/vendor\/dashboard\/?/, { timeout: 10000 });
 }
 
+/**
+ * Helper to get location form inputs by their id patterns.
+ * LocationFormFields uses id attributes like:
+ * - locationName-{id}
+ * - address-{id}
+ * - city-{id}
+ * - country-{id}
+ */
+function getLocationFormInputs(page: Page) {
+  return {
+    locationName: page.locator('input[id^="locationName-"]').last(),
+    address: page.locator('input[id^="address-"]').last(),
+    city: page.locator('input[id^="city-"]').last(),
+    country: page.locator('input[id^="country-"]').last(),
+  };
+}
+
 test.describe('TIER3-P2: Tier 3 Promotions', () => {
   test.setTimeout(90000); // 90 seconds for longer tests
 
@@ -222,19 +239,12 @@ test.describe('TIER3-P2: Tier 3 Promotions', () => {
           await addBtn.click();
           await page.waitForTimeout(300);
 
-          const nameInput = page.locator('input[name*="name"]').last();
-          if (await nameInput.isVisible({ timeout: 1000 }).catch(() => false)) {
-            await nameInput.fill(`Location ${i + 1}`);
-
-            const cityInput = page.locator('input[name*="city"]').last();
-            if (await cityInput.isVisible({ timeout: 500 }).catch(() => false)) {
-              await cityInput.fill(`City ${i + 1}`);
-            }
-
-            const countryInput = page.locator('input[name*="country"]').last();
-            if (await countryInput.isVisible({ timeout: 500 }).catch(() => false)) {
-              await countryInput.fill('France');
-            }
+          const inputs = getLocationFormInputs(page);
+          if (await inputs.locationName.isVisible({ timeout: 1000 }).catch(() => false)) {
+            await inputs.locationName.fill(`Location ${i + 1}`);
+            await inputs.address.fill(`${i + 1} Main Street`);
+            await inputs.city.fill(`City ${i + 1}`);
+            await inputs.country.fill('France');
 
             // Click "Done Editing" to exit edit mode and enable Add Location button again
             const doneBtn = page.locator('button').filter({ hasText: /Done.*Editing/i }).first();
