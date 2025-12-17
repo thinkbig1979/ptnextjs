@@ -272,11 +272,11 @@ export function VendorSearchBar({
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
           {/* Search Mode Tabs */}
           <TabsList className="grid w-full sm:w-[240px] grid-cols-2">
-            <TabsTrigger value="name" className="gap-2">
+            <TabsTrigger value="name" className="gap-2" data-testid="search-tab-name">
               <Search className="h-4 w-4" />
               Name
             </TabsTrigger>
-            <TabsTrigger value="location" className="gap-2">
+            <TabsTrigger value="location" className="gap-2" data-testid="search-tab-location">
               <MapPin className="h-4 w-4" />
               Location
             </TabsTrigger>
@@ -285,7 +285,11 @@ export function VendorSearchBar({
           {/* Category Filter */}
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <Select value={selectedCategory} onValueChange={onCategoryChange}>
-              <SelectTrigger className="w-full sm:w-[200px]" data-testid="category-filter">
+              <SelectTrigger
+                className="w-full sm:w-[200px]"
+                data-testid="category-filter"
+                aria-label="Filter by category"
+              >
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
               <SelectContent>
@@ -318,8 +322,9 @@ export function VendorSearchBar({
                 size="icon"
                 className="absolute right-1 top-1/2 transform -translate-y-1/2 h-8 w-8"
                 onClick={() => onSearchChange('')}
+                aria-label="Clear search"
               >
-                <X className="h-4 w-4" />
+                <X className="h-4 w-4" aria-hidden="true" />
               </Button>
             )}
           </div>
@@ -404,6 +409,7 @@ export function VendorSearchBar({
                         <button
                           key={result.properties.osm_id || index}
                           type="button"
+                          data-testid={`location-result-${index}`}
                           onMouseDown={(e) => {
                             e.preventDefault();
                             handleLocationSelect(result);
@@ -443,9 +449,10 @@ export function VendorSearchBar({
                   size="icon"
                   onClick={handleLocationReset}
                   className="h-12 w-12 shrink-0"
-                  data-testid="location-reset-button"
+                  data-testid="reset-button"
+                  aria-label="Clear location search"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-4 w-4" aria-hidden="true" />
                 </Button>
               )}
             </div>
@@ -454,7 +461,7 @@ export function VendorSearchBar({
             <div className="space-y-2 px-1">
               <div className="flex items-center justify-between">
                 <Label className="text-sm font-medium">Search Radius</Label>
-                <span className="text-sm font-medium text-muted-foreground">
+                <span className="text-sm font-medium text-muted-foreground" data-testid="distance-value">
                   {distance} km
                 </span>
               </div>

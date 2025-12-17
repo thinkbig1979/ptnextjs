@@ -22,13 +22,9 @@ export default function VendorDetailClient({ vendor }: VendorDetailClientProps) 
     threshold: 0.1,
   });
 
-  // Handler functions
-  const handleCallVendor = () => {
-    alert(`Calling ${vendor?.name}. You will be connected to their main office shortly.`);
-  };
-
-  const handleSendMessage = () => {
-    alert(`Opening contact form for ${vendor?.name}. You will be redirected to send a message.`);
+  // Format phone number for tel: link (remove spaces, dashes, parentheses)
+  const formatPhoneForTel = (phone: string): string => {
+    return phone.replace(/[\s\-\(\)]/g, '');
   };
 
   return (
@@ -39,19 +35,39 @@ export default function VendorDetailClient({ vendor }: VendorDetailClientProps) 
       transition={{ duration: 0.6, delay: 0.3 }}
       className="space-y-3"
     >
-      <Button className="w-full bg-accent hover:bg-accent/90" onClick={handleCallVendor}>
-        <Phone className="w-4 h-4 mr-2" />
-        Call Vendor
-      </Button>
+      {/* Phone link - uses tel: for accessibility */}
+      {vendor.contactPhone ? (
+        <Button className="w-full bg-accent hover:bg-accent/90" asChild>
+          <a href={`tel:${formatPhoneForTel(vendor.contactPhone)}`} aria-label={`Call ${vendor.name} at ${vendor.contactPhone}`}>
+            <Phone className="w-4 h-4 mr-2" />
+            Call Vendor
+          </a>
+        </Button>
+      ) : (
+        <Button className="w-full bg-accent hover:bg-accent/90" disabled aria-label="Phone number not available">
+          <Phone className="w-4 h-4 mr-2" />
+          Call Vendor
+        </Button>
+      )}
 
-      <Button variant="outline" className="w-full" onClick={handleSendMessage}>
-        <Mail className="w-4 h-4 mr-2" />
-        Send Message
-      </Button>
+      {/* Email link - uses mailto: for accessibility */}
+      {vendor.contactEmail ? (
+        <Button variant="outline" className="w-full" asChild>
+          <a href={`mailto:${vendor.contactEmail}`} aria-label={`Send email to ${vendor.name}`}>
+            <Mail className="w-4 h-4 mr-2" />
+            Send Message
+          </a>
+        </Button>
+      ) : (
+        <Button variant="outline" className="w-full" disabled aria-label="Email not available">
+          <Mail className="w-4 h-4 mr-2" />
+          Send Message
+        </Button>
+      )}
 
       {vendor.website && (
         <Button variant="outline" className="w-full" asChild>
-          <a href={ensureUrlProtocol(vendor.website)} target="_blank" rel="noopener noreferrer">
+          <a href={ensureUrlProtocol(vendor.website)} target="_blank" rel="noopener noreferrer" aria-label={`Visit ${vendor.name} website`}>
             <ExternalLink className="w-4 h-4 mr-2" />
             Visit Website
           </a>

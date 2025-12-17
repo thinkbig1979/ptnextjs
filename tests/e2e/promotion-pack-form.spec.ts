@@ -55,9 +55,10 @@ test.describe('PromotionPackForm Component Tests', () => {
     await promotionTab.click();
     await page.waitForSelector('text=Promotion Features', { timeout: 10000 });
 
+    // shadcn/ui Checkbox renders as button with role="checkbox", not input
     const checkboxes = ['featuredPlacement', 'editorialCoverage', 'searchHighlight'];
     for (const id of checkboxes) {
-      const checkbox = page.locator(`input[id="${id}"]`);
+      const checkbox = page.locator(`button[id="${id}"][role="checkbox"]`);
       expect(await checkbox.isVisible()).toBe(true);
       console.log(`[OK] ${id} checkbox visible`);
     }

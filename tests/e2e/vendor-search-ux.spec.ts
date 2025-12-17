@@ -53,15 +53,15 @@ test.describe('Vendor Search UX Improvements', () => {
   test('should allow name search', async ({ page }) => {
     const nameInput = page.getByTestId('name-search-input');
 
-    // Type in name search
-    await nameInput.fill('Test');
-    await expect(nameInput).toHaveValue('Test');
+    // Type in name search using actual vendor name from global setup
+    await nameInput.fill('Alfa');
+    await expect(nameInput).toHaveValue('Alfa');
 
-    // Clear button should be visible next to the input
-    const clearButton = page.locator('button').filter({ hasText: '' }).filter({ has: page.locator('svg') });
-    const visibleClearButton = clearButton.last(); // Get the clear button in the input
+    // Wait a moment for search to process
+    await page.waitForTimeout(500);
 
-    await visibleClearButton.click();
+    // Clear the search input
+    await nameInput.clear();
     await expect(nameInput).toHaveValue('');
   });
 

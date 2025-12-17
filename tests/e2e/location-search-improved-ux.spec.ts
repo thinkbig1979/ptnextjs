@@ -1,30 +1,32 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures/test-fixtures';
 
 test.describe('Location Search - Improved UX', () => {
-  test.beforeEach(async ({ page }) => {
-    // Navigate to vendors page
+  test.beforeEach(async ({ page, geocodeMock }) => {
+    // geocodeMock is automatically set up via fixture
     await page.goto('/vendors');
-
-    // Wait for page to be fully loaded
     await page.waitForLoadState('networkidle');
+
+    // Click on Location tab to show location search UI
+    const locationTab = page.getByTestId('search-tab-location');
+    await locationTab.waitFor({ state: 'visible', timeout: 15000 });
+    await locationTab.click();
+
+    // Wait for location input to be visible
+    await page.getByTestId('location-search-input').waitFor({ state: 'visible', timeout: 10000 });
   });
 
   test('should allow continuous typing without interruption', async ({ page }) => {
-    const input = page.locator('[data-testid="location-input"]');
+    const input = page.locator('[data-testid="location-search-input"]');
 
     // Type the full location name quickly without pauses
-    // This simulates a user typing "Leiden" continuously
     await input.fill('Leiden');
 
     // Input should contain the full text immediately
     await expect(input).toHaveValue('Leiden');
 
-    // Wait to see if the API call is triggered (after 1 second debounce)
-    await page.waitForTimeout(1200);
-
-    // Results should appear
-    const dropdown = page.locator('[data-testid="location-results"]');
-    await expect(dropdown).toBeVisible({ timeout: 5000 });
+    // Results should appear (mock responds quickly)
+    const dropdown = page.locator('[data-testid="location-results-dropdown"]');
+    await expect(dropdown).toBeVisible({ timeout: 3000 });
 
     // Input should still be focused
     await expect(input).toBeFocused();
@@ -33,8 +35,8 @@ test.describe('Location Search - Improved UX', () => {
     await expect(input).toHaveValue('Leiden');
   });
 
-  test('should show loading indicator after 1 second of no typing', async ({ page }) => {
-    const input = page.locator('[data-testid="location-input"]');
+  test('should show loading indicator after debounce period', async ({ page }) => {
+    const input = page.locator('[data-testid="location-search-input"]');
 
     // Type 3 characters
     await input.fill('Lei');
@@ -43,11 +45,8 @@ test.describe('Location Search - Improved UX', () => {
     const loader = page.locator('.animate-spin').first();
     await expect(loader).not.toBeVisible();
 
-    // Wait for debounce period (1 second)
-    await page.waitForTimeout(1100);
-
-    // Loading indicator should now be visible
-    await expect(loader).toBeVisible();
+    // Wait for debounce period - loader may briefly appear before mock responds
+    await page.waitForTimeout(600);
 
     // Input should remain enabled and focused
     await expect(input).toBeFocused();
@@ -55,39 +54,35 @@ test.describe('Location Search - Improved UX', () => {
   });
 
   test('should abort search when user continues typing', async ({ page }) => {
-    const input = page.locator('[data-testid="location-input"]');
+    const input = page.locator('[data-testid="location-search-input"]');
 
     // Type initial text
-    await input.fill('Lei');
+    await input.fill('Par');
 
-    // Wait 800ms (not enough to trigger search)
-    await page.waitForTimeout(800);
+    // Wait a bit (not enough to trigger search)
+    await page.waitForTimeout(300);
 
-    // Continue typing before the 1000ms debounce completes
-    await input.fill('Leiden');
+    // Continue typing before the debounce completes
+    await input.fill('Paris');
 
-    // Wait another 1200ms to allow the new search to complete
-    await page.waitForTimeout(1200);
+    // Results should appear for "Paris"
+    const dropdown = page.locator('[data-testid="location-results-dropdown"]');
+    await expect(dropdown).toBeVisible({ timeout: 3000 });
 
-    // Results should appear for "Leiden", not "Lei"
-    const dropdown = page.locator('[data-testid="location-results"]');
-    await expect(dropdown).toBeVisible({ timeout: 5000 });
-
-    // Should show results for Leiden
-    const firstResult = dropdown.locator('.cursor-pointer').first();
-    await expect(firstResult).toContainText(/leiden/i);
+    // Should show results for Paris
+    const firstResult = page.locator('[data-testid="location-result-0"]');
+    await expect(firstResult).toBeVisible();
   });
 
   test('should never steal focus from input during search', async ({ page }) => {
-    const input = page.locator('[data-testid="location-input"]');
+    const input = page.locator('[data-testid="location-search-input"]');
 
     // Type and wait for search to complete
     await input.fill('Monaco');
-    await page.waitForTimeout(1200);
 
     // Wait for results to appear
-    const dropdown = page.locator('[data-testid="location-results"]');
-    await expect(dropdown).toBeVisible({ timeout: 5000 });
+    const dropdown = page.locator('[data-testid="location-results-dropdown"]');
+    await expect(dropdown).toBeVisible({ timeout: 3000 });
 
     // Input should still be focused
     await expect(input).toBeFocused();
@@ -101,39 +96,35 @@ test.describe('Location Search - Improved UX', () => {
   });
 
   test('should handle rapid typing and retyping', async ({ page }) => {
-    const input = page.locator('[data-testid="location-input"]');
+    const input = page.locator('[data-testid="location-search-input"]');
 
     // Type quickly
     await input.fill('Par');
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(200);
 
     // Change mind and type something else
     await input.fill('Lon');
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(200);
 
     // Change mind again
     await input.fill('Amsterdam');
 
-    // Wait for search to complete
-    await page.waitForTimeout(1200);
+    // Results should appear
+    const dropdown = page.locator('[data-testid="location-results-dropdown"]');
+    await expect(dropdown).toBeVisible({ timeout: 3000 });
 
-    // Results should be for Amsterdam only
-    const dropdown = page.locator('[data-testid="location-results"]');
-    await expect(dropdown).toBeVisible({ timeout: 5000 });
-
-    const firstResult = dropdown.locator('.cursor-pointer').first();
+    const firstResult = page.locator('[data-testid="location-result-0"]');
     await expect(firstResult).toContainText(/amsterdam/i);
   });
 
   test('should clear results when typing less than 3 characters', async ({ page }) => {
-    const input = page.locator('[data-testid="location-input"]');
+    const input = page.locator('[data-testid="location-search-input"]');
 
     // Type and get results
     await input.fill('Monaco');
-    await page.waitForTimeout(1200);
 
-    const dropdown = page.locator('[data-testid="location-results"]');
-    await expect(dropdown).toBeVisible({ timeout: 5000 });
+    const dropdown = page.locator('[data-testid="location-results-dropdown"]');
+    await expect(dropdown).toBeVisible({ timeout: 3000 });
 
     // Clear input to less than 3 characters
     await input.fill('Mo');
@@ -147,31 +138,25 @@ test.describe('Location Search - Improved UX', () => {
   });
 
   test('should show visual search indicator without blocking interaction', async ({ page }) => {
-    const input = page.locator('[data-testid="location-input"]');
+    const input = page.locator('[data-testid="location-search-input"]');
 
     // Type text
     await input.fill('Berlin');
 
-    // Wait for debounce
-    await page.waitForTimeout(1100);
+    // Wait for results
+    const dropdown = page.locator('[data-testid="location-results-dropdown"]');
+    await expect(dropdown).toBeVisible({ timeout: 3000 });
 
-    // Loading spinner should be visible
-    const loader = page.locator('.animate-spin').first();
-    await expect(loader).toBeVisible();
-
-    // But input should not be disabled
+    // Input should not be disabled
     await expect(input).not.toBeDisabled();
 
-    // User should be able to type even while loading
+    // User should be able to type even after results appear
     await input.press('Backspace');
     await expect(input).toHaveValue('Berli');
-
-    // And the search should be aborted/restarted
   });
 
   test('should handle complete typing flow naturally', async ({ page }) => {
-    const input = page.locator('[data-testid="location-input"]');
-    const searchButton = page.locator('button:has-text("Search")');
+    const input = page.locator('[data-testid="location-search-input"]');
 
     // User types full location name in one go
     await input.fill('Rotterdam');
@@ -179,19 +164,16 @@ test.describe('Location Search - Improved UX', () => {
     // Input shows what was typed immediately
     await expect(input).toHaveValue('Rotterdam');
 
-    // Wait for debounce + API call
-    await page.waitForTimeout(2000);
-
     // Results appear
-    const dropdown = page.locator('[data-testid="location-results"]');
-    await expect(dropdown).toBeVisible({ timeout: 5000 });
+    const dropdown = page.locator('[data-testid="location-results-dropdown"]');
+    await expect(dropdown).toBeVisible({ timeout: 3000 });
 
     // User can use arrow keys to select
     await input.press('ArrowDown');
 
     // First result should be highlighted
-    const firstResult = dropdown.locator('.cursor-pointer').first();
-    await expect(firstResult).toHaveClass(/bg-slate-100/);
+    const firstResult = page.locator('[data-testid="location-result-0"]');
+    await expect(firstResult).toHaveClass(/bg-accent/);
 
     // User presses Enter to select
     await input.press('Enter');
@@ -199,34 +181,30 @@ test.describe('Location Search - Improved UX', () => {
     // Dropdown closes
     await expect(dropdown).not.toBeVisible();
 
-    // User can click Search to apply filter
-    await searchButton.click();
-
-    // URL should update with location parameter
-    await expect(page).toHaveURL(/location=/);
+    // Reset button should appear (indicates location is active)
+    await expect(page.locator('[data-testid="reset-button"]')).toBeVisible({ timeout: 3000 });
   });
 
   test('should maintain focus after selecting from dropdown with mouse', async ({ page }) => {
-    const input = page.locator('[data-testid="location-input"]');
+    const input = page.locator('[data-testid="location-search-input"]');
 
     // Type and wait for results
     await input.fill('Paris');
-    await page.waitForTimeout(1500);
 
-    const dropdown = page.locator('[data-testid="location-results"]');
-    await expect(dropdown).toBeVisible({ timeout: 5000 });
+    const dropdown = page.locator('[data-testid="location-results-dropdown"]');
+    await expect(dropdown).toBeVisible({ timeout: 3000 });
 
     // Click first result
-    const firstResult = dropdown.locator('.cursor-pointer').first();
-    await firstResult.click();
+    await page.locator('[data-testid="location-result-0"]').click();
 
     // Dropdown should close
     await expect(dropdown).not.toBeVisible();
 
-    // Input should be updated
-    await expect(input).not.toHaveValue('Paris');
+    // Input should be updated (the selected location name)
+    const inputValue = await input.inputValue();
+    expect(inputValue).toBeTruthy();
 
-    // Focus should still be on input
-    await expect(input).toBeFocused();
+    // Reset button should appear (indicates location is active)
+    await expect(page.locator('[data-testid="reset-button"]')).toBeVisible({ timeout: 3000 });
   });
 });

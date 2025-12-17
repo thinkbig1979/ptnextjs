@@ -1,5 +1,7 @@
-# Agent OS Configuration v4.6.0
+# Agent OS Configuration v4.8.2
 # Clean configuration with sane defaults for compound engineering integration
+# v4.8.2: E2E Stability Patterns - Isolation failures, unique fixtures, semantic waits, parallelism config
+# v4.8.0: E2E Testing Methodology Overhaul - Tiered organization, root cause analysis, progressive repair
 # v4.6.0: File consolidation - Single execute-tasks.md, removed redundant protocols
 # v4.5.0: Test Integrity Maintenance - Proactive existing test analysis and update tasks
 # v4.4.0: Quality Enforcement - Blocking gates, context verification, skill invocation checks
@@ -10,7 +12,7 @@
 # v4.0.0: Test Failure Handling Protocol - Orchestrated test execution with subagent delegation
 # v3.3.0: Test Execution Monitoring - Real-time streaming, hung test detection, test/code alignment
 
-agent_os_version: 4.6.0
+agent_os_version: 4.8.2
 
 # ================================================
 # CONFIGURATION HIERARCHY
@@ -92,209 +94,66 @@ execution:
 # ================================================
 # EXECUTION ROLES (Workflow Phase Documentation)
 # ================================================
-# IMPORTANT: These are NOT callable Claude Code agents.
+# These define the workflow phases and their instruction files.
+# The general-purpose agent loads instructions/agents/{role_name}.md
+# when entering each workflow phase.
 #
-# What these ARE:
-#   - Documentation of workflow phases
-#   - Context window recommendations per phase
-#   - Specialization focus areas for instruction files
-#
-# What these are NOT:
-#   - Real Claude Code agents you can invoke with Task tool
-#   - Separate processes or subagents
-#   - Anything that can be "called" or "spawned"
-#
-# How they're used:
-#   The general-purpose agent loads instruction files from
-#   instructions/agents/{role_name}.md when entering each workflow phase.
-#   These configs document the recommended context and focus.
-#
-# Available REAL Claude Code Agents (can be invoked):
-#   - general-purpose: Main execution agent
-#   - Explore: Codebase analysis
-#   - Plan: Strategic planning
-#   - (+ any custom user-defined agents)
+# Active roles (have instruction files):
+#   - test_architect: Test design (TDD RED phase)
+#   - test_context_gatherer: Pre-test research
+#   - test_integrity_analyzer: Existing test analysis
+#   - implementation_specialist: Implementation (TDD GREEN phase)
+#   - security_sentinel: Security review
+#   - test_runner: Test execution
 #
 # See: docs/GLOSSARY.md for terminology definitions
 
 execution_roles:
-  # Core coordination role (not a callable agent)
-  task_coordinator:
-    description: "Coordinates task execution phases"
-    context_window: 32768
-    focus: "Task planning and phase coordination"
-    model: inherit
-
-  # Development specialists
   test_architect:
     enabled: true
     context_window: 16384
     specialization: "test_design_and_implementation"
-    model: inherit
+
+  test_context_gatherer:
+    enabled: true
+    context_window: 12288
+    specialization: "pre_test_research"
+
+  test_integrity_analyzer:
+    enabled: true
+    context_window: 12288
+    specialization: "existing_test_analysis"
 
   implementation_specialist:
     enabled: true
     context_window: 20480
     specialization: "core_feature_implementation"
-    model: inherit
 
-  integration_coordinator:
-    enabled: true
-    context_window: 18432
-    specialization: "system_integration_and_apis"
-    model: inherit
-
-  quality_assurance:
-    enabled: true
-    context_window: 14336
-    specialization: "code_quality_and_standards"
-    model: inherit
-
-  security_auditor:
-    enabled: true
-    context_window: 12288
-    specialization: "security_analysis_and_hardening"
-    model: inherit
-
-  documentation_generator:
-    enabled: true
-    context_window: 10240
-    specialization: "technical_documentation"
-    model: inherit
-
-  # Frontend specialists
-  frontend_vue_specialist:
-    enabled: true
-    context_window: 20480
-    specialization: "vue_frontend_development"
-    model: inherit
-
-  frontend_react_specialist:
-    enabled: true
-    context_window: 20480
-    specialization: "react_frontend_development"
-    model: inherit
-
-  # Backend specialists
-  backend_nodejs_specialist:
-    enabled: true
-    context_window: 20480
-    specialization: "nodejs_backend_development"
-    model: inherit
-
-  # Compound Engineering - Review Agents
   security_sentinel:
     enabled: true
     context_window: 16384
     specialization: [security, vulnerability-scanning, owasp]
-    model: inherit
 
-  performance_oracle:
+  test_runner:
     enabled: true
     context_window: 12288
-    specialization: [performance, optimization]
-    model: inherit
-
-  architecture_strategist:
-    enabled: true
-    context_window: 16384
-    specialization: [architecture, design-patterns]
-    model: inherit
-
-  pattern_recognition_specialist:
-    enabled: true
-    context_window: 12288
-    specialization: [patterns, consistency]
-    model: inherit
-
-  code_simplicity_reviewer:
-    enabled: true
-    context_window: 8192
-    specialization: [complexity, simplicity]
-    model: inherit
-
-  data_integrity_guardian:
-    enabled: true
-    context_window: 12288
-    specialization: [data-validation, integrity]
-    model: inherit
-
-  # Compound Engineering - Research Agents
-  repo_research_analyst:
-    enabled: true
-    context_window: 16384
-    specialization: [research, codebase-analysis]
-    model: inherit
-
-  best_practices_researcher:
-    enabled: true
-    context_window: 12288
-    specialization: [research, best-practices]
-    model: inherit
-
-  framework_docs_researcher:
-    enabled: true
-    context_window: 12288
-    specialization: [research, documentation]
-    model: inherit
-
-  git_history_analyzer:
-    enabled: true
-    context_window: 12288
-    specialization: [git, history-analysis]
-    model: inherit
+    specialization: "test_execution"
 
 # ================================================
-# COMPOUND ENGINEERING (v2.7+)
+# SECURITY SCANNING
 # ================================================
-compound_engineering:
+security:
   enabled: true
+  block_on_p1: true # P1 (CRITICAL) findings block task completion
+  owasp_top_10: true
 
-  # All 15 transformative features
-  features:
-    - multi_agent_review # 10 specialized review agents
-    - research_agents # Codebase and best practice research
-    - interactive_triage # Finding management workflow
-    - security_scanning # Systematic security protocol
-    - ultra_thinking # Multi-perspective analysis
-    - finding_synthesis # Intelligent consolidation
-    - worktree_isolation # Git worktree pattern
-    - language_standards # Rails, Python, TypeScript patterns
-    - code_examples # Real working examples in specs
-    - multi_level_planning # Minimal/Standard/Comprehensive detail
-    - reference_collection # Standardized reference format
-    - ai_development_notes # AI-era development docs
-    - enhanced_work_command # Improved task execution
-    - interactive_progress # Real-time triage tracking
-    - compounding_philosophy # Write code that compounds
-
-  # Multi-agent system configuration
-  multi_agent_system:
-    parallel_execution: true
-    max_concurrent_agents: 10
-    timeout_seconds: 120
-
-  # Triage workflow
-  triage:
-    enabled: true
-    state_directory: ".triage-state"
-    progress_tracking: true
-    time_estimation: true
-    pause_resume: true
-
-  # Security scanning
-  # Enforced in: instructions/core/execute-tasks.md (Step 4.3)
-  # Checked by: hooks/validators/security_scan.js
-  security:
-    enabled: true
-    block_on_p1: true # P1 (CRITICAL) findings block task completion
-    owasp_top_10: true
-
-  # Worktree isolation
-  worktrees:
-    enabled: true
-    base_directory: ".agent-os/worktrees"
-    auto_cleanup: true
+# ================================================
+# WORKTREE ISOLATION
+# ================================================
+worktrees:
+  enabled: true
+  base_directory: ".agent-os/worktrees"
+  auto_cleanup: true
 
 # ================================================
 # QUALITY HOOKS (v2.2+)
@@ -755,6 +614,26 @@ skills_integration:
         - documentation sources
         - pattern extraction
 
+    e2e-test-repair:
+      description: "Systematic E2E test suite repair through failure categorization and strategic fixes"
+      references:
+        - failure-categories.md
+        - fix-patterns.md
+        - root-cause-analyzer.md
+        - quarantine-management.md
+        - test-runner-agent.md
+        - fix-agent.md
+        - handoff-protocol.md
+
+    e2e-test-organization:
+      description: "Tiered test organization, feature groups, and workflow-specific execution"
+      references:
+        - tier-definitions.md
+        - feature-groups.md
+        - test-inventory.md
+        - workflow-commands.md
+        - placement-checklist.md
+
   # Workflow integration points
   # Where skills are explicitly invoked during task execution
   workflow_integration:
@@ -1189,3 +1068,143 @@ test_integrity_maintenance:
 
     # If limits exceeded, suggest scope reduction
     on_limit_exceeded: "warn_and_continue" # "warn_and_continue" | "stop_and_ask"
+
+# ================================================
+# E2E TEST ORGANIZATION (v4.8.0+)
+# ================================================
+# Tiered test organization for efficient execution across development workflows.
+# Enables running the right tests at the right time (smoke for commits, core for PRs, etc.)
+#
+# Skills:
+#   - e2e-test-organization - Tier definitions, feature groups, placement
+#   - e2e-test-repair - Repair protocols with root cause analysis
+#
+# Commands:
+#   - /fix-e2e-large - Progressive repair for 100+ test suites
+#   - /test-health - Test suite health dashboard
+#
+# Files:
+#   - tests/e2e/test-inventory.ts - Source of truth for test categorization
+#   - scripts/test-organization/generate-inventory.ts - Inventory generator
+
+e2e_test_organization:
+  enabled: true
+
+  # Test tier definitions
+  tiers:
+    smoke:
+      description: "Critical user journeys"
+      target_duration: 120 # 2 minutes
+      when_to_run: "every_commit"
+      examples:
+        - registration
+        - login
+        - dashboard_access
+
+    core:
+      description: "Main feature coverage"
+      target_duration: 1200 # 20 minutes
+      when_to_run: "pull_request"
+      examples:
+        - feature_happy_paths
+        - crud_operations
+        - user_workflows
+
+    regression:
+      description: "Edge cases and validation"
+      target_duration: 2700 # 45 minutes
+      when_to_run: "nightly"
+      examples:
+        - validation_errors
+        - edge_cases
+        - security_tests
+
+    quarantine:
+      description: "Broken or flaky tests"
+      when_to_run: "manual_only"
+      requires_tracking_issue: true
+      max_age_days: 30
+
+  # Feature group configuration
+  feature_groups:
+    enabled: true
+    auto_detect: true # Try to detect from test file paths
+    standard_groups:
+      - auth
+      - dashboard
+      - search
+      - settings
+      - user-management
+      - data-import
+
+  # Test inventory configuration
+  inventory:
+    enabled: true
+    file_path: "tests/e2e/test-inventory.ts"
+    auto_generate: true
+    validate_on_commit: false # Set true to block commits with invalid inventory
+
+  # Tiered execution scripts (added to package.json)
+  scripts:
+    smoke: "TEST_TIER=smoke playwright test"
+    core: "TEST_TIER=core playwright test"
+    regression: "TEST_TIER=regression playwright test"
+    full: "playwright test"
+    list: "npx tsx tests/e2e/test-inventory.ts --list"
+
+  # Integration with fix protocols
+  repair_integration:
+    smoke_first: true # Always run smoke before full repair
+    sample_size: 30 # Tests to sample for root cause analysis
+    progressive_expansion: true # Sample -> Core -> Regression -> Full
+
+# ================================================
+# E2E REPAIR PROTOCOL (v4.8.0+)
+# ================================================
+# Configuration for /fix-e2e-tests and /fix-e2e-large commands.
+# Enables systematic repair of large test suites through root cause analysis.
+
+e2e_repair_protocol:
+  enabled: true
+
+  # Repair approach selection
+  approach:
+    small_suite_threshold: 50 # Use standard /fix-e2e-tests below this
+    large_suite_threshold: 100 # Use /fix-e2e-large above this
+
+  # Root cause analysis
+  root_cause_analysis:
+    enabled: true
+    group_by_error_signature: true
+    estimate_impact: true
+    rank_by_impact_to_effort: true
+
+  # Progressive verification
+  progressive_verification:
+    enabled: true
+    sample_first: true
+    sample_size: 30
+    expansion_threshold: 0.90 # Expand when sample hits 90%
+
+  # Session persistence
+  session_persistence:
+    enabled: true
+    state_directory: ".agent-os/e2e-repair"
+    state_file: "session-state.json"
+    enable_resume: true
+    checkpoint_after_each_fix: true
+
+  # Quarantine management
+  quarantine:
+    enabled: true
+    max_failures_before_quarantine: 3
+    require_tracking_issue: true
+    weekly_review_reminder: true
+    max_quarantine_age_days: 30
+    delete_stale_quarantine: false # Set true to auto-delete old quarantined tests
+
+  # Success criteria
+  success_criteria:
+    target_pass_rate: 0.95 # 95%
+    acceptable_pass_rate: 0.90 # 90% after 3 cycles
+    escalation_threshold: 0.70 # Escalate if below 70% after 2 cycles

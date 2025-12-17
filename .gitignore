@@ -51,6 +51,9 @@ payload.db
 *.db-shm
 *.db-wal
 
+# PostgreSQL Docker Data (bind mount)
+postgres-data/
+
 # Payload CMS Generated Files
 payload-types.ts
 generated-schema.graphql
@@ -72,3 +75,4 @@ backups/
 # Temporary files and directories
 temp/
 creds.md
+postgres-data/

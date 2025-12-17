@@ -204,12 +204,12 @@ export async function updateVendorData(
   vendorId: number,
   additionalData: Record<string, any> = {}
 ): Promise<any> {
-  // Update profile data fields (no tier update)
+  // Update profile data fields using admin test API (no auth required)
   if (Object.keys(additionalData).length > 0) {
     console.log(`[Update] Updating vendor ${vendorId} with:`, additionalData);
 
-    const response = await page.request.put(
-      `${API_BASE}/api/portal/vendors/${vendorId}?byUserId=true`,
+    const response = await page.request.patch(
+      `${API_BASE}/api/test/admin/vendors/${vendorId}`,
       { data: additionalData }
     );
 

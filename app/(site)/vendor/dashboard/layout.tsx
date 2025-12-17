@@ -69,12 +69,13 @@ export default function VendorDashboardLayout({ children }: VendorDashboardLayou
           />
         )}
 
-        {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto bg-muted dark:bg-background md:ml-0">
+        {/* Main Content Area - Using div instead of main to avoid duplicate landmark */}
+        {/* The outer site layout already provides the main landmark */}
+        <div className="flex-1 overflow-y-auto bg-muted dark:bg-background md:ml-0" role="region" aria-label="Dashboard content">
           <div className="container mx-auto px-4 py-8 md:px-8 md:py-12 mt-16 md:mt-0">
             {children}
           </div>
-        </main>
+        </div>
       </div>
     </VendorDashboardProvider>
   );

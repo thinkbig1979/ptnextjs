@@ -49,13 +49,38 @@ function generateSlug(companyName: string): string {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
 }
+
+/**
+ * Generate a unique slug by appending a timestamp suffix if the base slug already exists
+ */
+async function generateUniqueSlug(
+  payload: Awaited<ReturnType<typeof getPayload>>,
+  baseSlug: string
+): Promise<string> {
+  // Check if base slug exists
+  const existing = await payload.find({
+    collection: 'vendors',
+    where: { slug: { equals: baseSlug } },
+    limit: 1,
+  });
+
+  if (existing.docs.length === 0) {
+    return baseSlug;
+  }
+
+  // Slug exists, append unique suffix
+  const timestamp = Date.now();
+  const random = Math.random().toString(36).substring(2, 6);
+  return `${baseSlug}-${timestamp}-${random}`;
+}
 /**
  * POST /api/test/vendors/seed
  * Bulk create vendors for E2E testing
  */
 export async function POST(request: NextRequest): Promise<NextResponse<SeedResponse>> {
-  // NODE_ENV guard - only allow in test/development
-  if (process.env.NODE_ENV === 'production') {
+  // NODE_ENV guard - only allow in test/development OR when E2E_TEST is explicitly enabled
+  const isE2ETest = process.env.E2E_TEST === 'true';
+  if (process.env.NODE_ENV === 'production' && !isE2ETest) {
     return NextResponse.json(
       {
         success: false,
@@ -107,7 +132,9 @@ export async function POST(request: NextRequest): Promise<NextResponse<SeedRespo
           continue;
         }
         // Use explicit slug if provided, otherwise generate from company name
-        const slug = vendorData.slug || generateSlug(vendorData.companyName);
+        // Use generateUniqueSlug to handle duplicate slugs from repeated test runs
+        const baseSlug = vendorData.slug || generateSlug(vendorData.companyName);
+        const slug = await generateUniqueSlug(payload, baseSlug);
 
         // Check if user already exists with this email
         const existingUsers = await payload.find({

@@ -5,7 +5,8 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Product Review Modal Fix', () => {
-  const productUrl = '/products/product-to-delete';
+  // Use tier2 product that is seeded in global-setup.ts
+  const productUrl = '/products/tier2-nav-system';
 
   test('01 - Modal opens when clicking "Write the First Review"', async ({ page }) => {
     await page.goto(productUrl);

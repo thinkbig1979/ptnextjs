@@ -17,7 +17,7 @@ test.describe('Product Reviews Complete Display', () => {
     await page.waitForTimeout(1000);
 
     // Verify "Owner Reviews" heading exists
-    const ownerReviewsHeading = page.getByText('Owner Reviews');
+    const ownerReviewsHeading = page.getByRole('heading', { name: 'Owner Reviews' }).first();
     await expect(ownerReviewsHeading).toBeVisible();
     console.log('[OK] "Owner Reviews" heading visible');
 

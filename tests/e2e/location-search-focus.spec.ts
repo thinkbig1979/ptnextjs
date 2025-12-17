@@ -1,13 +1,22 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures/test-fixtures';
 
 test.describe('Location Search Focus Management', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page, geocodeMock }) => {
+    // geocodeMock is automatically set up via fixture
     await page.goto('/vendors');
     await page.waitForLoadState('networkidle');
+
+    // Click on Location tab to show location search UI
+    const locationTab = page.getByTestId('search-tab-location');
+    await locationTab.waitFor({ state: 'visible', timeout: 15000 });
+    await locationTab.click();
+
+    // Wait for location input to be visible
+    await page.getByTestId('location-search-input').waitFor({ state: 'visible', timeout: 10000 });
   });
 
   test('should keep focus in input when suggestions appear', async ({ page }) => {
-    const locationInput = page.getByTestId('location-input');
+    const locationInput = page.getByTestId('location-search-input');
 
     // Focus the input
     await locationInput.focus();
@@ -16,12 +25,9 @@ test.describe('Location Search Focus Management', () => {
     // Type 3 characters
     await locationInput.type('Mon');
 
-    // Wait for suggestions to appear
-    await page.waitForTimeout(1000);
-
-    // Verify dropdown is visible
+    // Wait for mock suggestions to appear
     const dropdown = page.getByTestId('location-results-dropdown');
-    await expect(dropdown).toBeVisible();
+    await expect(dropdown).toBeVisible({ timeout: 2000 });
 
     // Focus should STILL be in the input
     const isFocusedAfterDropdown = await locationInput.evaluate(el => el === document.activeElement);
@@ -29,13 +35,13 @@ test.describe('Location Search Focus Management', () => {
   });
 
   test('should allow typing to continue after suggestions appear', async ({ page }) => {
-    const locationInput = page.getByTestId('location-input');
+    const locationInput = page.getByTestId('location-search-input');
 
     // Start typing
     await locationInput.type('Mon');
 
     // Wait for suggestions
-    await page.waitForTimeout(1000);
+    await expect(page.getByTestId('location-results-dropdown')).toBeVisible({ timeout: 2000 });
 
     // Continue typing - should still work
     await locationInput.type('aco');
@@ -49,14 +55,13 @@ test.describe('Location Search Focus Management', () => {
   });
 
   test('should support arrow key navigation without losing focus', async ({ page }) => {
-    const locationInput = page.getByTestId('location-input');
+    const locationInput = page.getByTestId('location-search-input');
 
     // Type to show suggestions
     await locationInput.type('Paris');
-    await page.waitForTimeout(1000);
 
     // Verify dropdown is visible
-    await expect(page.getByTestId('location-results-dropdown')).toBeVisible();
+    await expect(page.getByTestId('location-results-dropdown')).toBeVisible({ timeout: 2000 });
 
     // Press arrow down
     await locationInput.press('ArrowDown');
@@ -80,11 +85,11 @@ test.describe('Location Search Focus Management', () => {
   });
 
   test('should maintain focus when hovering over suggestions with mouse', async ({ page }) => {
-    const locationInput = page.getByTestId('location-input');
+    const locationInput = page.getByTestId('location-search-input');
 
     // Type to show suggestions
     await locationInput.type('London');
-    await page.waitForTimeout(1000);
+    await expect(page.getByTestId('location-results-dropdown')).toBeVisible({ timeout: 2000 });
 
     // Input should be focused
     expect(await locationInput.evaluate(el => el === document.activeElement)).toBe(true);
@@ -98,11 +103,11 @@ test.describe('Location Search Focus Management', () => {
   });
 
   test('should refocus input after clicking a suggestion', async ({ page }) => {
-    const locationInput = page.getByTestId('location-input');
+    const locationInput = page.getByTestId('location-search-input');
 
     // Type to show suggestions
     await locationInput.type('Monaco');
-    await page.waitForTimeout(1000);
+    await expect(page.getByTestId('location-results-dropdown')).toBeVisible({ timeout: 2000 });
 
     // Click a result
     await page.getByTestId('location-result-0').click();
@@ -121,11 +126,11 @@ test.describe('Location Search Focus Management', () => {
   });
 
   test('complete keyboard flow without mouse', async ({ page }) => {
-    const locationInput = page.getByTestId('location-input');
+    const locationInput = page.getByTestId('location-search-input');
 
     // Step 1: Type location
     await locationInput.type('Paris');
-    await page.waitForTimeout(1000);
+    await expect(page.getByTestId('location-results-dropdown')).toBeVisible({ timeout: 2000 });
 
     // Step 2: Navigate with arrow keys
     await locationInput.press('ArrowDown');
@@ -147,13 +152,13 @@ test.describe('Location Search Focus Management', () => {
   });
 
   test('should handle rapid typing without focus issues', async ({ page }) => {
-    const locationInput = page.getByTestId('location-input');
+    const locationInput = page.getByTestId('location-search-input');
 
     // Type rapidly
     await locationInput.type('New York', { delay: 50 });
 
-    // Wait for debounce
-    await page.waitForTimeout(1000);
+    // Wait for mock response
+    await expect(page.getByTestId('location-results-dropdown')).toBeVisible({ timeout: 2000 });
 
     // Input should still be focused
     expect(await locationInput.evaluate(el => el === document.activeElement)).toBe(true);

@@ -1,3 +1,24 @@
+import type {
+  Vendor,
+  Category,
+  Tag,
+  SEO,
+  ProductImage,
+  Feature,
+  ProductSpecification,
+  ProductBenefit,
+  ProductService,
+  ProductPricing,
+  ProductActionButton,
+  ProductBadge,
+  PerformanceData,
+  SystemRequirements,
+  SystemCompatibility,
+  OwnerReview,
+  VisualDemoContent,
+  Partner,
+} from './types';
+
 export interface Product {
   id: string;
   slug?: string;

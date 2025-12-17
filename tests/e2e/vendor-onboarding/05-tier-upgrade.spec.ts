@@ -23,6 +23,8 @@ async function upgradeTierViaAPI(page: Page, vendorId: string, tier: string) {
 }
 
 test.describe('TIER-UPGRADE-P2: Tier Upgrade Flow', () => {
+  // Serial mode: tier upgrades modify vendor state and must not race
+  test.describe.configure({ mode: 'serial' });
   test.setTimeout(60000);
 
   test('Test 5.1: View tier upgrade options and pricing', async ({ page }) => {

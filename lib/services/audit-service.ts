@@ -88,7 +88,7 @@ export async function logAuditEvent(
 
     // Create the audit log entry
     await payload.create({
-      collection: 'audit-logs',
+      collection: 'audit_logs',
       data: {
         event: entry.event,
         userId: entry.userId,

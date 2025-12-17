@@ -1,7 +1,7 @@
 # Testing Standards (Authoritative Reference)
 
-**Version**: 1.0.0  
-**Agent OS**: v4.2.0  
+**Version**: 1.1.0  
+**Agent OS**: v4.8.2  
 **Status**: CANONICAL - All other documents MUST reference this file for testing standards
 
 ---
@@ -527,7 +527,267 @@ All testing behavior is controlled by `config.yml` toggles:
 
 ---
 
+---
+
+## 11. E2E Parallelism Configuration (CANONICAL)
+
+### 11.1 The Problem
+
+Unlimited Playwright workers cause:
+- ECONNRESET errors (network exhaustion)
+- Server resource exhaustion (CPU/memory thrashing)
+- Unpredictable test failures
+- 502/503 errors during test runs
+
+### 11.2 Optimal Worker Configuration
+
+| Environment | CPU Cores | Workers | Rationale |
+|-------------|-----------|---------|-----------|
+| CI (4-core) | 4 | 4 | Match core count |
+| CI (8-core) | 8 | 6 | Leave headroom for OS/server |
+| Local Dev | 4-8 | 3 | Leave headroom for dev server |
+| Local (constrained) | 2 | 2 | Minimum parallelism |
+
+### 11.3 Required Playwright Configuration
+
+```typescript
+// playwright.config.ts
+import { defineConfig } from '@playwright/test';
+
+const isCI = !!process.env.CI;
+
+export default defineConfig({
+  // CRITICAL: Explicit worker count
+  workers: isCI ? 4 : 3,
+  
+  // CRITICAL: Prevent multiple server instances
+  webServer: {
+    command: 'npm run dev',
+    url: 'http://localhost:3000',
+    reuseExistingServer: true,  // REQUIRED
+    timeout: 120000,
+  },
+});
+```
+
+### 11.4 When to Reduce Workers
+
+Reduce worker count if you see:
+- ECONNRESET errors
+- 502/503 errors during tests
+- Tests timing out that pass individually
+- High memory usage during test runs
+
+---
+
+## 12. Serial Mode for Write-Heavy Tests (CANONICAL)
+
+### 12.1 When to Use Serial Mode
+
+Mark tests as serial when they:
+- Modify shared user/vendor accounts
+- Create or delete database records
+- Test race condition handling explicitly
+- Perform bulk import/export operations
+- Send emails or notifications
+
+### 12.2 Implementation
+
+```typescript
+import { test, expect } from '@playwright/test';
+
+// At the top of the describe block
+test.describe.configure({ mode: 'serial' });
+
+test.describe('Vendor Dashboard', () => {
+  test('updates vendor profile', async ({ page }) => {
+    // This test modifies shared vendor state
+  });
+});
+```
+
+### 12.3 Common Serial Mode Candidates
+
+| File Pattern | Reason |
+|--------------|--------|
+| `*-dashboard.spec.ts` | Modifies user state |
+| `*-registration*.spec.ts` | Creates new accounts |
+| `*-onboarding*.spec.ts` | Multi-step state changes |
+| `*-import*.spec.ts` | Bulk data operations |
+| `*-approval*.spec.ts` | Admin state changes |
+| `concurrent-*.spec.ts` | Explicit race condition tests |
+
+---
+
+## 13. Selector Standards (CANONICAL)
+
+### 13.1 Priority Order
+
+1. `[data-testid="..."]` - PREFERRED for test stability
+2. `[role="..."][name="..."]` - Accessibility-driven, stable
+3. `getByRole()` - Playwright's accessibility locators
+4. `.class-name` - AVOID unless stable component library
+5. Text selectors - LAST resort
+
+### 13.2 Standard Selector Object Pattern
+
+```typescript
+// tests/e2e/selectors/page-selectors.ts
+export const LOGIN_SELECTORS = {
+  emailInput: '[data-testid="login-email"]',
+  passwordInput: '[data-testid="login-password"]',
+  submitButton: '[data-testid="login-submit"]',
+  errorMessage: '[data-testid="login-error"]',
+};
+
+export const MODAL_SELECTORS = {
+  container: '[data-testid="modal"]',
+  confirmButton: '[data-testid="modal-confirm"]',
+  cancelButton: '[data-testid="modal-cancel"]',
+  resultItem: (index: number) => `[data-testid="result-${index}"]`,
+};
+```
+
+### 13.3 When to Add data-testid
+
+**Add to:**
+- Interactive elements (buttons, links, inputs)
+- Dynamic content containers
+- Test-critical elements
+- Elements that change based on state
+
+**Skip for:**
+- Static text content
+- Decorative elements
+- Layout containers
+
+---
+
+## 14. Semantic Wait Utilities (CANONICAL)
+
+### 14.1 The Anti-Pattern
+
+```typescript
+// NEVER DO THIS
+await page.waitForTimeout(2000);
+await page.waitForTimeout(5000);  // "just to be safe"
+```
+
+### 14.2 Why Hardcoded Waits Are Bad
+
+1. **Unreliable**: Sometimes too short, sometimes too long
+2. **Slow**: Always waits full duration even if ready sooner
+3. **Flaky**: Different timing on CI vs local
+4. **Anti-pattern**: Playwright explicitly discourages this
+
+### 14.3 Semantic Wait Utilities
+
+Create helpers for common wait scenarios:
+
+| Utility | Use Case |
+|---------|----------|
+| `waitForPageReady(page)` | After navigation/reload |
+| `waitForElementStable(page, selector)` | After dynamic content |
+| `waitForFormReady(page)` | Before form interaction |
+| `waitForApiResponse(page, pattern)` | After form submission |
+| `waitForModal(page)` | After modal trigger |
+
+### 14.4 Implementation Reference
+
+See `~/.claude/skills/e2e-test-repair/references/stability-patterns.md` Section 4 for full implementations.
+
+---
+
+## 15. Test Isolation Patterns (CANONICAL)
+
+### 15.1 The Problem
+
+Multiple parallel tests using the same user/vendor account causes:
+- Session conflicts
+- Data corruption
+- Race conditions
+- Flaky, unreproducible failures
+
+### 15.2 Solution: Unique Fixtures
+
+Create per-test entities that don't conflict with parallel tests:
+
+```typescript
+// tests/e2e/fixtures/test-fixtures.ts
+export const testWithUniqueVendor = base.extend<UniqueVendorFixture>({
+  uniqueVendor: async ({ page, request }, use, testInfo) => {
+    const timestamp = Date.now();
+    const testId = testInfo.testId.slice(-8);
+    const email = `test-vendor-${timestamp}-${testId}@example.com`;
+    
+    // Create unique vendor
+    await request.post('/api/test/vendors/create', { data: { email } });
+    
+    await use({ email, /* ... */ });
+    
+    // Automatic cleanup
+    await request.delete(`/api/test/vendors/${slug}`);
+  },
+});
+```
+
+### 15.3 When to Use Unique Fixtures
+
+- Tests that log in as specific users
+- Tests that create/modify records
+- Any test with state dependencies
+- Tests that fail in parallel but pass alone (ISOLATION_FAILURE)
+
+### 15.4 Implementation Reference
+
+See `~/.claude/skills/e2e-test-repair/references/stability-patterns.md` Section 3 for full implementations.
+
+---
+
+## 16. Health Check Endpoint Standard (CANONICAL)
+
+### 16.1 Recommended Endpoint
+
+Projects should implement `/api/test/health` that verifies:
+
+```typescript
+interface HealthCheckResult {
+  status: 'healthy' | 'unhealthy';
+  checks: {
+    database: { ok: boolean; message: string };
+    requiredTables: { ok: boolean; count: number };
+    testEndpoints: { ok: boolean; message: string };
+  };
+  readyForTests: boolean;
+}
+```
+
+### 16.2 Global Setup Integration
+
+```typescript
+// tests/e2e/global-setup.ts
+const health = await checkHealth(baseURL, 30000);
+if (!health.ready) {
+  throw new Error('Server not ready for tests');
+}
+```
+
+### 16.3 Implementation Reference
+
+See `~/.claude/skills/e2e-test-repair/references/stability-patterns.md` Section 6 for full implementations.
+
+---
+
 ## Change Log
+
+### v1.1.0 (v4.8.2)
+- Added Section 11: E2E Parallelism Configuration
+- Added Section 12: Serial Mode for Write-Heavy Tests
+- Added Section 13: Selector Standards (data-testid)
+- Added Section 14: Semantic Wait Utilities
+- Added Section 15: Test Isolation Patterns
+- Added Section 16: Health Check Endpoint Standard
+- Cross-references to e2e-test-repair skill for implementations
 
 ### v1.0.0 (v4.2.0)
 - Initial canonical reference

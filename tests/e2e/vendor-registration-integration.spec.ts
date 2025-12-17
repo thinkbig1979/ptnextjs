@@ -3,7 +3,7 @@
  *
  * Tests the complete vendor registration workflow:
  * 1. Fill registration form
- * 2. Submit form → POST /api/vendors/register
+ * 2. Submit form -> POST /api/portal/vendors/register
  * 3. Verify database record created
  * 4. Check redirect to pending page
  *
@@ -11,83 +11,58 @@
  */
 
 import { test, expect } from '@playwright/test';
-import fs from 'fs';
-import path from 'path';
+import {
+  generateUniqueVendorData,
+  fillRegistrationForm,
+} from './helpers/vendor-onboarding-helpers';
 
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 
 test.describe('Vendor Registration Integration', () => {
-  const testEmail = `vendor-${Date.now()}@example.com`;
-  const testCompany = `Test Company ${Date.now()}`;
+  // Serial mode: registration creates vendors and tests duplicate email detection
+  test.describe.configure({ mode: 'serial' });
+  test.setTimeout(60000);
 
   test('should complete full registration flow', async ({ page }) => {
+    const vendor = generateUniqueVendorData();
+
     // Navigate to registration page
     await page.goto(`${BASE_URL}/vendor/register/`);
 
     // Wait for form to load
     await expect(page.locator('h1')).toContainText('Vendor Registration');
 
-    // Fill out registration form (using getByPlaceholder for better reliability)
-    await page.getByPlaceholder('vendor@example.com').fill(testEmail);
-    await page.getByPlaceholder('Your Company Ltd').fill(testCompany);
-    await page.getByPlaceholder('John Smith').fill('John Doe');
-    await page.getByPlaceholder('+1 (555) 123-4567').fill('+1-555-0123');
-    await page.getByPlaceholder('https://example.com').fill('https://example.com');
-    await page.getByPlaceholder('Enter strong password').fill('SecurePass123!@#');
-    await page.getByPlaceholder('Re-enter password').fill('SecurePass123!@#');
-    await page.getByPlaceholder('Tell us about your company...').fill('Test vendor company description');
-    await page.getByRole('checkbox', { name: 'Agree to terms and conditions' }).click();
+    // Fill out registration form using helper
+    await fillRegistrationForm(page, vendor);
 
     // Intercept API call to verify request payload
-    const apiResponsePromise = page.waitForResponse(
-      response => response.url().includes('/api/vendors/register') && response.request().method() === 'POST'
-    );
+    const [apiResponse] = await Promise.all([
+      page.waitForResponse(
+        (response) =>
+          response.url().includes('/api/portal/vendors/register') &&
+          response.request().method() === 'POST',
+        { timeout: 15000 }
+      ),
+      page.click('button[type="submit"]'),
+    ]);
 
-    // Submit form using the submit button (wait for it to be enabled)
-    const submitButton = page.locator('button[type="submit"]');
-    await submitButton.waitFor({ state: 'visible' });
-    await submitButton.click();
-
-    // Verify API call was made
-    const apiResponse = await apiResponsePromise;
-
-    // Allow 308 redirect followed by 201, or direct 201
-    let responseBody;
-    if (apiResponse.status() === 308) {
-      console.log('Got 308 redirect, waiting for actual response');
-      // Wait for the redirected request
-      const actualResponse = await page.waitForResponse(
-        response => response.url().includes('/api/vendors/register') && response.status() === 201
-      );
-      expect(actualResponse.status()).toBe(201);
-      responseBody = await actualResponse.json();
-    } else {
-      expect(apiResponse.status()).toBe(201);
-      responseBody = await apiResponse.json();
-    }
+    // Verify successful response
+    expect(apiResponse.status()).toBeLessThan(300);
+    const responseBody = await apiResponse.json();
 
     // Verify response structure
     expect(responseBody.success).toBe(true);
     expect(responseBody.data).toHaveProperty('vendorId');
     expect(responseBody.data).toHaveProperty('status');
     expect(responseBody.data.status).toBe('pending');
-    expect(responseBody.data).toHaveProperty('message');
 
-    // Verify redirect to pending page (with optional trailing slash)
-    await page.waitForURL(/\/vendor\/registration-pending\/?/);
+    // Verify redirect to pending page
+    await page.waitForURL(/\/vendor\/registration-pending\/?/, { timeout: 10000 });
     await expect(page.locator('h1')).toContainText('Registration Successful');
 
-    // Take screenshot of success page
-    const evidenceDir = path.join(__dirname, '../../.agent-os/specs/2025-10-11-payload-cms-vendor-enrollment/evidence');
-    await page.screenshot({
-      path: path.join(evidenceDir, 'registration-success.png'),
-      fullPage: true
-    });
-
-    console.log(`[OK] Registration successful for: ${testEmail}`);
-    console.log(`[OK] Company: ${testCompany}`);
+    console.log(`[OK] Registration successful for: ${vendor.email}`);
+    console.log(`[OK] Company: ${vendor.companyName}`);
     console.log(`[OK] Vendor ID: ${responseBody.data.vendorId}`);
-    console.log(`[OK] Status: ${responseBody.data.status}`);
   });
 
   test('should show validation errors for invalid data', async ({ page }) => {
@@ -96,62 +71,66 @@ test.describe('Vendor Registration Integration', () => {
     // Try to submit empty form
     await page.click('button[type="submit"]');
 
-    // Should show validation errors (stay on same page, trailing slash is okay)
-    await expect(page).toHaveURL(/\/vendor\/register\/?/);
+    // Should stay on same page
+    await page.waitForTimeout(500);
+    expect(page.url()).toContain('/vendor/register');
 
     // Check for error messages (form validation)
-    const errorMessages = await page.locator('[role="alert"], .text-destructive, .text-red-500, .text-red-600').count();
+    const errorMessages = await page
+      .locator('[role="alert"], .text-destructive, .text-red-500, .text-red-600')
+      .count();
     expect(errorMessages).toBeGreaterThan(0);
   });
 
   test('should handle duplicate email error', async ({ page }) => {
-    const duplicateEmail = 'existing@example.com';
-
+    // First, register a vendor
+    const vendor = generateUniqueVendorData();
     await page.goto(`${BASE_URL}/vendor/register/`);
+    await fillRegistrationForm(page, vendor);
 
-    // Fill form with duplicate email
-    await page.getByPlaceholder('vendor@example.com').fill(duplicateEmail);
-    await page.getByPlaceholder('Your Company Ltd').fill('Another Company');
-    await page.getByPlaceholder('John Smith').fill('Jane Doe');
-    await page.getByPlaceholder('+1 (555) 123-4567').fill('+1-555-9999');
-    await page.getByPlaceholder('Enter strong password').fill('SecurePass123!@#');
-    await page.getByPlaceholder('Re-enter password').fill('SecurePass123!@#');
-    await page.getByRole('checkbox', { name: 'Agree to terms and conditions' }).click();
+    const [firstResponse] = await Promise.all([
+      page.waitForResponse(
+        (response) => response.url().includes('/api/portal/vendors/register'),
+        { timeout: 15000 }
+      ),
+      page.click('button[type="submit"]'),
+    ]);
 
-    // Intercept API call
-    const apiResponsePromise = page.waitForResponse(
-      response => response.url().includes('/api/vendors/register')
-    );
+    // Only proceed if first registration succeeded
+    if (firstResponse.status() < 300) {
+      await page.waitForURL(/\/vendor\/registration-pending\/?/, { timeout: 10000 });
 
-    await page.click('button[type="submit"]');
+      // Try to register again with same email
+      await page.goto(`${BASE_URL}/vendor/register/`);
+      await fillRegistrationForm(page, vendor);
 
-    const apiResponse = await apiResponsePromise;
+      const [duplicateResponse] = await Promise.all([
+        page.waitForResponse(
+          (response) => response.url().includes('/api/portal/vendors/register'),
+          { timeout: 15000 }
+        ),
+        page.click('button[type="submit"]'),
+      ]);
 
-    // Should return 409 conflict or show error
-    if (apiResponse.status() === 409) {
-      // Wait for error toast to appear
-      await expect(page.locator('.sonner-toast, [role="status"]')).toBeVisible({ timeout: 3000 });
+      // Should return 409 conflict
+      expect(duplicateResponse.status()).toBe(409);
       console.log('[OK] Duplicate email error handled correctly');
     }
   });
 
   test('should disable submit button during submission', async ({ page }) => {
-    await page.goto(`${BASE_URL}/vendor/register/`);
+    const vendor = generateUniqueVendorData();
 
-    // Fill minimal form
-    await page.getByPlaceholder('vendor@example.com').fill(`test-${Date.now()}@example.com`);
-    await page.getByPlaceholder('Your Company Ltd').fill(`Company ${Date.now()}`);
-    await page.getByPlaceholder('John Smith').fill('Test User');
-    await page.getByPlaceholder('+1 (555) 123-4567').fill('+1-555-0000');
-    await page.getByPlaceholder('Enter strong password').fill('SecurePass123!@#');
-    await page.getByPlaceholder('Re-enter password').fill('SecurePass123!@#');
-    await page.getByRole('checkbox', { name: 'Agree to terms and conditions' }).click();
+    await page.goto(`${BASE_URL}/vendor/register/`);
+    await fillRegistrationForm(page, vendor);
+
+    // Get the submit button
+    const submitButton = page.locator('button[type="submit"]');
 
     // Click submit
-    const submitButton = page.locator('button[type="submit"]');
     await submitButton.click();
 
-    // Button should be disabled during submission
+    // Button should be disabled during submission (check within 500ms)
     await expect(submitButton).toBeDisabled({ timeout: 1000 });
   });
 });

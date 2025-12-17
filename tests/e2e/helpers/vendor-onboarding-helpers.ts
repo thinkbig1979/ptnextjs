@@ -837,3 +837,111 @@ export async function navigateToPublicProfile(
   await page.goto(`/vendors/${slug}/`);
   await page.waitForLoadState('networkidle');
 }
+
+// ============================================================================
+// Proper Wait Utilities (Replaces raw waitForTimeout)
+// ============================================================================
+
+/**
+ * Wait for page to be ready after navigation or state change
+ * Replaces waitForTimeout after page.goto or form submission
+ */
+export async function waitForPageReady(
+  page: Page,
+  options: { timeout?: number } = {}
+): Promise<void> {
+  const timeout = options.timeout || 10000;
+  await page.waitForLoadState('networkidle', { timeout });
+  // Also ensure no pending React hydration
+  await page.waitForFunction(
+    () => document.readyState === 'complete',
+    { timeout: timeout / 2 }
+  ).catch(() => {}); // Non-fatal if function check fails
+}
+
+/**
+ * Wait for a specific element to appear and stabilize
+ * Replaces waitForTimeout followed by element interaction
+ */
+export async function waitForElementStable(
+  page: Page,
+  selector: string,
+  options: { timeout?: number; stable?: boolean } = {}
+): Promise<void> {
+  const timeout = options.timeout || 5000;
+  const element = page.locator(selector).first();
+  await element.waitFor({ state: 'visible', timeout });
+  if (options.stable !== false) {
+    // Wait for element to stop moving (useful for animations)
+    await element.waitFor({ state: 'attached', timeout: timeout / 2 });
+  }
+}
+
+/**
+ * Wait for React form to be ready (inputs editable)
+ * Replaces waitForTimeout after form loads
+ */
+export async function waitForFormReady(
+  page: Page,
+  options: { timeout?: number } = {}
+): Promise<void> {
+  const timeout = options.timeout || 5000;
+  // Wait for at least one input to be visible and enabled
+  const input = page.locator('input:visible, textarea:visible, select:visible').first();
+  await input.waitFor({ state: 'visible', timeout });
+  // Ensure it's not disabled
+  await page.waitForFunction(
+    () => {
+      const el = document.querySelector('input:not([disabled]), textarea:not([disabled])');
+      return el !== null;
+    },
+    { timeout: timeout / 2 }
+  ).catch(() => {}); // Non-fatal
+}
+
+/**
+ * Wait for a tab/panel content to load after clicking a tab
+ * Replaces waitForTimeout after tab click
+ */
+export async function waitForTabContent(
+  page: Page,
+  options: { timeout?: number; checkFor?: string } = {}
+): Promise<void> {
+  const timeout = options.timeout || 5000;
+  // Wait for network to settle
+  await page.waitForLoadState('networkidle', { timeout }).catch(() => {});
+  // If a specific element is expected, wait for it
+  if (options.checkFor) {
+    await page.locator(options.checkFor).first().waitFor({
+      state: 'visible',
+      timeout: timeout / 2
+    }).catch(() => {});
+  }
+}
+
+/**
+ * Wait for API response after form submission
+ * Replaces waitForTimeout after clicking submit
+ */
+export async function waitForApiResponse(
+  page: Page,
+  urlPattern: string | RegExp,
+  options: { timeout?: number; method?: string } = {}
+): Promise<Response | null> {
+  const timeout = options.timeout || 15000;
+  try {
+    const response = await page.waitForResponse(
+      (resp) => {
+        const urlMatch = typeof urlPattern === 'string'
+          ? resp.url().includes(urlPattern)
+          : urlPattern.test(resp.url());
+        const methodMatch = !options.method || resp.request().method() === options.method;
+        return urlMatch && methodMatch;
+      },
+      { timeout }
+    );
+    return response;
+  } catch {
+    return null;
+  }
+}

@@ -8,6 +8,8 @@ import {
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 
 test.describe('VENDOR-REG-P1: Registration Workflow', () => {
+  // Serial mode: registration creates database records that must not conflict
+  test.describe.configure({ mode: 'serial' });
   test.setTimeout(30000);
 
   test('Test 1.1: Successful registration with all fields', async ({ page }) => {

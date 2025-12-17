@@ -43,6 +43,36 @@ function generateSlug(name: string): string {
 }
 
 /**
+ * Verify that a vendor exists in the database with retry logic
+ * Handles the case where vendor was just created but transaction not yet committed
+ */
+async function verifyVendorExists(
+  payload: Awaited<ReturnType<typeof getPayload>>,
+  vendorId: string,
+  maxRetries: number = 3,
+  retryDelay: number = 500
+): Promise<boolean> {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const result = await payload.findByID({
+        collection: 'vendors',
+        id: vendorId,
+      });
+      if (result) {
+        return true;
+      }
+    } catch (error) {
+      // Vendor not found or other error
+      if (attempt < maxRetries) {
+        console.log(`[Product Seed] Vendor ${vendorId} not found on attempt ${attempt}, retrying in ${retryDelay}ms...`);
+        await new Promise((resolve) => setTimeout(resolve, retryDelay));
+      }
+    }
+  }
+  return false;
+}
+
+/**
  * Convert plain text to Lexical JSON format
  */
 function textToLexical(text: string): object {
@@ -83,8 +113,9 @@ function textToLexical(text: string): object {
  * Bulk create products for E2E testing
  */
 export async function POST(request: NextRequest): Promise<NextResponse<SeedResponse>> {
-  // NODE_ENV guard - only allow in test/development
-  if (process.env.NODE_ENV === 'production') {
+  // NODE_ENV guard - only allow in test/development OR when E2E_TEST is explicitly enabled
+  const isE2ETest = process.env.E2E_TEST === 'true';
+  if (process.env.NODE_ENV === 'production' && !isE2ETest) {
     return NextResponse.json(
       {
         success: false,
@@ -127,6 +158,15 @@ export async function POST(request: NextRequest): Promise<NextResponse<SeedRespo
         }
         if (!productData.vendor) {
           errors[`product_${i}`] = 'vendor is required';
+          continue;
+        }
+
+        // CRITICAL: Verify vendor exists before attempting product creation
+        // This prevents "Vendor field invalid" errors when vendor isn't committed yet
+        const vendorExists = await verifyVendorExists(payload, productData.vendor);
+        if (!vendorExists) {
+          errors[`product_${i}_${productData.name}`] = `Vendor not found: ${productData.vendor}`;
+          console.warn(`[Product Seed] Vendor ${productData.vendor} not found, skipping product ${productData.name}`);
           continue;
         }
 
