@@ -30,8 +30,9 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<DeleteResponse>> {
-  // NODE_ENV guard - only allow in test/development
-  if (process.env.NODE_ENV === 'production') {
+  // NODE_ENV guard - only allow in test/development OR when E2E_TEST is explicitly enabled
+  const isE2ETest = process.env.E2E_TEST === 'true';
+  if (process.env.NODE_ENV === 'production' && !isE2ETest) {
     return NextResponse.json(
       {
         success: false,
@@ -163,8 +164,9 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse> {
-  // NODE_ENV guard - only allow in test/development
-  if (process.env.NODE_ENV === 'production') {
+  // NODE_ENV guard - only allow in test/development OR when E2E_TEST is explicitly enabled
+  const isE2ETest = process.env.E2E_TEST === 'true';
+  if (process.env.NODE_ENV === 'production' && !isE2ETest) {
     return NextResponse.json(
       {
         success: false,

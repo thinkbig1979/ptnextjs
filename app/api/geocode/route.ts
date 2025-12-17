@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import {
   PhotonResponse,
+  PhotonFeature,
   GeocodeSuccessResponse,
   GeocodeErrorResponse,
 } from '@/lib/types';
@@ -11,6 +12,167 @@ import {
 
 type SuccessResponse = GeocodeSuccessResponse;
 type ErrorResponse = GeocodeErrorResponse;
+
+// ============================================================================
+// Mock Geocoding Data (for testing without external API calls)
+// ============================================================================
+
+/**
+ * Check if geocoding should use mock data instead of external API
+ * Set MOCK_GEOCODING=true to enable mock mode (useful for E2E tests)
+ */
+function shouldUseMockGeocoding(): boolean {
+  return process.env.MOCK_GEOCODING === 'true';
+}
+
+/**
+ * Mock location data for common searches
+ * Used when MOCK_GEOCODING=true to avoid external API calls during testing
+ */
+const MOCK_LOCATIONS: Record<string, PhotonFeature[]> = {
+  monaco: [
+    {
+      type: 'Feature',
+      geometry: { coordinates: [7.4246, 43.7384], type: 'Point' },
+      properties: { osm_id: 36990, osm_type: 'R', name: 'Monaco', country: 'Monaco', countrycode: 'MC', type: 'city' },
+    },
+  ],
+  paris: [
+    {
+      type: 'Feature',
+      geometry: { coordinates: [2.3522, 48.8566], type: 'Point' },
+      properties: { osm_id: 7444, osm_type: 'R', name: 'Paris', state: 'Île-de-France', country: 'France', countrycode: 'FR', type: 'city' },
+    },
+  ],
+  london: [
+    {
+      type: 'Feature',
+      geometry: { coordinates: [-0.1278, 51.5074], type: 'Point' },
+      properties: { osm_id: 65606, osm_type: 'R', name: 'London', state: 'England', country: 'United Kingdom', countrycode: 'GB', type: 'city' },
+    },
+  ],
+  amsterdam: [
+    {
+      type: 'Feature',
+      geometry: { coordinates: [4.9041, 52.3676], type: 'Point' },
+      properties: { osm_id: 271110, osm_type: 'R', name: 'Amsterdam', state: 'North Holland', country: 'Netherlands', countrycode: 'NL', type: 'city' },
+    },
+  ],
+  nantes: [
+    {
+      type: 'Feature',
+      geometry: { coordinates: [-1.5536, 47.2184], type: 'Point' },
+      properties: { osm_id: 59874, osm_type: 'R', name: 'Nantes', state: 'Pays de la Loire', country: 'France', countrycode: 'FR', type: 'city' },
+    },
+  ],
+  antibes: [
+    {
+      type: 'Feature',
+      geometry: { coordinates: [7.1256, 43.5808], type: 'Point' },
+      properties: { osm_id: 76910, osm_type: 'R', name: 'Antibes', state: "Provence-Alpes-Côte d'Azur", country: 'France', countrycode: 'FR', type: 'city' },
+    },
+  ],
+  nice: [
+    {
+      type: 'Feature',
+      geometry: { coordinates: [7.2620, 43.7102], type: 'Point' },
+      properties: { osm_id: 76927, osm_type: 'R', name: 'Nice', state: "Provence-Alpes-Côte d'Azur", country: 'France', countrycode: 'FR', type: 'city' },
+    },
+  ],
+  cannes: [
+    {
+      type: 'Feature',
+      geometry: { coordinates: [7.0128, 43.5528], type: 'Point' },
+      properties: { osm_id: 76895, osm_type: 'R', name: 'Cannes', state: "Provence-Alpes-Côte d'Azur", country: 'France', countrycode: 'FR', type: 'city' },
+    },
+  ],
+  marseille: [
+    {
+      type: 'Feature',
+      geometry: { coordinates: [5.3698, 43.2965], type: 'Point' },
+      properties: { osm_id: 76503, osm_type: 'R', name: 'Marseille', state: "Provence-Alpes-Côte d'Azur", country: 'France', countrycode: 'FR', type: 'city' },
+    },
+  ],
+  barcelona: [
+    {
+      type: 'Feature',
+      geometry: { coordinates: [2.1734, 41.3851], type: 'Point' },
+      properties: { osm_id: 347950, osm_type: 'R', name: 'Barcelona', state: 'Catalonia', country: 'Spain', countrycode: 'ES', type: 'city' },
+    },
+  ],
+  'fort lauderdale': [
+    {
+      type: 'Feature',
+      geometry: { coordinates: [-80.1373, 26.1224], type: 'Point' },
+      properties: { osm_id: 113673, osm_type: 'R', name: 'Fort Lauderdale', state: 'Florida', country: 'United States', countrycode: 'US', type: 'city' },
+    },
+  ],
+  miami: [
+    {
+      type: 'Feature',
+      geometry: { coordinates: [-80.1918, 25.7617], type: 'Point' },
+      properties: { osm_id: 113671, osm_type: 'R', name: 'Miami', state: 'Florida', country: 'United States', countrycode: 'US', type: 'city' },
+    },
+  ],
+  palma: [
+    {
+      type: 'Feature',
+      geometry: { coordinates: [2.6502, 39.5696], type: 'Point' },
+      properties: { osm_id: 341321, osm_type: 'R', name: 'Palma de Mallorca', state: 'Balearic Islands', country: 'Spain', countrycode: 'ES', type: 'city' },
+    },
+  ],
+  rotterdam: [
+    {
+      type: 'Feature',
+      geometry: { coordinates: [4.4777, 51.9244], type: 'Point' },
+      properties: { osm_id: 324431, osm_type: 'R', name: 'Rotterdam', state: 'South Holland', country: 'Netherlands', countrycode: 'NL', type: 'city' },
+    },
+  ],
+  lund: [
+    {
+      type: 'Feature',
+      geometry: { coordinates: [13.1932, 55.7058], type: 'Point' },
+      properties: { osm_id: 935533, osm_type: 'R', name: 'Lund', state: 'Skåne', country: 'Sweden', countrycode: 'SE', type: 'city' },
+    },
+  ],
+  peoria: [
+    {
+      type: 'Feature',
+      geometry: { coordinates: [-89.5890, 40.6936], type: 'Point' },
+      properties: { osm_id: 128271, osm_type: 'R', name: 'Peoria', state: 'Illinois', country: 'United States', countrycode: 'US', type: 'city' },
+    },
+  ],
+  rockleigh: [
+    {
+      type: 'Feature',
+      geometry: { coordinates: [-74.0291, 41.0198], type: 'Point' },
+      properties: { osm_id: 175813, osm_type: 'R', name: 'Rockleigh', state: 'New Jersey', country: 'United States', countrycode: 'US', type: 'village' },
+    },
+  ],
+};
+
+/**
+ * Get mock geocoding response for a query
+ */
+function getMockGeocodingResponse(query: string, limit: number): PhotonFeature[] {
+  const normalizedQuery = query.toLowerCase().trim();
+
+  // Check for exact or partial match in mock locations
+  for (const [key, features] of Object.entries(MOCK_LOCATIONS)) {
+    if (normalizedQuery.includes(key) || key.includes(normalizedQuery)) {
+      return features.slice(0, limit);
+    }
+  }
+
+  // Return a generic response for unknown queries
+  return [
+    {
+      type: 'Feature',
+      geometry: { coordinates: [0, 0], type: 'Point' },
+      properties: { osm_id: 0, osm_type: 'N', name: query, country: 'Unknown', type: 'locality' },
+    },
+  ];
+}
 
 // ============================================================================
 // Rate Limiting Implementation
@@ -303,6 +465,18 @@ export async function GET(request: NextRequest): Promise<NextResponse<SuccessRes
           code: 'INVALID_QUERY',
         },
         { status: 400 }
+      );
+    }
+
+    // Use mock data if MOCK_GEOCODING is enabled (for E2E testing)
+    if (shouldUseMockGeocoding()) {
+      const mockFeatures = getMockGeocodingResponse(validation.query!, validation.limit!);
+      return NextResponse.json<SuccessResponse>(
+        {
+          success: true,
+          results: mockFeatures,
+        },
+        { status: 200 }
       );
     }
 

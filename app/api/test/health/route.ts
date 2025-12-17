@@ -25,8 +25,9 @@ interface HealthCheckResult {
 }
 
 export async function GET(): Promise<NextResponse<HealthCheckResult>> {
-  // Only allow in non-production environments
-  if (process.env.NODE_ENV === 'production') {
+  // Only allow in non-production environments OR when E2E_TEST is explicitly enabled
+  const isE2ETest = process.env.E2E_TEST === 'true';
+  if (process.env.NODE_ENV === 'production' && !isE2ETest) {
     return NextResponse.json(
       {
         status: 'unhealthy',

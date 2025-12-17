@@ -26,8 +26,9 @@ interface ApproveResponse {
  * Approve a tier upgrade/downgrade request for E2E testing
  */
 export async function POST(request: NextRequest): Promise<NextResponse<ApproveResponse>> {
-  // NODE_ENV guard - only allow in test/development
-  if (process.env.NODE_ENV === 'production') {
+  // NODE_ENV guard - only allow in test/development OR when E2E_TEST is explicitly enabled
+  const isE2ETest = process.env.E2E_TEST === 'true';
+  if (process.env.NODE_ENV === 'production' && !isE2ETest) {
     return NextResponse.json(
       {
         success: false,

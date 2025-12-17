@@ -17,10 +17,11 @@ npm run test:e2e         # Run Playwright tests
 | Category | Command | Description |
 |----------|---------|-------------|
 | **Dev** | `npm run dev` | Start development server |
+| | `npm run dev:e2e` | Dev server with E2E config (mocked external services) |
 | | `npm run dev:clean` | Clean restart (kills existing servers) |
 | | `npm run stop:dev` | Stop all dev servers |
 | **Build** | `npm run build` | Production build |
-| | `npm run build:netlify` | Static export for Netlify |
+| | `npm run start:e2e` | Production server with E2E config |
 | **Test** | `npm run test` | Jest unit tests |
 | | `npm run test:e2e` | Playwright E2E tests |
 | | `npm run test:e2e:ui` | E2E with Playwright UI |
@@ -31,7 +32,7 @@ npm run test:e2e         # Run Playwright tests
 
 - **Frontend**: Next.js 14 (App Router) + TypeScript
 - **Backend**: Payload CMS 3.x
-- **Database**: SQLite (dev) / PostgreSQL (prod) - see `Supporting-Docs/database-migration/`
+- **Database**: PostgreSQL (default) / SQLite (fallback)
 - **UI**: shadcn/ui + Tailwind CSS
 - **Testing**: Jest + Playwright
 
@@ -102,6 +103,21 @@ ADMIN_EMAIL_ADDRESS=admin@domain.com
 # Production
 NEXT_PUBLIC_BASE_URL=https://yourdomain.com
 ```
+
+## E2E Testing
+
+Use `.env.e2e` for isolated testing with mocked external services:
+
+```bash
+npm run build && npm run start:e2e   # Production server with E2E config
+npm run test:e2e                      # Run Playwright tests
+```
+
+**E2E environment flags** (all set in `.env.e2e`):
+- `DISABLE_RATE_LIMIT=true` - Prevent 429 errors
+- `DISABLE_EMAILS=true` - No real emails sent
+- `MOCK_GEOCODING=true` - Mock Photon API responses
+- `DISABLE_CAPTCHA=true` - Skip captcha validation
 
 ## Development Guidelines
 

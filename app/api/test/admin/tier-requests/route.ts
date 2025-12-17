@@ -40,8 +40,9 @@ interface ListResponse {
  * - vendorId: filter by vendor
  */
 export async function GET(request: NextRequest): Promise<NextResponse<ListResponse>> {
-  // NODE_ENV guard - only allow in test/development
-  if (process.env.NODE_ENV === 'production') {
+  // NODE_ENV guard - only allow in test/development OR when E2E_TEST is explicitly enabled
+  const isE2ETest = process.env.E2E_TEST === 'true';
+  if (process.env.NODE_ENV === 'production' && !isE2ETest) {
     return NextResponse.json(
       {
         success: false,
