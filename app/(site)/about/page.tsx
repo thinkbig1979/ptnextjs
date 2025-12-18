@@ -5,6 +5,9 @@ import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { Button } from "@/components/ui/button";
 
+// Force dynamic rendering - database not available at Docker build time
+export const dynamic = 'force-dynamic';
+
 const valuePropositions = [
   {
     icon: Anchor,

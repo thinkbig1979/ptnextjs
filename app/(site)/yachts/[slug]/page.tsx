@@ -8,7 +8,11 @@ import { payloadCMSDataService } from '@/lib/payload-cms-data-service';
 import { YachtTimelineEvent, YachtCustomization } from '@/lib/types';
 import { formatVendorLocation } from '@/lib/utils/location';
 
-// Required for static export
+// Force dynamic rendering - database not available at Docker build time
+export const dynamic = 'force-dynamic';
+export const dynamicParams = true;
+
+// Generate params for known yachts (will fall back to dynamic if DB unavailable)
 export async function generateStaticParams() {
   try {
     const yachts = await payloadCMSDataService.getYachts();

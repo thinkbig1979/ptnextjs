@@ -1,9 +1,10 @@
-
-
 import * as React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
+
+// Force dynamic rendering - database not available at Docker build time
+export const dynamic = 'force-dynamic';
 
 export default async function ContactPage() {
   // Fetch company info at build time

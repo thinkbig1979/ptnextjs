@@ -31,9 +31,8 @@ import { VendorProductsSection } from "@/components/vendors/VendorProductsSectio
 import { VendorMediaGallery } from "@/components/vendors/VendorMediaGallery";
 import VendorReviewsWrapper from "./_components/vendor-reviews-wrapper";
 
-// Static generation with on-demand revalidation
-// 'auto' allows revalidatePath() to work (force-static blocks it)
-export const dynamic = 'auto';
+// Force dynamic rendering - database not available at Docker build time
+export const dynamic = 'force-dynamic';
 export const dynamicParams = true;
 // ISR: Revalidate every 60s in production, on-demand in dev
 export const revalidate = 60;

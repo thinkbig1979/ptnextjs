@@ -2,6 +2,9 @@ import { Metadata } from 'next';
 import { YachtCard } from '@/components/yacht-profiles/YachtCard';
 import { payloadCMSDataService } from '@/lib/payload-cms-data-service';
 
+// Force dynamic rendering - database not available at Docker build time
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Yacht Profiles | Marine Technology Platform',
   description: 'Explore detailed yacht profiles with timeline visualization, supplier information, and sustainability metrics.',

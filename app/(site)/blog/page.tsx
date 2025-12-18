@@ -8,9 +8,8 @@ import { formatDate } from "@/lib/utils";
 import { BlogClient } from "./_components/blog-client";
 import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
 
-// ISR: Revalidate every 10 minutes in production
-// Use 'auto' to allow ISR revalidation (force-static blocks it)
-export const dynamic = 'auto';
+// Force dynamic rendering - database not available at Docker build time
+export const dynamic = 'force-dynamic';
 export const revalidate = 600;
 
 export default async function BlogPage() {

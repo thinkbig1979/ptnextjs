@@ -1,4 +1,3 @@
-
 import { TwoPillarHero } from "@/components/two-pillar-hero";
 import { CallPaulSection } from "@/components/call-paul-section";
 import { FeaturedPartnersSection } from "@/components/featured-partners-section";
@@ -6,6 +5,9 @@ import { ServicesOverviewSection } from "@/components/services-overview-section"
 import { FeaturedBlogSection } from "@/components/featured-blog-section";
 import { CTASection } from "@/components/cta-section";
 import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
+
+// Force dynamic rendering - database not available at Docker build time
+export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
   const [companyInfo, featuredPartners, featuredPosts] = await Promise.all([

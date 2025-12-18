@@ -30,8 +30,8 @@ import {
   VisualDemo
 } from "@/components/product-comparison";
 
-// Allow dynamic rendering with ISR for optimal flexibility
-export const dynamic = 'auto';
+// Force dynamic rendering - database not available at Docker build time
+export const dynamic = 'force-dynamic';
 export const dynamicParams = true;
 // ISR: Revalidate every 10s in dev, 5min in production
 export const revalidate = 300; // ISR: Revalidate every 5 minutes
