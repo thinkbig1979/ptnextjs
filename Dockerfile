@@ -35,20 +35,13 @@ COPY --from=deps /app/node_modules ./node_modules
 # Copy all source files
 COPY . .
 
-# Copy database for build-time static generation
-# .dockerignore excludes data/, but we need it for SSG
-COPY data ./data
-
 # Install build dependencies
 # These are needed for the build process but not runtime
 RUN npm ci --legacy-peer-deps
 
-# Copy migration scripts and run migrations BEFORE build
-# This ensures database schema is up-to-date for static generation
+# Copy migration scripts (migrations run at container startup, not build time)
+# This allows connecting to external PostgreSQL which isn't available during build
 COPY scripts/run-migrations.js ./scripts/run-migrations.js
-RUN echo "🔄 Running pre-build database migrations..." && \
-    DATABASE_URL="file:./data/payload.db" node scripts/run-migrations.js && \
-    echo "✅ Pre-build migrations complete"
 
 # Build arguments for runtime configuration
 # These must be provided at build time for Next.js to bake into the static bundle
@@ -94,19 +87,14 @@ ENV NEXT_TELEMETRY_DISABLED=1
 # We just need to set up the working directory
 RUN addgroup --system --gid 996 nodejs && \
     adduser --system --uid 1005 nextjs && \
-    mkdir -p /app /data /app/media /app/.next/cache && \
-    chown -R nextjs:nodejs /app /data
+    mkdir -p /app /app/public/media /app/.next/cache && \
+    chown -R nextjs:nodejs /app
 
 # Copy standalone Next.js output from builder
 # This includes only the files needed to run the app
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
-
-# Copy native modules required by libsql (SQLite driver)
-# Next.js standalone doesn't include optional native dependencies
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@libsql ./node_modules/@libsql
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/libsql ./node_modules/libsql
 
 # Copy payload.config.ts and package.json for runtime
 COPY --from=builder --chown=nextjs:nodejs /app/payload.config.ts ./
@@ -118,10 +106,10 @@ COPY --from=builder --chown=nextjs:nodejs /app/scripts/docker-entrypoint.sh ./do
 RUN chmod +x ./docker-entrypoint.sh
 
 # Create volume mount points
-# /data: SQLite database persistence
-# /app/media: Media uploads persistence
+# /app/public/media: Media uploads persistence
 # /app/.next/cache: ISR cache for incremental static regeneration
-VOLUME ["/data", "/app/media", "/app/.next/cache"]
+# Note: PostgreSQL data is managed by separate postgres container
+VOLUME ["/app/public/media", "/app/.next/cache"]
 
 # Expose application port
 EXPOSE 3000

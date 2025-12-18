@@ -1,37 +1,53 @@
 # Production Docker Compose for Paul Thames Superyacht Technology
 #
-# This is an EXAMPLE configuration for VPS production deployment.
-# Copy this file to your VPS and customize as needed.
+# ARCHITECTURE:
+#   This compose file is designed to live OUTSIDE the git repository on your VPS.
+#   The build context points to the git repository location.
 #
-# Usage:
-#   1. Copy to your VPS: scp docker-compose.production.example.yml user@vps:/path/to/deployment/docker-compose.yml
-#   2. Create .env file with production values (see .env.production.example)
-#   3. Run: docker compose up -d
+#   VPS Directory Structure:
+#     /home/pt/ptnextjs/              <- Git repository (PROJECT_DIR)
+#     /home/dockge/stacks/ptnext-app/ <- This compose file (COMPOSE_DIR)
+#       ├── docker-compose.yml
+#       ├── .env.production
+#       ├── media/                    <- Persistent media uploads
+#       └── backups/                  <- Database backups
+#     /var/lib/ptnextjs/postgres/     <- PostgreSQL data (POSTGRES_DATA_PATH)
 #
-# Migration from SQLite:
-#   1. Copy your SQLite database to the VPS
-#   2. Start PostgreSQL: docker compose up -d postgres
-#   3. Start app once to create schema: docker compose up app (then Ctrl+C after tables created)
-#   4. Run migration: npx tsx scripts/migration/sqlite-to-postgres.ts
-#   5. Start full stack: docker compose up -d
+# SETUP:
+#   1. Create PostgreSQL data directory with correct permissions:
+#      sudo mkdir -p /var/lib/ptnextjs/postgres
+#      sudo chown -R 999:999 /var/lib/ptnextjs/postgres
+#      sudo chmod 700 /var/lib/ptnextjs/postgres
+#
+#   2. Copy this file to your compose directory and rename:
+#      cp docker-compose.production.example.yml /path/to/compose/docker-compose.yml
+#
+#   3. Copy and configure environment:
+#      cp .env.production.example /path/to/compose/.env.production
+#      # Edit .env.production with your values
+#
+#   4. Build and run:
+#      docker compose --env-file .env.production build
+#      docker compose --env-file .env.production up -d
+#
+# PROFILES:
+#   - Default: postgres + app
+#   - with-nginx: Add nginx reverse proxy (if not using external nginx)
+#   - with-backup: Add daily PostgreSQL backups
 
 services:
-  # PostgreSQL Database
   postgres:
     image: postgres:16-alpine
     container_name: ptnextjs-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-ptnextjs}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
-      POSTGRES_DB: ${POSTGRES_DB:-ptnextjs}
-    ports:
-      - "127.0.0.1:5432:5432"  # Only expose to localhost for security
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
-      # IMPORTANT: Update this path to your desired location on the VPS
       - ${POSTGRES_DATA_PATH:-/var/lib/ptnextjs/postgres}:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ptnextjs} -d ${POSTGRES_DB:-ptnextjs}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -39,43 +55,45 @@ services:
     networks:
       - ptnextjs-network
 
-  # Next.js Application
   app:
-    image: node:20-alpine
+    build:
+      context: ${PROJECT_DIR:-/home/pt/ptnextjs}
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL}
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL}
+        NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL}
+        NEXT_PUBLIC_HCAPTCHA_SITE_KEY: ${NEXT_PUBLIC_HCAPTCHA_SITE_KEY}
+        PAYLOAD_SECRET: ${PAYLOAD_SECRET}
+    image: ptnextjs-app:latest
     container_name: ptnextjs-app
     restart: unless-stopped
-    working_dir: /app
+    env_file: .env.production
     environment:
       NODE_ENV: production
-      DATABASE_URL: postgresql://${POSTGRES_USER:-ptnextjs}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-ptnextjs}
+      DATABASE_URL: ${DATABASE_URL}
       USE_POSTGRES: "true"
-      PAYLOAD_SECRET: ${PAYLOAD_SECRET:?PAYLOAD_SECRET is required}
-      NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL:?NEXT_PUBLIC_SERVER_URL is required}
-      NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL:-${NEXT_PUBLIC_SERVER_URL}}
-      # Email configuration
-      RESEND_API_KEY: ${RESEND_API_KEY:-}
-      EMAIL_FROM_ADDRESS: ${EMAIL_FROM_ADDRESS:-}
-      ADMIN_EMAIL_ADDRESS: ${ADMIN_EMAIL_ADDRESS:-}
-      # hCaptcha
-      NEXT_PUBLIC_HCAPTCHA_SITE_KEY: ${NEXT_PUBLIC_HCAPTCHA_SITE_KEY:-}
-      HCAPTCHA_SECRET_KEY: ${HCAPTCHA_SECRET_KEY:-}
+      PAYLOAD_SECRET: ${PAYLOAD_SECRET}
+      NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL}
+      NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL}
+      RESEND_API_KEY: ${RESEND_API_KEY}
+      EMAIL_FROM_ADDRESS: ${EMAIL_FROM_ADDRESS}
+      ADMIN_EMAIL_ADDRESS: ${ADMIN_EMAIL_ADDRESS}
+      NEXT_PUBLIC_HCAPTCHA_SITE_KEY: ${NEXT_PUBLIC_HCAPTCHA_SITE_KEY}
+      HCAPTCHA_SECRET_KEY: ${HCAPTCHA_SECRET_KEY}
     ports:
-      - "${APP_PORT:-3000}:3000"
+      - "${PORT:-3000}:3000"
     volumes:
-      # Mount the application code
-      - ${APP_PATH:-.}:/app
-      # Persist node_modules as a named volume for performance
-      - node_modules:/app/node_modules
-      # Persist uploaded media
-      - ${MEDIA_PATH:-/var/lib/ptnextjs/media}:/app/public/media
+      # Only mount persistent data - app code is baked into the image
+      - ${MEDIA_PATH:-./media}:/app/public/media
     depends_on:
       postgres:
         condition: service_healthy
-    command: sh -c "npm install --production && npm run build && npm start"
+    # No command override - uses Dockerfile's CMD (docker-entrypoint.sh)
     networks:
       - ptnextjs-network
+      - nginx
 
-  # Nginx Reverse Proxy (optional but recommended)
   nginx:
     image: nginx:alpine
     container_name: ptnextjs-nginx
@@ -84,7 +102,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ${NGINX_CONF_PATH:-./nginx.conf}:/etc/nginx/nginx.conf:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - ${SSL_CERTS_PATH:-/etc/letsencrypt}:/etc/letsencrypt:ro
     depends_on:
       - app
@@ -93,24 +111,22 @@ services:
     profiles:
       - with-nginx
 
-  # Backup service (runs daily)
   backup:
     image: postgres:16-alpine
     container_name: ptnextjs-backup
     restart: unless-stopped
     environment:
       PGHOST: postgres
-      PGUSER: ${POSTGRES_USER:-ptnextjs}
+      PGUSER: ${POSTGRES_USER}
       PGPASSWORD: ${POSTGRES_PASSWORD}
-      PGDATABASE: ${POSTGRES_DB:-ptnextjs}
+      PGDATABASE: ${POSTGRES_DB}
     volumes:
-      - ${BACKUP_PATH:-/var/lib/ptnextjs/backups}:/backups
+      - ${BACKUP_PATH:-./backups}:/backups
     command: >
       sh -c "
         while true; do
           TIMESTAMP=$$(date +%Y%m%d_%H%M%S)
           pg_dump -Fc > /backups/ptnextjs_$$TIMESTAMP.dump
-          # Keep only last 7 days of backups
           find /backups -name '*.dump' -mtime +7 -delete
           echo \"Backup completed: ptnextjs_$$TIMESTAMP.dump\"
           sleep 86400
@@ -127,6 +143,5 @@ services:
 networks:
   ptnextjs-network:
     driver: bridge
-
-volumes:
-  node_modules:
+  nginx:
+    external: true

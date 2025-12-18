@@ -1,27 +1,43 @@
 #!/bin/sh
 # Docker entrypoint script for Next.js + Payload CMS
 # Handles database migrations and cache warmup before starting the application
+# Supports both PostgreSQL (production) and SQLite (development)
 
 set -e
 
 echo "🚀 Starting Paul Thames Platform..."
 
-# Check if database exists
-if [ -f "/data/payload.db" ]; then
-    echo "📦 Existing database found at /data/payload.db"
-
-    # Run Payload migrations if available
-    if [ -f "/app/run-migrations.js" ]; then
-        echo "🔄 Running database migrations..."
-        node /app/run-migrations.js
-        echo "✅ Migrations complete"
-    fi
+# Detect database type from DATABASE_URL
+if echo "$DATABASE_URL" | grep -q "^postgres"; then
+    echo "📦 PostgreSQL database detected"
+    DB_TYPE="postgres"
+elif echo "$DATABASE_URL" | grep -q "^file:"; then
+    echo "📦 SQLite database detected"
+    DB_TYPE="sqlite"
 else
-    echo "📦 No existing database - will be created on first start"
+    echo "⚠️  Unknown database type, assuming PostgreSQL"
+    DB_TYPE="postgres"
 fi
 
-# Start the Next.js server in background
-# HOSTNAME=0.0.0.0 ensures server binds to all interfaces (not just container hostname)
+# Wait for database to be ready (PostgreSQL only - handled by depends_on healthcheck in compose)
+# This is a fallback in case healthcheck isn't configured
+if [ "$DB_TYPE" = "postgres" ]; then
+    echo "⏳ Ensuring PostgreSQL is ready..."
+    # The compose healthcheck should handle this, but wait a moment just in case
+    sleep 2
+fi
+
+# Run Payload migrations
+if [ -f "/app/run-migrations.js" ]; then
+    echo "🔄 Running database migrations..."
+    node /app/run-migrations.js
+    echo "✅ Migrations complete"
+else
+    echo "⚠️  Migration script not found, skipping migrations"
+fi
+
+# Start the Next.js server
+# HOSTNAME=0.0.0.0 ensures server binds to all interfaces (required for Docker)
 echo "🌐 Starting Next.js server..."
 HOSTNAME=0.0.0.0 node server.js &
 SERVER_PID=$!
