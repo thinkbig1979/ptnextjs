@@ -6,8 +6,8 @@ import { ProductsClient } from "@/app/(site)/components/products-client";
 import { ComparisonProvider } from "@/components/ui/product-comparison";
 import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
 
-// Force static generation for optimal SEO and performance
-export const dynamic = 'force-static';
+// Force dynamic rendering - database not available at Docker build time
+export const dynamic = 'force-dynamic';
 // ISR: Revalidate every 10s in dev, 5min in production
 export const revalidate = 300; // ISR: Revalidate every 5 minutes
 

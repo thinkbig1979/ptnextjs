@@ -10,8 +10,8 @@ import BlogPostClient from "./_components/blog-post-client";
 import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 
-// Force static generation for optimal SEO and performance
-export const dynamic = 'force-static';
+// Force dynamic rendering - database not available at Docker build time
+export const dynamic = 'force-dynamic';
 export const dynamicParams = true;
 // ISR: Revalidate every 10s in dev, 1hr in production
 export const revalidate = 3600; // ISR: Revalidate every hour in production
