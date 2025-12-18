@@ -286,7 +286,24 @@ class PayloadCMSDataService {
   private cache: Map<string, CacheEntry<unknown>> = new Map();
   private readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutes (matching TinaCMS service)
 
-  private async getCached<T>(key: string, fetcher: () => Promise<T>): Promise<T> {
+  /**
+   * Check if database calls should be skipped (during Docker builds)
+   */
+  private shouldSkipDatabase(): boolean {
+    return process.env.SKIP_BUILD_DB === 'true';
+  }
+
+  private async getCached<T>(key: string, fetcher: () => Promise<T>, fallback?: T): Promise<T> {
+    // Skip database calls during Docker builds - return fallback
+    if (this.shouldSkipDatabase()) {
+      console.log(`📋 Skipping database call for ${key} (SKIP_BUILD_DB=true)`);
+      if (fallback !== undefined) {
+        return fallback;
+      }
+      // If no fallback provided, throw to let caller handle it
+      throw new Error(`Database unavailable during build: ${key}`);
+    }
+
     const cached = this.cache.get(key);
     const now = Date.now();
 
@@ -1140,7 +1157,7 @@ class PayloadCMSDataService {
       });
 
       return result.docs.map(doc => this.transformPayloadVendor(doc));
-    });
+    }, []); // Fallback to empty array during build
   }
 
   async getVendors(params?: { category?: string; featured?: boolean; partnersOnly?: boolean }): Promise<Vendor[]> {
@@ -1173,7 +1190,7 @@ class PayloadCMSDataService {
       });
 
       return result.docs[0] ? this.transformPayloadVendor(result.docs[0]) : null;
-    });
+    }, null); // Fallback to null during build
   }
 
   async getVendorById(id: string): Promise<Vendor | null> {
@@ -1186,7 +1203,7 @@ class PayloadCMSDataService {
       });
 
       return doc ? this.transformPayloadVendor(doc) : null;
-    });
+    }, null); // Fallback to null during build
   }
 
   async getFeaturedVendors(): Promise<Vendor[]> {
@@ -1211,7 +1228,7 @@ class PayloadCMSDataService {
         vendor => vendor.featured === true && vendor.partner === true
       );
       return featuredPartners.map(vendor => ({ ...vendor } as Partner));
-    });
+    }, []); // Fallback to empty array during build
   }
 
   async getPartnerBySlug(slug: string): Promise<Partner | null> {
@@ -1245,7 +1262,7 @@ class PayloadCMSDataService {
       });
 
       return filteredProducts;
-    });
+    }, []); // Fallback to empty array during build
   }
 
   async getProducts(params?: { category?: string; partnerId?: string; vendorId?: string }): Promise<Product[]> {
@@ -1279,7 +1296,7 @@ class PayloadCMSDataService {
       });
 
       return result.docs[0] ? this.transformPayloadProduct(result.docs[0]) : null;
-    });
+    }, null); // Fallback to null during build
   }
 
   async getProductById(id: string): Promise<Product | null> {
@@ -1306,7 +1323,7 @@ class PayloadCMSDataService {
       });
 
       return result.docs.map(doc => this.transformCategory(doc as unknown as PayloadCategoryDocument));
-    });
+    }, []); // Fallback to empty array during build
   }
 
   async getCategoryBySlug(slug: string): Promise<Category | null> {
@@ -1325,7 +1342,7 @@ class PayloadCMSDataService {
         console.error(`Error fetching category by slug ${slug}:`, error);
         return null;
       }
-    });
+    }, null); // Fallback to null during build
   }
 
   async getBlogCategories(): Promise<Category[]> {
@@ -1348,7 +1365,7 @@ class PayloadCMSDataService {
         console.error('Error fetching tags:', error);
         return [];
       }
-    });
+    }, []); // Fallback to empty array during build
   }
 
   async getTagBySlug(slug: string): Promise<Tag | null> {
@@ -1367,7 +1384,7 @@ class PayloadCMSDataService {
         console.error(`Error fetching tag by slug ${slug}:`, error);
         return null;
       }
-    });
+    }, null); // Fallback to null during build
   }
 
   async getPopularTags(limit: number = 10): Promise<Tag[]> {
@@ -1386,7 +1403,7 @@ class PayloadCMSDataService {
         console.error('Error fetching popular tags:', error);
         return [];
       }
-    });
+    }, []); // Fallback to empty array during build
   }
 
   // Blog Posts
@@ -1402,7 +1419,7 @@ class PayloadCMSDataService {
       });
 
       return result.docs.map(doc => this.transformPayloadBlogPost(doc as unknown as PayloadBlogDocument));
-    });
+    }, []); // Fallback to empty array during build
   }
 
   async getBlogPosts(params?: { category?: string; featured?: boolean }): Promise<BlogPost[]> {
@@ -1431,7 +1448,7 @@ class PayloadCMSDataService {
       });
 
       return result.docs[0] ? this.transformPayloadBlogPost(result.docs[0] as unknown as PayloadBlogDocument) : null;
-    });
+    }, null); // Fallback to null during build
   }
 
   // Team Members
@@ -1445,7 +1462,7 @@ class PayloadCMSDataService {
       });
 
       return result.docs.map(doc => this.transformPayloadTeamMember(doc as unknown as PayloadTeamMemberDocument));
-    });
+    }, []); // Fallback to empty array during build
   }
 
   // Company Info
@@ -1470,7 +1487,7 @@ class PayloadCMSDataService {
         console.error('Error fetching company info:', error);
         return null;
       }
-    });
+    }, null); // Fallback to null during build
   }
 
   // Search functionality
@@ -1530,7 +1547,7 @@ class PayloadCMSDataService {
       });
 
       return result.docs.map(doc => this.transformYacht(doc as unknown as PayloadYachtDocument));
-    });
+    }, []); // Fallback to empty array during build
   }
 
   async getYachtBySlug(slug: string): Promise<Yacht | null> {
@@ -1544,7 +1561,7 @@ class PayloadCMSDataService {
       });
 
       return result.docs[0] ? this.transformYacht(result.docs[0] as unknown as PayloadYachtDocument) : null;
-    });
+    }, null); // Fallback to null during build
   }
 
   async getFeaturedYachts(): Promise<Yacht[]> {
@@ -1559,7 +1576,7 @@ class PayloadCMSDataService {
       });
 
       return result.docs.map(doc => this.transformYacht(doc as unknown as PayloadYachtDocument));
-    });
+    }, []); // Fallback to empty array during build
   }
 
   async getYachtsByVendor(vendorSlug: string): Promise<Yacht[]> {
@@ -1580,7 +1597,7 @@ class PayloadCMSDataService {
       });
 
       return result.docs.map(doc => this.transformYacht(doc as unknown as PayloadYachtDocument));
-    });
+    }, []); // Fallback to empty array during build
   }
 
   // Utility methods for static generation
@@ -1609,21 +1626,21 @@ class PayloadCMSDataService {
     return this.getCached(`vendor-certifications:${vendorId}`, async () => {
       const vendor = await this.getVendorById(vendorId);
       return vendor?.certifications || [];
-    });
+    }, []); // Fallback to empty array during build
   }
 
   async getVendorAwards(vendorId: string): Promise<any[]> {
     return this.getCached(`vendor-awards:${vendorId}`, async () => {
       const vendor = await this.getVendorById(vendorId);
       return vendor?.awards || [];
-    });
+    }, []); // Fallback to empty array during build
   }
 
   async getVendorSocialProof(vendorId: string): Promise<any> {
     return this.getCached(`vendor-social-proof:${vendorId}`, async () => {
       const vendor = await this.getVendorById(vendorId);
       return vendor?.socialProof || {};
-    });
+    }, {}); // Fallback to empty object during build
   }
 
   async getEnhancedVendorProfile(vendorId: string): Promise<any> {
@@ -1644,7 +1661,7 @@ class PayloadCMSDataService {
         teamMembers: vendor.teamMembers || [],
         yachtProjects: vendor.yachtProjects || [],
       };
-    });
+    }, null); // Fallback to null during build
   }
 
   async preloadEnhancedVendorData(vendorId: string): Promise<void> {

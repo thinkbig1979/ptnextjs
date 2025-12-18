@@ -10,6 +10,9 @@ import { AuthProvider } from "@/lib/context/AuthContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
+// Force dynamic rendering - database not available at Docker build time
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://paulthames.com'),
   title: "Paul Thames - Superyacht Technology Excellence",
@@ -29,8 +32,15 @@ export default async function SiteLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Fetch company info at build time for footer
-  const companyInfo = await payloadCMSDataService.getCompanyInfo();
+  // Fetch company info for footer (skip during Docker builds)
+  let companyInfo = null;
+  if (process.env.SKIP_BUILD_DB !== 'true') {
+    try {
+      companyInfo = await payloadCMSDataService.getCompanyInfo();
+    } catch (error) {
+      console.warn('⚠️  Could not fetch company info (DB unavailable):', error instanceof Error ? error.message : error);
+    }
+  }
 
   return (
     <html lang="en" suppressHydrationWarning>

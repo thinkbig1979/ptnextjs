@@ -18,7 +18,19 @@ interface ProductsServerProps {
 export async function ProductsServer({ searchParams }: ProductsServerProps) {
   console.log('🏗️  Loading products data for server-side rendering...');
 
-  // Get all data at build time
+  // Skip database calls during Docker builds
+  if (process.env.SKIP_BUILD_DB === 'true') {
+    console.log('📋 Skipping products server data (SKIP_BUILD_DB=true)');
+    return (
+      <div className="text-center py-12">
+        <p className="text-muted-foreground font-poppins-light text-lg">
+          Loading products...
+        </p>
+      </div>
+    );
+  }
+
+  // Get all data at runtime
   const [allProducts, allVendors, categories] = await Promise.all([
     payloadCMSDataService.getAllProducts(),
     payloadCMSDataService.getAllVendors(),
