@@ -27,13 +27,14 @@ if [ "$DB_TYPE" = "postgres" ]; then
     sleep 2
 fi
 
-# Run Payload migrations
-if [ -f "/app/run-migrations.js" ]; then
+# Run Payload migrations (only for SQLite - PostgreSQL uses Payload's auto-push)
+# Payload CMS with push: true in payload.config.ts auto-applies schema changes
+if [ "$DB_TYPE" = "sqlite" ] && [ -f "/app/run-migrations.js" ]; then
     echo "🔄 Running database migrations..."
     node /app/run-migrations.js
     echo "✅ Migrations complete"
 else
-    echo "⚠️  Migration script not found, skipping migrations"
+    echo "ℹ️  Skipping migrations (PostgreSQL uses Payload's auto-push)"
 fi
 
 # Start the Next.js server
