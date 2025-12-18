@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPayload } from 'payload';
-import config from '@/payload.config';
+import { getPayloadClient } from '@/lib/utils/get-payload-config';
 import { authenticateAdmin } from '@/lib/utils/admin-auth';
 import type { VendorTier } from '@/lib/utils/tier-validator';
 
@@ -71,7 +70,7 @@ export async function PUT(
     const resolvedParams = await params;
     const vendorId = resolvedParams.id;
 
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
 
     // Fetch vendor to verify it exists
     let vendor;

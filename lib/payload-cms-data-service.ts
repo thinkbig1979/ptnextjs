@@ -3,9 +3,8 @@
  * Replicates TinaCMSDataService interface but fetches from Payload CMS database
  */
 
-import { getPayload } from 'payload';
-import config from '@/payload.config';
 import { lexicalToPlainText, type LexicalDocument } from './transformers/markdown-to-lexical';
+import { getPayloadClient } from './utils/get-payload-config';
 import type {
   Vendor,
   Partner,
@@ -1132,7 +1131,7 @@ class PayloadCMSDataService {
   // Vendors
   async getAllVendors(): Promise<Vendor[]> {
     return this.getCached('vendors', async () => {
-      const payload = await getPayload({ config });
+      const payload = await getPayloadClient();
       const result = await payload.find({
         collection: 'vendors',
         where: { published: { equals: true } },
@@ -1165,7 +1164,7 @@ class PayloadCMSDataService {
 
   async getVendorBySlug(slug: string): Promise<Vendor | null> {
     return this.getCached(`vendor:${slug}`, async () => {
-      const payload = await getPayload({ config });
+      const payload = await getPayloadClient();
       const result = await payload.find({
         collection: 'vendors',
         where: { slug: { equals: slug } },
@@ -1179,7 +1178,7 @@ class PayloadCMSDataService {
 
   async getVendorById(id: string): Promise<Vendor | null> {
     return this.getCached(`vendor-id:${id}`, async () => {
-      const payload = await getPayload({ config });
+      const payload = await getPayloadClient();
       const doc = await payload.findByID({
         collection: 'vendors',
         id,
@@ -1228,7 +1227,7 @@ class PayloadCMSDataService {
   // Products
   async getAllProducts(): Promise<Product[]> {
     return this.getCached('products', async () => {
-      const payload = await getPayload({ config });
+      const payload = await getPayloadClient();
       const result = await payload.find({
         collection: 'products',
         where: { published: { equals: true } },
@@ -1271,7 +1270,7 @@ class PayloadCMSDataService {
 
   async getProductBySlug(slug: string): Promise<Product | null> {
     return this.getCached(`product:${slug}`, async () => {
-      const payload = await getPayload({ config });
+      const payload = await getPayloadClient();
       const result = await payload.find({
         collection: 'products',
         where: { slug: { equals: slug } },
@@ -1299,7 +1298,7 @@ class PayloadCMSDataService {
   // Categories
   async getCategories(): Promise<Category[]> {
     return this.getCached('categories:all', async () => {
-      const payload = await getPayload({ config });
+      const payload = await getPayloadClient();
       const result = await payload.find({
         collection: 'categories',
         limit: 1000,
@@ -1313,7 +1312,7 @@ class PayloadCMSDataService {
   async getCategoryBySlug(slug: string): Promise<Category | null> {
     return this.getCached(`category:${slug}`, async () => {
       try {
-        const payload = await getPayload({ config });
+        const payload = await getPayloadClient();
         const result = await payload.find({
           collection: 'categories',
           where: { slug: { equals: slug } },
@@ -1337,7 +1336,7 @@ class PayloadCMSDataService {
   async getTags(): Promise<Tag[]> {
     return this.getCached('tags:all', async () => {
       try {
-        const payload = await getPayload({ config });
+        const payload = await getPayloadClient();
         const result = await payload.find({
           collection: 'tags',
           limit: 1000,
@@ -1355,7 +1354,7 @@ class PayloadCMSDataService {
   async getTagBySlug(slug: string): Promise<Tag | null> {
     return this.getCached(`tag:${slug}`, async () => {
       try {
-        const payload = await getPayload({ config });
+        const payload = await getPayloadClient();
         const result = await payload.find({
           collection: 'tags',
           where: { slug: { equals: slug } },
@@ -1374,7 +1373,7 @@ class PayloadCMSDataService {
   async getPopularTags(limit: number = 10): Promise<Tag[]> {
     return this.getCached(`tags:popular:${limit}`, async () => {
       try {
-        const payload = await getPayload({ config });
+        const payload = await getPayloadClient();
         const result = await payload.find({
           collection: 'tags',
           limit: limit,
@@ -1393,7 +1392,7 @@ class PayloadCMSDataService {
   // Blog Posts
   async getAllBlogPosts(): Promise<BlogPost[]> {
     return this.getCached('blog-posts', async () => {
-      const payload = await getPayload({ config });
+      const payload = await getPayloadClient();
       const result = await payload.find({
         collection: 'blog-posts',
         where: { published: { equals: true } },
@@ -1423,7 +1422,7 @@ class PayloadCMSDataService {
 
   async getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
     return this.getCached(`blog-post:${slug}`, async () => {
-      const payload = await getPayload({ config });
+      const payload = await getPayloadClient();
       const result = await payload.find({
         collection: 'blog-posts',
         where: { slug: { equals: slug } },
@@ -1438,7 +1437,7 @@ class PayloadCMSDataService {
   // Team Members
   async getTeamMembers(): Promise<TeamMember[]> {
     return this.getCached('team-members', async () => {
-      const payload = await getPayload({ config });
+      const payload = await getPayloadClient();
       const result = await payload.find({
         collection: 'team-members',
         limit: 1000,
@@ -1453,7 +1452,7 @@ class PayloadCMSDataService {
   async getCompanyInfo(): Promise<CompanyInfo | null> {
     return this.getCached('company:info', async () => {
       try {
-        const payload = await getPayload({ config });
+        const payload = await getPayloadClient();
         const result = await payload.find({
           collection: 'company-info',
           limit: 1,
@@ -1522,7 +1521,7 @@ class PayloadCMSDataService {
   // Yachts
   async getYachts(): Promise<Yacht[]> {
     return this.getCached('yachts:all', async () => {
-      const payload = await getPayload({ config });
+      const payload = await getPayloadClient();
       const result = await payload.find({
         collection: 'yachts',
         depth: 2, // Resolve vendor and product relationships in supplierMap
@@ -1536,7 +1535,7 @@ class PayloadCMSDataService {
 
   async getYachtBySlug(slug: string): Promise<Yacht | null> {
     return this.getCached(`yacht:${slug}`, async () => {
-      const payload = await getPayload({ config });
+      const payload = await getPayloadClient();
       const result = await payload.find({
         collection: 'yachts',
         where: { slug: { equals: slug } },
@@ -1550,7 +1549,7 @@ class PayloadCMSDataService {
 
   async getFeaturedYachts(): Promise<Yacht[]> {
     return this.getCached('yachts:featured', async () => {
-      const payload = await getPayload({ config });
+      const payload = await getPayloadClient();
       const result = await payload.find({
         collection: 'yachts',
         where: { featured: { equals: true } },
@@ -1569,7 +1568,7 @@ class PayloadCMSDataService {
       const vendor = await this.getVendorBySlug(vendorSlug);
       if (!vendor) return [];
 
-      const payload = await getPayload({ config });
+      const payload = await getPayloadClient();
       const result = await payload.find({
         collection: 'yachts',
         where: {

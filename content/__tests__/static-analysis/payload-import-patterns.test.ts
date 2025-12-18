@@ -3,7 +3,11 @@
  *
  * This test ensures that the Payload CMS is always imported correctly.
  *
- * The correct pattern is:
+ * The RECOMMENDED pattern (lazy-loading to avoid circular dependencies) is:
+ *   import { getPayloadClient } from '@/lib/utils/get-payload-config';
+ *   // Then use: const payload = await getPayloadClient();
+ *
+ * The LEGACY pattern (still acceptable but may cause circular dependency issues) is:
  *   import { getPayload } from 'payload';
  *   import config from '@/payload.config';
  *   // Then use: const payload = await getPayload({ config });
@@ -130,7 +134,7 @@ describe('Payload Import Patterns', () => {
     console.log(`Scanned ${files.length} files for incorrect Payload import patterns - all clean!`);
   });
 
-  it('should verify critical API routes use getPayload correctly', async () => {
+  it('should verify critical API routes use getPayloadClient correctly', async () => {
     const projectRoot = path.resolve(__dirname, '../..');
 
     // Critical routes that MUST use payload correctly
@@ -143,8 +147,7 @@ describe('Payload Import Patterns', () => {
       'app/api/admin/tier-upgrade-requests/route.ts',
     ];
 
-    const missingGetPayload: string[] = [];
-    const missingConfig: string[] = [];
+    const missingLazyLoadImport: string[] = [];
 
     for (const route of criticalRoutes) {
       const filePath = path.join(projectRoot, route);
@@ -156,29 +159,27 @@ describe('Payload Import Patterns', () => {
 
       const content = fs.readFileSync(filePath, 'utf-8');
 
-      // Check for getPayload import
-      if (!/import\s+{\s*getPayload\s*}\s+from\s+['"]payload['"]/.test(content)) {
-        missingGetPayload.push(route);
+      // Check for lazy-load pattern (recommended) OR legacy pattern (acceptable)
+      const hasLazyLoadImport = /import\s+{\s*getPayloadClient\s*}\s+from\s+['"]@\/lib\/utils\/get-payload-config['"]/.test(content);
+      const hasLegacyPattern = /import\s+{\s*getPayload\s*}\s+from\s+['"]payload['"]/.test(content) &&
+                               /import\s+config\s+from\s+['"]@\/payload\.config['"]/.test(content);
+
+      if (!hasLazyLoadImport && !hasLegacyPattern) {
+        missingLazyLoadImport.push(route);
       }
-
-      // Check for config import (should import from @/payload.config)
-      if (!/import\s+config\s+from\s+['"]@\/payload\.config['"]/.test(content)) {
-        missingConfig.push(route);
-      }
     }
 
-    const errors: string[] = [];
-
-    if (missingGetPayload.length > 0) {
-      errors.push(`Routes missing "import { getPayload } from 'payload'":\n  - ${missingGetPayload.join('\n  - ')}`);
-    }
-
-    if (missingConfig.length > 0) {
-      errors.push(`Routes missing "import config from '@/payload.config'":\n  - ${missingConfig.join('\n  - ')}`);
-    }
-
-    if (errors.length > 0) {
-      fail(`Critical API routes have incorrect Payload imports:\n\n${errors.join('\n\n')}`);
+    if (missingLazyLoadImport.length > 0) {
+      fail(
+        `Critical API routes missing proper Payload imports:\n  - ${missingLazyLoadImport.join('\n  - ')}\n\n` +
+        `RECOMMENDED PATTERN (avoids circular dependencies):\n` +
+        `  import { getPayloadClient } from '@/lib/utils/get-payload-config';\n` +
+        `  // Then: const payload = await getPayloadClient();\n\n` +
+        `LEGACY PATTERN (acceptable but may cause issues in standalone builds):\n` +
+        `  import { getPayload } from 'payload';\n` +
+        `  import config from '@/payload.config';\n` +
+        `  // Then: const payload = await getPayload({ config });`
+      );
     }
   });
 
@@ -213,14 +214,15 @@ describe('Payload Import Patterns', () => {
         });
       }
 
-      // If file uses payload operations, ensure it has getPayload
+      // If file uses payload operations, ensure it has proper payload access
       const usesPayloadOps = /payload\.(find|findByID|create|update|delete)/.test(content);
-      const hasGetPayload = /getPayload\s*\(\s*{\s*config\s*}\s*\)/.test(content);
+      const hasLazyLoad = /getPayloadClient\s*\(\s*\)/.test(content);
+      const hasLegacyGetPayload = /getPayload\s*\(\s*{\s*config\s*}\s*\)/.test(content);
 
-      if (usesPayloadOps && !hasGetPayload) {
+      if (usesPayloadOps && !hasLazyLoad && !hasLegacyGetPayload) {
         issues.push({
           file: service,
-          problem: 'Uses payload operations but may not be calling getPayload({ config })'
+          problem: 'Uses payload operations but is not calling getPayloadClient() or getPayload({ config })'
         });
       }
     }

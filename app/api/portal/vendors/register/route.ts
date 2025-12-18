@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getPayload } from "payload";
-import config from "@/payload.config";
+import { getPayloadClient } from "@/lib/utils/get-payload-config";
 import { authService } from "@/lib/services/auth-service";
 import { z } from "zod";
 import {
@@ -182,7 +181,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         }
 
         // Get Payload instance
-        const payload = await getPayload({ config });
+        const payload = await getPayloadClient();
 
         // Check for duplicate email
         const existingUsers = await payload.find({

@@ -9,8 +9,7 @@
  */
 
 import { NextResponse } from 'next/server';
-import { getPayload } from 'payload';
-import config from '@/payload.config';
+import { getPayloadClient } from '@/lib/utils/get-payload-config';
 
 interface HealthCheckResult {
   status: 'healthy' | 'unhealthy';
@@ -58,7 +57,7 @@ export async function GET(): Promise<NextResponse<HealthCheckResult>> {
 
   try {
     // Check 1: Database connection via Payload
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
     result.checks.database = { ok: true, message: 'Connected' };
 
     // Check 2: Vendors table query

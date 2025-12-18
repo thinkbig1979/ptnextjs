@@ -44,9 +44,8 @@ if (typeof console !== 'undefined') {
  */
 
 import { NextRequest } from 'next/server';
-import { getPayload } from 'payload';
-import config from '@/payload.config';
 import { authService } from '@/lib/services/auth-service';
+import { getPayloadClient } from '@/lib/utils/get-payload-config';
 
 /**
  * Authentication error result
@@ -115,7 +114,7 @@ export async function authenticateVendorPortal(
     }
 
     // Get Payload instance to fetch vendor
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
 
     // Fetch vendor
     const vendor = await payload.findByID({

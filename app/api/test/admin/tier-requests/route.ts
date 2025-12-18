@@ -8,8 +8,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getPayload } from 'payload';
-import config from '@/payload.config';
+import { getPayloadClient } from '@/lib/utils/get-payload-config';
 
 interface ListResponse {
   success: boolean;
@@ -58,7 +57,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<ListRespon
     const requestType = searchParams.get('requestType');
     const vendorId = searchParams.get('vendorId');
 
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
 
     // Build where clause
     const whereConditions: Array<{ [key: string]: { equals: string } }> = [];

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPayload } from 'payload';
-import config from '@/payload.config';
+import { getPayloadClient } from '@/lib/utils/get-payload-config';
 import {
   sendProfileSubmittedAdminEmail,
   sendProfileSubmittedVendorEmail,
@@ -82,7 +81,7 @@ export async function POST(
 ): Promise<NextResponse<SubmitProfileSuccessResponse | SubmitProfileErrorResponse>> {
   try {
     const { id: vendorId } = await params;
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
 
     // Get the current user from cookies/session
     const { user } = await payload.auth({ headers: request.headers });

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { getPayload } from 'payload';
-import config from '@/payload.config';
+import { getPayloadClient } from '@/lib/utils/get-payload-config';
 
 /**
  * Test Admin Vendor API
@@ -55,7 +54,7 @@ export async function DELETE(
       );
     }
 
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
 
     // First, verify the vendor exists
     const existingVendor = await payload.findByID({
@@ -190,7 +189,7 @@ export async function PATCH(
     }
 
     const body = await request.json();
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
 
     // Verify the vendor exists
     const existingVendor = await payload.findByID({

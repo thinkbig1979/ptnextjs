@@ -4,8 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getPayload } from 'payload';
-import config from '@/payload.config';
+import { getPayloadClient } from '@/lib/utils/get-payload-config';
 import { verifyHCaptchaToken, getHCaptchaErrorMessage } from '@/lib/utils/hcaptcha';
 
 // Helper to create Lexical rich text content
@@ -84,7 +83,7 @@ export async function POST(
       );
     }
 
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
 
     // Get the product
     const product = await payload.findByID({
@@ -150,7 +149,7 @@ export async function GET(
 ): Promise<NextResponse> {
   try {
     const { id } = await params;
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
 
     const product = await payload.findByID({
       collection: 'products',

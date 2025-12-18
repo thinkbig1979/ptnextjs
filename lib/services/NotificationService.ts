@@ -8,8 +8,7 @@
  * - Tier upgrade/downgrade requests are rejected (vendor notification)
  */
 
-import { getPayload } from 'payload';
-import config from '@payload-config';
+import { getPayloadClient } from '@/lib/utils/get-payload-config';
 import type {
   Notification,
   CreateNotificationPayload,
@@ -25,7 +24,7 @@ export async function createNotification(
   payload: CreateNotificationPayload
 ): Promise<{ success: boolean; notification?: Notification; error?: string }> {
   try {
-    const payloadCMS = await getPayload({ config });
+    const payloadCMS = await getPayloadClient();
 
     const notification = await payloadCMS.create({
       collection: 'notifications',
@@ -64,7 +63,7 @@ export async function getUserNotifications(
   filters?: NotificationFilters
 ): Promise<{ success: boolean; notifications?: Notification[]; unreadCount?: number; totalCount?: number; error?: string }> {
   try {
-    const payloadCMS = await getPayload({ config });
+    const payloadCMS = await getPayloadClient();
 
     // Build query
     const query: any = {
@@ -126,7 +125,7 @@ export async function markAsRead(
   userId: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    const payloadCMS = await getPayload({ config });
+    const payloadCMS = await getPayloadClient();
 
     // Verify the notification belongs to the user
     const notification = await payloadCMS.findByID({
@@ -175,7 +174,7 @@ export async function markAllAsRead(
   userId: string
 ): Promise<{ success: boolean; count?: number; error?: string }> {
   try {
-    const payloadCMS = await getPayload({ config });
+    const payloadCMS = await getPayloadClient();
 
     // Find all unread notifications for the user
     const unreadNotifications = await payloadCMS.find({
@@ -229,7 +228,7 @@ export async function notifyAdminOfTierRequest(
   vendorId: string
 ): Promise<void> {
   try {
-    const payloadCMS = await getPayload({ config });
+    const payloadCMS = await getPayloadClient();
 
     // Find all admin users
     const admins = await payloadCMS.find({

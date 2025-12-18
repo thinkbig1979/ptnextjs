@@ -10,8 +10,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getPayload } from 'payload';
-import config from '@payload-config';
+import { getPayloadClient } from '@/lib/utils/get-payload-config';
 
 export async function GET(_request: NextRequest): Promise<NextResponse> {
   const startTime = process.hrtime.bigint();
@@ -26,7 +25,7 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
 
   try {
     // Check Payload CMS initialization
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
     checks.payload = 'initialized';
 
     // Check database connectivity
@@ -73,7 +72,7 @@ export async function GET(_request: NextRequest): Promise<NextResponse> {
 // Support HEAD requests for lightweight readiness checks
 export async function HEAD(_request: NextRequest): Promise<NextResponse> {
   try {
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
     await payload.find({
       collection: 'users',
       limit: 1,

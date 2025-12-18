@@ -8,8 +8,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getPayload } from 'payload';
-import config from '@/payload.config';
+import { getPayloadClient } from '@/lib/utils/get-payload-config';
 
 interface ApproveRequest {
   requestId: string;
@@ -51,7 +50,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApproveRe
       );
     }
 
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
 
     // Find or create a test admin user
     let adminUser = await payload.find({

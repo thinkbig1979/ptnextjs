@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { authService } from '@/lib/services/auth-service';
-import { getPayload } from 'payload';
-import config from '@/payload.config';
+import { getPayloadClient } from '@/lib/utils/get-payload-config';
 
 /**
  * GET /api/auth/me
@@ -26,7 +25,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     // Fetch fresh approval status from database
     try {
-      const payload = await getPayload({ config });
+      const payload = await getPayloadClient();
       const userDoc = await payload.findByID({
         collection: 'users',
         id: user.id,

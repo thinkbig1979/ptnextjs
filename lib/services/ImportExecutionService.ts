@@ -16,8 +16,7 @@
  * @module lib/services/ImportExecutionService
  */
 
-import { getPayload } from 'payload';
-import config from '@/payload.config';
+import { getPayloadClient } from '@/lib/utils/get-payload-config';
 import type { Vendor } from '@/lib/types';
 import type { RowValidationResult } from './ImportValidationService';
 
@@ -111,7 +110,7 @@ export class ImportExecutionService {
 
     try {
       // Initialize Payload
-      const payload = await getPayload({ config });
+      const payload = await getPayloadClient();
 
       // Get current vendor data
       const currentVendor = await payload.findByID({
@@ -493,7 +492,7 @@ export class ImportExecutionService {
    * Create import history record
    */
   private static async createImportHistory(
-    payload: Awaited<ReturnType<typeof getPayload>>,
+    payload: Awaited<ReturnType<typeof getPayloadClient>>,
     options: ImportOptions,
     result: ImportExecutionResult,
     changes: FieldChange[]

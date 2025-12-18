@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPayload } from 'payload';
-import config from '@/payload.config';
+import { getPayloadClient } from '@/lib/utils/get-payload-config';
 import { authService } from '@/lib/services/auth-service';
 
 /**
@@ -31,7 +30,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
 
     // Find vendor profile linked to user
     const vendors = await payload.find({
@@ -70,7 +69,7 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
     }
 
     const body = await request.json();
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
 
     // Find vendor profile
     const vendors = await payload.find({

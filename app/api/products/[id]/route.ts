@@ -5,8 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getPayload } from 'payload';
-import config from '@/payload.config';
+import { getPayloadClient } from '@/lib/utils/get-payload-config';
 
 interface ProductResponse {
   id: string;
@@ -36,7 +35,7 @@ export async function GET(
       );
     }
 
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
 
     let product;
     try {

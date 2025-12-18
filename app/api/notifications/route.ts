@@ -5,13 +5,12 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserNotifications } from '@/lib/services/NotificationService';
-import { getPayload } from 'payload';
-import config from '@payload-config';
+import { getPayloadClient } from '@/lib/utils/get-payload-config';
 import type { NotificationFilters } from '@/lib/types/notifications';
 
 export async function GET(request: NextRequest) {
   try {
-    const payloadCMS = await getPayload({ config });
+    const payloadCMS = await getPayloadClient();
 
     // Get authenticated user
     const { user } = await payloadCMS.auth({ headers: request.headers });

@@ -6,8 +6,7 @@
  * This ensures audit logging never blocks authentication operations.
  */
 
-import { getPayload } from 'payload';
-import config from '@/payload.config';
+import { getPayloadClient } from '@/lib/utils/get-payload-config';
 import type { NextRequest } from 'next/server';
 
 /**
@@ -78,7 +77,7 @@ export async function logAuditEvent(
   request?: NextRequest
 ): Promise<void> {
   try {
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
 
     // Extract request context if available
     const ip_address = request ? getClientIp(request) : undefined;

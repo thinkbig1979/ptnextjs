@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPayload } from 'payload';
-import config from '@/payload.config';
+import { getPayloadClient } from '@/lib/utils/get-payload-config';
 import { authenticateAdmin } from '@/lib/utils/admin-auth';
 
 /**
@@ -32,7 +31,7 @@ export async function POST(
 
     const resolvedParams = await params;
     const userId = resolvedParams.id;
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
 
     // Update user status
     const updateData: {

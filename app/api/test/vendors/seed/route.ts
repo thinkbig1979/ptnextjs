@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { getPayload } from 'payload';
-import config from '@/payload.config';
+import { getPayloadClient } from '@/lib/utils/get-payload-config';
 /**
  * Test Vendor Seed API
  * POST /api/test/vendors/seed
@@ -54,7 +53,7 @@ function generateSlug(companyName: string): string {
  * Generate a unique slug by appending a timestamp suffix if the base slug already exists
  */
 async function generateUniqueSlug(
-  payload: Awaited<ReturnType<typeof getPayload>>,
+  payload: Awaited<ReturnType<typeof getPayloadClient>>,
   baseSlug: string
 ): Promise<string> {
   // Check if base slug exists
@@ -103,7 +102,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<SeedRespo
         { status: 400 }
       );
     }
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
     const createdVendorIds: string[] = [];
     const errors: Record<string, string> = {};
     // Track which vendors already existed (for success response)

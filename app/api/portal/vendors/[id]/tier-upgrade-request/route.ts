@@ -10,8 +10,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getPayload } from 'payload';
-import config from '@/payload.config';
+import { getPayloadClient } from '@/lib/utils/get-payload-config';
 import * as TierUpgradeRequestService from '@/lib/services/TierUpgradeRequestService';
 import { rateLimit } from '@/lib/middleware/rateLimit';
 import { authService } from '@/lib/services/auth-service';
@@ -38,7 +37,7 @@ async function authenticateVendor(request: NextRequest, vendorId: string) {
     }
 
     // Get Payload instance to fetch vendor
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
 
     // Check if user has vendor relationship
     const vendor = await payload.findByID({

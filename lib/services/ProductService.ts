@@ -5,9 +5,8 @@
  * authorization, and Lexical conversion for rich text fields.
  */
 
-import { getPayload } from 'payload';
 import type { Where } from 'payload';
-import config from '@/payload.config';
+import { getPayloadClient } from '@/lib/utils/get-payload-config';
 
 export interface ProductFilters {
   published?: boolean;
@@ -141,7 +140,7 @@ export class ProductService {
     userId: string,
     isAdmin: boolean
   ): Promise<Record<string, unknown>> {
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
 
     // Fetch product with vendor relationship populated
     const product = await payload.findByID({
@@ -196,7 +195,7 @@ export class ProductService {
     isAdmin: boolean,
     filters?: ProductFilters
   ): Promise<Array<Record<string, unknown>>> {
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
 
     // First verify the user owns this vendor (or is admin)
     const vendor = await payload.findByID({
@@ -295,7 +294,7 @@ export class ProductService {
     userId: string,
     isAdmin: boolean
   ): Promise<Record<string, unknown>> {
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
 
     // Verify user owns the vendor (or is admin)
     const vendor = await payload.findByID({
@@ -425,7 +424,7 @@ export class ProductService {
     userId: string,
     isAdmin: boolean
   ): Promise<Record<string, unknown>> {
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
 
     // Verify ownership (will throw if unauthorized)
     await this.verifyOwnership(productId, userId, isAdmin);
@@ -529,7 +528,7 @@ export class ProductService {
     userId: string,
     isAdmin: boolean
   ): Promise<void> {
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
 
     // Verify ownership (will throw if unauthorized)
     await this.verifyOwnership(productId, userId, isAdmin);
@@ -556,7 +555,7 @@ export class ProductService {
     userId: string,
     isAdmin: boolean
   ): Promise<Record<string, unknown>> {
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
 
     // Verify ownership (will throw if unauthorized)
     await this.verifyOwnership(productId, userId, isAdmin);

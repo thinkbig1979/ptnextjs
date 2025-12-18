@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { getPayload } from 'payload';
-import config from '@/payload.config';
+import { getPayloadClient } from '@/lib/utils/get-payload-config';
 
 /**
  * Test Product Seed API
@@ -47,7 +46,7 @@ function generateSlug(name: string): string {
  * Handles the case where vendor was just created but transaction not yet committed
  */
 async function verifyVendorExists(
-  payload: Awaited<ReturnType<typeof getPayload>>,
+  payload: Awaited<ReturnType<typeof getPayloadClient>>,
   vendorId: string,
   maxRetries: number = 3,
   retryDelay: number = 500
@@ -141,7 +140,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<SeedRespo
       );
     }
 
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
     const createdProductIds: string[] = [];
     const existingProductIds: string[] = [];
     const errors: Record<string, string> = {};

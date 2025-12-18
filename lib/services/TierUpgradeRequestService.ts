@@ -18,9 +18,8 @@
  * - Maximum length validation for rejectionReason (1000 chars)
  */
 
-import { getPayload } from 'payload';
 import type { Where } from 'payload';
-import config from '@/payload.config';
+import { getPayloadClient } from '@/lib/utils/get-payload-config';
 import type { Tier } from '@/lib/constants/tierConfig';
 
 export type RequestStatus = 'pending' | 'approved' | 'rejected' | 'cancelled';
@@ -283,7 +282,7 @@ export async function autoPopulateCurrentTier(
 export async function createUpgradeRequest(
   payload: CreateUpgradeRequestPayload
 ): Promise<TierUpgradeRequest> {
-  const payloadClient = await getPayload({ config });
+  const payloadClient = await getPayloadClient();
 
   // Get vendor to populate current tier
   const vendor = await payloadClient.findByID({
@@ -345,7 +344,7 @@ export async function createUpgradeRequest(
 export async function createDowngradeRequest(
   payload: CreateUpgradeRequestPayload
 ): Promise<TierUpgradeRequest> {
-  const payloadClient = await getPayload({ config });
+  const payloadClient = await getPayloadClient();
 
   // Get vendor to populate current tier
   const vendor = await payloadClient.findByID({
@@ -421,7 +420,7 @@ export async function getPendingRequest(
   vendorId: string,
   requestType?: RequestType
 ): Promise<TierUpgradeRequest | null> {
-  const payloadClient = await getPayload({ config });
+  const payloadClient = await getPayloadClient();
 
   const conditions: Where[] = [
     { vendor: { equals: vendorId } },
@@ -451,7 +450,7 @@ export async function getMostRecentRequest(
   vendorId: string,
   requestType?: RequestType
 ): Promise<TierUpgradeRequest | null> {
-  const payloadClient = await getPayload({ config });
+  const payloadClient = await getPayloadClient();
 
   const whereClause: Where = requestType
     ? {
@@ -480,7 +479,7 @@ export async function cancelRequest(
   vendorId: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    const payloadClient = await getPayload({ config });
+    const payloadClient = await getPayloadClient();
 
     // Get the request first to verify it exists and belongs to vendor
     const request = await payloadClient.findByID({
@@ -526,7 +525,7 @@ export async function cancelRequest(
  * PERFORMANCE OPTIMIZED: Field selection reduces payload size from ~85KB to ~45KB
  */
 export async function listRequests(filters: ListRequestsFilters): Promise<ListRequestsResult> {
-  const payloadClient = await getPayload({ config });
+  const payloadClient = await getPayloadClient();
 
   const page = filters.page || 1;
   const limit = filters.limit || 20;
@@ -586,7 +585,7 @@ export async function approveRequest(
   adminUserId: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    const payloadClient = await getPayload({ config });
+    const payloadClient = await getPayloadClient();
 
     // Get the request
     const request = await payloadClient.findByID({
@@ -641,7 +640,7 @@ export async function rejectRequest(
   rejectionReason: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    const payloadClient = await getPayload({ config });
+    const payloadClient = await getPayloadClient();
 
     // Get the request
     const request = await payloadClient.findByID({

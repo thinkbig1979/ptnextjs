@@ -9,8 +9,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getPayload } from 'payload';
-import config from '@/payload.config';
+import { getPayloadClient } from '@/lib/utils/get-payload-config';
 import * as TierUpgradeRequestService from '@/lib/services/TierUpgradeRequestService';
 import { rateLimit } from '@/lib/middleware/rateLimit';
 
@@ -18,7 +17,7 @@ import { rateLimit } from '@/lib/middleware/rateLimit';
  * Authenticate admin user
  */
 async function authenticateAdmin(request: NextRequest) {
-  const payload = await getPayload({ config });
+  const payload = await getPayloadClient();
 
   // Get user from cookie
   const token = request.cookies.get('payload-token')?.value;

@@ -11,8 +11,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserFromRequest } from '@/lib/middleware/auth-middleware';
-import { getPayload } from 'payload';
-import config from '@/payload.config';
+import { getPayloadClient } from '@/lib/utils/get-payload-config';
 
 interface RouteContext {
   params: Promise<{
@@ -67,7 +66,7 @@ export async function GET(
     const { id } = await context.params;
 
     // Initialize Payload
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
 
     // Authenticate user
     const user = await authenticateUser(request);

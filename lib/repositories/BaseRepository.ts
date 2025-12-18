@@ -7,8 +7,7 @@
  * - Cache key generation
  */
 
-import { getPayload } from 'payload';
-import config from '@payload-config';
+import { getPayloadClient } from '@/lib/utils/get-payload-config';
 import type { CacheService } from '@/lib/cache';
 import type { Repository } from './types';
 
@@ -23,7 +22,7 @@ export abstract class BaseRepository implements Repository {
    * Get Payload CMS instance
    */
   protected async getPayload() {
-    return getPayload({ config });
+    return getPayloadClient();
   }
 
   /**

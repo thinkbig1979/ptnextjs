@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPayload } from 'payload';
-import config from '@/payload.config';
+import { getPayloadClient } from '@/lib/utils/get-payload-config';
 import { authService } from '@/lib/services/auth-service';
 
 /**
@@ -30,7 +29,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     extractAdminUser(request);
 
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
 
     // Get all users with pending status
     const pendingUsers = await payload.find({

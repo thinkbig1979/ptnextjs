@@ -57,8 +57,7 @@ if (typeof console !== 'undefined') {
  */
 
 import { NextRequest } from 'next/server';
-import { getPayload } from 'payload';
-import config from '@/payload.config';
+import { getPayloadClient } from '@/lib/utils/get-payload-config';
 
 /**
  * Authentication Error Response
@@ -98,7 +97,7 @@ export type AuthResult = AuthError | AuthSuccess;
  * @returns Authentication result with user or error
  */
 export async function authenticateAdmin(request: NextRequest): Promise<AuthResult> {
-  const payload = await getPayload({ config });
+  const payload = await getPayloadClient();
 
   // Support multiple token sources for backward compatibility
   const token =

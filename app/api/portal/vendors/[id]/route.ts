@@ -1,11 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { getPayload } from 'payload';
-import config from '@/payload.config';
+import { getPayloadClient } from '@/lib/utils/get-payload-config';
 import { getUserFromRequest } from '@/lib/middleware/auth-middleware';
 import { safeValidateVendorUpdate } from '@/lib/validation/vendor-update-schema';
 import { filterFieldsByTier, type VendorTier } from '@/lib/utils/tier-validator';
 import { VendorProfileService } from '@/lib/services/VendorProfileService';
+
+/**
+ * Helper function to authenticate user from request
+ */
+async function authenticateUser(request: NextRequest) {
+  let user = getUserFromRequest(request);
+
+  // If user not in headers (middleware not applied), extract from token manually
+  if (!user) {
+    const { authService } = await import('@/lib/services/auth-service');
+    const token =
+      request.headers.get('authorization')?.replace('Bearer ', '') ||
+      request.cookies.get('access_token')?.value;
+
+    if (!token) {
+      return null;
+    }
+
+    try {
+      user = authService.validateToken(token);
+    } catch (error) {
+      return null;
+    }
+  }
+
+  return user;
+}
 
 // Force dynamic rendering - disable Next.js route caching
 // This ensures fresh database reads on every request
@@ -38,33 +64,6 @@ interface ErrorResponse {
     fields?: Record<string, string>;
     details?: string;
   };
-}
-
-/**
- * Helper function to authenticate user from request
- */
-async function authenticateUser(request: NextRequest) {
-  let user = getUserFromRequest(request);
-
-  // If user not in headers (middleware not applied), extract from token manually
-  if (!user) {
-    const { authService } = await import('@/lib/services/auth-service');
-    const token =
-      request.headers.get('authorization')?.replace('Bearer ', '') ||
-      request.cookies.get('access_token')?.value;
-
-    if (!token) {
-      return null;
-    }
-
-    try {
-      user = authService.validateToken(token);
-    } catch (error) {
-      return null;
-    }
-  }
-
-  return user;
 }
 
 /**
@@ -519,7 +518,7 @@ export async function PATCH(
     }
 
     // Get Payload instance
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
 
     // Fetch vendor from database
     let vendor;

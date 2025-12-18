@@ -5,9 +5,8 @@
  * authorization, and computed field enrichment.
  */
 
-import { getPayload } from 'payload';
 import type { Where } from 'payload';
-import config from '@/payload.config';
+import { getPayloadClient } from '@/lib/utils/get-payload-config';
 import { TierValidationService } from './TierValidationService';
 import { VendorComputedFieldsService } from './VendorComputedFieldsService';
 import type { Tier } from './TierService';
@@ -79,7 +78,7 @@ export class VendorProfileService {
   ): Promise<Record<string, unknown>> {
     const { includeComputed = true } = options;
 
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
 
     // Find vendor by slug
     const result = await payload.find({
@@ -123,7 +122,7 @@ export class VendorProfileService {
     userId: string,
     isAdmin: boolean
   ): Promise<Record<string, unknown>> {
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
 
     // Fetch vendor
     const vendor = await payload.findByID({
@@ -154,7 +153,7 @@ export class VendorProfileService {
    * Used when user logs in and we need to find their vendor profile
    */
   static async getVendorByUserId(userId: string): Promise<Record<string, unknown>> {
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
 
     // Find vendor by user_id
     const result = await payload.find({
@@ -194,7 +193,7 @@ export class VendorProfileService {
   ): Promise<Record<string, unknown>> {
     const { userId, isAdmin, validateTier = true } = options;
 
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
 
     // Fetch existing vendor
     const vendor = await payload.findByID({
@@ -270,7 +269,7 @@ export class VendorProfileService {
     vendorId: string,
     newTier: Tier
   ): Promise<ValidationResult> {
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
 
     const vendor = await payload.findByID({
       collection: 'vendors',
@@ -299,7 +298,7 @@ export class VendorProfileService {
    * @returns Array of vendor profiles
    */
   static async getVendors(tier?: Tier, limit: number = 100): Promise<Array<Record<string, unknown>>> {
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
 
     const whereClause: Where = {
       published: {
@@ -330,7 +329,7 @@ export class VendorProfileService {
    * @returns Array of featured vendor profiles
    */
   static async getFeaturedVendors(limit: number = 10): Promise<Array<Record<string, unknown>>> {
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
 
     const result = await payload.find({
       collection: 'vendors',

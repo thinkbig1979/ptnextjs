@@ -16,9 +16,8 @@
  */
 
 import { NextRequest } from 'next/server';
-import { getPayload } from 'payload';
-import config from '@/payload.config';
 import { verifyAccessToken } from '@/lib/utils/jwt';
+import { getPayloadClient } from '@/lib/utils/get-payload-config';
 import type {
   AuthResult,
   AuthSuccess,
@@ -90,7 +89,7 @@ export async function validateToken(request: NextRequest): Promise<AuthResult> {
     const decoded = verifyAccessToken(token);
 
     // Validate token version against database
-    const payload = await getPayload({ config });
+    const payload = await getPayloadClient();
     const users = await payload.find({
       collection: 'users',
       where: {
@@ -251,7 +250,7 @@ export function requireVendorOwnership(
 
     // Check vendor ownership
     try {
-      const payload = await getPayload({ config });
+      const payload = await getPayloadClient();
       const vendors = await payload.find({
         collection: 'vendors',
         where: {

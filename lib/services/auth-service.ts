@@ -1,6 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { getPayload } from 'payload';
-import config from '@/payload.config';
+import { getPayloadClient } from '@/lib/utils/get-payload-config';
 import { generateTokens, verifyToken, refreshAccessToken, type JWTPayload, type JWTPayloadBase, type LegacyJWTPayload, type TokenPair } from '@/lib/utils/jwt';
 
 const BCRYPT_ROUNDS = 12;
@@ -22,7 +21,7 @@ class AuthService {
    */
   async login(email: string, password: string): Promise<LoginResponse> {
     try {
-      const payload = await getPayload({ config });
+      const payload = await getPayloadClient();
 
       // Find user by email
       const users = await payload.find({
