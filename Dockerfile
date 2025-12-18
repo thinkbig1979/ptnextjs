@@ -55,7 +55,10 @@ ARG PAYLOAD_SECRET
 # Build Next.js application
 # NEXT_TELEMETRY_DISABLED=1 disables Next.js telemetry
 # This creates .next/standalone directory with minimal runtime files
+# USE_POSTGRES=true is CRITICAL: it tells webpack to exclude SQLite packages
+# Without this, the build includes @libsql native modules that fail on Alpine Linux
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV USE_POSTGRES=true
 ENV NEXT_PUBLIC_SERVER_URL=$NEXT_PUBLIC_SERVER_URL
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
@@ -81,6 +84,8 @@ WORKDIR /app
 # Set production environment
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+# USE_POSTGRES=true ensures PostgreSQL adapter is used at runtime
+ENV USE_POSTGRES=true
 
 # Create non-root user for security
 # nodejs user is created by node:alpine image

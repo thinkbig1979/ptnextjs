@@ -50,6 +50,38 @@ const nextConfig = {
       ...config.watchOptions,
       ignored: /postgres-data/
     };
+
+    // IMPORTANT: When building for PostgreSQL (USE_POSTGRES=true), exclude SQLite packages
+    // This prevents the "Cannot find module '@libsql/linux-x64-musl'" error in Docker
+    if (process.env.USE_POSTGRES === 'true' && isServer) {
+      config.plugins.push(
+        new webpack.IgnorePlugin({
+          resourceRegExp: /^@payloadcms\/db-sqlite$/
+        }),
+        new webpack.IgnorePlugin({
+          resourceRegExp: /^@libsql\//
+        }),
+        new webpack.IgnorePlugin({
+          resourceRegExp: /^libsql$/
+        }),
+        new webpack.IgnorePlugin({
+          resourceRegExp: /^better-sqlite3$/
+        })
+      );
+
+      // Also add to externals to prevent any resolution attempts
+      config.externals = config.externals || [];
+      if (Array.isArray(config.externals)) {
+        config.externals.push(
+          '@payloadcms/db-sqlite',
+          '@libsql/client',
+          '@libsql/core',
+          'libsql',
+          'better-sqlite3'
+        );
+      }
+    }
+
     // Bundle analyzer for development
     if (process.env.ANALYZE === 'true' && !dev && !isServer) {
       const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');

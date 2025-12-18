@@ -1,9 +1,23 @@
 import { buildConfig } from 'payload';
-import { sqliteAdapter } from '@payloadcms/db-sqlite';
 import { postgresAdapter } from '@payloadcms/db-postgres';
 import { lexicalEditor } from '@payloadcms/richtext-lexical';
 import path from 'path';
 import { fileURLToPath } from 'url';
+
+// Conditionally import SQLite adapter only when needed
+// This prevents bundling SQLite native modules in PostgreSQL production builds
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let sqliteAdapter: any = null;
+if (process.env.USE_POSTGRES !== 'true') {
+  try {
+    // Dynamic require to avoid bundling when USE_POSTGRES=true
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    sqliteAdapter = require('@payloadcms/db-sqlite').sqliteAdapter;
+  } catch {
+    // SQLite adapter not available (expected in PostgreSQL-only builds)
+    console.log('SQLite adapter not available - using PostgreSQL only');
+  }
+}
 
 // SECURITY: Validate PAYLOAD_SECRET at startup
 if (!process.env.PAYLOAD_SECRET) {
@@ -43,25 +57,40 @@ const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
 // Database adapter configuration
-// USE_POSTGRES=true -> PostgreSQL (recommended for production-like dev)
-// USE_POSTGRES=false or unset -> SQLite (quick local development)
+// USE_POSTGRES=true -> PostgreSQL (required for production Docker deployment)
+// USE_POSTGRES=false or unset -> SQLite (quick local development only)
 const usePostgres = process.env.USE_POSTGRES === 'true';
 
-const dbAdapter = usePostgres
-  ? postgresAdapter({
-      pool: {
-        connectionString: process.env.DATABASE_URL || 'postgresql://ptnextjs:ptnextjs_dev_password@localhost:5432/ptnextjs',
-      },
-      migrationDir: path.resolve(dirname, 'migrations'),
-      push: true,
-    })
-  : sqliteAdapter({
-      client: {
-        url: process.env.DATABASE_URL || 'file:./data/payload.db',
-      },
-      migrationDir: path.resolve(dirname, 'migrations'),
-      push: true,
-    });
+// Determine which database adapter to use
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let dbAdapter: any;
+
+if (usePostgres) {
+  // PostgreSQL adapter for production and production-like development
+  dbAdapter = postgresAdapter({
+    pool: {
+      connectionString: process.env.DATABASE_URL || 'postgresql://ptnextjs:ptnextjs_dev_password@localhost:5432/ptnextjs',
+    },
+    migrationDir: path.resolve(dirname, 'migrations'),
+    push: true,
+  });
+} else if (sqliteAdapter) {
+  // SQLite adapter for quick local development (only if available)
+  dbAdapter = sqliteAdapter({
+    client: {
+      url: process.env.DATABASE_URL || 'file:./data/payload.db',
+    },
+    migrationDir: path.resolve(dirname, 'migrations'),
+    push: true,
+  });
+} else {
+  // Fallback error if neither adapter is available
+  throw new Error(
+    'No database adapter available. Either:\n' +
+    '  1. Set USE_POSTGRES=true and provide DATABASE_URL for PostgreSQL, or\n' +
+    '  2. Ensure @payloadcms/db-sqlite is installed for SQLite development'
+  );
+}
 
 // Log which database is being used
 if (process.env.NODE_ENV === 'development') {
