@@ -68,7 +68,9 @@ docs
 
 # Deployment scripts (not needed in container)
 scripts/*.sh
+scripts/e2e-runner.ts
 !scripts/docker-entrypoint.sh
+!scripts/run-migrations.js
 docker
 
 # Backup files
