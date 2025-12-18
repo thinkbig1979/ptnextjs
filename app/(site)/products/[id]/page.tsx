@@ -38,6 +38,11 @@ export const revalidate = 300; // ISR: Revalidate every 5 minutes
 
 // Generate static params for all products at build time
 export async function generateStaticParams() {
+  // Skip database calls during Docker builds (no DB available)
+  if (process.env.SKIP_BUILD_DB === 'true') {
+    console.log('📋 Skipping product static params (SKIP_BUILD_DB=true)');
+    return [];
+  }
   try {
     console.log('🏗️  Generating static params for product pages...');
     const products = await payloadCMSDataService.getAllProducts();

@@ -64,6 +64,10 @@ ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
 ENV NEXT_PUBLIC_HCAPTCHA_SITE_KEY=$NEXT_PUBLIC_HCAPTCHA_SITE_KEY
 ENV PAYLOAD_SECRET=$PAYLOAD_SECRET
+# SKIP_BUILD_DB=true tells generateStaticParams to skip database calls
+# This allows the build to succeed without a database connection
+# Pages will be server-rendered on demand (dynamic = 'force-dynamic')
+ENV SKIP_BUILD_DB=true
 RUN npm run build
 
 # ============================================

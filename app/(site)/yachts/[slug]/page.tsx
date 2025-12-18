@@ -14,6 +14,11 @@ export const dynamicParams = true;
 
 // Generate params for known yachts (will fall back to dynamic if DB unavailable)
 export async function generateStaticParams() {
+  // Skip database calls during Docker builds (no DB available)
+  if (process.env.SKIP_BUILD_DB === 'true') {
+    console.log('📋 Skipping yacht static params (SKIP_BUILD_DB=true)');
+    return [];
+  }
   try {
     const yachts = await payloadCMSDataService.getYachts();
     return yachts.map((yacht) => ({

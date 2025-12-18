@@ -18,6 +18,11 @@ export const revalidate = 3600; // ISR: Revalidate every hour in production
 
 // Generate static params for all blog posts
 export async function generateStaticParams() {
+  // Skip database calls during Docker builds (no DB available)
+  if (process.env.SKIP_BUILD_DB === 'true') {
+    console.log('📋 Skipping blog static params (SKIP_BUILD_DB=true)');
+    return [];
+  }
   try {
     console.log('🏗️  Generating static params for blog post pages...');
     const blogPostSlugs = await payloadCMSDataService.getBlogPostSlugs();
