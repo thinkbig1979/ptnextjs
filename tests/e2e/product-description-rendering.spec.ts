@@ -25,8 +25,9 @@ test.describe('Product Description Rendering', () => {
   });
 
   test('should not show HTML tags in product detail page description', async ({ page }) => {
-    // Navigate to a seeded product
-    await page.goto(`${BASE_URL}/products/tier2-entertainment`);
+    // Navigate to a product that exists in the database (seeded at build time)
+    // Cannot use test-seeded products here as they're created after the build
+    await page.goto(`${BASE_URL}/products/marine-av-technologies-complete-system-integration`);
     await page.waitForLoadState('networkidle');
 
     // Get the product description
@@ -39,9 +40,9 @@ test.describe('Product Description Rendering', () => {
     expect(descriptionText).not.toContain('<p>');
     expect(descriptionText).not.toContain('</p>');
 
-    // Check that description exists and contains expected content for seeded product
+    // Check that description exists and contains expected content
     expect(descriptionText).toBeTruthy();
-    expect(descriptionText).toContain('entertainment'); // Match seeded product
+    expect(descriptionText).toContain('integration'); // Match the product description
 
     console.log('Product description:', descriptionText);
   });

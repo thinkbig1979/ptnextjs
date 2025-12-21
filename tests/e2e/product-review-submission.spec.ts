@@ -14,7 +14,9 @@ const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 test.describe('Product Review Submission', () => {
   // Serial mode: review submissions modify database state
   test.describe.configure({ mode: 'serial' });
-  const testProductUrl = `${BASE_URL}/products/tier2-entertainment`;
+  // Use a product that exists in the database (seeded at build time)
+  // Cannot use test-seeded products here as they're created after the build
+  const testProductUrl = `${BASE_URL}/products/marine-av-technologies-complete-system-integration`;
 
   test.beforeEach(async ({ page }) => {
     await page.goto(testProductUrl);

@@ -3,8 +3,12 @@ import { test, expect } from '@playwright/test';
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 
 test.describe('Product Detail Page - Simplified Tabs', () => {
+  // Use a product that exists in the database (seeded via data/seed.ts at build time)
+  // Cannot use test-seeded products here as they're created after the build
+  const testProductSlug = 'marine-av-technologies-complete-system-integration';
+
   test.beforeEach(async ({ page }) => {
-    await page.goto(`${BASE_URL}/products/tier2-entertainment`);
+    await page.goto(`${BASE_URL}/products/${testProductSlug}`);
     await page.waitForLoadState('networkidle');
   });
 
@@ -52,16 +56,19 @@ test.describe('Product Detail Page - Simplified Tabs', () => {
   test('should display Integration tab content', async ({ page }) => {
     await page.getByRole('tab', { name: /integration/i }).click();
 
-    // Check for Integration heading
-    const heading = page.getByRole('heading', { name: /system integration/i });
+    // Check for Integration heading inside the tab panel (h3, not h1)
+    const heading = page.getByRole('heading', { name: 'System Integration', exact: true });
     await expect(heading).toBeVisible();
   });
 
   test('should display Reviews tab content', async ({ page }) => {
     await page.getByRole('tab', { name: /reviews/i }).click();
+    // Wait for tab to be active
+    await expect(page.getByRole('tab', { name: /reviews/i })).toHaveAttribute('data-state', 'active');
 
-    // Check for Reviews heading
-    const heading = page.getByRole('heading', { name: /owner reviews/i });
+    // Check for Reviews heading - there may be multiple data-testid="owner-reviews"
+    // so we look for the heading directly within the active tab panel
+    const heading = page.getByRole('heading', { name: 'Owner Reviews', exact: true }).first();
     await expect(heading).toBeVisible();
   });
 
