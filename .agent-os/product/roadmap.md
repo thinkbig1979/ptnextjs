@@ -324,51 +324,53 @@ The following features have been successfully implemented and are currently live
 **Success Criteria:** Smart vendor-product matching, functional tier upgrade system, enhanced premium features
 **Dependencies:** Geolocation services (payment integration deferred to Phase 3B)
 **Start Date:** TBD
-**Status:** 🎯 NEXT PRIORITY - Ready to begin
+**Status:** 🎯 NEXT PRIORITY - Tier management mostly complete, discovery features pending
 
 ### Phase 3A: Core Features (Immediate Priority)
 
-- [ ] **Location-Based Vendor Discovery** - Regional service provider matching by product category `L`
-  - Geographic vendor profiles with service regions
-  - Smart matching: product discovery → regional vendor suggestions
-  - Filter vendors by location and product category relationships
-  - No hard-coded product-vendor links, intelligent category-based matching
+- [ ] **Location-Based Vendor Discovery** - Regional service provider matching by product category `L` ⚠️ PARTIAL
+  - ✅ **Core Infrastructure Complete**: Multi-location support, geocoding (Photon API), proximity filtering, interactive maps
+  - ✅ `LocationSearchFilter` - Autocomplete with distance radius slider
+  - ✅ `useLocationFilter` hook - Haversine distance calculation, vendor proximity search
+  - ✅ Vendor listing integration - Combined location + category + search filtering
+  - [ ] **Vendors in your area** (`ptnextjs-gu2g`) - Product page suggestions based on user location
+  - [ ] **Product-vendor matching** (`ptnextjs-6pti`) - "Find vendors near [location] that sell [category]"
+  - ~~Service regions~~ - Deferred (not needed currently)
 
-- [ ] **Subscription Tier Management (Functionality-First)** - Complete tier upgrade workflow without payment `L`
-  - [ ] **Tier Selection Interface** - UI for viewing and selecting subscription tiers `S`
-    - Tier comparison cards with feature breakdowns
-    - Clear pricing display (preparation for future payment integration)
-    - Upgrade/downgrade request workflow
+- [x] **Subscription Tier Management (Functionality-First)** - Complete tier upgrade workflow without payment `L` ✅ COMPLETED
+  - [x] **Tier Selection Interface** - UI for viewing and selecting subscription tiers `S` ✅
+    - ✅ `TierComparisonTable.tsx` - Feature comparison with current tier highlighting
+    - ✅ `/vendor/dashboard/subscription` - Tabbed upgrade/downgrade interface
+    - ✅ `tierConfig.ts` - Pricing display (monthly/yearly for all tiers)
 
-  - [ ] **Tier Upgrade Request System** - Admin-approved tier changes `M`
-    - Vendor-initiated upgrade requests
-    - Admin approval queue for tier changes
-    - Automated tier assignment after approval
-    - Email notifications for tier change requests/approvals
+  - [x] **Tier Upgrade Request System** - Admin-approved tier changes `M` ✅
+    - ✅ `TierUpgradeRequestForm.tsx` / `TierDowngradeRequestForm.tsx` - Vendor forms
+    - ✅ `AdminTierRequestQueue.tsx` - Admin approval queue (658 lines)
+    - ✅ `TierUpgradeRequestService.approveRequest()` - Atomic tier assignment
+    - ✅ 6 email notification types (request/approve/reject for upgrade & downgrade)
 
-  - [ ] **Enhanced Tier Gates** - Refined feature access control per tier `S`
-    - Granular feature gating throughout vendor dashboard
-    - Clear messaging about tier requirements
-    - Tier upgrade CTAs at feature restriction points
+  - [x] **Enhanced Tier Gates** - Refined feature access control per tier `S` ✅
+    - ✅ `TierGate.tsx` - Conditional rendering with upgrade CTAs
+    - ✅ `TierUpgradePrompt.tsx` - Visual upgrade prompts
+    - ✅ Field-level validation in Vendors.ts schema (1950 lines)
+    - ✅ `TierValidationService.ts` - Backend enforcement
 
-  - [ ] **Admin Tier Management** - Admin tools for manual tier assignment `S`
-    - Bulk tier assignment capabilities
-    - Tier change history and audit log
-    - Override capabilities for special cases
+  - [ ] **Admin Tier Management** - Admin tools for manual tier assignment `S` ⚠️ PARTIAL
+    - ✅ `AdminDirectTierChange.tsx` - Individual tier changes
+    - [ ] Bulk tier assignment capabilities - **NOT IMPLEMENTED**
+    - [ ] Tier change history and audit log view - **NOT IMPLEMENTED**
+    - ✅ Override via direct admin change
 
-- [ ] **Tier 2 Enhanced Profile Features** - Detailed capabilities, certifications, case studies `M`
-  - Advanced certification display with verification badges
-  - Case study showcase with project highlights
-  - Enhanced media galleries (video, 3D models)
-  - Team member profiles with expertise areas
-  - Service region mapping with geographic coverage
-
-- [ ] **Tier 3 Premium Profile Features** - Comprehensive product catalogs and analytics `L`
-  - Full product catalog with specifications and pricing
-  - Performance metrics and ROI tracking
-  - Lead inquiry analytics and management
-  - Featured placement in search results
-  - Priority support badge and contact options
+- [ ] **Tier 2/3 Profile Feature UIs** - Display tier-gated fields on vendor profiles `M`
+  - [ ] Advanced certification display with verification badges
+  - [ ] Case study showcase with project highlights
+  - [ ] Enhanced media galleries (video, 3D models)
+  - [ ] Team member profiles with expertise areas
+  - [ ] Service region mapping with geographic coverage
+  - [ ] Full product catalog display with specifications
+  - [ ] Featured placement badges and priority indicators
+  - [ ] Premium support badge and contact options
+  - **Note**: Schema fields exist in Vendors.ts, UI components needed
 
 ### Phase 3B: Payment Integration & Monetization (Future)
 
