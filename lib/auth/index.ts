@@ -271,9 +271,15 @@ export function requireVendorOwnership(
       }
 
       // Check if the vendor belongs to this user
-      const vendor_user_id = typeof vendor.user === 'string'
-        ? vendor.user
-        : (vendor.user as { id: string })?.id;
+      // Handle various formats: number (raw ID), string (string ID), or object with id property
+      let vendor_user_id: string | undefined;
+      if (typeof vendor.user === 'number') {
+        vendor_user_id = String(vendor.user);
+      } else if (typeof vendor.user === 'string') {
+        vendor_user_id = vendor.user;
+      } else if (vendor.user && typeof vendor.user === 'object') {
+        vendor_user_id = String((vendor.user as { id: string | number }).id);
+      }
 
       if (vendor_user_id !== result.user.id) {
         return {

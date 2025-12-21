@@ -93,7 +93,7 @@ class AuthService {
         role: user.role,
         tier,
         status: user.status,
-        tokenVersion: 0, // TODO: Get from user.tokenVersion once field is added
+        tokenVersion: (user as { tokenVersion?: number }).tokenVersion ?? 0,
       };
 
       const tokens = generateTokens(jwtPayload);
