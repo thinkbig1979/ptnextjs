@@ -52,7 +52,7 @@ export async function POST(
       const validation = TierUpgradeRequestService.validateTierRequest({
         vendor: id,
         user: String(user.id),
-        currentTier: vendor.tier,
+        currentTier: vendor.tier as string | undefined,
         requestedTier: body.requestedTier,
         vendorNotes: body.vendorNotes,
         status: 'pending',

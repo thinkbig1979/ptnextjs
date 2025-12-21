@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getUserFromRequest } from '@/lib/middleware/auth-middleware';
+import { validateToken } from '@/lib/auth';
 import { ProductService } from '@/lib/services/ProductService';
 import { UpdateProductSchema } from '@/lib/validation/product-schema';
 
@@ -27,33 +27,6 @@ interface ErrorResponse {
 }
 
 /**
- * Helper function to authenticate user from request
- */
-async function authenticateUser(request: NextRequest) {
-  let user = getUserFromRequest(request);
-
-  // If user not in headers (middleware not applied), extract from token manually
-  if (!user) {
-    const { authService } = await import('@/lib/services/auth-service');
-    const token =
-      request.headers.get('authorization')?.replace('Bearer ', '') ||
-      request.cookies.get('access_token')?.value;
-
-    if (!token) {
-      return null;
-    }
-
-    try {
-      user = authService.validateToken(token);
-    } catch (error) {
-      return null;
-    }
-  }
-
-  return user;
-}
-
-/**
  * GET /api/portal/vendors/[id]/products/[productId]
  *
  * Fetch single product by ID
@@ -71,21 +44,22 @@ export async function GET(
     const { id: vendorId, productId } = resolvedParams;
 
     // Authenticate user
-    const user = await authenticateUser(request);
+    const auth = await validateToken(request);
 
-    if (!user) {
+    if (!auth.success) {
       return NextResponse.json(
         {
           success: false,
           error: {
             code: 'UNAUTHORIZED',
-            message: 'Authentication required',
+            message: auth.error,
           },
         },
-        { status: 401 }
+        { status: auth.status }
       );
     }
 
+    const user = auth.user;
     const isAdmin = user.role === 'admin';
 
     // Fetch product using ProductService
@@ -184,21 +158,22 @@ export async function PUT(
     const { id: vendorId, productId } = resolvedParams;
 
     // Authenticate user
-    const user = await authenticateUser(request);
+    const auth = await validateToken(request);
 
-    if (!user) {
+    if (!auth.success) {
       return NextResponse.json(
         {
           success: false,
           error: {
             code: 'UNAUTHORIZED',
-            message: 'Authentication required',
+            message: auth.error,
           },
         },
-        { status: 401 }
+        { status: auth.status }
       );
     }
 
+    const user = auth.user;
     const isAdmin = user.role === 'admin';
 
     // Parse request body
@@ -339,21 +314,22 @@ export async function DELETE(
     const { id: vendorId, productId } = resolvedParams;
 
     // Authenticate user
-    const user = await authenticateUser(request);
+    const auth = await validateToken(request);
 
-    if (!user) {
+    if (!auth.success) {
       return NextResponse.json(
         {
           success: false,
           error: {
             code: 'UNAUTHORIZED',
-            message: 'Authentication required',
+            message: auth.error,
           },
         },
-        { status: 401 }
+        { status: auth.status }
       );
     }
 
+    const user = auth.user;
     const isAdmin = user.role === 'admin';
 
     // Delete product using ProductService

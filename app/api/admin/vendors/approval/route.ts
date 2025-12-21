@@ -1,33 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPayloadClient } from '@/lib/utils/get-payload-config';
-import { authService } from '@/lib/services/auth-service';
-
-/**
- * Extract and validate admin user
- */
-function extractAdminUser(request: NextRequest) {
-  const token = request.cookies.get('access_token')?.value ||
-                request.headers.get('authorization')?.replace('Bearer ', '');
-
-  if (!token) {
-    throw new Error('Authentication required');
-  }
-
-  const user = authService.validateToken(token);
-
-  if (user.role !== 'admin') {
-    throw new Error('Admin access required');
-  }
-
-  return user;
-}
+import { requireAdmin } from '@/lib/auth';
 
 /**
  * GET /api/admin/vendors/approval - Get pending vendor approvals
  */
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
-    extractAdminUser(request);
+    const auth = await requireAdmin(request);
+    if (!auth.success) {
+      return NextResponse.json(
+        { error: auth.error, code: auth.code },
+        { status: auth.status }
+      );
+    }
 
     const payload = await getPayloadClient();
 
@@ -63,12 +49,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ pending: vendorProfiles });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Failed to fetch pending approvals';
-
-    if (message.includes('Admin access required')) {
-      return NextResponse.json({ error: message }, { status: 403 });
-    }
-
-    return NextResponse.json({ error: message }, { status: 401 });
+    console.error('[Admin Approval] Error:', message);
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 
@@ -77,7 +59,13 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    extractAdminUser(request);
+    const auth = await requireAdmin(request);
+    if (!auth.success) {
+      return NextResponse.json(
+        { error: auth.error, code: auth.code },
+        { status: auth.status }
+      );
+    }
 
     const body = await request.json();
     const { userId, action, rejectionReason } = body;

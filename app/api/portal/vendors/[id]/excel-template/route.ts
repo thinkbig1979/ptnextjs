@@ -55,14 +55,15 @@ export async function GET(
     const { id } = await context.params;
 
     // Authenticate user
-    const user = await authenticateUser(request);
-    if (!user) {
+    const auth = await validateToken(request);
+    if (!auth.success) {
       return NextResponse.json(
-        { error: 'Unauthorized - Authentication required' },
-        { status: 401 }
+        { error: auth.error },
+        { status: auth.status }
       );
     }
 
+    const user = auth.user;
     const isAdmin = user.role === 'admin';
 
     // Get vendor using VendorProfileService (includes authorization)

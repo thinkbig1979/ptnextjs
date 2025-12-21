@@ -1,17 +1,17 @@
 /**
  * Admin Authentication Standardization Test
  *
- * Verifies that all admin vendor routes use the standardized
- * authenticateAdmin utility from lib/utils/admin-auth.ts
+ * Verifies that all admin vendor routes use the unified
+ * @/lib/auth module for authentication.
  *
- * Task: ptnextjs-2m1s
+ * Task: ptnextjs-21ib (updated for @/lib/auth migration)
  */
 
 import fs from 'fs';
 import path from 'path';
 
 describe('Admin API Authentication Standardization', () => {
-  const rootDir = path.join(__dirname, '../..');
+  const rootDir = path.join(__dirname, '../../..');
 
   const adminVendorRoutes = [
     'app/api/admin/vendors/[id]/approve/route.ts',
@@ -23,15 +23,16 @@ describe('Admin API Authentication Standardization', () => {
 
   describe('Import Standardization', () => {
     adminVendorRoutes.forEach((routePath) => {
-      it(`${routePath} should import authenticateAdmin from lib/utils/admin-auth`, () => {
+      it(`${routePath} should import requireAdmin from @/lib/auth`, () => {
         const fullPath = path.join(rootDir, routePath);
         const content = fs.readFileSync(fullPath, 'utf8');
 
-        // Should have the new import
-        expect(content).toContain("import { authenticateAdmin } from '@/lib/utils/admin-auth'");
+        // Should have the new unified auth import
+        expect(content).toContain("import { requireAdmin } from '@/lib/auth'");
 
-        // Should NOT have the old import
+        // Should NOT have the deprecated imports
         expect(content).not.toContain("import { authService } from '@/lib/services/auth-service'");
+        expect(content).not.toContain("import { authenticateAdmin } from '@/lib/utils/admin-auth'");
       });
     });
   });
@@ -42,19 +43,19 @@ describe('Admin API Authentication Standardization', () => {
         const fullPath = path.join(rootDir, routePath);
         const content = fs.readFileSync(fullPath, 'utf8');
 
-        // Should NOT have extractAdminUser function
+        // Should NOT have inline authentication functions
         expect(content).not.toMatch(/function extractAdminUser\(/);
       });
 
-      it(`${routePath} should use authenticateAdmin with proper error handling`, () => {
+      it(`${routePath} should use requireAdmin with proper error handling`, () => {
         const fullPath = path.join(rootDir, routePath);
         const content = fs.readFileSync(fullPath, 'utf8');
 
-        // Should call authenticateAdmin
-        expect(content).toMatch(/const auth = await authenticateAdmin\(request\)/);
+        // Should call requireAdmin
+        expect(content).toMatch(/const auth = await requireAdmin\(request\)/);
 
-        // Should have error handling
-        expect(content).toMatch(/if \('error' in auth\)/);
+        // Should have success-based error handling
+        expect(content).toMatch(/if \(!auth\.success\)/);
         expect(content).toMatch(/return NextResponse\.json\(/);
       });
     });
@@ -68,69 +69,74 @@ describe('Admin API Authentication Standardization', () => {
 
         // Extract the authentication block
         const authMatch = content.match(
-          /const auth = await authenticateAdmin\(request\);[\s\S]*?if \('error' in auth\) \{[\s\S]*?\}/
+          /const auth = await requireAdmin\(request\);[\s\S]*?if \(!auth\.success\) \{[\s\S]*?\}/
         );
 
         return authMatch ? authMatch[0] : null;
       });
 
       // All should have auth pattern
-      patterns.forEach((pattern, index) => {
+      patterns.forEach((pattern) => {
         expect(pattern).not.toBeNull();
-        expect(pattern).toContain('const auth = await authenticateAdmin(request)');
-        expect(pattern).toContain("if ('error' in auth)");
+        expect(pattern).toContain('const auth = await requireAdmin(request)');
+        expect(pattern).toContain('if (!auth.success)');
       });
     });
   });
 
-  describe('Backward Compatibility', () => {
-    it('authenticateAdmin utility should support both cookie types', () => {
-      const utilPath = path.join(rootDir, 'lib/utils/admin-auth.ts');
-      const content = fs.readFileSync(utilPath, 'utf8');
+  describe('Unified Auth Module', () => {
+    it('@/lib/auth should export requireAdmin function', () => {
+      const authPath = path.join(rootDir, 'lib/auth/index.ts');
+      const content = fs.readFileSync(authPath, 'utf8');
 
-      // Should support payload-token
-      expect(content).toContain("request.cookies.get('payload-token')");
+      // Should export requireAdmin
+      expect(content).toContain('export async function requireAdmin');
+    });
 
-      // Should support access_token for backward compatibility
-      expect(content).toContain("request.cookies.get('access_token')");
+    it('@/lib/auth should support Authorization header', () => {
+      const authPath = path.join(rootDir, 'lib/auth/index.ts');
+      const content = fs.readFileSync(authPath, 'utf8');
 
       // Should support Authorization header
-      expect(content).toContain("request.headers.get('authorization')");
+      expect(content).toContain("headers.get('authorization')");
+    });
+
+    it('@/lib/auth should support access_token cookie', () => {
+      const authPath = path.join(rootDir, 'lib/auth/index.ts');
+      const content = fs.readFileSync(authPath, 'utf8');
+
+      // Should support access_token cookie
+      expect(content).toContain("cookies.get('access_token')");
     });
   });
 
   describe('Error Response Standardization', () => {
     adminVendorRoutes.forEach((routePath) => {
-      it(`${routePath} should use structured error responses`, () => {
+      it(`${routePath} should use structured error responses from auth result`, () => {
         const fullPath = path.join(rootDir, routePath);
         const content = fs.readFileSync(fullPath, 'utf8');
 
-        // Should return error with proper structure
-        const errorPattern = /return NextResponse\.json\(\s*\{ error: auth\.message \},\s*\{ status: auth\.status \}/;
-        expect(content).toMatch(errorPattern);
+        // Should return error from auth result
+        expect(content).toMatch(/error: auth\.error/);
+        expect(content).toMatch(/status: auth\.status/);
       });
     });
   });
 
-  describe('No Redundant Error Handling', () => {
+  describe('No Deprecated Auth Patterns', () => {
     adminVendorRoutes.forEach((routePath) => {
-      it(`${routePath} should not have redundant auth error handling in catch blocks`, () => {
+      it(`${routePath} should not use deprecated auth patterns`, () => {
         const fullPath = path.join(rootDir, routePath);
         const content = fs.readFileSync(fullPath, 'utf8');
 
-        // These error checks are now redundant since authenticateAdmin handles them
-        // The file might still have generic error handling, but not these specific checks
-        const catchBlock = content.match(/catch \(error\) \{[\s\S]*?\}/);
+        // Should not have deprecated imports
+        expect(content).not.toContain('@/lib/utils/admin-auth');
+        expect(content).not.toContain('@/lib/services/auth-service');
+        expect(content).not.toContain('@/lib/middleware/auth-middleware');
 
-        if (catchBlock) {
-          // Should not have these specific string checks in the catch block
-          // since auth errors are handled before we get to the try block
-          const hasRedundantAuthCheck = /message\.includes\('Authentication required'\)/.test(catchBlock[0]);
-          const hasRedundantAdminCheck = /message\.includes\('Admin access required'\)/.test(catchBlock[0]);
-
-          expect(hasRedundantAuthCheck).toBe(false);
-          expect(hasRedundantAdminCheck).toBe(false);
-        }
+        // Should not have inline token validation
+        expect(content).not.toContain('authService.validateToken');
+        expect(content).not.toContain("cookies.get('access_token')?.value");
       });
     });
   });
