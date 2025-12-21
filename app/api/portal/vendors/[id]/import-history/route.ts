@@ -10,7 +10,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getUserFromRequest } from '@/lib/middleware/auth-middleware';
+import { validateToken } from '@/lib/auth';
 import { getPayloadClient } from '@/lib/utils/get-payload-config';
 
 interface RouteContext {
@@ -19,32 +19,6 @@ interface RouteContext {
   }>;
 }
 
-/**
- * Helper function to authenticate user from request
- */
-async function authenticateUser(request: NextRequest) {
-  let user = getUserFromRequest(request);
-
-  // If user not in headers (middleware not applied), extract from token manually
-  if (!user) {
-    const { authService } = await import('@/lib/services/auth-service');
-    const token =
-      request.headers.get('authorization')?.replace('Bearer ', '') ||
-      request.cookies.get('access_token')?.value;
-
-    if (!token) {
-      return null;
-    }
-
-    try {
-      user = authService.validateToken(token);
-    } catch (error) {
-      return null;
-    }
-  }
-
-  return user;
-}
 
 /**
  * GET /api/portal/vendors/[id]/import-history
@@ -69,14 +43,15 @@ export async function GET(
     const payload = await getPayloadClient();
 
     // Authenticate user
-    const user = await authenticateUser(request);
-    if (!user) {
+    const auth = await validateToken(request);
+    if (!auth.success) {
       return NextResponse.json(
-        { error: 'Unauthorized - Authentication required' },
-        { status: 401 }
+        { error: auth.error },
+        { status: auth.status }
       );
     }
 
+    const user = auth.user;
     const isAdmin = user.role === 'admin';
 
     // Authorization: Verify user owns this vendor (or is admin)

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getUserFromRequest } from '@/lib/middleware/auth-middleware';
+import { validateToken } from '@/lib/auth';
 import { ProductService } from '@/lib/services/ProductService';
 import { CreateProductSchema } from '@/lib/validation/product-schema';
 import type { ProductFilters } from '@/lib/services/ProductService';
@@ -25,32 +25,6 @@ interface ErrorResponse {
   };
 }
 
-/**
- * Helper function to authenticate user from request
- */
-async function authenticateUser(request: NextRequest) {
-  let user = getUserFromRequest(request);
-
-  // If user not in headers (middleware not applied), extract from token manually
-  if (!user) {
-    const { authService } = await import('@/lib/services/auth-service');
-    const token =
-      request.headers.get('authorization')?.replace('Bearer ', '') ||
-      request.cookies.get('access_token')?.value;
-
-    if (!token) {
-      return null;
-    }
-
-    try {
-      user = authService.validateToken(token);
-    } catch (error) {
-      return null;
-    }
-  }
-
-  return user;
-}
 
 /**
  * GET /api/portal/vendors/[id]/products
@@ -78,21 +52,22 @@ export async function GET(
     const { searchParams } = new URL(request.url);
 
     // Authenticate user
-    const user = await authenticateUser(request);
+    const auth = await validateToken(request);
 
-    if (!user) {
+    if (!auth.success) {
       return NextResponse.json(
         {
           success: false,
           error: {
             code: 'UNAUTHORIZED',
-            message: 'Authentication required',
+            message: auth.error,
           },
         },
-        { status: 401 }
+        { status: auth.status }
       );
     }
 
+    const user = auth.user;
     const isAdmin = user.role === 'admin';
 
     // Parse query parameters
@@ -232,21 +207,22 @@ export async function POST(
     const vendorId = resolvedParams.id;
 
     // Authenticate user
-    const user = await authenticateUser(request);
+    const auth = await validateToken(request);
 
-    if (!user) {
+    if (!auth.success) {
       return NextResponse.json(
         {
           success: false,
           error: {
             code: 'UNAUTHORIZED',
-            message: 'Authentication required',
+            message: auth.error,
           },
         },
-        { status: 401 }
+        { status: auth.status }
       );
     }
 
+    const user = auth.user;
     const isAdmin = user.role === 'admin';
 
     // Parse request body

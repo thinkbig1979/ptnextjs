@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPayloadClient } from '@/lib/utils/get-payload-config';
-import { authenticateAdmin } from '@/lib/utils/admin-auth';
+import { requireAdmin } from '@/lib/auth';
 
 /**
  * POST /api/admin/vendors/[id]/reject - Reject vendor
@@ -10,10 +10,10 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse> {
   try {
-    const auth = await authenticateAdmin(request);
-    if ('error' in auth) {
+    const auth = await requireAdmin(request);
+    if (!auth.success) {
       return NextResponse.json(
-        { error: auth.error, message: auth.message },
+        { error: auth.error, code: auth.code },
         { status: auth.status }
       );
     }

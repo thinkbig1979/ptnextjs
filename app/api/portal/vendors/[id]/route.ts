@@ -1,37 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { getPayloadClient } from '@/lib/utils/get-payload-config';
-import { getUserFromRequest } from '@/lib/middleware/auth-middleware';
+import { validateToken } from '@/lib/auth';
 import { safeValidateVendorUpdate } from '@/lib/validation/vendor-update-schema';
 import { filterFieldsByTier, type VendorTier } from '@/lib/utils/tier-validator';
 import { VendorProfileService } from '@/lib/services/VendorProfileService';
 
-/**
- * Helper function to authenticate user from request
- */
-async function authenticateUser(request: NextRequest) {
-  let user = getUserFromRequest(request);
-
-  // If user not in headers (middleware not applied), extract from token manually
-  if (!user) {
-    const { authService } = await import('@/lib/services/auth-service');
-    const token =
-      request.headers.get('authorization')?.replace('Bearer ', '') ||
-      request.cookies.get('access_token')?.value;
-
-    if (!token) {
-      return null;
-    }
-
-    try {
-      user = authService.validateToken(token);
-    } catch (error) {
-      return null;
-    }
-  }
-
-  return user;
-}
 
 // Force dynamic rendering - disable Next.js route caching
 // This ensures fresh database reads on every request
@@ -89,21 +63,22 @@ export async function GET(
     const byUserId = searchParams.get('byUserId') === 'true';
 
     // Authenticate user
-    const user = await authenticateUser(request);
+    const auth = await validateToken(request);
 
-    if (!user) {
+    if (!auth.success) {
       return NextResponse.json(
         {
           success: false,
           error: {
             code: 'UNAUTHORIZED',
-            message: 'Authentication required',
+            message: auth.error,
           },
         },
-        { status: 401 }
+        { status: auth.status }
       );
     }
 
+    const user = auth.user;
     const isAdmin = user.role === 'admin';
 
     // Fetch vendor using VendorProfileService
@@ -216,20 +191,22 @@ export async function PUT(
     const vendorId = resolvedParams.id;
 
     // Authenticate user
-    const user = await authenticateUser(request);
+    const auth = await validateToken(request);
 
-    if (!user) {
+    if (!auth.success) {
       return NextResponse.json(
         {
           success: false,
           error: {
             code: 'UNAUTHORIZED',
-            message: 'Authentication required',
+            message: auth.error,
           },
         },
-        { status: 401 }
+        { status: auth.status }
       );
     }
+
+    const user = auth.user;
 
     // Parse request body
     const body = await request.json();
@@ -447,20 +424,22 @@ export async function PATCH(
     const vendorId = resolvedParams.id;
 
     // Authenticate user
-    const user = await authenticateUser(request);
+    const auth = await validateToken(request);
 
-    if (!user) {
+    if (!auth.success) {
       return NextResponse.json(
         {
           success: false,
           error: {
             code: 'UNAUTHORIZED',
-            message: 'Authentication required',
+            message: auth.error,
           },
         },
-        { status: 401 }
+        { status: auth.status }
       );
     }
+
+    const user = auth.user;
 
     // Parse request body
     const body = await request.json();

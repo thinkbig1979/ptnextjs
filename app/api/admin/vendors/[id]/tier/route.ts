@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPayloadClient } from '@/lib/utils/get-payload-config';
-import { authenticateAdmin } from '@/lib/utils/admin-auth';
+import { requireAdmin } from '@/lib/auth';
 import type { VendorTier } from '@/lib/utils/tier-validator';
 
 /**
@@ -38,10 +38,10 @@ export async function PUT(
 ): Promise<NextResponse> {
   try {
     // Verify admin authentication
-    const auth = await authenticateAdmin(request);
-    if ('error' in auth) {
+    const auth = await requireAdmin(request);
+    if (!auth.success) {
       return NextResponse.json(
-        { error: auth.error, message: auth.message },
+        { error: auth.error, code: auth.code },
         { status: auth.status }
       );
     }

@@ -12,7 +12,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import * as TierUpgradeRequestService from '@/lib/services/TierUpgradeRequestService';
 import { rateLimit } from '@/lib/middleware/rateLimit';
-import { authenticateVendorPortal } from '@/lib/middleware/vendor-portal-auth';
+import { requireVendorOwnership } from '@/lib/auth';
 
 /**
  * POST - Submit a new tier downgrade request
@@ -24,11 +24,11 @@ export async function POST(
   return rateLimit(request, async () => {
     try {
       const { id } = await params;
-      const auth = await authenticateVendorPortal(request, id);
+      const auth = await requireVendorOwnership(id)(request);
 
-      if ('error' in auth) {
+      if (!auth.success) {
         return NextResponse.json(
-          { success: false, error: auth.error, message: auth.message },
+          { success: false, error: auth.code || 'UNAUTHORIZED', message: auth.error },
           { status: auth.status }
         );
       }
@@ -123,11 +123,11 @@ export async function GET(
   return rateLimit(request, async () => {
     try {
       const { id } = await params;
-      const auth = await authenticateVendorPortal(request, id);
+      const auth = await requireVendorOwnership(id)(request);
 
-      if ('error' in auth) {
+      if (!auth.success) {
         return NextResponse.json(
-          { success: false, error: auth.error, message: auth.message },
+          { success: false, error: auth.code || 'UNAUTHORIZED', message: auth.error },
           { status: auth.status }
         );
       }
