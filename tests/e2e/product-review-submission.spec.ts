@@ -28,8 +28,8 @@ test.describe('Product Review Submission', () => {
   test.skip('should submit a review and display it immediately without page reload', async ({ page }) => {
     // Navigate to Reviews tab
     await page.getByRole('tab', { name: /reviews/i }).click();
-    // Wait for Reviews tab content to be visible
-    await expect(page.getByRole('heading', { name: /owner reviews/i })).toBeVisible();
+    // Wait for Reviews tab content to be visible - use first() to handle duplicate headings
+    await expect(page.getByRole('heading', { name: /owner reviews/i }).first()).toBeVisible();
 
     // Count initial reviews
     const initialReviewCount = await page.locator('[data-testid="review-card"]').count();
@@ -108,8 +108,8 @@ test.describe('Product Review Submission', () => {
   test('should filter reviews by rating', async ({ page }) => {
     // Navigate to Reviews tab
     await page.getByRole('tab', { name: /reviews/i }).click();
-    // Wait for Reviews tab content to be visible
-    await expect(page.getByRole('heading', { name: /owner reviews/i })).toBeVisible();
+    // Wait for Reviews tab content to be visible - use first() to handle duplicate headings
+    await expect(page.getByRole('heading', { name: /owner reviews/i }).first()).toBeVisible();
 
     // Wait for reviews to load
     await page.waitForTimeout(1000);
@@ -157,8 +157,8 @@ test.describe('Product Review Submission', () => {
   test('should NOT show search box (search feature removed)', async ({ page }) => {
     // Navigate to Reviews tab
     await page.getByRole('tab', { name: /reviews/i }).click();
-    // Wait for Reviews tab content to be visible
-    await expect(page.getByRole('heading', { name: /owner reviews/i })).toBeVisible();
+    // Wait for Reviews tab content to be visible - use first() to handle duplicate headings
+    await expect(page.getByRole('heading', { name: /owner reviews/i }).first()).toBeVisible();
 
     // Verify NO search input exists
     const searchInputs = page.locator('input[type="search"], input[placeholder*="search" i]');
@@ -174,8 +174,8 @@ test.describe('Product Review Submission', () => {
   test('should display review statistics', async ({ page }) => {
     // Navigate to Reviews tab
     await page.getByRole('tab', { name: /reviews/i }).click();
-    // Wait for Reviews tab content to be visible
-    await expect(page.getByRole('heading', { name: /owner reviews/i })).toBeVisible();
+    // Wait for Reviews tab content to be visible - use first() to handle duplicate headings
+    await expect(page.getByRole('heading', { name: /owner reviews/i }).first()).toBeVisible();
 
     // Wait for statistics to load
     await page.waitForTimeout(1000);

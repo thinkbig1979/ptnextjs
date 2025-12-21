@@ -7,8 +7,9 @@ import { test, expect } from '@playwright/test';
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 
 test.describe('Product Reviews Display', () => {
-  // Use tier2 product that is seeded in global-setup.ts
-  const productUrl = '/products/tier2-nav-system';
+  // Use product from build-time seed data (data/seed.ts), not global-setup.ts
+  // Products seeded at build time have their pages pre-generated via SSG
+  const productUrl = '/products/marine-av-technologies-complete-system-integration';
 
   test('01 - Reviews section renders correctly', async ({ page }) => {
     await page.goto(productUrl);
@@ -50,8 +51,8 @@ test.describe('Product Reviews Display', () => {
     const html = await productResponse.text();
 
     // Check that the page contains product-related elements
-    const hasProductName = html.includes('Professional Marine Navigation System') ||
-                          html.includes('tier2-nav-system');
+    const hasProductName = html.includes('Complete System Integration') ||
+                          html.includes('marine-av-technologies-complete-system-integration');
     const hasReviewsTab = html.includes('Reviews') || html.includes('reviews');
     const hasProductVendor = html.includes('data-testid="product-vendor"');
 

@@ -67,13 +67,15 @@ test.describe('Blog Image Cache Invalidation', () => {
       waitUntil: 'networkidle',
     });
 
-    // Check if the featured image is displayed
-    const featuredImageContainer = page.locator('.rounded-lg.border.overflow-hidden').first();
-    const hasImage = await featuredImageContainer.count() > 0;
+    // Check if the featured image is displayed - look for any img tag on the page
+    // The blog post image is inside a nested structure with lazy loading
+    const img = page.locator('img[alt*="' + blogPost.title.substring(0, 20) + '"]').first();
+    const hasImage = await img.count() > 0;
 
     if (hasImage) {
-      const img = featuredImageContainer.locator('img').first();
-      const imgSrc = await img.getAttribute('src');
+      // Wait for image to be attached to the DOM
+      await img.waitFor({ state: 'attached', timeout: 10000 });
+      const imgSrc = await img.getAttribute('src', { timeout: 5000 });
       console.log(`Blog detail page image src: ${imgSrc?.substring(0, 100)}...`);
 
       // Verify the image source matches what's in the database

@@ -5,8 +5,9 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Product Review Modal Fix', () => {
-  // Use tier2 product that is seeded in global-setup.ts
-  const productUrl = '/products/tier2-nav-system';
+  // Use product from build-time seed data (data/seed.ts), not global-setup.ts
+  // Products seeded at build time have their pages pre-generated via SSG
+  const productUrl = '/products/marine-av-technologies-complete-system-integration';
 
   test('01 - Modal opens when clicking "Write the First Review"', async ({ page }) => {
     await page.goto(productUrl);
