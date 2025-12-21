@@ -7,7 +7,8 @@ import { Pagination } from "@/components/pagination";
 import { VendorToggle } from "@/components/ui/vendor-toggle";
 import { parseFilterParams } from "@/lib/utils";
 import { VendorCard } from "@/components/vendors/VendorCard";
-import { Vendor, Product, VendorCoordinates } from "@/lib/types";
+import { CategorySelect } from "@/components/vendors/CategorySelect";
+import { Vendor, Product, VendorCoordinates, Category } from "@/lib/types";
 import { VendorSearchBar } from "@/components/VendorSearchBar";
 import {
   useLocationFilter,
@@ -42,6 +43,9 @@ export function VendorsClient({
   const [selectedCategory, setSelectedCategory] = React.useState(
     urlParams.category,
   );
+  const [productCategory, setProductCategory] = React.useState<string | null>(
+    searchParams?.get("productCategory") || null,
+  );
   const [currentPage, setCurrentPage] = React.useState(1);
   const [highlightedVendor, setHighlightedVendor] = React.useState(
     urlParams.partner,
@@ -62,6 +66,7 @@ export function VendorsClient({
     const params = parseFilterParams(searchParams || new URLSearchParams());
     setSearchQuery(params.search);
     setSelectedCategory(params.category);
+    setProductCategory(searchParams?.get("productCategory") || null);
     setHighlightedVendor(params.partner);
     setVendorView(
       searchParams?.get("view") === "partners" ? "partners" : "all",
@@ -79,6 +84,43 @@ export function VendorsClient({
   const baseVendorsForFiltering = isLocationFiltering
     ? locationFilteredVendors
     : initialVendors;
+
+  // Extract unique product categories from products
+  const productCategories = React.useMemo(() => {
+    const uniqueCategories = new Set(
+      initialProducts.map((p) => p.category).filter(Boolean) as string[]
+    );
+    return Array.from(uniqueCategories)
+      .sort()
+      .map((cat) => ({
+        id: cat,
+        name: cat,
+        slug: cat,
+        description: '',
+        icon: '',
+        color: '',
+        createdAt: '',
+        updatedAt: '',
+        publishedAt: '',
+      }));
+  }, [initialProducts]);
+
+  // Calculate product counts per vendor for selected category
+  const vendorProductCounts = React.useMemo(() => {
+    if (!productCategory) return {};
+    return initialProducts
+      .filter((p) => p.category === productCategory)
+      .reduce(
+        (acc, p) => {
+          const vendorId = p.vendorId || p.partnerId;
+          if (vendorId) {
+            acc[vendorId] = (acc[vendorId] || 0) + 1;
+          }
+          return acc;
+        },
+        {} as Record<string, number>
+      );
+  }, [initialProducts, productCategory]);
 
   // Filter vendors based on search, category, and partner status
   const filteredVendors = React.useMemo(() => {
@@ -113,10 +155,23 @@ export function VendorsClient({
       );
     }
 
-    // Apply category filter
+    // Apply category filter (vendor category)
     if (selectedCategory !== "all") {
       filtered = filtered.filter(
         (vendor) => vendor?.category === selectedCategory,
+      );
+    }
+
+    // Apply product category filter (filter to vendors who have products in this category)
+    if (productCategory) {
+      const vendorIdsWithCategory = new Set(
+        initialProducts
+          .filter((p) => p.category === productCategory)
+          .map((p) => p.vendorId || p.partnerId)
+          .filter(Boolean)
+      );
+      filtered = filtered.filter((vendor) =>
+        vendorIdsWithCategory.has(vendor.id)
       );
     }
 
@@ -146,10 +201,12 @@ export function VendorsClient({
     baseVendorsForFiltering,
     searchQuery,
     selectedCategory,
+    productCategory,
     highlightedVendor,
     showPartnersOnly,
     showNonPartnersOnly,
     vendorView,
+    initialProducts,
   ]);
 
   // Paginate results
@@ -164,6 +221,7 @@ export function VendorsClient({
     (params: {
       search?: string;
       category?: string;
+      productCategory?: string | null;
       partner?: string;
       view?: "partners" | "all";
     }) => {
@@ -186,6 +244,15 @@ export function VendorsClient({
           current.set("category", params.category);
         } else {
           current.delete("category");
+        }
+      }
+
+      // Update or remove productCategory parameter
+      if (params.productCategory !== undefined) {
+        if (params.productCategory) {
+          current.set("productCategory", params.productCategory);
+        } else {
+          current.delete("productCategory");
         }
       }
 
@@ -232,6 +299,14 @@ export function VendorsClient({
     [updateUrlParams],
   );
 
+  const handleProductCategoryChange = React.useCallback(
+    (category: string | null) => {
+      setProductCategory(category);
+      updateUrlParams({ productCategory: category });
+    },
+    [updateUrlParams],
+  );
+
   const handleVendorViewChange = React.useCallback(
     (view: "partners" | "all") => {
       setVendorView(view);
@@ -259,7 +334,7 @@ export function VendorsClient({
   // Reset page when filters change
   React.useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, selectedCategory, vendorView]);
+  }, [searchQuery, selectedCategory, productCategory, vendorView]);
 
   return (
     <>
@@ -283,6 +358,33 @@ export function VendorsClient({
           placeholder={`Search ${pageTitle} by name, description, or technology...`}
         />
       </motion.div>
+
+      {/* Product Category Filter */}
+      {productCategories.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.15 }}
+          className="mb-6"
+        >
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <label htmlFor="product-category-filter" className="text-sm font-medium text-foreground whitespace-nowrap">
+              Filter by Product Type:
+            </label>
+            <CategorySelect
+              categories={productCategories}
+              value={productCategory}
+              onChange={handleProductCategoryChange}
+              className="w-full sm:w-64"
+            />
+            {productCategory && (
+              <p className="text-xs text-muted-foreground">
+                Showing vendors with {productCategory} products
+              </p>
+            )}
+          </div>
+        </motion.div>
+      )}
 
       {/* Vendor Toggle */}
       <motion.div
@@ -311,6 +413,7 @@ export function VendorsClient({
           {pageTitle}
           {vendorView === "partners" ? " (partners only)" : " (all vendors)"}
           {selectedCategory !== "all" && ` in ${selectedCategory}`}
+          {productCategory && ` offering ${productCategory} products`}
         </p>
       </motion.div>
 
