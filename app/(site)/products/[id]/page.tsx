@@ -29,6 +29,7 @@ import {
   IntegrationNotes,
   VisualDemo
 } from "@/components/product-comparison";
+import { VendorsNearYou } from "@/components/products/VendorsNearYou";
 
 // Force dynamic rendering - database not available at Docker build time
 export const dynamic = 'force-dynamic';
@@ -106,8 +107,13 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
   console.log(`✅ Loading product: ${product.name}`);
 
-  // Find the partner information
-  const partner = product.partnerId ? await payloadCMSDataService.getPartnerById(product.partnerId) : null;
+  // Fetch additional data for VendorsNearYou component in parallel
+  const [partner, allVendors, allProducts] = await Promise.all([
+    product.partnerId ? payloadCMSDataService.getPartnerById(product.partnerId) : Promise.resolve(null),
+    payloadCMSDataService.getAllVendors(),
+    payloadCMSDataService.getAllProducts(),
+  ]);
+
   if (partner) {
     console.log(`🤝 Partner found: ${partner.name}`);
   }
@@ -468,6 +474,19 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                   )}
 
                   <Separator />
+
+                  {/* Vendors Near You */}
+                  {product.category && (
+                    <>
+                      <VendorsNearYou
+                        category={product.category}
+                        currentVendorId={product.partnerId || undefined}
+                        vendors={allVendors}
+                        products={allProducts}
+                      />
+                      <Separator />
+                    </>
+                  )}
 
                   {/* Tags */}
                   {Array.isArray(product.tags) && product.tags.length > 0 && (
