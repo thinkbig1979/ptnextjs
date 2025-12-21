@@ -275,6 +275,133 @@ export async function waitForSeedData(
 // ============================================================================
 
 /**
+ * Look up a vendor ID by email using the test API (no auth required)
+ *
+ * @param page - Playwright page object
+ * @param email - The vendor's email address
+ * @returns The vendor ID if found
+ */
+export async function lookupVendorIdByEmail(
+  page: Page,
+  email: string
+): Promise<{ success: boolean; vendorId?: number; error?: string }> {
+  const response = await page.request.get(
+    `${BASE_URL}/api/test/vendors/lookup?email=${encodeURIComponent(email)}`
+  );
+
+  if (!response.ok()) {
+    // Try alternative approach - use the list endpoint with a filter
+    const listResponse = await page.request.get(`${BASE_URL}/api/test/vendors/list?email=${encodeURIComponent(email)}`);
+    if (listResponse.ok()) {
+      const data = await listResponse.json();
+      if (data.vendors?.length > 0) {
+        return { success: true, vendorId: data.vendors[0].id };
+      }
+    }
+    return { success: false, error: 'Vendor not found' };
+  }
+
+  const data = await response.json();
+  return { success: true, vendorId: data.vendorId || data.id };
+}
+
+/**
+ * Reset a vendor's tier to a specific value via test API
+ * This is essential for tests that depend on vendors being at specific tiers,
+ * since tier approval tests permanently change vendor tiers.
+ *
+ * @param page - Playwright page object
+ * @param vendorId - The vendor ID to reset
+ * @param tier - The tier to set ('free', 'tier1', 'tier2', 'tier3')
+ * @returns Success status
+ */
+export async function resetVendorTier(
+  page: Page,
+  vendorId: number | string,
+  tier: 'free' | 'tier1' | 'tier2' | 'tier3'
+): Promise<{ success: boolean; error?: string }> {
+  console.log(`[Test Admin] Resetting vendor ${vendorId} to tier: ${tier}`);
+
+  const response = await page.request.patch(`${BASE_URL}/api/test/admin/vendors/${vendorId}`, {
+    data: { tier },
+  });
+
+  if (!response.ok()) {
+    const errorText = await response.text();
+    console.error(`[Test Admin] Tier reset failed:`, errorText);
+    return { success: false, error: errorText };
+  }
+
+  console.log(`[Test Admin] Vendor ${vendorId} tier reset to ${tier}`);
+  return { success: true };
+}
+
+/**
+ * Reset a vendor's tier by email (looks up vendor first)
+ * Convenience function that combines lookup and reset
+ *
+ * @param page - Playwright page object
+ * @param email - The vendor's email address
+ * @param tier - The tier to set
+ * @returns Success status
+ */
+export async function resetVendorTierByEmail(
+  page: Page,
+  email: string,
+  tier: 'free' | 'tier1' | 'tier2' | 'tier3'
+): Promise<{ success: boolean; vendorId?: number; error?: string }> {
+  console.log(`[Tier Reset] Resetting ${email} to ${tier} BEFORE login...`);
+
+  // Use a simpler approach - just call the seed API with the updated tier
+  // This effectively "re-seeds" the vendor with the correct tier
+  const response = await page.request.post(`${BASE_URL}/api/test/vendors/reset-tier`, {
+    data: { email, tier },
+  });
+
+  if (response.ok()) {
+    const data = await response.json();
+    console.log(`[Tier Reset] Success - vendor ${data.vendorId} reset to ${tier}`);
+    return { success: true, vendorId: data.vendorId };
+  }
+
+  const errorText = await response.text();
+  console.error(`[Tier Reset] API failed: ${response.status()} - ${errorText}`);
+
+  // Fallback: lookup + reset
+  const lookup = await lookupVendorIdByEmail(page, email);
+  if (!lookup.success || !lookup.vendorId) {
+    return { success: false, error: lookup.error || 'Vendor not found' };
+  }
+
+  const reset = await resetVendorTier(page, lookup.vendorId, tier);
+  return { success: reset.success, vendorId: lookup.vendorId, error: reset.error };
+}
+
+/**
+ * Get a vendor's current tier via the profile API
+ *
+ * @param page - Playwright page object (must be logged in as the vendor)
+ * @returns The vendor's current tier
+ */
+export async function getVendorCurrentTier(
+  page: Page
+): Promise<{ success: boolean; tier?: string; vendorId?: number; error?: string }> {
+  const response = await page.request.get(`${BASE_URL}/api/portal/vendors/profile`);
+
+  if (!response.ok()) {
+    const errorText = await response.text();
+    return { success: false, error: errorText };
+  }
+
+  const data = await response.json();
+  return {
+    success: true,
+    tier: data.vendor?.tier,
+    vendorId: data.vendor?.id,
+  };
+}
+
+/**
  * Approve a tier upgrade/downgrade request via test API
  * This bypasses admin authentication for E2E testing
  */

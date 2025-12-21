@@ -23,6 +23,7 @@ import {
   adminApproveTierRequest,
   adminRejectTierRequest,
   adminListTierRequests,
+  resetVendorTierByEmail,
 } from '../helpers/seed-api-helpers';
 import { EmailMock, setupEmailMock } from '../helpers/email-mock-helpers';
 
@@ -180,6 +181,9 @@ test.describe('Email Notifications: Tier Upgrade Requests', () => {
   });
 
   test('EMAIL-TIER-02: Approved upgrade triggers vendor notification', async ({ page }) => {
+    // Reset vendor to free tier BEFORE login (may have been upgraded by previous test runs)
+    await resetVendorTierByEmail(page, TEST_VENDORS.free.email, 'free');
+
     // Login and create request using FREE tier vendor to avoid tier conflicts
     // (FREE tier can always upgrade to tier1)
     const vendorId = await loginVendor(page, TEST_VENDORS.free.email, TEST_VENDORS.free.password);
@@ -253,6 +257,9 @@ test.describe('Email Notifications: Tier Upgrade Requests', () => {
   });
 
   test('EMAIL-TIER-04: Downgrade request triggers admin notification', async ({ page }) => {
+    // Reset vendor to tier2 BEFORE login (may have been downgraded by previous test runs)
+    await resetVendorTierByEmail(page, TEST_VENDORS.tier2.email, 'tier2');
+
     // Login as tier2 vendor
     const vendorId = await loginVendor(page, TEST_VENDORS.tier2.email, TEST_VENDORS.tier2.password);
 
@@ -294,6 +301,9 @@ test.describe('Email Notifications: Tier Upgrade Requests', () => {
   });
 
   test('EMAIL-TIER-05: Approved downgrade triggers vendor notification', async ({ page }) => {
+    // Reset vendor to tier2 BEFORE login (may have been downgraded by previous test runs)
+    await resetVendorTierByEmail(page, TEST_VENDORS.tier2.email, 'tier2');
+
     // Login as tier2 and create downgrade request
     const vendorId = await loginVendor(page, TEST_VENDORS.tier2.email, TEST_VENDORS.tier2.password);
 

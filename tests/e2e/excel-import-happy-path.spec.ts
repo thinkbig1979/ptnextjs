@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
 import { TEST_VENDORS, loginVendor, clearRateLimits } from './helpers/test-vendors';
+import { resetVendorTierByEmail } from './helpers/seed-api-helpers';
 
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 
@@ -19,6 +20,9 @@ test.describe('Excel Import - Happy Path', () => {
   test.beforeEach(async ({ page }) => {
     // Clear rate limits to prevent 429 errors when running many tests
     await clearRateLimits(page);
+
+    // Reset vendor to tier2 BEFORE login (may have been changed by previous test runs)
+    await resetVendorTierByEmail(page, TEST_VENDORS.tier2.email, 'tier2');
 
     // Login as tier2 vendor (has access to data management features)
     await loginVendor(page, TEST_VENDORS.tier2.email, TEST_VENDORS.tier2.password);
@@ -178,6 +182,9 @@ test.describe('Excel Import - File Selection', () => {
   test.beforeEach(async ({ page }) => {
     // Clear rate limits to prevent 429 errors when running many tests
     await clearRateLimits(page);
+
+    // Reset vendor to tier2 BEFORE login (may have been changed by previous test runs)
+    await resetVendorTierByEmail(page, TEST_VENDORS.tier2.email, 'tier2');
 
     // Login as tier2 vendor (has access to data management features)
     await loginVendor(page, TEST_VENDORS.tier2.email, TEST_VENDORS.tier2.password);

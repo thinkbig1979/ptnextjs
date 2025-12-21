@@ -118,22 +118,29 @@ export async function clearRateLimits(page: any): Promise<boolean> {
  * Helper function to login vendor and get their ID
  */
 export async function loginVendor(page: any, email: string, password: string): Promise<number> {
+  console.log(`[Login] Logging in as ${email}...`);
+
   const loginResponse = await page.request.post(`${API_BASE}/api/auth/login`, {
     data: { email, password },
   });
 
   if (!loginResponse.ok()) {
     const errorText = await loginResponse.text();
+    console.error(`[Login] Failed: ${loginResponse.status()} - ${errorText}`);
     throw new Error(`Login failed: ${loginResponse.status()} - ${errorText}`);
   }
+
+  console.log(`[Login] Login successful for ${email}`);
 
   const profileResponse = await page.request.get(`${API_BASE}/api/portal/vendors/profile`);
   if (!profileResponse.ok()) {
     const errorText = await profileResponse.text();
+    console.error(`[Login] Profile fetch failed: ${profileResponse.status()} - ${errorText}`);
     throw new Error(`Failed to get profile: ${profileResponse.status()} - ${errorText}`);
   }
 
   const profileData = await profileResponse.json();
+  console.log(`[Login] Got vendor ID: ${profileData.vendor.id}`);
   return profileData.vendor.id;
 }
 
