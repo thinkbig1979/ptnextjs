@@ -6,7 +6,7 @@
 - **Agent**: frontend-react-specialist
 - **Estimated Time**: 45-60 min
 - **Dependencies**: impl-location-preference-hook
-- **Status**: pending
+- **Status**: completed
 
 ## Description
 

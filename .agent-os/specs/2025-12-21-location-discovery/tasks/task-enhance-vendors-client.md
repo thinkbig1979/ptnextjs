@@ -6,7 +6,7 @@
 - **Agent**: frontend-react-specialist
 - **Estimated Time**: 45-60 min
 - **Dependencies**: impl-category-select
-- **Status**: pending
+- **Status**: completed
 
 ## Description
 
