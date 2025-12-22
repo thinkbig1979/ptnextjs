@@ -135,8 +135,12 @@ describe('CategorySelect', () => {
       const trigger = screen.getByRole('combobox');
       await user.click(trigger);
 
-      // Should only show "All Categories" option
-      expect(screen.getByText('All Categories')).toBeInTheDocument();
+      // Should only show "All Categories" option in the listbox
+      // Multiple "All Categories" elements exist (trigger text + option), so query by role
+      const listbox = screen.getByRole('listbox');
+      const options = screen.getAllByRole('option');
+      expect(options).toHaveLength(1);
+      expect(options[0]).toHaveTextContent('All Categories');
     });
   });
 

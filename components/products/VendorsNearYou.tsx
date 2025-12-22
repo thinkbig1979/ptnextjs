@@ -79,14 +79,14 @@ export function VendorsNearYou({
   // Show skeleton while initializing (first render, location loading)
   if (isLoading) {
     return (
-      <Card className={cn('p-4', className)}>
+      <Card className={cn('p-4', className)} data-testid="vendors-near-you">
         <CardHeader className="pb-3 px-0 pt-0">
           <CardTitle className="text-lg font-semibold flex items-center gap-2">
             <MapPin className="h-4 w-4 text-primary" />
             Vendors Near You
           </CardTitle>
         </CardHeader>
-        <CardContent className="px-0 pb-0 space-y-3">
+        <CardContent className="px-0 pb-0 space-y-3" data-testid="vendors-near-you-loading">
           {Array.from({ length: 3 }).map((_, index) => (
             <Skeleton key={index} className="h-20 w-full rounded-lg" />
           ))}
@@ -99,14 +99,14 @@ export function VendorsNearYou({
   if (error) {
     console.error('Error loading nearby vendors:', error);
     return (
-      <Card className={cn('p-4', className)}>
+      <Card className={cn('p-4', className)} data-testid="vendors-near-you">
         <CardHeader className="pb-3 px-0 pt-0">
           <CardTitle className="text-lg font-semibold flex items-center gap-2">
             <MapPin className="h-4 w-4 text-primary" />
             Vendors Near You
           </CardTitle>
         </CardHeader>
-        <CardContent className="px-0 pb-0">
+        <CardContent className="px-0 pb-0" data-testid="vendors-near-you-error">
           <p className="text-sm text-muted-foreground">
             Unable to load nearby vendors. Please try again later.
           </p>
@@ -118,15 +118,15 @@ export function VendorsNearYou({
   // No location saved - prompt user to set location
   if (!userLocation) {
     return (
-      <Card className={cn('p-4', className)}>
+      <Card className={cn('p-4', className)} data-testid="vendors-near-you">
         <CardHeader className="pb-3 px-0 pt-0">
           <CardTitle className="text-lg font-semibold flex items-center gap-2">
             <MapPin className="h-4 w-4 text-primary" />
             Vendors Near You
           </CardTitle>
         </CardHeader>
-        <CardContent className="px-0 pb-0">
-          <p className="text-sm text-muted-foreground mb-3">
+        <CardContent className="px-0 pb-0" data-testid="vendors-near-you-no-location">
+          <p className="text-sm text-muted-foreground mb-3" data-testid="vendors-near-you-set-location-prompt">
             Set your location to find nearby vendors
           </p>
           <Link href={`/vendors?category=${encodeURIComponent(category)}`}>
@@ -143,14 +143,14 @@ export function VendorsNearYou({
   // No vendors found within radius
   if (nearbyVendors.length === 0) {
     return (
-      <Card className={cn('p-4', className)}>
+      <Card className={cn('p-4', className)} data-testid="vendors-near-you">
         <CardHeader className="pb-3 px-0 pt-0">
           <CardTitle className="text-lg font-semibold flex items-center gap-2">
             <MapPin className="h-4 w-4 text-primary" />
             Vendors Near You
           </CardTitle>
         </CardHeader>
-        <CardContent className="px-0 pb-0">
+        <CardContent className="px-0 pb-0" data-testid="vendors-near-you-empty">
           <p className="text-sm text-muted-foreground mb-3">
             No vendors found within {defaultRadius} km
           </p>
@@ -167,7 +167,7 @@ export function VendorsNearYou({
 
   // Success state - show vendor cards
   return (
-    <Card className={cn('p-4', className)}>
+    <Card className={cn('p-4', className)} data-testid="vendors-near-you">
       <CardHeader className="pb-3 px-0 pt-0">
         <CardTitle className="text-lg font-semibold flex items-center gap-2">
           <MapPin className="h-4 w-4 text-primary" />
@@ -175,7 +175,7 @@ export function VendorsNearYou({
         </CardTitle>
       </CardHeader>
 
-      <CardContent className="px-0 pb-0 space-y-3">
+      <CardContent className="px-0 pb-0 space-y-3" data-testid="vendors-near-you-list">
         {nearbyVendors.map((vendor) => (
           <NearbyVendorCard
             key={vendor.id}

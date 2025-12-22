@@ -52,6 +52,7 @@ export const TEST_TIERS = {
     // Location management
     'vendor-location-mapping.spec.ts',
     'multi-location-test.spec.ts',
+    'location-discovery.spec.ts',
 
     // Dashboard components
     'team-members-manager.spec.ts',
@@ -215,6 +216,7 @@ export const FEATURE_GROUPS = {
     'location-search-nantes.spec.ts',
     'location-search-ux.spec.ts',
     'location-search-verification.spec.ts',
+    'location-discovery.spec.ts',
     'vendor-map-detailed-test.spec.ts',
     'vendor-map-tiles-test.spec.ts',
     'vendor-map-verification.spec.ts',

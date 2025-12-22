@@ -7,10 +7,10 @@ import { render, screen } from '@testing-library/react';
 import { NearbyVendorCard } from '@/components/products/NearbyVendorCard';
 import type { Vendor } from '@/lib/types';
 
-// Mock next/link
+// Mock next/link - forward all props including data-testid
 jest.mock('next/link', () => {
-  return ({ children, href }: { children: React.ReactNode; href: string }) => {
-    return <a href={href}>{children}</a>;
+  return ({ children, href, ...rest }: { children: React.ReactNode; href: string; [key: string]: unknown }) => {
+    return <a href={href} {...rest}>{children}</a>;
   };
 });
 
@@ -348,7 +348,8 @@ describe('NearbyVendorCard', () => {
       const vendor = createMockVendor();
       render(<NearbyVendorCard vendor={vendor} distance={9999.99} />);
 
-      expect(screen.getByText('9999.9 km away')).toBeInTheDocument();
+      // Note: 9999.99.toFixed(1) rounds to 10000.0
+      expect(screen.getByText('10000.0 km away')).toBeInTheDocument();
     });
 
     it('should handle very small distance values', () => {

@@ -48,10 +48,13 @@ export function CategorySelect({
   onChange,
   className,
 }: CategorySelectProps): React.JSX.Element {
-  // Convert between null (our API) and empty string (Select component's API)
-  const selectValue = value ?? '';
+  // Radix Select requires non-empty string values
+  // Use sentinel value for "All Categories" option
+  const ALL_CATEGORIES_VALUE = '__all__';
+
+  const selectValue = value ?? ALL_CATEGORIES_VALUE;
   const handleValueChange = (newValue: string) => {
-    onChange(newValue || null);
+    onChange(newValue === ALL_CATEGORIES_VALUE ? null : newValue);
   };
 
   return (
@@ -60,7 +63,7 @@ export function CategorySelect({
         <SelectValue placeholder="All Categories" />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="">All Categories</SelectItem>
+        <SelectItem value={ALL_CATEGORIES_VALUE}>All Categories</SelectItem>
         {categories.map((cat) => (
           <SelectItem key={cat.id} value={cat.slug}>
             {cat.name}
