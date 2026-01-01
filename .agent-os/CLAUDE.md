@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Agent OS v4.6.0 - Structured workflows for AI agents to build products systematically.
+Agent OS v5.1.0 - Structured workflows for AI agents to build products systematically.
 
 ## Quick Reference
 
@@ -40,19 +40,92 @@ config.yml          → Version and feature toggles
 
 ## Agent Execution Model
 
-Agent OS provides structured workflows executed by Claude Code's actual agents:
+### Callable Agents (use with Task tool)
 
-| Agent Type | Purpose | Invocation |
-|------------|---------|------------|
-| `general-purpose` | Main execution for all tasks | `Task(subagent_type: "general-purpose")` |
-| `Explore` | Codebase analysis and context | `Task(subagent_type: "Explore")` |
-| `Plan` | Strategic planning | `Task(subagent_type: "Plan")` |
+Only these three agent types can be invoked via `Task(subagent_type: "...")`:
 
-**Important**: The "execution roles" in config.yml (test-architect, security-sentinel, etc.) are **workflow phase definitions**, NOT callable agents. They document structured phases that guide task execution through a single Claude Code agent.
+| Agent Type | Purpose | Example |
+|------------|---------|---------|
+| `general-purpose` | Main execution for all tasks | `Task(subagent_type: "general-purpose", prompt: "...")` |
+| `Explore` | Codebase analysis and context | `Task(subagent_type: "Explore", prompt: "...")` |
+| `Plan` | Strategic planning | `Task(subagent_type: "Plan", prompt: "...")` |
+
+### Workflow Phases (NOT callable agents)
+
+The following are **instruction files**, not agents. They define workflow phases that guide the `general-purpose` agent during task execution:
+
+| Phase | Instruction File | Purpose |
+|-------|------------------|---------|
+| `test-architect` | `instructions/agents/test-architect.md` | Test design guidance |
+| `implementation-specialist` | `instructions/agents/implementation-specialist.md` | Implementation guidance |
+| `security-sentinel` | `instructions/agents/security-sentinel.md` | Security review guidance |
+| `pattern-discovery-analyst` | `instructions/agents/pattern-discovery-analyst.md` | Pattern detection guidance |
+
+**How to use**: The orchestrator spawns a `general-purpose` agent and tells it to read the relevant instruction file. Example:
+```
+Task(subagent_type: "general-purpose", prompt: "Read instructions/agents/test-architect.md, then design tests for...")
+```
 
 For terminology definitions, see: `docs/GLOSSARY.md`
 
 ## Key Features by Version
+
+| Version | Feature | Purpose |
+|---------|---------|---------|
+| v5.1.0 | UI Testing Integration | E2E tests block UI implementation |
+| v5.0.0 | Pattern Consistency | Codebase pattern discovery/enforcement |
+| v4.9.0 | Autonomous Execution | Supervisor/PM pattern for context handoffs |
+| v4.5.0 | Test Integrity | Proactive test analysis before implementation |
+| v4.3.0 | TypeScript Checking | Multi-layer type verification |
+| v4.1.0 | Unified Execution | Beads-first orchestration |
+| v3.3.0 | Test Monitoring | Real-time test visibility, hung detection |
+| v3.2.0 | Skills Integration | Progressive-disclosure documentation |
+| v3.1.0 | Test Context | Pre-test library documentation gathering |
+| v2.9.0 | Test Infrastructure | Timeout enforcement, watch mode prevention |
+| v2.8.0 | Beads Integration | Git-backed task tracking |
+| v2.7.0 | Compound Engineering | Multi-phase review workflows |
+| v2.2.0 | Quality Hooks | Auto-validation on file writes |
+
+*Details for each feature follow below.*
+
+---
+
+### UI Testing Integration (v5.1.0+)
+E2E tests now block implementation completion for UI features.
+
+**Key Changes**:
+- E2E test strategy required in specs (`sub-specs/e2e-test-strategy.md`)
+- `test-user-flow-{name}` tasks BLOCK `impl-user-flow-{name}` completion
+- Browser validation gate before task completion (Step 4.2.5 in execute-tasks.md)
+- Accessibility (WCAG 2.1 AA) enforcement with axe-core
+- Core Web Vitals measurement (LCP, CLS, INP)
+
+**New Documents**:
+- `instructions/utilities/ui-component-testing-strategy.md` - Test type decision tree
+- `instructions/utilities/e2e-test-placement-checklist.md` - Tier assignment (smoke/core/regression)
+- `instructions/utilities/ui-acceptance-criteria-checklist.md` - Component completion criteria
+- `standards/e2e-ui-testing-standards.md` - UI-specific E2E patterns
+
+**Workflow Integration**:
+| Phase | Step | Action |
+|-------|------|--------|
+| Spec Creation | 9.6 | Create e2e-test-strategy.md |
+| Task Creation | 2 | Add design-e2e-test-strategy task, E2E blocking deps |
+| Execution | 4.2.5 | Browser validation gate |
+| Quality | 2.7 | UI specification validation |
+
+**Configuration** (`config.yml`):
+```yaml
+ui_testing:
+  enabled: true
+  blocking_dependencies:
+    e2e_blocks_implementation: true
+  browser_validation_gate:
+    enabled: true
+  accessibility:
+    wcag_level: "AA"
+    block_on_critical: true
+```
 
 ### Task Execution (v2.0+)
 - Parallel task processing via Claude Code's Task tool (spawns general-purpose subagents)
@@ -201,11 +274,11 @@ The orchestrator does NOT invoke skills directly - it delegates to test-context-
 
 | Skill | Purpose | Available References |
 |-------|---------|----------------------|
-| `agent-os-testing-standards` | **Canonical testing values** (v4.2.0+) | canonical-values.md, execution-commands.md, validation-checklist.md, failure-classification.md |
-| `agent-os-patterns` | Testing & code style | vitest.md, playwright.md, convex.md, test-strategies.md, coding-style.md |
+| `e2e-test-repair` | **E2E test suite repair** (v5.0.0) | failure-categories.md, fix-patterns.md, canonical-values.md, execution-commands.md |
+| `e2e-test-organization` | Test tier organization | Smoke/core/regression tiers, test inventory |
+| `agent-os-patterns` | Testing & code style | vitest.md, playwright.md, convex.md, coding-style.md |
 | `agent-os-specialists` | Development guidance | backend-nodejs.md, frontend-react.md, implementation.md |
 | `agent-os-test-research` | Pre-test research | Detection patterns, documentation sources |
-| `e2e-test-repair` | **E2E test suite repair** (v4.6.0+) | failure-categories.md, fix-patterns.md, test-runner-agent.md, fix-agent.md, handoff-protocol.md |
 
 **Skill Invocation Pattern** (v4.2.0+):
 To access skill content, explicitly invoke skills using `Skill(skill="skill-name")`. Skills are not automatically loaded - they must be requested when needed.
@@ -213,9 +286,9 @@ To access skill content, explicitly invoke skills using `Skill(skill="skill-name
 **Required Skill Invocations by Phase**:
 | Phase | Required Skills | Invocation |
 |-------|-----------------|------------|
-| Test Context (2.0) | Testing standards, Test research, Patterns | `Skill(skill="agent-os-testing-standards")`, `Skill(skill="agent-os-test-research")`, `Skill(skill="agent-os-patterns")` |
-| Test Design (2.1) | Testing standards | `Skill(skill="agent-os-testing-standards")` |
-| Alignment Validation (2.2a) | Testing standards | `Skill(skill="agent-os-testing-standards")` → references/validation-checklist.md |
+| Test Context (2.0) | E2E repair, Test research, Patterns | `Skill(skill="e2e-test-repair")`, `Skill(skill="agent-os-test-research")`, `Skill(skill="agent-os-patterns")` |
+| Test Design (2.1) | Patterns | `Skill(skill="agent-os-patterns")` |
+| E2E Test Repair | E2E repair | `Skill(skill="e2e-test-repair")` → references/canonical-values.md |
 
 **Project-Specific Patterns** (generated per-project in `.agent-os/patterns/`):
 
@@ -323,26 +396,40 @@ MAIN AGENT
 - Tracks fix history across iterations
 - Groups failures by root cause
 
-### E2E Test Suite Repair (v4.6.0+)
-Multi-agent orchestration for systematically repairing E2E test suites.
+### E2E Test Suite Repair (v5.0.0+)
+Systematic E2E test repair with config enforcement and production server execution.
 
-**Problem Solved**: E2E test suites with many failures need systematic repair, not one-off fixes.
+**Problem Solved**: E2E test suites often have non-compliant configs (dev servers, unlimited parallelism) and need systematic repair.
 
-**Solution**: Failure categorization + strategic batching + parallel fix implementation.
+**Solution**: Config enforcement + production server + root cause analysis + context-aware execution.
 
 **Orchestration Flow**:
 ```
-Phase 0: Pre-Flight     → Verify server, clear rate limits
-Phase 1: Discovery      → Run test batches in parallel, collect failures
-Phase 2: Analysis       → Categorize failures by root cause
-Phase 3: Fix            → Fix ONE category at a time
-Phase 4: Verification   → Re-run affected tests, confirm >80% pass
-Phase 5: Iterate        → Repeat until pass rate >90%
+Phase 0: Config Enforcement → Detect and fix non-compliant playwright.config.ts
+Phase 0.5: Server Stack     → Start database, backend, AND frontend (production)
+Phase 1: Discovery          → Run full suite against production server
+Phase 2: Analysis           → Identify root causes (not just categories)
+Phase 2.5: Bug Fixing       → Fix APPLICATION bugs first, rebuild server
+Phase 3: Root Cause Fixes   → Fix highest-impact root causes
+Phase 4: Verification       → Re-run affected tests
+Phase 5: Cleanup            → Stop all servers, final report
 ```
+
+**Config Enforcement** (automatic):
+- Remove `webServer` block from playwright.config.ts
+- Set `workers: process.env.CI ? 4 : 3` (limited parallelism)
+- Set `baseURL: process.env.BASE_URL || 'http://localhost:3000'`
+- Set `testDir: './tests/e2e'` (not `'./tests'`)
+
+**Server Stack** (all started automatically):
+1. Database/Docker services
+2. Backend API (if separate)
+3. Frontend (PRODUCTION build - 10-50x faster than dev)
 
 **Failure Categories**:
 | Category | Indicators | Priority |
 |----------|------------|----------|
+| `APPLICATION_BUG` | App behavior wrong | P0-BLOCKING |
 | `AUTH_FAILURE` | 401, Invalid credentials | P0 |
 | `RATE_LIMIT` | 429, Too many requests | P0 |
 | `SERVER_ERROR` | 500, ECONNREFUSED | P0 |
@@ -351,24 +438,19 @@ Phase 5: Iterate        → Repeat until pass rate >90%
 | `LOGIC_ERROR` | Assertion failures | P2 |
 | `HANG` | No progress >30s | P3 |
 
-**Operational Constraints** (prevent resource exhaustion):
-- Batch size: Max 5 test files per sub-agent (enables faster feedback)
-- Stop threshold: 3 consecutive OR 5 total failures (early detection of systemic issues)
-- Timeout: Hard 30s limit (surfaces hanging tests immediately)
-- Fix order: Highest impact first (maximizes pass rate improvement)
-
 **Key Files**:
-- `.claude/commands/fix-e2e-tests.md` - Slash command entry point
-- `~/.claude/skills/e2e-test-repair/` - Skill with reference files
+- `.claude/commands/fix-e2e-large.md` - Slash command entry point
+- `~/.claude/skills/e2e-test-repair/` - Skill with reference files (v5.0)
+- `instructions/agents/test-runner.md` - Test execution with config enforcement
 
-**Usage**: `/fix-e2e-tests` or `/fix-e2e-tests --resume`
+**Usage**: `/fix-e2e-large` or `/fix-e2e-large --resume`
 
-**Skill References**:
-- `failure-categories.md` - Detailed category definitions
-- `fix-patterns.md` - Proven fixes per category
-- `test-runner-agent.md` - Sub-agent prompt for test execution
-- `fix-agent.md` - Sub-agent prompt for fix implementation
-- `handoff-protocol.md` - Context-aware session management
+**Critical Rules**:
+- Tests MUST run against production server (not dev)
+- Config violations are automatically fixed
+- Application bugs are fixed BEFORE test repairs
+- Server must be rebuilt after any app code changes
+- Uses `/context-aware` pattern for large suites (100+ tests)
 
 ### Unified Execution Protocol (v4.1.0+)
 Beads-first orchestration with parallel specialist delegation.
@@ -445,6 +527,64 @@ unified_execution:
   beads_first: true
   context_limit: 0.75
   parallel_waves: true
+```
+
+### Autonomous Execution (v4.9.0+)
+Supervisor/PM pattern for fully autonomous task execution with automatic context handoffs.
+
+**Problem Solved**: Context exhaustion interrupts work, requiring manual intervention to resume. Users had to monitor and restart execution.
+
+**Solution**: 3-tier execution model where Supervisor spawns Project Manager subagents that automatically hand off when approaching context limits.
+
+**Execution Model**:
+```
+SUPERVISOR (Ultra-minimal context, <5%)
+│
+├── Spawns PROJECT MANAGER subagent
+│   ├── PM uses /execute-tasks protocol
+│   ├── PM spawns SPECIALIST subagents for implementation
+│   ├── PM monitors own context (~85% triggers handoff)
+│   └── PM saves state to Beads before stopping
+│
+├── Monitors PM status (periodic check)
+│
+├── On PM handoff → Spawns NEW PM with continuation context
+│
+└── Repeats until ALL tasks complete
+```
+
+**Why This Works**:
+- Supervisor uses <5% context (only spawns/monitors)
+- PM uses full /execute-tasks protocol with specialists
+- Beads persists ALL state (survives any context limit)
+- Automatic continuation without user intervention
+
+**PM Status Reports**:
+```
+PM_STATUS: [all_complete | handoff_required | blocked]
+COMPLETED_TASKS: [beads IDs]
+REMAINING_TASKS: [beads IDs]
+STOPPED_AT: [exact point]
+NEXT_ACTION: [what next PM does first]
+```
+
+**Usage**:
+```bash
+/context-aware                    # Start from ready Beads tasks
+/context-aware <SPEC_FOLDER>      # Execute all tasks for a spec
+/context-aware --resume           # Resume from last handoff
+```
+
+**Key Files**:
+- `.claude/commands/context-aware.md` - Full protocol
+- `.agent-os/supervisor/pm-handoff.json` - Handoff state
+
+**Configuration** (`config.yml`):
+```yaml
+autonomous_execution:
+  enabled: true
+  pm_context_limit: 0.85
+  max_pm_sessions: 20
 ```
 
 ### Test Integrity Maintenance (v4.5.0+)
@@ -541,6 +681,76 @@ test_integrity_maintenance:
     add_dependencies: true
   enforcement:
     mode: "advisory"
+```
+
+### Pattern Consistency (v5.0+)
+Ensures new features integrate seamlessly with existing codebase patterns.
+
+**Problem Solved**: New code uses different patterns than existing code (e.g., slugs in URLs when existing code uses IDs), causing:
+- Integration bugs at boundaries
+- Inconsistent user experience
+- Technical debt requiring refactoring
+- Maintenance burden from mixed patterns
+
+**Solution**: Pattern-aware development pipeline:
+
+```
+1. DISCOVER: Analyze codebase for patterns before spec creation
+2. DOCUMENT: Persist patterns to .agent-os/patterns/
+3. CONSTRAIN: Include pattern requirements in task definitions
+4. VALIDATE: Verify new code matches patterns before completion
+```
+
+**Pattern Categories Detected**:
+| Category | Example Detection | Constraint Generated |
+|----------|-------------------|---------------------|
+| URL Structure | `/users/[id]` vs `/users/[slug]` | "Use :id, not :slug" |
+| Naming | `PascalCase.tsx` components | "Components must be PascalCase" |
+| API Format | `{ data: T }` wrapper | "Wrap responses in { data }" |
+| State | Zustand usage | "Use Zustand for state" |
+| Forms | React Hook Form + Zod | "Use RHF + Zod" |
+
+**Key Files**:
+- `instructions/agents/pattern-discovery-analyst.md` - Pattern detection agent
+- `instructions/core/create-spec.md` (Step 1.5) - Discovery trigger
+- `templates/patterns/*.md.template` - Documentation templates
+- `.agent-os/patterns/` - Generated pattern docs (per-project)
+
+**Workflow Integration**:
+| Phase | Step | Action |
+|-------|------|--------|
+| Spec Creation | 1.5 | Run pattern discovery if stale/missing |
+| Task Creation | 1 | Load patterns, add constraints to tasks |
+| Implementation | 3.0 | Load patterns before coding |
+| Completion | 4.5 | Validate against patterns |
+
+**Console Output**:
+```
+Pattern Discovery: COMPLETE
+├── URL Structure: ID-based (:id) [HIGH confidence]
+├── Naming: PascalCase components [HIGH confidence]
+├── API Format: { data: T } wrapper [HIGH confidence]
+└── 5 constraints loaded for implementation
+```
+
+**Enforcement Modes**:
+| Mode | Behavior |
+|------|----------|
+| `advisory` | Log deviations, continue (default) |
+| `warning` | Show warnings, require acknowledgment |
+| `blocking` | Cannot proceed with unjustified deviations |
+
+**Configuration** (`config.yml`):
+```yaml
+pattern_consistency:
+  enabled: true
+  discovery:
+    auto_run: true
+    refresh_threshold_days: 7
+    confidence_threshold: 0.7
+  enforcement:
+    mode: "advisory"
+    allow_justified_deviations: true
 ```
 
 ### TypeScript Type Checking (v4.3.0+)
@@ -686,48 +896,6 @@ test_context_gathering:
       - context7_mcp     # Priority 3: If MCP available
       - websearch        # Priority 4: Fallback
 ```
-
-### TypeScript Type Checking (v4.3.0+)
-Mandatory TypeScript type verification to prevent type errors from entering the codebase.
-
-**Problem Solved**: TypeScript errors were accumulating because:
-- `syntax_check.js` only validates JavaScript syntax, not TypeScript types
-- No explicit directive for agents to run `tsc --noEmit`
-- No pre-commit hook to block commits with type errors
-
-**Solution**: Multi-layer type checking:
-
-| Layer | Implementation | When | What It Catches |
-|-------|---------------|------|-----------------|
-| Validator | `hooks/validators/type_checking.js` | Per-file write | Immediate errors |
-| Task Verification | `execute-tasks.md` Step 4.2 | Before task completion | Accumulated errors |
-| Pre-commit Hook | `.git/hooks/pre-commit` | Before commit | Final safety net |
-
-**Key Commands**:
-```bash
-# Manual type check
-pnpm tsc --noEmit
-
-# Install pre-commit hook
-~/.agent-os/setup/install-typescript-precommit.sh
-
-# Add typecheck script to package.json
-npm pkg set scripts.typecheck="tsc --noEmit"
-```
-
-**Configuration** (`config.yml`):
-```yaml
-typescript_checking:
-  enabled: true
-  triggers:
-    on_file_write: true
-    on_task_completion: true
-    pre_commit: true
-  error_handling:
-    block_on_error: true
-```
-
-Before completing any task in a TypeScript project, run `pnpm tsc --noEmit` and fix all errors.
 
 ### Validator Improvements (v3.0+)
 

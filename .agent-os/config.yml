@@ -1,5 +1,13 @@
-# Agent OS Configuration v4.8.2
+# Agent OS Configuration v5.1.0
 # Clean configuration with sane defaults for compound engineering integration
+#
+# TOKEN EFFICIENCY NOTE:
+# - This file is loaded once per session (not repeatedly)
+# - Agents access specific sections via key lookup, not full-file parsing
+# - Unused sections do not consume additional context tokens
+# v5.1.0: UI Testing Integration - E2E tests block implementation, browser validation gates
+# v5.0.0: Pattern Consistency - Auto-detect and enforce codebase patterns
+# v4.9.0: Autonomous Execution - Supervisor/PM pattern, automatic handoffs, context-aware respawn
 # v4.8.2: E2E Stability Patterns - Isolation failures, unique fixtures, semantic waits, parallelism config
 # v4.8.0: E2E Testing Methodology Overhaul - Tiered organization, root cause analysis, progressive repair
 # v4.6.0: File consolidation - Single execute-tasks.md, removed redundant protocols
@@ -12,7 +20,7 @@
 # v4.0.0: Test Failure Handling Protocol - Orchestrated test execution with subagent delegation
 # v3.3.0: Test Execution Monitoring - Real-time streaming, hung test detection, test/code alignment
 
-agent_os_version: 4.8.2
+agent_os_version: 5.1.0
 
 # ================================================
 # CONFIGURATION HIERARCHY
@@ -398,8 +406,9 @@ test_infrastructure:
   server_preflight:
     enabled: true
     health_check_timeout: 2000 # 2 seconds per server
-    block_on_failure: true # Don't run tests if servers down
-    auto_start_servers: false # Never auto-start (causes conflicts)
+    block_on_failure: false # Agent starts prod server if down
+    auto_start_prod_server: true # Autonomously build and start production server
+    server_type: production # Always use prod server (10-50x faster than dev)
 
   # Watch Mode Prevention
   # Ensures test commands exit cleanly (no indefinite hanging)
@@ -1070,6 +1079,324 @@ test_integrity_maintenance:
     on_limit_exceeded: "warn_and_continue" # "warn_and_continue" | "stop_and_ask"
 
 # ================================================
+# PATTERN CONSISTENCY (v5.0+)
+# ================================================
+# Ensures new features integrate seamlessly with existing codebase patterns
+# by discovering, documenting, and enforcing architectural conventions.
+#
+# Solves: New code using different patterns than existing code (e.g., slugs vs IDs in URLs)
+#
+# Implementation:
+#   - instructions/agents/pattern-discovery-analyst.md - Pattern detection
+#   - instructions/agents/pattern-consistency-validator.md - Validation
+#   - templates/patterns/*.md.template - Documentation templates
+#   - Step 0.5 in create-spec.md, Step 4.5 in execute-tasks.md
+#
+# Workflow:
+#   1. Pattern Discovery: Analyze codebase before spec creation
+#   2. Pattern Documentation: Persist patterns to .agent-os/patterns/
+#   3. Pattern Constraints: Include in task definitions
+#   4. Pattern Validation: Verify new code matches patterns
+
+pattern_consistency:
+  enabled: true
+
+  # Pattern discovery configuration
+  # Automatically analyzes codebase to detect existing patterns
+  discovery:
+    enabled: true
+    auto_run: true # Run before spec creation
+    refresh_threshold_days: 7 # Re-run if patterns older than this
+    confidence_threshold: 0.7 # Minimum confidence to accept a pattern (0.0-1.0)
+
+    # Source directories to scan
+    source_directories:
+      - src/
+      - app/
+      - lib/
+      - pages/
+      - components/
+      - api/
+      - routes/
+      - controllers/
+      - models/
+      - services/
+
+    # Directories to exclude from scanning
+    exclude_directories:
+      - node_modules/
+      - .git/
+      - dist/
+      - build/
+      - .next/
+      - __pycache__/
+      - venv/
+      - coverage/
+
+    # Minimum samples for pattern detection
+    minimum_samples:
+      url_structure: 3
+      naming_conventions: 10
+      component_structure: 5
+      state_management: 2
+      api_patterns: 3
+      authentication: 1
+      form_handling: 2
+      error_handling: 5
+      testing_patterns: 5
+
+  # Pattern documentation configuration
+  documentation:
+    output_directory: ".agent-os/patterns"
+    format: "markdown"
+    include_evidence: true # Include file:line references
+    max_evidence_per_category: 10 # Limit evidence to prevent bloat
+
+    # Files generated
+    structure:
+      metadata: "_metadata.yml"
+      summary: "architecture.md"
+      frontend:
+        - routing.md
+        - components.md
+        - state.md
+        - forms.md
+      backend:
+        - api.md
+        - auth.md
+      testing:
+        - patterns.md
+      global:
+        - naming.md
+        - error-handling.md
+
+  # Pattern categories to detect
+  categories:
+    url_structure:
+      enabled: true
+      priority: high # Most common source of integration issues
+      description: "URL parameter style (ID vs slug vs UUID)"
+
+    naming_conventions:
+      enabled: true
+      priority: high
+      description: "File and code naming patterns"
+
+    component_structure:
+      enabled: true
+      priority: medium
+      description: "Frontend component organization"
+
+    state_management:
+      enabled: true
+      priority: medium
+      description: "State libraries and patterns"
+
+    api_patterns:
+      enabled: true
+      priority: high
+      description: "API response format and conventions"
+
+    authentication:
+      enabled: true
+      priority: low
+      description: "Auth mechanism and storage"
+
+    form_handling:
+      enabled: true
+      priority: medium
+      description: "Form libraries and validation"
+
+    error_handling:
+      enabled: true
+      priority: medium
+      description: "Error display and reporting patterns"
+
+    testing_patterns:
+      enabled: true
+      priority: low
+      description: "Test framework and structure"
+
+  # Consistency enforcement configuration
+  enforcement:
+    # Advisory: Log findings but don't block
+    # Warning: Show warnings, require acknowledgment
+    # Blocking: Cannot proceed without addressing deviations
+    mode: "advisory" # "advisory" | "warning" | "blocking"
+
+    # When to check for consistency
+    check_on_spec_creation: true # During create-spec
+    check_on_task_creation: true # During create-tasks
+    check_on_implementation: true # During task execution
+    check_before_completion: true # Before marking task complete
+
+    # Deviation handling
+    allow_justified_deviations: true # Allow if developer provides reason
+    require_justification: true # Must explain why deviating
+
+    # In blocking mode, these trigger blocks
+    blocking_triggers:
+      any_unjustified_deviation: true
+      high_priority_pattern_violation: true
+      multiple_deviations: 3 # Block if 3+ deviations in one task
+
+  # Workflow integration
+  workflow_integration:
+    create_spec:
+      step: "0.5"
+      action: "Run pattern discovery if patterns stale or missing"
+
+    create_tasks:
+      step: "1"
+      action: "Load patterns, check spec alignment, add constraints to tasks"
+
+    execute_tasks:
+      step: "3.0"
+      action: "Load patterns before implementation"
+
+    post_implementation:
+      step: "4.5"
+      action: "Validate new code against patterns"
+
+  # Deviation documentation
+  deviations:
+    # Where to document approved deviations
+    documentation_location: ".agent-os/patterns/deviations/"
+
+    # Whether to update patterns when deviations are approved
+    update_patterns_on_approval: false # Manual pattern updates only (safer)
+
+    # Require architectural decision record for deviations
+    require_adr: false # Set true for stricter governance
+
+  # Output and reporting
+  output:
+    save_report: true
+    report_directory: ".agent-os/pattern-analysis"
+    report_file_pattern: "{timestamp}-analysis.json"
+
+    # Console output verbosity
+    console_output: "summary" # "summary" | "detailed" | "minimal"
+
+    # Include in task summaries
+    include_in_task_summary: true
+
+# ================================================
+# UI TESTING INTEGRATION (v5.1.0+)
+# ================================================
+# Ensures UI components and user flows include proper E2E testing,
+# accessibility validation, and browser compatibility checks.
+#
+# Key Features:
+#   - E2E tests BLOCK implementation task completion
+#   - Browser validation gate before task completion
+#   - Accessibility (WCAG 2.1 AA) enforcement
+#   - Core Web Vitals measurement
+#
+# Implementation:
+#   - instructions/utilities/ui-component-testing-strategy.md
+#   - instructions/utilities/e2e-test-placement-checklist.md
+#   - instructions/utilities/ui-acceptance-criteria-checklist.md
+#   - standards/e2e-ui-testing-standards.md
+#   - execute-tasks.md Step 4.2.5 (Browser Validation Gate)
+
+ui_testing:
+  enabled: true
+
+  # E2E Test Strategy Requirements
+  # Enforces creation of e2e-test-strategy.md for UI specs
+  e2e_strategy:
+    enabled: true
+    required_for_ui_specs: true # Block task creation without E2E strategy
+    require_user_flow_inventory: true # All flows must be documented
+    require_tier_assignment: true # smoke/core/regression for each flow
+    require_data_testid_specs: true # data-testid for interactive elements
+    require_accessibility_matrix: true # Per-page a11y requirements
+    require_browser_matrix: true # Browser compatibility requirements
+
+  # E2E Test Blocking Dependencies
+  # Makes E2E tests block implementation task completion
+  blocking_dependencies:
+    enabled: true
+    e2e_blocks_implementation: true # test-user-flow blocks impl-user-flow
+    browser_validation_required: true # validate-browser task required
+    enforcement_mode: "blocking" # "blocking" | "warning" | "advisory"
+
+  # Browser Validation Gate
+  # Executed before UI task completion (Step 4.2.5)
+  browser_validation_gate:
+    enabled: true
+    trigger: "before_task_completion" # When to run validation
+    browsers:
+      chrome: true # Required
+      firefox: true # Required
+      safari: false # Optional (set true if supporting Safari)
+      mobile: true # Required
+    block_on_failure: true # Block task if validation fails
+
+  # Accessibility Requirements
+  # WCAG 2.1 AA compliance enforcement
+  accessibility:
+    enabled: true
+    wcag_level: "AA" # "A" | "AA" | "AAA"
+    axe_core_integration: true
+    block_on_critical: true # Block on critical violations
+    block_on_serious: false # Warn but don't block on serious
+    keyboard_navigation_required: true
+    screen_reader_testing: "recommended" # "required" | "recommended" | "optional"
+
+  # Performance Requirements
+  # Core Web Vitals targets
+  performance:
+    enabled: true
+    core_web_vitals:
+      lcp_target: 2500 # ms - Largest Contentful Paint
+      lcp_warning: 4000 # ms
+      cls_target: 0.1 # Cumulative Layout Shift
+      cls_warning: 0.25
+      inp_target: 200 # ms - Interaction to Next Paint
+      inp_warning: 500
+    block_on_critical_performance: false # Warn but don't block
+    measure_before_completion: true
+
+  # Component Testing Strategy
+  # Determines test type per component
+  component_testing:
+    unit_tests:
+      required_for: ["presentational", "form_input", "interactive"]
+      co_located: true # Component.test.tsx next to Component.tsx
+    integration_tests:
+      required_for: ["form_container", "data_display"]
+      location: "tests/integration/"
+    e2e_tests:
+      required_for: ["page", "user_flow"]
+      location: "tests/e2e/"
+
+  # Acceptance Criteria Requirements
+  # What must be checked before task completion
+  acceptance_criteria:
+    components:
+      - "Unit tests pass"
+      - "Accessibility scan passes (0 critical violations)"
+      - "data-testid attributes present"
+    user_flows:
+      - "E2E tests pass"
+      - "Accessibility scan passes (WCAG 2.1 AA)"
+      - "Browser validation completed"
+    pages:
+      - "E2E tests pass"
+      - "Accessibility scan passes"
+      - "Core Web Vitals measured"
+
+  # Validation in /validate-quality
+  quality_validation:
+    check_e2e_strategy: true
+    check_ux_ui_spec: true
+    check_task_dependencies: true
+    check_acceptance_criteria: true
+    check_data_testid_coverage: true
+
+# ================================================
 # E2E TEST ORGANIZATION (v4.8.0+)
 # ================================================
 # Tiered test organization for efficient execution across development workflows.
@@ -1159,18 +1486,85 @@ e2e_test_organization:
     progressive_expansion: true # Sample -> Core -> Regression -> Full
 
 # ================================================
-# E2E REPAIR PROTOCOL (v4.8.0+)
+# AUTONOMOUS EXECUTION (v4.9.0+)
+# ================================================
+# Supervisor/PM pattern for fully autonomous task execution.
+# Survives context limits through automatic PM respawn with Beads state.
+#
+# Implementation: .claude/commands/context-aware.md
+# State: .agent-os/supervisor/pm-handoff.json
+#
+# Workflow:
+#   1. Supervisor spawns PM subagent
+#   2. PM executes /execute-tasks protocol autonomously
+#   3. PM hands off at 85% context, saves state to Beads
+#   4. Supervisor spawns new PM with continuation context
+#   5. Repeats until all tasks complete or user aborts
+
+autonomous_execution:
+  enabled: true
+
+  # Context limits
+  pm_context_limit: 0.85 # PM triggers handoff at 85%
+  supervisor_context_limit: 0.95 # Emergency stop (should never hit)
+
+  # Session limits (safety)
+  max_pm_sessions: 20 # Maximum PM respawns before requiring user intervention
+
+  # State persistence
+  handoff_directory: ".agent-os/supervisor"
+  handoff_file: "pm-handoff.json"
+  session_history: true # Keep log of all PM sessions
+
+  # User interaction
+  require_user_confirmation: true # Confirm before starting execution
+  auto_resume: false # Require explicit --resume flag
+  prompt_on_blocker: true # Always ask user for blocker resolution
+
+  # PM delegation
+  pm_subagent_type: "general-purpose"
+  pm_follows_execute_tasks: true # PM must use /execute-tasks protocol
+  pm_spawns_specialists: true # PM can spawn implementation specialists
+
+  # Quality gates (inherited from execute-tasks)
+  verify_deliverables: true
+  run_tests_before_handoff: true
+  require_clean_commits: true
+
+# ================================================
+# E2E REPAIR PROTOCOL (v4.9.0+)
 # ================================================
 # Configuration for /fix-e2e-tests and /fix-e2e-large commands.
-# Enables systematic repair of large test suites through root cause analysis.
+# Enables systematic repair using PRODUCTION SERVER execution.
+#
+# CRITICAL (v4.9.0): E2E tests MUST run against production server.
+# Tests run 10-50x faster. No sharding needed.
 
 e2e_repair_protocol:
   enabled: true
 
-  # Repair approach selection
-  approach:
-    small_suite_threshold: 50 # Use standard /fix-e2e-tests below this
-    large_suite_threshold: 100 # Use /fix-e2e-large above this
+  # Production server requirement (v4.9.0 - MANDATORY)
+  production_server:
+    required: true # MUST use production server
+    build_command: "npm run build"
+    start_command: "npm run start"
+    port: 3000
+    health_check_url: "http://localhost:3000"
+    startup_timeout: 60 # seconds
+    rebuild_after_app_fix: true # MUST rebuild after any app code change
+
+  # Server management
+  server_management:
+    kill_existing_before_start: true
+    server_log_path: ".agent-os/e2e-repair/server.log"
+    server_pid_path: ".agent-os/e2e-repair/server.pid"
+    keep_running_on_handoff: true # Avoid rebuild time on resume
+
+  # Parallelism (simplified - no sharding needed with prod server)
+  parallelism:
+    # No sharding needed - prod server handles concurrent requests
+    sharding_enabled: false
+    workers: 4 # Playwright workers (prod server handles it)
 
   # Root cause analysis
   root_cause_analysis:
@@ -1208,3 +1602,14 @@ e2e_repair_protocol:
     target_pass_rate: 0.95 # 95%
     acceptable_pass_rate: 0.90 # 90% after 3 cycles
     escalation_threshold: 0.70 # Escalate if below 70% after 2 cycles
+
+  # Performance expectations (with production server)
+  performance:
+    # Discovery time (running full suite)
+    discovery_100_tests: "30s"
+    discovery_250_tests: "1min"
+    discovery_500_tests: "2min"
+    # Total repair time
+    total_100_tests: "5min"
+    total_250_tests: "10min"
+    total_500_tests: "15min"

@@ -1,0 +1,118 @@
+# Pattern: Component Structure
+
+## Metadata
+- Generated: {{GENERATED_DATE}}
+- Confidence: {{CONFIDENCE_LEVEL}}
+- Files Analyzed: {{FILE_COUNT}}
+- Pattern Instances: {{INSTANCE_COUNT}}
+
+## Detected Patterns
+
+### Organization Style
+
+**Pattern**: {{ORGANIZATION_STYLE}}
+
+```
+{{DIRECTORY_STRUCTURE}}
+```
+
+### Component Patterns
+
+| Pattern | Detected | Confidence |
+|---------|----------|------------|
+| Single file per component | {{SINGLE_FILE}} | {{SINGLE_FILE_CONFIDENCE}} |
+| Barrel exports (index.ts) | {{BARREL_EXPORTS}} | {{BARREL_CONFIDENCE}} |
+| Colocated styles | {{COLOCATED_STYLES}} | {{STYLES_CONFIDENCE}} |
+| Colocated tests | {{COLOCATED_TESTS}} | {{TESTS_CONFIDENCE}} |
+
+## Evidence
+
+| Directory | Structure Type | Components |
+|-----------|----------------|------------|
+{{#each evidence}}
+| `{{this.directory}}` | {{this.type}} | {{this.count}} |
+{{/each}}
+
+## Convention Rules
+
+### Directory Organization
+
+```
+WHEN organizing components
+USE:
+{{CORRECT_ORGANIZATION}}
+
+NOT:
+{{WRONG_ORGANIZATION}}
+
+RATIONALE: {{ORGANIZATION_RATIONALE}}
+```
+
+### Component File Structure
+
+```
+WHEN creating a new component
+USE:
+{{CORRECT_FILE_STRUCTURE}}
+
+Example:
+{{FILE_STRUCTURE_EXAMPLE}}
+```
+
+### Barrel Exports
+
+```
+{{#if BARREL_EXPORTS}}
+WHEN exporting from a directory
+USE: index.ts with named exports
+
+// components/index.ts
+export { Button } from './Button'
+export { Input } from './Input'
+export { Card } from './Card'
+
+// Usage
+import { Button, Input, Card } from '@/components'
+{{else}}
+WHEN importing components
+USE: Direct imports (no barrel files)
+
+// Usage
+import { Button } from '@/components/Button'
+import { Input } from '@/components/Input'
+{{/if}}
+```
+
+## Component Template
+
+```typescript
+{{COMPONENT_TEMPLATE}}
+```
+
+## Props Pattern
+
+```typescript
+// Detected props pattern
+{{PROPS_PATTERN}}
+```
+
+## Styling Pattern
+
+```typescript
+// Detected styling approach
+{{STYLING_PATTERN}}
+```
+
+## Integration Requirements
+
+1. **File Location**: Place in {{COMPONENT_LOCATION}}
+2. **Naming**: Use {{FILE_NAMING_CONVENTION}}
+3. **Exports**: {{EXPORT_STYLE}}
+4. **Props**: Define types {{PROPS_LOCATION}}
+5. **Styles**: {{STYLING_APPROACH}}
+
+## Related Patterns
+
+- [Naming](../global/naming.md) - File and code naming conventions
+- [State Management](./state.md) - Component state patterns
+- [Testing](../testing/patterns.md) - Component test patterns

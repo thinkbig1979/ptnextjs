@@ -16,20 +16,20 @@ requires: [test-context-gatherer]
 **BEFORE any work:**
 
 ```
-Skill(skill="agent-os-testing-standards")
+Skill(skill="e2e-test-repair")
 ```
 
 Then READ:
 - `references/canonical-values.md` - Timeouts, file locations, patterns
 - `references/validation-checklist.md` - Alignment validation
 
-**Confirm:** "I have invoked Skill(skill='agent-os-testing-standards') and read canonical values."
+**Confirm:** "I have invoked Skill(skill='e2e-test-repair') and read canonical values."
 
 ## Prerequisites Gate
 
 **MUST complete before proceeding:**
 
-1. **Invoke skill** `Skill(skill="agent-os-testing-standards")`
+1. **Invoke skill** `Skill(skill="e2e-test-repair")`
 2. **Read** `references/canonical-values.md` from skill
 3. **Verify** test-context-gatherer completed (context file exists)
 4. **Check** config.yml for feature toggles

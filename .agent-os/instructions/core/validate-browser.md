@@ -79,7 +79,7 @@ Initialize Playwright testing environment and identify web UI components for val
     IF project is git repository AND worktree desired:
       1. CREATE: ./setup/create-worktree.sh browser-test-[TIMESTAMP]
       2. CAPTURE worktree path from output
-      3. START dev server in worktree directory
+      3. BUILD and START production server in worktree directory
       4. RUN browser tests against worktree instance
       5. CLEANUP: ./setup/cleanup-worktree.sh browser-test-[TIMESTAMP]
 
@@ -95,23 +95,28 @@ Initialize Playwright testing environment and identify web UI components for val
     ./setup/create-worktree.sh browser-test-$(date +%s)
     cd .agent-os/worktrees/browser-test-*
 
-    # Start dev server in worktree
-    npm run dev &
-    DEV_SERVER_PID=$!
-
-    # Run browser tests
+    # Build and start production server (NOT dev server - 10-50x faster)
+    npm run build
+    npm run start &
+    PROD_SERVER_PID=$!
+    
+    # Wait for server ready
+    until curl -sf http://localhost:3000 > /dev/null; do sleep 1; done
+    
+    # Set BASE_URL and run browser tests
+    export BASE_URL="http://localhost:3000"
     npm run test:e2e
 
     # Cleanup
-    kill $DEV_SERVER_PID
+    kill $PROD_SERVER_PID
     cd ../..
     ./setup/cleanup-worktree.sh browser-test-*
     ```
 
   **Standard Execution** (without worktree):
-    - Tests run in current workspace
-    - Dev server uses current file state
-    - Suitable for quick validation
+    - Build and start production server
+    - Tests run against production build
+    - 10-50x faster than dev server
 </worktree_setup>
 
 <playwright_initialization>
@@ -153,7 +158,8 @@ Initialize Playwright testing environment and identify web UI components for val
   </browser_configuration>
 
   <test_environment_setup>
-    - Start local dev server if not running
+    - Build and start production server (NOT dev server - 10-50x faster)
+    - Set BASE_URL environment variable
     - Clear browser cache and storage
     - Set up test data and fixtures
     - Configure authentication if needed
@@ -788,14 +794,14 @@ Create detailed browser validation report with test results, screenshots, and ac
     - ACTION: Run `npx playwright install`
   </browser_not_installed>
 
-  <dev_server_not_running>
+  <server_not_running>
     - Local server not accessible
-    - ACTION: Start dev server automatically or prompt user
-  </dev_server_not_running>
+    - ACTION: Build and start production server (npm run build && npm run start)
+  </server_not_running>
 
   <port_conflicts>
-    - Dev server port in use
-    - ACTION: Use alternative port or stop conflicting process
+    - Server port in use
+    - ACTION: Kill existing process or use alternative port
   </port_conflicts>
 </environment_issues>
 

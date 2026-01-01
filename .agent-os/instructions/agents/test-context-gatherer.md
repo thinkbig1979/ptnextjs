@@ -62,7 +62,7 @@ step_1_check_project_patterns:
 
 step_2_invoke_skills:
   required_invocations:
-    - "Skill(skill='agent-os-testing-standards')" # Timeouts, locations, rules
+    - "Skill(skill='e2e-test-repair')" # Timeouts, locations, rules
     - "Skill(skill='agent-os-test-research')"     # Detection patterns
     - "Skill(skill='agent-os-patterns')"          # vitest.md, playwright.md, convex.md
 
@@ -75,7 +75,7 @@ step_3_fill_gaps:
     5: "WebSearch/WebFetch (fallback)"
 ```
 
-**Confirm:** "I have invoked Skill('agent-os-testing-standards'), Skill('agent-os-test-research'), Skill('agent-os-patterns')"
+**Confirm:** "I have invoked Skill('e2e-test-repair'), Skill('agent-os-test-research'), Skill('agent-os-patterns')"
 
 ### 2.1 External Sources (For Gaps Only)
 

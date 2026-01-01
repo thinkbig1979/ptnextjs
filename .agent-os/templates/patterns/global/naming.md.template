@@ -1,0 +1,112 @@
+# Pattern: Naming Conventions
+
+## Metadata
+- Generated: {{GENERATED_DATE}}
+- Confidence: {{CONFIDENCE_LEVEL}}
+- Files Analyzed: {{FILE_COUNT}}
+- Pattern Instances: {{INSTANCE_COUNT}}
+
+## Detected Patterns
+
+### File Naming
+
+| Category | Convention | Example | Confidence |
+|----------|------------|---------|------------|
+| Components | {{COMPONENT_FILE_CASE}} | `{{COMPONENT_EXAMPLE}}` | {{COMPONENT_CONFIDENCE}} |
+| Utilities | {{UTILITY_FILE_CASE}} | `{{UTILITY_EXAMPLE}}` | {{UTILITY_CONFIDENCE}} |
+| Hooks | {{HOOK_FILE_CASE}} | `{{HOOK_EXAMPLE}}` | {{HOOK_CONFIDENCE}} |
+| Types | {{TYPE_FILE_CASE}} | `{{TYPE_EXAMPLE}}` | {{TYPE_CONFIDENCE}} |
+| Tests | {{TEST_FILE_PATTERN}} | `{{TEST_EXAMPLE}}` | {{TEST_CONFIDENCE}} |
+
+### Code Naming
+
+| Element | Convention | Example | Confidence |
+|---------|------------|---------|------------|
+| Variables | {{VARIABLE_CASE}} | `{{VARIABLE_EXAMPLE}}` | {{VARIABLE_CONFIDENCE}} |
+| Functions | {{FUNCTION_CASE}} | `{{FUNCTION_EXAMPLE}}` | {{FUNCTION_CONFIDENCE}} |
+| Classes | {{CLASS_CASE}} | `{{CLASS_EXAMPLE}}` | {{CLASS_CONFIDENCE}} |
+| Constants | {{CONSTANT_CASE}} | `{{CONSTANT_EXAMPLE}}` | {{CONSTANT_CONFIDENCE}} |
+| Types/Interfaces | {{TYPE_CASE}} | `{{TYPE_NAME_EXAMPLE}}` | {{TYPE_NAME_CONFIDENCE}} |
+
+## Evidence
+
+### File Naming Evidence
+{{#each file_evidence}}
+| `{{this.file}}` | {{this.convention}} |
+{{/each}}
+
+### Code Naming Evidence
+{{#each code_evidence}}
+| `{{this.file}}:{{this.line}}` | `{{this.snippet}}` | {{this.convention}} |
+{{/each}}
+
+## Convention Rules
+
+### Files
+
+```
+WHEN creating component files
+USE: {{COMPONENT_FILE_CASE}} (e.g., UserProfile.tsx)
+NOT: {{WRONG_COMPONENT_CASE}} (e.g., user-profile.tsx, userProfile.tsx)
+
+WHEN creating utility files
+USE: {{UTILITY_FILE_CASE}} (e.g., formatDate.ts)
+NOT: {{WRONG_UTILITY_CASE}}
+
+WHEN creating test files
+USE: {{TEST_FILE_PATTERN}} (e.g., UserProfile.test.tsx)
+NOT: {{WRONG_TEST_PATTERN}}
+```
+
+### Code
+
+```
+WHEN naming variables
+USE: {{VARIABLE_CASE}} (e.g., userName, isLoading)
+NOT: {{WRONG_VARIABLE_CASE}}
+
+WHEN naming functions
+USE: {{FUNCTION_CASE}} (e.g., getUserById, handleSubmit)
+NOT: {{WRONG_FUNCTION_CASE}}
+
+WHEN naming constants
+USE: {{CONSTANT_CASE}} (e.g., MAX_RETRIES, API_BASE_URL)
+NOT: {{WRONG_CONSTANT_CASE}}
+
+WHEN naming types/interfaces
+USE: {{TYPE_CASE}} (e.g., UserProfile, ApiResponse)
+NOT: {{WRONG_TYPE_CASE}}
+```
+
+## Quick Reference
+
+```typescript
+// Component file: {{COMPONENT_FILE_CASE}}
+// {{COMPONENT_EXAMPLE}}
+export function {{COMPONENT_NAME_EXAMPLE}}() { ... }
+
+// Utility file: {{UTILITY_FILE_CASE}}
+// {{UTILITY_EXAMPLE}}
+export function {{FUNCTION_EXAMPLE}}() { ... }
+
+// Variables: {{VARIABLE_CASE}}
+const {{VARIABLE_EXAMPLE}} = ...
+
+// Constants: {{CONSTANT_CASE}}
+const {{CONSTANT_EXAMPLE}} = ...
+
+// Types: {{TYPE_CASE}}
+interface {{TYPE_NAME_EXAMPLE}} { ... }
+```
+
+## Integration Requirements
+
+When creating new files:
+1. Check existing files in the same directory for convention
+2. Follow the detected pattern for that file type
+3. If uncertain, default to the conventions above
+
+## Related Patterns
+
+- [Components](../frontend/components.md) - Component file organization
+- [Testing](../testing/patterns.md) - Test file naming and location

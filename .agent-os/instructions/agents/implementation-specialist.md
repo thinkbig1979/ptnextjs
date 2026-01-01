@@ -28,6 +28,103 @@ Core Feature Implementation Specialist - robust, efficient, maintainable busines
 - Performance constraints
 - Integration points (APIs, services)
 
+## Pattern Loading (MANDATORY - v5.0+)
+
+**⚠️ BEFORE starting any implementation, you MUST load and follow existing patterns.**
+
+### Step 1: Load Pattern Documentation
+
+```yaml
+patterns_path: "{AGENT_OS_ROOT}/.agent-os/patterns"
+
+LOAD (if exists):
+  - architecture.md         # Overall patterns summary
+  - frontend/routing.md     # URL structure (CRITICAL: ID vs slug)
+  - frontend/components.md  # Component organization
+  - frontend/state.md       # State management library
+  - frontend/forms.md       # Form handling approach
+  - backend/api.md          # API response format
+  - backend/auth.md         # Authentication pattern
+  - global/naming.md        # Naming conventions
+  - global/error-handling.md # Error patterns
+
+IF patterns not found:
+  CHECK: Task definition for "## Pattern Constraints" section
+  WARN: "No patterns loaded - verify with existing code before implementing"
+```
+
+### Step 2: Extract Key Constraints
+
+```yaml
+EXTRACT and CONFIRM these constraints before coding:
+
+url_structure:
+  pattern: "id_based" | "slug_based" | "uuid_based"
+  constraint: "Use /:id in routes, NOT /:slug"
+
+naming:
+  files: "PascalCase for components, camelCase for utilities"
+  code: "camelCase variables, UPPER_SNAKE_CASE constants"
+
+api_format:
+  response: "{ data: T }" | "flat"
+  error: "{ error: string }" | "{ errors: [] }"
+
+state_management:
+  library: "zustand" | "redux" | "context"
+  server_state: "@tanstack/react-query" | "swr"
+
+forms:
+  library: "react-hook-form" | "formik"
+  validation: "zod" | "yup"
+```
+
+### Step 3: Confirm Pattern Compliance
+
+```yaml
+BEFORE writing code, STATE:
+  "Following patterns:
+   - URL: {url_pattern}
+   - Naming: {naming_pattern}
+   - API: {api_pattern}
+   - State: {state_library}
+   - Forms: {form_library}"
+
+DURING implementation:
+  FOR each file created:
+    VERIFY: Matches loaded patterns
+    IF deviation needed:
+      STOP: Document justification before proceeding
+      SAVE: To .agent-os/patterns/deviations/{task_id}.md
+```
+
+### Pattern Adherence Checklist
+
+Before submitting implementation, verify:
+
+- [ ] **URL Structure**: Routes use correct param style (`:id` vs `:slug`)
+- [ ] **File Naming**: Components PascalCase, utilities camelCase
+- [ ] **Code Naming**: Variables camelCase, constants UPPER_SNAKE_CASE
+- [ ] **API Responses**: Match existing format (wrapped vs flat)
+- [ ] **State Management**: Using same library as codebase
+- [ ] **Form Handling**: Using same library + validation
+- [ ] **Error Handling**: Following existing patterns
+- [ ] **Component Structure**: Matching existing organization
+
+### Deviation Protocol
+
+```yaml
+IF pattern deviation is necessary:
+  1. STOP implementation
+  2. DOCUMENT reason: "Why existing pattern won't work"
+  3. PROPOSE alternative: "What pattern to use instead"
+  4. SAVE to: .agent-os/patterns/deviations/{task_id}.md
+  5. NOTIFY: Include in status report
+  6. WAIT: For acknowledgment before proceeding
+
+NEVER silently deviate from established patterns.
+```
+
 ## Design Principles
 
 ```yaml

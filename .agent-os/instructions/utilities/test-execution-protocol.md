@@ -25,23 +25,44 @@ Why? Subagents don't stream intermediate output - users would see nothing for 5+
 
 ## 1. Server Pre-Flight Check (E2E/Integration Only)
 
-Before running E2E or integration tests, verify servers are running:
+Before running E2E or integration tests, check if production server is running:
 
 ```bash
-# Check frontend
-curl -sf --max-time 2 http://localhost:3000 && echo "Frontend: OK" || echo "Frontend: DOWN"
-
-# Check backend
-curl -sf --max-time 2 http://localhost:3001 && echo "Backend: OK" || echo "Backend: DOWN"
+curl -sf --max-time 2 http://localhost:3000 && echo "Server: OK" || echo "Server: DOWN"
 ```
 
-**If ANY server is down:**
-1. **STOP** - Do not run E2E tests
-2. **Tell the user** which server(s) are down
-3. **Ask them** to start the servers
-4. **Wait** for confirmation before proceeding
+**If server is down - Start Production Server Autonomously:**
 
-**Never auto-start servers** - causes port conflicts.
+E2E tests MUST run against a production server (10-50x faster than dev server).
+
+```bash
+# 1. Kill any existing servers (avoid port conflicts)
+lsof -ti:3000 | xargs kill -9 2>/dev/null || true
+
+# 2. Detect framework and build
+if [ -f "next.config.js" ] || [ -f "next.config.ts" ] || [ -f "next.config.mjs" ]; then
+  npm run build && npm run start > /tmp/prod-server.log 2>&1 &
+elif [ -f "vite.config.ts" ] || [ -f "vite.config.js" ]; then
+  npm run build && npm run preview > /tmp/prod-server.log 2>&1 &
+else
+  npm run build && npm run start > /tmp/prod-server.log 2>&1 &
+fi
+echo $! > /tmp/prod-server.pid
+
+# 3. Wait for ready (max 60s)
+for i in {1..60}; do
+  curl -sf http://localhost:3000 > /dev/null 2>&1 && break
+  sleep 1
+done
+
+# 4. Verify
+curl -sf http://localhost:3000 && echo "Production server ready" || { echo "ERROR: Server failed to start"; exit 1; }
+```
+
+**CRITICAL RULES:**
+- **DO NOT ask user to start the server** - Start it yourself
+- **DO NOT use dev server** (npm run dev) - Always use production build
+- Production server is 10-50x faster for E2E tests
 
 ---
 

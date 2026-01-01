@@ -1,0 +1,193 @@
+# Pattern: API Patterns
+
+## Metadata
+- Generated: {{GENERATED_DATE}}
+- Confidence: {{CONFIDENCE_LEVEL}}
+- Files Analyzed: {{FILE_COUNT}}
+- Pattern Instances: {{INSTANCE_COUNT}}
+
+## Detected Patterns
+
+### Response Format
+
+**Pattern**: {{RESPONSE_FORMAT_NAME}}
+
+```typescript
+// Detected response structure
+{{RESPONSE_STRUCTURE}}
+```
+
+### Error Format
+
+**Pattern**: {{ERROR_FORMAT_NAME}}
+
+```typescript
+// Detected error structure
+{{ERROR_STRUCTURE}}
+```
+
+### Pagination
+
+**Pattern**: {{PAGINATION_TYPE}}
+
+```typescript
+// Detected pagination structure
+{{PAGINATION_STRUCTURE}}
+```
+
+## Evidence
+
+| File | Line | Response Pattern |
+|------|------|------------------|
+{{#each evidence}}
+| `{{this.file}}` | {{this.line}} | `{{this.snippet}}` |
+{{/each}}
+
+## Convention Rules
+
+### Success Responses
+
+```typescript
+WHEN returning successful data
+USE:
+{{SUCCESS_RESPONSE_PATTERN}}
+
+NOT:
+{{WRONG_SUCCESS_PATTERN}}
+
+RATIONALE: {{SUCCESS_RATIONALE}} ({{SUCCESS_PERCENTAGE}}% consistency)
+```
+
+### Error Responses
+
+```typescript
+WHEN returning errors
+USE:
+{{ERROR_RESPONSE_PATTERN}}
+
+NOT:
+{{WRONG_ERROR_PATTERN}}
+
+RATIONALE: {{ERROR_RATIONALE}} ({{ERROR_PERCENTAGE}}% consistency)
+```
+
+### Pagination
+
+```typescript
+WHEN returning paginated data
+USE:
+{{PAGINATION_PATTERN}}
+
+NOT:
+{{WRONG_PAGINATION_PATTERN}}
+
+RATIONALE: {{PAGINATION_RATIONALE}}
+```
+
+## Implementation Templates
+
+### Standard GET Response
+
+```typescript
+// Single resource
+export async function GET(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  const resource = await getResource(params.id)
+
+  if (!resource) {
+    return NextResponse.json(
+      {{NOT_FOUND_ERROR}},
+      { status: 404 }
+    )
+  }
+
+  return NextResponse.json({{SUCCESS_SINGLE}})
+}
+```
+
+### Standard LIST Response
+
+```typescript
+// List with pagination
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url)
+  {{PAGINATION_PARAMS}}
+
+  const { items, total, {{PAGINATION_META}} } = await listResources(params)
+
+  return NextResponse.json({{SUCCESS_LIST}})
+}
+```
+
+### Standard POST Response
+
+```typescript
+// Create resource
+export async function POST(request: Request) {
+  const body = await request.json()
+
+  // Validation
+  const validated = schema.safeParse(body)
+  if (!validated.success) {
+    return NextResponse.json(
+      {{VALIDATION_ERROR}},
+      { status: 400 }
+    )
+  }
+
+  const created = await createResource(validated.data)
+
+  return NextResponse.json({{SUCCESS_CREATED}}, { status: 201 })
+}
+```
+
+### Standard Error Handler
+
+```typescript
+// Error handling middleware/wrapper
+function handleError(error: unknown) {
+  if (error instanceof ValidationError) {
+    return NextResponse.json({{VALIDATION_ERROR_SHAPE}}, { status: 400 })
+  }
+
+  if (error instanceof NotFoundError) {
+    return NextResponse.json({{NOT_FOUND_ERROR_SHAPE}}, { status: 404 })
+  }
+
+  if (error instanceof UnauthorizedError) {
+    return NextResponse.json({{UNAUTHORIZED_ERROR_SHAPE}}, { status: 401 })
+  }
+
+  // Unknown error
+  console.error(error)
+  return NextResponse.json({{INTERNAL_ERROR_SHAPE}}, { status: 500 })
+}
+```
+
+## TypeScript Types
+
+```typescript
+// Standard response type
+{{RESPONSE_TYPE_DEFINITION}}
+
+// Standard error type
+{{ERROR_TYPE_DEFINITION}}
+
+// Pagination type
+{{PAGINATION_TYPE_DEFINITION}}
+```
+
+## Integration Requirements
+
+1. **Response Wrapper**: Always use the detected response format
+2. **Error Codes**: Use consistent error structure
+3. **Status Codes**: Match HTTP semantics (200, 201, 400, 401, 404, 500)
+4. **Type Safety**: Export response types for frontend consumption
+
+## Related Patterns
+
+- [URL Structure](../frontend/routing.md) - How routes map to endpoints
+- [Error Handling](../global/error-handling.md) - Frontend error display
+- [Authentication](./auth.md) - Auth headers and responses

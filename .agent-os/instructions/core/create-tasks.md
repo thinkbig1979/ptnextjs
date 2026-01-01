@@ -42,6 +42,87 @@ Use context-fetcher to identify reusable components, integration points, and pat
   - **Patterns**: Architecture, organization, integration, quality
 </analysis_scope>
 
+<pattern_consistency_check version="5.0">
+  **Purpose**: Ensure spec requirements align with existing codebase patterns.
+
+  **Step 1.1: Load Pattern Documentation**
+  ```yaml
+  patterns_path: "{AGENT_OS_ROOT}/.agent-os/patterns"
+
+  IF exists(patterns_path):
+    LOAD:
+      - architecture.md       # Overall patterns summary
+      - frontend/routing.md   # URL structure (ID vs slug)
+      - frontend/components.md # Component organization
+      - backend/api.md        # API response format
+      - global/naming.md      # Naming conventions
+
+    EXTRACT constraints:
+      url_pattern: "ID-based" | "slug-based" | "UUID-based"
+      naming_convention: "PascalCase" | "kebab-case"
+      api_format: "wrapped" | "flat"
+      state_library: "zustand" | "redux" | "context"
+
+  ELSE:
+    WARN: "No patterns found. Run pattern-discovery-analyst first."
+    SUGGEST: "Use /create-spec to trigger pattern discovery."
+  ```
+
+  **Step 1.2: Compare Spec Requirements**
+  ```yaml
+  FOR each spec requirement:
+    COMPARE: requirement vs detected_patterns
+
+    IF requirement.url_structure != patterns.url_structure:
+      FLAG: "URL Pattern Conflict"
+      DETAILS: "Spec uses {spec.url}, codebase uses {patterns.url}"
+
+    IF requirement.naming != patterns.naming:
+      FLAG: "Naming Convention Conflict"
+      DETAILS: "Spec uses {spec.naming}, codebase uses {patterns.naming}"
+
+    IF requirement.api_format != patterns.api_format:
+      FLAG: "API Format Conflict"
+      DETAILS: "Spec uses {spec.format}, codebase uses {patterns.format}"
+  ```
+
+  **Step 1.3: Resolve Conflicts**
+  ```yaml
+  IF conflicts_detected:
+    PROMPT user:
+      "Pattern conflicts detected between spec and existing codebase:
+
+       1. URL Structure: Spec wants '{spec.url}', codebase uses '{patterns.url}'
+       2. [other conflicts...]
+
+       Options:
+       A. Follow existing patterns (RECOMMENDED) - modify task requirements
+       B. Deviate with justification - document as architectural decision
+       C. Expand scope to refactor - update existing code to new pattern
+
+       Which approach for each conflict?"
+
+    WAIT: User decision
+
+    FOR each conflict:
+      IF decision == "follow_existing":
+        UPDATE: Task requirements to match existing pattern
+        NOTE: "Aligned with existing pattern: {pattern}"
+
+      IF decision == "deviate":
+        REQUIRE: Justification from user
+        DOCUMENT: In tasks.md header and relevant task files
+        CREATE: .agent-os/patterns/deviations/{spec_name}.md
+
+      IF decision == "refactor":
+        WARN: "Scope expansion - additional refactoring tasks will be created"
+        CREATE: Refactoring tasks for existing code
+        UPDATE: Dependency graph
+  ```
+
+  **Output**: Pattern-aligned task requirements ready for generation.
+</pattern_consistency_check>
+
 </step>
 
 <step number="1.5" name="full_stack_feature_detection">
@@ -207,6 +288,65 @@ Check for existing tasks and offer upgrade to v2.2.0 structure.
   OUTPUT: "✅ Project: typescript.md | Skill: vitest.md, coding-style.md"
 </skill_invocation_required>
 
+<pattern_constraints_for_tasks version="5.0">
+  **Purpose**: Inject pattern constraints into every task definition.
+
+  **Step 1: Generate Constraints Block**
+  ```yaml
+  # Extract from loaded patterns
+  constraints_block: |
+    ## Pattern Constraints (AUTO-GENERATED)
+
+    These patterns MUST be followed for integration consistency:
+
+    | Category | Constraint | Source |
+    |----------|------------|--------|
+    | URL Structure | Use `/:id` (numeric), NOT `/:slug` | .agent-os/patterns/frontend/routing.md |
+    | File Naming | Components: PascalCase.tsx | .agent-os/patterns/global/naming.md |
+    | API Response | Wrap in `{ data: T }` | .agent-os/patterns/backend/api.md |
+    | State | Use Zustand for global state | .agent-os/patterns/frontend/state.md |
+    | Forms | React Hook Form + Zod | .agent-os/patterns/frontend/forms.md |
+
+    **Deviation Protocol**: If you must deviate, STOP and document justification.
+  ```
+
+  **Step 2: Inject Into Task Files**
+  ```yaml
+  FOR each task-*.md file:
+    INSERT: constraints_block after "## Context Requirements"
+
+    # Example task structure:
+    # ## Task: task-impl-user-profile
+    # ## Context Requirements
+    # - Read: src/components/...
+    # ## Pattern Constraints (AUTO-GENERATED)  <-- INSERTED
+    # - URL Structure: Use /:id...
+    # ## Implementation Notes
+    # ...
+  ```
+
+  **Step 3: Add to Master tasks.md Header**
+  ```yaml
+  INSERT in tasks.md header:
+    ## Active Pattern Constraints
+
+    All tasks in this spec follow these patterns:
+    - **URL**: ID-based routing (`:id`)
+    - **Naming**: PascalCase components, camelCase functions
+    - **API**: `{ data: T }` response wrapper
+    - **State**: Zustand + TanStack Query
+
+    Pattern source: `.agent-os/patterns/`
+    Last analyzed: {DATE}
+  ```
+
+  **Verification**:
+  - [ ] Constraints block generated from patterns
+  - [ ] Every task-*.md includes constraints section
+  - [ ] Master tasks.md has pattern summary
+  - [ ] Deviation protocol documented
+</pattern_constraints_for_tasks>
+
 </step>
 
 <step number="2" subagent="file-creator" name="generate_micro_granular_tasks">
@@ -352,43 +492,125 @@ Use file-creator to create lightweight master tasks.md + detailed task-*.md file
      - Block frontend if incomplete
      - AC: Phase 1 passes, no "TBD"/"if exists", entry points documented, flows have specs
 
-  2. **impl-app-routes** - Implement Application Routes
-     - Agent: frontend-[tech]-specialist, 15-20 min, depends: [ux-validate-arch-spec]
+  2. **design-e2e-test-strategy** - Design E2E Test Strategy (v5.1.0+)
+     - Agent: test-architect, 15-20 min, depends: [ux-validate-arch-spec]
+     - Read sub-specs/e2e-test-strategy.md (created in spec)
+     - Verify all user flows have test plans
+     - Assign tiers (smoke/core/regression) per @instructions/utilities/e2e-test-placement-checklist.md
+     - Define data-testid attributes for all interactive elements
+     - Document accessibility testing requirements
+     - **OUTPUT**: .agent-os/specs/[spec]/e2e-strategy-verified.md
+     - AC: All flows have tier assignment, data-testid list complete, accessibility requirements defined
+
+  3. **impl-app-routes** - Implement Application Routes
+     - Agent: frontend-[tech]-specialist, 15-20 min, depends: [design-e2e-test-strategy]
      - Create route definitions, guards/auth, nested routing, parameters, placeholder pages
      - AC: Routes accessible, auth works, nested render correctly, parameters captured, navigation works
 
-  3. **impl-global-layout** - Implement Global Layout Shell
+  4. **impl-global-layout** - Implement Global Layout Shell
      - Agent: frontend-[tech]-specialist, 25-30 min, depends: [impl-app-routes]
      - Based on layout_strategy (NEW/EXTEND/USE): Create/modify components, header, sidebar, main area, responsive
      - AC: Layout renders, dimensions correct, responsive tested
 
-  4. **impl-navigation-structure** - Implement Navigation Architecture
+  5. **impl-navigation-structure** - Implement Navigation Architecture
      - Agent: frontend-[tech]-specialist, 25-30 min, depends: [impl-global-layout]
      - Type (sidebar/top/hybrid), component, items, active state, mobile nav, breadcrumbs, user menu
      - AC: Items render, navigate correctly, active highlighted, mobile works, breadcrumbs show hierarchy, user menu functions
 
-  5. **setup-component-library** - Setup UI Component Library
+  6. **setup-component-library** - Setup UI Component Library
      - Agent: frontend-[tech]-specialist, 15-20 min, depends: [impl-navigation-structure]
      - Install library OR create base primitives, configure theme, design tokens
      - AC varies by library vs custom
 
-  6. **impl-page-layouts** - Implement Page Layout Templates
+  7. **impl-page-layouts** - Implement Page Layout Templates
      - Agent: frontend-[tech]-specialist, 25-30 min, depends: [setup-component-library]
      - Patterns (grid/form/list/master-detail/wizard), layout components, containers, hierarchy, spacing, responsive
      - AC: Patterns implemented, responsive tested
 
-  7. **impl-frontend-components** - Implement UI Components
+  8. **impl-frontend-components** - Implement UI Components
      - Agent: frontend-[tech]-specialist, 30-40 min, depends: [impl-page-layouts]
      - Use library OR custom, follow hierarchy, apply styling
+     - **MUST include data-testid attributes** per design-e2e-test-strategy output
+     - AC per @instructions/utilities/ui-acceptance-criteria-checklist.md
 
-  8. **impl-user-flow-{name}** - Implement {FlowName} User Flow
+  9. **impl-user-flow-{name}** - Implement {FlowName} User Flow
      - Agent: frontend-[tech]-specialist, 25-35 min, depends: [impl-frontend-components, impl-frontend-state]
      - Complete flow steps, connect components, navigation, loading/error/success states
+     - **BLOCKED BY**: test-user-flow-{name} must pass for task to complete
 
-  9. **test-user-flow-{name}** - Validate {FlowName} User Flow
-     - Agent: test-architect, 20-25 min, depends: [impl-user-flow-{name}]
-     - E2E test, verify steps, test error/loading, capture evidence
+  10. **test-user-flow-{name}** - Create E2E Tests for {FlowName} User Flow
+      - Agent: test-architect, 20-25 min, depends: [impl-frontend-components] (NOT impl-user-flow)
+      - **⚠️ BLOCKING DEPENDENCY**: This task BLOCKS impl-user-flow-{name} completion
+      - Read: @instructions/utilities/e2e-test-placement-checklist.md
+      - Read: @standards/e2e-ui-testing-standards.md
+      - Create E2E test per e2e-strategy-verified.md
+      - Place in correct tier (smoke/core/regression)
+      - Include accessibility assertions (axe-core)
+      - Update test-inventory.ts
+      - AC: E2E test passes, tier assigned correctly, accessibility scan passes, inventory updated
+
+  11. **validate-browser-{flow}** - Browser Validation for {FlowName}
+      - Agent: quality-assurance, 15-20 min, depends: [test-user-flow-{name}]
+      - Run browser validation per @instructions/core/validate-browser.md
+      - Verify Chrome, Firefox, Safari (if supported), Mobile
+      - Run accessibility scan (WCAG 2.1 AA)
+      - Check Core Web Vitals (LCP < 2.5s, CLS < 0.1)
+      - **OUTPUT**: .agent-os/validation/[flow]-validation-report.json
+      - AC: All browsers pass, 0 critical a11y violations, performance targets met
 </ux_ui_architecture_tasks>
+
+<e2e_test_blocking_dependencies>
+  **⚠️ CRITICAL: E2E Tests BLOCK Implementation Completion (v5.1.0+)**
+
+  **The Problem**: Previously, `test-user-flow-{name}` was optional - implementations could complete without E2E tests.
+
+  **The Solution**: E2E test tasks now BLOCK implementation task completion.
+
+  **Dependency Structure**:
+  ```
+  impl-frontend-components
+           │
+           ├─────────────────────────────┐
+           ▼                             ▼
+  impl-user-flow-{name}         test-user-flow-{name}
+           │                             │
+           │◄────── BLOCKS ──────────────┘
+           │
+           ▼
+  validate-browser-{flow}
+           │
+           ▼
+  User Flow COMPLETE ✅
+  ```
+
+  **Enforcement**:
+  - impl-user-flow-{name} status remains "in_progress" until test-user-flow-{name} passes
+  - Beads dependency: `bd dep add impl-user-flow-X test-user-flow-X`
+  - Task completion gate verifies: `test-user-flow-{name}.status == "completed"`
+
+  **Task File Template Addition**:
+  ```yaml
+  # In task-impl-user-flow-{name}.md
+  blocking_dependencies:
+    - task_id: test-user-flow-{name}
+      type: e2e_test
+      must_pass: true
+      verification: "E2E tests pass + accessibility scan clean"
+
+    - task_id: validate-browser-{flow}
+      type: browser_validation
+      must_pass: true
+      verification: "Browser validation report generated with 0 critical issues"
+  ```
+
+  **User Flow Completion Criteria**:
+  - [ ] impl-user-flow-{name} implementation complete
+  - [ ] test-user-flow-{name} E2E tests pass
+  - [ ] validate-browser-{flow} browser validation passes
+  - [ ] Accessibility: 0 critical/serious violations
+  - [ ] Performance: Core Web Vitals targets met
+  - [ ] Evidence documented in task file
+</e2e_test_blocking_dependencies>
 
 </step>
 

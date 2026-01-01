@@ -553,6 +553,328 @@ USE FOR: Triage input, progress tracking, before/after comparison, quality trend
 
 </step>
 
+<step number="2.7" name="ui_specification_validation">
+
+### Step 2.7: UI Specification Validation (v5.1.0+)
+
+**Trigger**: When target is a specification that includes frontend/UI components.
+
+**Purpose**: Ensure UI specifications include mandatory E2E test strategy, accessibility requirements, and browser validation criteria.
+
+<ui_spec_detection>
+```yaml
+ui_spec_indicators:
+  # Check for UI-related content in spec files
+  CHECK: spec.md, technical-spec.md, ux-ui-spec.md
+
+  HAS_UI_IF:
+    - Contains "UI Components" section
+    - Contains "Frontend Implementation" section
+    - Contains "User Interface" or "User Flow"
+    - References .tsx, .jsx, .vue, .svelte files
+    - Contains route definitions (/path, /route)
+    - References form components or form validation
+
+  IF has_ui_content:
+    EXECUTE: UI-specific validation
+  ELSE:
+    SKIP: UI validation (backend-only spec)
+```
+</ui_spec_detection>
+
+<e2e_test_strategy_validation>
+**Check**: E2E Test Strategy Exists (MANDATORY for UI specs)
+
+```yaml
+e2e_strategy_check:
+  LOOK_FOR: sub-specs/e2e-test-strategy.md
+
+  IF NOT exists:
+    FINDING:
+      severity: P1 (CRITICAL)
+      category: Testing
+      title: "Missing E2E Test Strategy"
+      description: |
+        UI specification lacks E2E test strategy document.
+        This is MANDATORY for all UI features per Agent OS v5.1.0.
+      recommendation: |
+        Create sub-specs/e2e-test-strategy.md with:
+        1. User flow inventory with tier assignments
+        2. Critical path tests (smoke tier)
+        3. Feature tests (core tier)
+        4. data-testid specifications for all interactive elements
+        5. Accessibility testing requirements
+        6. Browser validation matrix
+      reference: "@instructions/core/create-spec.md Step 9.6"
+
+  IF exists:
+    VALIDATE contents:
+
+    # 1. User Flow Inventory
+    CHECK: "User Flow Inventory" section exists
+    VERIFY: Each flow has tier assignment (smoke/core/regression)
+    IF missing:
+      FINDING: P2, "E2E strategy missing user flow inventory"
+
+    # 2. data-testid Specifications
+    CHECK: "data-testid Elements" table exists
+    COUNT: data-testid entries
+    IF count < (form_elements_in_spec):
+      FINDING: P2, "Incomplete data-testid specifications"
+      DETAIL: "Found {count} data-testid entries, spec has {form_count} form elements"
+
+    # 3. Tier Assignments
+    CHECK: Each user flow has tier (smoke/core/regression)
+    VERIFY: At least 1 smoke tier test for critical paths
+    IF no_smoke_tests:
+      FINDING: P2, "No smoke tier tests defined for critical paths"
+
+    # 4. Accessibility Requirements
+    CHECK: "Accessibility Testing Requirements" section exists
+    VERIFY: Per-page accessibility matrix defined
+    IF missing:
+      FINDING: P2, "Missing accessibility testing requirements"
+
+    # 5. Browser Matrix
+    CHECK: "Browser Validation Matrix" section exists
+    VERIFY: At least Chrome + Mobile defined
+    IF missing:
+      FINDING: P3, "Missing browser validation matrix"
+```
+</e2e_test_strategy_validation>
+
+<ux_ui_spec_validation>
+**Check**: UX/UI Specification Completeness
+
+```yaml
+ux_ui_spec_check:
+  LOOK_FOR: sub-specs/ux-ui-spec.md
+
+  IF spec_requires_frontend AND NOT exists:
+    FINDING:
+      severity: P1 (CRITICAL)
+      category: Architecture
+      title: "Missing UX/UI Specification"
+      description: |
+        Frontend feature lacks UX/UI specification.
+        Architecture-first approach requires routes, navigation,
+        and layout to be defined BEFORE component implementation.
+      recommendation: |
+        Create sub-specs/ux-ui-spec.md following:
+        @instructions/utilities/ux-ui-specification-checklist.md
+      reference: "@instructions/core/create-spec.md Step 9.5"
+
+  IF exists:
+    VALIDATE phases:
+
+    # Phase 1: Application Architecture (REQUIRED)
+    CHECK: Route Structure defined (no "TBD")
+    CHECK: Navigation Structure defined (no "if exists")
+    CHECK: Layout Integration specified
+    CHECK: User Entry Points documented
+    CHECK: User Flows step-by-step
+
+    IF any_missing_phase1:
+      FINDING:
+        severity: P1 (CRITICAL)
+        title: "Incomplete UX/UI Architecture (Phase 1)"
+        description: "Cannot proceed without complete architecture specification"
+
+    # Phase 2: Layout Systems
+    CHECK: Container Specifications with responsive classes
+    CHECK: Spacing System with Tailwind classes
+    CHECK: Typography System defined
+
+    IF any_missing_phase2:
+      FINDING: P2, "Incomplete layout system specification"
+
+    # Phase 3: Component Patterns
+    CHECK: Component Library Strategy defined
+    CHECK: Component specifications include:
+      - Props interface
+      - State variations (default, hover, active, disabled, loading, error)
+      - Responsive behavior
+      - Accessibility requirements
+
+    IF any_missing_phase3:
+      FINDING: P2, "Incomplete component specifications"
+
+    # Phase 4: Interaction Patterns
+    CHECK: Interactive states defined
+    CHECK: Form validation approach specified
+
+    IF any_missing_phase4:
+      FINDING: P3, "Incomplete interaction patterns"
+
+    # Anti-Pattern Detection
+    SCAN for:
+      - "TBD" or "TODO" in routes/navigation
+      - "if exists" language
+      - Pixels without Tailwind classes
+      - Missing responsive specifications
+      - Components without state variations
+
+    FOR each anti_pattern:
+      FINDING: P2, "UX/UI anti-pattern: {pattern}"
+```
+</ux_ui_spec_validation>
+
+<ui_task_validation>
+**Check**: UI Tasks Have Correct Dependencies
+
+```yaml
+ui_task_dependency_check:
+  IF target_type == "task_list":
+    SCAN: tasks.md for UI implementation tasks
+
+    FOR each impl-user-flow-* task:
+      # Check E2E test dependency
+      VERIFY: test-user-flow-* task exists
+      VERIFY: test-user-flow-* BLOCKS impl-user-flow-*
+
+      IF NOT blocking_dependency:
+        FINDING:
+          severity: P1 (CRITICAL)
+          category: Testing
+          title: "E2E test not blocking implementation"
+          description: |
+            Task {impl_task} can complete without E2E tests passing.
+            Per v5.1.0, E2E tests MUST block implementation completion.
+          recommendation: |
+            Add to task file:
+            blocking_dependencies:
+              - task_id: test-user-flow-{name}
+                type: e2e_test
+                must_pass: true
+          reference: "@instructions/core/create-tasks.md"
+
+    FOR each impl-frontend-components task:
+      # Check data-testid requirement
+      VERIFY: Acceptance criteria includes "data-testid attributes"
+
+      IF NOT includes_testid_requirement:
+        FINDING:
+          severity: P2
+          category: Testing
+          title: "Missing data-testid requirement in component task"
+          recommendation: "Add to AC: 'Include data-testid attributes per e2e-strategy'"
+
+    # Check validate-browser task exists
+    FOR each user_flow:
+      VERIFY: validate-browser-{flow} task exists
+      VERIFY: Depends on test-user-flow-{flow}
+
+      IF NOT exists:
+        FINDING:
+          severity: P2
+          category: Quality
+          title: "Missing browser validation task for {flow}"
+          recommendation: "Add validate-browser-{flow} task per create-tasks.md"
+```
+</ui_task_validation>
+
+<ui_acceptance_criteria_validation>
+**Check**: UI Tasks Have Complete Acceptance Criteria
+
+```yaml
+ui_acceptance_criteria_check:
+  FOR each frontend task in tasks/:
+    READ: task file
+
+    CHECK acceptance_criteria contains:
+
+    # For component tasks
+    IF task_type == "component":
+      REQUIRE:
+        - [ ] Unit tests pass
+        - [ ] Accessibility scan passes (0 critical violations)
+        - [ ] data-testid attributes present
+
+      RECOMMEND:
+        - [ ] Responsive design verified
+        - [ ] Keyboard navigation works
+
+    # For user flow tasks
+    IF task_type == "user_flow":
+      REQUIRE:
+        - [ ] E2E tests pass
+        - [ ] Accessibility scan passes (WCAG 2.1 AA)
+        - [ ] Browser validation completed
+
+      RECOMMEND:
+        - [ ] Performance targets met (LCP < 2.5s, CLS < 0.1)
+        - [ ] Evidence documented
+
+    # For page tasks
+    IF task_type == "page":
+      REQUIRE:
+        - [ ] E2E tests pass
+        - [ ] Accessibility scan passes
+        - [ ] Core Web Vitals measured
+
+    FOR each missing_requirement:
+      FINDING:
+        severity: P2
+        category: Quality
+        title: "Missing required acceptance criterion"
+        description: "Task {task_id} missing: {requirement}"
+        recommendation: "Add to acceptance criteria: {requirement}"
+        reference: "@instructions/utilities/ui-acceptance-criteria-checklist.md"
+```
+</ui_acceptance_criteria_validation>
+
+<ui_validation_summary>
+**Output**: UI Validation Summary
+
+```
+═══════════════════════════════════════════════════════════════════
+UI SPECIFICATION VALIDATION - SUMMARY
+═══════════════════════════════════════════════════════════════════
+
+📋 E2E Test Strategy:
+   Status: [PRESENT/MISSING]
+   User Flows Defined: [COUNT]
+   Smoke Tests: [COUNT]
+   data-testid Coverage: [COUNT]/[TOTAL] ([PERCENT]%)
+   Accessibility Requirements: [DEFINED/MISSING]
+   Browser Matrix: [DEFINED/MISSING]
+
+🎨 UX/UI Specification:
+   Status: [PRESENT/MISSING]
+   Phase 1 (Architecture): [COMPLETE/INCOMPLETE]
+   Phase 2 (Layout): [COMPLETE/INCOMPLETE]
+   Phase 3 (Components): [COMPLETE/INCOMPLETE]
+   Phase 4 (Interactions): [COMPLETE/INCOMPLETE]
+   Anti-Patterns Found: [COUNT]
+
+📝 Task Dependencies:
+   UI Tasks: [COUNT]
+   E2E Blocking Dependencies: [COUNT]/[REQUIRED]
+   Browser Validation Tasks: [COUNT]/[REQUIRED]
+   Missing data-testid Requirements: [COUNT]
+
+🔍 Acceptance Criteria:
+   Tasks with Complete UI AC: [COUNT]/[TOTAL]
+   Missing Requirements: [COUNT]
+
+⚠️ UI-Specific Findings:
+   P1 (Critical): [COUNT] - Block implementation
+   P2 (Important): [COUNT] - Should address
+   P3 (Nice-to-have): [COUNT] - Consider
+
+═══════════════════════════════════════════════════════════════════
+```
+</ui_validation_summary>
+
+**Actions**:
+- Validate E2E test strategy exists and is complete
+- Validate UX/UI specification follows architecture-first approach
+- Verify UI task dependencies (E2E tests block implementation)
+- Check acceptance criteria completeness
+- Generate UI-specific findings
+
+</step>
+
 <step number="3" name="quality_report_generation">
 
 ### Step 3: Generate Comprehensive Quality Report

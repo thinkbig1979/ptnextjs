@@ -365,36 +365,48 @@ These file names suggest debug scripts, NOT tests:
 
 Before running E2E or integration tests:
 
-1. **DETECT** required servers from:
-   - `playwright.config.ts` → `webServer` configuration
-   - Test file imports and URLs
-   - Test setup files
+1. **BUILD** production server:
+   - Run `npm run build` (or framework equivalent)
+   - Block if build fails
 
-2. **VERIFY** each server is running:
-   - HTTP GET to health endpoint
+2. **START** production server:
+   - Kill any existing servers on the port
+   - Run `npm run start` in background
+   - Wait for server ready (health check)
+
+3. **VERIFY** server is running:
+   - HTTP GET to base URL
    - 2-second timeout
    - Report status: ✅ Running | ❌ Not Running
 
-3. **BLOCK** if any server not running:
-   - Do NOT auto-start servers (causes conflicts)
-   - Report which servers need to be started
-   - Wait for user action
+4. **SET** environment:
+   - `export BASE_URL="http://localhost:3000"`
 
-### 5.2 Playwright webServer Configuration
+5. **CLEANUP** after tests:
+   - Kill production server process
+
+### 5.2 Playwright Configuration (Production Server)
+
+**CRITICAL**: E2E tests MUST run against a production server, NOT a dev server.
+Tests run 10-50x faster against production server.
 
 ```typescript
 // playwright.config.ts
 export default defineConfig({
-  webServer: {
-    command: 'pnpm dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: true,  // Use existing if running
-    timeout: 120000,            // 2 minutes to start
+  use: {
+    // Use BASE_URL from environment (set by test runner)
+    baseURL: process.env.BASE_URL || 'http://localhost:3000',
   },
+  
+  // CRITICAL: Do NOT use webServer - we manage the server ourselves
+  // Build and start prod server BEFORE running tests
+  // webServer: undefined,
+  
+  workers: process.env.CI ? 4 : 3,
 });
 ```
 
-**Important**: When `reuseExistingServer: true`, Playwright will use an existing server. The test-runner agent should verify the server is running BEFORE letting Playwright attempt to start it, to avoid port conflicts.
+**Important**: The agent builds and starts the production server itself. Do NOT configure `webServer` in Playwright - this causes dev server overhead and 10-50x slower tests.
 
 ---
 

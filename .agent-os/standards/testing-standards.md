@@ -1,7 +1,7 @@
 # Testing Standards (Authoritative Reference)
 
-**Version**: 1.1.0  
-**Agent OS**: v4.8.2  
+**Version**: 1.2.0  
+**Agent OS**: v4.9.0  
 **Status**: CANONICAL - All other documents MUST reference this file for testing standards
 
 ---
@@ -545,28 +545,29 @@ Unlimited Playwright workers cause:
 |-------------|-----------|---------|-----------|
 | CI (4-core) | 4 | 4 | Match core count |
 | CI (8-core) | 8 | 6 | Leave headroom for OS/server |
-| Local Dev | 4-8 | 3 | Leave headroom for dev server |
+| Local | 4-8 | 3 | Leave headroom for prod server |
 | Local (constrained) | 2 | 2 | Minimum parallelism |
 
 ### 11.3 Required Playwright Configuration
+
+**IMPORTANT**: E2E tests MUST run against a production server. See Section 17.
 
 ```typescript
 // playwright.config.ts
 import { defineConfig } from '@playwright/test';
 
-const isCI = !!process.env.CI;
-
 export default defineConfig({
-  // CRITICAL: Explicit worker count
-  workers: isCI ? 4 : 3,
-  
-  // CRITICAL: Prevent multiple server instances
-  webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: true,  // REQUIRED
-    timeout: 120000,
+  use: {
+    // Use BASE_URL from environment, default to prod port
+    baseURL: process.env.BASE_URL || 'http://localhost:3000',
   },
+  
+  // CRITICAL: Explicit worker count
+  workers: process.env.CI ? 4 : 3,
+  
+  // CRITICAL: Do NOT use webServer - we manage the server ourselves
+  // Tests run against pre-built production server for 10-50x speed improvement
+  // webServer: undefined,
 });
 ```
 
@@ -778,7 +779,325 @@ See `~/.claude/skills/e2e-test-repair/references/stability-patterns.md` Section 
 
 ---
 
+## 17. Production Server Requirement (CANONICAL v4.9.0)
+
+### 17.1 The Requirement
+
+**E2E tests MUST run against a PRODUCTION server, NOT a dev server.**
+
+This is mandatory for all E2E test execution. Tests should never spawn their own dev server.
+
+### 17.2 Why Production Server?
+
+| Aspect | Dev Server | Prod Server |
+|--------|------------|-------------|
+| Startup | 30-60s | Already built |
+| Per-request | Hot reload overhead | Optimized |
+| Test speed | ~500ms/test | ~50ms/test |
+| 100 tests | ~5 minutes | ~30 seconds |
+| Parallelism | Needs sharding | Handles concurrent |
+| Stability | Memory leaks, rebuilds | Stable, predictable |
+
+### 17.3 Required Workflow
+
+```bash
+# 1. Kill any existing servers
+lsof -ti:3000 | xargs kill -9 2>/dev/null || true
+
+# 2. Build production
+npm run build
+
+# 3. Start production server
+npm run start > /tmp/prod-server.log 2>&1 &
+echo $! > /tmp/prod-server.pid
+
+# 4. Wait for ready
+until curl -sf http://localhost:3000 > /dev/null; do sleep 1; done
+
+# 5. Run tests
+export BASE_URL="http://localhost:3000"
+npx playwright test
+
+# 6. Stop server
+kill $(cat /tmp/prod-server.pid) 2>/dev/null || true
+```
+
+### 17.4 Playwright Configuration
+
+```typescript
+// playwright.config.ts
+export default defineConfig({
+  use: {
+    baseURL: process.env.BASE_URL || 'http://localhost:3000',
+  },
+  // CRITICAL: No webServer - we manage server ourselves
+  // webServer: undefined,
+  
+  // Reasonable parallelism - prod server handles it
+  workers: process.env.CI ? 4 : 3,
+});
+```
+
+### 17.5 After Application Code Changes
+
+**MUST rebuild before running tests:**
+
+```bash
+# Kill current server
+kill $(cat /tmp/prod-server.pid) 2>/dev/null || true
+
+# Rebuild
+npm run build
+
+# Restart
+npm run start > /tmp/prod-server.log 2>&1 &
+echo $! > /tmp/prod-server.pid
+
+# Wait and continue
+until curl -sf http://localhost:3000 > /dev/null; do sleep 1; done
+```
+
+### 17.6 CI Pipeline Example
+
+```yaml
+e2e_tests:
+  steps:
+    - npm run build
+    - npm run start &
+    - npx wait-on http://localhost:3000
+    - npm run test:e2e:ci
+```
+
+---
+
+---
+
+## 18. UI Component Testing Strategy (v5.1.0)
+
+### 18.1 Test Type Decision Tree
+
+| Component Type | Unit Test | Integration Test | E2E Test |
+|----------------|-----------|------------------|----------|
+| Presentational (Button, Card) | ✅ Required | ❌ Skip | ❌ Skip |
+| Form Input (TextInput, Select) | ✅ Required | ✅ With form library | ❌ Skip |
+| Form Container (LoginForm) | ⚠️ Logic only | ✅ Required | ✅ Critical paths |
+| Data Display (Table, List) | ✅ Required | ✅ With API mocking | ⚠️ If critical |
+| Page Component (DashboardPage) | ⚠️ Logic only | ⚠️ Complex cases | ✅ Required |
+| User Flow (multi-step) | ❌ Skip | ❌ Skip | ✅ Required |
+
+Legend: ✅ Required | ⚠️ Conditional | ❌ Skip
+
+### 18.2 Test File Location by Component Type
+
+| Component Type | Unit Test Location | Integration Location | E2E Location |
+|----------------|-------------------|---------------------|--------------|
+| Presentational | `src/components/X/X.test.tsx` | N/A | N/A |
+| Form Input | `src/components/X/X.test.tsx` | `tests/integration/forms/` | N/A |
+| Form Container | `src/components/X/X.test.tsx` | `tests/integration/forms/` | `tests/e2e/[tier]/` |
+| Page | N/A | N/A | `tests/e2e/[tier]/` |
+| User Flow | N/A | N/A | `tests/e2e/[tier]/[flow].spec.ts` |
+
+### 18.3 Canonical Reference
+
+Full guidance: `@instructions/utilities/ui-component-testing-strategy.md`
+
+---
+
+## 19. UI-Specific Selector Standards (v5.1.0)
+
+### 19.1 Selector Priority Order
+
+1. **Role + Name** (preferred): `getByRole('button', { name: 'Submit' })`
+2. **Label**: `getByLabel('Email')`
+3. **Text**: `getByText('Welcome back')`
+4. **data-testid**: `getByTestId('login-form')`
+5. **CSS** (last resort): `.card-header`
+
+### 19.2 data-testid Convention
+
+Pattern: `[feature]-[component]-[element]`
+
+Examples:
+- `login-form` - Form container
+- `login-email-input` - Email field
+- `login-submit-button` - Submit button
+- `login-error-message` - Error display
+- `user-card-0` - Indexed list item
+
+### 19.3 Selector Object Pattern
+
+```typescript
+// tests/e2e/selectors/auth.selectors.ts
+export const AUTH_SELECTORS = {
+  loginForm: '[data-testid="login-form"]',
+  emailInput: '[data-testid="login-email-input"]',
+  passwordInput: '[data-testid="login-password-input"]',
+  submitButton: '[data-testid="login-submit-button"]',
+  errorMessage: '[data-testid="login-error-message"]',
+  fieldError: (field: string) => `[data-testid="login-${field}-error"]`,
+};
+```
+
+### 19.4 Canonical Reference
+
+Full patterns: `@standards/e2e-ui-testing-standards.md`
+
+---
+
+## 20. E2E Test Placement Rules (v5.1.0)
+
+### 20.1 Tier Criteria
+
+| Tier | Criteria | When to Run | Duration Target |
+|------|----------|-------------|-----------------|
+| Smoke | Critical user journeys, high impact, stable, fast | Every commit | < 2 minutes |
+| Core | Feature happy paths, CRUD operations, medium impact | Every PR | < 20 minutes |
+| Regression | Edge cases, validation, slow tests, complex setup | Nightly | < 45 minutes |
+| Quarantine | Broken or flaky tests | Manual only | N/A |
+
+### 20.2 Tier Assignment Decision
+
+```
+Is this a CRITICAL user journey? (auth, payment, core feature)
+├─► YES + Fast (< 30s) + Stable → SMOKE
+├─► YES + Slow or Unstable → CORE (optimize later)
+└─► NO: Is this a main feature happy path?
+    ├─► YES → CORE
+    └─► NO: Is this an edge case or error path?
+        ├─► YES → REGRESSION
+        └─► NO: Is this broken or flaky?
+            └─► YES → QUARANTINE (requires tracking issue)
+```
+
+### 20.3 Directory Structure
+
+```
+tests/e2e/
+├── smoke/           # Critical paths - every commit
+│   ├── auth.spec.ts
+│   └── dashboard.spec.ts
+├── core/            # Feature coverage - every PR
+│   ├── auth/
+│   │   └── password-reset.spec.ts
+│   └── user-management/
+│       └── profile.spec.ts
+├── regression/      # Edge cases - nightly
+│   ├── validation/
+│   │   └── form-validation.spec.ts
+│   └── error-handling/
+│       └── api-errors.spec.ts
+└── quarantine/      # Broken/flaky - manual only
+    └── flaky-upload.spec.ts  # Tracking: #123
+```
+
+### 20.4 Canonical Reference
+
+Full checklist: `@instructions/utilities/e2e-test-placement-checklist.md`
+
+---
+
+## 21. UI Accessibility Test Requirements (v5.1.0)
+
+### 21.1 Mandatory Accessibility Testing
+
+Required for:
+- All new UI components
+- All forms
+- All user-facing pages
+
+### 21.2 WCAG 2.1 AA Criteria
+
+| Criterion | Requirement | How to Test |
+|-----------|-------------|-------------|
+| Color Contrast | Text ≥ 4.5:1, UI ≥ 3:1 | axe-core |
+| Keyboard Navigation | All functionality accessible | Manual + E2E |
+| Focus Indicators | Visible focus ring (2px min) | Visual inspection |
+| Screen Reader | Correct announcements | NVDA/VoiceOver testing |
+| ARIA Usage | Correct roles, states, properties | axe-core |
+
+### 21.3 axe-core Integration Pattern
+
+```typescript
+import { test, expect } from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
+
+test('page has no accessibility violations', async ({ page }) => {
+  await page.goto('/dashboard');
+
+  const results = await new AxeBuilder({ page })
+    .withTags(['wcag2a', 'wcag2aa'])
+    .analyze();
+
+  expect(results.violations).toEqual([]);
+});
+```
+
+### 21.4 Violation Severity
+
+| Severity | Action | Blocks Completion? |
+|----------|--------|-------------------|
+| Critical | Must fix immediately | YES |
+| Serious | Must fix before release | YES (after grace period) |
+| Moderate | Should fix | NO |
+| Minor | Nice to fix | NO |
+
+### 21.5 Canonical Reference
+
+Full requirements: `@instructions/utilities/ui-acceptance-criteria-checklist.md`
+
+---
+
+## 22. UI Performance Requirements (v5.1.0)
+
+### 22.1 Core Web Vitals Targets
+
+| Metric | Target | Warning | Critical |
+|--------|--------|---------|----------|
+| LCP (Largest Contentful Paint) | < 2.5s | 2.5-4s | > 4s |
+| CLS (Cumulative Layout Shift) | < 0.1 | 0.1-0.25 | > 0.25 |
+| INP (Interaction to Next Paint) | < 200ms | 200-500ms | > 500ms |
+| FCP (First Contentful Paint) | < 1.8s | 1.8-3s | > 3s |
+
+### 22.2 When to Measure
+
+- Before task completion (blocking for page components)
+- Before PR merge (warning level)
+- In CI pipeline (regression detection)
+
+### 22.3 Measurement Methods
+
+```bash
+# Lighthouse CLI
+lighthouse http://localhost:3000 --output=json --output-path=./lighthouse.json
+
+# Playwright with Lighthouse
+const { lighthouse } = require('lighthouse');
+```
+
+### 22.4 Canonical Reference
+
+Full criteria: `@instructions/utilities/ui-acceptance-criteria-checklist.md`
+
+---
+
 ## Change Log
+
+### v1.3.0 (v5.1.0)
+- Added Section 18: UI Component Testing Strategy
+- Added Section 19: UI-Specific Selector Standards
+- Added Section 20: E2E Test Placement Rules
+- Added Section 21: UI Accessibility Test Requirements
+- Added Section 22: UI Performance Requirements
+- New utility documents: ui-component-testing-strategy.md, e2e-test-placement-checklist.md, ui-acceptance-criteria-checklist.md
+- New standards document: e2e-ui-testing-standards.md
+- E2E tests now BLOCK UI implementation task completion
+- Browser validation gate added to execute-tasks.md
+
+### v1.2.0 (v4.9.0)
+- Added Section 17: Production Server Requirement (MANDATORY)
+- E2E tests must run against production server, not dev server
+- Removed sharding requirements (not needed with prod server)
+- Tests run 10-50x faster with production server
 
 ### v1.1.0 (v4.8.2)
 - Added Section 11: E2E Parallelism Configuration

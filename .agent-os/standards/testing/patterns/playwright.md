@@ -328,12 +328,13 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  workers: process.env.CI ? 4 : 3,
 
   reporter: 'html',
 
   use: {
-    baseURL: 'http://localhost:3000',
+    // Use BASE_URL from environment (set by test runner to prod server)
+    baseURL: process.env.BASE_URL || 'http://localhost:3000',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'on-first-retry',
@@ -354,11 +355,10 @@ export default defineConfig({
     },
   ],
 
-  webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
-  },
+  // CRITICAL: Do NOT use webServer - tests run against production server
+  // Build and start prod server BEFORE running tests (10-50x faster)
+  // See: @standards/testing-standards.md Section 17
+  // webServer: undefined,
 });
 ```
 

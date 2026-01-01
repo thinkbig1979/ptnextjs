@@ -1,0 +1,99 @@
+# Architecture Patterns Summary
+
+## Project Overview
+
+| Attribute | Value |
+|-----------|-------|
+| Project Type | {{PROJECT_TYPE}} |
+| Framework | {{FRAMEWORK}} {{FRAMEWORK_VERSION}} |
+| Language | {{LANGUAGE}} |
+| Analysis Date | {{GENERATED_DATE}} |
+
+## Pattern Summary
+
+| Category | Detected Pattern | Confidence | Constraint |
+|----------|-----------------|------------|------------|
+| URL Structure | {{URL_PATTERN}} | {{URL_CONFIDENCE}} | {{URL_CONSTRAINT}} |
+| File Naming | {{FILE_NAMING}} | {{FILE_NAMING_CONFIDENCE}} | {{FILE_NAMING_CONSTRAINT}} |
+| Code Naming | {{CODE_NAMING}} | {{CODE_NAMING_CONFIDENCE}} | {{CODE_NAMING_CONSTRAINT}} |
+| Components | {{COMPONENT_PATTERN}} | {{COMPONENT_CONFIDENCE}} | {{COMPONENT_CONSTRAINT}} |
+| State | {{STATE_PATTERN}} | {{STATE_CONFIDENCE}} | {{STATE_CONSTRAINT}} |
+| API Format | {{API_PATTERN}} | {{API_CONFIDENCE}} | {{API_CONSTRAINT}} |
+| Auth | {{AUTH_PATTERN}} | {{AUTH_CONFIDENCE}} | {{AUTH_CONSTRAINT}} |
+| Forms | {{FORM_PATTERN}} | {{FORM_CONFIDENCE}} | {{FORM_CONSTRAINT}} |
+| Errors | {{ERROR_PATTERN}} | {{ERROR_CONFIDENCE}} | {{ERROR_CONSTRAINT}} |
+| Testing | {{TESTING_PATTERN}} | {{TESTING_CONFIDENCE}} | {{TESTING_CONSTRAINT}} |
+
+## Critical Constraints
+
+These patterns MUST be followed for new features to integrate seamlessly:
+
+{{#each critical_constraints}}
+### {{this.number}}. {{this.title}}
+
+**Pattern**: {{this.pattern}}
+**Reason**: {{this.reason}}
+**Evidence**: {{this.evidence_count}} instances across {{this.file_count}} files
+
+```
+{{this.example}}
+```
+
+{{/each}}
+
+## Tech Stack
+
+### Frontend
+{{#if FRONTEND}}
+- Framework: {{FRONTEND_FRAMEWORK}}
+- State: {{STATE_LIBRARY}}
+- Forms: {{FORM_LIBRARY}}
+- Styling: {{STYLING_APPROACH}}
+- Testing: {{FRONTEND_TESTING}}
+{{else}}
+No frontend detected.
+{{/if}}
+
+### Backend
+{{#if BACKEND}}
+- Framework: {{BACKEND_FRAMEWORK}}
+- Database: {{DATABASE}}
+- Auth: {{AUTH_LIBRARY}}
+- Testing: {{BACKEND_TESTING}}
+{{else}}
+No backend detected.
+{{/if}}
+
+## Directory Structure
+
+```
+{{DIRECTORY_TREE}}
+```
+
+## Pattern Files
+
+Detailed patterns are documented in:
+
+| File | Description |
+|------|-------------|
+{{#each pattern_files}}
+| [`{{this.path}}`]({{this.path}}) | {{this.description}} |
+{{/each}}
+
+## Usage
+
+When creating specs or implementing features:
+
+1. **Read this summary** for quick constraint reference
+2. **Check specific pattern files** for implementation details
+3. **Follow the "WHEN/USE/NOT" rules** in each pattern file
+4. **Document deviations** if pattern must be broken (with justification)
+
+## Refresh
+
+This analysis should be refreshed:
+- **Automatically**: When patterns are >7 days old
+- **Manually**: After major refactoring or new library adoption
+- **Command**: Run pattern-discovery-analyst agent
+
+Next refresh recommended: {{REFRESH_DATE}}

@@ -698,6 +698,207 @@ IF no tsconfig:
   SKIP
 ```
 
+### 4.2.5: Browser Validation Gate (v5.1.0+)
+
+**Purpose**: Verify UI components and user flows pass browser validation.
+
+**Trigger**: After frontend implementation tasks, before task completion.
+
+**Skip**: Backend-only features, non-UI tasks.
+
+```yaml
+browser_validation_gate:
+  # Check if task has UI deliverables
+  ANALYZE: Task deliverables
+
+  IF NOT has_ui_deliverables:
+    SKIP to 4.2.6
+
+  # Load validation requirements
+  READ: @instructions/core/validate-browser.md
+  READ: @instructions/utilities/ui-acceptance-criteria-checklist.md
+
+  # Execute validation
+  FOR each user_flow in task:
+    # Run E2E tests
+    EXECUTE: pnpm test:e2e:ci --grep "{flow_name}"
+
+    IF e2e_tests_fail:
+      BLOCK: Task cannot complete until E2E tests pass
+      SHOW: Failure details
+      PROMPT: "E2E tests failing. Options:
+               1. FIX - Delegate fixes to subagent
+               2. INVESTIGATE - Show detailed analysis
+               3. SKIP - Continue without E2E (NOT RECOMMENDED)"
+
+      IF choice == "FIX":
+        DELEGATE: Fix to test-fixer subagent
+        RERUN: E2E tests after fix
+
+    # Run accessibility scan
+    EXECUTE: Accessibility scan with axe-core
+
+    IF a11y_violations > 0:
+      CATEGORIZE:
+        - critical: BLOCK completion
+        - serious: WARN + require acknowledgment
+        - moderate: LOG only
+        - minor: LOG only
+
+      IF critical_violations > 0:
+        BLOCK: Task cannot complete with critical a11y issues
+        SHOW: Violation details with fix suggestions
+        PROMPT: "Critical accessibility violations. Must fix."
+
+    # Check Core Web Vitals
+    EXECUTE: Lighthouse or Web Vitals measurement
+
+    VERIFY:
+      - LCP < 2.5s (WARN if exceeded)
+      - CLS < 0.1 (WARN if exceeded)
+      - INP < 200ms (WARN if exceeded)
+
+    IF performance_warnings > 0:
+      SHOW: Performance issues
+      LOG: To validation report
+
+    # Generate validation report
+    SAVE: .agent-os/validation/{TASK_ID}-browser-report.json
+
+    CONTENTS:
+      task_id: {TASK_ID}
+      timestamp: {ISO_TIMESTAMP}
+      e2e_tests:
+        passed: {COUNT}
+        failed: {COUNT}
+        skipped: {COUNT}
+      accessibility:
+        critical: {COUNT}
+        serious: {COUNT}
+        moderate: {COUNT}
+        minor: {COUNT}
+      performance:
+        lcp: {VALUE}
+        cls: {VALUE}
+        inp: {VALUE}
+      browsers_tested:
+        - chrome: {PASS/FAIL}
+        - firefox: {PASS/FAIL}
+        - safari: {PASS/FAIL}
+        - mobile: {PASS/FAIL}
+      status: {PASSED/BLOCKED}
+
+  # Final gate check
+  IF all_flows_passed:
+    CONFIRM: "✓ Browser validation passed"
+    CONTINUE to 4.2.6
+
+  ELSE:
+    BLOCK: "Browser validation failed - fix issues before completing task"
+    SHOW: Summary of blocking issues
+```
+
+**Console Output**:
+```
+Browser Validation Gate - {TASK_ID}
+├── E2E Tests: ✓ 5/5 passed
+├── Accessibility: ✓ 0 violations
+├── Performance:
+│   ├── LCP: 1.8s ✓
+│   ├── CLS: 0.05 ✓
+│   └── INP: 150ms ✓
+├── Browsers:
+│   ├── Chrome: ✓
+│   ├── Firefox: ✓
+│   └── Mobile: ✓
+└── Status: ✓ PASSED
+```
+
+### 4.2.6: Pattern Consistency Validation (v5.0+)
+
+**Purpose**: Verify implemented code matches existing codebase patterns.
+
+**Trigger**: After TypeScript verification, before test suite.
+
+```yaml
+pattern_validation:
+  # Load patterns
+  patterns_path: "{AGENT_OS_ROOT}/.agent-os/patterns"
+
+  IF NOT exists(patterns_path):
+    WARN: "No patterns found - skipping validation"
+    CONTINUE to 4.3
+
+  # Get changed files
+  CHANGED_FILES: git diff --name-only HEAD~1
+  SOURCE_FILES: filter(CHANGED_FILES, include: ["*.ts", "*.tsx", "*.js"])
+
+  # Run validation
+  SPAWN: pattern-consistency-validator subagent
+    FILES: SOURCE_FILES
+    PATTERNS: patterns_path
+    MODE: config.pattern_consistency.enforcement.mode  # advisory|warning|blocking
+
+  # Handle results
+  RECEIVE: validation_report
+
+  IF validation_report.blocking_violations > 0:
+    SHOW: Violation details
+
+    PROMPT: |
+      ❌ Pattern violations detected that block completion:
+
+      {for each violation}
+      File: {file}
+      Issue: {issue}
+      Expected: {expected}
+      Actual: {actual}
+      {end for}
+
+      Options:
+      1. FIX violations (recommended)
+      2. JUSTIFY deviations (document reason)
+      3. OVERRIDE (not recommended)
+
+    IF choice == "FIX":
+      FOR each violation:
+        APPLY: suggested_fix if auto_fixable
+        ELSE: Prompt user for manual fix
+      REVALIDATE: Run pattern-consistency-validator again
+
+    IF choice == "JUSTIFY":
+      FOR each violation:
+        PROMPT: "Justification for {violation}:"
+        SAVE: .agent-os/patterns/deviations/{task_id}.md
+      CONTINUE: With documented deviations
+
+    IF choice == "OVERRIDE":
+      WARN: "Overriding pattern validation is not recommended"
+      REQUIRE: Explicit confirmation
+      LOG: Override in validation report
+      CONTINUE
+
+  IF validation_report.warnings > 0:
+    SHOW: Warning summary
+    LOG: To validation report
+    CONTINUE: Warnings don't block
+
+  IF validation_report.passed:
+    CONFIRM: "✓ Pattern consistency validated"
+
+  # Save report
+  SAVE: .agent-os/pattern-validation/{TASK_ID}-report.json
+```
+
+**Console Output**:
+```
+Pattern Consistency Validation
+├── Files checked: 5
+├── Patterns verified: 6
+├── Violations: 0
+└── Status: ✓ PASSED
+```
+
 ### 4.3: Run Full Test Suite
 
 ```bash
@@ -805,8 +1006,8 @@ bd sync --from-main
 
 | Role | Required Skills |
 |------|-----------------|
-| test-context-gatherer | agent-os-testing-standards, agent-os-test-research, agent-os-patterns |
-| test-architect | agent-os-testing-standards, agent-os-patterns, e2e-test-organization |
+| test-context-gatherer | e2e-test-repair, agent-os-test-research, agent-os-patterns |
+| test-architect | e2e-test-repair, agent-os-patterns, e2e-test-organization |
 | implementation-specialist | agent-os-patterns, agent-os-specialists |
 | frontend-specialist | agent-os-patterns, agent-os-specialists |
 | security-sentinel | agent-os-specialists |
@@ -821,7 +1022,7 @@ When dispatching ANY subagent with test responsibilities:
 1. **Include skill requirements in prompt**:
    ```
    MANDATORY FIRST ACTIONS:
-   1. Skill(skill="agent-os-testing-standards")
+   1. Skill(skill="e2e-test-repair")
    2. Skill(skill="e2e-test-organization")  # if E2E work
    3. Read references/canonical-values.md
    4. Confirm: "Skills loaded: [list]"

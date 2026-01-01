@@ -1,0 +1,77 @@
+# Pattern: URL Structure & Routing
+
+## Metadata
+- Generated: {{GENERATED_DATE}}
+- Confidence: {{CONFIDENCE_LEVEL}}
+- Files Analyzed: {{FILE_COUNT}}
+- Pattern Instances: {{INSTANCE_COUNT}}
+
+## Detected Pattern
+
+**{{PATTERN_NAME}}**: {{PATTERN_DESCRIPTION}}
+
+## Evidence
+
+| File | Line | Pattern Instance |
+|------|------|------------------|
+{{#each evidence}}
+| `{{this.file}}` | {{this.line}} | `{{this.snippet}}` |
+{{/each}}
+
+## Convention Rule
+
+```
+WHEN creating new routes or links
+USE: {{CORRECT_PATTERN}}
+NOT: {{INCORRECT_PATTERNS}}
+
+RATIONALE: {{RATIONALE}} ({{PERCENTAGE}}% consistency across {{COUNT}} instances)
+```
+
+## Integration Requirements
+
+### Route Parameters
+- Parameter name: `{{PARAM_NAME}}` (e.g., `:id`, `:slug`, `:uuid`)
+- Parameter type: `{{PARAM_TYPE}}` (e.g., `number`, `string`)
+- Validation: {{VALIDATION_REQUIRED}}
+
+### Dynamic Routes (Next.js)
+```
+{{#if IS_NEXTJS}}
+Directory structure: app/[resource]/[{{PARAM_NAME}}]/page.tsx
+Example: app/users/[id]/page.tsx
+{{/if}}
+```
+
+### Link Components
+```typescript
+// Correct pattern
+<Link href={`/{{RESOURCE}}/${item.{{PARAM_NAME}}}`}>
+
+// Incorrect - DO NOT USE
+<Link href={`/{{RESOURCE}}/${item.{{WRONG_PARAM}}}`}>
+```
+
+### API Endpoints
+```typescript
+// Route definition
+router.get('/{{RESOURCE}}/:{{PARAM_NAME}}', handler)
+
+// Fetch call
+fetch(`/api/{{RESOURCE}}/${{{PARAM_NAME}}}`)
+```
+
+## Data Requirements
+
+When implementing features with this URL pattern:
+
+1. **Database**: Primary key must be {{DB_KEY_TYPE}}
+2. **API Response**: Must include `{{PARAM_NAME}}` field
+3. **Frontend State**: Store `{{PARAM_NAME}}` for navigation
+4. **Type Definitions**: Include `{{PARAM_NAME}}: {{PARAM_TYPE}}`
+
+## Related Patterns
+
+- [API Patterns](../backend/api.md) - Response format for resource endpoints
+- [State Management](./state.md) - How to store current resource ID
+- [Components](./components.md) - How to pass ID to child components
