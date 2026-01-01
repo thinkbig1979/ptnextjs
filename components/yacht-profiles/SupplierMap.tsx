@@ -55,8 +55,8 @@ const SupplierCard = React.memo(({
           )}
           {supplier.systems && supplier.systems.length > 0 && (
             <div className="flex flex-wrap gap-1">
-              {supplier.systems.slice(0, 3).map((system, index) => (
-                <Badge key={index} variant="outline" className="text-xs">
+              {supplier.systems.slice(0, 3).map((system) => (
+                <Badge key={`system-${system}`} variant="outline" className="text-xs">
                   {system}
                 </Badge>
               ))}

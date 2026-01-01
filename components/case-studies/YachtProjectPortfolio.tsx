@@ -105,9 +105,9 @@ export function YachtProjectPortfolio({
         <div className="flex flex-wrap gap-2 justify-center">
           {Array.from(new Set(projects.flatMap(p => p.systems)))
             .sort()
-            .map((system, index) => (
+            .map((system) => (
               <Badge
-                key={index}
+                key={`system-${system}`}
                 variant="secondary"
                 className="px-3 py-1"
                 data-testid="system-tag"
@@ -141,9 +141,9 @@ export function YachtProjectPortfolio({
           className={cn("grid gap-6 md:grid-cols-2 lg:grid-cols-3", className)}
           data-testid="yacht-portfolio"
         >
-          {sortedProjects.map((project, index) => (
+          {sortedProjects.map((project) => (
             <Card
-              key={index}
+              key={`project-${project.yachtName}-${project.projectYear || 'unknown'}`}
               className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-accent/50"
               data-testid="yacht-project"
             >
@@ -180,9 +180,9 @@ export function YachtProjectPortfolio({
                       Systems Delivered
                     </h4>
                     <div className="space-y-2">
-                      {project.systems.map((system, systemIndex) => (
+                      {project.systems.map((system) => (
                         <div
-                          key={systemIndex}
+                          key={`${project.yachtName}-system-${system}`}
                           className="flex items-center gap-2 text-sm"
                           data-testid="system-tag"
                         >

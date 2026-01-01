@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import Link from 'next/link';
 import { VendorRegistrationForm } from '@/components/vendor/VendorRegistrationForm';
 
 export const metadata: Metadata = {
@@ -29,9 +30,9 @@ export default function VendorRegisterPage() {
       <div className="mt-6 text-center text-sm text-muted-foreground">
         <p>
           Already have an account?{' '}
-          <a href="/vendor/login" className="font-medium text-primary hover:underline">
+          <Link href="/vendor/login" className="font-medium text-primary hover:underline">
             Sign in
-          </a>
+          </Link>
         </p>
       </div>
     </div>

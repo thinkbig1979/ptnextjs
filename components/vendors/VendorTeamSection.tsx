@@ -41,7 +41,7 @@ export function VendorTeamSection({ vendor }: VendorTeamSectionProps) {
       <h2 className="text-2xl font-cormorant font-bold">Our Team</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {vendor.teamMembers!.map((member, index) => (
-          <Card key={index} className="p-4">
+          <Card key={`${member.name}-${index}`} className="p-4">
             <div className="flex flex-col items-center text-center space-y-3">
               {/* Photo */}
               {member.image && (

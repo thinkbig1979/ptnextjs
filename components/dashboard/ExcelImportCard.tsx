@@ -539,7 +539,7 @@ export function ExcelImportCard() {
                           <p className="font-medium text-red-600">Row {row.rowNumber}:</p>
                           <ul className="list-disc list-inside pl-4">
                             {row.errors.map((error, idx) => (
-                              <li key={idx}>{error.field}: {error.message}</li>
+                              <li key={`error-${error.field}-${idx}`}>{error.field}: {error.message}</li>
                             ))}
                           </ul>
                         </div>

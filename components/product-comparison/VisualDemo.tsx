@@ -293,9 +293,9 @@ export function VisualDemo({
       )}
 
       {/* Hotspots */}
-      {showHotspots && activeContent.hotspots?.map((hotspot, index) => (
+      {showHotspots && activeContent.hotspots?.map((hotspot) => (
         <button
-          key={index}
+          key={`hotspot-${hotspot.title}`}
           className="absolute w-6 h-6 bg-blue-500 rounded-full border-2 border-white shadow-lg hover:bg-blue-600 transform -translate-x-1/2 -translate-y-1/2 transition-colors"
           style={{
             left: `${hotspot.position.x * 100}%`,
@@ -520,9 +520,9 @@ export function VisualDemo({
                 {/* Demo Navigation */}
                 {contentArray.length > 1 && (
                   <div className="flex items-center space-x-1" data-testid="demo-navigation">
-                    {contentArray.map((_, index) => (
+                    {contentArray.map((contentItem, index) => (
                       <Button
-                        key={index}
+                        key={`demo-nav-${contentItem.title}-${index}`}
                         size="sm"
                         variant={index === currentContent ? "default" : "outline"}
                         onClick={() => setCurrentContent(index)}

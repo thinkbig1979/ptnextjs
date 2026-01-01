@@ -143,7 +143,7 @@ export function VendorAboutSection({ vendor }: VendorAboutSectionProps) {
           <h2 className="text-2xl font-cormorant font-bold mb-4">Service Areas</h2>
           <div className="space-y-3">
             {vendor.serviceAreas!.map((service, index) => (
-              <div key={index} className="flex items-start space-x-3">
+              <div key={`${typeof service === 'string' ? service : service.area}-${index}`} className="flex items-start space-x-3">
                 <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
                 <div>
                   <div className="font-medium">
@@ -167,7 +167,7 @@ export function VendorAboutSection({ vendor }: VendorAboutSectionProps) {
           <h2 className="text-2xl font-cormorant font-bold mb-4">Our Values</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {vendor.companyValues!.map((val, index) => (
-              <Card key={index} className="p-4">
+              <Card key={`${typeof val === 'string' ? val : val.value}-${index}`} className="p-4">
                 <div className="flex items-start space-x-3">
                   <CheckCircle className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
                   <div>

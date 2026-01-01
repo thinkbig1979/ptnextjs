@@ -45,7 +45,7 @@ export function DashboardSkeleton() {
             {/* Stats Cards Skeleton */}
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {[1, 2, 3].map((i) => (
-                <Card key={i}>
+                <Card key={`stats-skeleton-${i}`}>
                   <CardHeader>
                     <Skeleton className="h-5 w-32 mb-2" />
                     <Skeleton className="h-4 w-48" />
@@ -67,7 +67,7 @@ export function DashboardSkeleton() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="flex items-start gap-3">
+                  <div key={`content-skeleton-${i}`} className="flex items-start gap-3">
                     <Skeleton className="h-5 w-5 rounded-full flex-shrink-0" />
                     <div className="flex-1 space-y-2">
                       <Skeleton className="h-4 w-48" />
@@ -106,7 +106,7 @@ export function DashboardSkeleton() {
               </CardHeader>
               <CardContent className="space-y-2">
                 {[1, 2, 3].map((i) => (
-                  <Skeleton key={i} className="h-9 w-full" />
+                  <Skeleton key={`actions-skeleton-${i}`} className="h-9 w-full" />
                 ))}
               </CardContent>
             </Card>
@@ -119,7 +119,7 @@ export function DashboardSkeleton() {
               </CardHeader>
               <CardContent className="space-y-3">
                 {[1, 2, 3].map((i) => (
-                  <Skeleton key={i} className="h-4 w-full" />
+                  <Skeleton key={`resources-skeleton-${i}`} className="h-4 w-full" />
                 ))}
               </CardContent>
             </Card>

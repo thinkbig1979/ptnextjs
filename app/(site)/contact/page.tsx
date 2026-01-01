@@ -67,7 +67,7 @@ export default async function ContactPage() {
                 <CardContent className="text-center">
                   <div className="space-y-1">
                     {info.details.map((detail, idx) => (
-                      <p key={idx} className="text-sm text-muted-foreground font-poppins-light">
+                      <p key={`${info.title}-detail-${idx}`} className="text-sm text-muted-foreground font-poppins-light">
                         {detail}
                       </p>
                     ))}

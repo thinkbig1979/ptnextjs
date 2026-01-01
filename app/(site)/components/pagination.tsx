@@ -65,7 +65,7 @@ export function Pagination({ currentPage, totalPages, onPageChange, className }:
       </Button>
       
       {generatePageNumbers().map((page, index) => (
-        <React.Fragment key={index}>
+        <React.Fragment key={page === '...' ? `ellipsis-${index}` : `page-${page}`}>
           {page === '...' ? (
             <span className="px-2 text-muted-foreground">...</span>
           ) : (

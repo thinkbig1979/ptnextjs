@@ -163,7 +163,7 @@ export function OwnerReviews({
       <div className="flex items-center space-x-1">
         {Array.from({ length: 5 }, (_, i) => (
           <Star
-            key={i}
+            key={`star-${i}`}
             className={cn(
               starSize,
               i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'
@@ -387,8 +387,8 @@ export function OwnerReviews({
                         <div>
                           <h4 className="text-sm font-medium text-green-700 mb-2">Pros</h4>
                           <ul className="text-sm space-y-1">
-                            {review.pros.map((pro, index) => (
-                              <li key={index} className="flex items-start space-x-2">
+                            {review.pros.map((pro) => (
+                              <li key={`pro-${pro}`} className="flex items-start space-x-2">
                                 <span className="text-green-600 mt-0.5">+</span>
                                 <span>{pro}</span>
                               </li>
@@ -400,8 +400,8 @@ export function OwnerReviews({
                         <div>
                           <h4 className="text-sm font-medium text-red-700 mb-2">Cons</h4>
                           <ul className="text-sm space-y-1">
-                            {review.cons.map((con, index) => (
-                              <li key={index} className="flex items-start space-x-2">
+                            {review.cons.map((con) => (
+                              <li key={`con-${con}`} className="flex items-start space-x-2">
                                 <span className="text-red-600 mt-0.5">-</span>
                                 <span>{con}</span>
                               </li>
@@ -416,7 +416,7 @@ export function OwnerReviews({
                   {review.images && review.images.length > 0 && (
                     <div className="flex space-x-2 overflow-x-auto">
                       {review.images.map((image, index) => (
-                        <div key={index} className="relative h-20 w-20 flex-shrink-0">
+                        <div key={`review-${review.id}-image-${index}`} className="relative h-20 w-20 flex-shrink-0">
                           <Image
                             src={image}
                             alt={`Review image from ${review.ownerName}`}

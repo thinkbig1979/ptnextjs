@@ -476,7 +476,7 @@ export function ImportHistoryCard() {
                     <div className="space-y-2">
                       {selectedImport.errors.map((error, index) => (
                         <div
-                          key={index}
+                          key={`error-${error.rowNumber}-${error.field}-${index}`}
                           className="rounded-md border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/10 p-3 text-sm"
                         >
                           <div className="flex items-start gap-2">
@@ -508,7 +508,7 @@ export function ImportHistoryCard() {
                     <div className="space-y-2">
                       {selectedImport.changes.map((change, index) => (
                         <div
-                          key={index}
+                          key={`change-${change.rowNumber}-${change.field}-${index}`}
                           className="rounded-md border bg-muted/50 p-3 text-sm"
                         >
                           <div className="flex items-start gap-2">

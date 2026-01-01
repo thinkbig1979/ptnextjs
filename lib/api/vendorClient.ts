@@ -6,6 +6,7 @@
  */
 
 import { Vendor } from '@/lib/types';
+import { VENDOR_PORTAL_ENDPOINTS, VENDOR_PUBLIC_ENDPOINTS } from './endpoints';
 
 /**
  * API Response Types
@@ -70,7 +71,7 @@ export async function fetchVendor(
   vendorId: string,
   options?: RequestInit
 ): Promise<Vendor> {
-  const response = await fetch(`/api/portal/vendors/${vendorId}`, {
+  const response = await fetch(VENDOR_PORTAL_ENDPOINTS.byId(vendorId), {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -108,7 +109,7 @@ export async function updateVendor(
   updates: Partial<Vendor>,
   options?: RequestInit
 ): Promise<Vendor> {
-  const response = await fetch(`/api/portal/vendors/${vendorId}`, {
+  const response = await fetch(VENDOR_PORTAL_ENDPOINTS.byId(vendorId), {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -147,7 +148,7 @@ export async function patchVendor(
   updates: Partial<Vendor>,
   options?: RequestInit
 ): Promise<Vendor> {
-  const response = await fetch(`/api/portal/vendors/${vendorId}`, {
+  const response = await fetch(VENDOR_PORTAL_ENDPOINTS.byId(vendorId), {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -184,7 +185,7 @@ export async function fetchVendorBySlug(
   slug: string,
   options?: RequestInit
 ): Promise<Vendor> {
-  const response = await fetch(`/api/public/vendors/${slug}`, {
+  const response = await fetch(VENDOR_PUBLIC_ENDPOINTS.bySlug(slug), {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -224,7 +225,7 @@ export async function uploadVendorLogo(
   const formData = new FormData();
   formData.append('logo', file);
 
-  const response = await fetch(`/api/portal/vendors/${vendorId}/logo`, {
+  const response = await fetch(VENDOR_PORTAL_ENDPOINTS.logo(vendorId), {
     method: 'POST',
     credentials: 'include',
     body: formData,
@@ -257,7 +258,7 @@ export async function deleteVendorLogo(
   vendorId: string,
   options?: RequestInit
 ): Promise<string> {
-  const response = await fetch(`/api/portal/vendors/${vendorId}/logo`, {
+  const response = await fetch(VENDOR_PORTAL_ENDPOINTS.logo(vendorId), {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',

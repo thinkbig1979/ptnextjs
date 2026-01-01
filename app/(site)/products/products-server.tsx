@@ -135,7 +135,7 @@ export async function ProductsServer({ searchParams }: ProductsServerProps) {
                       <h4 className="font-poppins-medium text-sm text-foreground">Key Features:</h4>
                       <ul className="text-sm text-muted-foreground space-y-1">
                         {product.features.slice(0, 3).map((feature, idx) => (
-                          <li key={idx} className="flex items-center space-x-2">
+                          <li key={`feature-${feature.title}-${idx}`} className="flex items-center space-x-2">
                             <Star className="w-3 h-3 text-accent" />
                             <span className="font-poppins-light">{feature.title}</span>
                           </li>

@@ -342,7 +342,7 @@ export function VendorReviews({
                         <h5 className="font-medium text-sm mb-2 text-green-600">Pros</h5>
                         <ul className="space-y-1">
                           {prosArray.map((pro, idx) => (
-                            <li key={idx} className="text-sm flex items-start">
+                            <li key={`pro-${idx}-${pro.slice(0, 20)}`} className="text-sm flex items-start">
                               <span className="text-green-600 mr-2">✓</span>
                               <span>{pro}</span>
                             </li>
@@ -355,7 +355,7 @@ export function VendorReviews({
                         <h5 className="font-medium text-sm mb-2 text-orange-600">Cons</h5>
                         <ul className="space-y-1">
                           {consArray.map((con, idx) => (
-                            <li key={idx} className="text-sm flex items-start">
+                            <li key={`con-${idx}-${con.slice(0, 20)}`} className="text-sm flex items-start">
                               <span className="text-orange-600 mr-2">−</span>
                               <span>{con}</span>
                             </li>

@@ -98,9 +98,9 @@ export default function ProductDetailClient({ product, partner: _partner }: Prod
 
   return (
     <div className="space-y-3">
-      {actionButtons.map((button, index) => (
+      {actionButtons.map((button) => (
         <Button
-          key={index}
+          key={`action-${button.action}-${button.label}`}
           variant={button.type === 'primary' ? 'default' : button.type}
           className={`w-full h-auto py-3 ${button.type === 'primary' ? 'bg-accent hover:bg-accent/90' : ''}`}
           onClick={() => handleAction(button.action, button.action_data, button.label)}

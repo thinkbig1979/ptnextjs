@@ -601,7 +601,7 @@ export function CaseStudiesManager({ vendor }: CaseStudiesManagerProps) {
               {imageUrls.length > 0 && (
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {imageUrls.map((url, index) => (
-                    <div key={index} className="relative group">
+                    <div key={`image-${url || index}`} className="relative group">
                       <div className="aspect-video bg-muted rounded-md overflow-hidden">
                         <img
                           src={url}

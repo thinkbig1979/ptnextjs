@@ -378,7 +378,7 @@ export function ExcelPreviewDialog({
                     </TableRow>
                   ) : (
                     changes.map((change, index) => (
-                      <TableRow key={index}>
+                      <TableRow key={`change-${change.rowNumber}-${change.field}-${index}`}>
                         <TableCell className="font-medium">
                           {change.rowNumber}
                         </TableCell>

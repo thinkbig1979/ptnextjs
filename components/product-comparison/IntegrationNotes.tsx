@@ -231,7 +231,7 @@ export function IntegrationNotes({
                             <span className="text-sm font-medium">Requirements:</span>
                             <ul className="list-disc list-inside text-sm text-muted-foreground mt-1">
                               {item.requirements.map((req, index) => (
-                                <li key={index}>{req}</li>
+                                <li key={`req-${item.system}-${index}`}>{req}</li>
                               ))}
                             </ul>
                           </div>
@@ -269,7 +269,7 @@ export function IntegrationNotes({
                           <span className="text-sm font-medium">Requirements:</span>
                           <ul className="list-disc list-inside text-sm text-muted-foreground mt-1">
                             {item.requirements.map((req, index) => (
-                              <li key={index}>{req}</li>
+                              <li key={`req-${item.system}-${index}`}>{req}</li>
                             ))}
                           </ul>
                         </div>

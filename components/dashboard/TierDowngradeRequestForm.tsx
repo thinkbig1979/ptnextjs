@@ -295,8 +295,8 @@ export function TierDowngradeRequestForm({
                   Features You Will Lose:
                 </h4>
                 <ul className="list-disc list-inside space-y-1 text-sm text-warning-foreground">
-                  {featuresLost.map((feature, index) => (
-                    <li key={index}>{feature}</li>
+                  {featuresLost.map((feature) => (
+                    <li key={`feature-${feature}`}>{feature}</li>
                   ))}
                 </ul>
               </div>

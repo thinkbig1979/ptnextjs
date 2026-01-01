@@ -160,8 +160,8 @@ export function SustainabilityScore({
             <div className="space-y-2">
               <p className="text-sm font-medium">Certifications</p>
               <div className="flex flex-wrap gap-2">
-                {metrics.certifications.map((certification, index) => (
-                  <Badge key={index} variant="outline" className="text-xs">
+                {metrics.certifications.map((certification) => (
+                  <Badge key={`cert-${certification}`} variant="outline" className="text-xs">
                     {certification}
                   </Badge>
                 ))}

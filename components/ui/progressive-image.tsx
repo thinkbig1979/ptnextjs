@@ -223,7 +223,7 @@ export function ImageGallery({
     <div className={cn("grid gap-4", gridClasses[columns], className)}>
       {images.map((image, index) => (
         <div
-          key={index}
+          key={image.src}
           className={cn("relative overflow-hidden rounded-lg", aspectClasses[aspectRatio])}
         >
           <ProgressiveImage

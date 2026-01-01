@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Lock, Sparkles } from 'lucide-react';
@@ -67,10 +68,10 @@ export function TierGate({
           many more.
         </p>
         <Button asChild size="sm" className="mt-2">
-          <a href={upgradeUrl}>
+          <Link href={upgradeUrl}>
             <Sparkles className="mr-2 h-4 w-4" />
             Upgrade Now
-          </a>
+          </Link>
         </Button>
       </AlertDescription>
     </Alert>

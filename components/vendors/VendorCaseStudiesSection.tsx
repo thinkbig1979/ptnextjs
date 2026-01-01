@@ -45,7 +45,7 @@ export function VendorCaseStudiesSection({ vendor }: VendorCaseStudiesSectionPro
       {/* Case Studies Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {allCaseStudies.map((caseStudy, index) => (
-          <Card key={index} className="overflow-hidden">
+          <Card key={`${caseStudy.title}-${index}`} className="overflow-hidden">
             {/* Image */}
             {caseStudy.images && caseStudy.images.length > 0 && (
               <div className="aspect-video relative">
@@ -89,8 +89,8 @@ export function VendorCaseStudiesSection({ vendor }: VendorCaseStudiesSectionPro
               )}
               {caseStudy.technologies && caseStudy.technologies.length > 0 && (
                 <div className="flex flex-wrap gap-1 mt-2">
-                  {caseStudy.technologies.slice(0, 3).map((tech, idx) => (
-                    <Badge key={idx} variant="outline" className="text-xs">
+                  {caseStudy.technologies.slice(0, 3).map((tech) => (
+                    <Badge key={tech} variant="outline" className="text-xs">
                       {tech}
                     </Badge>
                   ))}

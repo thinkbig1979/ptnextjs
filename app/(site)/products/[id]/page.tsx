@@ -279,7 +279,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                 <h2 className="text-2xl font-cormorant font-bold mb-4">Benefits</h2>
                 <div className="space-y-3">
                   {benefits.map((benefit, index) => (
-                    <div key={index} className="flex items-center space-x-3">
+                    <div key={`benefit-${index}`} className="flex items-center space-x-3">
                       <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
                       <span className="font-poppins-light">
                         {typeof benefit === 'string' ? benefit : benefit.benefit}
@@ -297,8 +297,8 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                 <Card>
                   <CardContent className="p-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {specifications.map((spec, index) => (
-                        <div key={index} className="flex justify-between items-center py-2 border-b last:border-b-0">
+                      {specifications.map((spec) => (
+                        <div key={`spec-${spec.label}`} className="flex justify-between items-center py-2 border-b last:border-b-0">
                           <span className="font-poppins-medium text-sm">{spec.label}</span>
                           <span className="font-poppins-light text-sm text-muted-foreground">{spec.value}</span>
                         </div>
@@ -316,8 +316,8 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {product.services
                     .sort((a, b) => (a.order || 0) - (b.order || 0))
-                    .map((service, index) => (
-                      <Card key={index}>
+                    .map((service) => (
+                      <Card key={`service-${service.title}`}>
                         <CardHeader className="text-center">
                           {service.icon && (
                             <div className="w-8 h-8 text-accent mx-auto mb-2">

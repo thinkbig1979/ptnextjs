@@ -132,8 +132,8 @@ export default function DiscoveryPlatformPage() {
           </div>
 
           <div className="flex justify-center space-x-12">
-            {teamLeaders.map((leader, index) => (
-              <div key={index} className="text-center">
+            {teamLeaders.map((leader) => (
+              <div key={`leader-${leader.name}`} className="text-center">
                 <div className="w-24 h-24 rounded-full overflow-hidden mb-4 mx-auto">
                   <Image
                     src={leader.image}
@@ -161,8 +161,8 @@ export default function DiscoveryPlatformPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {platformFeatures.map((feature, index) => (
-              <Card key={index} className="hover-lift text-center">
+            {platformFeatures.map((feature) => (
+              <Card key={`feature-${feature.title}`} className="hover-lift text-center">
                 <CardHeader>
                   <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4">
                     <feature.icon className="w-8 h-8 text-white" />
@@ -188,8 +188,8 @@ export default function DiscoveryPlatformPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {targetAudience.map((audience, index) => (
-              <Card key={index} className="hover-lift text-center">
+            {targetAudience.map((audience) => (
+              <Card key={`audience-${audience.title}`} className="hover-lift text-center">
                 <CardHeader>
                   <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4">
                     <audience.icon className="w-8 h-8 text-white" />
@@ -218,8 +218,8 @@ export default function DiscoveryPlatformPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {discoveryNavigation.map((item, index) => (
-              <Card key={index} className="hover-lift group">
+            {discoveryNavigation.map((item) => (
+              <Card key={`nav-${item.title}`} className="hover-lift group">
                 <CardHeader>
                   <div className="flex items-center space-x-4">
                     <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center group-hover:bg-accent group-hover:text-white transition-colors">

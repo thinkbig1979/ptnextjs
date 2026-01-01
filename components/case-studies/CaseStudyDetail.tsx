@@ -96,8 +96,8 @@ export function CaseStudyDetail({
         {/* Technologies */}
         {caseStudy.technologies && caseStudy.technologies.length > 0 && (
           <div className="flex flex-wrap gap-2" data-testid="technology-tags">
-            {caseStudy.technologies.map((tech, index) => (
-              <Badge key={index} variant="secondary" className="px-3 py-1">
+            {caseStudy.technologies.map((tech) => (
+              <Badge key={`tech-${tech}`} variant="secondary" className="px-3 py-1">
                 {tech}
               </Badge>
             ))}
@@ -122,14 +122,14 @@ export function CaseStudyDetail({
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {caseStudy.images.map((image, index) => (
+                {caseStudy.images.map((image) => (
                   <div
-                    key={index}
+                    key={image}
                     className="aspect-video relative rounded-lg overflow-hidden group cursor-pointer"
                   >
                     <Image
                       src={image}
-                      alt={`${caseStudy.title} image ${index + 1}`}
+                      alt={`${caseStudy.title} gallery image`}
                       fill
                       className="object-cover transition-transform duration-300 group-hover:scale-105"
                       sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"

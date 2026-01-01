@@ -69,9 +69,9 @@ export function FounderCard({
                 Specialties
               </p>
               <div className="flex flex-wrap gap-1 justify-center">
-                {specialties.map((specialty, index) => (
+                {specialties.map((specialty) => (
                   <span
-                    key={index}
+                    key={`specialty-${specialty}`}
                     className="px-2 py-1 text-xs rounded-full bg-primary/10 text-primary font-poppins-light"
                   >
                     {specialty}
