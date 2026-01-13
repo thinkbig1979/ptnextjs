@@ -102,9 +102,7 @@ hooks:
 
 ## Documentation
 
-- **Comprehensive Guide**: `instructions/utilities/quality-hooks-guide.md`
-- **Installation**: `INSTALLATION.md`
-- **Implementation**: `QUALITY_HOOKS_IMPLEMENTATION.md`
+- **Complete Documentation**: `docs/README.md`
 - **Test Results**: `tests/TEST_RESULTS.md`
 
 ## Troubleshooting
@@ -185,4 +183,4 @@ Part of Agent OS - see main repository for license information
 
 ---
 
-For comprehensive documentation, see: `instructions/utilities/quality-hooks-guide.md`
+For comprehensive documentation, see: `docs/README.md`

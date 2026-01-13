@@ -1,3 +1,9 @@
+---
+version: 5.1.0
+last-updated: 2026-01-02
+---
+
+
 # CSS Style Guide
 
 We always use the latest version of TailwindCSS for all CSS.

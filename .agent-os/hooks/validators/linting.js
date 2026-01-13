@@ -1,10 +1,69 @@
-const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
+const { execSync } = require("child_process");
+const fs = require("fs");
+const path = require("path");
 
+/**
+ * Linting Validator with Agent OS Base Config Fallback
+ *
+ * Validates JavaScript/TypeScript, Python, and CSS files using appropriate linters.
+ * When a project lacks ESLint configuration, uses the Agent OS base config to ensure
+ * consistent quality standards (especially @typescript-eslint/no-explicit-any).
+ *
+ * Version: 2.0.0
+ */
 class LintingValidator {
   constructor() {
-    this.name = 'linting';
+    this.name = "linting";
+    this.agentOsRoot = process.env.HOME
+      ? path.join(process.env.HOME, ".agent-os")
+      : null;
+    this.baseConfigPath = this.agentOsRoot
+      ? path.join(this.agentOsRoot, "hooks", "eslint-base.config.js")
+      : null;
+  }
+
+  /**
+   * Check if project has its own ESLint configuration
+   * @param {string} filePath - Path to file being validated
+   * @returns {boolean} True if project has ESLint config
+   */
+  hasProjectESLintConfig(filePath) {
+    let dir = path.dirname(filePath);
+    const root = path.parse(dir).root;
+
+    const configFiles = [
+      ".eslintrc",
+      ".eslintrc.js",
+      ".eslintrc.cjs",
+      ".eslintrc.json",
+      ".eslintrc.yaml",
+      ".eslintrc.yml",
+      "eslint.config.js",
+      "eslint.config.mjs",
+      "eslint.config.cjs",
+    ];
+
+    while (dir !== root) {
+      for (const configFile of configFiles) {
+        if (fs.existsSync(path.join(dir, configFile))) {
+          return true;
+        }
+      }
+      // Also check package.json for eslintConfig
+      const pkgPath = path.join(dir, "package.json");
+      if (fs.existsSync(pkgPath)) {
+        try {
+          const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
+          if (pkg.eslintConfig) {
+            return true;
+          }
+        } catch {
+          // Ignore JSON parse errors
+        }
+      }
+      dir = path.dirname(dir);
+    }
+    return false;
   }
 
   /**
@@ -18,11 +77,11 @@ class LintingValidator {
     const autoFix = options.autoFix !== false; // Default to true
 
     // Determine which linter to use based on file extension
-    if (['.js', '.jsx', '.ts', '.tsx', '.mjs', '.cjs'].includes(ext)) {
+    if ([".js", ".jsx", ".ts", ".tsx", ".mjs", ".cjs"].includes(ext)) {
       return this.validateWithESLint(filePath, autoFix);
-    } else if (['.py'].includes(ext)) {
+    } else if ([".py"].includes(ext)) {
       return this.validateWithPylint(filePath);
-    } else if (['.css', '.scss', '.sass', '.less'].includes(ext)) {
+    } else if ([".css", ".scss", ".sass", ".less"].includes(ext)) {
       return this.validateWithStylelint(filePath, autoFix);
     }
 
@@ -34,12 +93,13 @@ class LintingValidator {
       warnings: [],
       errors: [],
       content: null,
-      message: `No linter configured for ${ext} files`
+      message: `No linter configured for ${ext} files`,
     };
   }
 
   /**
    * Validate JavaScript/TypeScript with ESLint
+   * Uses Agent OS base config as fallback when project lacks ESLint config
    * @param {string} filePath - Path to file
    * @param {boolean} autoFix - Whether to attempt auto-fix
    * @returns {object} Validation result
@@ -48,7 +108,7 @@ class LintingValidator {
     try {
       // Check if ESLint is available
       try {
-        execSync('npx eslint --version', { stdio: 'pipe' });
+        execSync("npx eslint --version", { stdio: "pipe" });
       } catch {
         return {
           passed: true,
@@ -57,24 +117,41 @@ class LintingValidator {
           warnings: [],
           errors: [],
           content: null,
-          message: 'ESLint not available in project'
+          message: "ESLint not available in project",
         };
       }
 
-      const originalContent = fs.readFileSync(filePath, 'utf8');
+      const originalContent = fs.readFileSync(filePath, "utf8");
       let fixed = false;
       let fixedContent = null;
+
+      // Determine if we need to use Agent OS base config
+      const hasProjectConfig = this.hasProjectESLintConfig(filePath);
+      let configFlag = "";
+      let usingBaseConfig = false;
+
+      if (
+        !hasProjectConfig &&
+        this.baseConfigPath &&
+        fs.existsSync(this.baseConfigPath)
+      ) {
+        configFlag = `--config "${this.baseConfigPath}" --no-eslintrc`;
+        usingBaseConfig = true;
+      }
 
       // Run ESLint with auto-fix if enabled
       if (autoFix) {
         try {
-          execSync(`npx eslint --fix --format json "${filePath}"`, {
-            stdio: 'pipe',
-            encoding: 'utf8'
-          });
+          execSync(
+            `npx eslint --fix --format json ${configFlag} "${filePath}"`,
+            {
+              stdio: "pipe",
+              encoding: "utf8",
+            },
+          );
 
           // Check if file was modified
-          const newContent = fs.readFileSync(filePath, 'utf8');
+          const newContent = fs.readFileSync(filePath, "utf8");
           if (newContent !== originalContent) {
             fixed = true;
             fixedContent = newContent;
@@ -88,13 +165,16 @@ class LintingValidator {
       // Run ESLint again to get current state (without --fix to avoid double-fixing)
       let output;
       try {
-        output = execSync(`npx eslint --format json "${filePath}"`, {
-          stdio: 'pipe',
-          encoding: 'utf8'
-        });
+        output = execSync(
+          `npx eslint --format json ${configFlag} "${filePath}"`,
+          {
+            stdio: "pipe",
+            encoding: "utf8",
+          },
+        );
       } catch (error) {
         // ESLint exits with 1 when issues found
-        output = error.stdout || '[]';
+        output = error.stdout || "[]";
       }
 
       // Parse ESLint JSON output
@@ -105,13 +185,13 @@ class LintingValidator {
       const warnings = [];
       const fixes = [];
 
-      fileResult.messages.forEach(msg => {
+      fileResult.messages.forEach((msg) => {
         const issue = {
           line: msg.line,
           column: msg.column,
           rule: msg.ruleId,
           message: msg.message,
-          severity: msg.severity === 2 ? 'error' : 'warning'
+          severity: msg.severity === 2 ? "error" : "warning",
         };
 
         if (msg.severity === 2) {
@@ -126,12 +206,24 @@ class LintingValidator {
             line: msg.line,
             column: msg.column,
             rule: msg.ruleId,
-            description: msg.message
+            description: msg.message,
           });
         }
       });
 
       const passed = errors.length === 0;
+
+      // Add note about which config was used
+      let message = this.generateMessage(
+        passed,
+        fixed,
+        errors.length,
+        warnings.length,
+        fixes.length,
+      );
+      if (usingBaseConfig) {
+        message += " (using Agent OS base config)";
+      }
 
       return {
         passed,
@@ -140,24 +232,26 @@ class LintingValidator {
         warnings,
         errors,
         content: fixedContent,
-        message: this.generateMessage(passed, fixed, errors.length, warnings.length, fixes.length)
+        message,
+        usingBaseConfig,
       };
-
     } catch (error) {
       return {
         passed: false,
         fixed: false,
         fixes: [],
         warnings: [],
-        errors: [{
-          line: 0,
-          column: 0,
-          rule: 'eslint-error',
-          message: `ESLint validation failed: ${error.message}`,
-          severity: 'error'
-        }],
+        errors: [
+          {
+            line: 0,
+            column: 0,
+            rule: "eslint-error",
+            message: `ESLint validation failed: ${error.message}`,
+            severity: "error",
+          },
+        ],
         content: null,
-        message: `ESLint validation failed: ${error.message}`
+        message: `ESLint validation failed: ${error.message}`,
       };
     }
   }
@@ -171,7 +265,7 @@ class LintingValidator {
     try {
       // Check if Pylint is available
       try {
-        execSync('pylint --version', { stdio: 'pipe' });
+        execSync("pylint --version", { stdio: "pipe" });
       } catch {
         return {
           passed: true,
@@ -180,7 +274,7 @@ class LintingValidator {
           warnings: [],
           errors: [],
           content: null,
-          message: 'Pylint not available in system'
+          message: "Pylint not available in system",
         };
       }
 
@@ -188,12 +282,12 @@ class LintingValidator {
       let output;
       try {
         output = execSync(`pylint --output-format=json "${filePath}"`, {
-          stdio: 'pipe',
-          encoding: 'utf8'
+          stdio: "pipe",
+          encoding: "utf8",
         });
       } catch (error) {
         // Pylint exits with non-zero when issues found
-        output = error.stdout || '[]';
+        output = error.stdout || "[]";
       }
 
       // Parse Pylint JSON output
@@ -201,16 +295,16 @@ class LintingValidator {
       const errors = [];
       const warnings = [];
 
-      results.forEach(msg => {
+      results.forEach((msg) => {
         const issue = {
           line: msg.line,
           column: msg.column,
-          rule: msg['message-id'],
+          rule: msg["message-id"],
           message: msg.message,
-          severity: ['error', 'fatal'].includes(msg.type) ? 'error' : 'warning'
+          severity: ["error", "fatal"].includes(msg.type) ? "error" : "warning",
         };
 
-        if (['error', 'fatal'].includes(msg.type)) {
+        if (["error", "fatal"].includes(msg.type)) {
           errors.push(issue);
         } else {
           warnings.push(issue);
@@ -226,24 +320,31 @@ class LintingValidator {
         warnings,
         errors,
         content: null,
-        message: this.generateMessage(passed, false, errors.length, warnings.length, 0)
+        message: this.generateMessage(
+          passed,
+          false,
+          errors.length,
+          warnings.length,
+          0,
+        ),
       };
-
     } catch (error) {
       return {
         passed: false,
         fixed: false,
         fixes: [],
         warnings: [],
-        errors: [{
-          line: 0,
-          column: 0,
-          rule: 'pylint-error',
-          message: `Pylint validation failed: ${error.message}`,
-          severity: 'error'
-        }],
+        errors: [
+          {
+            line: 0,
+            column: 0,
+            rule: "pylint-error",
+            message: `Pylint validation failed: ${error.message}`,
+            severity: "error",
+          },
+        ],
         content: null,
-        message: `Pylint validation failed: ${error.message}`
+        message: `Pylint validation failed: ${error.message}`,
       };
     }
   }
@@ -258,7 +359,7 @@ class LintingValidator {
     try {
       // Check if Stylelint is available
       try {
-        execSync('npx stylelint --version', { stdio: 'pipe' });
+        execSync("npx stylelint --version", { stdio: "pipe" });
       } catch {
         return {
           passed: true,
@@ -267,11 +368,11 @@ class LintingValidator {
           warnings: [],
           errors: [],
           content: null,
-          message: 'Stylelint not available in project'
+          message: "Stylelint not available in project",
         };
       }
 
-      const originalContent = fs.readFileSync(filePath, 'utf8');
+      const originalContent = fs.readFileSync(filePath, "utf8");
       let fixed = false;
       let fixedContent = null;
 
@@ -279,12 +380,12 @@ class LintingValidator {
       if (autoFix) {
         try {
           execSync(`npx stylelint --fix --formatter json "${filePath}"`, {
-            stdio: 'pipe',
-            encoding: 'utf8'
+            stdio: "pipe",
+            encoding: "utf8",
           });
 
           // Check if file was modified
-          const newContent = fs.readFileSync(filePath, 'utf8');
+          const newContent = fs.readFileSync(filePath, "utf8");
           if (newContent !== originalContent) {
             fixed = true;
             fixedContent = newContent;
@@ -299,12 +400,12 @@ class LintingValidator {
       let output;
       try {
         output = execSync(`npx stylelint --formatter json "${filePath}"`, {
-          stdio: 'pipe',
-          encoding: 'utf8'
+          stdio: "pipe",
+          encoding: "utf8",
         });
       } catch (error) {
         // Stylelint exits with 2 when issues found
-        output = error.stdout || '[]';
+        output = error.stdout || "[]";
       }
 
       // Parse Stylelint JSON output
@@ -315,16 +416,16 @@ class LintingValidator {
       const warnings = [];
       const fixes = [];
 
-      fileResult.warnings.forEach(msg => {
+      fileResult.warnings.forEach((msg) => {
         const issue = {
           line: msg.line,
           column: msg.column,
           rule: msg.rule,
           message: msg.text,
-          severity: msg.severity === 'error' ? 'error' : 'warning'
+          severity: msg.severity === "error" ? "error" : "warning",
         };
 
-        if (msg.severity === 'error') {
+        if (msg.severity === "error") {
           errors.push(issue);
         } else {
           warnings.push(issue);
@@ -336,8 +437,8 @@ class LintingValidator {
         fixes.push({
           line: 0,
           column: 0,
-          rule: 'stylelint-autofix',
-          description: 'Auto-fixed formatting and style issues'
+          rule: "stylelint-autofix",
+          description: "Auto-fixed formatting and style issues",
         });
       }
 
@@ -350,24 +451,31 @@ class LintingValidator {
         warnings,
         errors,
         content: fixedContent,
-        message: this.generateMessage(passed, fixed, errors.length, warnings.length, fixes.length)
+        message: this.generateMessage(
+          passed,
+          fixed,
+          errors.length,
+          warnings.length,
+          fixes.length,
+        ),
       };
-
     } catch (error) {
       return {
         passed: false,
         fixed: false,
         fixes: [],
         warnings: [],
-        errors: [{
-          line: 0,
-          column: 0,
-          rule: 'stylelint-error',
-          message: `Stylelint validation failed: ${error.message}`,
-          severity: 'error'
-        }],
+        errors: [
+          {
+            line: 0,
+            column: 0,
+            rule: "stylelint-error",
+            message: `Stylelint validation failed: ${error.message}`,
+            severity: "error",
+          },
+        ],
         content: null,
-        message: `Stylelint validation failed: ${error.message}`
+        message: `Stylelint validation failed: ${error.message}`,
       };
     }
   }
@@ -385,26 +493,26 @@ class LintingValidator {
     const parts = [];
 
     if (passed && !fixed && warningCount === 0) {
-      return 'Linting passed with no issues';
+      return "Linting passed with no issues";
     }
 
     if (fixed) {
-      parts.push(`Auto-fixed ${fixCount} issue${fixCount !== 1 ? 's' : ''}`);
+      parts.push(`Auto-fixed ${fixCount} issue${fixCount !== 1 ? "s" : ""}`);
     }
 
     if (errorCount > 0) {
-      parts.push(`${errorCount} error${errorCount !== 1 ? 's' : ''}`);
+      parts.push(`${errorCount} error${errorCount !== 1 ? "s" : ""}`);
     }
 
     if (warningCount > 0) {
-      parts.push(`${warningCount} warning${warningCount !== 1 ? 's' : ''}`);
+      parts.push(`${warningCount} warning${warningCount !== 1 ? "s" : ""}`);
     }
 
     if (parts.length === 0) {
-      return 'Linting passed';
+      return "Linting passed";
     }
 
-    return parts.join(', ');
+    return parts.join(", ");
   }
 }
 

@@ -1,3 +1,11 @@
+---
+version: 5.1.0
+last-updated: 2026-01-02
+related-files:
+  - standards/testing-standards.md
+---
+
+
 # Testing Strategies for Agent OS
 
 ## Context

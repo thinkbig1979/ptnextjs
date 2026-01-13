@@ -973,7 +973,7 @@ export const [IntegratedFeature] = () => {
 **Code Style References**:
 - See `standards/code-style.md` for Agent OS code style guidelines
 - See `standards/best-practices.md` for development best practices
-- See `standards/tech-stack.md` for technology choices and rationale
+- See `standards/global/tech-stack.md` for technology choices and rationale
 
 ## Deep Analysis
 

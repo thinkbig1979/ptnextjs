@@ -784,7 +784,7 @@ export const generate_token = (payload: TokenPayload): string => {
 ### Agent OS Standards
 - **Code Style Guide**: `~/.agent-os/standards/code-style.md`
 - **Best Practices**: `~/.agent-os/standards/best-practices.md`
-- **Tech Stack Defaults**: `~/.agent-os/standards/tech-stack.md`
+- **Tech Stack Defaults**: `~/.agent-os/standards/global/tech-stack.md`
 
 ### Template Locations
 - **Spec Templates**: `~/.agent-os/templates/spec-templates/`

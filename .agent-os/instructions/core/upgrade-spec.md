@@ -1,16 +1,16 @@
 ---
-description: Comprehensive workflow for upgrading existing specs to Agent OS v3.3.0 standards
+description: Comprehensive workflow for upgrading existing specs to Agent OS v5.1.0 standards
 globs:
 alwaysApply: false
-version: 2.0
+version: 5.1.0
 encoding: UTF-8
 ---
 
-# Upgrade Spec to v3.3.0 Standards
+# Upgrade Spec to v5.1.0 Standards
 
 ## Overview
 
-Complete modernization of existing Agent OS specs to v3.3.0 through:
+Complete modernization of existing Agent OS specs to v5.1.0 through:
 - Full re-evaluation of spec content
 - Fresh codebase analysis with integration intelligence
 - 6-file comprehensive spec structure
@@ -20,7 +20,7 @@ Complete modernization of existing Agent OS specs to v3.3.0 through:
 - Test/code alignment validation
 
 **Time**: 30-60 minutes  
-**Outcome**: Fully modernized spec with v3.3.0 standards
+**Outcome**: Fully modernized spec with v5.1.0 standards
 
 <pre_flight_check>
   EXECUTE: @.agent-os/instructions/meta/pre-flight.md
@@ -77,7 +77,7 @@ Complete modernization of existing Agent OS specs to v3.3.0 through:
   - Spec version (v1.0, v2.x, v3.x, custom)
   - File structure (monolithic, partial v2.0, custom)
   - Completeness (missing files, incomplete sections)
-  - Modernization needs (v3.3.0 updates required)
+  - Modernization needs (v5.1.0 updates required)
 </existing_content_analysis>
 
 <instructions>
@@ -141,7 +141,7 @@ Complete modernization of existing Agent OS specs to v3.3.0 through:
   USE:
   - Extracted content from Step 1
   - Fresh codebase intelligence from Step 2
-  - Latest v3.3.0 templates from create-spec.md
+  - Latest v5.1.0 templates from create-spec.md
   
   ENHANCE: Modern best practices
   PRESERVE: Core feature purpose, completed work insights
@@ -340,7 +340,7 @@ Complete modernization of existing Agent OS specs to v3.3.0 through:
 <user_review_presentation>
   **Upgrade Summary**:
   - **Original Version**: [detected]
-  - **Upgraded To**: Agent OS v3.3.0
+  - **Upgraded To**: Agent OS v5.1.0
   - **Files Backed Up**: [count] → `.backup-[timestamp]/`
   - **Files Generated**: [count] spec + [count] task files
   - **Tasks Preserved**: [count]/[total] marked complete
@@ -367,7 +367,7 @@ Complete modernization of existing Agent OS specs to v3.3.0 through:
   - ✅ Fresh codebase integration
   - ✅ Micro-granular task breakdown
   - ✅ 90%+ context reduction
-  - ✅ Latest v3.3.0 standards
+  - ✅ Latest v5.1.0 standards
   - ✅ Work preserved (completed tasks [x])
 
   **Rollback**: All original files in `.backup-[timestamp]/`
@@ -389,7 +389,7 @@ Complete modernization of existing Agent OS specs to v3.3.0 through:
   **IF approved**:
   
   ✅ **Confirm Complete**:
-  - Spec upgraded to v3.3.0
+  - Spec upgraded to v5.1.0
   - Backup in `.backup-[timestamp]/`
   - Ready for task execution
 
@@ -399,7 +399,7 @@ Complete modernization of existing Agent OS specs to v3.3.0 through:
 
   ✅ **Next Steps**:
   ```
-  ✅ Spec upgrade to v3.3.0 complete!
+  ✅ Spec upgrade to v5.1.0 complete!
 
   **Next Steps**:
   1. Review upgraded spec files
@@ -412,7 +412,7 @@ Complete modernization of existing Agent OS specs to v3.3.0 through:
   **Context Efficiency**: 90%+ reduction in task overhead
   ```
 
-  **IF adjustments needed**: Make specific changes, maintain v3.3.0 structure, re-validate
+  **IF adjustments needed**: Make specific changes, maintain v5.1.0 structure, re-validate
 
   **IF rollback**: Copy from `.backup-[timestamp]/`, restore original
 </finalization_actions>
@@ -428,13 +428,13 @@ Complete modernization of existing Agent OS specs to v3.3.0 through:
 <upgrade_outcomes>
   **✅ Comprehensive Modernization**: 6-file structure, fresh codebase integration, micro-granular tasks, 90%+ context reduction
   **✅ Work Preservation**: Completed tasks preserved, notes maintained, backup created, no data loss
-  **✅ Modern Standards**: v3.3.0, codebase intelligence, quality gates, evidence requirements
+  **✅ Modern Standards**: v5.1.0, codebase intelligence, quality gates, evidence requirements
   **✅ Execution Ready**: Implementation-ready tasks, optimized for orchestration, context efficient, quality focused
 </upgrade_outcomes>
 
 <comparison_with_enhance_existing>
   **Use `upgrade-spec` when**:
-  - Full modernization to v3.3.0 needed
+  - Full modernization to v5.1.0 needed
   - Fresh codebase analysis required
   - Want 6-file comprehensive structure
   - Micro-granular task regeneration needed

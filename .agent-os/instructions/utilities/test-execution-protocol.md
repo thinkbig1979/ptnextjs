@@ -10,7 +10,7 @@
 
 This protocol is used by:
 - `@instructions/core/execute-tasks.md` - Step 2.1 RED phase validation
-- `@.claude/commands/run-tests.md` - Standalone test execution command
+- `@.claude/commands/e2e.md` - Unified E2E testing command
 
 ---
 
@@ -248,7 +248,7 @@ Save test failure analysis to: `.agent-os/test-failures/[run-id].json`
 |------|--------------|
 | `@standards/testing-standards.md` | Canonical testing values |
 | `@instructions/core/execute-tasks.md` | Orchestration flow |
-| `@.claude/commands/run-tests.md` | Standalone test command |
+| `@.claude/commands/e2e.md` | Unified E2E testing command |
 | `@instructions/agents/test-runner.md` | Test execution agent guidance |
 
 ---
@@ -256,5 +256,5 @@ Save test failure analysis to: `.agent-os/test-failures/[run-id].json`
 ## Change Log
 
 ### v1.0.0 (v4.2.0)
-- Initial shared protocol extracted from run-tests.md
+- Initial shared protocol extracted from run-tests.md (now e2e.md)
 - Consolidates test execution steps for reuse

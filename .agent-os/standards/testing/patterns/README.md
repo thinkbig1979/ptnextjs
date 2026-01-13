@@ -1,3 +1,9 @@
+---
+version: 5.1.0
+last-updated: 2026-01-02
+---
+
+
 # Test Library Pattern Catalog
 
 This catalog contains framework-specific testing patterns used by the test-context-gatherer to provide accurate, version-appropriate patterns to the test-architect.

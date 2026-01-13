@@ -1,6 +1,6 @@
 ---
 description: Migration workflow for converting monolithic tasks.md to optimized split structure
-version: 1.0
+version: 5.1.0
 encoding: UTF-8
 ---
 

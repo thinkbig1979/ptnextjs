@@ -1,0 +1,37 @@
+# Quick Spec: {SPEC_NAME}
+
+**Type**: [bug-fix | documentation | refactor | config | other]
+**Priority**: [P1-Critical | P2-High | P3-Medium | P4-Low]
+**Estimated Time**: [X minutes]
+
+## What
+
+[1-2 sentences describing the change]
+
+## Why
+
+[1-2 sentences explaining the reason/motivation]
+
+## Acceptance Criteria
+
+- [ ] [Criterion 1]
+- [ ] [Criterion 2]
+- [ ] [Criterion 3]
+
+## Files Affected
+
+| File | Change Type |
+|------|-------------|
+| `path/to/file` | [create/modify/delete] |
+
+## Implementation Notes
+
+[Optional: Any specific approach or constraints]
+
+## Testing
+
+- [ ] [How to verify the change works]
+
+---
+*Created: {DATE}*
+*Quick spec - no sub-specs required*

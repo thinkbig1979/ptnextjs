@@ -1,8 +1,18 @@
+---
+version: 5.3.0
+last-updated: 2026-01-09
+related-files:
+  - instructions/core/create-tasks.md
+---
+
+
 # Unified Task Execution Protocol
 
-> **Version**: 1.1.0 | Beads-first orchestration with parallel specialists
+> **Version**: 1.3.0 | Beads-first orchestration with parallel specialists
 > **Core Principle**: Create ALL beads tasks + dependencies FIRST, then delegate execution
 > **v4.5.0**: Test integrity analysis (Phase 1.5)
+> **v5.1.1**: Ledger maintenance prompts (non-blocking)
+> **v5.3.0**: Mandatory session ledger when remaining work exists
 
 ## Execution Flow
 
@@ -32,12 +42,14 @@ Phase 2: Parallel Execution
 
 Phase 3: Context Monitoring
 ├─ Track 75% limit
+├─ Ledger update prompt at 70%
 └─ Graceful stop with state saved
 
 Phase 4: Post-Execution
 ├─ Verify deliverables
 ├─ Run full test suite
 ├─ Verify test integrity
+├─ Session ledger if remaining work (MANDATORY)
 └─ Final commit and summary
 ```
 
@@ -45,10 +57,14 @@ Phase 4: Post-Execution
 
 | Directive | Rule |
 |-----------|------|
-| **Context limit** | Stop at 75% capacity. No exceptions. |
+| **Session ledger at 85%** | Create `.agent-os/session-ledger.md` for seamless cross-session handoff. |
+| **Checkpoint at 75%** | Graceful checkpoint with Beads note if continuing work. |
 | **Beads-first** | Create task BEFORE spawning subagent. |
+| **Auto-formalize** | Convert ad-hoc work to Beads tasks at handoff time. |
 | **Checkpoint frequency** | Every 10 tool calls or end of wave. |
 | **User approval** | Always prompt for blocked/checkpoint decisions. |
+| **Ledger prompts** | Suggest ledger updates at 70% context, after tasks, before compaction (non-blocking). |
+| **Ledger on remaining work** | **MANDATORY**: Create session ledger BEFORE displaying summary if remaining tasks exist. |
 
 ---
 
@@ -436,6 +452,11 @@ BEFORE stopping (REQUIRED):
 3. bd sync --from-main
 4. REPORT status (format below)
 
+LEDGER UPDATE (OPTIONAL - non-blocking):
+If significant decisions were made, consider updating:
+  .agent-os/ledgers/LEDGER-{session-name}-{date}.md
+with key decisions, patterns discovered, or blockers resolved.
+
 ═══════════════════════════════════════════════════════════
 MANDATORY INSTRUCTION LOADING
 ═══════════════════════════════════════════════════════════
@@ -456,7 +477,7 @@ E2E TEST CREATION PROTOCOL (if creating E2E tests)
 ═══════════════════════════════════════════════════════════
 
 BEFORE writing any E2E test:
-1. Skill(skill="e2e-test-organization")
+1. Skill(skill="e2e-testing")
 2. READ references/coverage-analysis.md
 3. COMPLETE Step 0 (coverage analysis):
    - existing_tests_reviewed: true
@@ -581,17 +602,156 @@ AFTER each wave:
 ### 3.1: Orchestrator Context Check
 
 ```
-AFTER each wave:
-  EVALUATE:
-    - Am I at 75% context?
-    - Waves remaining?
-    - Can I complete next + save state?
+AFTER each wave or every ~20 tool calls:
+  EVALUATE context usage
 
-  IF approaching 75%:
-    INITIATE graceful stop (Step 3.2)
+  IF approaching 85%:
+    INITIATE session ledger handoff (Step 3.4)
+
+  IF approaching 75% (and continuing work):
+    INITIATE graceful checkpoint (Step 3.3)
 ```
 
-### 3.2: Orchestrator Checkpoint
+### 3.1.1: 85% Session Ledger Trigger (v5.2+)
+
+**Purpose**: Create unified session ledger for seamless cross-session handoff.
+
+```
+WHEN context approaches 85%:
+  1. STOP at clean point (between tasks, not mid-implementation)
+
+  2. ENSURE BEADS TRACKING:
+     IF current work NOT tracked in Beads:
+       # Auto-formalize ad-hoc work
+       FOR each remaining work item:
+         bd create --title="[descriptive title]" --type=task
+         CAPTURE: new Beads ID
+
+       CONFIRM: "Created Beads tasks for remaining work: [IDs]"
+
+  3. CREATE SESSION LEDGER:
+     → Go to Step 3.4 (Session Ledger Handoff)
+```
+
+### 3.2: Ledger Maintenance (v5.1.1+)
+
+**Purpose**: Capture key decisions and learnings to session ledgers for future context.
+
+**Ledger Location**: `.agent-os/ledgers/LEDGER-<name>-<date>.md`
+
+**Prompts are NON-BLOCKING** - suggestions only, not requirements.
+
+#### 3.2.1: Context Threshold Prompt (70%)
+
+```
+WHEN context approaches 70%:
+  SUGGEST:
+    "📝 LEDGER UPDATE SUGGESTION
+     Context at ~70%. Consider updating session ledger with:
+     - Key decisions made this session
+     - Patterns discovered
+     - Blockers encountered
+     - Rationale for non-obvious choices
+
+     Ledger: .agent-os/ledgers/LEDGER-{session-name}-{date}.md
+
+     [continue | update-ledger | skip]"
+
+  IF user chooses "update-ledger":
+    PROMPT for key items to capture
+    APPEND to ledger file
+
+  ELSE:
+    CONTINUE (non-blocking)
+```
+
+#### 3.2.2: Task Completion Prompt
+
+```
+AFTER task marked complete (bd close):
+  SUGGEST:
+    "📝 Update ledger with key decisions?
+     Task: ${TASK_ID} - ${TASK_TITLE}
+
+     Suggested entries:
+     - Implementation approach chosen
+     - Trade-offs considered
+     - Future considerations
+
+     [yes | no | later]"
+
+  IF yes:
+    CAPTURE: Brief summary of decisions/learnings
+    APPEND to ledger
+
+  ELSE:
+    CONTINUE (non-blocking)
+```
+
+#### 3.2.3: Pre-Compaction Prompt
+
+```
+BEFORE context compaction or graceful stop:
+  SUGGEST:
+    "📝 CAPTURE STATE TO LEDGER
+     About to checkpoint/stop. Consider capturing:
+     - Current state summary
+     - What worked well
+     - What to avoid next time
+     - Continuation guidance
+
+     Ledger: .agent-os/ledgers/LEDGER-{session-name}-{date}.md
+
+     [capture-now | skip]"
+
+  IF capture-now:
+    GENERATE: State summary
+    APPEND to ledger with timestamp
+
+  ELSE:
+    CONTINUE to checkpoint (non-blocking)
+```
+
+#### 3.2.4: Ledger Entry Format
+
+```markdown
+## Session Entry - {TIMESTAMP}
+
+### Task: {TASK_ID}
+
+**Decisions Made**:
+- {decision 1}: {rationale}
+- {decision 2}: {rationale}
+
+**Patterns Discovered**:
+- {pattern}: {context}
+
+**Blockers/Workarounds**:
+- {blocker}: {resolution or workaround}
+
+**For Future Sessions**:
+- {recommendation}
+
+---
+```
+
+#### 3.2.5: Configuration
+
+```yaml
+# config.yml
+ledger_maintenance:
+  enabled: true
+  prompts:
+    context_threshold: 0.70        # Prompt at 70% context
+    on_task_completion: true       # Suggest after task closes
+    before_compaction: true        # Suggest before context stop
+  blocking: false                  # ALWAYS non-blocking
+  ledger_path: ".agent-os/ledgers"
+```
+
+---
+
+### 3.3: Orchestrator Checkpoint
 
 ```bash
 # 1. Ensure all subagents returned
@@ -633,13 +793,87 @@ DISPLAY:
   "ORCHESTRATOR CHECKPOINT
    Progress: [X]% ([N]/[TOTAL] waves)
    State saved: ${MAIN_TASK_ID}
-   
-   To resume:
-   1. Start new session
-   2. bd show ${MAIN_TASK_ID}
-   3. Continue from checkpoint
-   
-   Remaining: [SUMMARY]"
+
+   Remaining: [SUMMARY]
+
+   Next session will auto-detect and offer to resume."
+```
+
+### 3.4: Session Ledger Handoff (v5.2+)
+
+**Purpose**: Create unified session ledger that enables seamless auto-resume on next session start.
+
+```bash
+# 1. Gather handoff data
+COMPLETED_TASKS=$(bd list --status=closed --json | jq -r '.[].id' | tail -10)
+CURRENT_TASK=$(bd list --status=in_progress --json | jq -r '.[0].id')
+REMAINING_TASKS=$(bd ready --json | jq -r '.[].id')
+LAST_COMMIT=$(git rev-parse --short HEAD)
+CURRENT_BRANCH=$(git branch --show-current)
+PM_SESSION=${PM_SESSION_NUMBER:-1}
+
+# 2. Create/update session ledger
+WRITE: .agent-os/session-ledger.md
+
+CONTENTS:
+```markdown
+# Session Ledger: ${SESSION_NAME}
+Created: ${CREATED_TIMESTAMP}
+Last Updated: $(date -Iseconds)
+Task Context: ${MAIN_TASK_ID}
+
+## Handoff Context
+- **PM Session**: ${PM_SESSION}
+- **Completed Tasks**: ${COMPLETED_TASKS}
+- **Current Task**: ${CURRENT_TASK}
+- **Stopped At**: ${STOPPED_AT_LOCATION}
+- **Next Action**: ${NEXT_ACTION}
+- **Remaining Tasks**: ${REMAINING_TASKS}
+- **Last Commit**: ${LAST_COMMIT}
+
+## Goal
+${GOAL_FROM_SPEC_OR_TASK}
+
+## Constraints
+${CONSTRAINTS_FROM_SPEC}
+
+## State
+- **DONE**: ${COMPLETED_ITEMS}
+- **NOW**: ${CURRENT_FOCUS}
+- **NEXT**: ${UPCOMING_ITEMS}
+
+## Working Set
+- **Files**: ${MODIFIED_FILES}
+- **Branch**: ${CURRENT_BRANCH}
+- **Commands**: ${KEY_COMMANDS}
+
+## Session Notes
+${CONTEXT_NOTES_AND_KEY_DECISIONS}
+```
+
+# 3. Commit ledger
+git add .agent-os/session-ledger.md
+git add -A
+git commit -m "checkpoint: session ledger at ${STOPPED_AT_LOCATION}"
+
+# 4. Sync
+bd sync
+
+# 5. Inform user
+DISPLAY:
+  "═══════════════════════════════════════════════════════════
+   SESSION LEDGER SAVED
+   ═══════════════════════════════════════════════════════════
+
+   Progress: [X]% complete
+   Stopped At: ${STOPPED_AT_LOCATION}
+   Next Action: ${NEXT_ACTION}
+
+   Session ledger: .agent-os/session-ledger.md
+   Last commit: ${LAST_COMMIT}
+
+   Next session will auto-detect this ledger and offer to resume.
+   ═══════════════════════════════════════════════════════════"
 ```
 
 ---
@@ -818,7 +1052,7 @@ Browser Validation Gate - {TASK_ID}
 
 **Purpose**: Verify implemented code matches existing codebase patterns.
 
-**Trigger**: After TypeScript verification, before test suite.
+**Trigger**: After TypeScript verification, before evolution check.
 
 ```yaml
 pattern_validation:
@@ -899,6 +1133,132 @@ Pattern Consistency Validation
 └── Status: ✓ PASSED
 ```
 
+### 4.2.7: Evolution Check for Deliverables (v5.2+)
+
+**Purpose**: Verify implementation aligns with spec's evolution requirements and flag new anti-patterns.
+
+**Trigger**: After pattern validation, before test suite.
+
+**Skip**: If `config.yml` → `evolution_scoring.apply_to.tasks: false`
+
+```yaml
+evolution_check:
+  # 1. Load configuration
+  READ: config.yml → evolution_scoring
+
+  IF NOT enabled OR NOT apply_to.tasks:
+    SKIP to 4.3
+
+  # 2. Load spec's evolution requirements
+  spec_folder: {AGENT_OS_ROOT}/.agent-os/specs/{spec_name}
+
+  IF exists({spec_folder}/analysis-inversion.md):
+    LOAD: inversion_analysis
+    anti_patterns: EXTRACT anti_patterns from inversion_analysis
+    constraints: EXTRACT constraints from inversion_analysis
+  ELSE:
+    anti_patterns: []
+    constraints: []
+
+  # 3. Analyze deliverables for anti-patterns
+  FOR each modified_file in task.deliverables:
+    SCAN for:
+      # Global anti-patterns (always checked)
+      global_anti_patterns:
+        - god_objects: "Class/module with >10 responsibilities"
+        - hidden_dependencies: "Dependencies not in function signature"
+        - magic_values: "Unexplained constants or strings"
+        - nested_callbacks: "Callback depth > 3"
+        - mixed_abstractions: "High-level mixed with low-level code"
+        - excessive_coupling: "Module depends on >5 other modules"
+
+      # Spec-specific anti-patterns (from inversion analysis)
+      spec_anti_patterns: {anti_patterns}
+
+  # 4. Verify constraint compliance
+  FOR each constraint in constraints:
+    VERIFY: Implementation satisfies constraint
+    IF NOT satisfied:
+      FLAG: constraint_violation
+
+  # 5. Calculate evolution impact
+  evolution_impact:
+    anti_patterns_introduced: [list of new anti-patterns]
+    constraints_violated: [list of violated constraints]
+    total_issues: count(anti_patterns_introduced) + count(constraints_violated)
+
+  # 6. Enforcement decision
+  mode: config.evolution_scoring.enforcement_mode  # "warning" | "blocking"
+
+  IF evolution_impact.total_issues == 0:
+    PASS: Continue to 4.3
+    OUTPUT:
+      "Evolution Check: PASSED
+       ├── Anti-patterns: 0 introduced
+       ├── Constraints: All satisfied
+       └── Status: ✓ Clean implementation"
+
+  ELIF mode == "warning":
+    WARN: Show issues
+    PROMPT: "Evolution issues detected:
+
+            Anti-patterns introduced:
+            {for each anti_pattern}
+            - {file}: {pattern_name} - {description}
+            {end for}
+
+            Constraints violated:
+            {for each violation}
+            - {constraint}: {how_violated}
+            {end for}
+
+            Options:
+            1. FIX - Address issues before proceeding
+            2. CONTINUE - Proceed with justification
+            3. DEFER - Create follow-up task"
+
+    IF choice == "FIX":
+      RETURN to implementation phase
+    ELIF choice == "CONTINUE":
+      REQUIRE: Justification
+      SAVE: .agent-os/evolution/{TASK_ID}-override.md
+      PROCEED to 4.3
+    ELIF choice == "DEFER":
+      CREATE: Follow-up Beads task for tech debt
+      PROCEED to 4.3
+
+  ELIF mode == "blocking":
+    BLOCK: Cannot proceed with evolution issues
+    OUTPUT:
+      "Evolution Check: BLOCKED
+
+       Must address before completion:
+       {issues}
+
+       Return to implementation and fix these issues."
+    HALT until issues resolved
+
+  # 7. Save evolution report
+  SAVE: .agent-os/evolution/{TASK_ID}-check.json
+  CONTENTS:
+    task_id: {TASK_ID}
+    timestamp: {ISO_TIMESTAMP}
+    anti_patterns_found: {list}
+    constraints_violated: {list}
+    status: {PASSED | WARNED | BLOCKED}
+    override_justification: {if applicable}
+    deferred_tasks: {if any}
+```
+
+**Console Output**:
+```
+Evolution Check - {TASK_ID}
+├── Anti-patterns: {count} introduced
+├── Constraints: {satisfied}/{total} satisfied
+├── Files analyzed: {count}
+└── Status: {PASSED | WARNED | BLOCKED}
+```
+
 ### 4.3: Run Full Test Suite
 
 ```bash
@@ -935,7 +1295,45 @@ IF open tasks:
 bd sync --from-main
 ```
 
-### 4.5: Final Commit + Summary
+### 4.5: Session Ledger for Remaining Work (v5.3.0+)
+
+**MANDATORY**: Create session ledger BEFORE any summary if work remains.
+
+```bash
+# Check for remaining work
+REMAINING_TASKS=$(bd ready --json 2>/dev/null | jq length)
+SPEC_TASKS_REMAINING=$(grep -c "^\s*- \[ \]" tasks.md 2>/dev/null || echo 0)
+
+IF REMAINING_TASKS > 0 OR SPEC_TASKS_REMAINING > 0:
+  # MUST create session ledger before summary
+  EXECUTE: Step 3.4 (Session Ledger Handoff)
+
+  # Update ledger with batch completion context
+  APPEND to .agent-os/session-ledger.md:
+    """
+    ## Batch Complete - $(date -Iseconds)
+
+    **Completed This Session**:
+    ${COMPLETED_TASK_LIST}
+
+    **Remaining Work**:
+    - Beads tasks ready: ${REMAINING_TASKS}
+    - Spec tasks unchecked: ${SPEC_TASKS_REMAINING}
+
+    **Ready to Continue**:
+    $(bd ready --json | jq -r '.[] | "- \(.id): \(.title)"')
+    """
+
+  CONFIRM: "Session ledger created: .agent-os/session-ledger.md"
+
+ELSE:
+  # All work complete - archive any existing ledger
+  IF exists .agent-os/session-ledger.md:
+    MOVE: .agent-os/session-ledger.md → .agent-os/ledgers/LEDGER-${spec_name}-$(date +%Y-%m-%d).md
+    CONFIRM: "Session ledger archived (all work complete)"
+```
+
+### 4.6: Final Commit + Summary
 
 ```bash
 # 1. Stage
@@ -953,23 +1351,44 @@ Completed:
 Co-Authored-By: Claude <noreply@anthropic.com>"
 
 # 3. Summary
-DISPLAY:
-  "✅ EXECUTION COMPLETE
-   
-   📊 Summary:
-   - Tasks: [COUNT]
-   - Files: [COUNT]
-   - Tests passing: [COUNT]
-   - Waves: [COUNT]
-   
-   📁 Deliverables:
-   [LIST with paths]
-   
-   🔗 Branch: ${BRANCH}
-   
-   Next:
-   1. git diff main...HEAD
-   2. gh pr create"
+IF session_ledger_created:
+  DISPLAY:
+    "📋 SESSION COMPLETE (more work remains)
+     
+     📊 This Session:
+     - Tasks completed: [COUNT]
+     - Files modified: [COUNT]
+     - Tests passing: [COUNT]
+     
+     📁 Deliverables:
+     [LIST with paths]
+     
+     🔗 Branch: ${BRANCH}
+     📝 Session ledger: .agent-os/session-ledger.md
+     
+     Remaining:
+     - Tasks ready: [COUNT]
+     
+     To continue: /execute-tasks --resume or start new session"
+
+ELSE:
+  DISPLAY:
+    "✅ EXECUTION COMPLETE
+     
+     📊 Summary:
+     - Tasks: [COUNT]
+     - Files: [COUNT]
+     - Tests passing: [COUNT]
+     - Waves: [COUNT]
+     
+     📁 Deliverables:
+     [LIST with paths]
+     
+     🔗 Branch: ${BRANCH}
+     
+     Next:
+     1. git diff main...HEAD
+     2. gh pr create"
 ```
 
 <post_flight_check>
@@ -1006,12 +1425,12 @@ bd sync --from-main
 
 | Role | Required Skills |
 |------|-----------------|
-| test-context-gatherer | e2e-test-repair, agent-os-test-research, agent-os-patterns |
-| test-architect | e2e-test-repair, agent-os-patterns, e2e-test-organization |
+| test-context-gatherer | e2e-testing, agent-os-test-research, agent-os-patterns |
+| test-architect | e2e-testing, agent-os-patterns |
 | implementation-specialist | agent-os-patterns, agent-os-specialists |
 | frontend-specialist | agent-os-patterns, agent-os-specialists |
 | security-sentinel | agent-os-specialists |
-| e2e-repair | e2e-test-repair, e2e-test-organization |
+| e2e-repair | e2e-testing |
 
 ### Skill Enforcement Protocol (v4.8.0)
 
@@ -1022,11 +1441,10 @@ When dispatching ANY subagent with test responsibilities:
 1. **Include skill requirements in prompt**:
    ```
    MANDATORY FIRST ACTIONS:
-   1. Skill(skill="e2e-test-repair")
-   2. Skill(skill="e2e-test-organization")  # if E2E work
-   3. Read references/canonical-values.md
-   4. Confirm: "Skills loaded: [list]"
-   
+   1. Skill(skill="e2e-testing")
+   2. Read references/canonical-values.md
+   3. Confirm: "Skills loaded: [list]"
+
    DO NOT proceed without skill confirmation.
    ```
 
@@ -1037,11 +1455,32 @@ When dispatching ANY subagent with test responsibilities:
 3. **E2E test creation additional requirements**:
    ```
    FOR E2E tests:
-   1. Skill(skill="e2e-test-organization")
+   1. Skill(skill="e2e-testing")
    2. Read references/placement-checklist.md
    3. Complete placement decision BEFORE writing test
    4. Add test to test-inventory.ts
    ```
+
+### Ledger Maintenance (v5.1.1+)
+
+**Prompts are NON-BLOCKING suggestions**:
+
+| Trigger | Threshold | Action |
+|---------|-----------|--------|
+| Context threshold | 70% | Suggest updating ledger with decisions/patterns |
+| Task completion | After `bd close` | Suggest capturing key decisions |
+| Pre-compaction | Before checkpoint | Suggest capturing state summary |
+
+**Ledger Location**: `.agent-os/ledgers/LEDGER-<name>-<date>.md`
+
+**Entry Format**:
+```markdown
+## Session Entry - {TIMESTAMP}
+### Task: {TASK_ID}
+**Decisions Made**: ...
+**Patterns Discovered**: ...
+**For Future Sessions**: ...
+```
 
 ### Configuration
 
@@ -1051,6 +1490,18 @@ unified_execution:
   beads_first: true
   context_limit: 0.75
   checkpoint_interval: 10
+
+ledger_maintenance:
+  enabled: true
+  prompts:
+    context_threshold: 0.70
+    on_task_completion: true
+    before_compaction: true
+  blocking: false
+  ledger_path: ".agent-os/ledgers"
+
+# Additional unified_execution options
+unified_execution:
   parallel_waves: true
   auto_continuation: false
 ```

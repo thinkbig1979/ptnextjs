@@ -160,6 +160,81 @@ Identify opportunities to extract reusable components following compounding engi
 
 ---
 
+## Failure Modes & Anti-Patterns
+
+> Reference: `@.agent-os/instructions/utilities/quality-lenses.md#inversion-lens`
+> Status: [COMPLETED | SKIPPED - see justification below]
+
+### Identified Failure Modes
+
+| Mode | Category | Severity | Mitigation |
+|------|----------|----------|------------|
+| [FAILURE_MODE_1] | [Adoption/Execution/Evolution/Security] | [High/Med/Low] | [Constraint] |
+| [FAILURE_MODE_2] | [Adoption/Execution/Evolution/Security] | [High/Med/Low] | [Constraint] |
+| [FAILURE_MODE_3] | [Adoption/Execution/Evolution/Security] | [High/Med/Low] | [Constraint] |
+| [FAILURE_MODE_4] | [Adoption/Execution/Evolution/Security] | [High/Med/Low] | [Constraint] |
+
+### Anti-Patterns to Avoid
+
+- **DO NOT** [ANTI_PATTERN_1] because [reason from failure analysis]
+- **DO NOT** [ANTI_PATTERN_2] because [reason from failure analysis]
+
+### Derived Constraints
+
+- **MUST** [CONSTRAINT_1] (from: [failure category])
+- **MUST** [CONSTRAINT_2] (from: [failure category])
+- **SHOULD** [CONSTRAINT_3] (from: [failure category])
+- **SHOULD** [CONSTRAINT_4] (from: [failure category])
+
+<!-- For P3-P4 features that skip inversion analysis, replace above with: -->
+<!--
+### Inversion Analysis
+
+**Status**: SKIPPED
+**Priority**: [P3|P4]
+**Justification**: [All of: no security implications, no data integrity risks, no external integrations, <4h work, pure docs/config]
+-->
+
+---
+
+## Pre-Mortem Risk Analysis
+
+> Reference: `@.agent-os/instructions/utilities/quality-lenses.md#pre-mortem-lens`
+> Status: [COMPLETED | SKIPPED - see justification below]
+
+### Failure Scenario
+
+> "It's 6 months from now. This feature has failed completely. Why?"
+
+### Risk Assessment
+
+| Cause | Category | L | I | D | Score | Mitigation |
+|-------|----------|---|---|---|-------|------------|
+| [RISK_1] | [Technical/Product/Process/External] | [1-5] | [1-5] | [1-5] | [L*I*D/2] | [Mitigation] |
+| [RISK_2] | [Technical/Product/Process/External] | [1-5] | [1-5] | [1-5] | [L*I*D/2] | [Mitigation] |
+
+**Scoring**: L=Likelihood, I=Impact, D=Detectability. Score > 12 requires mitigation.
+
+### High-Risk Mitigations (Score > 12)
+
+1. **[RISK_TITLE]**: [Action] - Owner: [Name], Deadline: [Date]
+
+### Early Warning Indicators
+
+- [ ] [INDICATOR_1]: [Threshold]
+- [ ] [INDICATOR_2]: [Threshold]
+
+<!-- For P2-P4 features that skip pre-mortem analysis, replace above with: -->
+<!--
+### Pre-Mortem Analysis
+
+**Status**: SKIPPED
+**Priority**: [P2|P3|P4]
+**Justification**: [All of: no external dependencies, no data integrity risks, no security implications, low complexity]
+-->
+
+---
+
 ## Risks & Mitigations
 
 | Risk | Impact | Mitigation |
@@ -190,6 +265,6 @@ Identify opportunities to extract reusable components following compounding engi
 
 ---
 
-**Template Version**: 1.0.0
+**Template Version**: 1.1.0
 **Created**: [DATE]
 **Last Updated**: [DATE]

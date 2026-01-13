@@ -4,7 +4,7 @@ description: "Discovers and documents existing codebase patterns for consistency
 phase: pre_spec_analysis
 context_window: 16384
 specialization: [pattern-detection, codebase-analysis, convention-discovery, architecture-mapping]
-version: 1.0
+version: 5.1.0
 encoding: UTF-8
 introduced_in: "5.0.0"
 ---

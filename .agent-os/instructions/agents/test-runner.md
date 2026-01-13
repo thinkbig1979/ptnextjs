@@ -11,7 +11,7 @@ description: "Test execution protocol reference - for DIRECT execution by main a
 phase: test_execution
 context_window: 6144
 specialization: ["unit tests", "integration tests", "E2E tests", "result analysis", "verification reporting"]
-version: 4.0
+version: 5.1.0
 encoding: UTF-8
 ---
 
@@ -30,7 +30,7 @@ encoding: UTF-8
 - Running tests: **DIRECT** (main agent) - real-time visibility needed
 - Fixing failures: **DELEGATED** (subagent) - no real-time output needed
 
-**Canonical Reference**: `~/.agent-os/.claude/commands/run-tests.md`
+**Canonical Reference**: `~/.agent-os/.claude/commands/e2e.md`
 
 ---
 

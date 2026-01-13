@@ -4,7 +4,7 @@ description: "Test design, strategy, and implementation phase"
 phase: test_design_and_implementation
 context_window: 16384
 specialization: [test-design, coverage, tdd, test-frameworks]
-version: 2.2
+version: 5.1.0
 encoding: UTF-8
 requires: [test-context-gatherer]
 ---
@@ -16,20 +16,20 @@ requires: [test-context-gatherer]
 **BEFORE any work:**
 
 ```
-Skill(skill="e2e-test-repair")
+Skill(skill="e2e-testing")
 ```
 
 Then READ:
 - `references/canonical-values.md` - Timeouts, file locations, patterns
 - `references/validation-checklist.md` - Alignment validation
 
-**Confirm:** "I have invoked Skill(skill='e2e-test-repair') and read canonical values."
+**Confirm:** "I have invoked Skill(skill='e2e-testing') and read canonical values."
 
 ## Prerequisites Gate
 
 **MUST complete before proceeding:**
 
-1. **Invoke skill** `Skill(skill="e2e-test-repair")`
+1. **Invoke skill** `Skill(skill="e2e-testing")`
 2. **Read** `references/canonical-values.md` from skill
 3. **Verify** test-context-gatherer completed (context file exists)
 4. **Check** config.yml for feature toggles
@@ -126,7 +126,7 @@ test_design_patterns:
 
 **BEFORE creating any E2E test:**
 
-1. Invoke: `Skill(skill="e2e-test-organization")`
+1. Invoke: `Skill(skill="e2e-testing")`
 2. Read: `references/coverage-analysis.md`
 3. Complete Step 0 of `references/placement-checklist.md`
 4. Document: Why this test is needed (not redundant)

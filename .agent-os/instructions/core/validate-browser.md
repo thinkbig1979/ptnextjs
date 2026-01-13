@@ -2,7 +2,7 @@
 description: Execute comprehensive browser-based validation for web UI implementations
 globs:
 alwaysApply: false
-version: 1.0
+version: 5.1.0
 encoding: UTF-8
 ---
 
@@ -64,59 +64,23 @@ Initialize Playwright testing environment and identify web UI components for val
 </target_detection>
 
 <worktree_setup>
-  **Optional Worktree Isolation for Browser Testing**
+  **Worktree Isolation for Browser Testing [DEFERRED]**
 
-  FOR browser validation of actively developed features:
-    CONSIDER creating worktree for isolated testing environment
+  > **Status**: DEFERRED - Worktree scripts archived to `setup/archive/worktrees/`
+  >
+  > **Rationale**: The current orchestration model (subagent coordination via
+  > TodoWrite/beads) provides sufficient parallelism without requiring filesystem
+  > isolation. Worktrees add complexity (sync, merge, conflict resolution) that
+  > isn't justified by current bottlenecks.
+  >
+  > **If you need this**: Scripts remain available in the archive and can be
+  > restored if a concrete use case emerges. See `setup/archive/worktrees/ARCHIVED.md`
 
-  **When to Use Worktree**:
-    - Testing uncommitted changes without affecting main workspace
-    - Running tests in parallel with development work
-    - Validating feature branch before merge
-    - Isolating test failures from main codebase
-
-  **Setup Procedure**:
-    IF project is git repository AND worktree desired:
-      1. CREATE: ./setup/create-worktree.sh browser-test-[TIMESTAMP]
-      2. CAPTURE worktree path from output
-      3. BUILD and START production server in worktree directory
-      4. RUN browser tests against worktree instance
-      5. CLEANUP: ./setup/cleanup-worktree.sh browser-test-[TIMESTAMP]
-
-  **Benefits**:
-    - Prevents test interference with development
-    - Multiple test runs in parallel (different worktrees)
-    - Clean environment for reproducible testing
-    - Easy rollback after testing complete
-
-  **Typical Workflow**:
-    ```bash
-    # Create worktree for testing
-    ./setup/create-worktree.sh browser-test-$(date +%s)
-    cd .agent-os/worktrees/browser-test-*
-
-    # Build and start production server (NOT dev server - 10-50x faster)
-    npm run build
-    npm run start &
-    PROD_SERVER_PID=$!
-    
-    # Wait for server ready
-    until curl -sf http://localhost:3000 > /dev/null; do sleep 1; done
-    
-    # Set BASE_URL and run browser tests
-    export BASE_URL="http://localhost:3000"
-    npm run test:e2e
-
-    # Cleanup
-    kill $PROD_SERVER_PID
-    cd ../..
-    ./setup/cleanup-worktree.sh browser-test-*
-    ```
-
-  **Standard Execution** (without worktree):
-    - Build and start production server
+  **Standard Execution** (recommended):
+    - Build and start production server in current working directory
     - Tests run against production build
     - 10-50x faster than dev server
+    - Use git stash/branch for isolation if needed
 </worktree_setup>
 
 <playwright_initialization>
@@ -138,7 +102,7 @@ Initialize Playwright testing environment and identify web UI components for val
        - Suite total: 10 minutes max
        - Kill hung tests automatically
 
-    See @.agent-os/standards/test-infrastructure.md for complete standards.
+    See @.agent-os/standards/testing-standards.md for complete standards.
   </execution_safety_protocol>
 
   <setup_checks>

@@ -1,3 +1,11 @@
+---
+version: 5.1.0
+last-updated: 2026-01-02
+related-files:
+  - standards/testing/patterns/README.md
+---
+
+
 # Convex Testing Patterns
 
 Version compatibility: convex-test 0.1.x, convex 1.x

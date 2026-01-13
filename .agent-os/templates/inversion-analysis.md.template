@@ -1,0 +1,317 @@
+# Inversion Analysis: {{SPEC_NAME}}
+
+> Generated: {{TIMESTAMP}}
+> Spec: {{SPEC_FOLDER}}
+> Time Budget: 10-15 minutes
+
+## Core Question
+
+**What would GUARANTEE this feature/spec FAILS?**
+
+This analysis inverts success thinking to uncover hidden risks, missing requirements, and critical constraints before implementation.
+
+---
+
+## 1. Adoption Failures
+
+*How could users/developers NEVER successfully adopt this feature?*
+
+### 1.1 Complexity Barriers
+
+| Failure Mode | How It Happens | Risk Level | Constraint Derived |
+|--------------|----------------|------------|-------------------|
+| **Cognitive overload** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+| **Steep learning curve** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+| **Hidden prerequisites** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+
+**Prompting Questions**:
+- What requires 3+ steps when users expect 1?
+- What concepts must users already understand?
+- Where is documentation insufficient or missing?
+
+### 1.2 Discoverability Issues
+
+| Failure Mode | How It Happens | Risk Level | Constraint Derived |
+|--------------|----------------|------------|-------------------|
+| **Feature invisibility** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+| **Misleading naming** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+| **Wrong mental model** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+
+**Prompting Questions**:
+- How would users know this feature exists?
+- Does the name match what users search for?
+- Does behavior match user expectations from the name?
+
+### 1.3 Integration Friction
+
+| Failure Mode | How It Happens | Risk Level | Constraint Derived |
+|--------------|----------------|------------|-------------------|
+| **Migration burden** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+| **Incompatible patterns** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+| **Breaking changes** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+
+**Prompting Questions**:
+- What existing code/workflows does this disrupt?
+- What migration steps are required?
+- What patterns does this conflict with?
+
+---
+
+## 2. Execution Failures
+
+*How could this feature FAIL at runtime, under load, or in production?*
+
+### 2.1 Race Conditions & Concurrency
+
+| Failure Mode | How It Happens | Risk Level | Constraint Derived |
+|--------------|----------------|------------|-------------------|
+| **Data corruption** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+| **Deadlocks** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+| **Lost updates** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+
+**Prompting Questions**:
+- What happens with 2 simultaneous requests?
+- What shared resources need locking?
+- What happens if a process crashes mid-operation?
+
+### 2.2 Edge Cases & Boundary Conditions
+
+| Failure Mode | How It Happens | Risk Level | Constraint Derived |
+|--------------|----------------|------------|-------------------|
+| **Empty/null inputs** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+| **Maximum limits exceeded** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+| **Unicode/special chars** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+| **Timezone edge cases** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+
+**Prompting Questions**:
+- What are the MIN and MAX values for each input?
+- What happens with 0 items? 1 item? 1 million items?
+- What characters could break parsing/display?
+
+### 2.3 Resource Exhaustion
+
+| Failure Mode | How It Happens | Risk Level | Constraint Derived |
+|--------------|----------------|------------|-------------------|
+| **Memory exhaustion** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+| **Connection pool drain** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+| **Disk space exhaustion** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+| **Rate limit exceeded** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+
+**Prompting Questions**:
+- What happens at 10x, 100x normal load?
+- What resources are NOT bounded?
+- What cleanup happens on errors?
+
+### 2.4 Dependency Failures
+
+| Failure Mode | How It Happens | Risk Level | Constraint Derived |
+|--------------|----------------|------------|-------------------|
+| **External service down** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+| **Database unavailable** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+| **Network partition** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+| **Slow dependency** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+
+**Prompting Questions**:
+- What external services does this depend on?
+- What happens if they respond in 30s instead of 300ms?
+- What is the fallback when dependencies fail?
+
+---
+
+## 3. Evolution Failures
+
+*How could this feature become UNMAINTAINABLE or block future development?*
+
+### 3.1 Tight Coupling
+
+| Failure Mode | How It Happens | Risk Level | Constraint Derived |
+|--------------|----------------|------------|-------------------|
+| **God object/module** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+| **Hidden dependencies** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+| **Circular dependencies** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+
+**Prompting Questions**:
+- What must change if requirements change slightly?
+- What other components depend on this?
+- Can this be tested in isolation?
+
+### 3.2 Missing Extension Points
+
+| Failure Mode | How It Happens | Risk Level | Constraint Derived |
+|--------------|----------------|------------|-------------------|
+| **No customization hooks** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+| **Hardcoded assumptions** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+| **No versioning strategy** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+
+**Prompting Questions**:
+- What variations will users inevitably request?
+- What assumptions are baked in that will change?
+- How will this handle v2 requirements?
+
+### 3.3 Technical Debt Accumulation
+
+| Failure Mode | How It Happens | Risk Level | Constraint Derived |
+|--------------|----------------|------------|-------------------|
+| **No test coverage** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+| **Documentation rot** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+| **Magic numbers/strings** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+| **Copy-paste proliferation** | {{DESCRIBE_HOW}} | HIGH/MED/LOW | {{CONSTRAINT}} |
+
+**Prompting Questions**:
+- What will developers NOT understand in 6 months?
+- What manual steps are required for maintenance?
+- What will cause "works on my machine" issues?
+
+---
+
+## 4. Security Failures
+
+*How could this feature be EXPLOITED or cause security incidents?*
+
+### 4.1 Authentication Failures
+
+| Failure Mode | OWASP Category | Risk Level | Constraint Derived |
+|--------------|----------------|------------|-------------------|
+| **Broken authentication** | A07:2021 | HIGH/MED/LOW | {{CONSTRAINT}} |
+| **Session fixation** | A07:2021 | HIGH/MED/LOW | {{CONSTRAINT}} |
+| **Credential exposure** | A02:2021 | HIGH/MED/LOW | {{CONSTRAINT}} |
+
+**Prompting Questions**:
+- How are users authenticated?
+- What happens with invalid/expired tokens?
+- Are credentials ever logged or exposed?
+
+### 4.2 Authorization Failures
+
+| Failure Mode | OWASP Category | Risk Level | Constraint Derived |
+|--------------|----------------|------------|-------------------|
+| **Broken access control** | A01:2021 | HIGH/MED/LOW | {{CONSTRAINT}} |
+| **IDOR vulnerabilities** | A01:2021 | HIGH/MED/LOW | {{CONSTRAINT}} |
+| **Privilege escalation** | A01:2021 | HIGH/MED/LOW | {{CONSTRAINT}} |
+
+**Prompting Questions**:
+- Who should NOT access this?
+- Can users access others' data by guessing IDs?
+- What happens if a user's role changes mid-session?
+
+### 4.3 Injection Attacks
+
+| Failure Mode | OWASP Category | Risk Level | Constraint Derived |
+|--------------|----------------|------------|-------------------|
+| **SQL injection** | A03:2021 | HIGH/MED/LOW | {{CONSTRAINT}} |
+| **XSS (Cross-site scripting)** | A03:2021 | HIGH/MED/LOW | {{CONSTRAINT}} |
+| **Command injection** | A03:2021 | HIGH/MED/LOW | {{CONSTRAINT}} |
+| **SSRF** | A10:2021 | HIGH/MED/LOW | {{CONSTRAINT}} |
+
+**Prompting Questions**:
+- Where is user input used in queries/commands?
+- What input is rendered without escaping?
+- Can users control URLs that backend fetches?
+
+### 4.4 Data Exposure
+
+| Failure Mode | OWASP Category | Risk Level | Constraint Derived |
+|--------------|----------------|------------|-------------------|
+| **Sensitive data exposure** | A02:2021 | HIGH/MED/LOW | {{CONSTRAINT}} |
+| **Mass assignment** | A04:2021 | HIGH/MED/LOW | {{CONSTRAINT}} |
+| **Verbose errors** | A05:2021 | HIGH/MED/LOW | {{CONSTRAINT}} |
+
+**Prompting Questions**:
+- What data should NEVER be in responses/logs?
+- What fields can users update that they shouldn't?
+- Do error messages reveal system internals?
+
+---
+
+## 5. Analysis Summary
+
+### Critical Failures Identified (P0 - Must Address)
+
+| # | Category | Failure Mode | Derived Constraint |
+|---|----------|--------------|-------------------|
+| 1 | {{CATEGORY}} | {{FAILURE}} | {{CONSTRAINT}} |
+| 2 | {{CATEGORY}} | {{FAILURE}} | {{CONSTRAINT}} |
+| 3 | {{CATEGORY}} | {{FAILURE}} | {{CONSTRAINT}} |
+
+### High-Risk Failures (P1 - Should Address)
+
+| # | Category | Failure Mode | Derived Constraint |
+|---|----------|--------------|-------------------|
+| 1 | {{CATEGORY}} | {{FAILURE}} | {{CONSTRAINT}} |
+| 2 | {{CATEGORY}} | {{FAILURE}} | {{CONSTRAINT}} |
+
+### Medium-Risk Failures (P2 - Consider)
+
+| # | Category | Failure Mode | Derived Constraint |
+|---|----------|--------------|-------------------|
+| 1 | {{CATEGORY}} | {{FAILURE}} | {{CONSTRAINT}} |
+
+---
+
+## 6. Constraints for Spec Integration
+
+Copy these constraints to the main specification:
+
+### Technical Constraints (from Execution/Evolution Failures)
+
+```markdown
+## Constraints
+
+### Performance
+- {{CONSTRAINT_FROM_RESOURCE_EXHAUSTION}}
+- {{CONSTRAINT_FROM_DEPENDENCY_FAILURES}}
+
+### Data Integrity
+- {{CONSTRAINT_FROM_RACE_CONDITIONS}}
+- {{CONSTRAINT_FROM_EDGE_CASES}}
+
+### Maintainability
+- {{CONSTRAINT_FROM_COUPLING}}
+- {{CONSTRAINT_FROM_EXTENSION_POINTS}}
+```
+
+### Security Constraints (from Security Failures)
+
+```markdown
+### Security
+- {{CONSTRAINT_FROM_AUTH}}
+- {{CONSTRAINT_FROM_INJECTION}}
+- {{CONSTRAINT_FROM_DATA_EXPOSURE}}
+```
+
+### UX Constraints (from Adoption Failures)
+
+```markdown
+### User Experience
+- {{CONSTRAINT_FROM_COMPLEXITY}}
+- {{CONSTRAINT_FROM_DISCOVERABILITY}}
+- {{CONSTRAINT_FROM_INTEGRATION}}
+```
+
+---
+
+## 7. Anti-Patterns to Avoid
+
+Based on this analysis, the implementation MUST NOT:
+
+1. **{{ANTI_PATTERN_1}}** - Causes: {{FAILURE_MODES_IT_CAUSES}}
+2. **{{ANTI_PATTERN_2}}** - Causes: {{FAILURE_MODES_IT_CAUSES}}
+3. **{{ANTI_PATTERN_3}}** - Causes: {{FAILURE_MODES_IT_CAUSES}}
+
+---
+
+## 8. Validation Checklist
+
+Before marking inversion analysis complete:
+
+- [ ] At least 2 failures identified per category (Adoption, Execution, Evolution, Security)
+- [ ] All HIGH risk failures have constraints derived
+- [ ] Anti-patterns documented with specific failure modes
+- [ ] Constraints formatted for spec integration
+- [ ] Time spent: _____ minutes (target: 10-15)
+
+---
+
+*This analysis follows the Agent OS Inversion Lens process.*
+*Reference: `instructions/utilities/inversion-lens-guide.md`*
+*Catalog: `instructions/references/failure-modes-catalog.md`*

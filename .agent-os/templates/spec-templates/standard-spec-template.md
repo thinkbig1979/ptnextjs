@@ -773,6 +773,158 @@ These criteria are enforced by the task-orchestrator during task execution and m
 
 ---
 
+## Failure Modes & Anti-Patterns
+
+> Generated from Inversion Analysis: [analysis-inversion.md](./analysis-inversion.md)
+> Reference: `@.agent-os/instructions/utilities/quality-lenses.md#inversion-lens`
+
+### Identified Failure Modes
+
+| Mode | Category | Severity | Mitigation |
+|------|----------|----------|------------|
+| [FAILURE_MODE_1] | [Adoption/Execution/Evolution/Security] | [Critical/High/Medium/Low] | [Specific constraint or approach] |
+| [FAILURE_MODE_2] | [Adoption/Execution/Evolution/Security] | [Critical/High/Medium/Low] | [Specific constraint or approach] |
+| [FAILURE_MODE_3] | [Adoption/Execution/Evolution/Security] | [Critical/High/Medium/Low] | [Specific constraint or approach] |
+| [FAILURE_MODE_4] | [Adoption/Execution/Evolution/Security] | [Critical/High/Medium/Low] | [Specific constraint or approach] |
+
+#### Adoption Failures
+- **[ADOPTION_FAILURE_1]**: [How it happens] - Risk: [HIGH/MED/LOW]
+  - **Constraint**: [Specific, actionable constraint derived]
+- **[ADOPTION_FAILURE_2]**: [How it happens] - Risk: [HIGH/MED/LOW]
+  - **Constraint**: [Specific, actionable constraint derived]
+
+#### Execution Failures
+- **[EXECUTION_FAILURE_1]**: [How it happens] - Risk: [HIGH/MED/LOW]
+  - **Constraint**: [Specific, actionable constraint derived]
+- **[EXECUTION_FAILURE_2]**: [How it happens] - Risk: [HIGH/MED/LOW]
+  - **Constraint**: [Specific, actionable constraint derived]
+
+#### Evolution Failures
+- **[EVOLUTION_FAILURE_1]**: [How it happens] - Risk: [HIGH/MED/LOW]
+  - **Constraint**: [Specific, actionable constraint derived]
+- **[EVOLUTION_FAILURE_2]**: [How it happens] - Risk: [HIGH/MED/LOW]
+  - **Constraint**: [Specific, actionable constraint derived]
+
+#### Security Failures
+- **[SECURITY_FAILURE_1]**: [How it happens] - OWASP: [Category] - Risk: [HIGH/MED/LOW]
+  - **Constraint**: [Specific, actionable constraint derived]
+- **[SECURITY_FAILURE_2]**: [How it happens] - OWASP: [Category] - Risk: [HIGH/MED/LOW]
+  - **Constraint**: [Specific, actionable constraint derived]
+
+### Anti-Patterns to Avoid
+
+Based on this inversion analysis, the implementation **MUST NOT**:
+
+1. **[ANTI_PATTERN_1]** - [Root cause/description]
+   - **Causes**: [List failure modes this anti-pattern causes]
+   - **Prevent With**: [Specific approach to prevent]
+
+2. **[ANTI_PATTERN_2]** - [Root cause/description]
+   - **Causes**: [List failure modes this anti-pattern causes]
+   - **Prevent With**: [Specific approach to prevent]
+
+3. **[ANTI_PATTERN_3]** - [Root cause/description]
+   - **Causes**: [List failure modes this anti-pattern causes]
+   - **Prevent With**: [Specific approach to prevent]
+
+### Derived Constraints
+
+Constraints derived from inversion analysis, integrated into relevant spec sections:
+
+#### Technical Constraints (from Execution/Evolution Failures)
+- **MUST** [CONSTRAINT_1] (from: [failure mode analysis])
+- **MUST** [CONSTRAINT_2] (from: [failure mode analysis])
+- **SHOULD** [CONSTRAINT_3] (from: [failure mode analysis])
+
+#### Security Constraints (from Security Failures)
+- **MUST** [SECURITY_CONSTRAINT_1] (from: [failure mode analysis])
+- **MUST** [SECURITY_CONSTRAINT_2] (from: [failure mode analysis])
+
+#### UX Constraints (from Adoption Failures)
+- **MUST** [UX_CONSTRAINT_1] (from: [failure mode analysis])
+- **SHOULD** [UX_CONSTRAINT_2] (from: [failure mode analysis])
+
+### Inversion Analysis Summary
+
+| Metric | Count | Target |
+|--------|-------|--------|
+| Adoption Failures | [N] | Min 2 |
+| Execution Failures | [N] | Min 2 |
+| Evolution Failures | [N] | Min 2 |
+| Security Failures | [N] | Min 2 |
+| **Total Failures** | [N] | Min 8 |
+| Constraints Derived | [N] | Min 6 |
+| Anti-Patterns Documented | [N] | Min 2 |
+
+---
+
+## Pre-Mortem Risk Analysis
+
+> Reference: `@.agent-os/instructions/utilities/quality-lenses.md#pre-mortem-lens`
+> Status: [COMPLETED | SKIPPED - see justification below]
+
+### Failure Scenario
+
+> "It's 6 months from now. This feature has failed completely. Users have abandoned it, stakeholders are frustrated, and we're considering removing it entirely. Looking back, we should have seen this coming."
+
+### Risk Assessment
+
+| Cause | Category | L | I | D | Score | Mitigation |
+|-------|----------|---|---|---|-------|------------|
+| [RISK_1] | [Technical/Product/Process/External] | [1-5] | [1-5] | [1-5] | [L*I*D/2] | [Mitigation strategy] |
+| [RISK_2] | [Technical/Product/Process/External] | [1-5] | [1-5] | [1-5] | [L*I*D/2] | [Mitigation strategy] |
+| [RISK_3] | [Technical/Product/Process/External] | [1-5] | [1-5] | [1-5] | [L*I*D/2] | [Mitigation strategy] |
+| [RISK_4] | [Technical/Product/Process/External] | [1-5] | [1-5] | [1-5] | [L*I*D/2] | [Mitigation strategy] |
+
+**Scoring Legend**:
+- **L (Likelihood)**: 1=Rare (<5%), 2=Unlikely (5-20%), 3=Possible (20-50%), 4=Likely (50-80%), 5=Almost Certain (>80%)
+- **I (Impact)**: 1=Minimal, 2=Minor, 3=Moderate, 4=Major, 5=Catastrophic
+- **D (Detectability)**: 1=Obvious, 2=Easy, 3=Moderate, 4=Difficult, 5=Hidden
+- **Score**: L x I x (D/2) - Threshold for mitigation: >12
+
+### High-Risk Mitigations (Score > 12)
+
+1. **[RISK_TITLE]** (Score: [N])
+   - **Action**: [Specific, measurable mitigation action]
+   - **Owner**: [Person responsible]
+   - **Deadline**: [Date]
+   - **Verification**: [How to confirm mitigation worked]
+
+2. **[RISK_TITLE]** (Score: [N])
+   - **Action**: [Specific, measurable mitigation action]
+   - **Owner**: [Person responsible]
+   - **Deadline**: [Date]
+   - **Verification**: [How to confirm mitigation worked]
+
+### Early Warning Indicators
+
+Track these signals to detect emerging risks:
+
+- [ ] [INDICATOR_1]: [Threshold or trigger condition]
+- [ ] [INDICATOR_2]: [Threshold or trigger condition]
+- [ ] [INDICATOR_3]: [Threshold or trigger condition]
+
+### Risk Categories Summary
+
+| Category | Count | Critical (>12) | Mitigations Required |
+|----------|-------|----------------|---------------------|
+| Technical | [N] | [N] | [N] |
+| Product | [N] | [N] | [N] |
+| Process | [N] | [N] | [N] |
+| External | [N] | [N] | [N] |
+| **Total** | **[N]** | **[N]** | **[N]** |
+
+<!-- For P2-P4 features that skip pre-mortem analysis, replace above with: -->
+<!--
+### Pre-Mortem Analysis
+
+**Status**: SKIPPED
+**Priority**: [P2|P3|P4]
+**Justification**: [All of: no external dependencies, no data integrity risks, no security implications, low complexity, no time-critical delivery]
+-->
+
+---
+
 ## Risks & Mitigation
 
 ### Technical Risks
@@ -827,7 +979,7 @@ These criteria are enforced by the task-orchestrator during task execution and m
 
 ---
 
-**Template Version**: 2.0.0
+**Template Version**: 2.1.0
 **Specification Level**: Standard (Medium Detail)
 **Created**: [CREATION_DATE]
 **Last Updated**: [UPDATE_DATE]
