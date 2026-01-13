@@ -1,0 +1,362 @@
+# Tasks: Enhanced Vendor Product Form
+
+## Task Overview
+
+| ID | Task | Est. Effort | Dependencies | Phase |
+|----|------|-------------|--------------|-------|
+| T1 | Project setup and types | Small | None | 1 |
+| T2 | FormSection component | Small | T1 | 1 |
+| T3 | BasicInfoSection refactor | Small | T1, T2 | 1 |
+| T4 | ImagesSection | Medium | T1 | 2 |
+| T5 | SpecificationsSection | Small | T1 | 2 |
+| T6 | FeaturesSection | Medium | T1 | 2 |
+| T7 | ActionButtons & BadgesSection | Medium | T1 | 2 |
+| T8 | CategoriesTagsSection + API routes | Medium | T1 | 3 |
+| T9 | PricingSection | Small | T1 | 4 |
+| T10 | SeoSection | Small | T1 | 4 |
+| T11 | Full form assembly | Medium | T2-T10 | 5 |
+| T12 | Tier gating implementation | Small | T11 | 5 |
+| T13 | Draft autosave hook | Small | T11 | 5 |
+| T14 | Mobile responsiveness | Medium | T11 | 6 |
+| T15 | Accessibility audit & fixes | Medium | T11 | 6 |
+
+## Task Details
+
+---
+
+### T1: Project Setup and Types
+
+**Phase**: 1 - Foundation
+**Effort**: Small
+
+**Objective**: Create component file structure and TypeScript types.
+
+**Deliverables**:
+- `components/dashboard/product-form/index.ts`
+- `components/dashboard/product-form/types.ts`
+
+**Acceptance Criteria**:
+- [ ] Types compile without errors
+- [ ] All schemas validate correctly
+- [ ] Exports are properly configured
+
+**Reference**: `sub-specs/implementation-guide.md#task-1`
+
+---
+
+### T2: FormSection Component
+
+**Phase**: 1 - Foundation
+**Effort**: Small
+**Depends On**: T1
+
+**Objective**: Create collapsible section wrapper with tier gating.
+
+**Deliverables**:
+- `components/dashboard/product-form/FormSection.tsx`
+
+**Acceptance Criteria**:
+- [ ] Sections expand/collapse correctly
+- [ ] Locked state displays for tier-restricted content
+- [ ] Error count badge shows when validation errors exist
+- [ ] Accessible via keyboard
+
+**Reference**: `sub-specs/implementation-guide.md#task-2`
+
+---
+
+### T3: BasicInfoSection Refactor
+
+**Phase**: 1 - Foundation
+**Effort**: Small
+**Depends On**: T1, T2
+
+**Objective**: Extract basic fields into dedicated section component.
+
+**Deliverables**:
+- `components/dashboard/product-form/BasicInfoSection.tsx`
+
+**Acceptance Criteria**:
+- [ ] Name, description, shortDescription, slug fields work
+- [ ] Slug auto-generates from name
+- [ ] Character counters display
+- [ ] Validation messages show correctly
+
+---
+
+### T4: ImagesSection
+
+**Phase**: 2 - Array Fields
+**Effort**: Medium
+**Depends On**: T1
+
+**Objective**: Implement image array management with validation.
+
+**Deliverables**:
+- `components/dashboard/product-form/ImagesSection.tsx`
+
+**Acceptance Criteria**:
+- [ ] Can add images via URL
+- [ ] URL validation on blur
+- [ ] Thumbnail preview displays for valid URLs
+- [ ] Main image selection (radio)
+- [ ] Alt text and caption fields per image
+- [ ] Remove image with undo toast
+- [ ] Empty state when no images
+
+**Reference**: `sub-specs/ux-ui-spec.md#2-images-section`
+
+---
+
+### T5: SpecificationsSection
+
+**Phase**: 2 - Array Fields
+**Effort**: Small
+**Depends On**: T1
+
+**Objective**: Implement label/value pair specifications.
+
+**Deliverables**:
+- `components/dashboard/product-form/SpecificationsSection.tsx`
+
+**Acceptance Criteria**:
+- [ ] Can add specification rows
+- [ ] Two-column layout (label | value)
+- [ ] Both fields required for each row
+- [ ] Remove button per row
+- [ ] "Add specification" button
+
+---
+
+### T6: FeaturesSection
+
+**Phase**: 2 - Array Fields
+**Effort**: Medium
+**Depends On**: T1
+
+**Objective**: Implement features array with icons.
+
+**Deliverables**:
+- `components/dashboard/product-form/FeaturesSection.tsx`
+
+**Acceptance Criteria**:
+- [ ] Can add features with title (required)
+- [ ] Description field (optional)
+- [ ] Icon input (Lucide icon name)
+- [ ] Remove feature with confirmation
+- [ ] Features display as cards
+
+---
+
+### T7: ActionButtons & BadgesSection
+
+**Phase**: 2 - Array Fields
+**Effort**: Medium
+**Depends On**: T1
+
+**Objective**: Implement CTA buttons and quality badges.
+
+**Deliverables**:
+- `components/dashboard/product-form/ActionButtonsSection.tsx`
+- `components/dashboard/product-form/BadgesSection.tsx`
+
+**Acceptance Criteria**:
+- [ ] Action buttons: label, type, action, actionData
+- [ ] Badge: label, type with preview
+- [ ] Type selects with visual preview
+- [ ] Add/remove functionality
+
+---
+
+### T8: CategoriesTagsSection + API Routes
+
+**Phase**: 3 - Relationships
+**Effort**: Medium
+**Depends On**: T1
+
+**Objective**: Implement multi-select for categories and tags.
+
+**Deliverables**:
+- `components/dashboard/product-form/CategoriesTagsSection.tsx`
+- `hooks/useProductFormData.ts`
+- `app/api/categories/route.ts` (if not exists)
+- `app/api/tags/route.ts` (if not exists)
+
+**Acceptance Criteria**:
+- [ ] Categories load from API
+- [ ] Tags load from API
+- [ ] Multi-select combobox works
+- [ ] Selected items show as removable badges
+- [ ] Search/filter functionality
+- [ ] Loading state handled
+
+---
+
+### T9: PricingSection
+
+**Phase**: 4 - Advanced Fields
+**Effort**: Small
+**Depends On**: T1
+
+**Objective**: Implement pricing configuration fields.
+
+**Deliverables**:
+- `components/dashboard/product-form/PricingSection.tsx`
+
+**Acceptance Criteria**:
+- [ ] Price text input
+- [ ] Display text input
+- [ ] Subtitle input
+- [ ] Currency dropdown
+- [ ] Contact form toggle switch
+
+---
+
+### T10: SeoSection
+
+**Phase**: 4 - Advanced Fields
+**Effort**: Small
+**Depends On**: T1
+
+**Objective**: Implement SEO metadata fields.
+
+**Deliverables**:
+- `components/dashboard/product-form/SeoSection.tsx`
+
+**Acceptance Criteria**:
+- [ ] Meta title with character count
+- [ ] Meta description with character count
+- [ ] Keywords input
+- [ ] Length warnings when exceeding recommendations
+
+---
+
+### T11: Full Form Assembly
+
+**Phase**: 5 - Integration
+**Effort**: Medium
+**Depends On**: T2, T3, T4, T5, T6, T7, T8, T9, T10
+
+**Objective**: Integrate all sections into ProductForm component.
+
+**Deliverables**:
+- Updated `components/dashboard/ProductForm.tsx`
+
+**Acceptance Criteria**:
+- [ ] All sections render in order
+- [ ] Form submits all data correctly
+- [ ] API validation errors map to fields
+- [ ] Success/error toasts display
+- [ ] Create and edit modes work
+
+---
+
+### T12: Tier Gating Implementation
+
+**Phase**: 5 - Integration
+**Effort**: Small
+**Depends On**: T11
+
+**Objective**: Enforce tier restrictions on form sections.
+
+**Deliverables**:
+- Vendor tier context/hook integration
+- Tier gating applied to all restricted sections
+
+**Acceptance Criteria**:
+- [ ] Free tier sees locked sections
+- [ ] Tier 1 sees partially locked sections
+- [ ] Tier 2 sees all sections unlocked
+- [ ] Upgrade prompts display correctly
+- [ ] Backend still validates tier restrictions
+
+---
+
+### T13: Draft Autosave Hook
+
+**Phase**: 5 - Integration
+**Effort**: Small
+**Depends On**: T11
+
+**Objective**: Implement automatic draft saving.
+
+**Deliverables**:
+- `hooks/useFormDraft.ts`
+- Integration into ProductForm
+
+**Acceptance Criteria**:
+- [ ] Draft saves to localStorage every 30 seconds
+- [ ] Draft loads on form mount
+- [ ] Draft clears on successful submit
+- [ ] "Resume draft?" prompt if draft exists
+- [ ] Handles corrupted localStorage gracefully
+
+---
+
+### T14: Mobile Responsiveness
+
+**Phase**: 6 - Polish
+**Effort**: Medium
+**Depends On**: T11
+
+**Objective**: Ensure form works well on mobile devices.
+
+**Deliverables**:
+- Responsive CSS adjustments
+- Mobile-specific interaction patterns
+
+**Acceptance Criteria**:
+- [ ] Form usable on 320px width
+- [ ] Touch targets ≥44px
+- [ ] No horizontal scroll
+- [ ] Dropdowns work on touch
+- [ ] Sections collapse properly
+
+---
+
+### T15: Accessibility Audit & Fixes
+
+**Phase**: 6 - Polish
+**Effort**: Medium
+**Depends On**: T11
+
+**Objective**: Ensure WCAG 2.1 AA compliance.
+
+**Deliverables**:
+- Accessibility fixes across all sections
+- axe-core integration in tests
+
+**Acceptance Criteria**:
+- [ ] All axe-core tests pass
+- [ ] Keyboard navigation works end-to-end
+- [ ] Screen reader testing passed (VoiceOver, NVDA)
+- [ ] Focus management on dynamic operations
+- [ ] ARIA labels complete
+
+---
+
+## Execution Order
+
+```
+Week 1: Foundation (T1, T2, T3)
+  └─ Setup types, FormSection, BasicInfo
+
+Week 2: Array Fields (T4, T5, T6, T7)
+  └─ Images, Specs, Features, Buttons/Badges
+
+Week 3: Relationships + Advanced (T8, T9, T10)
+  └─ Categories/Tags, Pricing, SEO
+
+Week 4: Integration (T11, T12, T13)
+  └─ Assembly, Tier Gating, Autosave
+
+Week 5: Polish (T14, T15)
+  └─ Mobile, Accessibility
+```
+
+## Notes
+
+- Each task should include unit tests
+- Run `npm run type-check` after each task
+- Test form submission after completing each section
+- Backend API changes not required (already supports all fields)
