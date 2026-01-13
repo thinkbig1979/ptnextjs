@@ -234,15 +234,22 @@ function MultiSelect<T extends { id: string | number; name: string }>({
                     style={color ? { backgroundColor: `${color}20`, color: color } : undefined}
                   >
                     {option.name}
-                    <button
-                      type="button"
-                      className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                    <span
+                      role="button"
+                      tabIndex={0}
+                      className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2 cursor-pointer"
                       onMouseDown={(e) => e.preventDefault()}
                       onClick={(e) => handleRemove(option.id, e)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          handleRemove(option.id, e as unknown as React.MouseEvent);
+                        }
+                      }}
                       aria-label={`Remove ${option.name}`}
                     >
                       <X className="h-3 w-3" />
-                    </button>
+                    </span>
                   </Badge>
                 );
               })
