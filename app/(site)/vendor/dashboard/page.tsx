@@ -21,6 +21,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { SubmitProfileCard } from '@/components/dashboard/SubmitProfileCard';
+import { HelpTooltip } from '@/components/help';
 
 /**
  * VendorDashboard Component
@@ -173,7 +174,15 @@ function DashboardContent({
                 {/* Profile Completion with Prominent Progress */}
                 <div>
                   <div className="flex justify-between items-end mb-3">
-                    <span className="text-sm font-medium text-muted-foreground">Profile Completion</span>
+                    <span className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
+                      Profile Completion
+                      <HelpTooltip
+                        content="Complete your company details, add a logo, description, contact info, and business locations to reach 100%."
+                        title="What counts toward completion?"
+                        iconSize={14}
+                        side="right"
+                      />
+                    </span>
                     <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
                       {profileCompletion}%
                     </span>
@@ -197,7 +206,15 @@ function DashboardContent({
                 {/* Approval Status with Styled Indicator */}
                 <div className="pt-4 border-t border-border">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Approval Status</span>
+                    <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                      Approval Status
+                      <HelpTooltip
+                        content="Pending: Under review by our team. Approved: Your profile is live. Rejected: Please contact support for details."
+                        title="Account Status"
+                        iconSize={14}
+                        side="right"
+                      />
+                    </span>
                     {approvalStatus === 'approved' ? (
                       <span className="flex items-center gap-2 text-sm font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-3 py-1 rounded-full">
                         <span className="w-2 h-2 bg-green-500 rounded-full" />
@@ -234,7 +251,16 @@ function DashboardContent({
               </CardHeader>
               <CardContent className="space-y-4 pt-6">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Current Plan</span>
+                  <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                    Current Plan
+                    <HelpTooltip
+                      content="Higher tiers unlock more locations, products, and premium features. Upgrade anytime to grow your visibility."
+                      title="Subscription Tiers"
+                      iconSize={14}
+                      side="right"
+                      learnMoreUrl="/vendor/dashboard/subscription"
+                    />
+                  </span>
                   <TierBadge tier={normalizedTier} size="lg" />
                 </div>
 
@@ -276,7 +302,15 @@ function DashboardContent({
                   <Zap className="h-5 w-5 text-orange-600 dark:text-orange-400" aria-hidden="true" />
                 </div>
                 <div>
-                  <CardTitle>Getting Started</CardTitle>
+                  <div className="flex items-center gap-2">
+                    <CardTitle>Getting Started</CardTitle>
+                    <HelpTooltip
+                      content="Complete these setup steps to maximize your profile visibility and attract more customers."
+                      title="Quick Setup Guide"
+                      iconSize={14}
+                      side="right"
+                    />
+                  </div>
                   <CardDescription>Complete these steps to make the most of your vendor account</CardDescription>
                 </div>
               </div>
@@ -342,7 +376,14 @@ function DashboardContent({
           {/* Quick Actions Card */}
           <Card>
             <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
+              <div className="flex items-center gap-2">
+                <CardTitle>Quick Actions</CardTitle>
+                <HelpTooltip
+                  content="Shortcuts to common tasks like editing your profile, contacting support, and accessing help documentation."
+                  iconSize={14}
+                  side="right"
+                />
+              </div>
               <CardDescription>Common tasks and tools</CardDescription>
             </CardHeader>
             <CardContent>
