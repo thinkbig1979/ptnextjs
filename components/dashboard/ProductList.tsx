@@ -1,13 +1,14 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Package, Plus } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ProductCard } from './ProductCard';
-import { ProductForm } from './ProductForm';
 import { ProductDeleteDialog } from './ProductDeleteDialog';
 import { useVendorProducts } from '@/hooks/useVendorProducts';
 import { toast } from '@/components/ui/sonner';
@@ -24,45 +25,32 @@ interface ProductListProps {
  * Handles loading, empty, and error states.
  * Orchestrates product CRUD operations via child components.
  *
+ * Updated to use full-page form routes instead of slide-over sheet.
+ *
  * @param vendorId - The vendor ID to fetch products for
  */
 export function ProductList({ vendorId }: ProductListProps) {
+  const router = useRouter();
   const { products, isLoading, isError, mutate } = useVendorProducts(vendorId);
 
-  // State for modals
+  // State for delete dialog
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [publishingProductId, setPublishingProductId] = useState<string | null>(null);
 
-  // Handlers
-  const handleAddClick = useCallback(() => {
-    setSelectedProduct(null);
-    setIsFormOpen(true);
-  }, []);
-
+  // Navigate to edit page
   const handleEditClick = useCallback((product: Product) => {
-    setSelectedProduct(product);
-    setIsFormOpen(true);
-  }, []);
+    router.push(`/vendor/dashboard/products/${product.id}/edit`);
+  }, [router]);
 
+  // Open delete confirmation dialog
   const handleDeleteClick = useCallback((product: Product) => {
     setSelectedProduct(product);
     setIsDeleteDialogOpen(true);
   }, []);
 
-  const handleFormSuccess = useCallback(() => {
-    setIsFormOpen(false);
-    setSelectedProduct(null);
-    mutate();
-  }, [mutate]);
-
-  const handleFormCancel = useCallback(() => {
-    setIsFormOpen(false);
-    setSelectedProduct(null);
-  }, []);
-
+  // Handle delete confirmation
   const handleDeleteConfirm = useCallback(async () => {
     if (!selectedProduct) return;
 
@@ -95,6 +83,7 @@ export function ProductList({ vendorId }: ProductListProps) {
     setSelectedProduct(null);
   }, []);
 
+  // Handle publish toggle
   const handlePublishToggle = useCallback(
     async (product: Product, published: boolean) => {
       setPublishingProductId(product.id);
@@ -166,25 +155,18 @@ export function ProductList({ vendorId }: ProductListProps) {
   // Empty state
   if (products.length === 0) {
     return (
-      <>
-        <Card className="text-center py-12">
-          <CardContent>
-            <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p className="text-muted-foreground mb-4">No products yet</p>
-            <Button onClick={handleAddClick}>
+      <Card className="text-center py-12">
+        <CardContent>
+          <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
+          <p className="text-muted-foreground mb-4">No products yet</p>
+          <Button asChild>
+            <Link href="/vendor/dashboard/products/new">
               <Plus className="mr-2 h-4 w-4" />
               Add Your First Product
-            </Button>
-          </CardContent>
-        </Card>
-
-        <ProductForm
-          vendorId={vendorId}
-          open={isFormOpen}
-          onSuccess={handleFormSuccess}
-          onCancel={handleFormCancel}
-        />
-      </>
+            </Link>
+          </Button>
+        </CardContent>
+      </Card>
     );
   }
 
@@ -193,9 +175,11 @@ export function ProductList({ vendorId }: ProductListProps) {
     <>
       <div className="space-y-6">
         <div className="flex justify-end">
-          <Button onClick={handleAddClick}>
-            <Plus className="mr-2 h-4 w-4" />
-            Add New Product
+          <Button asChild>
+            <Link href="/vendor/dashboard/products/new">
+              <Plus className="mr-2 h-4 w-4" />
+              Add New Product
+            </Link>
           </Button>
         </div>
 
@@ -212,14 +196,6 @@ export function ProductList({ vendorId }: ProductListProps) {
           ))}
         </div>
       </div>
-
-      <ProductForm
-        product={selectedProduct || undefined}
-        vendorId={vendorId}
-        open={isFormOpen}
-        onSuccess={handleFormSuccess}
-        onCancel={handleFormCancel}
-      />
 
       <ProductDeleteDialog
         product={selectedProduct}
