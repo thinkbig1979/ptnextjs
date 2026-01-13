@@ -28,7 +28,7 @@ export class BlogRepository extends BaseRepository {
     const fetcher = async () => {
       const payload = await this.getPayload();
       const result = await payload.find({
-        collection: 'blog',
+        collection: 'blog-posts',
         limit: 1000,
         sort: '-publishedAt',
       });
@@ -61,7 +61,7 @@ export class BlogRepository extends BaseRepository {
       }
 
       const result = await payload.find({
-        collection: 'blog',
+        collection: 'blog-posts',
         where,
         limit: params?.limit || 1000,
         sort: '-publishedAt',
@@ -107,7 +107,7 @@ export class BlogRepository extends BaseRepository {
       const depth = params?.depth !== undefined ? params.depth : 1;
 
       const result = await payload.find({
-        collection: 'blog',
+        collection: 'blog-posts',
         where,
         limit,
         page,
@@ -131,7 +131,7 @@ export class BlogRepository extends BaseRepository {
     const fetcher = async () => {
       const payload = await this.getPayload();
       const result = await payload.find({
-        collection: 'blog',
+        collection: 'blog-posts',
         where: {
           slug: {
             equals: slug,
@@ -172,7 +172,7 @@ export class BlogRepository extends BaseRepository {
     const fetcher = async () => {
       const payload = await this.getPayload();
       const result = await payload.find({
-        collection: 'blog',
+        collection: 'blog-posts',
         limit: 1000,
         depth: 0, // No need for relationships when just getting slugs
       });
