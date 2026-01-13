@@ -192,7 +192,7 @@ export function LocationFormFields({
           disabled={!canEdit}
           placeholder="e.g., Monaco Office, Fort Lauderdale Branch"
           aria-invalid={touched.locationName && !!errors.locationName}
-          className={touched.locationName && errors.locationName ? 'border-red-500' : ''}
+          className={touched.locationName && errors.locationName ? 'border-destructive' : ''}
         />
         {touched.locationName && errors.locationName && (
           <p className="text-sm text-red-600 dark:text-red-400">{errors.locationName}</p>
@@ -219,7 +219,7 @@ export function LocationFormFields({
           disabled={!canEdit}
           placeholder="123 Main Street"
           aria-invalid={touched.address && !!errors.address}
-          className={touched.address && errors.address ? 'border-red-500' : ''}
+          className={touched.address && errors.address ? 'border-destructive' : ''}
         />
         <p className="text-xs text-muted-foreground">Full street address including suite/unit number if applicable</p>
         {touched.address && errors.address && (
@@ -248,7 +248,7 @@ export function LocationFormFields({
             disabled={!canEdit}
             placeholder="Monaco"
             aria-invalid={touched.city && !!errors.city}
-            className={touched.city && errors.city ? 'border-red-500' : ''}
+            className={touched.city && errors.city ? 'border-destructive' : ''}
           />
           <p className="text-xs text-muted-foreground">Required for map display and search filters</p>
           {touched.city && errors.city && (
@@ -275,7 +275,7 @@ export function LocationFormFields({
             disabled={!canEdit}
             placeholder="Monaco"
             aria-invalid={touched.country && !!errors.country}
-            className={touched.country && errors.country ? 'border-red-500' : ''}
+            className={touched.country && errors.country ? 'border-destructive' : ''}
           />
           <p className="text-xs text-muted-foreground">Required for regional search and filtering</p>
           {touched.country && errors.country && (
@@ -323,7 +323,7 @@ export function LocationFormFields({
               disabled={!canEdit}
               placeholder="43.7384"
               aria-invalid={touched.latitude && !!errors.latitude}
-              className={touched.latitude && errors.latitude ? 'border-red-500' : ''}
+              className={touched.latitude && errors.latitude ? 'border-destructive' : ''}
             />
             {touched.latitude && errors.latitude && (
               <p className="text-sm text-red-600 dark:text-red-400">{errors.latitude}</p>
@@ -344,7 +344,7 @@ export function LocationFormFields({
               disabled={!canEdit}
               placeholder="7.4246"
               aria-invalid={touched.longitude && !!errors.longitude}
-              className={touched.longitude && errors.longitude ? 'border-red-500' : ''}
+              className={touched.longitude && errors.longitude ? 'border-destructive' : ''}
             />
             {touched.longitude && errors.longitude && (
               <p className="text-sm text-red-600 dark:text-red-400">{errors.longitude}</p>

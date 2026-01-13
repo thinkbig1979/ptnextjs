@@ -142,13 +142,13 @@ export function BasicInfoForm({ vendor, onSubmit }: BasicInfoFormProps) {
               id="companyName"
               {...register('companyName')}
               placeholder="e.g., Acme Marine Services"
-              className={errors.companyName ? 'border-red-500' : ''}
+              className={errors.companyName ? 'border-destructive' : ''}
             />
             <p className="text-xs text-muted-foreground">
               Your official business name as customers will see it.
             </p>
             {errors.companyName && (
-              <p className="text-sm text-red-500">{errors.companyName.message}</p>
+              <p className="text-sm text-destructive">{errors.companyName.message}</p>
             )}
           </div>
 
@@ -172,7 +172,7 @@ export function BasicInfoForm({ vendor, onSubmit }: BasicInfoFormProps) {
               Your profile will be available at: /vendors/{watch('slug')}
             </p>
             {errors.slug && (
-              <p className="text-sm text-red-500">{errors.slug.message}</p>
+              <p className="text-sm text-destructive">{errors.slug.message}</p>
             )}
           </div>
 
@@ -186,7 +186,7 @@ export function BasicInfoForm({ vendor, onSubmit }: BasicInfoFormProps) {
               {...register('description')}
               placeholder="Describe your company and the services you provide..."
               rows={4}
-              className={errors.description ? 'border-red-500' : ''}
+              className={errors.description ? 'border-destructive' : ''}
             />
             <div className="flex justify-between items-center">
               <p className="text-xs text-muted-foreground">
@@ -199,7 +199,7 @@ export function BasicInfoForm({ vendor, onSubmit }: BasicInfoFormProps) {
               />
             </div>
             {errors.description && (
-              <p className="text-sm text-red-500">{errors.description.message}</p>
+              <p className="text-sm text-destructive">{errors.description.message}</p>
             )}
           </div>
 
@@ -218,13 +218,13 @@ export function BasicInfoForm({ vendor, onSubmit }: BasicInfoFormProps) {
               type="url"
               {...register('logo')}
               placeholder="https://example.com/your-logo.png"
-              className={errors.logo ? 'border-red-500' : ''}
+              className={errors.logo ? 'border-destructive' : ''}
             />
             <p className="text-xs text-muted-foreground">
               Enter a direct link to your company logo image.
             </p>
             {errors.logo && (
-              <p className="text-sm text-red-500">{errors.logo.message}</p>
+              <p className="text-sm text-destructive">{errors.logo.message}</p>
             )}
             {watch('logo') && (
               <div className="mt-2 p-4 bg-muted dark:bg-muted rounded-lg">
@@ -251,13 +251,13 @@ export function BasicInfoForm({ vendor, onSubmit }: BasicInfoFormProps) {
               type="email"
               {...register('contactEmail')}
               placeholder="contact@yourcompany.com"
-              className={errors.contactEmail ? 'border-red-500' : ''}
+              className={errors.contactEmail ? 'border-destructive' : ''}
             />
             <p className="text-xs text-muted-foreground">
               Public email displayed on your profile for customer inquiries.
             </p>
             {errors.contactEmail && (
-              <p className="text-sm text-red-500">{errors.contactEmail.message}</p>
+              <p className="text-sm text-destructive">{errors.contactEmail.message}</p>
             )}
           </div>
 
@@ -269,13 +269,13 @@ export function BasicInfoForm({ vendor, onSubmit }: BasicInfoFormProps) {
               type="tel"
               {...register('contactPhone')}
               placeholder="+1 (555) 123-4567"
-              className={errors.contactPhone ? 'border-red-500' : ''}
+              className={errors.contactPhone ? 'border-destructive' : ''}
             />
             <p className="text-xs text-muted-foreground">
               Business phone for customer inquiries (optional).
             </p>
             {errors.contactPhone && (
-              <p className="text-sm text-red-500">{errors.contactPhone.message}</p>
+              <p className="text-sm text-destructive">{errors.contactPhone.message}</p>
             )}
           </div>
         </CardContent>
