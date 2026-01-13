@@ -39,6 +39,10 @@ export interface TierDowngradeRequestFormProps {
   currentTier: 'free' | 'tier1' | 'tier2' | 'tier3';
   onSuccess?: (data?: any) => void;
   onCancel?: () => void;
+  /** Current number of locations the vendor has */
+  locationCount?: number;
+  /** Current number of products the vendor has */
+  productCount?: number;
 }
 
 // Zod validation schema
@@ -138,11 +142,48 @@ function getFeaturesLost(currentTier: string, targetTier: string): string[] {
   return [...new Set(featuresLost)]; // Remove duplicates
 }
 
+// Tier limits for locations and products
+const TIER_LIMITS: Record<string, { locations: number; products: number }> = {
+  free: { locations: 1, products: 1 },
+  tier1: { locations: 1, products: 5 },
+  tier2: { locations: 5, products: 25 },
+  tier3: { locations: 10, products: Infinity },
+};
+
+// Calculate what will be archived when downgrading
+interface ArchiveImpact {
+  locationsToArchive: number;
+  productsToArchive: number;
+  hasImpact: boolean;
+}
+
+function calculateArchiveImpact(
+  targetTier: string,
+  currentLocationCount: number,
+  currentProductCount: number
+): ArchiveImpact {
+  const limits = TIER_LIMITS[targetTier];
+  if (!limits) {
+    return { locationsToArchive: 0, productsToArchive: 0, hasImpact: false };
+  }
+
+  const locationsToArchive = Math.max(0, currentLocationCount - limits.locations);
+  const productsToArchive = Math.max(0, currentProductCount - limits.products);
+
+  return {
+    locationsToArchive,
+    productsToArchive,
+    hasImpact: locationsToArchive > 0 || productsToArchive > 0,
+  };
+}
+
 export function TierDowngradeRequestForm({
   vendorId,
   currentTier,
   onSuccess,
-  onCancel
+  onCancel,
+  locationCount = 0,
+  productCount = 0,
 }: TierDowngradeRequestFormProps) {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
@@ -167,6 +208,9 @@ export function TierDowngradeRequestForm({
 
   const availableTiers = getAvailableLowerTiers(currentTier);
   const featuresLost = selectedTier ? getFeaturesLost(currentTier, selectedTier) : [];
+  const archiveImpact = selectedTier
+    ? calculateArchiveImpact(selectedTier, locationCount, productCount)
+    : { locationsToArchive: 0, productsToArchive: 0, hasImpact: false };
 
   const onSubmit = async (data: TierDowngradeRequestFormData) => {
     setIsSubmitting(true);
@@ -300,6 +344,34 @@ export function TierDowngradeRequestForm({
                   ))}
                 </ul>
               </div>
+            )}
+
+            {/* Archive Impact Warning - Critical downgrade warnings */}
+            {selectedTier && archiveImpact.hasImpact && (
+              <Alert variant="destructive">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertTitle>Content Will Be Archived</AlertTitle>
+                <AlertDescription className="space-y-2">
+                  <p>Based on your current content, the following will be archived (hidden from public view):</p>
+                  <ul className="list-disc list-inside space-y-1 mt-2">
+                    {archiveImpact.locationsToArchive > 0 && (
+                      <li>
+                        <strong>{archiveImpact.locationsToArchive} location{archiveImpact.locationsToArchive > 1 ? 's' : ''}</strong>
+                        {' '}will be archived. You have {locationCount} location{locationCount > 1 ? 's' : ''}, but {TIER_LABELS[selectedTier]} allows only {TIER_LIMITS[selectedTier]?.locations}.
+                      </li>
+                    )}
+                    {archiveImpact.productsToArchive > 0 && (
+                      <li>
+                        <strong>{archiveImpact.productsToArchive} product{archiveImpact.productsToArchive > 1 ? 's' : ''}</strong>
+                        {' '}will be archived. You have {productCount} product{productCount > 1 ? 's' : ''}, but {TIER_LABELS[selectedTier]} allows only {TIER_LIMITS[selectedTier]?.products}.
+                      </li>
+                    )}
+                  </ul>
+                  <p className="text-sm mt-2 italic">
+                    Archived content is preserved and can be restored if you upgrade again later.
+                  </p>
+                </AlertDescription>
+              </Alert>
             )}
 
             {/* Vendor Notes Textarea */}

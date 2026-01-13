@@ -4,8 +4,9 @@ import React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Lock, ArrowUpCircle } from 'lucide-react';
+import { Lock, ArrowUpCircle, Check } from 'lucide-react';
 import Link from 'next/link';
+import { getTierExplanation } from '@/lib/help/content/tier-system';
 
 export interface TierUpgradePromptProps {
   currentTier: string;
@@ -54,6 +55,10 @@ export function TierUpgradePrompt({
   }
 
   // Full version with card
+  // Get feature benefits for the required tier
+  const tierKey = requiredTier.toLowerCase().replace(' ', '') as 'free' | 'tier1' | 'tier2' | 'tier3';
+  const tierExplanation = getTierExplanation(tierKey);
+
   return (
     <Card className={`border-blue-200 dark:border-blue-800 ${className}`}>
       <CardHeader>
@@ -86,6 +91,26 @@ export function TierUpgradePrompt({
             </div>
           </div>
         </div>
+
+        {/* Feature Benefits */}
+        {tierExplanation && (
+          <div className="bg-blue-50 dark:bg-blue-950/30 rounded-lg p-4 border border-blue-100 dark:border-blue-800">
+            <h4 className="text-sm font-semibold text-blue-700 dark:text-blue-300 mb-2">
+              Benefits of {tierExplanation.name}:
+            </h4>
+            <p className="text-sm text-blue-600 dark:text-blue-400 mb-3">
+              {tierExplanation.description}
+            </p>
+            <ul className="space-y-1.5">
+              {tierExplanation.highlights.slice(0, 5).map((benefit, index) => (
+                <li key={index} className="flex items-center gap-2 text-sm text-blue-700 dark:text-blue-300">
+                  <Check className="h-4 w-4 text-green-600 dark:text-green-400 flex-shrink-0" />
+                  {benefit}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         <div className="pt-2">
           <Link href={upgradePath}>

@@ -30,6 +30,9 @@ import {
   CardTitle,
   CardDescription
 } from '@/components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Info, Clock, Check } from 'lucide-react';
+import { getTierExplanation } from '@/lib/help/content/tier-system';
 
 export interface TierUpgradeRequestFormProps {
   vendorId: string;
@@ -101,6 +104,8 @@ export function TierUpgradeRequestForm({
   }
 
   const availableTiers = getAvailableTiers(currentTier);
+  const selectedTier = form.watch('requestedTier');
+  const selectedTierExplanation = selectedTier ? getTierExplanation(selectedTier) : null;
 
   const onSubmit = async (data: TierUpgradeRequestFormData) => {
     setIsSubmitting(true);
@@ -171,6 +176,20 @@ export function TierUpgradeRequestForm({
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            {/* Approval Process Info */}
+            <Alert className="border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/30">
+              <Clock className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+              <AlertTitle className="text-blue-700 dark:text-blue-300">Upgrade Approval Process</AlertTitle>
+              <AlertDescription className="text-blue-600 dark:text-blue-400">
+                <ul className="list-disc list-inside space-y-1 mt-2 text-sm">
+                  <li>Submit your upgrade request with any relevant notes</li>
+                  <li>Our team reviews requests within 1-2 business days</li>
+                  <li>You will receive an email notification when approved</li>
+                  <li>New tier features are immediately available upon approval</li>
+                </ul>
+              </AlertDescription>
+            </Alert>
+
             {/* Requested Tier Select */}
             <FormField
               control={form.control}
@@ -202,6 +221,27 @@ export function TierUpgradeRequestForm({
               )}
             />
 
+            {/* Selected Tier Benefits */}
+            {selectedTierExplanation && (
+              <div className="rounded-lg border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/30 p-4">
+                <h4 className="font-semibold text-green-700 dark:text-green-300 mb-2 flex items-center gap-2">
+                  <Info className="h-4 w-4" />
+                  {selectedTierExplanation.name} Benefits
+                </h4>
+                <p className="text-sm text-green-600 dark:text-green-400 mb-3">
+                  {selectedTierExplanation.description}
+                </p>
+                <ul className="space-y-1.5">
+                  {selectedTierExplanation.highlights.map((benefit, index) => (
+                    <li key={index} className="flex items-center gap-2 text-sm text-green-700 dark:text-green-300">
+                      <Check className="h-4 w-4 text-green-600 dark:text-green-400 flex-shrink-0" />
+                      {benefit}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             {/* Vendor Notes Textarea */}
             <FormField
               control={form.control}
@@ -209,18 +249,21 @@ export function TierUpgradeRequestForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Vendor Notes <span className="text-muted-foreground">(Optional)</span>
+                    Additional Notes <span className="text-muted-foreground">(Optional)</span>
                   </FormLabel>
                   <FormControl>
                     <Textarea
                       {...field}
-                      placeholder="Please provide details about why you need this upgrade..."
+                      placeholder="Share why you're looking to upgrade. For example: expanding to new locations, growing product line, need better analytics for business decisions..."
                       disabled={isSubmitting}
-                      aria-label="Vendor Notes"
+                      aria-label="Additional Notes"
                       className="min-h-[120px]"
                     />
                   </FormControl>
-                  <FormDescription>
+                  <FormDescription className="space-y-1">
+                    <span className="block text-xs text-muted-foreground">
+                      Tips: Mention your business goals, planned content additions, or specific features you need. This helps our team process your request faster.
+                    </span>
                     {notesLength > 0 && (
                       <span className={notesLength > 500 ? 'text-destructive' : ''}>
                         {notesLength}/500 characters

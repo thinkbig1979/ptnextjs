@@ -11,8 +11,12 @@ import { TierComparisonTable } from '@/components/TierComparisonTable';
 import { TierUpgradeRequestForm } from '@/components/dashboard/TierUpgradeRequestForm';
 import { TierDowngradeRequestForm } from '@/components/dashboard/TierDowngradeRequestForm';
 import { UpgradeRequestStatusCard } from '@/components/dashboard/UpgradeRequestStatusCard';
-import { Loader2, AlertCircle, ArrowUp, ArrowDown } from 'lucide-react';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { HelpTooltip } from '@/components/help';
+import { Loader2, AlertCircle, ArrowUp, ArrowDown, HelpCircle, Info } from 'lucide-react';
 import { TierUpgradeRequest } from '@/lib/types';
+import { subscriptionFAQ } from '@/lib/help/content/subscription';
+import { tierExplanations } from '@/lib/help/content/tier-system';
 
 // Interface for downgrade request (mirrors upgrade request structure)
 interface TierDowngradeRequest {
@@ -280,6 +284,118 @@ export default function SubscriptionPage() {
         </h2>
         <TierComparisonTable currentTier={vendor.tier} />
       </div>
+
+      {/* Tier Explanations */}
+      <Card className="hover-lift">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Info className="h-5 w-5 text-accent" />
+            Understanding the Tiers
+          </CardTitle>
+          <CardDescription>
+            Learn what each subscription tier offers and find the right fit for your business
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-2">
+            {tierExplanations.map((tier) => (
+              <div
+                key={tier.tier}
+                className={`p-4 rounded-lg border ${
+                  vendor.tier === tier.tier
+                    ? 'border-primary bg-primary/5'
+                    : 'border-border'
+                }`}
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <h3 className="font-semibold">{tier.name}</h3>
+                  {vendor.tier === tier.tier && (
+                    <span className="text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded">
+                      Current
+                    </span>
+                  )}
+                </div>
+                <p className="text-sm text-muted-foreground mb-3">
+                  {tier.description}
+                </p>
+                <ul className="text-sm space-y-1">
+                  {tier.highlights.slice(0, 4).map((highlight, index) => (
+                    <li key={index} className="flex items-center gap-2">
+                      <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+                      {highlight}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Upgrade/Downgrade Process Help */}
+      <Card className="hover-lift">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <HelpCircle className="h-5 w-5 text-accent" />
+            How Tier Changes Work
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="p-4 rounded-lg bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800">
+              <h3 className="font-semibold text-green-700 dark:text-green-300 mb-2 flex items-center gap-2">
+                <ArrowUp className="h-4 w-4" />
+                Upgrading Your Tier
+              </h3>
+              <ul className="text-sm space-y-2 text-green-800 dark:text-green-200">
+                <li>1. Select your desired tier and submit a request</li>
+                <li>2. Our team reviews within 1-2 business days</li>
+                <li>3. Once approved, new features are immediately available</li>
+                <li>4. Start adding more products, locations, and content</li>
+              </ul>
+            </div>
+            <div className="p-4 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800">
+              <h3 className="font-semibold text-amber-700 dark:text-amber-300 mb-2 flex items-center gap-2">
+                <ArrowDown className="h-4 w-4" />
+                Downgrading Your Tier
+              </h3>
+              <ul className="text-sm space-y-2 text-amber-800 dark:text-amber-200">
+                <li>1. Review features you will lose before requesting</li>
+                <li>2. Content exceeding new limits will be archived</li>
+                <li>3. Archived content is preserved, not deleted</li>
+                <li>4. Upgrade later to restore archived content</li>
+              </ul>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* FAQ Section */}
+      <Card className="hover-lift">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <HelpCircle className="h-5 w-5 text-accent" />
+            Frequently Asked Questions
+          </CardTitle>
+          <CardDescription>
+            Common questions about managing your subscription
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Accordion type="single" collapsible className="w-full">
+            {subscriptionFAQ.map((faq) => (
+              <AccordionItem key={faq.id} value={faq.id}>
+                <AccordionTrigger className="text-left">
+                  {faq.question}
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">
+                  {faq.answer}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </CardContent>
+      </Card>
 
       {/* Tier Change Requests */}
       <div>
