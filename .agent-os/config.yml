@@ -1,10 +1,11 @@
-# Agent OS Configuration v5.1.0
+# Agent OS Configuration v5.2.0
 # Clean configuration with sane defaults for compound engineering integration
 #
 # TOKEN EFFICIENCY NOTE:
 # - This file is loaded once per session (not repeatedly)
 # - Agents access specific sections via key lookup, not full-file parsing
 # - Unused sections do not consume additional context tokens
+# v5.2.0: Unified Session Ledger - Multi-session persistence, /orchestrate command
 # v5.1.0: UI Testing Integration - E2E tests block implementation, browser validation gates
 # v5.0.0: Pattern Consistency - Auto-detect and enforce codebase patterns
 # v4.9.0: Autonomous Execution - Supervisor/PM pattern, automatic handoffs, context-aware respawn
@@ -20,7 +21,7 @@
 # v4.0.0: Test Failure Handling Protocol - Orchestrated test execution with subagent delegation
 # v3.3.0: Test Execution Monitoring - Real-time streaming, hung test detection, test/code alignment
 
-agent_os_version: 5.1.0
+agent_os_version: 5.2.0
 
 # ================================================
 # CONFIGURATION HIERARCHY
@@ -156,10 +157,15 @@ security:
   owasp_top_10: true
 
 # ================================================
-# WORKTREE ISOLATION
+# WORKTREE ISOLATION [DEFERRED]
 # ================================================
+# Status: DEFERRED - Scripts archived to setup/archive/worktrees/
+# Rationale: Current orchestration model (subagent coordination via TodoWrite)
+# provides sufficient parallelism without filesystem isolation complexity.
+# The infrastructure remains available if future use cases require it.
+# See: setup/archive/worktrees/ARCHIVED.md
 worktrees:
-  enabled: true
+  enabled: false  # DEFERRED - not part of active workflow
   base_directory: ".agent-os/worktrees"
   auto_cleanup: true
 
@@ -1079,6 +1085,158 @@ test_integrity_maintenance:
     on_limit_exceeded: "warn_and_continue" # "warn_and_continue" | "stop_and_ask"
 
 # ================================================
+# QUALITY LENSES (v5.2+)
+# ================================================
+# Unified configuration for all quality lenses (Inversion, Pre-Mortem, Evolution).
+# By default, lenses are OPT-IN for simple specs to reduce cognitive load.
+#
+# Reference: instructions/utilities/quality-lenses.md
+# Workflow: Steps 2.6, 2.7, 9.7 in create-spec
+#
+# The key insight: Quality lenses add significant value for complex features
+# but create unnecessary overhead for simple changes. This configuration
+# makes it easy to apply lenses where they matter most.
+
+quality_lenses:
+  enabled: true
+
+  # Opt-in threshold: specs below this estimated work are opt-in by default
+  # User can still request lenses for simple specs via --with-lenses flag
+  opt_in_threshold_hours: 4  # <4h estimated work = opt-in
+
+  # Which lenses are opt-in vs always-on
+  # "always": Applied regardless of complexity
+  # "opt-in": Only applied if work > threshold OR explicitly requested
+  # "disabled": Never applied
+  default_behavior:
+    inversion: "opt-in"      # Failure mode analysis
+    pre_mortem: "opt-in"     # Risk projection
+    evolution: "opt-in"      # Timelessness scoring
+
+  # Override by priority (takes precedence over threshold)
+  # P0-P1: Always apply all lenses (critical features need thorough analysis)
+  # P2: Apply if > threshold OR has risk factors
+  # P3-P4: Opt-in only (simple changes)
+  priority_overrides:
+    P0: "always"
+    P1: "always"
+    P2: "threshold"  # Use opt_in_threshold_hours
+    P3: "opt-in"
+    P4: "opt-in"
+
+  # Risk factors that trigger lenses even for simple specs
+  # If ANY of these apply, lenses are recommended regardless of threshold
+  risk_factors:
+    - security_implications     # Auth, permissions, secrets
+    - data_integrity            # Database changes, migrations
+    - external_integrations     # Third-party APIs, webhooks
+    - user_facing_changes       # UI that affects many users
+    - breaking_changes          # API changes, deprecations
+
+  # Skip conditions (ALL must be true to skip for P3-P4)
+  skip_conditions:
+    - no_security_implications
+    - no_data_integrity_risks
+    - no_external_integrations
+    - estimated_under_threshold
+    - pure_docs_or_config
+
+  # Quick-spec mode: automatically skip lenses
+  # When using /quick-spec, lenses are skipped by default
+  quick_spec_behavior: "skip"  # "skip" | "ask" | "minimal"
+
+# ================================================
+# PRE-MORTEM LENS (v5.2+)
+# ================================================
+# Pre-mortem risk analysis that identifies potential failure causes
+# by imagining the feature has already failed and working backward.
+#
+# Reference: instructions/utilities/quality-lenses.md#pre-mortem-lens
+# Template: templates/pre-mortem-analysis.md.template
+# Workflow: Step 2.7 in create-spec.md
+
+pre_mortem_lens:
+  enabled: true
+
+  # Inherits from quality_lenses.priority_overrides
+  # These settings are ADDITIONAL configuration for pre-mortem specific behavior
+  mandatory_for: ['P0', 'P1']  # Overridden by quality_lenses.priority_overrides
+
+  # Optional for P2-P4 features (apply if: external deps, data risks, security, complexity)
+  optional_for: ['P2', 'P3', 'P4']
+
+  # Risk scoring configuration
+  scoring:
+    # Risk score threshold - scores above this require mitigation
+    risk_threshold: 12
+
+    # Scoring formula: Likelihood x Impact x (Detectability / 2)
+    formula: "L * I * (D / 2)"
+
+    # Likelihood scale (1-5)
+    likelihood_scale:
+      1: "Rare (<5%)"
+      2: "Unlikely (5-20%)"
+      3: "Possible (20-50%)"
+      4: "Likely (50-80%)"
+      5: "Almost Certain (>80%)"
+
+    # Impact scale (1-5)
+    impact_scale:
+      1: "Minimal (cosmetic)"
+      2: "Minor (workaround exists)"
+      3: "Moderate (degraded UX)"
+      4: "Major (core function broken)"
+      5: "Catastrophic (total failure)"
+
+    # Detectability scale (1-5)
+    detectability_scale:
+      1: "Obvious (immediate)"
+      2: "Easy (<1 day)"
+      3: "Moderate (1-7 days)"
+      4: "Difficult (7-30 days)"
+      5: "Hidden (30+ days)"
+
+  # Risk categories to analyze
+  categories:
+    - technical      # Architecture, performance, security, integration
+    - product        # UX, value proposition, adoption, market fit
+    - process        # Communication, coordination, timeline, resources
+    - external       # Dependencies, market changes, regulatory, competition
+
+  # Minimum requirements by priority
+  requirements:
+    P0_P1:
+      min_risks: 8           # At least 2 per category
+      min_mitigations: "all_above_threshold"
+      early_warnings: 5
+      time_budget_min: 15
+    P2:
+      min_risks: 4           # At least 1 per category
+      min_mitigations: "score_above_16"
+      early_warnings: 3
+      time_budget_min: 10
+    P3_P4:
+      min_risks: 4
+      min_mitigations: "critical_only"
+      early_warnings: 0      # Optional
+      time_budget_min: 5
+
+  # Output configuration
+  output:
+    file_location: "sub-specs/pre-mortem-analysis.md"
+    link_to_acceptance_criteria: true
+    include_early_warnings: true
+    include_review_schedule: true
+
+  # Integration with other spec sections
+  integration:
+    technical_spec: true     # Feed technical risks into architecture decisions
+    ux_ui_spec: true         # Feed product risks into user flow architecture
+    implementation_plan: true # Feed process risks into timeline
+    integration_requirements: true # Feed external risks into dependencies
+
+# ================================================
 # PATTERN CONSISTENCY (v5.0+)
 # ================================================
 # Ensures new features integrate seamlessly with existing codebase patterns
@@ -1397,18 +1555,51 @@ ui_testing:
     check_data_testid_coverage: true
 
 # ================================================
-# E2E TEST ORGANIZATION (v4.8.0+)
+# E2E TESTING (v5.2+)
+# ================================================
+# Unified E2E testing command that consolidates test running, failure analysis,
+# and fixing into a single interactive workflow.
+#
+# Command: /e2e (replaces /run-tests and /test-health)
+# Skill: e2e-testing (consolidates e2e-test-repair and e2e-test-organization)
+#
+# Features:
+#   - Production server auto-start (10-50x faster than dev)
+#   - Tiered execution (smoke -> core -> regression)
+#   - Failure categorization and root cause analysis
+#   - Priority-based fixing with sample verification
+#   - Context handoff for multi-session workflows
+#   - Quarantine management with Beads tracking
+
+e2e:
+  enabled: true
+  tiers:
+    smoke:
+      timeout_minutes: 3
+      stop_on_failure: true
+    core:
+      timeout_minutes: 15
+      stop_on_failure: false
+    regression:
+      timeout_minutes: 45
+      stop_on_failure: false
+  loop:
+    max_iterations: 3
+    max_total_iterations: 10
+    success_threshold: 0.95
+    quarantine_after_failures: 3
+  fix:
+    prioritize_by: "impact"
+    verify_sample_size: 3
+
+# ================================================
+# E2E TEST ORGANIZATION (legacy config, merged into e2e)
 # ================================================
 # Tiered test organization for efficient execution across development workflows.
 # Enables running the right tests at the right time (smoke for commits, core for PRs, etc.)
 #
-# Skills:
-#   - e2e-test-organization - Tier definitions, feature groups, placement
-#   - e2e-test-repair - Repair protocols with root cause analysis
-#
-# Commands:
-#   - /fix-e2e-large - Progressive repair for 100+ test suites
-#   - /test-health - Test suite health dashboard
+# Note: This section is kept for backwards compatibility.
+# New configurations should use the 'e2e' section above.
 #
 # Files:
 #   - tests/e2e/test-inventory.ts - Source of truth for test categorization
@@ -1511,14 +1702,15 @@ autonomous_execution:
   # Session limits (safety)
   max_pm_sessions: 20 # Maximum PM respawns before requiring user intervention
 
-  # State persistence
-  handoff_directory: ".agent-os/supervisor"
-  handoff_file: "pm-handoff.json"
+  # State persistence (unified session ledger)
+  handoff_directory: ".agent-os"
+  handoff_file: "session-ledger.md"
+  ledger_archive_directory: ".agent-os/ledgers"
   session_history: true # Keep log of all PM sessions
 
   # User interaction
   require_user_confirmation: true # Confirm before starting execution
-  auto_resume: false # Require explicit --resume flag
+  auto_resume: true # Session start auto-detects ledger and offers resume
   prompt_on_blocker: true # Always ask user for blocker resolution
 
   # PM delegation
@@ -1530,6 +1722,108 @@ autonomous_execution:
   verify_deliverables: true
   run_tests_before_handoff: true
   require_clean_commits: true
+
+# ================================================
+# EVOLUTION SCORING (v5.2+)
+# ================================================
+# Evaluates spec and implementation quality through an "evolution lens"
+# that focuses on maintainability, extensibility, debuggability, and simplicity.
+#
+# Reference: instructions/utilities/quality-lenses.md#evolution-scoring
+# Integration:
+#   - create-spec.md Step 9.7 - Score specs before completion
+#   - execute-tasks.md Step 4.2.7 - Check deliverables for anti-patterns
+#
+# NOTE: Controlled by quality_lenses.priority_overrides for when to apply
+#
+# Workflow:
+#   1. Spec Creation: Score spec quality, block/warn if below threshold
+#   2. Task Execution: Verify implementation matches evolution requirements
+#   3. Deliverable Check: Flag new anti-patterns introduced during implementation
+
+evolution_scoring:
+  enabled: true
+
+  # Score threshold (0-10)
+  # Specs/implementations must score at or above this to pass
+  threshold: 7
+
+  # Enforcement mode
+  # "warning": Show issues, allow override with justification
+  # "blocking": Cannot proceed without meeting threshold
+  enforcement_mode: "warning"
+
+  # Where to apply evolution scoring
+  apply_to:
+    specs: true # Evaluate spec quality (Step 9.7)
+    tasks: true # Check task deliverables (Step 4.2.7)
+    deliverables: false # Reserved for future: detailed file-level analysis
+
+  # Scoring categories (each scored 0-10)
+  categories:
+    maintainability:
+      enabled: true
+      weight: 1.0
+      criteria:
+        - separation_of_concerns
+        - modular_design
+        - clear_dependencies
+        - testing_strategy
+
+    extensibility:
+      enabled: true
+      weight: 1.0
+      criteria:
+        - extension_points
+        - future_considerations
+        - backwards_compatibility
+        - api_versioning
+
+    debuggability:
+      enabled: true
+      weight: 1.0
+      criteria:
+        - error_handling_patterns
+        - logging_strategy
+        - observable_boundaries
+        - troubleshooting_guidance
+
+    simplicity:
+      enabled: true
+      weight: 1.0
+      criteria:
+        - minimal_dependencies
+        - clear_data_flow
+        - appropriate_abstraction
+        - no_over_engineering
+
+  # Anti-pattern detection (for task deliverables)
+  anti_patterns:
+    global:
+      - god_objects # Class/module with >10 responsibilities
+      - hidden_dependencies # Dependencies not in function signature
+      - magic_values # Unexplained constants or strings
+      - nested_callbacks # Callback depth > 3
+      - mixed_abstractions # High-level mixed with low-level code
+      - excessive_coupling # Module depends on >5 other modules
+
+    # Additional patterns loaded from spec's inversion analysis
+    load_from_inversion_analysis: true
+
+  # Override handling
+  overrides:
+    require_justification: true
+    justification_min_length: 50 # Characters
+    save_overrides: true
+    override_directory: ".agent-os/evolution"
+
+  # Reporting
+  output:
+    save_reports: true
+    report_directory: ".agent-os/evolution"
+    spec_report_pattern: "{spec_folder}/evolution-score.json"
+    task_report_pattern: "{task_id}-check.json"
+    include_in_pr_summary: true
 
 # ================================================
 # E2E REPAIR PROTOCOL (v4.9.0+)

@@ -6,11 +6,11 @@ This directory contains instruction files that guide Claude through workflow pha
 
 | Directory | Files | Purpose |
 |-----------|-------|---------|
-| `core/` | 13 files | Main workflow definitions |
-| `agents/` | 29 files | Phase-specific guidance (NOT callable agents) |
-| `utilities/` | 8 files | Tool and integration guides |
-| `validation/` | 2 files | Validation protocols |
+| `core/` | 11 files | Main workflow definitions |
+| `agents/` | 9 files | Phase-specific guidance (NOT callable agents) |
+| `utilities/` | 16 files | Tool and integration guides |
 | `meta/` | 2 files | Meta-level guidance |
+| `references/` | 1 file | External reference documents |
 
 ## How Instructions Are Used
 
@@ -40,18 +40,20 @@ See: [docs/GLOSSARY.md](../docs/GLOSSARY.md) for terminology.
 ### Phase Instructions (in `agents/`)
 | File | Workflow Phase |
 |------|----------------|
-| `test-architect.md` | Test design phase |
-| `implementation-specialist.md` | Implementation phase |
-| `integration-coordinator.md` | Integration phase |
+| `test-architect.md` | Test design phase (TDD RED) |
+| `test-context-gatherer.md` | Pre-test research phase |
+| `test-runner.md` | Test execution phase |
+| `implementation-specialist.md` | Implementation phase (TDD GREEN) |
 | `security-sentinel.md` | Security review phase |
-| `quality-assurance.md` | Quality review phase |
+| `pattern-discovery-analyst.md` | Pattern analysis phase |
 
 ### Utilities
 | File | Purpose |
 |------|---------|
 | `beads-integration-guide.md` | Beads task tracking |
-| `quality-hooks-guide.md` | Hook system usage |
 | `tdd-validator.md` | TDD enforcement |
+| `test-execution-protocol.md` | Test execution steps |
+| `quality-lenses.md` | Quality analysis techniques (Inversion, Pre-Mortem, Evolution) |
 
 ## Usage Example
 

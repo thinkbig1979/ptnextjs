@@ -178,7 +178,7 @@ fallbackType="company"
               <CardContent>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {yacht.images.map((image: string, index: number) => (
-                    <div key={index} className="aspect-video relative rounded-lg overflow-hidden">
+                    <div key={`gallery-${image}-${index}`} className="aspect-video relative rounded-lg overflow-hidden">
                       <OptimizedImage
                         src={image}
                         alt={`${yacht.name} - Image ${index + 1}`}
@@ -201,8 +201,8 @@ fallbackType="company"
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {yacht.timeline.map((event: YachtTimelineEvent, index: number) => (
-                    <div key={index} className="border-l-2 border-primary pl-4">
+                  {yacht.timeline.map((event: YachtTimelineEvent) => (
+                    <div key={`timeline-${event.date || ''}-${event.event}`} className="border-l-2 border-primary pl-4">
                       <div className="flex items-center gap-2 mb-1">
                         <h3 className="font-semibold">{event.event}</h3>
                         {event.date && (
@@ -304,7 +304,7 @@ fallbackType="company"
 
                         {/* Suppliers Grid */}
                         <div className="grid gap-4">
-                          {suppliers.map((supplier: any, index: number) => {
+                          {suppliers.map((supplier: any) => {
                             // Find the matching vendor from our platform
                             const vendor = allVendors.find((v: any) =>
                               v.id === supplier.vendorId ||
@@ -312,7 +312,7 @@ fallbackType="company"
                             );
 
                             return (
-                              <div key={index} className="group/supplier relative border border-border/50 rounded-xl p-6 bg-gradient-to-br from-card to-muted/10 hover:border-accent/30 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ease-out">
+                              <div key={supplier.vendorId || `supplier-${supplier.vendorName}`} className="group/supplier relative border border-border/50 rounded-xl p-6 bg-gradient-to-br from-card to-muted/10 hover:border-accent/30 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ease-out">
                                 {/* Vendor Name Section */}
                                 <div className="flex items-start justify-between mb-4">
                                   <div className="flex items-center gap-3">
@@ -364,7 +364,7 @@ fallbackType="company"
                                     <div className="text-sm font-poppins-medium text-muted-foreground mb-2">
                                       Systems & Products:
                                     </div>
-                                    {supplier.systems.map((system: string, sysIndex: number) => {
+                                    {supplier.systems.map((system: string) => {
                                       // Try to find matching products for this system
                                       const matchingProducts = allProducts.filter((product: any) =>
                                         (product.vendorId === supplier.vendorId ||
@@ -376,19 +376,19 @@ fallbackType="company"
 
                                       if (matchingProducts.length > 0) {
                                         return (
-                                          <div key={sysIndex} className="flex items-start gap-2 text-sm">
+                                          <div key={`system-${system}`} className="flex items-start gap-2 text-sm">
                                             <div className="w-1.5 h-1.5 bg-accent rounded-full mt-2 flex-shrink-0"></div>
                                             <div className="space-y-1">
                                               <div className="flex flex-wrap gap-1">
-                                                {matchingProducts.map((product: any, pIndex: number) => (
-                                                  <span key={pIndex} className="inline-flex items-center">
+                                                {matchingProducts.map((product: any, productIndex: number) => (
+                                                  <span key={product.id || `product-${product.slug}`} className="inline-flex items-center">
                                                     <Link
                                                       href={`/products/${product.slug}`}
                                                       className="text-foreground hover:text-accent hover:underline transition-colors duration-200 font-poppins-medium"
                                                     >
                                                       {product.name}
                                                     </Link>
-                                                    {pIndex < matchingProducts.length - 1 && <span className="text-muted-foreground mx-1">•</span>}
+                                                    {productIndex < matchingProducts.length - 1 && <span className="text-muted-foreground mx-1">•</span>}
                                                   </span>
                                                 ))}
                                               </div>
@@ -397,7 +397,7 @@ fallbackType="company"
                                         );
                                       } else {
                                         return (
-                                          <div key={sysIndex} className="flex items-center gap-2 text-sm">
+                                          <div key={`system-${system}`} className="flex items-center gap-2 text-sm">
                                             <div className="w-1.5 h-1.5 bg-muted-foreground rounded-full flex-shrink-0"></div>
                                             <span className="text-foreground font-poppins-light">{system}</span>
                                           </div>
@@ -464,8 +464,8 @@ fallbackType="company"
                   <div className="mt-4">
                     <h4 className="font-semibold mb-2">Certifications</h4>
                     <div className="flex flex-wrap gap-2">
-                      {yacht.sustainabilityScore.certifications.map((cert: string, index: number) => (
-                        <Badge key={index} variant="outline">{cert}</Badge>
+                      {yacht.sustainabilityScore.certifications.map((cert: string) => (
+                        <Badge key={`cert-${cert}`} variant="outline">{cert}</Badge>
                       ))}
                     </div>
                   </div>
@@ -482,8 +482,8 @@ fallbackType="company"
               </CardHeader>
               <CardContent>
                 <div className="grid md:grid-cols-2 gap-4">
-                  {yacht.customizations.map((customization: YachtCustomization, index: number) => (
-                    <div key={index} className="border rounded-lg p-4">
+                  {yacht.customizations.map((customization: YachtCustomization) => (
+                    <div key={`customization-${customization.category}`} className="border rounded-lg p-4">
                       <h4 className="font-semibold mb-2">{customization.category}</h4>
                       {customization.description && (
                         <p className="text-sm text-muted-foreground mb-2">{customization.description}</p>

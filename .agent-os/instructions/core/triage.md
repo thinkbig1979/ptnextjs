@@ -1,3 +1,11 @@
+---
+version: 5.1.0
+last-updated: 2026-01-02
+related-files:
+  - instructions/core/validate-quality.md
+---
+
+
 # Triage Command
 
 ## Purpose

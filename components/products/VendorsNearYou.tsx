@@ -88,7 +88,7 @@ export function VendorsNearYou({
         </CardHeader>
         <CardContent className="px-0 pb-0 space-y-3" data-testid="vendors-near-you-loading">
           {Array.from({ length: 3 }).map((_, index) => (
-            <Skeleton key={index} className="h-20 w-full rounded-lg" />
+            <Skeleton key={`skeleton-${index}`} className="h-20 w-full rounded-lg" />
           ))}
         </CardContent>
       </Card>

@@ -233,7 +233,7 @@ export function PromotionPackForm({ vendor, onSubmit, isAdmin = false }: Promoti
             <div className="space-y-4">
               {editorialContent.map((article, index) => (
                 <div
-                  key={index}
+                  key={article.title || `editorial-${index}`}
                   className="p-4 rounded-lg border bg-card space-y-3"
                 >
                   <div className="flex items-start justify-between gap-4">

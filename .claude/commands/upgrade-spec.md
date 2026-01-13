@@ -1,16 +1,16 @@
 ---
-description: Upgrade existing specs to Agent OS v3.3.0 standards with full re-evaluation and modernization
+description: Upgrade existing specs to Agent OS v5.1.0 standards with full re-evaluation and modernization
 globs:
 alwaysApply: false
 version: 2.0
 encoding: UTF-8
 ---
 
-# Upgrade Spec to v3.3.0 Standards
+# Upgrade Spec to v5.1.0 Standards
 
 ## Overview
 
-Fully modernize existing Agent OS specifications to v3.3.0 standards through comprehensive re-evaluation, codebase analysis, and regeneration of all spec and task files.
+Fully modernize existing Agent OS specifications to v5.1.0 standards through comprehensive re-evaluation, codebase analysis, and regeneration of all spec and task files.
 
 This command performs a **complete upgrade** including:
 - 6-file comprehensive spec structure
@@ -19,8 +19,8 @@ This command performs a **complete upgrade** including:
 - Optimized split task file structure (90%+ context reduction)
 - Test context gathering with library documentation (v3.1+)
 - Skills integration for pattern lookup (v3.2+)
-- Test execution monitoring with streaming reporters (v3.3.0+)
-- Test/code alignment validation (v3.3.0+)
+- Test execution monitoring with streaming reporters (v5.1.0+)
+- Test/code alignment validation (v5.1.0+)
 
 **Use this when:** You want to fully modernize an old spec to current standards.
 

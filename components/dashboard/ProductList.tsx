@@ -134,7 +134,7 @@ export function ProductList({ vendorId }: ProductListProps) {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
-            <Card key={i}>
+            <Card key={`skeleton-${i}`}>
               <CardHeader>
                 <Skeleton className="h-6 w-3/4" />
               </CardHeader>

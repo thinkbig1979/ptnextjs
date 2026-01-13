@@ -4,7 +4,7 @@ description: "Core feature implementation and business logic"
 phase: core_implementation
 context_window: 20480
 specialization: [implementation, business-logic, algorithms, data-structures]
-version: 2.1
+version: 5.1.0
 ---
 
 # Implementation Specialist

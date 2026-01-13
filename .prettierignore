@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+.next/
+.turbo/
+
+# Build outputs
+out/
+dist/
+build/
+
+# Generated files
+*.lock
+pnpm-lock.yaml
+package-lock.json
+
+# Payload CMS generated
+payload-types.ts
+
+# Data files
+data/
+*.db
+
+# Test coverage
+coverage/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+*.min.js
+*.min.css

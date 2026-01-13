@@ -1,3 +1,9 @@
+---
+version: 5.1.0
+last-updated: 2026-01-02
+---
+
+
 # Code Style Guide
 
 ## Context
@@ -19,9 +25,15 @@ ELSE:
 - Align nested structures for readability
 
 ### Naming Conventions
-- **Methods and Variables**: Use snake_case (e.g., `user_profile`, `calculate_total`)
-- **Classes and Modules**: Use PascalCase (e.g., `UserProfile`, `PaymentProcessor`)
-- **Constants**: Use UPPER_SNAKE_CASE (e.g., `MAX_RETRY_COUNT`)
+
+**Important**: For comprehensive naming rules by language, see `@standards/naming-conventions.md`.
+
+**General Principle**: Follow the idiomatic conventions of each programming language:
+- **TypeScript/JavaScript**: `camelCase` for variables/functions
+- **Python/Ruby**: `snake_case` for variables/functions
+- **All Languages**: `PascalCase` for classes, `UPPER_SNAKE_CASE` for constants
+
+See the canonical naming reference for full details and examples.
 
 ### String Formatting
 - Use single quotes for strings: `'Hello World'`

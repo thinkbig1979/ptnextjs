@@ -1,3 +1,11 @@
+---
+version: 5.1.0
+last-updated: 2026-01-02
+related-files:
+  - standards/testing/patterns/README.md
+---
+
+
 # Vitest Testing Patterns
 
 Version compatibility: Vitest 1.x - 2.x

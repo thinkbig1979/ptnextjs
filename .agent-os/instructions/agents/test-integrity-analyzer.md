@@ -4,7 +4,7 @@ description: "Pre-implementation analysis to identify existing tests affected by
 phase: test_integrity_analysis
 context_window: 16384
 specialization: [test-analysis, impact-assessment, test-maintenance, dependency-mapping]
-version: 1.0
+version: 5.1.0
 encoding: UTF-8
 introduced_in: "4.5.0"
 ---

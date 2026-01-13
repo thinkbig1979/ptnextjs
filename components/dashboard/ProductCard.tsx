@@ -98,8 +98,8 @@ export function ProductCard({
         {/* Categories */}
         {categories.length > 0 && (
           <div className="flex flex-wrap gap-2">
-            {displayCategories.map((category, index) => (
-              <Badge key={index} variant="outline" className="text-xs">
+            {displayCategories.map((category) => (
+              <Badge key={`category-${category}`} variant="outline" className="text-xs">
                 {category}
               </Badge>
             ))}

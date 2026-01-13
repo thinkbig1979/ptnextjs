@@ -146,7 +146,7 @@ export function AvatarGroup({
     <div className={cn("flex items-center", className)}>
       {visibleAvatars.map((avatar, index) => (
         <div
-          key={index}
+          key={avatar.src ?? `avatar-${avatar.alt}-${index}`}
           className={cn(
             "relative ring-2 ring-white",
             index > 0 && overlapClass[size]

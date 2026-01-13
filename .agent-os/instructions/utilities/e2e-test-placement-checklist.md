@@ -369,4 +369,4 @@ Before marking placement complete:
 | `@standards/testing-standards.md` | Canonical timeout/location values |
 | `@instructions/utilities/ui-component-testing-strategy.md` | Test type decision tree |
 | `@config.yml` → `e2e_test_organization` | Tier configuration |
-| `~/.claude/skills/e2e-test-organization/` | Tier definitions and workflows |
+| `~/.claude/skills/e2e-testing/` | Unified E2E testing (execution, repair, organization) |

@@ -30,7 +30,7 @@ export function MaintenanceHistory({
   expandable = false,
   className
 }: MaintenanceHistoryProps) {
-  const [expandedRecord, setExpandedRecord] = React.useState<number | null>(null);
+  const [expandedRecord, setExpandedRecord] = React.useState<string | null>(null);
 
   const filteredRecords = React.useMemo(() => {
     return records
@@ -141,11 +141,13 @@ export function MaintenanceHistory({
         )}
         data-testid="maintenance-timeline"
       >
-        {filteredRecords.map((record, index) => (
+        {filteredRecords.map((record) => {
+          const recordKey = `${record.date}-${record.system}-${record.type}`;
+          return (
           <Card
-            key={index}
+            key={recordKey}
             className="transition-all duration-200 hover:shadow-md"
-            data-testid={`maintenance-record-${index}`}
+            data-testid={`maintenance-record-${recordKey}`}
             data-date={record.date}
           >
             <CardHeader className="pb-3">
@@ -175,10 +177,10 @@ export function MaintenanceHistory({
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => setExpandedRecord(expandedRecord === index ? null : index)}
-                    data-testid={`expand-record-${index}`}
+                    onClick={() => setExpandedRecord(expandedRecord === recordKey ? null : recordKey)}
+                    data-testid={`expand-record-${recordKey}`}
                   >
-                    {expandedRecord === index ? 'Less' : 'More'}
+                    {expandedRecord === recordKey ? 'Less' : 'More'}
                   </Button>
                 )}
               </div>
@@ -207,7 +209,7 @@ export function MaintenanceHistory({
                   </p>
                 )}
 
-                {expandable && expandedRecord === index && (
+                {expandable && expandedRecord === recordKey && (
                   <div className="pt-3 border-t border-border">
                     <p className="text-sm font-medium mb-2">Full Details</p>
                     <div className="space-y-2 text-sm text-muted-foreground">
@@ -223,7 +225,8 @@ export function MaintenanceHistory({
               </div>
             </CardContent>
           </Card>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

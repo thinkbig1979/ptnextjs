@@ -116,8 +116,8 @@ export default function BespokeSolutionsPage() {
           </div>
 
           <div className="space-y-8">
-            {coreServices.map((service, index) => (
-              <Card key={index} className="hover-lift">
+            {coreServices.map((service) => (
+              <Card key={`service-${service.title}`} className="hover-lift">
                 <CardContent className="p-8">
                   <div className="md:flex md:items-start md:space-x-8">
                     <div className="w-20 h-20 bg-accent rounded-full flex items-center justify-center mb-6 md:mb-0 flex-shrink-0">
@@ -136,8 +136,8 @@ export default function BespokeSolutionsPage() {
                         {service.description}
                       </CardDescription>
                       <ul className="space-y-2">
-                        {service.features.map((feature, featureIndex) => (
-                          <li key={featureIndex} className="flex items-center">
+                        {service.features.map((feature) => (
+                          <li key={`${service.title}-${feature}`} className="flex items-center">
                             <Check className="w-4 h-4 text-accent mr-3 flex-shrink-0" />
                             <span className="text-muted-foreground font-poppins-light">{feature}</span>
                           </li>

@@ -2,7 +2,7 @@
 description: Execute comprehensive quality validation for Agent OS artifacts
 globs:
 alwaysApply: false
-version: 1.0
+version: 5.1.0
 encoding: UTF-8
 ---
 

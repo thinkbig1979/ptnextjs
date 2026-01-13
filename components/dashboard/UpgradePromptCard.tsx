@@ -99,8 +99,8 @@ export function UpgradePromptCard({
               What you'll get with {TIER_LABELS[targetTier]}:
             </p>
             <ul className="space-y-2">
-              {benefitsList.map((benefit, index) => (
-                <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground dark:text-muted-foreground">
+              {benefitsList.map((benefit) => (
+                <li key={`benefit-${benefit}`} className="flex items-start gap-2 text-sm text-muted-foreground dark:text-muted-foreground">
                   <Check className="h-4 w-4 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
                   <span>{benefit}</span>
                 </li>
@@ -118,9 +118,9 @@ export function UpgradePromptCard({
           </Link>
         </Button>
         <Button variant="outline" className="w-full" size="lg" asChild>
-          <a href="/pricing" target="_blank">
+          <Link href="/pricing" target="_blank">
             View Pricing
-          </a>
+          </Link>
         </Button>
       </CardFooter>
     </>

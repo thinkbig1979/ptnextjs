@@ -1,0 +1,277 @@
+# Pre-Mortem Analysis: {{FEATURE_NAME}}
+Generated: {{TIMESTAMP}}
+Spec: {{SPEC_PATH}}
+Facilitator: {{FACILITATOR}}
+
+## Failure Scenario
+
+**Time Horizon:** 6 months from launch
+**Projection Date:** {{PROJECTION_DATE}}
+
+> "It's {{PROJECTION_DATE}}. {{FEATURE_NAME}} has failed completely. Users have abandoned it, stakeholders are frustrated, and we're considering removing it entirely. Looking back, we should have seen this coming."
+
+## Analysis Summary
+
+| Metric | Value |
+|--------|-------|
+| Total Risks Identified | {{TOTAL_RISKS}} |
+| Critical (Score > 25) | {{CRITICAL_COUNT}} |
+| High (Score 12-25) | {{HIGH_COUNT}} |
+| Medium (Score 6-12) | {{MEDIUM_COUNT}} |
+| Low (Score < 6) | {{LOW_COUNT}} |
+| Mitigations Required | {{MITIGATIONS_REQUIRED}} |
+
+---
+
+## Risk Scoring Rubric
+
+| Factor | 1 | 2 | 3 | 4 | 5 |
+|--------|---|---|---|---|---|
+| **Likelihood** | Rare (<5%) | Unlikely (5-20%) | Possible (20-50%) | Likely (50-80%) | Almost Certain (>80%) |
+| **Impact** | Minimal (cosmetic) | Minor (workaround exists) | Moderate (degraded UX) | Major (core function broken) | Catastrophic (total failure) |
+| **Detectability** | Obvious (immediate) | Easy (<1 day) | Moderate (1-7 days) | Difficult (7-30 days) | Hidden (30+ days) |
+
+**Formula:** `Risk Score = Likelihood x Impact x (Detectability / 2)`
+
+**Thresholds:**
+- Score > 25: CRITICAL - Must have mitigation before launch
+- Score 12-25: HIGH - Should have mitigation before launch
+- Score 6-12: MEDIUM - Plan mitigation, implement if time allows
+- Score < 6: LOW - Accept risk, monitor
+
+---
+
+## Failure Causes by Category
+
+### Technical Failures
+
+{{#each TECHNICAL_RISKS}}
+#### T{{INDEX}}: {{TITLE}}
+
+**Failure Narrative:**
+> {{NARRATIVE}}
+
+| Factor | Score | Justification |
+|--------|-------|---------------|
+| Likelihood | {{LIKELIHOOD}} | {{LIKELIHOOD_JUSTIFICATION}} |
+| Impact | {{IMPACT}} | {{IMPACT_JUSTIFICATION}} |
+| Detectability | {{DETECTABILITY}} | {{DETECTABILITY_JUSTIFICATION}} |
+| **Risk Score** | **{{SCORE}}** | {{RISK_LEVEL}} |
+
+**Root Cause:**
+{{ROOT_CAUSE}}
+
+**Early Warning Indicators:**
+{{#each INDICATORS}}
+- {{.}}
+{{/each}}
+
+**Mitigation Strategy:**
+{{#if MITIGATION_REQUIRED}}
+- [ ] **Required:** {{MITIGATION}}
+- **Owner:** {{MITIGATION_OWNER}}
+- **Deadline:** {{MITIGATION_DEADLINE}}
+- **Verification:** {{VERIFICATION_METHOD}}
+{{else}}
+- Accepted risk. Monitor indicators.
+{{/if}}
+
+---
+{{/each}}
+
+### Product Failures
+
+{{#each PRODUCT_RISKS}}
+#### P{{INDEX}}: {{TITLE}}
+
+**Failure Narrative:**
+> {{NARRATIVE}}
+
+| Factor | Score | Justification |
+|--------|-------|---------------|
+| Likelihood | {{LIKELIHOOD}} | {{LIKELIHOOD_JUSTIFICATION}} |
+| Impact | {{IMPACT}} | {{IMPACT_JUSTIFICATION}} |
+| Detectability | {{DETECTABILITY}} | {{DETECTABILITY_JUSTIFICATION}} |
+| **Risk Score** | **{{SCORE}}** | {{RISK_LEVEL}} |
+
+**Root Cause:**
+{{ROOT_CAUSE}}
+
+**Early Warning Indicators:**
+{{#each INDICATORS}}
+- {{.}}
+{{/each}}
+
+**Mitigation Strategy:**
+{{#if MITIGATION_REQUIRED}}
+- [ ] **Required:** {{MITIGATION}}
+- **Owner:** {{MITIGATION_OWNER}}
+- **Deadline:** {{MITIGATION_DEADLINE}}
+- **Verification:** {{VERIFICATION_METHOD}}
+{{else}}
+- Accepted risk. Monitor indicators.
+{{/if}}
+
+---
+{{/each}}
+
+### Process Failures
+
+{{#each PROCESS_RISKS}}
+#### R{{INDEX}}: {{TITLE}}
+
+**Failure Narrative:**
+> {{NARRATIVE}}
+
+| Factor | Score | Justification |
+|--------|-------|---------------|
+| Likelihood | {{LIKELIHOOD}} | {{LIKELIHOOD_JUSTIFICATION}} |
+| Impact | {{IMPACT}} | {{IMPACT_JUSTIFICATION}} |
+| Detectability | {{DETECTABILITY}} | {{DETECTABILITY_JUSTIFICATION}} |
+| **Risk Score** | **{{SCORE}}** | {{RISK_LEVEL}} |
+
+**Root Cause:**
+{{ROOT_CAUSE}}
+
+**Early Warning Indicators:**
+{{#each INDICATORS}}
+- {{.}}
+{{/each}}
+
+**Mitigation Strategy:**
+{{#if MITIGATION_REQUIRED}}
+- [ ] **Required:** {{MITIGATION}}
+- **Owner:** {{MITIGATION_OWNER}}
+- **Deadline:** {{MITIGATION_DEADLINE}}
+- **Verification:** {{VERIFICATION_METHOD}}
+{{else}}
+- Accepted risk. Monitor indicators.
+{{/if}}
+
+---
+{{/each}}
+
+### External Failures
+
+{{#each EXTERNAL_RISKS}}
+#### E{{INDEX}}: {{TITLE}}
+
+**Failure Narrative:**
+> {{NARRATIVE}}
+
+| Factor | Score | Justification |
+|--------|-------|---------------|
+| Likelihood | {{LIKELIHOOD}} | {{LIKELIHOOD_JUSTIFICATION}} |
+| Impact | {{IMPACT}} | {{IMPACT_JUSTIFICATION}} |
+| Detectability | {{DETECTABILITY}} | {{DETECTABILITY_JUSTIFICATION}} |
+| **Risk Score** | **{{SCORE}}** | {{RISK_LEVEL}} |
+
+**Root Cause:**
+{{ROOT_CAUSE}}
+
+**Early Warning Indicators:**
+{{#each INDICATORS}}
+- {{.}}
+{{/each}}
+
+**Mitigation Strategy:**
+{{#if MITIGATION_REQUIRED}}
+- [ ] **Required:** {{MITIGATION}}
+- **Owner:** {{MITIGATION_OWNER}}
+- **Deadline:** {{MITIGATION_DEADLINE}}
+- **Verification:** {{VERIFICATION_METHOD}}
+{{else}}
+- Accepted risk. Monitor indicators.
+{{/if}}
+
+---
+{{/each}}
+
+## Mitigation Action Plan
+
+### Critical Mitigations (Must Complete)
+
+| ID | Risk | Mitigation | Owner | Deadline | Status |
+|----|------|------------|-------|----------|--------|
+{{#each CRITICAL_MITIGATIONS}}
+| {{ID}} | {{RISK_TITLE}} | {{MITIGATION}} | {{OWNER}} | {{DEADLINE}} | {{STATUS}} |
+{{/each}}
+
+### High Priority Mitigations (Should Complete)
+
+| ID | Risk | Mitigation | Owner | Deadline | Status |
+|----|------|------------|-------|----------|--------|
+{{#each HIGH_MITIGATIONS}}
+| {{ID}} | {{RISK_TITLE}} | {{MITIGATION}} | {{OWNER}} | {{DEADLINE}} | {{STATUS}} |
+{{/each}}
+
+### Accepted Risks (Monitor Only)
+
+| ID | Risk | Score | Early Warning | Monitor Frequency |
+|----|------|-------|---------------|-------------------|
+{{#each ACCEPTED_RISKS}}
+| {{ID}} | {{RISK_TITLE}} | {{SCORE}} | {{PRIMARY_INDICATOR}} | {{FREQUENCY}} |
+{{/each}}
+
+---
+
+## Early Warning Dashboard
+
+Track these indicators weekly to detect emerging risks:
+
+| Indicator | Source | Baseline | Warning Threshold | Critical Threshold |
+|-----------|--------|----------|-------------------|-------------------|
+{{#each WARNING_INDICATORS}}
+| {{NAME}} | {{SOURCE}} | {{BASELINE}} | {{WARNING}} | {{CRITICAL}} |
+{{/each}}
+
+---
+
+## Review Schedule
+
+| Review Point | Date | Focus | Participants |
+|--------------|------|-------|--------------|
+| Pre-Launch | {{PRE_LAUNCH_DATE}} | All critical mitigations complete | {{PARTICIPANTS}} |
+| Week 1 | {{WEEK_1_DATE}} | Early warning indicators | {{PARTICIPANTS}} |
+| Week 4 | {{WEEK_4_DATE}} | User feedback, metrics | {{PARTICIPANTS}} |
+| Month 3 | {{MONTH_3_DATE}} | Full risk reassessment | {{PARTICIPANTS}} |
+
+---
+
+## Sign-Off
+
+This pre-mortem analysis has been reviewed and the mitigation plan approved:
+
+| Role | Name | Date | Signature |
+|------|------|------|-----------|
+| Technical Lead | {{TECH_LEAD}} | {{DATE}} | [ ] Approved |
+| Product Owner | {{PRODUCT_OWNER}} | {{DATE}} | [ ] Approved |
+| Project Manager | {{PM}} | {{DATE}} | [ ] Approved |
+
+---
+
+## Appendix: Risk Score Calculation Examples
+
+### Example 1: Database Connection Failure
+- Likelihood: 3 (possible - depends on load patterns)
+- Impact: 5 (catastrophic - complete feature outage)
+- Detectability: 2 (easy - monitoring will catch immediately)
+- **Score: 3 x 5 x (2/2) = 15** (HIGH)
+
+### Example 2: Poor User Adoption
+- Likelihood: 4 (likely - new paradigm for users)
+- Impact: 4 (major - feature becomes unused)
+- Detectability: 4 (difficult - gradual decline over weeks)
+- **Score: 4 x 4 x (4/2) = 32** (CRITICAL)
+
+### Example 3: Minor UI Bug
+- Likelihood: 3 (possible)
+- Impact: 1 (minimal - cosmetic only)
+- Detectability: 1 (obvious - immediately visible)
+- **Score: 3 x 1 x (1/2) = 1.5** (LOW)
+
+---
+
+*This pre-mortem analysis was generated using Agent OS v5.1.0+*
+*Template: templates/pre-mortem-analysis.md.template*
+*Guide: instructions/utilities/pre-mortem-lens-guide.md*

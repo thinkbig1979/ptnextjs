@@ -1,3 +1,9 @@
+---
+version: 5.1.0
+last-updated: 2026-01-02
+---
+
+
 # TypeScript Development Patterns for Agent OS
 
 ## Context

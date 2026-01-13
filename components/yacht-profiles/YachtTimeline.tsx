@@ -81,7 +81,7 @@ export function YachtTimeline({
   return (
     <div className={cn("space-y-4", className)}>
       {sortedEvents.map((event, index) => (
-        <Card key={index} className="relative">
+        <Card key={`${event.date}-${event.event}`} className="relative">
           <CardContent className="p-6">
             <div className="flex items-start gap-4">
               {/* Timeline dot */}

@@ -2,7 +2,7 @@
 description: Product Planning Rules for Agent OS
 globs:
 alwaysApply: false
-version: 4.0
+version: 5.1.0
 encoding: UTF-8
 ---
 
@@ -48,7 +48,7 @@ Use context-fetcher subagent to collect required inputs with blocking validation
 <data_sources>
   PRIMARY: user_direct_input
   FALLBACK:
-  1. @.agent-os/standards/tech-stack.md
+  1. @.agent-os/standards/global/tech-stack.md
   2. @.claude/CLAUDE.md
   3. Cursor User Rules
 </data_sources>
@@ -155,7 +155,7 @@ File: {AGENT_OS_ROOT}/.agent-os/product/tech-stack.md
     FOR each required_item:
       IF NOT in user_input:
         CHECK:
-        1. @.agent-os/standards/tech-stack.md
+        1. @.agent-os/standards/global/tech-stack.md
         2. @.claude/CLAUDE.md
         3. Cursor User Rules
       ELSE add_to_missing_list

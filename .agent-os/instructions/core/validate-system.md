@@ -2,7 +2,7 @@
 description: Execute comprehensive system validation for the Agent OS enhanced pipeline
 globs:
 alwaysApply: false
-version: 1.0
+version: 5.1.0
 encoding: UTF-8
 ---
 

@@ -1,3 +1,11 @@
+---
+version: 5.1.0
+last-updated: 2026-01-02
+related-files:
+  - docs/GLOSSARY.md
+---
+
+
 # Execution Role Instructions
 
 ## Important: These Are NOT Callable Agents
@@ -30,38 +38,18 @@ Task(subagent_type: "general-purpose",
 ### Development Phases
 | Role | File | Purpose |
 |------|------|---------|
-| Test Architect | `test-architect.md` | Test design and structure |
-| Test Runner | `test-runner.md` | Test execution and results |
-| Implementation | `implementation-specialist.md` | Feature implementation |
-| Integration | `integration-coordinator.md` | System integration |
-| Quality | `quality-assurance.md` | Code quality review |
-| Security | `security-auditor.md` | Security analysis |
-| Documentation | `documentation-generator.md` | Technical docs |
+| Test Architect | `test-architect.md` | Test design and TDD RED phase |
+| Test Runner | `test-runner.md` | Test execution and monitoring |
+| Test Context Gatherer | `test-context-gatherer.md` | Pre-test library research |
+| Test Integrity Analyzer | `test-integrity-analyzer.md` | Proactive test impact analysis |
+| Implementation Specialist | `implementation-specialist.md` | Feature implementation (TDD GREEN) |
+| Security Sentinel | `security-sentinel.md` | Security review and OWASP scanning |
 
-### Compound Engineering Review Phases
+### Pattern & Quality
 | Role | File | Purpose |
 |------|------|---------|
-| Security Sentinel | `security-sentinel.md` | OWASP/vulnerability scanning |
-| Performance Oracle | `performance-oracle.md` | Performance analysis |
-| Architecture Strategist | `architecture-strategist.md` | Design patterns |
-| Pattern Recognition | `pattern-recognition-specialist.md` | Code patterns |
-| Code Simplicity | `code-simplicity-reviewer.md` | Complexity reduction |
-| Data Integrity | `data-integrity-guardian.md` | Data validation |
-
-### Research Phases
-| Role | File | Purpose |
-|------|------|---------|
-| Repo Research | `repo-research-analyst.md` | Codebase analysis |
-| Best Practices | `best-practices-researcher.md` | External research |
-| Framework Docs | `framework-docs-researcher.md` | Documentation research |
-| Git History | `git-history-analyzer.md` | Version control analysis |
-
-### Specialist Phases
-| Role | File | Purpose |
-|------|------|---------|
-| Frontend Vue | `frontend-vue-specialist.md` | Vue.js development |
-| Frontend React | `frontend-react-specialist.md` | React development |
-| Backend Node.js | `backend-nodejs-specialist.md` | Node.js development |
+| Pattern Discovery Analyst | `pattern-discovery-analyst.md` | Codebase pattern analysis |
+| Pattern Consistency Validator | `pattern-consistency-validator.md` | Pattern enforcement |
 
 ## YAML Frontmatter Format
 
@@ -88,19 +76,19 @@ encoding: UTF-8
 ## How Phases Work
 
 ```
-┌────────────────────────────────────────────────────────┐
-│         General-Purpose Agent Execution                 │
-│                                                         │
-│  1. Load test-architect.md → Design tests              │
-│                    ↓                                    │
-│  2. Load implementation-specialist.md → Write code     │
-│                    ↓                                    │
-│  3. Load integration-coordinator.md → Integrate        │
-│                    ↓                                    │
-│  4. Load security-sentinel.md → Security review        │
-│                    ↓                                    │
-│  5. Complete task                                       │
-└────────────────────────────────────────────────────────┘
++--------------------------------------------------------+
+|         General-Purpose Agent Execution                 |
+|                                                         |
+|  1. Load test-context-gatherer.md -> Research libs      |
+|                    |                                    |
+|  2. Load test-architect.md -> Design tests (RED)        |
+|                    |                                    |
+|  3. Load implementation-specialist.md -> Write code     |
+|                    |                                    |
+|  4. Load security-sentinel.md -> Security review        |
+|                    |                                    |
+|  5. Complete task                                       |
++--------------------------------------------------------+
 ```
 
 ## See Also

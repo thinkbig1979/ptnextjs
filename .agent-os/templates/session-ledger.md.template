@@ -1,0 +1,43 @@
+# Session Ledger: {{session_name}}
+Created: {{timestamp}}
+Last Updated: {{timestamp}}
+Task Context: {{beads_task_id or 'general'}}
+
+## Handoff Context
+- **PM Session**: {{pm_session or 'N/A'}}
+- **Completed Tasks**: {{completed_beads_ids or 'none'}}
+- **Current Task**: {{current_beads_id or 'none'}}
+- **Stopped At**: {{stopped_at_location or 'N/A'}}
+- **Next Action**: {{next_action or 'N/A'}}
+- **Remaining Tasks**: {{remaining_beads_ids or 'none'}}
+- **Last Commit**: {{last_commit_sha or 'N/A'}}
+
+## Goal
+[Success criteria - what does 'done' look like?]
+
+## Constraints
+- [Technical requirements]
+- [Patterns to follow]
+- [Things to avoid]
+
+## Key Decisions
+| Decision | Rationale | Timestamp |
+|----------|-----------|-----------|
+| [choice made] | [why] | [when] |
+
+## State
+- **DONE**: [completed items]
+- **NOW**: [single focus item - ONE thing only]
+- **NEXT**: [upcoming items]
+
+## Open Questions
+- UNCONFIRMED: [assumption to verify after clear]
+- UNCONFIRMED: [another assumption]
+
+## Working Set
+- **Files**: [active files being modified]
+- **Branch**: [current git branch]
+- **Commands**: [key commands to run]
+
+## Session Notes
+[Free-form notes, observations, blockers]

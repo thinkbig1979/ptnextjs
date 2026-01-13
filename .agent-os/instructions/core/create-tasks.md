@@ -2,7 +2,7 @@
 description: Create Agent OS tasks from approved spec with micro-granular task generation
 globs:
 alwaysApply: false
-version: 2.0
+version: 5.1.0
 encoding: UTF-8
 ---
 

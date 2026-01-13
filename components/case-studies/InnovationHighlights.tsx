@@ -58,9 +58,9 @@ export function InnovationHighlights({
         className={cn("grid gap-6 md:grid-cols-2 lg:grid-cols-3", className)}
         data-testid="innovation-highlights"
       >
-        {innovations.map((innovation, index) => (
+        {innovations.map((innovation) => (
           <Card
-            key={index}
+            key={`innovation-${innovation.technology}`}
             className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-accent/50"
             data-testid="innovation-item"
           >
@@ -119,9 +119,9 @@ export function InnovationHighlights({
                     Client Benefits
                   </h4>
                   <ul className="space-y-2">
-                    {innovation.benefitsToClients.map((benefit, benefitIndex) => (
+                    {innovation.benefitsToClients.map((benefit) => (
                       <li
-                        key={benefitIndex}
+                        key={`${innovation.technology}-benefit-${benefit.slice(0, 30)}`}
                         className="flex items-center gap-2 text-sm"
                         data-testid="benefit-item"
                       >

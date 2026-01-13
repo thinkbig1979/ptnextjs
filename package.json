@@ -14,6 +14,8 @@
     "stop:dev": "./scripts/kill-dev-servers.sh",
     "kill:3000": "pid=$(ss -tlnp 'sport = :3000' 2>/dev/null | grep -oP 'pid=\\K\\d+' | head -1) && [ -n \"$pid\" ] && kill -9 $pid && echo \"Killed process $pid on port 3000\" || echo \"No process on port 3000\"",
     "lint": "next lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "type-check": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",

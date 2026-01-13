@@ -1,4 +1,5 @@
 import * as React from "react";
+import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Grid, Compass, Anchor, Settings, Box, Users } from "lucide-react";
 import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
@@ -87,7 +88,7 @@ export default async function AboutPage() {
                   Led by: Roel (sales & BD), Thijs (marketing strategy & digital), Nigel (relationships & events)
                 </p>
                 <Button asChild className="bg-accent hover:bg-accent/90 text-white">
-                  <a href="/discovery-platform">Learn More</a>
+                  <Link href="/discovery-platform">Learn More</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -110,7 +111,7 @@ export default async function AboutPage() {
                   Led by: Edwin (Technical Founder / CTO)
                 </p>
                 <Button asChild className="bg-accent hover:bg-accent/90 text-white">
-                  <a href="/bespoke-solutions">Learn More</a>
+                  <Link href="/bespoke-solutions">Learn More</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -126,8 +127,8 @@ export default async function AboutPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {valuePropositions.map((value, index) => (
-              <div key={index} className="text-center">
+            {valuePropositions.map((value) => (
+              <div key={`value-${value.title}`} className="text-center">
                 <Card className="h-full hover-lift">
                   <CardHeader className="text-center">
                     <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4">

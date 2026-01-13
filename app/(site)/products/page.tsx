@@ -54,7 +54,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             <div className="h-6 bg-muted/20 rounded w-48" />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="h-96 bg-muted/20 rounded-lg" />
+                <div key={`skeleton-${i}`} className="h-96 bg-muted/20 rounded-lg" />
               ))}
             </div>
           </div>}>

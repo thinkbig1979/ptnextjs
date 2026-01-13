@@ -2,13 +2,13 @@
 description: Enable context-aware execution with automatic checkpointing and clean handoffs
 globs:
 alwaysApply: false
-version: 3.0
+version: 4.0
 encoding: UTF-8
 ---
 
 # Context-Aware Autonomous Execution
 
-> **Version 3.0**: Supervisor/PM pattern for fully autonomous task execution
+> **Version 4.0**: Unified session ledger for seamless cross-session handoffs
 > **Goal**: Complete ALL tasks from a spec with minimal human intervention
 
 ## Overview
@@ -21,12 +21,12 @@ SUPERVISOR (You - Ultra-minimal context)
 ├── Spawns PROJECT MANAGER subagent
 │   ├── PM uses /execute-tasks protocol
 │   ├── PM spawns SPECIALIST subagents for implementation
-│   ├── PM monitors own context (~85% triggers handoff)
-│   └── PM saves state to Beads before stopping
+│   ├── PM monitors own context (~85% triggers session ledger handoff)
+│   └── PM saves state to unified session ledger
 │
 ├── Monitors PM status (periodic check)
 │
-├── On PM handoff → Spawns NEW PM with continuation context
+├── On PM handoff → Spawns NEW PM with continuation context from session ledger
 │
 └── Repeats until ALL tasks complete
 ```
@@ -34,7 +34,8 @@ SUPERVISOR (You - Ultra-minimal context)
 **Why this works:**
 - Supervisor uses <5% context (only spawns/monitors)
 - PM uses full /execute-tasks protocol with specialists
-- Beads persists ALL state (survives any context limit)
+- **Session ledger** (`.agent-os/session-ledger.md`) persists ALL state
+- **Auto-resume**: Next session auto-detects ledger and offers to resume
 - Automatic continuation without user intervention
 
 ---
@@ -44,8 +45,9 @@ SUPERVISOR (You - Ultra-minimal context)
 ```bash
 /context-aware                     # Start from ready Beads tasks
 /context-aware <SPEC_FOLDER>       # Execute all tasks for a spec
-/context-aware --resume            # Resume from last handoff
 ```
+
+**Note**: `--resume` flag is no longer needed. Session start auto-detects `.agent-os/session-ledger.md` and offers to resume.
 
 ---
 
@@ -65,18 +67,41 @@ echo "Open tasks: ${OPEN_TASKS}"
 echo "Ready tasks: ${READY_TASKS}"
 ```
 
-### 0.2: Check for Resume
+### 0.2: Check for Session Ledger
 
 ```bash
-IF --resume flag provided OR handoff file exists:
-  READ: .agent-os/supervisor/handoff.json
-  
-  IF exists:
-    LOAD: last_pm_task_id, completed_tasks, remaining_tasks, last_commit
-    DISPLAY: "Resuming from PM handoff: ${last_pm_task_id}"
+IF .agent-os/session-ledger.md exists:
+  READ: .agent-os/session-ledger.md
+  PARSE: Handoff Context section
+
+  DISPLAY:
+    "═══════════════════════════════════════════════════════════
+     SESSION LEDGER DETECTED
+     ═══════════════════════════════════════════════════════════
+
+     Task: ${Task_Context}
+     Last Updated: ${Last_Updated}
+     Stopped At: ${Stopped_At}
+     Next Action: ${Next_Action}
+
+     Options:
+     1. resume - Continue from where you left off
+     2. new - Start fresh (archives current ledger)
+     3. view - Show full ledger details
+     ═══════════════════════════════════════════════════════════"
+
+  WAIT for user choice
+
+  IF resume:
+    LOAD: PM_Session, Completed_Tasks, Current_Task, Remaining_Tasks, Last_Commit
     SKIP to Step 1 (Spawn PM with continuation)
-  ELSE:
-    DISPLAY: "No handoff found, starting fresh"
+
+  IF new:
+    ARCHIVE: mv .agent-os/session-ledger.md .agent-os/ledgers/LEDGER-${name}-$(date +%Y%m%d).md
+    PROCEED with fresh start
+
+ELSE:
+  DISPLAY: "No session ledger found, starting fresh"
 ```
 
 ### 0.3: Confirm Execution Scope
@@ -154,7 +179,7 @@ MANDATORY FIRST ACTIONS
    bd list --status=in_progress  # Resume any active work
 
 3. IF resuming from handoff:
-   - Read: .agent-os/supervisor/pm-handoff.json
+   - Read: .agent-os/session-ledger.md
    - Continue from STOPPED_AT point
    - Do NOT restart completed work
 
@@ -178,35 +203,60 @@ HANDOFF PROTOCOL (when approaching 85% context)
 
 1. STOP current work at a clean point (between tasks, not mid-task)
 
-2. SAVE state to Beads:
+2. ENSURE BEADS TRACKING:
+   IF current work NOT tracked in Beads:
+     FOR each remaining work item:
+       bd create --title="[descriptive title]" --type=task
+     CONFIRM: "Created Beads tasks for remaining work"
+
+3. SAVE state to Beads:
    bd note ${CURRENT_TASK_ID} "
    PM CHECKPOINT: $(date -Iseconds)
    STOPPED_AT: [exact point - task/step/file]
    NEXT_ACTION: [what next PM should do first]
    "
 
-3. COMMIT all work:
+4. WRITE session ledger:
+   Save to .agent-os/session-ledger.md:
+
+   # Session Ledger: [session_name]
+   Created: [original timestamp]
+   Last Updated: [current timestamp]
+   Task Context: [main task ID]
+
+   ## Handoff Context
+   - **PM Session**: [N]
+   - **Completed Tasks**: [beads-xxx, beads-yyy]
+   - **Current Task**: [beads-zzz]
+   - **Stopped At**: [exact point - file:line or step]
+   - **Next Action**: [what to do first]
+   - **Remaining Tasks**: [beads-aaa, beads-bbb]
+   - **Last Commit**: [commit sha]
+
+   ## Goal
+   [success criteria from spec]
+
+   ## State
+   - **DONE**: [completed items]
+   - **NOW**: [current focus]
+   - **NEXT**: [upcoming items]
+
+   ## Working Set
+   - **Files**: [modified files]
+   - **Branch**: [current branch]
+   - **Commands**: [key commands]
+
+   ## Session Notes
+   [context notes, key decisions]
+
+5. COMMIT all work:
    git add -A
-   git commit -m "checkpoint: PM handoff at [task/step]"
+   git commit -m "checkpoint: session ledger at [task/step]"
 
-4. SYNC Beads:
-   bd sync --from-main
+6. SYNC Beads:
+   bd sync
 
-5. WRITE handoff file:
-   Save to .agent-os/supervisor/pm-handoff.json:
-   {
-     "timestamp": "[ISO timestamp]",
-     "pm_session": "[N]",
-     "completed_tasks": ["beads-xxx", "beads-yyy"],
-     "current_task": "beads-zzz",
-     "stopped_at": "[exact point]",
-     "next_action": "[what to do first]",
-     "remaining_tasks": ["beads-aaa", "beads-bbb"],
-     "last_commit": "[commit sha]",
-     "context_notes": "[any important context]"
-   }
-
-6. RETURN this exact format:
+7. RETURN this exact format:
    ---
    PM_STATUS: handoff_required
    PM_SESSION: [N]
@@ -215,7 +265,7 @@ HANDOFF PROTOCOL (when approaching 85% context)
    STOPPED_AT: [exact point]
    NEXT_ACTION: [what next PM does first]
    LAST_COMMIT: [sha]
-   HANDOFF_FILE: .agent-os/supervisor/pm-handoff.json
+   SESSION_LEDGER: .agent-os/session-ledger.md
    ---
 
 ═══════════════════════════════════════════════════════════════════
@@ -232,14 +282,18 @@ When you have completed ALL tasks:
 2. CLOSE supervisor task:
    bd close ${SUPERVISOR_TASK_ID} --reason="All tasks completed successfully"
 
-3. COMMIT:
+3. ARCHIVE session ledger (if exists):
+   IF .agent-os/session-ledger.md exists:
+     mv .agent-os/session-ledger.md .agent-os/ledgers/LEDGER-${name}-$(date +%Y%m%d)-complete.md
+
+4. COMMIT:
    git add -A
    git commit -m "feat: [description] - all tasks complete"
 
-4. SYNC:
-   bd sync --from-main
+5. SYNC:
+   bd sync
 
-5. RETURN this exact format:
+6. RETURN this exact format:
    ---
    PM_STATUS: all_complete
    COMPLETED_TASKS: [full list]
@@ -364,7 +418,7 @@ IF abort:
 
 ```bash
 # Read handoff state
-READ: .agent-os/supervisor/pm-handoff.json
+READ: .agent-os/session-ledger.md
 
 # Increment session number
 PM_SESSION_NUMBER = previous + 1
@@ -414,14 +468,142 @@ ${CONTEXT_NOTES}
 ${USER_GUIDANCE_IF_PROVIDED}
 ═══════════════════════════════════════════════════════════════════
 
-IMPORTANT: Read .agent-os/supervisor/pm-handoff.json for full state.
+IMPORTANT: Read .agent-os/session-ledger.md for full state.
 Continue from NEXT_ACTION, do not restart completed work.
+
+═══════════════════════════════════════════════════════════════════
+HANDOFF VALIDATION (MANDATORY FIRST ACTION)
+═══════════════════════════════════════════════════════════════════
+
+Before doing ANY work, you MUST answer these validation probes to
+confirm context was properly transferred:
+
+1. PROBE: "What was the last task completed before this handoff?"
+   YOUR ANSWER: [state the Beads task ID and brief description]
+
+2. PROBE: "What file/location was work stopped at?"
+   YOUR ANSWER: [state exact file:line or step reference from handoff]
+
+3. PROBE: "What is the immediate next action you will take?"
+   YOUR ANSWER: [state specific action, not generic "continue work"]
+
+VALIDATION REQUIREMENT:
+- Your answers MUST match the stored handoff state
+- If you cannot answer accurately, STOP and re-read state:
+  cat .agent-os/session-ledger.md
+  bd show ${CURRENT_TASK_ID}
+  bd list --status=in_progress
+- Then answer the probes again before proceeding
+
+FORMAT YOUR PROBE RESPONSES:
+---
+PROBE_ANSWERS:
+  last_task: "[task ID]: [description]"
+  stopped_at: "[exact location]"
+  next_action: "[specific action]"
+---
+
+Only proceed with execution AFTER providing probe answers.
+═══════════════════════════════════════════════════════════════════
 `,
   description: "PM Session ${PM_SESSION_NUMBER}: Continue from ${RESUME_POINT}"
 )
 ```
 
-### 3.4: Loop Back to Monitor
+### 3.4: Handoff Validation Probes
+
+After spawning a new PM following a handoff, verify that context was properly transferred by requiring the PM to answer validation probes.
+
+**Purpose**: Detect context transfer failures early, before the PM wastes cycles on incorrect work.
+
+```
+VALIDATION PROBES (PM must answer these correctly):
+
+1. "What was the last task completed before this handoff?"
+   - Expected: Match Completed Tasks[-1] from session ledger
+   - Validates: PM read the handoff state
+
+2. "What file/location was work stopped at?"
+   - Expected: Match Stopped At from session ledger
+   - Validates: PM knows exact resume point
+
+3. "What is the immediate next action you will take?"
+   - Expected: Match Next Action from session ledger
+   - Validates: PM has clear direction
+
+VALIDATION LOGIC:
+  IF PM answers ALL probes correctly:
+    PROCEED with execution
+  ELSE:
+    DISPLAY: "Context transfer incomplete. Re-reading Beads state..."
+    PM MUST:
+      1. Re-read: .agent-os/session-ledger.md
+      2. Run: bd show ${CURRENT_TASK_ID}
+      3. Run: bd list --status=in_progress
+      4. Re-answer probes before proceeding
+```
+
+**Integration in PM Prompt** (add to Step 1.2 and 3.3 prompts):
+
+```
+═══════════════════════════════════════════════════════════════════
+HANDOFF VALIDATION (if resuming from previous PM)
+═══════════════════════════════════════════════════════════════════
+
+Before starting any work, you MUST answer these validation probes:
+
+1. PROBE: "What was the last task completed before this handoff?"
+   YOUR ANSWER: [state the task ID and brief description]
+
+2. PROBE: "What file/location was work stopped at?"
+   YOUR ANSWER: [state exact file:line or step reference]
+
+3. PROBE: "What is the immediate next action you will take?"
+   YOUR ANSWER: [state specific action, not generic "continue work"]
+
+If you cannot answer these accurately, STOP and:
+- Re-read: .agent-os/session-ledger.md
+- Run: bd show <TASK_ID> for the current task
+- Run: bd list --status=in_progress
+- Then answer the probes again before proceeding
+═══════════════════════════════════════════════════════════════════
+```
+
+**Supervisor Verification** (after receiving PM response):
+
+```
+WHEN PM responds with probe answers:
+
+  LOAD: .agent-os/session-ledger.md
+
+  VERIFY each probe answer against stored state:
+
+  IF probe_1_answer MATCHES completed_tasks[-1]:
+    ✓ Last task verified
+  ELSE:
+    ✗ Mismatch: Expected "${completed_tasks[-1]}", got "${probe_1_answer}"
+
+  IF probe_2_answer MATCHES stopped_at:
+    ✓ Stop point verified
+  ELSE:
+    ✗ Mismatch: Expected "${stopped_at}", got "${probe_2_answer}"
+
+  IF probe_3_answer MATCHES next_action (semantic match):
+    ✓ Next action verified
+  ELSE:
+    ✗ Mismatch: Expected "${next_action}", got "${probe_3_answer}"
+
+  IF all verified:
+    DISPLAY: "Handoff validated. PM proceeding."
+  ELSE:
+    DISPLAY: "Handoff validation FAILED. Instructing PM to re-read state."
+    SEND to PM: "Your probe answers don't match saved state.
+                 Run: cat .agent-os/session-ledger.md
+                 Run: bd show <TASK_ID>
+                 Then provide corrected answers."
+```
+
+### 3.5: Loop Back to Monitor
 
 ```
 → Go to Step 2 (Monitor PM Status)
@@ -448,8 +630,7 @@ IF OPEN > 0:
 # Close supervisor task
 bd close ${SUPERVISOR_TASK_ID} --reason="Autonomous execution complete"
 
-# Clean up handoff file (optional)
-rm -f .agent-os/supervisor/pm-handoff.json
+# Archive session ledger (already done in step 3)
 
 # Final sync
 bd sync --from-main
@@ -533,19 +714,23 @@ DISPLAY:
 3. **Save state to Beads** - Every checkpoint, every handoff
 4. **Clean handoffs** - Between tasks, not mid-implementation
 5. **Report accurately** - Status format must be exact
+6. **Answer validation probes** - When resuming, answer all 3 probes before work
 
-### Handoff State (Beads + JSON)
+### Session Ledger State
 
-The handoff file `.agent-os/supervisor/pm-handoff.json` contains:
-- `timestamp` - When handoff occurred
-- `pm_session` - Which PM session (1, 2, 3...)
-- `completed_tasks` - Beads IDs of completed work
-- `current_task` - What was being worked on
-- `stopped_at` - Exact point (task/step/file:line)
-- `next_action` - What next PM does first
-- `remaining_tasks` - What's left
-- `last_commit` - Git SHA for verification
-- `context_notes` - Important context to preserve
+The session ledger `.agent-os/session-ledger.md` contains:
+
+**Handoff Context section:**
+- `PM Session` - Which PM session (1, 2, 3...)
+- `Completed Tasks` - Beads IDs of completed work
+- `Current Task` - What was being worked on
+- `Stopped At` - Exact point (task/step/file:line)
+- `Next Action` - What next PM does first
+- `Remaining Tasks` - What's left
+- `Last Commit` - Git SHA for verification
+
+**Plus standard ledger sections:**
+- Goal, Constraints, State (DONE/NOW/NEXT), Working Set, Session Notes
 
 ---
 
@@ -559,9 +744,11 @@ autonomous_execution:
   pm_context_limit: 0.85           # When PM triggers handoff
   supervisor_context_limit: 0.95   # Emergency stop (should never hit)
   max_pm_sessions: 20              # Safety limit
-  handoff_directory: ".agent-os/supervisor"
+  handoff_directory: ".agent-os"
+  handoff_file: "session-ledger.md"
+  ledger_archive_directory: ".agent-os/ledgers"
   require_user_confirmation: true  # Confirm before starting
-  auto_resume: false               # Require explicit --resume
+  auto_resume: true                # Session start auto-detects ledger
 ```
 
 ---
@@ -570,9 +757,9 @@ autonomous_execution:
 
 ```
 .agent-os/
-├── supervisor/
-│   ├── pm-handoff.json        # Current handoff state
-│   └── session-history.json   # Log of all PM sessions (optional)
+├── session-ledger.md          # Current session state (unified handoff)
+├── ledgers/                   # Archived session ledgers
+│   └── LEDGER-*.md            # Historical session records
 ├── test-context/              # Test patterns (from execute-tasks)
 ├── test-failures/             # Failure analysis (from execute-tasks)
 └── tdd-state/                 # TDD cycle tracking
@@ -588,13 +775,12 @@ autonomous_execution:
 ```
 
 ### Resume After Interruption
-```bash
-/context-aware --resume            # Continue from last handoff
-```
+Session start auto-detects `.agent-os/session-ledger.md` and offers to resume.
+No explicit command needed - just start a new session.
 
 ### Check Progress (from another terminal)
 ```bash
 bd list --status=in_progress       # What's being worked on
 bd stats                           # Overall progress
-cat .agent-os/supervisor/pm-handoff.json  # Current state
+cat .agent-os/session-ledger.md  # Current state
 ```

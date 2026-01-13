@@ -247,7 +247,7 @@ export function LazyImageGrid({
     <div className={cn("grid", gridClasses[columns], gapClasses[gap], className)}>
       {images.map((image, index) => (
         <LazyMedia
-          key={index}
+          key={image.src}
           fallback={<MediaPlaceholder type="image" />}
           className="aspect-video"
         >

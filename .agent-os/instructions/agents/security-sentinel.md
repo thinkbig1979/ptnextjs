@@ -4,7 +4,7 @@ description: "Security analysis, vulnerability scanning, and OWASP compliance"
 phase: security_review
 context_window: 16384
 specialization: [security, vulnerability-scanning, owasp, authentication, authorization]
-version: 2.1
+version: 5.1.0
 ---
 
 # Security Sentinel

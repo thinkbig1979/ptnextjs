@@ -1,93 +1,53 @@
+---
+version: 5.1.0
+last-updated: 2026-01-02
+related-files:
+  - CLAUDE.md
+---
+
+
 # Agent OS Standards
-
-Coding standards and best practices for Agent OS projects.
-
-## Directory Structure
-
-| Directory | Content |
-|-----------|---------|
-| `global/` | Language-agnostic standards |
-| `frontend/` | Frontend-specific patterns |
-| `backend/` | Backend-specific patterns |
-| `testing/` | Testing standards |
 
 ## Key Documents
 
 | Document | Purpose |
 |----------|---------|
-| `test-infrastructure.md` | Test reliability standards (v2.9+) |
-| `best-practices.md` | Comprehensive best practices |
+| `naming-conventions.md` | **Canonical** naming rules by language (v5.1+) |
+| `testing-standards.md` | Canonical testing reference (v4.9+) |
+| `e2e-ui-testing-standards.md` | UI-specific E2E patterns (v5.1+) |
+| `best-practices.md` | TDD and compounding engineering |
 | `reference-format.md` | Code reference format |
+| `evolution-scoring.md` | Timelessness/evolution evaluation rubric (v5.2+) |
 
-## Standards by Category
+## Directory Structure
 
-### Global (`global/`)
-| File | Purpose |
-|------|---------|
-| `coding-style.md` | Indentation, naming, formatting |
-| `conventions.md` | General conventions |
-| `error-handling.md` | Error handling patterns |
-| `tech-stack.md` | Technology stack standards |
-
-### Frontend (`frontend/`)
-| File | Purpose |
-|------|---------|
-| `react-patterns.md` | React best practices |
-| `typescript-patterns.md` | TypeScript patterns |
-| `javascript-patterns.md` | JavaScript patterns |
-| `html-patterns.md` | HTML patterns |
-| `styling.md` | CSS/styling standards |
-
-### Backend (`backend/`)
-| File | Purpose |
-|------|---------|
-| `api-patterns.md` | REST API patterns |
-| `database.md` | Database standards |
-| `rails-patterns.md` | Rails-specific patterns |
-| `python-patterns.md` | Python patterns |
-
-### Testing (`testing/`)
-| File | Purpose |
-|------|---------|
-| `test-strategies.md` | Testing strategies |
-
-### Root Level
-| File | Purpose |
-|------|---------|
-| `test-infrastructure.md` | Test reliability (v2.9) |
-| `best-practices.md` | Comprehensive best practices |
-| `reference-format.md` | Code reference format |
-
-## Enforcement
-
-Standards are enforced via:
-
-1. **Quality Hooks** - Automatic validation on file write
-   - Configured in: `config.yml` → `quality_hooks`
-   - Validators in: `hooks/validators/`
-
-2. **Code Review** - Manual review against standards
-
-3. **CI Checks** - Automated CI validation
+| Directory | Content |
+|-----------|---------|
+| `global/` | Language-agnostic: coding-style, conventions, error-handling, tech-stack |
+| `frontend/` | React, TypeScript, JavaScript, HTML, styling patterns |
+| `backend/` | API, database, Rails, Python patterns |
+| `testing/` | Testing strategies |
 
 ## Quick Reference: Code Style
 
-| Element | Convention | Example |
-|---------|------------|---------|
-| Indentation | 2 spaces | `if (x) {\n  return y;\n}` |
-| Variables | snake_case | `user_name`, `is_active` |
-| Classes | PascalCase | `UserProfile`, `AuthService` |
-| Constants | UPPER_SNAKE_CASE | `MAX_RETRIES`, `API_BASE_URL` |
-| Strings | Single quotes | `'hello'` (double for interpolation) |
+**For comprehensive naming rules by language, see `naming-conventions.md` (canonical reference).**
 
-## Configuration
+| Element | Convention | Notes |
+|---------|------------|-------|
+| Indentation | 2 spaces | Never tabs |
+| TS/JS Variables | `camelCase` | `userName`, `isActive` |
+| Python Variables | `snake_case` | `user_name`, `is_active` |
+| Classes | `PascalCase` | `UserProfile`, `AuthService` |
+| Constants | `UPPER_SNAKE_CASE` | `MAX_RETRIES` |
+| Strings | Single quotes | `'hello'` |
 
-Validation rules configured in:
-- `config.yml` → `quality_hooks`
-- `hooks/config.yml` → validator-specific rules
+## Enforcement
+
+1. **Quality Hooks** - `hooks/validators/` (config: `config.yml`)
+2. **Code Review** - Manual standards review
+3. **CI Checks** - Automated validation
 
 ## See Also
 
-- [../hooks/README.md](../hooks/README.md) - Hook system
-- [../docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md) - System architecture
-- [../CLAUDE.md](../CLAUDE.md) - Main reference
+- `../hooks/README.md` - Hook system
+- `../CLAUDE.md` - Main reference

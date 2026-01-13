@@ -144,9 +144,9 @@ export function YachtCard({
             {/* Tags */}
             {yacht.tags && yacht.tags.length > 0 && (
               <div className="flex flex-wrap gap-1">
-                {yacht.tags.slice(0, 3).map((tag, index) => (
+                {yacht.tags.slice(0, 3).map((tag) => (
                   <Badge
-                    key={index}
+                    key={`tag-${tag}`}
                     variant="outline"
                     className="text-xs px-2 py-1"
                   >

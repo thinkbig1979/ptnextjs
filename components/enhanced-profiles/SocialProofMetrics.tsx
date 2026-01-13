@@ -154,7 +154,7 @@ export const SocialProofMetrics = React.memo(function SocialProofMetrics({
         className={cn("grid grid-cols-2 md:grid-cols-4 gap-4", className)}
       >
         {Array.from({ length: 6 }).map((_, i) => (
-          <Card key={i}>
+          <Card key={`skeleton-${i}`}>
             <CardContent className="p-4">
               <MetricSkeleton />
             </CardContent>

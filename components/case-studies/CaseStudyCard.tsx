@@ -94,9 +94,9 @@ export function CaseStudyCard({
 
             {caseStudy.technologies && caseStudy.technologies.length > 0 && (
               <div className="flex flex-wrap gap-2">
-                {caseStudy.technologies.slice(0, 4).map((tech, index) => (
+                {caseStudy.technologies.slice(0, 4).map((tech) => (
                   <Badge
-                    key={index}
+                    key={`tech-${tech}`}
                     variant="secondary"
                     className="text-xs px-2 py-1"
                   >

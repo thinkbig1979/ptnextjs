@@ -136,8 +136,8 @@ function PillarSection({ pillar, icon }: PillarSectionProps) {
 
         {/* Founder Team */}
         <div className="flex justify-center space-x-6 mb-6">
-          {pillar.founders.map((founder, index) => (
-            <div key={index} className="text-center">
+          {pillar.founders.map((founder) => (
+            <div key={`founder-${founder.name}`} className="text-center">
               <div className="w-20 h-20 rounded-full overflow-hidden mb-2 mx-auto">
                 {founder.image ? (
                   <Image
@@ -166,8 +166,8 @@ function PillarSection({ pillar, icon }: PillarSectionProps) {
         {/* Features List - Only show if features exist */}
         {pillar.features && pillar.features.length > 0 && (
           <ul className="space-y-3 text-left">
-            {pillar.features.map((feature, index) => (
-              <li key={index} className="flex items-center gap-3">
+            {pillar.features.map((feature) => (
+              <li key={`feature-${feature}`} className="flex items-center gap-3">
                 <svg className="w-5 h-5 text-accent flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
                 </svg>

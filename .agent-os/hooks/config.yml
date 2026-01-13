@@ -1,5 +1,5 @@
 # Agent OS Hook Configuration System
-# Version: 1.0
+# Version: 2.0
 #
 # This configuration controls the validation and quality assurance hooks
 # that run during file operations (creation, editing, commits).
@@ -18,9 +18,56 @@ hooks:
   mode: balanced
 
   # Global behavior settings
-  fail_on_error: false  # Warn but don't block operations on validation failures
-  show_detailed_output: true  # Display detailed validation results
-  timeout_seconds: 30  # Maximum time for validation operations
+  fail_on_error: false # Default: warn but don't block (can be overridden per-validator)
+  show_detailed_output: true # Display detailed validation results
+  timeout_seconds: 30 # Maximum time for validation operations
+
+# =============================================================================
+# PER-VALIDATOR SETTINGS
+# =============================================================================
+# Override global settings for specific validators.
+# Each validator can have its own fail_on_error setting.
+
+validators:
+  # Linting validator - BLOCKS on errors (catches 'any' types, etc.)
+  linting:
+    fail_on_error: true
+    description: "ESLint/Pylint/Stylelint - blocks on type safety violations"
+
+  # Type checking validator - BLOCKS on errors
+  type_checking:
+    fail_on_error: true
+    description: "TypeScript type checking - blocks on type errors"
+
+  # Security scanning - BLOCKS on errors
+  security_scan:
+    fail_on_error: true
+    description: "Security vulnerability detection - blocks on vulnerabilities"
+
+  # Syntax checking - BLOCKS on errors (code won't run anyway)
+  syntax_check:
+    fail_on_error: true
+    description: "Syntax validation - blocks on syntax errors"
+
+  # Formatting - does NOT block (auto-fixes anyway)
+  formatting:
+    fail_on_error: false
+    description: "Prettier/Black formatting - auto-fixes, doesn't block"
+
+  # Import organization - does NOT block (auto-fixes anyway)
+  imports_organization:
+    fail_on_error: false
+    description: "Import sorting - auto-fixes, doesn't block"
+
+  # Test generation - does NOT block (informational)
+  test_generator:
+    fail_on_error: false
+    description: "Test scaffolding suggestions - informational only"
+
+  # Test standards - WARNS but doesn't block by default
+  test_standards:
+    fail_on_error: false
+    description: "Test file quality checks - warns on issues"
 
 # =============================================================================
 # FILE CREATION HOOKS
@@ -165,7 +212,6 @@ file_edit:
 # These standards documents provide detailed code style, patterns, and best practices
 # that validators should enforce when checking files of each type.
 standards_documentation:
-
   # Ruby on Rails standards
   rails:
     enabled: true
@@ -212,7 +258,6 @@ standards_documentation:
       - code_quality
 
 validation_rules:
-
   # JavaScript validation
   javascript:
     enabled: true
@@ -222,7 +267,7 @@ validation_rules:
       - "**/*.mjs"
 
     tools:
-      syntax_checker: "acorn"  # Fast JavaScript parser
+      syntax_checker: "acorn" # Fast JavaScript parser
       formatter: "prettier"
       linter: "eslint"
 
@@ -306,13 +351,13 @@ validation_rules:
 
     linting:
       select:
-        - "E"   # pycodestyle errors
-        - "F"   # pyflakes
-        - "I"   # isort
-        - "N"   # pep8-naming
-        - "W"   # pycodestyle warnings
+        - "E" # pycodestyle errors
+        - "F" # pyflakes
+        - "I" # isort
+        - "N" # pep8-naming
+        - "W" # pycodestyle warnings
       ignore:
-        - "E501"  # line too long (handled by formatter)
+        - "E501" # line too long (handled by formatter)
 
     type_checking:
       strict: false
@@ -408,7 +453,7 @@ validation_rules:
 
     linting:
       rules:
-        line_length: false  # Don't enforce in markdown
+        line_length: false # Don't enforce in markdown
         no-inline-html: false
 
 # =============================================================================
@@ -432,7 +477,7 @@ test_standards:
     # Tests must have real assertions (expect, assert, should, etc.)
     assertions_required:
       enabled: true
-      severity: error  # error | warning
+      severity: error # error | warning
 
     # No focused tests (.only) allowed - they skip other tests
     focused_tests:
@@ -462,19 +507,19 @@ test_standards:
       severity: warning
       required_for:
         - "e2e"
-        - "integration"  # Optional: also require for integration tests
+        - "integration" # Optional: also require for integration tests
 
     # Limit console statements in test files
     console_limit:
       enabled: true
       severity: warning
-      max_statements: 5  # Configurable threshold
+      max_statements: 5 # Configurable threshold
 
     # Detect hardcoded URLs that should use config
     hardcoded_urls:
       enabled: true
       severity: warning
-      max_localhost_urls: 2  # Warn if more than this many localhost URLs
+      max_localhost_urls: 2 # Warn if more than this many localhost URLs
 
     # No watch mode configurations in test files
     watch_mode:
@@ -506,7 +551,7 @@ test_standards:
   #   // @agent-os-skip test-standards:watch-mode
   skip_directives:
     enabled: true
-    scan_lines: 10  # How many lines to scan for directives
+    scan_lines: 10 # How many lines to scan for directives
 
 # =============================================================================
 # AUTO-FIX CAPABILITIES
@@ -548,7 +593,6 @@ auto_fix:
 # =============================================================================
 
 performance:
-
   # Run independent validations in parallel
   parallel_execution:
     enabled: true
@@ -571,7 +615,6 @@ performance:
 # =============================================================================
 
 error_handling:
-
   # Retry failed validations
   retry_on_failure:
     enabled: true
@@ -586,15 +629,14 @@ error_handling:
 
   # Fallback behavior
   fallback:
-    on_validator_crash: "skip"  # skip | fail | warn
-    on_timeout: "warn"  # warn | fail | skip
+    on_validator_crash: "skip" # skip | fail | warn
+    on_timeout: "warn" # warn | fail | skip
 
 # =============================================================================
 # INTEGRATION SETTINGS
 # =============================================================================
 
 integrations:
-
   # Git hook integration
   git_hooks:
     enabled: false
@@ -614,7 +656,6 @@ integrations:
 # =============================================================================
 
 exclusions:
-
   # Directories to skip
   ignore_directories:
     - "node_modules"
@@ -648,12 +689,11 @@ exclusions:
 # =============================================================================
 
 reporting:
-
   # Output format for validation results
-  output_format: "pretty"  # pretty | json | minimal
+  output_format: "pretty" # pretty | json | minimal
 
   # Verbosity level
-  verbosity: "normal"  # minimal | normal | verbose | debug
+  verbosity: "normal" # minimal | normal | verbose | debug
 
   # Save validation reports
   save_reports:

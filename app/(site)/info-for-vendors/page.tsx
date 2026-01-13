@@ -100,8 +100,8 @@ export default function InfoForVendorsPage() {
             </div>
 
             <div className="flex justify-center space-x-12">
-              {teamLeaders.map((leader, index) => (
-                <div key={index} className="text-center">
+              {teamLeaders.map((leader) => (
+                <div key={`leader-${leader.name}`} className="text-center">
                   <div className="w-24 h-24 rounded-full overflow-hidden mb-4 mx-auto">
                     <Image
                       src={leader.image}
@@ -133,8 +133,8 @@ export default function InfoForVendorsPage() {
           </div>
 
           <div className="space-y-6">
-            {tieredStructure.map((tier, index) => (
-              <Card key={index} className="hover-lift">
+            {tieredStructure.map((tier) => (
+              <Card key={`tier-${tier.title}`} className="hover-lift">
                 <CardContent className="p-8">
                   <div className="flex items-start">
                     <div className="w-12 h-12 bg-accent text-white rounded-full flex items-center justify-center font-bold text-xl mr-6 flex-shrink-0">
@@ -164,8 +164,8 @@ export default function InfoForVendorsPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {premiumOptions.map((option, index) => (
-              <Card key={index} className="hover-lift text-center">
+            {premiumOptions.map((option) => (
+              <Card key={`option-${option.title}`} className="hover-lift text-center">
                 <CardHeader>
                   <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4">
                     <option.icon className="w-8 h-8 text-white" />
