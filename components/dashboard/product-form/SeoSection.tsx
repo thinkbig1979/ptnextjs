@@ -11,9 +11,10 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Search } from 'lucide-react';
+import { Search, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { FormSection } from './FormSection';
+import { HelpTooltip, CharacterCounter } from '@/components/help';
 import type { ExtendedProductFormValues, TierLevel } from './types';
 
 interface SeoSectionProps {
@@ -30,7 +31,7 @@ interface SeoSectionProps {
  * - Yellow: At recommended limit (warning)
  * - Red: Over maximum (error)
  */
-function CharacterCounter({
+function SeoCharacterCounter({
   current,
   recommended,
   max,
@@ -87,6 +88,15 @@ export function SeoSection({
       testId="seo-section"
     >
       <div className="space-y-6">
+        {/* SEO Guidelines Info Box */}
+        <div className="flex items-start gap-2 p-3 bg-muted/50 rounded-lg text-sm text-muted-foreground">
+          <Info className="h-4 w-4 mt-0.5 flex-shrink-0" />
+          <div>
+            <p className="font-medium text-foreground">SEO Best Practices</p>
+            <p>Meta titles appear in browser tabs and search results. Meta descriptions show below the title in Google. Keep them concise and compelling to improve click-through rates.</p>
+          </div>
+        </div>
+
         {/* Meta Title */}
         <FormField
           control={control}
@@ -94,8 +104,15 @@ export function SeoSection({
           render={({ field }) => (
             <FormItem>
               <div className="flex justify-between items-center">
-                <FormLabel>Meta Title</FormLabel>
-                <CharacterCounter
+                <div className="flex items-center gap-1.5">
+                  <FormLabel>Meta Title</FormLabel>
+                  <HelpTooltip
+                    content="Appears in browser tabs and search engine results. Keep under 60 characters for full display in Google. Include your primary keyword near the beginning."
+                    title="Meta Title"
+                    iconSize={14}
+                  />
+                </div>
+                <SeoCharacterCounter
                   current={metaTitle.length}
                   recommended={60}
                   max={100}
@@ -103,7 +120,7 @@ export function SeoSection({
               </div>
               <FormControl>
                 <Input
-                  placeholder={productName || 'Enter meta title...'}
+                  placeholder={productName || 'Premium Navigation System X5 | Marine Electronics'}
                   maxLength={100}
                   disabled={disabled}
                   {...field}
@@ -111,7 +128,7 @@ export function SeoSection({
                 />
               </FormControl>
               <FormDescription>
-                Leave empty to use product name. Recommended: 50-60 characters.
+                Leave empty to use product name. Recommended: 50-60 characters for full display.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -125,8 +142,15 @@ export function SeoSection({
           render={({ field }) => (
             <FormItem>
               <div className="flex justify-between items-center">
-                <FormLabel>Meta Description</FormLabel>
-                <CharacterCounter
+                <div className="flex items-center gap-1.5">
+                  <FormLabel>Meta Description</FormLabel>
+                  <HelpTooltip
+                    content="The description shown in Google search results. Make it compelling to encourage clicks. Include relevant keywords naturally. Keep under 155 characters for full display."
+                    title="Meta Description"
+                    iconSize={14}
+                  />
+                </div>
+                <SeoCharacterCounter
                   current={metaDescription.length}
                   recommended={160}
                   max={300}
@@ -134,7 +158,7 @@ export function SeoSection({
               </div>
               <FormControl>
                 <Textarea
-                  placeholder="Describe your product for search engine results..."
+                  placeholder="Professional-grade marine navigation with GPS, AIS, and radar integration. Trusted by superyacht captains worldwide."
                   className="resize-none min-h-[80px]"
                   rows={3}
                   maxLength={300}
@@ -144,7 +168,7 @@ export function SeoSection({
                 />
               </FormControl>
               <FormDescription>
-                Shown in search engine results. Recommended: 150-160 characters.
+                Shown in search engine results. Recommended: 150-160 characters for full display.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -157,10 +181,17 @@ export function SeoSection({
           name="seo.keywords"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Keywords</FormLabel>
+              <div className="flex items-center gap-1.5">
+                <FormLabel>Keywords</FormLabel>
+                <HelpTooltip
+                  content="Comma-separated keywords for search optimization. Include terms customers use when searching. While less important for Google, keywords help with internal search and related products."
+                  title="SEO Keywords"
+                  iconSize={14}
+                />
+              </div>
               <FormControl>
                 <Input
-                  placeholder="navigation, GPS, marine electronics, superyacht"
+                  placeholder="marine navigation, GPS, yacht electronics, AIS, radar"
                   maxLength={500}
                   disabled={disabled}
                   {...field}
@@ -168,7 +199,7 @@ export function SeoSection({
                 />
               </FormControl>
               <FormDescription>
-                Comma-separated keywords for search optimization.
+                Comma-separated keywords for search optimization and product discovery.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -177,16 +208,16 @@ export function SeoSection({
 
         {/* SEO Preview */}
         <div className="rounded-lg border p-4 bg-muted/50">
-          <p className="text-xs text-muted-foreground mb-2">Search Result Preview:</p>
-          <div className="space-y-1">
-            <p className="text-blue-600 dark:text-blue-400 text-lg hover:underline cursor-pointer truncate">
+          <p className="text-xs text-muted-foreground mb-3 font-medium">Google Search Result Preview:</p>
+          <div className="space-y-1 bg-background p-3 rounded border">
+            <p className="text-blue-600 dark:text-blue-400 text-lg hover:underline cursor-pointer truncate font-medium">
               {metaTitle || productName || 'Product Title'}
             </p>
             <p className="text-green-700 dark:text-green-500 text-sm truncate">
               www.example.com/products/{productSlug || 'product-slug'}
             </p>
             <p className="text-sm text-muted-foreground line-clamp-2">
-              {metaDescription || 'Your product description will appear here in search results...'}
+              {metaDescription || 'Your product description will appear here in search results. A compelling description increases click-through rates.'}
             </p>
           </div>
         </div>

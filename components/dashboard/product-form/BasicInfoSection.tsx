@@ -12,9 +12,9 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { cn } from '@/lib/utils';
 import { FileText } from 'lucide-react';
 import { FormSection } from './FormSection';
+import { HelpTooltip, CharacterCounter } from '@/components/help';
 import type { ExtendedProductFormValues } from './types';
 
 interface BasicInfoSectionProps {
@@ -32,22 +32,6 @@ function generateSlug(name: string): string {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
-}
-
-/**
- * Character count indicator component
- */
-function CharacterCount({ current, max }: { current: number; max: number }) {
-  return (
-    <span
-      className={cn(
-        'text-xs tabular-nums',
-        current > max ? 'text-destructive' : 'text-muted-foreground'
-      )}
-    >
-      {current}/{max}
-    </span>
-  );
 }
 
 /**
@@ -104,18 +88,28 @@ export function BasicInfoSection({
           render={({ field }) => (
             <FormItem>
               <div className="flex items-center justify-between">
-                <FormLabel>
-                  Product Name <span className="text-destructive">*</span>
-                </FormLabel>
-                <CharacterCount current={nameValue.length} max={255} />
+                <div className="flex items-center gap-1.5">
+                  <FormLabel>
+                    Product Name <span className="text-destructive">*</span>
+                  </FormLabel>
+                  <HelpTooltip
+                    content="Clear, descriptive name customers will search for. Use specific terms that describe your product."
+                    title="Product Name"
+                    iconSize={14}
+                  />
+                </div>
+                <CharacterCounter current={nameValue.length} max={255} />
               </div>
               <FormControl>
                 <Input
-                  placeholder="Enter product name"
+                  placeholder="Premium Marine Navigation System X5"
                   maxLength={255}
                   {...field}
                 />
               </FormControl>
+              <FormDescription>
+                The name as it will appear in search results and listings.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -127,18 +121,25 @@ export function BasicInfoSection({
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>
-                Description <span className="text-destructive">*</span>
-              </FormLabel>
+              <div className="flex items-center gap-1.5">
+                <FormLabel>
+                  Description <span className="text-destructive">*</span>
+                </FormLabel>
+                <HelpTooltip
+                  content="Comprehensive description including key features, benefits, and use cases. This is the full description shown on the product page."
+                  title="Full Description"
+                  iconSize={14}
+                />
+              </div>
               <FormControl>
                 <Textarea
-                  placeholder="Detailed product description"
+                  placeholder="Describe your product in detail including features, specifications, and benefits..."
                   className="min-h-[120px] resize-y"
                   {...field}
                 />
               </FormControl>
               <FormDescription>
-                Comprehensive description of the product. Supports plain text.
+                Detailed description shown on the product page. Include key features and benefits.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -152,12 +153,19 @@ export function BasicInfoSection({
           render={({ field }) => (
             <FormItem>
               <div className="flex items-center justify-between">
-                <FormLabel>Short Description</FormLabel>
-                <CharacterCount current={shortDescriptionValue.length} max={500} />
+                <div className="flex items-center gap-1.5">
+                  <FormLabel>Short Description</FormLabel>
+                  <HelpTooltip
+                    content="Appears in product cards and search results. Keep it concise and impactful to attract customer attention."
+                    title="Short Description"
+                    iconSize={14}
+                  />
+                </div>
+                <CharacterCounter current={shortDescriptionValue.length} max={500} />
               </div>
               <FormControl>
                 <Textarea
-                  placeholder="Brief summary for product listings"
+                  placeholder="A brief, compelling summary of your product..."
                   className="min-h-[80px] resize-y"
                   maxLength={500}
                   {...field}
@@ -165,7 +173,7 @@ export function BasicInfoSection({
                 />
               </FormControl>
               <FormDescription>
-                Brief summary shown in product listings and search results.
+                Brief summary for listings and search results (max 500 characters).
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -178,10 +186,17 @@ export function BasicInfoSection({
           name="slug"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>URL Slug</FormLabel>
+              <div className="flex items-center gap-1.5">
+                <FormLabel>URL Slug</FormLabel>
+                <HelpTooltip
+                  content="URL path for this product. Auto-generated from the name but can be customized. Use lowercase letters, numbers, and hyphens only."
+                  title="URL Slug"
+                  iconSize={14}
+                />
+              </div>
               <FormControl>
                 <Input
-                  placeholder="product-url-slug"
+                  placeholder="premium-marine-navigation-system-x5"
                   maxLength={255}
                   {...field}
                   value={field.value || ''}
@@ -195,7 +210,7 @@ export function BasicInfoSection({
                 />
               </FormControl>
               <FormDescription>
-                Auto-generated from product name. Edit to customize.
+                Auto-generated from product name. Edit to customize the URL path.
               </FormDescription>
               <FormMessage />
             </FormItem>

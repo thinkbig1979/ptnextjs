@@ -22,6 +22,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { MousePointerClick, Plus, Trash2 } from 'lucide-react';
 import { FormSection } from './FormSection';
+import { HelpTooltip } from '@/components/help';
 import type { ExtendedProductFormValues, TierLevel } from './types';
 
 interface ActionButtonsSectionProps {
@@ -85,6 +86,16 @@ export function ActionButtonsSection({
       testId="action-buttons-section"
     >
       <div className="space-y-4">
+        {/* Section Help */}
+        <FormDescription className="flex items-center gap-1.5">
+          <span>Add buttons for contact, quotes, downloads, and external links.</span>
+          <HelpTooltip
+            content="Call-to-action buttons displayed on the product page. Common options include Contact Us, Request Quote, Download Brochure, and Watch Video."
+            title="Action Buttons"
+            iconSize={14}
+          />
+        </FormDescription>
+
         {fields.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
             <MousePointerClick className="mx-auto h-12 w-12 mb-2 opacity-50" />
@@ -138,10 +149,17 @@ export function ActionButtonsSection({
                       name={`actionButtons.${index}.label`}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Button Label <span className="text-destructive">*</span></FormLabel>
+                          <div className="flex items-center gap-1">
+                            <FormLabel>Button Label <span className="text-destructive">*</span></FormLabel>
+                            <HelpTooltip
+                              content="The text displayed on the button. Keep it short and action-oriented."
+                              title="Button Label"
+                              iconSize={12}
+                            />
+                          </div>
                           <FormControl>
                             <Input
-                              placeholder="e.g., Contact Us"
+                              placeholder="e.g., Request Quote"
                               maxLength={100}
                               disabled={disabled}
                               {...field}
@@ -159,7 +177,14 @@ export function ActionButtonsSection({
                         name={`actionButtons.${index}.type`}
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Button Style</FormLabel>
+                            <div className="flex items-center gap-1">
+                              <FormLabel>Button Style</FormLabel>
+                              <HelpTooltip
+                                content="Visual style of the button. Primary for main action, Secondary/Outline for alternatives."
+                                title="Button Style"
+                                iconSize={12}
+                              />
+                            </div>
                             <Select
                               onValueChange={field.onChange}
                               value={field.value}
@@ -188,7 +213,14 @@ export function ActionButtonsSection({
                         name={`actionButtons.${index}.action`}
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Action Type</FormLabel>
+                            <div className="flex items-center gap-1">
+                              <FormLabel>Action Type</FormLabel>
+                              <HelpTooltip
+                                content="What happens when clicked: Contact opens email, Quote shows form, Download/Link opens URL."
+                                title="Button Action"
+                                iconSize={12}
+                              />
+                            </div>
                             <Select
                               onValueChange={field.onChange}
                               value={field.value}
@@ -220,11 +252,18 @@ export function ActionButtonsSection({
                         name={`actionButtons.${index}.actionData`}
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>URL</FormLabel>
+                            <div className="flex items-center gap-1">
+                              <FormLabel>URL</FormLabel>
+                              <HelpTooltip
+                                content="URL for download, external link, or video actions."
+                                title="Action URL"
+                                iconSize={12}
+                              />
+                            </div>
                             <FormControl>
                               <Input
                                 type="url"
-                                placeholder="https://..."
+                                placeholder="https://example.com/brochure.pdf"
                                 maxLength={500}
                                 disabled={disabled}
                                 {...field}
@@ -232,7 +271,7 @@ export function ActionButtonsSection({
                               />
                             </FormControl>
                             <FormDescription>
-                              {currentAction === 'download' && 'Link to downloadable file'}
+                              {currentAction === 'download' && 'Link to downloadable file (PDF, brochure, etc.)'}
                               {currentAction === 'external_link' && 'External website URL'}
                               {currentAction === 'video' && 'Video URL (YouTube, Vimeo, etc.)'}
                             </FormDescription>

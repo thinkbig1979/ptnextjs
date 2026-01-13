@@ -5,6 +5,7 @@ import type { Control } from 'react-hook-form';
 import { useFieldArray } from 'react-hook-form';
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -14,6 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ListChecks, Plus, Trash2 } from 'lucide-react';
 import { FormSection } from './FormSection';
+import { HelpTooltip } from '@/components/help';
 import type { ExtendedProductFormValues, TierLevel } from './types';
 
 interface SpecificationsSectionProps {
@@ -69,6 +71,16 @@ export function SpecificationsSection({
       testId="specifications-section"
     >
       <div ref={containerRef} className="space-y-4">
+        {/* Section Help */}
+        <FormDescription className="flex items-center gap-1.5">
+          <span>Add technical details as label-value pairs.</span>
+          <HelpTooltip
+            content="Include dimensions, weight, power requirements, and other specs customers need. Examples: Display Size: 15 inches, Weight: 12.5 kg, Power: 12-24V DC."
+            title="Technical Specifications"
+            iconSize={14}
+          />
+        </FormDescription>
+
         {fields.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
             <ListChecks className="mx-auto h-12 w-12 mb-2 opacity-50" />
@@ -89,8 +101,22 @@ export function SpecificationsSection({
           <>
             {/* Header row for desktop */}
             <div className="hidden md:grid md:grid-cols-[1fr_1fr_40px] gap-4 text-sm font-medium text-muted-foreground pb-2">
-              <span>Label</span>
-              <span>Value</span>
+              <div className="flex items-center gap-1">
+                <span>Label</span>
+                <HelpTooltip
+                  content="The specification name or property (e.g., Display Size, Weight, Power)."
+                  title="Specification Label"
+                  iconSize={12}
+                />
+              </div>
+              <div className="flex items-center gap-1">
+                <span>Value</span>
+                <HelpTooltip
+                  content="The specification value including units where applicable (e.g., 15 inches, 12.5 kg)."
+                  title="Specification Value"
+                  iconSize={12}
+                />
+              </div>
               <span></span>
             </div>
 

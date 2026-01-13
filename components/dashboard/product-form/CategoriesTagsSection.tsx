@@ -28,6 +28,7 @@ import {
 import { FolderTree, Tags, Check, ChevronsUpDown, X, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { FormSection } from './FormSection';
+import { HelpTooltip } from '@/components/help';
 import type {
   ExtendedProductFormValues,
   TierLevel,
@@ -345,9 +346,16 @@ export function CategoriesTagsSection({
           name="categories"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Categories</FormLabel>
+              <div className="flex items-center gap-1.5">
+                <FormLabel>Categories</FormLabel>
+                <HelpTooltip
+                  content="Select categories that best describe your product. Multiple categories improve discoverability in search and filtering."
+                  title="Product Categories"
+                  iconSize={14}
+                />
+              </div>
               <FormDescription>
-                Select one or more categories for this product
+                Help customers find your product by selecting relevant categories.
               </FormDescription>
               <FormControl>
                 <MultiSelect
@@ -375,12 +383,17 @@ export function CategoriesTagsSection({
           name="tags"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <Tags className="h-4 w-4" />
-                Tags
-              </FormLabel>
+                <FormLabel>Tags</FormLabel>
+                <HelpTooltip
+                  content="Add tags for specific features, use cases, or keywords customers might search for. Tags help with filtering and related products."
+                  title="Product Tags"
+                  iconSize={14}
+                />
+              </div>
               <FormDescription>
-                Add tags to help users find this product
+                Add searchable keywords and labels to improve product discovery.
               </FormDescription>
               <FormControl>
                 <MultiSelect

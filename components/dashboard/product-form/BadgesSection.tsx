@@ -4,6 +4,7 @@ import type { Control, UseFormWatch } from 'react-hook-form';
 import { useFieldArray } from 'react-hook-form';
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -22,6 +23,7 @@ import { Badge } from '@/components/ui/badge';
 import { Award, Plus, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { FormSection } from './FormSection';
+import { HelpTooltip } from '@/components/help';
 import type { ExtendedProductFormValues, TierLevel, Badge as BadgeType } from './types';
 
 interface BadgesSectionProps {
@@ -102,6 +104,16 @@ export function BadgesSection({
       testId="badges-section"
     >
       <div className="space-y-4">
+        {/* Section Help */}
+        <FormDescription className="flex items-center gap-1.5">
+          <span>Add badges for certifications, awards, and status indicators.</span>
+          <HelpTooltip
+            content="Visual labels highlighting certifications, awards, or status indicators like 'New', 'Sale', or 'Popular'. Use Success (green) for certifications, Info (blue) for features."
+            title="Quality Badges"
+            iconSize={14}
+          />
+        </FormDescription>
+
         {fields.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
             <Award className="mx-auto h-12 w-12 mb-2 opacity-50" />
@@ -136,7 +148,14 @@ export function BadgesSection({
                     name={`badges.${index}.label`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Badge Text <span className="text-destructive">*</span></FormLabel>
+                        <div className="flex items-center gap-1">
+                          <FormLabel>Badge Text <span className="text-destructive">*</span></FormLabel>
+                          <HelpTooltip
+                            content="The text displayed in the badge. Keep it short and descriptive."
+                            title="Badge Text"
+                            iconSize={12}
+                          />
+                        </div>
                         <FormControl>
                           <Input
                             placeholder="e.g., ISO 9001 Certified"
@@ -156,7 +175,14 @@ export function BadgesSection({
                     name={`badges.${index}.type`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Style</FormLabel>
+                        <div className="flex items-center gap-1">
+                          <FormLabel>Style</FormLabel>
+                          <HelpTooltip
+                            content="Badge color style: Success (green) for certifications, Info (blue) for features, Warning (yellow) for notices."
+                            title="Badge Style"
+                            iconSize={12}
+                          />
+                        </div>
                         <Select
                           onValueChange={field.onChange}
                           value={field.value}

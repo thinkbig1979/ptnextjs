@@ -4,6 +4,7 @@ import type { Control } from 'react-hook-form';
 import { useFieldArray } from 'react-hook-form';
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -43,6 +44,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { FormSection } from './FormSection';
+import { HelpTooltip } from '@/components/help';
 import type { ExtendedProductFormValues, TierLevel } from './types';
 
 interface FeaturesSectionProps {
@@ -124,6 +126,16 @@ export function FeaturesSection({
       testId="features-section"
     >
       <div className="space-y-4">
+        {/* Section Help */}
+        <FormDescription className="flex items-center gap-1.5">
+          <span>Highlight key capabilities and benefits with optional icons.</span>
+          <HelpTooltip
+            content="Key features and benefits that set your product apart. Add icons for visual appeal. Focus on what makes your product valuable to customers."
+            title="Key Features"
+            iconSize={14}
+          />
+        </FormDescription>
+
         {fields.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
             <Sparkles className="mx-auto h-12 w-12 mb-2 opacity-50" />
@@ -170,7 +182,14 @@ export function FeaturesSection({
                         const IconComponent = getIconComponent(field.value || '');
                         return (
                           <FormItem className="w-full sm:w-32">
-                            <FormLabel>Icon</FormLabel>
+                            <div className="flex items-center gap-1">
+                              <FormLabel>Icon</FormLabel>
+                              <HelpTooltip
+                                content="Optional icon to visually represent this feature."
+                                title="Feature Icon"
+                                iconSize={12}
+                              />
+                            </div>
                             <Select
                               onValueChange={(value) => field.onChange(value === 'none' ? '' : value)}
                               value={field.value || 'none'}
@@ -211,7 +230,14 @@ export function FeaturesSection({
                       name={`features.${index}.title`}
                       render={({ field }) => (
                         <FormItem className="flex-1">
-                          <FormLabel>Title <span className="text-destructive">*</span></FormLabel>
+                          <div className="flex items-center gap-1">
+                            <FormLabel>Title <span className="text-destructive">*</span></FormLabel>
+                            <HelpTooltip
+                              content="Short, compelling feature headline that catches attention."
+                              title="Feature Title"
+                              iconSize={12}
+                            />
+                          </div>
                           <FormControl>
                             <Input
                               placeholder="e.g., Real-time GPS Tracking"
@@ -232,10 +258,17 @@ export function FeaturesSection({
                     name={`features.${index}.description`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Description</FormLabel>
+                        <div className="flex items-center gap-1">
+                          <FormLabel>Description</FormLabel>
+                          <HelpTooltip
+                            content="Brief explanation of the feature and its benefit to the customer."
+                            title="Feature Description"
+                            iconSize={12}
+                          />
+                        </div>
                         <FormControl>
                           <Textarea
-                            placeholder="Describe this feature..."
+                            placeholder="Track vessel position with sub-meter accuracy in real-time..."
                             className="resize-none min-h-[60px]"
                             rows={2}
                             maxLength={1000}

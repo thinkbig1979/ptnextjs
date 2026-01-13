@@ -8,6 +8,12 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { ProductCard } from './ProductCard';
 import { ProductDeleteDialog } from './ProductDeleteDialog';
 import { useVendorProducts } from '@/hooks/useVendorProducts';
@@ -159,12 +165,22 @@ export function ProductList({ vendorId }: ProductListProps) {
         <CardContent>
           <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
           <p className="text-muted-foreground mb-4">No products yet</p>
-          <Button asChild>
-            <Link href="/vendor/dashboard/products/new">
-              <Plus className="mr-2 h-4 w-4" />
-              Add Your First Product
-            </Link>
-          </Button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button asChild>
+                  <Link href="/vendor/dashboard/products/new">
+                    <Plus className="mr-2 h-4 w-4" />
+                    Add Your First Product
+                  </Link>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Create a new product listing with images, pricing, and specifications.</p>
+                <p className="text-xs text-muted-foreground mt-1">Available for Tier 2+ vendors</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </CardContent>
       </Card>
     );
@@ -175,12 +191,21 @@ export function ProductList({ vendorId }: ProductListProps) {
     <>
       <div className="space-y-6">
         <div className="flex justify-end">
-          <Button asChild>
-            <Link href="/vendor/dashboard/products/new">
-              <Plus className="mr-2 h-4 w-4" />
-              Add New Product
-            </Link>
-          </Button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button asChild>
+                  <Link href="/vendor/dashboard/products/new">
+                    <Plus className="mr-2 h-4 w-4" />
+                    Add New Product
+                  </Link>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Create a new product listing with images, pricing, and specifications.</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -5,6 +5,7 @@ import type { Control, UseFormWatch, UseFormSetValue } from 'react-hook-form';
 import { useFieldArray } from 'react-hook-form';
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -13,12 +14,11 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Image as ImageIcon, Plus, Trash2, ImageOff, Star } from 'lucide-react';
+import { Image as ImageIcon, Plus, Trash2, ImageOff, Star, Info } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
 import { cn } from '@/lib/utils';
 import { FormSection } from './FormSection';
+import { HelpTooltip } from '@/components/help';
 import type { ExtendedProductFormValues, TierLevel, ProductImage } from './types';
 
 interface ImagesSectionProps {
@@ -160,11 +160,28 @@ export function ImagesSection({
       testId="images-section"
     >
       <div className="space-y-4">
+        {/* Image Guidelines */}
+        <div className="flex items-start gap-2 p-3 bg-muted/50 rounded-lg text-sm text-muted-foreground">
+          <Info className="h-4 w-4 mt-0.5 flex-shrink-0" />
+          <div>
+            <p className="font-medium text-foreground">Image Recommendations</p>
+            <p>Recommended size: 1200x800px. Supported formats: JPEG, PNG, WebP. First image becomes the main product image.</p>
+          </div>
+        </div>
+
         {/* Add Image Input */}
         <div className="flex gap-2">
           <div className="flex-1">
+            <div className="flex items-center gap-1.5 mb-1.5">
+              <span className="text-sm font-medium">Add Image URL</span>
+              <HelpTooltip
+                content="Enter a direct link to your product image. Use high-quality images for best results. The first image becomes the main product image."
+                title="Product Images"
+                iconSize={14}
+              />
+            </div>
             <Input
-              placeholder="Enter image URL (e.g., https://example.com/image.jpg)"
+              placeholder="https://example.com/product-image.jpg"
               value={newImageUrl}
               onChange={(e) => {
                 setNewImageUrl(e.target.value);
@@ -182,6 +199,7 @@ export function ImagesSection({
             type="button"
             onClick={handleAddImage}
             disabled={disabled || !newImageUrl.trim()}
+            className="mt-[26px]"
           >
             <Plus className="h-4 w-4 mr-2" />
             Add
@@ -258,10 +276,17 @@ export function ImagesSection({
                             name={`images.${index}.altText`}
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="text-xs">Alt Text</FormLabel>
+                                <div className="flex items-center gap-1">
+                                  <FormLabel className="text-xs">Alt Text</FormLabel>
+                                  <HelpTooltip
+                                    content="Describe the image for screen readers and search engines. Good alt text improves accessibility and SEO."
+                                    title="Alt Text"
+                                    iconSize={12}
+                                  />
+                                </div>
                                 <FormControl>
                                   <Input
-                                    placeholder="Describe the image"
+                                    placeholder="Marine navigation system on yacht bridge"
                                     maxLength={255}
                                     disabled={disabled}
                                     {...field}
@@ -277,10 +302,17 @@ export function ImagesSection({
                             name={`images.${index}.caption`}
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="text-xs">Caption</FormLabel>
+                                <div className="flex items-center gap-1">
+                                  <FormLabel className="text-xs">Caption</FormLabel>
+                                  <HelpTooltip
+                                    content="Optional caption displayed below the image in galleries."
+                                    title="Image Caption"
+                                    iconSize={12}
+                                  />
+                                </div>
                                 <FormControl>
                                   <Input
-                                    placeholder="Optional caption"
+                                    placeholder="X5 Navigation System - Bridge Installation"
                                     maxLength={255}
                                     disabled={disabled}
                                     {...field}

@@ -20,6 +20,7 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { DollarSign } from 'lucide-react';
 import { FormSection } from './FormSection';
+import { HelpTooltip } from '@/components/help';
 import type { ExtendedProductFormValues, TierLevel } from './types';
 
 interface PricingSectionProps {
@@ -73,7 +74,14 @@ export function PricingSection({
           name="price"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Price Display Text</FormLabel>
+              <div className="flex items-center gap-1.5">
+                <FormLabel>Price Display Text</FormLabel>
+                <HelpTooltip
+                  content='Display text for pricing. Can include currency symbols, ranges, or "Contact for Quote" for custom pricing.'
+                  title="Price Display"
+                  iconSize={14}
+                />
+              </div>
               <FormControl>
                 <Input
                   placeholder='e.g., "From $12,500" or "Contact for Quote"'
@@ -84,7 +92,7 @@ export function PricingSection({
                 />
               </FormControl>
               <FormDescription>
-                How the price appears on your product page
+                How the price appears on your product page. Leave flexible for custom quotes.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -98,17 +106,24 @@ export function PricingSection({
             name="pricing.subtitle"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Pricing Subtitle</FormLabel>
+                <div className="flex items-center gap-1.5">
+                  <FormLabel>Pricing Subtitle</FormLabel>
+                  <HelpTooltip
+                    content='Additional context like "Installed price", "Starting from", or "Per unit".'
+                    title="Pricing Subtitle"
+                    iconSize={14}
+                  />
+                </div>
                 <FormControl>
                   <Input
-                    placeholder="e.g., Installed price"
+                    placeholder="e.g., Installed price includes commissioning"
                     maxLength={200}
                     disabled={disabled}
                     {...field}
                     value={field.value || ''}
                   />
                 </FormControl>
-                <FormDescription>Additional context for the price</FormDescription>
+                <FormDescription>Optional additional context for the price.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -119,7 +134,14 @@ export function PricingSection({
             name="pricing.currency"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Currency</FormLabel>
+                <div className="flex items-center gap-1.5">
+                  <FormLabel>Currency</FormLabel>
+                  <HelpTooltip
+                    content="Select the currency for your product pricing."
+                    title="Currency"
+                    iconSize={14}
+                  />
+                </div>
                 <Select
                   onValueChange={field.onChange}
                   value={field.value || ''}
@@ -151,9 +173,16 @@ export function PricingSection({
           render={({ field }) => (
             <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
               <div className="space-y-0.5">
-                <FormLabel className="text-base">Show Contact Form</FormLabel>
+                <div className="flex items-center gap-1.5">
+                  <FormLabel className="text-base">Show Contact Form</FormLabel>
+                  <HelpTooltip
+                    content="Enable to display a contact form for pricing inquiries and custom quotes."
+                    title="Contact Form"
+                    iconSize={14}
+                  />
+                </div>
                 <FormDescription>
-                  Display a contact form for pricing inquiries
+                  Display a contact form for pricing inquiries and custom quotes.
                 </FormDescription>
               </div>
               <FormControl>
