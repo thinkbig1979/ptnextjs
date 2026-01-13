@@ -11,22 +11,29 @@ export const registrationHelp: SectionHelp = {
     {
       fieldName: 'email',
       tooltip: {
-        text: 'Your business email will be used for account verification and communications.',
-        title: 'Business Email',
+        text: 'Business email for account login and notifications.',
+        title: 'Email',
       },
       placeholder: 'vendor@company.com',
     },
     {
       fieldName: 'password',
       tooltip: {
-        text: 'Choose a strong password with at least 8 characters.',
-        title: 'Password',
+        text: '12+ characters with uppercase, lowercase, number, and special character.',
+        title: 'Password Requirements',
+      },
+    },
+    {
+      fieldName: 'confirmPassword',
+      tooltip: {
+        text: 'Re-enter your password to confirm.',
+        title: 'Confirm Password',
       },
     },
     {
       fieldName: 'companyName',
       tooltip: {
-        text: 'Enter your company\'s official business name as registered.',
+        text: 'Your official business name as it will appear on your profile.',
         title: 'Company Name',
       },
       placeholder: 'Your Company Name',

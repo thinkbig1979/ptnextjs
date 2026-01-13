@@ -18,7 +18,8 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-import { Loader2, Eye, EyeOff, Info } from 'lucide-react';
+import { Loader2, Eye, EyeOff } from 'lucide-react';
+import { HelpTooltip } from '@/components/help';
 
 // Dynamically import HCaptcha to avoid SSR issues
 const HCaptcha = dynamic(() => import('@hcaptcha/react-hcaptcha'), {
@@ -266,15 +267,25 @@ export function VendorRegistrationForm() {
           name="companyName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel aria-label="Company Name">Company Name</FormLabel>
+              <FormLabel aria-label="Company Name" className="flex items-center gap-1">
+                Company Name
+                <HelpTooltip
+                  content="Your official business name as it will appear on your profile."
+                  title="Company Name"
+                  data-testid="company-name-help-icon"
+                />
+              </FormLabel>
               <FormControl>
                 <Input
                   type="text"
-                  placeholder="Your Company Ltd"
+                  placeholder="Acme Marine Services Ltd"
                   aria-label="Company Name"
                   {...field}
                 />
               </FormControl>
+              <FormDescription>
+                2-100 characters. This will be displayed publicly.
+              </FormDescription>
               <FormMessage role="alert" />
             </FormItem>
           )}
@@ -286,15 +297,25 @@ export function VendorRegistrationForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel aria-label="Email">Email</FormLabel>
+              <FormLabel aria-label="Email" className="flex items-center gap-1">
+                Email
+                <HelpTooltip
+                  content="Business email for account login and notifications."
+                  title="Email"
+                  data-testid="email-help-icon"
+                />
+              </FormLabel>
               <FormControl>
                 <Input
                   type="email"
-                  placeholder="vendor@example.com"
+                  placeholder="contact@yourcompany.com"
                   aria-label="Email"
                   {...field}
                 />
               </FormControl>
+              <FormDescription>
+                We will send account notifications to this address.
+              </FormDescription>
               <FormMessage role="alert" />
             </FormItem>
           )}
@@ -306,22 +327,19 @@ export function VendorRegistrationForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel aria-label="Password">
+              <FormLabel aria-label="Password" className="flex items-center gap-1">
                 Password
-                <button
-                  type="button"
+                <HelpTooltip
+                  content="12+ characters with uppercase, lowercase, number, and special character."
+                  title="Password Requirements"
                   data-testid="password-help-icon"
-                  className="ml-2 inline-flex items-center"
-                  title="Password must contain at least 12 characters, including uppercase, lowercase, number, and special character"
-                >
-                  <Info className="h-4 w-4 text-muted-foreground" />
-                </button>
+                />
               </FormLabel>
               <FormControl>
                 <div className="relative">
                   <Input
                     type={showPassword ? 'text' : 'password'}
-                    placeholder="Enter strong password"
+                    placeholder="Create a strong password"
                     aria-label="Password"
                     {...field}
                   />
@@ -361,12 +379,19 @@ export function VendorRegistrationForm() {
           name="confirmPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel aria-label="Confirm Password">Confirm Password</FormLabel>
+              <FormLabel aria-label="Confirm Password" className="flex items-center gap-1">
+                Confirm Password
+                <HelpTooltip
+                  content="Re-enter your password to confirm."
+                  title="Confirm Password"
+                  data-testid="confirm-password-help-icon"
+                />
+              </FormLabel>
               <FormControl>
                 <div className="relative">
                   <Input
                     type={showConfirmPassword ? 'text' : 'password'}
-                    placeholder="Re-enter password"
+                    placeholder="Re-enter your password"
                     aria-label="Confirm Password"
                     {...field}
                   />
@@ -384,6 +409,9 @@ export function VendorRegistrationForm() {
                   </button>
                 </div>
               </FormControl>
+              <FormDescription>
+                Must match the password above.
+              </FormDescription>
               <FormMessage role="alert" />
             </FormItem>
           )}
