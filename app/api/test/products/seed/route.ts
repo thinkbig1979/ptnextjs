@@ -215,7 +215,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<SeedRespo
           data: {
             name: productData.name,
             slug,
-            vendor: productData.vendor,
+            vendor: Number(productData.vendor),
             description: textToLexical(productData.description || 'Product description'),
             shortDescription: productData.shortDescription || productData.description?.slice(0, 200) || '',
             published: productData.published !== undefined ? productData.published : true,

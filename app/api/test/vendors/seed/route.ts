@@ -206,7 +206,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<SeedRespo
         const createdVendor = await payload.create({
           collection: 'vendors',
           data: {
-            user: createdUser.id,
+            user: Number(createdUser.id),
             slug,
             companyName: vendorData.companyName,
             contactEmail: vendorData.email,

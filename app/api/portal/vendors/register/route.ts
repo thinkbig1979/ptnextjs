@@ -267,7 +267,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           const vendor = await payload.create({
             collection: "vendors",
             data: {
-              user: userId,
+              user: Number(userId),
               companyName: data.companyName,
               slug,
               contactEmail: data.contactEmail,

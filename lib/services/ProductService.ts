@@ -320,7 +320,7 @@ export class ProductService {
 
     // Prepare product data
     const productData: Record<string, unknown> = {
-      vendor: vendorId,
+      vendor: Number(vendorId),
       name: data.name,
       published: data.published !== undefined ? data.published : false,
     };

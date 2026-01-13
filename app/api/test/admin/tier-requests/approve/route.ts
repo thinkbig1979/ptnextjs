@@ -122,7 +122,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApproveRe
       id: body.requestId,
       data: {
         status: 'approved',
-        reviewedBy: adminId,
+        reviewedBy: Number(adminId),
         reviewedAt: new Date().toISOString(),
       },
     });
