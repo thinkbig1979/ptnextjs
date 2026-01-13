@@ -172,8 +172,8 @@ export function FeaturesSection({
                           <FormItem className="w-full sm:w-32">
                             <FormLabel>Icon</FormLabel>
                             <Select
-                              onValueChange={field.onChange}
-                              value={field.value || ''}
+                              onValueChange={(value) => field.onChange(value === 'none' ? '' : value)}
+                              value={field.value || 'none'}
                               disabled={disabled}
                             >
                               <FormControl>
@@ -188,7 +188,7 @@ export function FeaturesSection({
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                <SelectItem value="">None</SelectItem>
+                                <SelectItem value="none">None</SelectItem>
                                 {FEATURE_ICONS.map(({ value, label, icon: Icon }) => (
                                   <SelectItem key={value} value={value}>
                                     <div className="flex items-center gap-2">

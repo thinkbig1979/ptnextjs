@@ -3,93 +3,27 @@ import { z } from 'zod';
 /**
  * Extended Product Form Types and Schemas
  *
- * Re-exports existing API schemas and adds new schemas for enhanced form fields.
+ * Re-exports existing API schemas for use in the product form.
  * Used with React Hook Form + Zod resolver for form validation.
  */
 
-// Re-export existing schemas from API validation
+// Re-export all schemas from API validation (single source of truth)
 export {
   ProductImageSchema,
   SpecificationSchema,
   FeatureSchema,
   PricingSchema,
+  ActionButtonSchema,
+  BadgeSchema,
+  SeoSchema,
   type ProductImage,
   type Specification,
   type Feature,
   type Pricing,
+  type ActionButton,
+  type Badge,
+  type Seo,
 } from '@/lib/validation/product-schema';
-
-// =============================================================================
-// New Schemas for Enhanced Form Fields
-// =============================================================================
-
-/**
- * Action Button Schema - Call-to-action buttons for product page
- * Matches Products.ts actionButtons array
- */
-export const ActionButtonSchema = z.object({
-  label: z.string().min(1, 'Button label is required').max(100),
-  type: z.enum(['primary', 'secondary', 'outline'], {
-    required_error: 'Button type is required',
-  }),
-  action: z.enum(['contact', 'quote', 'download', 'external_link', 'video'], {
-    required_error: 'Button action is required',
-  }),
-  actionData: z.preprocess(
-    (val) => (val === '' || val === null ? undefined : val),
-    z.string().max(500).optional()
-  ),
-  icon: z.preprocess(
-    (val) => (val === '' || val === null ? undefined : val),
-    z.string().max(100).optional()
-  ),
-  order: z.number().int().min(0).optional().nullable(),
-});
-
-export type ActionButton = z.infer<typeof ActionButtonSchema>;
-
-/**
- * Badge Schema - Quality badges and certifications
- * Matches Products.ts badges array
- */
-export const BadgeSchema = z.object({
-  label: z.string().min(1, 'Badge label is required').max(100),
-  type: z.enum(['secondary', 'outline', 'success', 'warning', 'info'], {
-    required_error: 'Badge type is required',
-  }),
-  icon: z.preprocess(
-    (val) => (val === '' || val === null ? undefined : val),
-    z.string().max(100).optional()
-  ),
-  order: z.number().int().min(0).optional().nullable(),
-});
-
-export type Badge = z.infer<typeof BadgeSchema>;
-
-/**
- * SEO Schema - Search engine optimization settings
- * Matches Products.ts seo group
- */
-export const SeoSchema = z.object({
-  metaTitle: z.preprocess(
-    (val) => (val === '' || val === null ? undefined : val),
-    z.string().max(100).optional()
-  ),
-  metaDescription: z.preprocess(
-    (val) => (val === '' || val === null ? undefined : val),
-    z.string().max(300).optional()
-  ),
-  keywords: z.preprocess(
-    (val) => (val === '' || val === null ? undefined : val),
-    z.string().max(500).optional()
-  ),
-  ogImage: z.preprocess(
-    (val) => (val === '' || val === null ? undefined : val),
-    z.string().url('Invalid URL').max(500).optional().or(z.literal(''))
-  ),
-});
-
-export type Seo = z.infer<typeof SeoSchema>;
 
 // Import base schemas for ExtendedProductFormSchema
 import {
@@ -97,6 +31,9 @@ import {
   SpecificationSchema as BaseSpecificationSchema,
   FeatureSchema as BaseFeatureSchema,
   PricingSchema as BasePricingSchema,
+  ActionButtonSchema as BaseActionButtonSchema,
+  BadgeSchema as BaseBadgeSchema,
+  SeoSchema as BaseSeoSchema,
 } from '@/lib/validation/product-schema';
 
 // =============================================================================
@@ -140,12 +77,16 @@ export const ExtendedProductFormSchema = z.object({
   features: z.array(BaseFeatureSchema).optional().default([]),
 
   // Relationship IDs (categories and tags)
-  categories: z.array(z.union([z.string(), z.number()])).optional().default([]),
-  tags: z.array(z.union([z.string(), z.number()])).optional().default([]),
+  categories: z.array(
+    z.union([z.string(), z.number()]).transform(val => typeof val === 'number' ? val : String(val))
+  ).optional().default([]),
+  tags: z.array(
+    z.union([z.string(), z.number()]).transform(val => typeof val === 'number' ? val : String(val))
+  ).optional().default([]),
 
   // Enhanced form fields
-  actionButtons: z.array(ActionButtonSchema).optional().default([]),
-  badges: z.array(BadgeSchema).optional().default([]),
+  actionButtons: z.array(BaseActionButtonSchema).optional().default([]),
+  badges: z.array(BaseBadgeSchema).optional().default([]),
 
   // Pricing
   price: z.preprocess(
@@ -155,7 +96,7 @@ export const ExtendedProductFormSchema = z.object({
   pricing: BasePricingSchema.optional(),
 
   // SEO
-  seo: SeoSchema.optional(),
+  seo: BaseSeoSchema.optional(),
 
   // Status
   published: z.boolean().optional().default(false),

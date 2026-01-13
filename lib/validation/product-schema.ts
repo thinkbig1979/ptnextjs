@@ -64,6 +64,71 @@ export const PricingSchema = z.object({
 
 export type Pricing = z.infer<typeof PricingSchema>;
 
+// Action Button Schema - matches Payload CMS actionButtons array
+export const ActionButtonSchema = z.object({
+  label: z.string().min(1, 'Button label is required').max(100, 'Label must be less than 100 characters'),
+  type: z.enum(['primary', 'secondary', 'outline'], {
+    required_error: 'Button type is required',
+  }),
+  action: z.enum(['contact', 'quote', 'download', 'external_link', 'video'], {
+    required_error: 'Button action is required',
+  }),
+  actionData: z.preprocess(
+    (val) => (val === '' || val === null ? undefined : val),
+    z.string().max(500, 'Action data must be less than 500 characters').optional()
+  ),
+  icon: z.preprocess(
+    (val) => (val === '' || val === null ? undefined : val),
+    z.string().max(100, 'Icon must be less than 100 characters').optional()
+  ),
+  order: z.number().int().min(0).optional().nullable(),
+});
+
+export type ActionButton = z.infer<typeof ActionButtonSchema>;
+
+// Badge Schema - matches Payload CMS badges array
+export const BadgeSchema = z.object({
+  label: z.string().min(1, 'Badge label is required').max(100, 'Label must be less than 100 characters'),
+  type: z.enum(['secondary', 'outline', 'success', 'warning', 'info'], {
+    required_error: 'Badge type is required',
+  }),
+  icon: z.preprocess(
+    (val) => (val === '' || val === null ? undefined : val),
+    z.string().max(100, 'Icon must be less than 100 characters').optional()
+  ),
+  order: z.number().int().min(0).optional().nullable(),
+});
+
+export type Badge = z.infer<typeof BadgeSchema>;
+
+// SEO Schema - matches Payload CMS seo group
+export const SeoSchema = z.object({
+  metaTitle: z.preprocess(
+    (val) => (val === '' || val === null ? undefined : val),
+    z.string().max(100, 'Meta title must be less than 100 characters').optional()
+  ),
+  metaDescription: z.preprocess(
+    (val) => (val === '' || val === null ? undefined : val),
+    z.string().max(300, 'Meta description must be less than 300 characters').optional()
+  ),
+  keywords: z.preprocess(
+    (val) => (val === '' || val === null ? undefined : val),
+    z.string().max(500, 'Keywords must be less than 500 characters').optional()
+  ),
+  ogImage: z.preprocess(
+    (val) => (val === '' || val === null ? undefined : val),
+    z.string().max(500, 'OG image URL must be less than 500 characters').optional()
+  ),
+});
+
+export type Seo = z.infer<typeof SeoSchema>;
+
+// Helper to coerce string or number to string for relationship IDs
+const relationshipIdSchema = z.preprocess(
+  (val) => (typeof val === 'number' ? String(val) : val),
+  z.string()
+);
+
 // Create Product Schema - all required fields for product creation
 export const CreateProductSchema = z.object({
   // Required fields
@@ -84,9 +149,9 @@ export const CreateProductSchema = z.object({
   // Product images array
   images: z.array(ProductImageSchema).optional().nullable().default([]),
 
-  // Categories and tags relationships
-  categories: z.array(z.string()).optional().nullable().default([]),
-  tags: z.array(z.string()).optional().nullable().default([]),
+  // Categories and tags relationships (accept both string and number IDs)
+  categories: z.array(relationshipIdSchema).optional().nullable().default([]),
+  tags: z.array(relationshipIdSchema).optional().nullable().default([]),
 
   // Specifications array
   specifications: z.array(SpecificationSchema).optional().nullable().default([]),
@@ -100,6 +165,15 @@ export const CreateProductSchema = z.object({
     z.string().max(100, 'Price must be less than 100 characters').optional()
   ),
   pricing: PricingSchema.optional().nullable(),
+
+  // Action buttons array
+  actionButtons: z.array(ActionButtonSchema).optional().nullable().default([]),
+
+  // Badges array
+  badges: z.array(BadgeSchema).optional().nullable().default([]),
+
+  // SEO settings
+  seo: SeoSchema.optional().nullable(),
 
   // Published status
   published: z.boolean().optional().nullable().default(false),
@@ -136,9 +210,9 @@ export const UpdateProductSchema = z.object({
   // Product images array
   images: z.array(ProductImageSchema).optional().nullable(),
 
-  // Categories and tags relationships
-  categories: z.array(z.string()).optional().nullable(),
-  tags: z.array(z.string()).optional().nullable(),
+  // Categories and tags relationships (accept both string and number IDs)
+  categories: z.array(relationshipIdSchema).optional().nullable(),
+  tags: z.array(relationshipIdSchema).optional().nullable(),
 
   // Specifications array
   specifications: z.array(SpecificationSchema).optional().nullable(),
@@ -152,6 +226,15 @@ export const UpdateProductSchema = z.object({
     z.string().max(100, 'Price must be less than 100 characters').optional()
   ),
   pricing: PricingSchema.optional().nullable(),
+
+  // Action buttons array
+  actionButtons: z.array(ActionButtonSchema).optional().nullable(),
+
+  // Badges array
+  badges: z.array(BadgeSchema).optional().nullable(),
+
+  // SEO settings
+  seo: SeoSchema.optional().nullable(),
 
   // Published status
   published: z.boolean().optional().nullable(),

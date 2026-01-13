@@ -262,9 +262,20 @@ export function EnhancedProductForm({
     }
   }, [isEdit, vendorId, product?.id, form, onSuccess]);
 
+  const onInvalid = useCallback((errors: Record<string, unknown>) => {
+    console.error('[ProductForm] Validation errors:', errors);
+    const errorMessages = Object.entries(errors)
+      .map(([field, error]) => {
+        const message = (error as { message?: string })?.message;
+        return `${field}: ${message || 'Invalid value'}`;
+      })
+      .join(', ');
+    toast.error(`Validation failed: ${errorMessages || 'Please check the form'}`);
+  }, []);
+
   return (
     <Form {...form}>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit, onInvalid)}>
         <Card>
           <CardContent className="pt-6 space-y-6">
             {/* Basic Information - always open, available to all tiers */}
