@@ -15,6 +15,7 @@ import { useVendorDashboard } from '@/lib/context/VendorDashboardContext';
 import { TierService } from '@/lib/services/TierService';
 import { TierUpgradePrompt } from '@/components/dashboard/TierUpgradePrompt';
 import { YearsInBusinessDisplay } from '@/components/vendors/YearsInBusinessDisplay';
+import { HelpTooltip, CharacterCounter } from '@/components/help';
 
 export interface BrandStoryFormProps {
   vendor: Vendor;
@@ -183,7 +184,13 @@ export function BrandStoryForm({ vendor, onSubmit }: BrandStoryFormProps) {
           <CardContent className="space-y-4">
             {/* Website */}
             <div className="space-y-2">
-              <Label htmlFor="website">Website</Label>
+              <div className="flex items-center gap-2">
+                <Label htmlFor="website">Website</Label>
+                <HelpTooltip
+                  content="Enter the full URL including https:// (e.g., https://example.com)"
+                  title="Website URL"
+                />
+              </div>
               <Input
                 id="website"
                 type="url"
@@ -198,7 +205,13 @@ export function BrandStoryForm({ vendor, onSubmit }: BrandStoryFormProps) {
 
             {/* LinkedIn */}
             <div className="space-y-2">
-              <Label htmlFor="linkedinUrl">LinkedIn URL</Label>
+              <div className="flex items-center gap-2">
+                <Label htmlFor="linkedinUrl">LinkedIn URL</Label>
+                <HelpTooltip
+                  content="Enter full URL including https:// (e.g., https://linkedin.com/company/yourcompany)"
+                  title="LinkedIn URL"
+                />
+              </div>
               <Input
                 id="linkedinUrl"
                 type="url"
@@ -213,7 +226,13 @@ export function BrandStoryForm({ vendor, onSubmit }: BrandStoryFormProps) {
 
             {/* Twitter */}
             <div className="space-y-2">
-              <Label htmlFor="twitterUrl">Twitter URL</Label>
+              <div className="flex items-center gap-2">
+                <Label htmlFor="twitterUrl">Twitter URL</Label>
+                <HelpTooltip
+                  content="Enter full URL including https:// (e.g., https://twitter.com/yourhandle)"
+                  title="Twitter URL"
+                />
+              </div>
               <Input
                 id="twitterUrl"
                 type="url"
@@ -243,7 +262,13 @@ export function BrandStoryForm({ vendor, onSubmit }: BrandStoryFormProps) {
           <CardContent className="space-y-4">
             {/* Founded Year */}
             <div className="space-y-2">
-              <Label htmlFor="foundedYear">Founded Year</Label>
+              <div className="flex items-center gap-2">
+                <Label htmlFor="foundedYear">Founded Year</Label>
+                <HelpTooltip
+                  content="Year your company was established. We'll calculate years in business automatically."
+                  title="Founded Year"
+                />
+              </div>
               <Input
                 id="foundedYear"
                 type="number"
@@ -276,7 +301,13 @@ export function BrandStoryForm({ vendor, onSubmit }: BrandStoryFormProps) {
         {/* Long Description */}
         <Card>
           <CardHeader>
-            <CardTitle>Detailed Description</CardTitle>
+            <div className="flex items-center gap-2">
+              <CardTitle>Detailed Description</CardTitle>
+              <HelpTooltip
+                content="Detailed company story for your profile page. Be thorough and engaging."
+                title="Detailed Description"
+              />
+            </div>
             <CardDescription>
               Tell your company's story in detail (max 5000 characters).
             </CardDescription>
@@ -293,9 +324,9 @@ export function BrandStoryForm({ vendor, onSubmit }: BrandStoryFormProps) {
             {errors.longDescription && (
               <p className="text-sm text-red-500">{errors.longDescription.message}</p>
             )}
-            <p className="text-sm text-muted-foreground dark:text-muted-foreground text-right">
-              {longDescriptionLength} / 5000 characters
-            </p>
+            <div className="flex justify-end">
+              <CharacterCounter current={longDescriptionLength} max={5000} />
+            </div>
           </CardContent>
         </Card>
 
@@ -305,6 +336,10 @@ export function BrandStoryForm({ vendor, onSubmit }: BrandStoryFormProps) {
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5" />
               Social Proof Metrics
+              <HelpTooltip
+                content="Optional statistics to build trust with visitors. Only display accurate, verifiable numbers."
+                title="Social Proof Metrics"
+              />
             </CardTitle>
             <CardDescription>
               Showcase your achievements and credibility.
@@ -429,7 +464,13 @@ export function BrandStoryForm({ vendor, onSubmit }: BrandStoryFormProps) {
           <CardContent className="space-y-4">
             {/* Video URL */}
             <div className="space-y-2">
-              <Label htmlFor="videoUrl">Video URL</Label>
+              <div className="flex items-center gap-2">
+                <Label htmlFor="videoUrl">Video URL</Label>
+                <HelpTooltip
+                  content="YouTube or Vimeo link to showcase your work or introduce your company."
+                  title="Video URL"
+                />
+              </div>
               <Input
                 id="videoUrl"
                 type="url"
@@ -512,7 +553,13 @@ export function BrandStoryForm({ vendor, onSubmit }: BrandStoryFormProps) {
         {/* Service Areas */}
         <Card>
           <CardHeader>
-            <CardTitle>Service Areas</CardTitle>
+            <div className="flex items-center gap-2">
+              <CardTitle>Service Areas</CardTitle>
+              <HelpTooltip
+                content="Geographic regions where you provide services (e.g., Mediterranean, Caribbean)."
+                title="Service Areas"
+              />
+            </div>
             <CardDescription>
               Geographic regions or specializations where you provide services.
             </CardDescription>
@@ -553,7 +600,13 @@ export function BrandStoryForm({ vendor, onSubmit }: BrandStoryFormProps) {
         {/* Company Values */}
         <Card>
           <CardHeader>
-            <CardTitle>Company Values</CardTitle>
+            <div className="flex items-center gap-2">
+              <CardTitle>Company Values</CardTitle>
+              <HelpTooltip
+                content="Core values that define your business culture and guide decision-making."
+                title="Company Values"
+              />
+            </div>
             <CardDescription>
               Core principles and values that guide your company.
             </CardDescription>

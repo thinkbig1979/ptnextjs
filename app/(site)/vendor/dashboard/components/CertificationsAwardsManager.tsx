@@ -19,6 +19,7 @@ import { VendorCertification, VendorAward, Vendor } from '@/lib/types';
 import { useVendorDashboard } from '@/lib/context/VendorDashboardContext';
 import { TierService } from '@/lib/services/TierService';
 import { TierUpgradePrompt } from '@/components/dashboard/TierUpgradePrompt';
+import { HelpTooltip } from '@/components/help';
 
 // Validation schemas
 const certificationSchema = z.object({
@@ -280,6 +281,10 @@ export function CertificationsAwardsManager({ vendor }: CertificationsAwardsMana
               <CardTitle className="flex items-center gap-2">
                 <Medal className="h-5 w-5" />
                 Certifications
+                <HelpTooltip
+                  content="Official credentials from recognized industry bodies (e.g., ISO, ABYC)."
+                  title="Certification"
+                />
               </CardTitle>
               <CardDescription>
                 Professional certifications and credentials ({certifications.length})
@@ -394,6 +399,10 @@ export function CertificationsAwardsManager({ vendor }: CertificationsAwardsMana
               <CardTitle className="flex items-center gap-2">
                 <Award className="h-5 w-5" />
                 Awards & Recognition
+                <HelpTooltip
+                  content="Industry recognition or honors received for excellence in your field."
+                  title="Award"
+                />
               </CardTitle>
               <CardDescription>
                 Industry awards and achievements ({awards.length})
@@ -596,7 +605,13 @@ export function CertificationsAwardsManager({ vendor }: CertificationsAwardsMana
 
             {/* Certificate URL */}
             <div className="space-y-2">
-              <Label htmlFor="cert-url">Certificate URL</Label>
+              <div className="flex items-center gap-2">
+                <Label htmlFor="cert-url">Certificate URL</Label>
+                <HelpTooltip
+                  content="URL to verify or view the certification document online."
+                  title="Verification URL"
+                />
+              </div>
               <Input
                 id="cert-url"
                 type="url"

@@ -19,6 +19,7 @@ import { TeamMember, Vendor } from '@/lib/types';
 import { useVendorDashboard } from '@/lib/context/VendorDashboardContext';
 import { TierService } from '@/lib/services/TierService';
 import { TierUpgradePrompt } from '@/components/dashboard/TierUpgradePrompt';
+import { HelpTooltip, CharacterCounter } from '@/components/help';
 
 // Validation schema
 const teamMemberSchema = z.object({
@@ -110,6 +111,8 @@ export function TeamMembersManager({ vendor }: TeamMembersManagerProps) {
   // Watch fields for UI updates
   const watchedImage = watch('image');
   const watchedLinkedin = watch('linkedin');
+  const watchedBio = watch('bio');
+  const bioLength = watchedBio?.length || 0;
 
   // Filter team members by search
   const filteredMembers = teamMembers.filter((member) =>
@@ -465,7 +468,13 @@ export function TeamMembersManager({ vendor }: TeamMembersManagerProps) {
 
             {/* Bio */}
             <div className="space-y-2">
-              <Label htmlFor="bio">Bio</Label>
+              <div className="flex items-center gap-2">
+                <Label htmlFor="bio">Bio</Label>
+                <HelpTooltip
+                  content="Brief professional biography highlighting expertise and experience."
+                  title="Bio"
+                />
+              </div>
               <Textarea
                 id="bio"
                 {...register('bio')}
@@ -476,11 +485,20 @@ export function TeamMembersManager({ vendor }: TeamMembersManagerProps) {
               {errors.bio && (
                 <p className="text-sm text-red-500">{errors.bio.message}</p>
               )}
+              <div className="flex justify-end">
+                <CharacterCounter current={bioLength} max={1000} />
+              </div>
             </div>
 
             {/* Photo URL */}
             <div className="space-y-2">
-              <Label htmlFor="image">Photo URL</Label>
+              <div className="flex items-center gap-2">
+                <Label htmlFor="image">Photo URL</Label>
+                <HelpTooltip
+                  content="Use a professional headshot. Square images (1:1 ratio) work best."
+                  title="Team Photo"
+                />
+              </div>
               <Input
                 id="image"
                 {...register('image')}
@@ -505,10 +523,16 @@ export function TeamMembersManager({ vendor }: TeamMembersManagerProps) {
 
             {/* LinkedIn URL */}
             <div className="space-y-2">
-              <Label htmlFor="linkedin" className="flex items-center gap-2">
-                <Linkedin className="h-4 w-4 text-accent" />
-                LinkedIn Profile URL
-              </Label>
+              <div className="flex items-center gap-2">
+                <Label htmlFor="linkedin" className="flex items-center gap-2">
+                  <Linkedin className="h-4 w-4 text-accent" />
+                  LinkedIn Profile URL
+                </Label>
+                <HelpTooltip
+                  content="Enter full LinkedIn profile URL (e.g., https://linkedin.com/in/username)."
+                  title="LinkedIn Profile"
+                />
+              </div>
               <Input
                 id="linkedin"
                 {...register('linkedin')}

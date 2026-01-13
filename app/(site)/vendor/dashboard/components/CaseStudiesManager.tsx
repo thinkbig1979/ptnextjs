@@ -20,6 +20,7 @@ import { useVendorDashboard } from '@/lib/context/VendorDashboardContext';
 import { TierService } from '@/lib/services/TierService';
 import { TierUpgradePrompt } from '@/components/dashboard/TierUpgradePrompt';
 import { caseStudySchema, type CaseStudyFormData } from '@/lib/validation/vendorSchemas';
+import { HelpTooltip } from '@/components/help';
 
 // Default values for form
 const CASE_STUDY_DEFAULT_VALUES: CaseStudyFormData = {
@@ -482,9 +483,15 @@ export function CaseStudiesManager({ vendor }: CaseStudiesManagerProps) {
               <h3 className="text-lg font-medium">Project Details</h3>
 
               <div className="space-y-2">
-                <Label htmlFor="challenge">
-                  Challenge <span className="text-destructive">*</span>
-                </Label>
+                <div className="flex items-center gap-2">
+                  <Label htmlFor="challenge">
+                    Challenge <span className="text-destructive">*</span>
+                  </Label>
+                  <HelpTooltip
+                    content="Describe the client's problem or need that you addressed."
+                    title="Challenge"
+                  />
+                </div>
                 <Textarea
                   id="challenge"
                   {...register('challenge')}
@@ -498,9 +505,15 @@ export function CaseStudiesManager({ vendor }: CaseStudiesManagerProps) {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="solution">
-                  Solution <span className="text-destructive">*</span>
-                </Label>
+                <div className="flex items-center gap-2">
+                  <Label htmlFor="solution">
+                    Solution <span className="text-destructive">*</span>
+                  </Label>
+                  <HelpTooltip
+                    content="Explain the approach and methods you used to solve the problem."
+                    title="Solution"
+                  />
+                </div>
                 <Textarea
                   id="solution"
                   {...register('solution')}
@@ -514,9 +527,15 @@ export function CaseStudiesManager({ vendor }: CaseStudiesManagerProps) {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="results">
-                  Results <span className="text-destructive">*</span>
-                </Label>
+                <div className="flex items-center gap-2">
+                  <Label htmlFor="results">
+                    Results <span className="text-destructive">*</span>
+                  </Label>
+                  <HelpTooltip
+                    content="Describe measurable outcomes and benefits achieved for the client."
+                    title="Results"
+                  />
+                </div>
                 <Textarea
                   id="results"
                   {...register('results')}
@@ -535,7 +554,13 @@ export function CaseStudiesManager({ vendor }: CaseStudiesManagerProps) {
               <h3 className="text-lg font-medium">Client Testimony (Optional)</h3>
 
               <div className="space-y-2">
-                <Label htmlFor="testimonyQuote">Quote</Label>
+                <div className="flex items-center gap-2">
+                  <Label htmlFor="testimonyQuote">Quote</Label>
+                  <HelpTooltip
+                    content="Direct quote from the client about their experience working with you."
+                    title="Client Quote"
+                  />
+                </div>
                 <Textarea
                   id="testimonyQuote"
                   {...register('testimonyQuote')}
@@ -549,7 +574,13 @@ export function CaseStudiesManager({ vendor }: CaseStudiesManagerProps) {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="testimonyAuthor">Author Name</Label>
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="testimonyAuthor">Author Name</Label>
+                    <HelpTooltip
+                      content="Name of the person providing the testimonial."
+                      title="Author Name"
+                    />
+                  </div>
                   <Input
                     id="testimonyAuthor"
                     {...register('testimonyAuthor')}
@@ -561,7 +592,13 @@ export function CaseStudiesManager({ vendor }: CaseStudiesManagerProps) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="testimonyRole">Author Role</Label>
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="testimonyRole">Author Role</Label>
+                    <HelpTooltip
+                      content="Title or role of the person (e.g., Yacht Owner, Captain)."
+                      title="Author Role"
+                    />
+                  </div>
                   <Input
                     id="testimonyRole"
                     {...register('testimonyRole')}

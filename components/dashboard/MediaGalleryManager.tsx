@@ -29,6 +29,7 @@ import { useTierAccess } from '@/hooks/useTierAccess';
 import { UpgradePromptCard } from './UpgradePromptCard';
 import { uploadFile } from '@/lib/utils/file-upload';
 import type { MediaGalleryItem, MediaGalleryItemType, Vendor } from '@/lib/types';
+import { HelpTooltip } from '@/components/help';
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -602,7 +603,13 @@ export function MediaGalleryManager({ vendor, onSubmit }: MediaGalleryManagerPro
             {/* Image Upload */}
             {formData.type === 'image' && (
               <div className="space-y-2">
-                <Label htmlFor="image-file">Image File</Label>
+                <div className="flex items-center gap-2">
+                  <Label htmlFor="image-file">Image File</Label>
+                  <HelpTooltip
+                    content="Upload JPEG, PNG, WebP, or GIF images (max 10MB). Use high-quality photos."
+                    title="Image Upload"
+                  />
+                </div>
                 <Input
                   id="image-file"
                   type="file"
@@ -623,7 +630,13 @@ export function MediaGalleryManager({ vendor, onSubmit }: MediaGalleryManagerPro
             {/* Video URL */}
             {formData.type === 'video' && (
               <div className="space-y-2">
-                <Label htmlFor="video-url">Video URL</Label>
+                <div className="flex items-center gap-2">
+                  <Label htmlFor="video-url">Video URL</Label>
+                  <HelpTooltip
+                    content="Paste a YouTube or Vimeo URL to embed a video in your gallery."
+                    title="Video URL"
+                  />
+                </div>
                 <Input
                   id="video-url"
                   type="url"
@@ -655,7 +668,13 @@ export function MediaGalleryManager({ vendor, onSubmit }: MediaGalleryManagerPro
             {/* Alt Text (Images only) */}
             {formData.type === 'image' && (
               <div className="space-y-2">
-                <Label htmlFor="alt-text">Alt Text (optional)</Label>
+                <div className="flex items-center gap-2">
+                  <Label htmlFor="alt-text">Alt Text (optional)</Label>
+                  <HelpTooltip
+                    content="Describe the image for accessibility and SEO. Screen readers use this text."
+                    title="Alt Text"
+                  />
+                </div>
                 <Input
                   id="alt-text"
                   placeholder="Descriptive text for accessibility"
@@ -731,7 +750,13 @@ export function MediaGalleryManager({ vendor, onSubmit }: MediaGalleryManagerPro
             {/* Alt Text (Images only) */}
             {editingItem?.type === 'image' && (
               <div className="space-y-2">
-                <Label htmlFor="edit-alt-text">Alt Text (optional)</Label>
+                <div className="flex items-center gap-2">
+                  <Label htmlFor="edit-alt-text">Alt Text (optional)</Label>
+                  <HelpTooltip
+                    content="Describe the image for accessibility and SEO. Screen readers use this text."
+                    title="Alt Text"
+                  />
+                </div>
                 <Input
                   id="edit-alt-text"
                   placeholder="Descriptive text for accessibility"
