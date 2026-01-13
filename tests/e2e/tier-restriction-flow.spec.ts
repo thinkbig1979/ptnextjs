@@ -130,7 +130,7 @@ test.describe('Tier-Based Access Control', () => {
     const vendorId = await page.evaluate(() => window.location.pathname.split('/').pop());
     const apiResult = await page.evaluate(async ({ vendorId, baseUrl }) => {
       try {
-        const response = await fetch(`${baseUrl}/api/vendors/${vendorId}`, {
+        const response = await fetch(`${baseUrl}/api/portal/vendors/${vendorId}`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',

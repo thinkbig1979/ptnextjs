@@ -52,7 +52,7 @@ describe('Dashboard Locations Workflow - Integration Tests', () => {
 
     // Mock successful fetch responses
     (global.fetch as jest.Mock).mockImplementation((url: string, options?: any) => {
-      if (url.includes('/api/vendors/')) {
+      if (url.includes('/api/portal/vendors/') || url.includes('/api/public/vendors/')) {
         return Promise.resolve({
           ok: true,
           json: () => Promise.resolve({ success: true, data: mockVendorTier2, locations: mockVendorTier2.locations }),

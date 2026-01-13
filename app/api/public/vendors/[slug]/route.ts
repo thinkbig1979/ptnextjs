@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { VendorProfileService } from '@/lib/services/VendorProfileService';
 import { TierValidationService } from '@/lib/services/TierValidationService';
+import { VendorComputedFieldsService } from '@/lib/services/VendorComputedFieldsService';
+import { getPayloadClient } from '@/lib/utils/get-payload-config';
 import type { Tier } from '@/lib/services/TierService';
 
 interface RouteContext {
@@ -97,20 +99,43 @@ export async function GET(
 ): Promise<NextResponse<SuccessResponse | ErrorResponse>> {
   try {
     const resolvedParams = await context.params;
-    const slug = resolvedParams.slug;
+    const slugOrId = resolvedParams.slug;
 
-    // Fetch vendor using VendorProfileService (handles published check)
+    // Check if param is a numeric ID or a slug
+    const isNumericId = /^\d+$/.test(slugOrId);
+
+    // Fetch vendor - by ID if numeric, otherwise by slug
     try {
-      const vendor = await VendorProfileService.getVendorProfile(slug, {
-        includeComputed: true, // Include yearsInBusiness
-      });
+      let vendor: Record<string, unknown>;
+
+      if (isNumericId) {
+        // Fetch by ID using Payload directly
+        const payload = await getPayloadClient();
+        const result = await payload.findByID({
+          collection: 'vendors',
+          id: parseInt(slugOrId, 10),
+          depth: 1,
+        });
+
+        if (!result || !result.published) {
+          throw new Error('Vendor not found');
+        }
+
+        vendor = VendorComputedFieldsService.enrichVendorData(result);
+      } else {
+        // Fetch by slug using VendorProfileService (handles published check)
+        vendor = await VendorProfileService.getVendorProfile(slugOrId, {
+          includeComputed: true, // Include yearsInBusiness
+        });
+      }
 
       // Filter fields based on vendor's tier
       const filteredVendor = filterFieldsByTier(vendor);
 
       // Log successful fetch (for analytics/monitoring)
       console.log('[VendorPublicGet] Public vendor profile fetched:', {
-        slug,
+        identifier: slugOrId,
+        isNumericId,
         tier: vendor.tier,
         timestamp: new Date().toISOString(),
       });

@@ -20,7 +20,7 @@ export default function ProductReviewsClient({ product, initialReviews }: Produc
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(`/api/products/${product.id}/reviews`, {
+      const response = await fetch(`/api/public/products/${product.id}/reviews`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

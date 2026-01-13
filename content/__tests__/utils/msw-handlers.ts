@@ -12,7 +12,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 export const handlers = [
   // GET vendor by ID
-  http.get(`${BASE_URL}/api/vendors/:id`, ({ params }) => {
+  http.get(`${BASE_URL}/api/public/vendors/:id`, ({ params }) => {
     const { id } = params;
 
     if (id === mockVendorTier2.id) {
@@ -28,8 +28,8 @@ export const handlers = [
     );
   }),
 
-  // PATCH vendor (update locations)
-  http.patch(`${BASE_URL}/api/vendors/:id`, async ({ request, params }) => {
+  // PATCH vendor (update locations) - uses portal endpoint for authenticated updates
+  http.patch(`${BASE_URL}/api/portal/vendors/:id`, async ({ request, params }) => {
     const { id } = params;
     const body = await request.json();
 
@@ -95,7 +95,7 @@ export const handlers = [
 // Error handlers for testing error states
 export const errorHandlers = [
   // Server error on vendor update
-  http.patch(`${BASE_URL}/api/vendors/:id`, () => {
+  http.patch(`${BASE_URL}/api/portal/vendors/:id`, () => {
     return HttpResponse.json(
       { success: false, error: 'Internal server error' },
       { status: 500 }
