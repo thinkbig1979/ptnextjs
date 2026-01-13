@@ -51,9 +51,10 @@ interface TabDefinition {
  *
  * Tier visibility:
  * - Free: Basic Info, Locations (2 tabs)
- * - Tier 1: + Brand Story, Certifications, Case Studies, Team, Media Gallery (8 tabs)
- * - Tier 2: + Products (9 tabs)
- * - Tier 3: + Promotion (10 tabs)
+ * - Tier 1: + Brand Story, Certifications, Case Studies, Team, Media Gallery (7 tabs)
+ * - Tier 3: + Promotion (8 tabs)
+ *
+ * Note: Products are managed separately at /vendor/dashboard/products
  */
 export function ProfileEditTabs({ vendor }: ProfileEditTabsProps) {
   const { activeTab, setActiveTab, isDirty, markDirty, updateVendor, saveVendor } = useVendorDashboard();
@@ -162,13 +163,6 @@ export function ProfileEditTabs({ vendor }: ProfileEditTabsProps) {
       minTier: 1,
       component: () => <MediaGalleryManager vendor={vendor} onSubmit={handleFormSave} />,
       description: 'Images and videos showcase',
-    },
-    {
-      id: 'products',
-      label: 'Products',
-      minTier: 2,
-      component: PlaceholderComponent('Products'),
-      description: 'Product catalog',
     },
     {
       id: 'promotion',
