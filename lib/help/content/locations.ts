@@ -22,7 +22,7 @@ export const locationsHelp: SectionHelp = {
     {
       fieldName: 'address',
       tooltip: {
-        text: 'Full street address including suite/unit number if applicable.',
+        text: 'Full street address for accurate geocoding and customer visits. Include suite/unit number if applicable.',
         title: 'Street Address',
       },
       placeholder: '123 Marina Blvd, Suite 100',
@@ -30,7 +30,7 @@ export const locationsHelp: SectionHelp = {
     {
       fieldName: 'city',
       tooltip: {
-        text: 'City where this location is situated.',
+        text: 'City name - required for map display and search filters.',
         title: 'City',
       },
       placeholder: 'Fort Lauderdale',
@@ -46,7 +46,7 @@ export const locationsHelp: SectionHelp = {
     {
       fieldName: 'country',
       tooltip: {
-        text: 'Country where this location operates.',
+        text: 'Country - required for regional search and filtering.',
         title: 'Country',
       },
       placeholder: 'United States',
@@ -54,16 +54,30 @@ export const locationsHelp: SectionHelp = {
     {
       fieldName: 'postalCode',
       tooltip: {
-        text: 'Postal or ZIP code for this location.',
+        text: 'Postal/ZIP code - helps with local search results.',
         title: 'Postal Code',
       },
       placeholder: '33316',
     },
     {
-      fieldName: 'isPrimary',
+      fieldName: 'isHQ',
       tooltip: {
-        text: 'Mark this as your primary business location. This will be shown prominently on your profile.',
-        title: 'Primary Location',
+        text: 'Mark one location as your headquarters. This appears as your primary location on your profile.',
+        title: 'Headquarters',
+      },
+    },
+    {
+      fieldName: 'geocoding',
+      tooltip: {
+        text: 'Converts your address to map coordinates. Enter a complete address first, then click to verify location on map.',
+        title: 'Find Coordinates',
+      },
+    },
+    {
+      fieldName: 'tierLimits',
+      tooltip: {
+        text: 'Location limits by tier: Free/Tier 1 allows 1 location (HQ only), Tier 2 allows up to 5 locations, Tier 3 allows unlimited locations.',
+        title: 'Location Limits',
       },
     },
   ],

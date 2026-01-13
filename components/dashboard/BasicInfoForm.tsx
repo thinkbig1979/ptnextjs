@@ -12,6 +12,7 @@ import { Loader2, Save } from 'lucide-react';
 import { basicInfoSchema, type BasicInfoFormData } from '@/lib/validation/vendorSchemas';
 import { Vendor } from '@/lib/types';
 import { useVendorDashboard } from '@/lib/context/VendorDashboardContext';
+import { HelpTooltip, CharacterCounter } from '@/components/help';
 
 export interface BasicInfoFormProps {
   vendor: Vendor;
@@ -140,9 +141,12 @@ export function BasicInfoForm({ vendor, onSubmit }: BasicInfoFormProps) {
             <Input
               id="companyName"
               {...register('companyName')}
-              placeholder="Your Company Name"
+              placeholder="e.g., Acme Marine Services"
               className={errors.companyName ? 'border-red-500' : ''}
             />
+            <p className="text-xs text-muted-foreground">
+              Your official business name as customers will see it.
+            </p>
             {errors.companyName && (
               <p className="text-sm text-red-500">{errors.companyName.message}</p>
             )}
@@ -150,7 +154,14 @@ export function BasicInfoForm({ vendor, onSubmit }: BasicInfoFormProps) {
 
           {/* Slug (Read-only) */}
           <div className="space-y-2">
-            <Label htmlFor="slug">URL Slug</Label>
+            <div className="flex items-center gap-1.5">
+              <Label htmlFor="slug">URL Slug</Label>
+              <HelpTooltip
+                content="Your unique URL path. This cannot be changed after creation and is used to identify your company in web addresses."
+                title="URL Slug"
+                iconSize={14}
+              />
+            </div>
             <Input
               id="slug"
               {...register('slug')}
@@ -173,32 +184,45 @@ export function BasicInfoForm({ vendor, onSubmit }: BasicInfoFormProps) {
             <Textarea
               id="description"
               {...register('description')}
-              placeholder="Brief description of your company (10-500 characters)"
+              placeholder="Describe your company and the services you provide..."
               rows={4}
               className={errors.description ? 'border-red-500' : ''}
             />
             <div className="flex justify-between items-center">
-              <div>
-                {errors.description && (
-                  <p className="text-sm text-red-500">{errors.description.message}</p>
-                )}
-              </div>
-              <p className={`text-xs ${descriptionLength > 500 ? 'text-red-500' : 'text-muted-foreground'}`}>
-                {descriptionLength} / 500
+              <p className="text-xs text-muted-foreground">
+                Brief summary shown in search results and profile header.
               </p>
+              <CharacterCounter
+                current={descriptionLength}
+                min={10}
+                max={500}
+              />
             </div>
+            {errors.description && (
+              <p className="text-sm text-red-500">{errors.description.message}</p>
+            )}
           </div>
 
           {/* Logo URL */}
           <div className="space-y-2">
-            <Label htmlFor="logo">Logo URL</Label>
+            <div className="flex items-center gap-1.5">
+              <Label htmlFor="logo">Logo URL</Label>
+              <HelpTooltip
+                content="Direct link to your company logo image. For best results, use a square image (recommended: 400x400px PNG or JPG)."
+                title="Logo URL"
+                iconSize={14}
+              />
+            </div>
             <Input
               id="logo"
               type="url"
               {...register('logo')}
-              placeholder="https://example.com/logo.png"
+              placeholder="https://example.com/your-logo.png"
               className={errors.logo ? 'border-red-500' : ''}
             />
+            <p className="text-xs text-muted-foreground">
+              Enter a direct link to your company logo image.
+            </p>
             {errors.logo && (
               <p className="text-sm text-red-500">{errors.logo.message}</p>
             )}
@@ -226,9 +250,12 @@ export function BasicInfoForm({ vendor, onSubmit }: BasicInfoFormProps) {
               id="contactEmail"
               type="email"
               {...register('contactEmail')}
-              placeholder="contact@company.com"
+              placeholder="contact@yourcompany.com"
               className={errors.contactEmail ? 'border-red-500' : ''}
             />
+            <p className="text-xs text-muted-foreground">
+              Public email displayed on your profile for customer inquiries.
+            </p>
             {errors.contactEmail && (
               <p className="text-sm text-red-500">{errors.contactEmail.message}</p>
             )}
@@ -244,6 +271,9 @@ export function BasicInfoForm({ vendor, onSubmit }: BasicInfoFormProps) {
               placeholder="+1 (555) 123-4567"
               className={errors.contactPhone ? 'border-red-500' : ''}
             />
+            <p className="text-xs text-muted-foreground">
+              Business phone for customer inquiries (optional).
+            </p>
             {errors.contactPhone && (
               <p className="text-sm text-red-500">{errors.contactPhone.message}</p>
             )}

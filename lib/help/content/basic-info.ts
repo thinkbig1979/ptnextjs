@@ -11,50 +11,59 @@ export const basicInfoHelp: SectionHelp = {
     {
       fieldName: 'companyName',
       tooltip: {
-        text: 'Your company name as it should appear on your public profile.',
+        text: 'Your official business name as customers will see it.',
         title: 'Company Name',
       },
-      placeholder: 'Your Company Name',
+      placeholder: 'e.g., Acme Marine Services',
       characterLimits: {
         min: 2,
         max: 100,
       },
     },
     {
+      fieldName: 'slug',
+      tooltip: {
+        text: 'Your unique URL path. This cannot be changed after creation and is used to identify your company in web addresses.',
+        title: 'URL Slug',
+      },
+      placeholder: 'your-company-name',
+      examples: ['/vendors/your-company-name'],
+    },
+    {
       fieldName: 'description',
       tooltip: {
-        text: 'A brief overview of your company and services. This appears in search results.',
+        text: 'Brief summary shown in search results and profile header. Make it compelling to attract customers.',
         title: 'Company Description',
       },
       placeholder: 'Describe your company and the services you provide...',
       characterLimits: {
-        min: 50,
+        min: 10,
         max: 500,
       },
     },
     {
-      fieldName: 'website',
+      fieldName: 'logoUrl',
       tooltip: {
-        text: 'Your company website URL. Include the full URL with https://.',
-        title: 'Website',
+        text: 'Direct link to your company logo image. For best results, use a square image (recommended: 400x400px PNG or JPG).',
+        title: 'Logo URL',
       },
-      placeholder: 'https://www.yourcompany.com',
+      placeholder: 'https://example.com/your-logo.png',
     },
     {
-      fieldName: 'phone',
+      fieldName: 'contactEmail',
       tooltip: {
-        text: 'Primary contact phone number for your business.',
-        title: 'Phone Number',
-      },
-      placeholder: '+1 (555) 123-4567',
-    },
-    {
-      fieldName: 'email',
-      tooltip: {
-        text: 'Primary business contact email for customer inquiries.',
+        text: 'Public email displayed on your profile for customer inquiries. This will be visible to all visitors.',
         title: 'Contact Email',
       },
       placeholder: 'contact@yourcompany.com',
+    },
+    {
+      fieldName: 'contactPhone',
+      tooltip: {
+        text: 'Business phone for customer inquiries. This field is optional but recommended for better accessibility.',
+        title: 'Contact Phone',
+      },
+      placeholder: '+1 (555) 123-4567',
     },
   ],
 };

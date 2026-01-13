@@ -6,19 +6,29 @@ import { z } from 'zod';
 
 // Basic Info Form Schema
 export const basicInfoSchema = z.object({
-  companyName: z.string().min(2, 'Company name must be at least 2 characters').max(100, 'Company name must be less than 100 characters'),
-  slug: z.string().min(2).max(100).regex(/^[a-z0-9-]+$/, 'Slug must contain only lowercase letters, numbers, and hyphens'),
-  description: z.string().min(10, 'Description must be at least 10 characters').max(500, 'Description must be less than 500 characters'),
+  companyName: z.string()
+    .min(2, 'Please enter a company name with at least 2 characters')
+    .max(100, 'Company name is too long (maximum 100 characters)'),
+  slug: z.string()
+    .min(2, 'URL slug must have at least 2 characters')
+    .max(100, 'URL slug is too long (maximum 100 characters)')
+    .regex(/^[a-z0-9-]+$/, 'URL slug can only contain lowercase letters, numbers, and hyphens'),
+  description: z.string()
+    .min(10, 'Please provide a description with at least 10 characters')
+    .max(500, 'Description is too long (maximum 500 characters)'),
   // Allow empty strings, null, or undefined - only validate URL format if value is provided
   logo: z.preprocess(
     (val) => (val === '' || val === null ? undefined : val),
-    z.string().url('Invalid logo URL').optional()
+    z.string().url('Please enter a valid URL for your logo (e.g., https://example.com/logo.png)').optional()
   ),
-  contactEmail: z.string().email('Invalid email address'),
+  contactEmail: z.string().email('Please enter a valid email address'),
   // Allow empty strings, null, or undefined for optional phone
   contactPhone: z.preprocess(
     (val) => (val === '' || val === null ? undefined : val),
-    z.string().min(10, 'Phone number must be at least 10 characters').max(20, 'Phone number must be less than 20 characters').optional()
+    z.string()
+      .min(10, 'Phone number should have at least 10 digits')
+      .max(20, 'Phone number is too long (maximum 20 characters)')
+      .optional()
   ),
 });
 
