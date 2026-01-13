@@ -5,12 +5,13 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
-import { Upload, AlertCircle, FileSpreadsheet, CheckCircle, Loader2 } from 'lucide-react';
+import { Upload, AlertCircle, FileSpreadsheet, CheckCircle, Loader2, Info, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTierAccess } from '@/hooks/useTierAccess';
 import { useVendorDashboard } from '@/lib/context/VendorDashboardContext';
 import { UpgradePromptCard } from './UpgradePromptCard';
 import { uploadFile } from '@/lib/utils/file-upload';
+import { HelpTooltip } from '@/components/help';
 
 import { ExcelPreviewDialog } from './ExcelPreviewDialog';
 
@@ -359,18 +360,39 @@ export function ExcelImportCard() {
   // Show upgrade prompt for users without access
   if (!hasAccess) {
     return (
-      <UpgradePromptCard
-        currentTier={tier}
-        targetTier={upgradePath}
-        feature="Excel Import/Export"
-        benefits={[
-          'Import vendor data from Excel spreadsheets',
-          'Bulk update products, certifications, and team members',
-          'Export current data to Excel format',
-          'Download tier-appropriate templates',
-          'Automatic data validation',
-        ]}
-      />
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2">
+              <Upload className="h-5 w-5" />
+              Excel Import
+            </CardTitle>
+            <HelpTooltip
+              title="Tier 2+ Feature"
+              content="Excel import is available for Tier 2 (Professional) and above. Upgrade your subscription to access bulk data import, automatic validation, and import history tracking."
+              side="right"
+              iconSize={16}
+            />
+          </div>
+          <CardDescription>
+            Bulk import requires a Professional (Tier 2) or higher subscription
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <UpgradePromptCard
+            currentTier={tier}
+            targetTier={upgradePath}
+            feature="Excel Import/Export"
+            benefits={[
+              'Import vendor data from Excel spreadsheets',
+              'Bulk update products, certifications, and team members',
+              'Export current data to Excel format',
+              'Download tier-appropriate templates',
+              'Automatic data validation',
+            ]}
+          />
+        </CardContent>
+      </Card>
     );
   }
 
@@ -395,16 +417,49 @@ export function ExcelImportCard() {
     <>
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Upload className="h-5 w-5" />
-            Excel Import
-          </CardTitle>
+          <div className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2">
+              <Upload className="h-5 w-5" />
+              Excel Import
+            </CardTitle>
+            <HelpTooltip
+              title="Bulk Data Import"
+              content="Upload an Excel file to update your vendor data in bulk. Data is validated before import to prevent errors. Only valid rows will be imported."
+              side="right"
+              iconSize={16}
+            />
+          </div>
           <CardDescription>
             Upload an Excel file to import or update your vendor data
           </CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-4">
+          {/* Import Requirements Info */}
+          <div className="flex items-start gap-3 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
+            <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
+            <div className="text-sm">
+              <p className="font-medium text-amber-800 dark:text-amber-200">Important: Data will be overwritten</p>
+              <p className="text-amber-700 dark:text-amber-300 mt-1">
+                Importing data will replace existing values for matching fields. Download a backup export first if needed.
+              </p>
+            </div>
+          </div>
+
+          {/* File Format Requirements */}
+          <div className="flex items-start gap-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+            <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5 shrink-0" />
+            <div className="text-sm text-blue-700 dark:text-blue-300">
+              <p className="font-medium">File Format Requirements:</p>
+              <ul className="list-disc list-inside mt-1 space-y-0.5">
+                <li>Excel format (.xlsx) only</li>
+                <li>Maximum file size: 5MB</li>
+                <li>Column headers must match the template exactly</li>
+                <li>Use the download template feature for correct format</li>
+              </ul>
+            </div>
+          </div>
+
           {/* Error Alert */}
           {error && (
             <Alert variant="destructive">

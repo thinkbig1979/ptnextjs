@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useVendorDashboard } from '@/lib/context/VendorDashboardContext';
+import { HelpTooltip } from '@/components/help';
 import {
   Dialog,
   DialogContent,
@@ -274,10 +275,18 @@ export function ImportHistoryCard() {
         <CardHeader>
           <div className="flex items-start justify-between">
             <div>
-              <CardTitle className="flex items-center gap-2">
-                <FileSpreadsheet className="h-5 w-5" />
-                Import History
-              </CardTitle>
+              <div className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2">
+                  <FileSpreadsheet className="h-5 w-5" />
+                  Import History
+                </CardTitle>
+                <HelpTooltip
+                  title="Import History"
+                  content="Track all your past import operations with timestamps and status. View details to see which rows succeeded, which failed, and what errors occurred. Use this to verify imports and troubleshoot issues."
+                  side="right"
+                  iconSize={16}
+                />
+              </div>
               <CardDescription>
                 View past import operations and their results
               </CardDescription>
@@ -297,6 +306,12 @@ export function ImportHistoryCard() {
                   <SelectItem value="failed">Failed</SelectItem>
                 </SelectContent>
               </Select>
+              <HelpTooltip
+                title="Import Status Types"
+                content="Success: All rows imported without errors. Partial: Some rows imported, but others had errors. Failed: Import could not be completed due to critical errors."
+                side="left"
+                iconSize={14}
+              />
             </div>
           </div>
         </CardHeader>

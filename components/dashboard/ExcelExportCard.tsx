@@ -4,9 +4,10 @@ import { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Download, FileSpreadsheet } from 'lucide-react';
+import { Download, FileSpreadsheet, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 import { useVendorDashboard } from '@/lib/context/VendorDashboardContext';
+import { HelpTooltip } from '@/components/help';
 
 /**
  * ExcelExportCard Component
@@ -153,10 +154,24 @@ export function ExcelExportCard() {
       <CardContent className="space-y-4">
         {/* Download Template Section */}
         <div className="space-y-2">
-          <h4 className="text-sm font-medium">Download Import Template</h4>
+          <div className="flex items-center gap-2">
+            <h4 className="text-sm font-medium">Download Import Template</h4>
+            <HelpTooltip
+              title="Import Template"
+              content="Download a pre-formatted Excel template that matches your subscription tier. Use this template to prepare your data for bulk import. Column headers must remain unchanged for successful import."
+              side="right"
+              iconSize={14}
+            />
+          </div>
           <p className="text-sm text-muted-foreground">
             Get a pre-formatted Excel template with your tier-appropriate fields
           </p>
+          <div className="flex items-start gap-2 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-sm">
+            <AlertTriangle className="h-4 w-4 text-blue-600 dark:text-blue-400 mt-0.5 shrink-0" />
+            <p className="text-blue-700 dark:text-blue-300">
+              <strong>Tip:</strong> Download the template first to ensure your data matches the required format before importing.
+            </p>
+          </div>
           <Button
             onClick={handleDownloadTemplate}
             disabled={downloadingTemplate}
@@ -173,7 +188,15 @@ export function ExcelExportCard() {
 
         {/* Export Data Section */}
         <div className="space-y-2">
-          <h4 className="text-sm font-medium">Export Current Data</h4>
+          <div className="flex items-center gap-2">
+            <h4 className="text-sm font-medium">Export Current Data</h4>
+            <HelpTooltip
+              title="Data Export"
+              content="Download your current vendor data as an Excel file for backup, editing, or record-keeping. Includes all your profile information, products, certifications, and locations."
+              side="right"
+              iconSize={14}
+            />
+          </div>
           <p className="text-sm text-muted-foreground">
             Export your current vendor profile data to Excel
           </p>
@@ -191,6 +214,12 @@ export function ExcelExportCard() {
             >
               Include export metadata
             </label>
+            <HelpTooltip
+              title="Export Metadata"
+              content="Adds a separate sheet with export date, vendor information, and data summary. Useful for tracking when exports were created."
+              side="top"
+              iconSize={14}
+            />
           </div>
 
           <Button
