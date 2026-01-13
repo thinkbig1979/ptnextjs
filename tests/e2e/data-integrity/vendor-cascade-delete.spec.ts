@@ -74,7 +74,7 @@ async function createVendorWithRelatedData(page: Page): Promise<{
  */
 async function vendorExists(page: Page, vendorId: string): Promise<boolean> {
   try {
-    const response = await page.request.get(`${BASE_URL}/api/vendors/${vendorId}`);
+    const response = await page.request.get(`${BASE_URL}/api/public/vendors/${vendorId}`);
     return response.ok();
   } catch {
     return false;
@@ -88,7 +88,7 @@ async function productsExist(page: Page, productIds: string[]): Promise<boolean[
   const results: boolean[] = [];
   for (const productId of productIds) {
     try {
-      const response = await page.request.get(`${BASE_URL}/api/products/${productId}`);
+      const response = await page.request.get(`${BASE_URL}/api/public/products/${productId}`);
       results.push(response.ok());
     } catch {
       results.push(false);

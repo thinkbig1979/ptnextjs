@@ -422,7 +422,7 @@ async function seedTestProducts(baseURL: string): Promise<boolean> {
 
     for (const slug of uniqueSlugs) {
       try {
-        const response = await fetch(`${baseURL}/api/vendors?where[slug][equals]=${slug}&limit=1`);
+        const response = await fetch(`${baseURL}/api/public/vendors?where[slug][equals]=${slug}&limit=1`);
         if (response.ok) {
           const data = await response.json();
           if (data.docs && data.docs.length > 0) {

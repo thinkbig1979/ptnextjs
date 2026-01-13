@@ -92,7 +92,7 @@ async function getProductVendorReference(
   productId: string
 ): Promise<{ vendorId?: string; vendorExists?: boolean }> {
   try {
-    const response = await page.request.get(`${BASE_URL}/api/products/${productId}`);
+    const response = await page.request.get(`${BASE_URL}/api/public/products/${productId}`);
 
     if (!response.ok()) {
       return {};
@@ -107,7 +107,7 @@ async function getProductVendorReference(
       const vendorId = typeof vendorRef === 'object' ? vendorRef.id : vendorRef;
       // Use public vendors API (not portal which requires auth)
       const vendorResponse = await page.request.get(
-        `${BASE_URL}/api/vendors/${vendorId}`
+        `${BASE_URL}/api/public/vendors/${vendorId}`
       );
 
       return {
@@ -177,7 +177,7 @@ test.describe('Data Integrity: Foreign Key Constraints', () => {
     await page.waitForTimeout(500);
 
     // Check product state
-    const productResponse = await page.request.get(`${BASE_URL}/api/products/${productId}`);
+    const productResponse = await page.request.get(`${BASE_URL}/api/public/products/${productId}`);
 
     if (productResponse.ok()) {
       // Product still exists - vendor reference should be nullified

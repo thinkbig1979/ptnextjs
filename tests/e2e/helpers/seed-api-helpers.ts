@@ -248,7 +248,7 @@ export async function waitForSeedData(
     try {
       // Try to load a seeded vendor
       const response = await page.request.get(
-        `/api/vendors/${vendorIds[0]}`,
+        `/api/public/vendors/${vendorIds[0]}`,
         {
           timeout: 2000,
         }

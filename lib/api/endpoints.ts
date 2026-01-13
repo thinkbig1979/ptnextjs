@@ -42,6 +42,8 @@ export const VENDOR_PORTAL_ENDPOINTS = {
  * Public vendor endpoints (no authentication required)
  */
 export const VENDOR_PUBLIC_ENDPOINTS = {
+  list: '/api/public/vendors',
+  byId: (id: string) => `/api/public/vendors/${id}` as const,
   bySlug: (slug: string) => `/api/public/vendors/${slug}` as const,
   reviews: (vendorSlug: string) =>
     `/api/public/vendors/${vendorSlug}/reviews` as const,
@@ -67,10 +69,19 @@ export const ADMIN_ENDPOINTS = {
 } as const;
 
 /**
- * Product endpoints
+ * Product endpoints (public)
  */
 export const PRODUCT_ENDPOINTS = {
-  reviews: (productId: string) => `/api/products/${productId}/reviews` as const,
+  list: '/api/public/products',
+  byId: (productId: string) => `/api/public/products/${productId}` as const,
+  reviews: (productId: string) => `/api/public/products/${productId}/reviews` as const,
+} as const;
+
+/**
+ * Blog endpoints (public)
+ */
+export const BLOG_ENDPOINTS = {
+  list: '/api/public/blog',
 } as const;
 
 /**
@@ -100,6 +111,7 @@ export const API_ENDPOINTS = {
   public: VENDOR_PUBLIC_ENDPOINTS,
   admin: ADMIN_ENDPOINTS,
   products: PRODUCT_ENDPOINTS,
+  blog: BLOG_ENDPOINTS,
   notifications: NOTIFICATION_ENDPOINTS,
   utility: UTILITY_ENDPOINTS,
 } as const;

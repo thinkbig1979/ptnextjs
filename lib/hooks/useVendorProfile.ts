@@ -193,7 +193,7 @@ export function useVendorProfileBySlug(
   slug: string | null,
   options: SWRConfiguration<Vendor> = {}
 ): UseVendorProfileReturn {
-  const swrKey = slug ? `/api/vendors/${slug}` : null;
+  const swrKey = slug ? `/api/public/vendors/${slug}` : null;
 
   const {
     data: vendor,
