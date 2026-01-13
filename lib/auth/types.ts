@@ -11,7 +11,7 @@ export interface AuthUser {
   id: string;
   email: string;
   role: 'admin' | 'vendor';
-  tier?: 'free' | 'tier1' | 'tier2';
+  tier?: 'free' | 'tier1' | 'tier2' | 'tier3';
   status?: 'pending' | 'approved' | 'rejected' | 'suspended';
   tokenVersion: number;
   type: 'access' | 'refresh';

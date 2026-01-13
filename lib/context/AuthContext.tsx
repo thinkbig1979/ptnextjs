@@ -13,7 +13,7 @@ interface AuthContextState {
   isLoading: boolean;
   error: string | null;
   role: 'admin' | 'vendor' | null;
-  tier: 'free' | 'tier1' | 'tier2' | null;
+  tier: 'free' | 'tier1' | 'tier2' | 'tier3' | null;
   status: 'pending' | 'approved' | 'rejected' | 'suspended' | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;

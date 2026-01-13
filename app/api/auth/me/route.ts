@@ -6,7 +6,7 @@ import { getPayloadClient } from '@/lib/utils/get-payload-config';
  * GET /api/auth/me
  *
  * Returns current authenticated user from JWT token in httpOnly cookie
- * Also fetches fresh approval status from database to ensure it's up-to-date
+ * Also fetches fresh approval status and tier from database to ensure they're up-to-date
  */
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     // Validate token and get user data
     const user = authService.validateToken(token);
 
-    // Fetch fresh approval status from database
+    // Fetch fresh approval status and tier from database
     try {
       const payload = await getPayloadClient();
       const userDoc = await payload.findByID({
@@ -34,10 +34,28 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       // Update status from database if user is a vendor
       if (userDoc && user.role === 'vendor') {
         user.status = (userDoc.status as 'pending' | 'approved' | 'rejected') || 'pending';
+
+        // Fetch fresh tier from vendor record
+        // The tier is stored on the vendor, not the user
+        const vendors = await payload.find({
+          collection: 'vendors',
+          where: {
+            user: {
+              equals: user.id,
+            },
+          },
+          limit: 1,
+          depth: 0,
+        });
+
+        if (vendors.docs.length > 0) {
+          const vendor = vendors.docs[0];
+          user.tier = (vendor.tier as 'free' | 'tier1' | 'tier2' | 'tier3') || 'free';
+        }
       }
     } catch (dbError) {
-      // If database fetch fails, continue with JWT status
-      console.warn('[Auth] Failed to fetch fresh user status from database:', dbError);
+      // If database fetch fails, continue with JWT values
+      console.warn('[Auth] Failed to fetch fresh user data from database:', dbError);
     }
 
     return NextResponse.json({
