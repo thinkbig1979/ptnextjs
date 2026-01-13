@@ -24,6 +24,8 @@ export interface FieldHelp {
   tooltip: TooltipContent;
   /** Placeholder text suggestion */
   placeholder?: string;
+  /** Description text shown below the input field */
+  formDescription?: string;
   /** Character limits for text fields */
   characterLimits?: {
     min?: number;

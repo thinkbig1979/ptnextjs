@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { GeocodingButton } from '@/components/vendor/GeocodingButton';
 import { Trash2 } from 'lucide-react';
+import { HelpTooltip } from '@/components/help';
 
 export interface LocationFormFieldsProps {
   location: VendorLocation;
@@ -200,9 +201,16 @@ export function LocationFormFields({
 
       {/* Address */}
       <div className="space-y-2">
-        <Label htmlFor={`address-${location.id || 'new'}`}>
-          Address <span className="text-red-500">*</span>
-        </Label>
+        <div className="flex items-center gap-1">
+          <Label htmlFor={`address-${location.id || 'new'}`}>
+            Address <span className="text-red-500">*</span>
+          </Label>
+          <HelpTooltip
+            title="Street Address"
+            content="Full street address for accurate geocoding and customer visits."
+            iconSize={14}
+          />
+        </div>
         <Input
           id={`address-${location.id || 'new'}`}
           value={location.address || ''}
@@ -213,6 +221,7 @@ export function LocationFormFields({
           aria-invalid={touched.address && !!errors.address}
           className={touched.address && errors.address ? 'border-red-500' : ''}
         />
+        <p className="text-xs text-muted-foreground">Full street address including suite/unit number if applicable</p>
         {touched.address && errors.address && (
           <p className="text-sm text-red-600 dark:text-red-400">{errors.address}</p>
         )}
@@ -221,9 +230,16 @@ export function LocationFormFields({
       {/* City and Country - Side by side on desktop */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor={`city-${location.id || 'new'}`}>
-            City <span className="text-red-500">*</span>
-          </Label>
+          <div className="flex items-center gap-1">
+            <Label htmlFor={`city-${location.id || 'new'}`}>
+              City <span className="text-red-500">*</span>
+            </Label>
+            <HelpTooltip
+              title="City"
+              content="City name - required for map display and search filters."
+              iconSize={14}
+            />
+          </div>
           <Input
             id={`city-${location.id || 'new'}`}
             value={location.city || ''}
@@ -234,15 +250,23 @@ export function LocationFormFields({
             aria-invalid={touched.city && !!errors.city}
             className={touched.city && errors.city ? 'border-red-500' : ''}
           />
+          <p className="text-xs text-muted-foreground">Required for map display and search filters</p>
           {touched.city && errors.city && (
             <p className="text-sm text-red-600 dark:text-red-400">{errors.city}</p>
           )}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor={`country-${location.id || 'new'}`}>
-            Country <span className="text-red-500">*</span>
-          </Label>
+          <div className="flex items-center gap-1">
+            <Label htmlFor={`country-${location.id || 'new'}`}>
+              Country <span className="text-red-500">*</span>
+            </Label>
+            <HelpTooltip
+              title="Country"
+              content="Country - required for regional search and filtering."
+              iconSize={14}
+            />
+          </div>
           <Input
             id={`country-${location.id || 'new'}`}
             value={location.country || ''}
@@ -253,6 +277,7 @@ export function LocationFormFields({
             aria-invalid={touched.country && !!errors.country}
             className={touched.country && errors.country ? 'border-red-500' : ''}
           />
+          <p className="text-xs text-muted-foreground">Required for regional search and filtering</p>
           {touched.country && errors.country && (
             <p className="text-sm text-red-600 dark:text-red-400">{errors.country}</p>
           )}
@@ -261,9 +286,16 @@ export function LocationFormFields({
 
       {/* Postal Code */}
       <div className="space-y-2">
-        <Label htmlFor={`postalCode-${location.id || 'new'}`}>
-          Postal Code <span className="text-muted-foreground text-xs">(optional)</span>
-        </Label>
+        <div className="flex items-center gap-1">
+          <Label htmlFor={`postalCode-${location.id || 'new'}`}>
+            Postal Code <span className="text-muted-foreground text-xs">(optional)</span>
+          </Label>
+          <HelpTooltip
+            title="Postal Code"
+            content="Postal/ZIP code - helps with local search results."
+            iconSize={14}
+          />
+        </div>
         <Input
           id={`postalCode-${location.id || 'new'}`}
           value={location.postalCode || ''}
@@ -271,6 +303,7 @@ export function LocationFormFields({
           disabled={!canEdit}
           placeholder="98000"
         />
+        <p className="text-xs text-muted-foreground">Helps with local search results</p>
       </div>
 
       {/* Coordinates with Geocoding Button */}
@@ -321,13 +354,23 @@ export function LocationFormFields({
 
         {/* Geocoding Button */}
         {canEdit && (
-          <GeocodingButton
-            address={location.address || ''}
-            onSuccess={handleGeocodingSuccess}
-            variant="outline"
-            size="sm"
-            className="w-full md:w-auto"
-          />
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <GeocodingButton
+                address={location.address || ''}
+                onSuccess={handleGeocodingSuccess}
+                variant="outline"
+                size="sm"
+                className="w-full md:w-auto"
+              />
+              <HelpTooltip
+                title="Find Coordinates"
+                content="Converts your address to map coordinates. Enter a complete address first, then click to verify location on map."
+                iconSize={14}
+              />
+            </div>
+            <p className="text-xs text-muted-foreground">Enter complete address before clicking to find coordinates</p>
+          </div>
         )}
       </div>
 
@@ -349,6 +392,11 @@ export function LocationFormFields({
           >
             Set as Headquarters
           </Label>
+          <HelpTooltip
+            title="Headquarters"
+            content="Mark one location as your headquarters. This appears as your primary location on your profile."
+            iconSize={14}
+          />
         </div>
 
         {canEdit && (

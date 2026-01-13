@@ -18,6 +18,7 @@ import { VendorLocation } from '@/lib/types';
 import { useTierAccess } from '@/hooks/useTierAccess';
 import { LocationFormFields } from './LocationFormFields';
 import { TierUpgradePrompt } from './TierUpgradePrompt';
+import { HelpTooltip } from '@/components/help';
 
 export interface LocationsManagerCardProps {
   vendor: {
@@ -240,11 +241,22 @@ export function LocationsManagerCard({ vendor, onUpdate }: LocationsManagerCardP
               <CardDescription>
                 Add and manage your office locations. One location must be designated as headquarters.
               </CardDescription>
+              {/* Tier Limit Indicator */}
+              <p className="text-sm text-muted-foreground mt-1">
+                {locations.length} of {maxLocations === Infinity ? 'unlimited' : maxLocations} location{maxLocations === 1 ? '' : 's'} used ({tier})
+              </p>
             </div>
-            <Button onClick={handleAddLocation} size="sm" disabled={isEditing || !canAddMore}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Location
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button onClick={handleAddLocation} size="sm" disabled={isEditing || !canAddMore}>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Location
+              </Button>
+              <HelpTooltip
+                title="Location Limits"
+                content="Location limits by tier: Free/Tier 1 allows 1 location (HQ only), Tier 2 allows up to 5 locations, Tier 3 allows unlimited locations."
+                side="left"
+              />
+            </div>
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
