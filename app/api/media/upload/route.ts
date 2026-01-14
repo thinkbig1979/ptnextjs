@@ -1,12 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPayloadClient } from '@/lib/utils/get-payload-config';
+import { validateToken } from '@/lib/auth';
 
 /**
  * POST /api/media/upload
  * Upload an image to Payload Media collection
+ *
+ * @requires Authentication - Only authenticated users can upload media
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
+    // Authenticate user - only logged-in users can upload media
+    const auth = await validateToken(request);
+    if (!auth.success) {
+      return NextResponse.json(
+        { error: auth.error, code: auth.code },
+        { status: auth.status }
+      );
+    }
+
     const formData = await request.formData();
     const file = formData.get('file') as File;
 
