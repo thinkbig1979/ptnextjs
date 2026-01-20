@@ -1,6 +1,6 @@
 ---
-version: 5.5.0
-last-updated: 2026-01-17
+version: 5.6.0
+last-updated: 2026-01-20
 related-files:
   - docs/GETTING_STARTED.md
   - docs/ARCHITECTURE.md
@@ -9,7 +9,7 @@ related-files:
 
 # CLAUDE.md
 
-Agent OS v5.5.0 - Structured workflows for AI agents to build products systematically.
+Agent OS v5.6.0 - Structured workflows for AI agents to build products systematically.
 
 ## What is Agent OS?
 
@@ -63,16 +63,16 @@ config.yml          -> Feature toggles and thresholds
 1. **Plan**: `/plan-product` - Define product, install Agent OS
 2. **Specify**: `/create-spec` - Create feature specifications
 3. **Task**: `/create-tasks` - Break specs into executable tasks
-4. **Execute**: `/run` - Unified task execution (autonomous with supervisor pattern)
+4. **Execute**: `/run` or `/orchestrate` - Task execution (2-layer or 3-layer)
 5. **Validate**: `/validate-browser` - Browser testing for web components
 
-### Run Command Modes
+### Execution Modes
 
-| Mode | Description |
-|------|-------------|
-| `/run` | Autonomous execution with session ledger (default) |
-| `/run --quick` | Direct execution for simple tasks |
-| `/run --supervisor` | Force supervisor pattern |
+| Command | Layers | When to Use |
+|---------|--------|-------------|
+| `/run` | 2-layer (Orchestrator → Workers) | < 10 tasks, single session expected |
+| `/run --quick` | 1-layer (direct) | Simple, immediate tasks |
+| `/orchestrate` | 3-layer (Orchestrator → PM → Workers) | > 10 tasks, multi-session, complex dependencies |
 
 ## Agent Execution Model
 
@@ -112,12 +112,15 @@ bd sync                               # Sync with git (always run at session end
 ~/.agent-os/setup/install-agent-os.sh    # Install in project
 ~/.agent-os/setup/install-hooks.sh       # Install quality hooks
 
-# Task execution (unified command)
-/run                                     # Execute ready tasks (autonomous mode)
+# Task execution - 2-layer (Orchestrator → Workers)
+/run                                     # Execute ready tasks
 /run <SPEC_FOLDER>                       # Execute spec tasks
-/run --quick                             # Direct execution (no supervisor)
-/run --supervisor                        # Force supervisor pattern
+/run --quick                             # Direct execution (no orchestration)
 /run --tasks "T1, T2"                    # Inline task list
+
+# Task execution - 3-layer (Orchestrator → PM → Workers)
+/orchestrate                             # Complex multi-session work
+/orchestrate <SPEC_FOLDER>               # Execute spec with PM coordination
 # Note: Session start auto-detects ledger for resume
 
 # E2E Testing (unified command)

@@ -1,80 +1,49 @@
 ---
-description: Execute individual tasks from the task list using Unified Beads-First Execution
+description: "[DEPRECATED] Use /run instead - Execute tasks with 2-layer orchestration"
 globs:
 alwaysApply: false
-version: 2.0
+version: 3.0
 encoding: UTF-8
 ---
 
 # Execute Tasks
 
-## Overview
+> **DEPRECATED**: This command is deprecated. Use `/run` or `/orchestrate` instead.
 
-Execute tasks using Agent OS v4.1+ **Unified Execution Protocol** - combining Beads-first orchestration with parallel specialist delegation. This command provides:
+## Migration Guide
 
-### Core Features
-- ✅ **Beads-first orchestration** - ALL tasks created with dependencies BEFORE execution
-- ✅ **Context-aware execution** - PreCompact hook triggers graceful handoff
-- ✅ **Parallel specialist execution** - Independent tasks run in parallel waves
-- ✅ **Real-time progress tracking** - Tasks and specs updated as work progresses
+| Old Command | New Command | When to Use |
+|-------------|-------------|-------------|
+| `/execute-tasks` | `/run` | Simple work, < 10 tasks |
+| `/execute-tasks` (complex) | `/orchestrate` | Complex work, 10+ tasks |
 
-### Inherited from Orchestrated Execution
-- ✅ **60-80% faster execution** through intelligent parallel processing
-- ✅ **Specialist agent coordination** for testing, implementation, security, etc.
-- ✅ **Pre-flight checks** - Repo health and quality hooks verification
-- ✅ **Deliverable verification** (v2.5+) - all files verified before completion
-- ✅ **TDD enforcement** with RED-GREEN-REFACTOR cycle tracking
+## Quick Redirect
 
-### Inherited from Context-Aware Protocol
-- ✅ **Clean handoffs** - Full state saved to Beads before stopping
-- ✅ **User decision prompts** - No autonomous decisions on blocked tasks
-- ✅ **Checkpoint protocol** - Git commits and Beads sync at every checkpoint
-- ✅ **Continuation support** - Seamless resume from checkpoints
-
-## Execution Flow
-
-```
-Phase 0: Pre-Flight
-├─ Quality hooks verification
-├─ Repository health check
-└─ Branch setup
-
-Phase 1: Beads Task Decomposition (BEFORE any execution)
-├─ Analyze full work scope
-├─ Create ALL beads tasks
-├─ Define ALL dependencies
-└─ Create execution plan (parallel waves)
-
-Phase 2: Parallel Execution
-├─ Wave N: Launch parallel subagents
-├─ Collect status reports
-├─ Handle completions/checkpoints/blockers
-├─ Update documents (tasks.md, specs)
-└─ Checkpoint (git commit, bd sync)
-
-Phase 3: Context Management
-├─ PreCompact hook signals graceful handoff
-└─ Create session ledger and stop when triggered
-
-Phase 4: Post-Execution
-├─ Verify all deliverables
-├─ Run full test suite
-├─ Close beads tasks
-└─ Final commit and summary
+For most cases, just use:
+```bash
+/run                           # 2-layer: Orchestrator → Workers
+/run <SPEC_FOLDER>             # Execute spec tasks
 ```
 
-## Usage
-
-```
-/execute-tasks                    # Execute next uncompleted task
-/execute-tasks <SPEC_FOLDER>      # Execute all tasks for a spec
-/execute-tasks <TASK_ID>          # Execute specific task
+For complex multi-session work:
+```bash
+/orchestrate                   # 3-layer: Orchestrator → PM → Workers
+/orchestrate <SPEC_FOLDER>     # Execute spec tasks with PM coordination
 ```
 
-**Use this when:** Implementing tasks from a task list created by create-tasks.
+## Why the Change?
 
-**Use validate-spec after:** To validate implementation quality and completeness.
+The old `/execute-tasks` mixed 2-layer and 3-layer patterns inconsistently. The new commands provide:
+
+- `/run` - Clean 2-layer (Orchestrator → Workers) for simple work
+- `/orchestrate` - Clean 3-layer (Orchestrator → PM → Workers) for complex work
 
 ## Instructions
 
+**If you really need the old behavior**, the instruction file still exists:
+
 @.agent-os/instructions/core/execute-tasks.md
+
+**But prefer using:**
+- @.agent-os/instructions/core/run.md (2-layer)
+- @.agent-os/instructions/core/orchestrate.md (3-layer)

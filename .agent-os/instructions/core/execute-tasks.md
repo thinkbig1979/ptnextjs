@@ -64,6 +64,7 @@ Phase 4: Post-Execution
 | **User approval** | Always prompt for blocked/checkpoint decisions. |
 | **Ledger prompts** | Suggest ledger updates after tasks and before compaction (non-blocking). |
 | **Ledger on remaining work** | **MANDATORY**: Create session ledger BEFORE displaying summary if remaining tasks exist. |
+| **Agent state tracking** | Update agent state via `bd agent state` at lifecycle transitions. |
 
 ---
 
@@ -392,28 +393,34 @@ PROCEED to Phase 2
 
 ```bash
 FOR each wave:
-  # 1. Claim tasks
+  # 1. Claim tasks and set agent states
   FOR task in wave:
     bd update ${task} --status in_progress
+    AGENT_ID="aos-${ROLE}-${task}"
+    bd agent state ${AGENT_ID} spawning
 
   # 2. Launch parallel subagents
   FOR task in wave:
+    AGENT_ID="aos-${ROLE}-${task}"
     Task(subagent_type: "general-purpose",
-         prompt: "{BEADS_DELEGATION_TEMPLATE}")
+         prompt: "{BEADS_DELEGATION_TEMPLATE with AGENT_ID}")
 
-  # 3. Collect status reports
+  # 3. Collect status reports and update agent states
   FOR report in responses:
-    PARSE: STATUS, TASK_ID, COMPLETED, REMAINING, BLOCKERS
+    PARSE: STATUS, TASK_ID, AGENT_ID, COMPLETED, REMAINING, BLOCKERS
 
     IF STATUS == "completed":
+      bd agent state ${AGENT_ID} done
       bd close ${TASK_ID} --reason="[summary]"
       UPDATE tasks.md → ✅
 
     ELIF STATUS == "stopped_at_checkpoint":
+      bd agent state ${AGENT_ID} stopped
       bd note ${TASK_ID} "[checkpoint details]"
       ADD to continuation_queue
 
     ELIF STATUS == "blocked":
+      bd agent state ${AGENT_ID} stuck
       bd note ${TASK_ID} "[blocker details]"
       PROMPT user
 
@@ -434,22 +441,52 @@ BEADS CONTEXT PROTOCOL
 ═══════════════════════════════════════════════════════════
 
 Working on: ${TASK_ID} - ${TASK_TITLE}
+AGENT_ID: ${AGENT_ID}
 
 BEFORE starting:
 1. READ: bd show ${TASK_ID}
-2. CHECK for notes
+2. CHECK for notes and comments
 3. VERIFY no blockers
+4. bd agent state ${AGENT_ID} working
+5. bd comment ${TASK_ID} "Starting: reviewing requirements"
 
 DURING work:
 1. Save every 10 calls: bd note ${TASK_ID} "..."
-2. Update Agent-OS task file
-3. If PreCompact hook fires, follow graceful shutdown instructions
+2. Progress comment every 5-10 tool calls: bd comment ${TASK_ID} "Progress: ..."
+3. Heartbeat every 10 tool calls: bd agent heartbeat ${AGENT_ID}
+4. Update Agent-OS task file
+5. If PreCompact hook fires, follow graceful shutdown instructions
 
 BEFORE stopping (REQUIRED):
-1. bd note ${TASK_ID} "[checkpoint]"
-2. git add -A && git commit -m "checkpoint: ${TASK_ID} - [brief]"
-3. bd sync --from-main
-4. REPORT status (format below)
+1. bd comment ${TASK_ID} "Complete: [summary]" OR "Stopped: [reason]"
+2. bd note ${TASK_ID} "[checkpoint]"
+3. bd agent state ${AGENT_ID} done (or stopped if checkpoint)
+4. git add -A && git commit -m "checkpoint: ${TASK_ID} - [brief]"
+5. bd sync --from-main
+6. REPORT status (format below)
+
+═══════════════════════════════════════════════════════════
+PROGRESS COMMENTS (bd comment)
+═══════════════════════════════════════════════════════════
+
+Use bd comment to add timestamped progress updates:
+
+FREQUENCY:
+- Every 5-10 tool calls, add a progress comment
+- Always comment on key milestones
+
+WHEN TO COMMENT:
+- At task start: bd comment ${TASK_ID} "Starting: reviewing requirements"
+- During work: bd comment ${TASK_ID} "Progress: implemented X, moving to Y"
+- On blockers: bd comment ${TASK_ID} "BLOCKED: [reason]"
+- On breakthroughs: bd comment ${TASK_ID} "Breakthrough: [discovery]"
+- At completion: bd comment ${TASK_ID} "Complete: all tests passing"
+
+COMMENT CONTENT:
+- Be specific about what was done and what's next
+- Include file names or function names when relevant
+- Note decisions made or deviations from plan
+- Keep comments concise but informative
 
 LEDGER UPDATE (OPTIONAL - non-blocking):
 If significant decisions were made, consider updating:
@@ -510,6 +547,34 @@ ${DELIVERABLES}
 
 ACCEPTANCE:
 ${ACCEPTANCE_CRITERIA}
+
+═══════════════════════════════════════════════════════════
+AUDIT TRAIL CHECKPOINTS
+═══════════════════════════════════════════════════════════
+
+Record significant events using bd audit:
+
+**Decision Points** (BEFORE major choices):
+  bd audit add --type=decision --text="[choice] because [rationale]"
+
+**Discovery Logging** (WHEN finding relevant code):
+  bd audit add --type=discovery --text="Found [what] at [location]"
+
+**Blocker Recording** (WHEN stuck):
+  bd audit add --type=blocker --text="[issue] - [status/resolution]"
+
+**Learning Capture** (AFTER learning something):
+  bd audit add --type=learning --text="[insight about codebase/project]"
+
+Audit Types: decision, discovery, blocker, learning, risk, assumption
+
+Examples:
+  bd audit add --type=decision --text="Using existing UserService - maintains consistency with rest of codebase"
+  bd audit add --type=discovery --text="Found rate limiting in middleware/rateLimit.ts - can reuse"
+  bd audit add --type=blocker --text="Missing DATABASE_URL env var - need user input"
+  bd audit add --type=learning --text="Project uses Zod for validation, not Yup as initially assumed"
+  bd audit add --type=risk --text="Large refactor may affect upstream consumers"
+  bd audit add --type=assumption --text="Assuming PostgreSQL based on connection string format"
 
 ═══════════════════════════════════════════════════════════
 STATUS REPORT FORMAT (MANDATORY)
@@ -1381,6 +1446,13 @@ bd create --title="..." --type=task
 bd update <id> --status=in_progress
 bd note <id> "checkpoint..."
 bd close <id> --reason="..."
+
+# Progress comments (timestamped updates)
+bd comment <id> "Starting: reviewing requirements"
+bd comment <id> "Progress: implemented X, moving to Y"
+bd comment <id> "BLOCKED: [reason]"
+bd comment <id> "Breakthrough: [discovery]"
+bd comment <id> "Complete: all tests passing"
 
 # Dependencies
 bd dep add <child> <parent>  # child depends on parent

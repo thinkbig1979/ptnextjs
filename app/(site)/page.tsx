@@ -1,5 +1,6 @@
 import { TwoPillarHero } from "@/components/two-pillar-hero";
 import { CallPaulSection } from "@/components/call-paul-section";
+import { CustomLightingPreviewSection } from "@/components/custom-lighting-preview-section";
 import { FeaturedPartnersSection } from "@/components/featured-partners-section";
 import { ServicesOverviewSection } from "@/components/services-overview-section";
 import { FeaturedBlogSection } from "@/components/featured-blog-section";
@@ -45,6 +46,7 @@ export default async function HomePage() {
         heroImage="/heroimagePT-min.png"
       />
       <CallPaulSection />
+      <CustomLightingPreviewSection />
       <FeaturedPartnersSection featuredPartners={featuredPartners} />
       <ServicesOverviewSection />
       <FeaturedBlogSection featuredPosts={featuredPosts} />

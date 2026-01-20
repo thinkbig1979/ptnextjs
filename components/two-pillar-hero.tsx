@@ -3,6 +3,8 @@ import { Search, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/ui/logo";
 import Image from "next/image";
+import { PixelGridBackground } from "@/components/pixel-grid-background";
+import { LightFieldGradient } from "@/components/light-field-gradient";
 
 interface FounderData {
   name: string;
@@ -41,10 +43,15 @@ export function TwoPillarHero({
   className,
 }: TwoPillarHeroProps) {
   return (
-    <section className={cn("relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-background to-muted/20", className)}>
-      {/* Hero Background Image */}
+    <PixelGridBackground
+      variant="prominent"
+      as="section"
+      aria-label="Two Pillar Hero"
+      className={cn("relative min-h-screen flex items-center justify-center overflow-hidden", className)}
+    >
+      {/* Hero Background Image - rendered below the pixel grid */}
       {heroImage && (
-        <div className="absolute inset-0 opacity-40">
+        <div className="absolute inset-0 -z-10 opacity-30">
           <Image
             src={heroImage}
             alt="Hero Background"
@@ -54,11 +61,20 @@ export function TwoPillarHero({
           />
         </div>
       )}
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-accent blur-3xl"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-primary blur-3xl"></div>
-      </div>
+
+      {/* Light Field Gradient Overlay - adds ambient glow effect */}
+      <LightFieldGradient
+        position="center"
+        intensity="soft"
+        className="absolute inset-0 pointer-events-none"
+      />
+
+      {/* Secondary Light Field for depth - positioned right */}
+      <LightFieldGradient
+        position="right"
+        intensity="subtle"
+        className="absolute inset-0 pointer-events-none"
+      />
 
       <div className="container max-w-screen-xl px-4 py-20 relative z-10">
         <div className="text-center space-y-12">
@@ -105,7 +121,7 @@ export function TwoPillarHero({
           </div>
         </div>
       </div>
-    </section>
+    </PixelGridBackground>
   );
 }
 
@@ -116,10 +132,10 @@ interface PillarSectionProps {
 
 function PillarSection({ pillar, icon }: PillarSectionProps) {
   return (
-    <div className="bg-card rounded-2xl p-8 shadow-lg border border-border/50 hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+    <div className="bg-card/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-accent/10 hover:border-accent/30 hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
       <div className="space-y-6">
         {/* Icon */}
-        <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto">
+        <div className="w-16 h-16 bg-accent/10 border border-accent/20 rounded-full flex items-center justify-center mx-auto">
           {icon}
         </div>
 
