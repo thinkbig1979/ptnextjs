@@ -1,10 +1,9 @@
 ---
-version: 5.1.0
-last-updated: 2026-01-02
+version: 5.2.0
+last-updated: 2026-01-17
 related-files:
   - docs/GLOSSARY.md
 ---
-
 
 # Execution Role Instructions
 
@@ -19,59 +18,39 @@ The files in this directory are **instruction documents**, not callable Claude C
 
 ### Incorrect Understanding
 - These are NOT separate agents you can invoke
-- `test-architect` is NOT a callable agent type
-- You cannot use `Task(subagent_type: "test-architect")`
+- `test-design` is NOT a callable agent type
+- You cannot use `Task(subagent_type: "test-design")`
 
 ## Correct Usage
 
 ```javascript
 // WRONG - will fail with "Agent type not found"
-Task(subagent_type: "test-architect", prompt: "...")
+Task(subagent_type: "test-design", prompt: "...")
 
 // CORRECT - load instructions via general-purpose agent
 Task(subagent_type: "general-purpose",
-     prompt: "Load and follow instructions from instructions/agents/test-architect.md...")
+     prompt: "Load and follow instructions from instructions/agents/test-design.md...")
 ```
 
 ## Available Execution Roles
 
+### Testing Phases
+| Role | File | Purpose |
+|------|------|---------|
+| Test Design | `test-design.md` | Test strategy, framework research, TDD RED phase |
+| Test Execution | `test-execution.md` | Test running protocol (direct by main agent) |
+| Test Maintenance | `test-maintenance.md` | Pre-implementation test impact analysis |
+
 ### Development Phases
 | Role | File | Purpose |
 |------|------|---------|
-| Test Architect | `test-architect.md` | Test design and TDD RED phase |
-| Test Runner | `test-runner.md` | Test execution and monitoring |
-| Test Context Gatherer | `test-context-gatherer.md` | Pre-test library research |
-| Test Integrity Analyzer | `test-integrity-analyzer.md` | Proactive test impact analysis |
 | Implementation Specialist | `implementation-specialist.md` | Feature implementation (TDD GREEN) |
 | Security Sentinel | `security-sentinel.md` | Security review and OWASP scanning |
 
 ### Pattern & Quality
 | Role | File | Purpose |
 |------|------|---------|
-| Pattern Discovery Analyst | `pattern-discovery-analyst.md` | Codebase pattern analysis |
-| Pattern Consistency Validator | `pattern-consistency-validator.md` | Pattern enforcement |
-
-## YAML Frontmatter Format
-
-All files should use this consistent format:
-
-```yaml
----
-# EXECUTION ROLE DEFINITION
-# This file provides guidance for a workflow phase.
-# It is NOT a callable Claude Code agent.
-#
-# Usage: The general-purpose agent loads this file when
-# entering the specified phase of task execution.
-
-role: role-name
-description: "Brief description of this phase"
-phase: phase_identifier
-context_window: 16384
-version: 2.0
-encoding: UTF-8
----
-```
+| Pattern Guardian | `pattern-guardian.md` | Pattern discovery and consistency validation |
 
 ## How Phases Work
 
@@ -79,16 +58,35 @@ encoding: UTF-8
 +--------------------------------------------------------+
 |         General-Purpose Agent Execution                 |
 |                                                         |
-|  1. Load test-context-gatherer.md -> Research libs      |
+|  1. Load pattern-guardian.md (discovery) → Get patterns |
 |                    |                                    |
-|  2. Load test-architect.md -> Design tests (RED)        |
+|  2. Load test-design.md → Design tests (RED)            |
 |                    |                                    |
-|  3. Load implementation-specialist.md -> Write code     |
+|  3. Load implementation-specialist.md → Write code      |
 |                    |                                    |
-|  4. Load security-sentinel.md -> Security review        |
+|  4. Load test-execution.md → Run tests                  |
 |                    |                                    |
-|  5. Complete task                                       |
+|  5. Load security-sentinel.md → Security review         |
+|                    |                                    |
+|  6. Load pattern-guardian.md (validation) → Verify      |
+|                    |                                    |
+|  7. Complete task                                       |
 +--------------------------------------------------------+
+```
+
+## YAML Frontmatter Format
+
+All files use this consistent format:
+
+```yaml
+---
+role: role-name
+description: "Brief description of this phase"
+phase: phase_identifier
+context_window: 16384
+version: 5.2.0
+encoding: UTF-8
+---
 ```
 
 ## See Also

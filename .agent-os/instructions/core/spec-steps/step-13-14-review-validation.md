@@ -1,8 +1,11 @@
 ---
-version: 5.1.0
-last-updated: 2026-01-02
+version: 5.4.0
+last-updated: 2026-01-15
 related-files:
   - instructions/core/create-spec.md
+  - instructions/utilities/post-spec-coverage-checklist.md
+  - instructions/utilities/data-flow-tracing.md
+  - instructions/utilities/integration-impact-analysis.md
 ---
 
 
@@ -180,6 +183,154 @@ Evolution Scoring Gate - {SPEC_NAME}
 
 ---
 
+## Step 12.5: Semantic Coverage Validation (v5.4.0+)
+
+**Purpose**: Validate that the specification addresses all aspects of user workflows, not just structural completeness.
+
+**Trigger**: After all spec files created, before Evolution Scoring Gate.
+
+**Key Insight**: Structural validation (files exist, sections present) is necessary but insufficient. A spec can be structurally complete yet miss critical workflow aspects.
+
+```yaml
+semantic_coverage_validation:
+  # Load checklists
+  REFERENCE:
+    - "@.agent-os/instructions/utilities/post-spec-coverage-checklist.md"
+    - "@.agent-os/instructions/utilities/data-flow-tracing.md"
+    - "@.agent-os/instructions/utilities/integration-impact-analysis.md"
+
+  # 1. Determine feature type
+  CLASSIFY:
+    frontend_only: Has UI, no database/API changes
+    backend_only: Has database/API, no UI
+    full_stack: Has both UI and backend components
+
+  # 2. Run Post-Spec Coverage Checklist
+  EXECUTE: post-spec-coverage-checklist
+  CHECKS:
+    ui_workflow_coverage:  # If frontend
+      - All screens identified
+      - Navigation flow complete
+      - Empty states specified
+      - Loading states specified
+      - Error states specified
+      - Feedback mechanisms defined
+    
+    data_backend_coverage:  # If backend
+      - Database schema complete
+      - API endpoints specified
+      - Client validation rules
+      - Server validation rules
+      - Data migration strategy (if modifying)
+    
+    edge_case_coverage:  # Always
+      - Error scenarios handled
+      - Permission checks specified
+      - Race conditions addressed
+      - Boundary conditions handled
+    
+    integration_coverage:  # Always
+      - Existing feature integration
+      - Dependencies identified
+      - Breaking changes documented
+    
+    testing_coverage:  # Always
+      - Tasks independently verifiable
+      - Testable acceptance criteria
+      - E2E workflow tests planned
+
+  # 3. Run Data Flow Tracing (if full-stack or has data)
+  IF has_data_entities:
+    EXECUTE: data-flow-tracing
+    FOR each entity:
+      TRACE: Create flow (UI → API → DB)
+      TRACE: Read flow (DB → API → UI)
+      TRACE: Update flow (if applicable)
+      TRACE: Delete flow (if applicable)
+      FLAG: Gaps (data stored but never displayed, etc.)
+
+  # 4. Run Integration Impact Analysis
+  EXECUTE: integration-impact-analysis
+  IDENTIFY:
+    - Shared components affected
+    - Shared data/tables touched
+    - Shared APIs modified
+    - Navigation integration points
+    - Auth/permission changes
+  DETECT:
+    - API breaking changes
+    - Database breaking changes
+    - Component breaking changes
+  ASSESS:
+    - Regression risk level
+    - Affected features list
+    - Required test coverage
+
+  # 5. Consolidate Findings
+  AGGREGATE:
+    p1_findings: "[Critical gaps that block implementation]"
+    p2_findings: "[Important gaps that should be addressed]"
+    p3_findings: "[Nice-to-have improvements]"
+
+  # 6. Enforcement
+  IF p1_findings.count > 0:
+    BLOCK: "Cannot proceed with P1 gaps"
+    OUTPUT: Detailed gap report with remediation
+    PROMPT: "Address these gaps before proceeding"
+    WAIT for corrections
+    RE-RUN validation
+  
+  ELIF p2_findings.count > 0:
+    WARN: "P2 gaps found"
+    OUTPUT: Gap report
+    PROMPT: "Options:
+             1. ADDRESS - Fix P2 gaps
+             2. CONTINUE - Proceed with acknowledgment
+             3. ABORT - Cancel spec creation"
+    IF choice == "CONTINUE":
+      SAVE: .agent-os/specs/{spec_folder}/coverage-acknowledgment.md
+
+  # 7. Generate Report
+  OUTPUT: |
+    ═══════════════════════════════════════════════════════════════════
+    SEMANTIC COVERAGE VALIDATION - {SPEC_NAME}
+    ═══════════════════════════════════════════════════════════════════
+    
+    Feature Type: {frontend_only | backend_only | full_stack}
+    
+    📋 POST-SPEC COVERAGE
+    ───────────────────────────────────────────────────────────────────
+    UI & Workflow:    {PASS/FAIL/NA} - {details}
+    Data & Backend:   {PASS/FAIL/NA} - {details}
+    Edge Cases:       {PASS/FAIL} - {details}
+    Integration:      {PASS/FAIL} - {details}
+    Testing:          {PASS/FAIL} - {details}
+    
+    📊 DATA FLOW TRACING
+    ───────────────────────────────────────────────────────────────────
+    Entities Traced: {count}
+    Complete Flows: {count}/{total}
+    Gaps Found: {count}
+    
+    🔗 INTEGRATION IMPACT
+    ───────────────────────────────────────────────────────────────────
+    Touchpoints: {count}
+    Breaking Changes: {count}
+    Affected Features: {count}
+    Regression Risk: {HIGH/MEDIUM/LOW}
+    
+    ⚠️ FINDINGS
+    ───────────────────────────────────────────────────────────────────
+    P1 (Must Fix): {count}
+    P2 (Should Fix): {count}
+    P3 (Nice to Have): {count}
+    
+    Status: {PASSED | BLOCKED | WARNED}
+    ═══════════════════════════════════════════════════════════════════
+```
+
+---
+
 ## Step 14: Specification Quality Validation
 
 **Subagent**: quality-assurance
@@ -196,6 +347,7 @@ Execute QualityGateValidator system.
 | Documentation Quality | >=85% | Content depth, examples, organization |
 | Consistency | >=95% | Cross-file spec name/date/references |
 | Reference Format | >=95% | `file_path:line_number` format compliance |
+| **Semantic Coverage** | >=90% | **Workflow coverage, data flows, integration (v5.4.0+)** |
 
 ### Valid Reference Formats
 
@@ -213,9 +365,10 @@ Execute QualityGateValidator system.
 
 1. Load quality config (`.agent-os/quality-config.yml` or defaults)
 2. Execute `QualityGateValidator.validateSpecification(specPath)`
-3. Generate quality report with scores/recommendations
-4. Enforce quality gates based on thresholds
-5. Provide actionable recommendations
+3. **Execute Semantic Coverage Validation (Step 12.5)** (v5.4.0+)
+4. Generate quality report with scores/recommendations
+5. Enforce quality gates based on thresholds
+6. Provide actionable recommendations
 
 ### Actions
 
@@ -239,6 +392,7 @@ Retry validation after corrections
 
 - Overall score and status
 - Category-by-category breakdown
+- **Semantic coverage breakdown (v5.4.0+)**
 - Specific issues with file locations
 - Actionable recommendations by priority
 - Before/after comparison if re-validated

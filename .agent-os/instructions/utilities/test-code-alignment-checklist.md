@@ -335,10 +335,10 @@ If automated checks pass but tests were brittle:
 | GREEN | Same file | Read patterns |
 | Verify | `.agent-os/tdd-state/{TASK_ID}-alignment.yml` | Store verification results |
 
-### Required Skills
+### Required Instruction Files
 
-- `agent-os-patterns` - Testing patterns reference
-- `agent-os-specialists` - Implementation guidance
+- `standards/` - Testing patterns reference
+- `instructions/agents/` - Implementation guidance
 
 ### Config Reference
 

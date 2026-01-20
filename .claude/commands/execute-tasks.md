@@ -14,7 +14,7 @@ Execute tasks using Agent OS v4.1+ **Unified Execution Protocol** - combining Be
 
 ### Core Features
 - ✅ **Beads-first orchestration** - ALL tasks created with dependencies BEFORE execution
-- ✅ **Context-aware execution** - 75% context limit with clean checkpoints
+- ✅ **Context-aware execution** - PreCompact hook triggers graceful handoff
 - ✅ **Parallel specialist execution** - Independent tasks run in parallel waves
 - ✅ **Real-time progress tracking** - Tasks and specs updated as work progresses
 
@@ -52,9 +52,9 @@ Phase 2: Parallel Execution
 ├─ Update documents (tasks.md, specs)
 └─ Checkpoint (git commit, bd sync)
 
-Phase 3: Context-Aware Monitoring
-├─ Monitor orchestrator context
-└─ Graceful stop if approaching 75%
+Phase 3: Context Management
+├─ PreCompact hook signals graceful handoff
+└─ Create session ledger and stop when triggered
 
 Phase 4: Post-Execution
 ├─ Verify all deliverables

@@ -20,7 +20,6 @@ Template files for specifications, patterns, and generated outputs.
 | `inversion-analysis.md.template` | Inversion lens output | create-spec, inversion-lens-guide |
 | `pre-mortem-analysis.md.template` | Pre-mortem analysis output | create-spec, pre-mortem-lens-guide |
 | `session-ledger.md.template` | Session tracking template | session-start-ledger.js, execute-tasks |
-| `quick-spec.md.template` | Quick spec format | /quick-spec command |
 
 ### Infrastructure
 
@@ -70,7 +69,6 @@ node templates/template-validator.js templates/spec-templates/
 Templates are used by:
 - `instructions/core/create-spec.md` - Specification creation
 - `instructions/core/create-tasks.md` - Task breakdown
-- `.claude/commands/quick-spec.md` - Quick specifications
 - Quality lenses (Inversion, Pre-Mortem, Evolution)
 
 ---

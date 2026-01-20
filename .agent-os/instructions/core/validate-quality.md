@@ -2,7 +2,7 @@
 description: Execute comprehensive quality validation for Agent OS artifacts
 globs:
 alwaysApply: false
-version: 5.1.0
+version: 5.4.0
 encoding: UTF-8
 ---
 
@@ -872,6 +872,263 @@ UI SPECIFICATION VALIDATION - SUMMARY
 - Verify UI task dependencies (E2E tests block implementation)
 - Check acceptance criteria completeness
 - Generate UI-specific findings
+
+</step>
+
+<step number="2.8" name="semantic_coverage_validation">
+
+### Step 2.8: Semantic Coverage Validation (v5.4.0+)
+
+**Purpose**: Validate that specifications address all aspects of user workflows, data flows, and integration impacts - not just structural completeness.
+
+**Key Insight**: A specification can be structurally complete (all files exist, all sections filled) yet miss critical workflow aspects like error states, data validation paths, or integration impacts.
+
+<semantic_coverage_protocol>
+
+**Reference Checklists**:
+- `@.agent-os/instructions/utilities/post-spec-coverage-checklist.md`
+- `@.agent-os/instructions/utilities/data-flow-tracing.md`
+- `@.agent-os/instructions/utilities/integration-impact-analysis.md`
+
+**Execution**:
+```yaml
+semantic_coverage_validation:
+  # 1. Classify feature type
+  CLASSIFY target:
+    frontend_only: Has UI components, no database/API changes
+    backend_only: Has database/API, no user-facing UI
+    full_stack: Has both UI and backend components
+
+  # 2. Run Post-Spec Coverage Checklist
+  EXECUTE: post-spec-coverage-checklist
+  
+  ui_workflow_checks:  # If has frontend
+    - screens_identified: "All screens/views user interacts with"
+    - navigation_flow: "Complete path between screens"
+    - empty_states: "What shows when no data"
+    - loading_states: "What shows during async ops"
+    - error_states: "What shows when things fail"
+    - feedback_mechanisms: "Toasts, confirmations, progress"
+  
+  data_backend_checks:  # If has backend
+    - database_schema: "All tables/fields defined"
+    - api_endpoints: "All endpoints specified"
+    - client_validation: "Frontend validation rules"
+    - server_validation: "Backend validation rules"
+    - data_migration: "Migration strategy if modifying existing"
+  
+  edge_case_checks:  # Always
+    - error_scenarios: "Network, server, client errors handled"
+    - permission_checks: "Auth at every relevant step"
+    - race_conditions: "Concurrent access scenarios"
+    - boundary_conditions: "Empty, null, max values"
+  
+  integration_checks:  # Always
+    - existing_feature_integration: "Works with current features"
+    - dependency_identification: "External deps documented"
+    - breaking_changes: "Impact on existing functionality"
+  
+  testing_checks:  # Always
+    - task_verifiability: "Each task independently testable"
+    - testable_acceptance_criteria: "Specific, measurable criteria"
+    - e2e_workflow_tests: "Complete workflow coverage"
+
+  # 3. Run Data Flow Tracing (if has data entities)
+  IF has_database_schema OR has_api_spec:
+    EXECUTE: data-flow-tracing
+    
+    FOR each data_entity:
+      TRACE create_flow:
+        - UI entry point → Form fields → Client validation
+        - API endpoint → Server validation → DB write
+        - Success feedback
+      
+      TRACE read_flow:
+        - Display location → API query → DB read
+        - Loading state → Empty state → Error state
+      
+      TRACE update_flow: (if applicable)
+        - Edit entry point → Pre-populated form
+        - API endpoint → Conflict handling
+      
+      TRACE delete_flow: (if applicable)
+        - Delete trigger → Confirmation
+        - API endpoint → Cascade behavior
+      
+      FLAG gaps:
+        - "Data stored but never displayed"
+        - "Display exists but no persistence"
+        - "API endpoint with no UI"
+        - "Missing validation layer"
+
+  # 4. Run Integration Impact Analysis
+  EXECUTE: integration-impact-analysis
+  
+  IDENTIFY touchpoints:
+    - shared_components: "UI components used elsewhere"
+    - shared_data: "Tables accessed by other features"
+    - shared_apis: "Endpoints used by other clients"
+    - navigation_integration: "Links to/from existing pages"
+    - auth_integration: "Permission/role changes"
+  
+  DETECT breaking_changes:
+    - api_breaking: "Removed/changed endpoints"
+    - db_breaking: "Schema changes affecting queries"
+    - component_breaking: "Changed props/behavior"
+    - config_breaking: "Changed env vars/settings"
+  
+  ASSESS regression_risk:
+    - high_risk_areas: "Full regression needed"
+    - medium_risk_areas: "Targeted tests needed"
+    - affected_features: "Features to verify"
+
+  # 5. Aggregate findings
+  COLLECT findings by severity:
+    P1_critical:
+      - "Data can be created but never displayed"
+      - "Missing server validation for user input"
+      - "Breaking API change without migration"
+      - "Missing error handling for critical path"
+      - "Security gap in permission checks"
+    
+    P2_important:
+      - "Missing loading/empty/error states"
+      - "No client validation"
+      - "Breaking component changes"
+      - "Missing E2E test for workflow"
+    
+    P3_nice_to_have:
+      - "No undo capability"
+      - "Missing optimistic updates"
+      - "Documentation gaps"
+
+  # 6. Calculate semantic coverage score
+  CALCULATE score:
+    workflow_coverage: (checks_passed / total_workflow_checks)
+    data_flow_coverage: (complete_flows / total_entities)
+    integration_coverage: (touchpoints_documented / total_touchpoints)
+    
+    semantic_score: weighted_average(
+      workflow_coverage * 0.4,
+      data_flow_coverage * 0.35,
+      integration_coverage * 0.25
+    )
+```
+</semantic_coverage_protocol>
+
+<semantic_coverage_output>
+
+**Output Format**:
+```
+═══════════════════════════════════════════════════════════════════
+SEMANTIC COVERAGE VALIDATION
+═══════════════════════════════════════════════════════════════════
+
+Feature Type: [frontend_only | backend_only | full_stack]
+Semantic Coverage Score: [SCORE]/1.0
+
+📋 WORKFLOW COVERAGE
+───────────────────────────────────────────────────────────────────
+UI & User Workflow:
+  Screens Identified:     [✓/✗] {count} screens
+  Navigation Flow:        [✓/✗/NA]
+  Empty States:           [✓/✗/NA] {count}/{total}
+  Loading States:         [✓/✗/NA] {count}/{total}
+  Error States:           [✓/✗] {count}/{total}
+  Feedback Mechanisms:    [✓/✗/NA]
+
+Data & Backend:
+  Database Schema:        [✓/✗/NA]
+  API Endpoints:          [✓/✗/NA] {count} endpoints
+  Client Validation:      [✓/✗/NA]
+  Server Validation:      [✓/✗/NA]
+  Data Migration:         [✓/✗/NA]
+
+Edge Cases:
+  Error Scenarios:        [✓/✗]
+  Permission Checks:      [✓/✗/NA]
+  Race Conditions:        [✓/✗/NA]
+  Boundary Conditions:    [✓/✗]
+
+📊 DATA FLOW TRACING
+───────────────────────────────────────────────────────────────────
+Entities Analyzed: {count}
+
+| Entity | Create | Read | Update | Delete | Gaps |
+|--------|--------|------|--------|--------|------|
+| {name} | ✓/✗    | ✓/✗  | ✓/✗/NA | ✓/✗/NA | {n}  |
+
+Flow Gaps Found: {count}
+- {entity}: {gap_description}
+
+🔗 INTEGRATION IMPACT
+───────────────────────────────────────────────────────────────────
+Touchpoints: {count}
+Breaking Changes: {count}
+Affected Features: {count}
+Regression Risk: [HIGH/MEDIUM/LOW]
+
+Breaking Changes:
+- {type}: {description} → {remediation}
+
+Affected Features:
+- {feature}: {impact} [{risk_level}]
+
+⚠️ FINDINGS
+───────────────────────────────────────────────────────────────────
+🔴 P1 (Must Fix): {count}
+- {finding}: {location} → {remediation}
+
+🟡 P2 (Should Fix): {count}
+- {finding}: {location} → {remediation}
+
+🔵 P3 (Nice to Have): {count}
+- {finding}: {location} → {remediation}
+
+═══════════════════════════════════════════════════════════════════
+```
+</semantic_coverage_output>
+
+<semantic_coverage_enforcement>
+
+**Enforcement Rules**:
+```yaml
+enforcement:
+  P1_findings:
+    action: BLOCK
+    message: "Cannot proceed with P1 semantic coverage gaps"
+    requirement: "Must address all P1 findings before user review"
+  
+  P2_findings:
+    action: WARN
+    message: "P2 gaps found - recommend addressing"
+    options:
+      - "ADDRESS: Fix P2 gaps"
+      - "CONTINUE: Proceed with acknowledgment"
+      - "ABORT: Cancel spec creation"
+    if_continue:
+      SAVE: ".agent-os/specs/{spec_folder}/coverage-acknowledgment.md"
+  
+  P3_findings:
+    action: INFO
+    message: "P3 improvements available"
+    no_blocking: true
+
+  score_threshold:
+    minimum: 0.85
+    if_below:
+      action: WARN
+      message: "Semantic coverage score {score} below threshold 0.85"
+```
+</semantic_coverage_enforcement>
+
+**Actions**:
+- Execute post-spec coverage checklist
+- Trace data flows for all entities
+- Analyze integration impacts
+- Aggregate and prioritize findings
+- Enforce coverage thresholds
+- Generate semantic coverage report
 
 </step>
 

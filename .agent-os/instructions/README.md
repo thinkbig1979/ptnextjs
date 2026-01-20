@@ -7,7 +7,7 @@ This directory contains instruction files that guide Claude through workflow pha
 | Directory | Files | Purpose |
 |-----------|-------|---------|
 | `core/` | 11 files | Main workflow definitions |
-| `agents/` | 9 files | Phase-specific guidance (NOT callable agents) |
+| `agents/` | 6 files | Phase-specific guidance (NOT callable agents) |
 | `utilities/` | 16 files | Tool and integration guides |
 | `meta/` | 2 files | Meta-level guidance |
 | `references/` | 1 file | External reference documents |
@@ -40,12 +40,12 @@ See: [docs/GLOSSARY.md](../docs/GLOSSARY.md) for terminology.
 ### Phase Instructions (in `agents/`)
 | File | Workflow Phase |
 |------|----------------|
-| `test-architect.md` | Test design phase (TDD RED) |
-| `test-context-gatherer.md` | Pre-test research phase |
-| `test-runner.md` | Test execution phase |
+| `test-design.md` | Test strategy and design (TDD RED) |
+| `test-execution.md` | Test running protocol |
+| `test-maintenance.md` | Existing test impact analysis |
 | `implementation-specialist.md` | Implementation phase (TDD GREEN) |
 | `security-sentinel.md` | Security review phase |
-| `pattern-discovery-analyst.md` | Pattern analysis phase |
+| `pattern-guardian.md` | Pattern discovery and validation |
 
 ### Utilities
 | File | Purpose |
@@ -59,7 +59,7 @@ See: [docs/GLOSSARY.md](../docs/GLOSSARY.md) for terminology.
 
 When entering the test design phase:
 ```
-Load and follow instructions from instructions/agents/test-architect.md
+Load and follow instructions from instructions/agents/test-design.md
 ```
 
 When entering implementation:

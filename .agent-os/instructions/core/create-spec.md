@@ -23,13 +23,13 @@ When delegating via `Task()`, MUST use template:
 **Required in ALL delegation prompts**:
 ```yaml
 mandatory_inclusions:
-  1_skill_invocation: |
-    BEFORE writing spec: Skill(skill="agent-os-patterns")
+  1_pattern_lookup: |
+    BEFORE writing spec: READ standards/testing-standards.md
     For UI: mcp__shadcn__list_components(), mcp__shadcn__get_component_demo()
 
-  2_pattern_lookup: |
+  2_pattern_priority: |
     FIRST: .agent-os/patterns/ (project-specific)
-    SECOND: skills (generic patterns)
+    SECOND: standards/ (generic patterns)
     THIRD: WebSearch (fallback)
 
   3_confirmation: |

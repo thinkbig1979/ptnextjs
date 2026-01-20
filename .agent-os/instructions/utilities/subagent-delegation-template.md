@@ -99,65 +99,64 @@ Use these blocks for `{SKILL_INVOCATIONS_FOR_PHASE}`:
 ### Test Context Gathering (Phase 2.0)
 
 ```
-BEFORE fetching test documentation, you MUST invoke:
+BEFORE fetching test documentation, you MUST READ:
 
-1. Skill(skill="agent-os-test-research")
+1. instructions/agents/test-context-gatherer.md
    - Provides library detection patterns
    - Documents fallback priority for docs
 
-2. Skill(skill="agent-os-patterns")
-   - Provides Vitest patterns (vitest.md)
-   - Provides Playwright patterns (playwright.md)
-   - Provides Convex patterns (convex.md)
+2. standards/testing-standards.md
+   - Provides Vitest patterns
+   - Provides Playwright patterns
+   - Provides Convex patterns
 
-These skills are Priority 0 - check them BEFORE DocFork, Context7, or WebSearch.
+These are Priority 0 - check them BEFORE DocFork, Context7, or WebSearch.
 ```
 
 ### Test Design (Phase 2.1)
 
 ```
-BEFORE designing tests, you MUST invoke:
+BEFORE designing tests, you MUST READ:
 
-1. Skill(skill="agent-os-patterns")
-   - Load vitest.md for unit test patterns
-   - Load playwright.md for E2E test patterns
-   - Load test-strategies.md for test architecture
+1. standards/testing-standards.md
+   - Vitest patterns for unit tests
+   - Playwright patterns for E2E tests
+   - Test architecture strategies
 
-2. Skill(skill="agent-os-specialists")
-   - Load test-design guidance
+2. instructions/agents/test-architect.md
+   - Test design guidance
 ```
 
 ### Implementation (Phase 3.0)
 
 ```
-BEFORE writing implementation code, you MUST invoke:
+BEFORE writing implementation code, you MUST READ:
 
-1. Skill(skill="agent-os-patterns")
-   - Load coding-style.md for code conventions
+1. standards/global/coding-style.md
+   - Code conventions
 
-2. Skill(skill="agent-os-specialists")
-   - Load backend-nodejs.md OR frontend-react.md as appropriate
-   - Load implementation.md for general guidance
+2. instructions/agents/implementation-specialist.md
+   - Implementation guidance
 ```
 
 ### Security Review (Phase 4.0)
 
 ```
-BEFORE performing security review, you MUST invoke:
+BEFORE performing security review, you MUST READ:
 
-1. Skill(skill="agent-os-specialists")
-   - Load security review guidance
-   - Reference OWASP Top 10 patterns
+1. instructions/agents/security-sentinel.md
+   - Security review guidance
+   - OWASP Top 10 patterns
 ```
 
 ### Spec Creation
 
 ```
-BEFORE writing specifications, you MUST invoke:
+BEFORE writing specifications, you MUST READ:
 
-1. Skill(skill="agent-os-patterns")
-   - Load testing patterns for test plan sections
-   - Load coding-style.md for implementation guidance
+1. standards/testing-standards.md
+   - Testing patterns for test plan sections
+   - Coding style for implementation guidance
 
 If building UI specifications with shadcn:
 2. mcp__shadcn__list_components()
@@ -197,33 +196,33 @@ BEFORE performing ANY work, you MUST:
 4. PROCEED with task only AFTER confirmation
 
 ═══════════════════════════════════════════════════════════════════
-MANDATORY SKILL INVOCATIONS
+MANDATORY FILE READS
 ═══════════════════════════════════════════════════════════════════
 
-BEFORE fetching test documentation, you MUST invoke:
+BEFORE fetching test documentation, you MUST READ:
 
-1. Skill(skill="agent-os-test-research")
+1. instructions/agents/test-context-gatherer.md
    - Provides library detection patterns
    - Documents fallback priority for docs
 
-2. Skill(skill="agent-os-patterns")
-   - Provides Vitest patterns (vitest.md)
-   - Provides Playwright patterns (playwright.md)
-   - Provides Convex patterns (convex.md)
+2. standards/testing-standards.md
+   - Provides Vitest patterns
+   - Provides Playwright patterns
+   - Provides Convex patterns
 
-These skills are Priority 0 - check them BEFORE DocFork, Context7, or WebSearch.
+These are Priority 0 - check them BEFORE DocFork, Context7, or WebSearch.
 
 ═══════════════════════════════════════════════════════════════════
 PATTERN LOOKUP HIERARCHY (MANDATORY ORDER)
 ═══════════════════════════════════════════════════════════════════
 
 FIRST:  Check .agent-os/patterns/testing/ (project-specific)
-SECOND: Invoke skills listed above (generic patterns)
+SECOND: Read standards/ files listed above (generic patterns)
 THIRD:  Use DocFork MCP if available
 FOURTH: Use Context7 MCP if available
 FIFTH:  Use WebSearch/WebFetch as fallback only
 
-Project-specific patterns OVERRIDE skill patterns where both exist.
+Project-specific patterns OVERRIDE standard patterns where both exist.
 
 ═══════════════════════════════════════════════════════════════════
 GLOBAL EXECUTION REQUIREMENTS
@@ -245,7 +244,7 @@ PHASE: 2.0 - Test Context Gathering
 SPECIFIC REQUIREMENTS:
 - Scan package.json for testing libraries (vitest, playwright, jest, etc.)
 - Detect framework versions
-- Fetch version-specific patterns from skills first
+- Fetch version-specific patterns from standards/ first
 - Fall back to MCPs and web search only if needed
 - Save output to .agent-os/test-context/PRJ-042.json
 
@@ -254,7 +253,7 @@ DELIVERABLES:
 
 ACCEPTANCE CRITERIA:
 - All testing libraries in package.json are detected
-- Patterns are loaded from skills (not just web search)
+- Patterns are loaded from standards/ (not just web search)
 - Output file contains actionable patterns for test-architect
 `)
 ```
@@ -288,14 +287,14 @@ BEFORE performing ANY work, you MUST:
 4. PROCEED with task only AFTER confirmation
 
 ═══════════════════════════════════════════════════════════════════
-MANDATORY SKILL INVOCATIONS
+MANDATORY FILE READS
 ═══════════════════════════════════════════════════════════════════
 
-BEFORE writing this specification, you MUST invoke:
+BEFORE writing this specification, you MUST READ:
 
-1. Skill(skill="agent-os-patterns")
-   - Load testing patterns for test plan sections
-   - Load coding-style.md for implementation guidance
+1. standards/testing-standards.md
+   - Testing patterns for test plan sections
+   - Coding style for implementation guidance
 
 Since this is a UI specification:
 2. mcp__shadcn__list_components() - discover available components
@@ -308,10 +307,10 @@ PATTERN LOOKUP HIERARCHY (MANDATORY ORDER)
 ═══════════════════════════════════════════════════════════════════
 
 FIRST:  Check .agent-os/patterns/ (project-specific, takes PRECEDENCE)
-SECOND: Invoke skills listed above (generic patterns)
+SECOND: Read standards/ files listed above (generic patterns)
 THIRD:  Use WebSearch/WebFetch as fallback only
 
-Project-specific patterns OVERRIDE skill patterns where both exist.
+Project-specific patterns OVERRIDE standard patterns where both exist.
 
 ═══════════════════════════════════════════════════════════════════
 GLOBAL EXECUTION REQUIREMENTS

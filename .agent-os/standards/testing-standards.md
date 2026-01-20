@@ -97,7 +97,7 @@ project/
 
 ```
 1. FIRST:  .agent-os/patterns/        (Project-specific - HIGHEST)
-2. SECOND: Skills                     (agent-os-patterns, agent-os-test-research)
+2. SECOND: standards/                 (testing-standards.md, patterns/)
 3. THIRD:  MCPs                       (DocFork, Context7)
 4. FOURTH: WebSearch/WebFetch         (Fallback)
 ```

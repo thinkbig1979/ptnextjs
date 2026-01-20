@@ -146,9 +146,9 @@ Complete modernization of existing Agent OS specs to v5.1.0 through:
   ENHANCE: Modern best practices
   PRESERVE: Core feature purpose, completed work insights
 
-  INVOKE SKILLS (v3.2+):
-  - Skill(skill="agent-os-patterns") → code style, testing patterns
-  - Skill(skill="agent-os-specialists") → specialist guidance
+  READ instruction files (v5.3.0+):
+  - standards/ → code style, testing patterns
+  - instructions/agents/ → specialist guidance
 </spec_regeneration_approach>
 
 <file_generation_sequence>

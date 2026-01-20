@@ -157,7 +157,7 @@ EXECUTE autonomous loop:
   |   IF no improvement -> rollback, try different approach
   |   IF all fixed -> complete
   |
-  +-> CHECKPOINT (at 85% context)
+  +-> CHECKPOINT (when PreCompact hook fires)
       Save to .agent-os/e2e-repair/handoff.json
       Report "checkpoint saved, resumable"
 ```

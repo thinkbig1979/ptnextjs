@@ -1,6 +1,6 @@
 ---
-version: 5.2.0
-last-updated: 2026-01-02
+version: 5.5.0
+last-updated: 2026-01-17
 related-files:
   - docs/GETTING_STARTED.md
   - docs/ARCHITECTURE.md
@@ -9,7 +9,7 @@ related-files:
 
 # CLAUDE.md
 
-Agent OS v5.2.0 - Structured workflows for AI agents to build products systematically.
+Agent OS v5.5.0 - Structured workflows for AI agents to build products systematically.
 
 ## What is Agent OS?
 
@@ -62,30 +62,17 @@ config.yml          -> Feature toggles and thresholds
 
 1. **Plan**: `/plan-product` - Define product, install Agent OS
 2. **Specify**: `/create-spec` - Create feature specifications
-   - **Quick**: `/quick-spec` - Lightweight spec for simple changes (< 30 min)
 3. **Task**: `/create-tasks` - Break specs into executable tasks
-4. **Execute**: `/execute-tasks` - Run tasks with orchestration
-   - **Orchestrate**: `/orchestrate` - Force supervisor pattern for hands-off execution
+4. **Execute**: `/run` - Unified task execution (autonomous with supervisor pattern)
 5. **Validate**: `/validate-browser` - Browser testing for web components
 
-### When to Use Quick Spec
+### Run Command Modes
 
-| Use `/quick-spec` | Use `/create-spec` |
-|-------------------|-------------------|
-| Bug fixes | New features |
-| Documentation updates | > 3 files affected |
-| Small refactors (< 3 files) | Security-sensitive changes |
-| Config changes | > 30 min estimated work |
-| < 30 min work | Architectural decisions needed |
-
-### When to Use Orchestrate
-
-| Use `/orchestrate` | Use `/execute-tasks` |
-|--------------------|---------------------|
-| Hands-off task processing | Single task execution |
-| Multi-session work | Quick tasks within context |
-| Minimize user intervention | Tasks needing frequent input |
-| Always want checkpointing | Let system decide approach |
+| Mode | Description |
+|------|-------------|
+| `/run` | Autonomous execution with session ledger (default) |
+| `/run --quick` | Direct execution for simple tasks |
+| `/run --supervisor` | Force supervisor pattern |
 
 ## Agent Execution Model
 
@@ -99,12 +86,13 @@ config.yml          -> Feature toggles and thresholds
 
 ### Workflow Phases (NOT callable - instruction files)
 
-Load these with general-purpose: `Task(subagent_type: "general-purpose", prompt: "Read instructions/agents/test-architect.md, then...")`
+Load these with general-purpose: `Task(subagent_type: "general-purpose", prompt: "Read instructions/agents/test-design.md, then...")`
 
-- `test-architect` - Test design (RED phase)
+- `test-design` - Test design (RED phase)
+- `test-execution` - Test running protocol
 - `implementation-specialist` - Code implementation (GREEN phase)
 - `security-sentinel` - Security review
-- `pattern-discovery-analyst` - Pattern enforcement
+- `pattern-guardian` - Pattern discovery and validation
 
 ## Beads Task Tracking
 
@@ -124,15 +112,13 @@ bd sync                               # Sync with git (always run at session end
 ~/.agent-os/setup/install-agent-os.sh    # Install in project
 ~/.agent-os/setup/install-hooks.sh       # Install quality hooks
 
-# Context-aware execution (survives context limits)
-/context-aware                           # Execute ready tasks
-/context-aware <SPEC_FOLDER>             # Execute spec tasks
-# Note: --resume no longer needed - session start auto-detects ledger
-
-# Orchestrated execution (always uses supervisor pattern)
-/orchestrate                             # Execute all ready beads tasks
-/orchestrate <SPEC_FOLDER>               # Execute spec tasks with orchestration
-/orchestrate --tasks "T1, T2"            # Inline task list
+# Task execution (unified command)
+/run                                     # Execute ready tasks (autonomous mode)
+/run <SPEC_FOLDER>                       # Execute spec tasks
+/run --quick                             # Direct execution (no supervisor)
+/run --supervisor                        # Force supervisor pattern
+/run --tasks "T1, T2"                    # Inline task list
+# Note: Session start auto-detects ledger for resume
 
 # E2E Testing (unified command)
 /e2e                                     # Interactive test+fix workflow

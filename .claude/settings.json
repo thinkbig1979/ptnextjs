@@ -1,14 +1,25 @@
 {
-  "toolUse": {
-    "postToolUseHooks": [
-      {
-        "script": ".claude/hooks/validate-file.js",
-        "enabled": true,
-        "timeout": 30000
-      }
-    ]
-  },
   "hooks": {
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/pre-compact-ledger.js"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/session-start-ledger.js"
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Write|Edit",
@@ -19,11 +30,17 @@
           }
         ]
       }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/validate-file.js"
+          }
+        ]
+      }
     ]
-  },
-  "validation": {
-    "autoFix": true,
-    "failOnError": false,
-    "parallelExecution": true
   }
 }

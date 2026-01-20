@@ -57,13 +57,12 @@ Phase 4: Post-Execution
 
 | Directive | Rule |
 |-----------|------|
-| **Session ledger at 85%** | Create `.agent-os/session-ledger.md` for seamless cross-session handoff. |
-| **Checkpoint at 75%** | Graceful checkpoint with Beads note if continuing work. |
+| **PreCompact hook** | When you see the "CONTEXT COMPACTION IMMINENT" message, follow its graceful shutdown instructions. |
 | **Beads-first** | Create task BEFORE spawning subagent. |
 | **Auto-formalize** | Convert ad-hoc work to Beads tasks at handoff time. |
 | **Checkpoint frequency** | Every 10 tool calls or end of wave. |
 | **User approval** | Always prompt for blocked/checkpoint decisions. |
-| **Ledger prompts** | Suggest ledger updates at 70% context, after tasks, before compaction (non-blocking). |
+| **Ledger prompts** | Suggest ledger updates after tasks and before compaction (non-blocking). |
 | **Ledger on remaining work** | **MANDATORY**: Create session ledger BEFORE displaying summary if remaining tasks exist. |
 
 ---
@@ -442,9 +441,9 @@ BEFORE starting:
 3. VERIFY no blockers
 
 DURING work:
-1. Monitor context (stop at 75%)
-2. Save every 10 calls: bd note ${TASK_ID} "..."
-3. Update Agent-OS task file
+1. Save every 10 calls: bd note ${TASK_ID} "..."
+2. Update Agent-OS task file
+3. If PreCompact hook fires, follow graceful shutdown instructions
 
 BEFORE stopping (REQUIRED):
 1. bd note ${TASK_ID} "[checkpoint]"
@@ -597,40 +596,35 @@ AFTER each wave:
 
 ---
 
-## Phase 3: Context Monitoring
+## Phase 3: Context Management
 
-### 3.1: Orchestrator Context Check
+### 3.1: PreCompact Hook Response (v5.4+)
 
-```
-AFTER each wave or every ~20 tool calls:
-  EVALUATE context usage
+**Purpose**: Gracefully wrap up when context compaction is imminent.
 
-  IF approaching 85%:
-    INITIATE session ledger handoff (Step 3.4)
-
-  IF approaching 75% (and continuing work):
-    INITIATE graceful checkpoint (Step 3.3)
-```
-
-### 3.1.1: 85% Session Ledger Trigger (v5.2+)
-
-**Purpose**: Create unified session ledger for seamless cross-session handoff.
+The PreCompact hook automatically fires before context compaction (auto or manual). When you see the "CONTEXT COMPACTION IMMINENT" message:
 
 ```
-WHEN context approaches 85%:
-  1. STOP at clean point (between tasks, not mid-implementation)
+WHEN PreCompact hook fires:
+  1. DO NOT start any new tasks or subagents
 
-  2. ENSURE BEADS TRACKING:
-     IF current work NOT tracked in Beads:
-       # Auto-formalize ad-hoc work
-       FOR each remaining work item:
-         bd create --title="[descriptive title]" --type=task
-         CAPTURE: new Beads ID
+  2. WAIT for any running subagents to complete and report back
 
-       CONFIRM: "Created Beads tasks for remaining work: [IDs]"
+  3. ONCE all subagents are done:
+     a. ENSURE BEADS TRACKING:
+        IF current work NOT tracked in Beads:
+          FOR each remaining work item:
+            bd create --title="[descriptive title]" --type=task
+          CONFIRM: "Created Beads tasks for remaining work: [IDs]"
 
-  3. CREATE SESSION LEDGER:
-     → Go to Step 3.4 (Session Ledger Handoff)
+     b. CREATE SESSION LEDGER:
+        → Go to Step 3.4 (Session Ledger Handoff)
+
+     c. COMMIT any uncommitted work:
+        git add -A && git commit -m "WIP: <description>"
+        bd sync
+
+  4. STOP - do not continue work after ledger is created
 ```
 
 ### 3.2: Ledger Maintenance (v5.1.1+)
@@ -641,31 +635,7 @@ WHEN context approaches 85%:
 
 **Prompts are NON-BLOCKING** - suggestions only, not requirements.
 
-#### 3.2.1: Context Threshold Prompt (70%)
-
-```
-WHEN context approaches 70%:
-  SUGGEST:
-    "📝 LEDGER UPDATE SUGGESTION
-     Context at ~70%. Consider updating session ledger with:
-     - Key decisions made this session
-     - Patterns discovered
-     - Blockers encountered
-     - Rationale for non-obvious choices
-
-     Ledger: .agent-os/ledgers/LEDGER-{session-name}-{date}.md
-
-     [continue | update-ledger | skip]"
-
-  IF user chooses "update-ledger":
-    PROMPT for key items to capture
-    APPEND to ledger file
-
-  ELSE:
-    CONTINUE (non-blocking)
-```
-
-#### 3.2.2: Task Completion Prompt
+#### 3.2.1: Task Completion Prompt
 
 ```
 AFTER task marked complete (bd close):
@@ -688,7 +658,7 @@ AFTER task marked complete (bd close):
     CONTINUE (non-blocking)
 ```
 
-#### 3.2.3: Pre-Compaction Prompt
+#### 3.2.2: Pre-Compaction Prompt
 
 ```
 BEFORE context compaction or graceful stop:
@@ -712,7 +682,7 @@ BEFORE context compaction or graceful stop:
     CONTINUE to checkpoint (non-blocking)
 ```
 
-#### 3.2.4: Ledger Entry Format
+#### 3.2.3: Ledger Entry Format
 
 ```markdown
 ## Session Entry - {TIMESTAMP}
@@ -735,16 +705,15 @@ BEFORE context compaction or graceful stop:
 ---
 ```
 
-#### 3.2.5: Configuration
+#### 3.2.4: Configuration
 
 ```yaml
 # config.yml
 ledger_maintenance:
   enabled: true
   prompts:
-    context_threshold: 0.70        # Prompt at 70% context
     on_task_completion: true       # Suggest after task closes
-    before_compaction: true        # Suggest before context stop
+    before_compaction: true        # Suggest before context stop (PreCompact hook handles this)
   blocking: false                  # ALWAYS non-blocking
   ledger_path: ".agent-os/ledgers"
 ```
@@ -1421,15 +1390,15 @@ bd blocked                   # Show blocked
 bd sync --from-main
 ```
 
-### Skill Invocations
+### Skills and Instruction Files
 
-| Role | Required Skills |
-|------|-----------------|
-| test-context-gatherer | e2e-testing, agent-os-test-research, agent-os-patterns |
-| test-architect | e2e-testing, agent-os-patterns |
-| implementation-specialist | agent-os-patterns, agent-os-specialists |
-| frontend-specialist | agent-os-patterns, agent-os-specialists |
-| security-sentinel | agent-os-specialists |
+| Role | Skills / Instruction Files |
+|------|---------------------------|
+| test-context-gatherer | e2e-testing, instructions/agents/test-context-gatherer.md |
+| test-architect | e2e-testing, instructions/agents/test-architect.md |
+| implementation-specialist | standards/, instructions/agents/implementation-specialist.md |
+| frontend-specialist | standards/, instructions/agents/frontend-specialist.md |
+| security-sentinel | instructions/agents/security-sentinel.md |
 | e2e-repair | e2e-testing |
 
 ### Skill Enforcement Protocol (v4.8.0)

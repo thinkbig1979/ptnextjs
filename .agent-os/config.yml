@@ -1,10 +1,13 @@
-# Agent OS Configuration v5.2.0
+# Agent OS Configuration v5.4.1
 # Clean configuration with sane defaults for compound engineering integration
 #
 # TOKEN EFFICIENCY NOTE:
 # - This file is loaded once per session (not repeatedly)
 # - Agents access specific sections via key lookup, not full-file parsing
 # - Unused sections do not consume additional context tokens
+# v5.4.1: Task Coverage Validation - Ensures tasks fully cover spec requirements
+# v5.4.0: Semantic Coverage Validation - Workflow, data flow, and integration coverage checks
+# v5.3.0: Mandatory Session Ledger - Session ledger required when remaining work exists
 # v5.2.0: Unified Session Ledger - Multi-session persistence, /orchestrate command
 # v5.1.0: UI Testing Integration - E2E tests block implementation, browser validation gates
 # v5.0.0: Pattern Consistency - Auto-detect and enforce codebase patterns
@@ -21,7 +24,7 @@
 # v4.0.0: Test Failure Handling Protocol - Orchestrated test execution with subagent delegation
 # v3.3.0: Test Execution Monitoring - Real-time streaming, hung test detection, test/code alignment
 
-agent_os_version: 5.2.0
+agent_os_version: 5.5.0
 
 # ================================================
 # CONFIGURATION HIERARCHY
@@ -108,29 +111,29 @@ execution:
 # when entering each workflow phase.
 #
 # Active roles (have instruction files):
-#   - test_architect: Test design (TDD RED phase)
-#   - test_context_gatherer: Pre-test research
-#   - test_integrity_analyzer: Existing test analysis
+#   - test_design: Test strategy and design (TDD RED phase)
+#   - test_execution: Test running protocol
+#   - test_maintenance: Existing test impact analysis
 #   - implementation_specialist: Implementation (TDD GREEN phase)
 #   - security_sentinel: Security review
-#   - test_runner: Test execution
+#   - pattern_guardian: Pattern discovery and validation
 #
 # See: docs/GLOSSARY.md for terminology definitions
 
 execution_roles:
-  test_architect:
+  test_design:
     enabled: true
     context_window: 16384
-    specialization: "test_design_and_implementation"
+    specialization: "test_design_and_framework_research"
 
-  test_context_gatherer:
+  test_execution:
     enabled: true
-    context_window: 12288
-    specialization: "pre_test_research"
+    context_window: 6144
+    specialization: "test_running_protocol"
 
-  test_integrity_analyzer:
+  test_maintenance:
     enabled: true
-    context_window: 12288
+    context_window: 16384
     specialization: "existing_test_analysis"
 
   implementation_specialist:
@@ -143,10 +146,10 @@ execution_roles:
     context_window: 16384
     specialization: [security, vulnerability-scanning, owasp]
 
-  test_runner:
+  pattern_guardian:
     enabled: true
-    context_window: 12288
-    specialization: "test_execution"
+    context_window: 16384
+    specialization: "pattern_discovery_and_validation"
 
 # ================================================
 # SECURITY SCANNING
@@ -165,7 +168,7 @@ security:
 # The infrastructure remains available if future use cases require it.
 # See: setup/archive/worktrees/ARCHIVED.md
 worktrees:
-  enabled: false  # DEFERRED - not part of active workflow
+  enabled: false # DEFERRED - not part of active workflow
   base_directory: ".agent-os/worktrees"
   auto_cleanup: true
 
@@ -272,10 +275,13 @@ deliverable_verification:
   verify_integration: true
 
 # ================================================
-# TDD ENFORCEMENT (v2.8+)
+# TDD ENFORCEMENT (v2.8+, opt-in v5.3.0+)
 # ================================================
+# TDD enforcement is OPT-IN by default. AI agents don't need the human
+# discipline that strict RED-GREEN-REFACTOR provides. Enable when you want
+# stricter test-first workflow.
 tdd_enforcement:
-  enabled: true
+  enabled: false  # Set true to enable TDD enforcement
 
   # Enforcement level: strict | standard | relaxed
   # - strict: Block implementation without passing tests (production)
@@ -285,28 +291,28 @@ tdd_enforcement:
 
   # Test-first workflow enforcement
   test_first:
-    enabled: true
+    enabled: false  # Set true for test-first requirement
     block_implementation: false # Set true for strict enforcement
     require_passing_tests: true
     allow_refactoring: true
 
   # Minimal implementation principle
   minimal_implementation:
-    enabled: true
+    enabled: false  # Set true to enforce simplicity checks
     enforce_simplicity: true
     check_complexity: true
     max_lines_per_function: 50
 
   # TDD cycle tracking (RED-GREEN-REFACTOR)
   cycle_tracking:
-    enabled: true
+    enabled: false  # Set true to track TDD cycles
     state_directory: ".agent-os/tdd-state"
     persist_history: true
     track_metrics: true
 
   # TDD workflow hooks
   hooks:
-    enabled: true
+    enabled: false  # Set true to enable TDD hooks
     pre_implementation: true # Validate tests exist before implementation
     post_test: true # Validate tests pass after changes
     pre_commit: false # Optional: Validate before git commit
@@ -475,7 +481,7 @@ test_infrastructure:
 # Pre-test research phase that gathers library documentation and patterns
 # BEFORE test writing begins. Prevents test failures from incorrect API usage.
 #
-# Implementation: instructions/agents/test-context-gatherer.md
+# Implementation: instructions/agents/test-design.md (Phase 1)
 # Utilities: hooks/lib/detect-test-libraries.js, hooks/lib/fetch-test-documentation.js
 # Workflow: execute-tasks.md Step 2.0
 
@@ -510,11 +516,11 @@ test_context_gathering:
       - websearch # Priority 4: WebSearch (always available)
       - webfetch # Priority 5: Direct URL fetch (always available)
 
-    # Skills to invoke for pattern lookup
-    skills:
-      patterns: agent-os-patterns # Code and testing patterns
-      specialists: agent-os-specialists # Specialist guidance
-      test_research: agent-os-test-research # Test library research
+    # Instruction files for pattern lookup (skills removed in v5.3.0)
+    instruction_files:
+      patterns: "standards/" # Code and testing patterns
+      specialists: "instructions/agents/" # Specialist guidance
+      test_research: "instructions/agents/test-context-gatherer.md" # Test library research
 
     # MCP tool names to check for availability
     mcp_tools:
@@ -585,16 +591,15 @@ test_context_gathering:
       - transactions
 
 # ================================================
-# SKILLS INTEGRATION (v3.2+)
+# SKILLS INTEGRATION (v5.3.0+)
 # ================================================
-# Claude Code skills provide progressive-disclosure documentation
-# that loads on-demand without network dependencies.
+# Agent OS skills provide specialized workflows that Claude can invoke.
 #
-# Benefits over MCP/WebSearch:
-#   - Always available (no network required)
-#   - Progressive disclosure (load only needed sections)
-#   - Version controlled with Agent OS
-#   - Explicit invocation in workflows
+# Note: agent-os-patterns, agent-os-specialists, and agent-os-test-research
+# were removed in v5.3.0. Their content now lives in:
+#   - standards/ (patterns)
+#   - instructions/agents/ (specialists)
+#   - instructions/agents/test-context-gatherer.md (test research)
 #
 # Skills location: ~/.claude/skills/
 # See: https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
@@ -604,31 +609,6 @@ skills_integration:
 
   # Available Agent OS skills
   skills:
-    agent-os-patterns:
-      description: "Code and testing patterns"
-      references:
-        - testing/vitest.md
-        - testing/playwright.md
-        - testing/convex.md
-        - testing/test-strategies.md
-        - global/coding-style.md
-        - global/tech-stack.md
-
-    agent-os-specialists:
-      description: "Specialist guidance for development phases"
-      references:
-        - development/test-architect.md
-        - development/backend-nodejs.md
-        - review/security-sentinel.md
-        - review/quality-assurance.md
-
-    agent-os-test-research:
-      description: "Pre-test library detection and documentation gathering"
-      references:
-        - detection patterns
-        - documentation sources
-        - pattern extraction
-
     e2e-test-repair:
       description: "Systematic E2E test suite repair through failure categorization and strategic fixes"
       references:
@@ -650,30 +630,31 @@ skills_integration:
         - placement-checklist.md
 
   # Workflow integration points
-  # Where skills are explicitly invoked during task execution
+  # Where instruction files are loaded during task execution
+  # Note: Skills replaced with direct instruction file loading in v5.3.0
   workflow_integration:
     create_tasks:
       step: "1.7"
-      skills:
-        - agent-os-patterns # For code examples in task generation
+      instructions:
+        - standards/testing-standards.md # For code examples in task generation
     test_context_gathering:
       step: "2.0"
-      skills:
-        - agent-os-test-research # For library detection
-        - agent-os-patterns # For testing patterns (fallback)
+      instructions:
+        - instructions/agents/test-design.md # Phase 1: Context research
+        - standards/testing-standards.md # For testing patterns (fallback)
     test_design:
       step: "2.1"
-      skills:
-        - agent-os-specialists # For test-architect guidance
+      instructions:
+        - instructions/agents/test-design.md # For test design guidance
     implementation:
       step: "3.0"
-      skills:
-        - agent-os-patterns # For code style/patterns
-        - agent-os-specialists # For specialist guidance
+      instructions:
+        - standards/ # For code style/patterns
+        - instructions/agents/implementation-specialist.md # For implementation guidance
     security_review:
       step: "4.5"
-      skills:
-        - agent-os-specialists # For security-sentinel guidance
+      instructions:
+        - instructions/agents/security-sentinel.md # For security review guidance
 
   # Invocation mode
   # "explicit": Only invoke when workflow specifies
@@ -1102,16 +1083,16 @@ quality_lenses:
 
   # Opt-in threshold: specs below this estimated work are opt-in by default
   # User can still request lenses for simple specs via --with-lenses flag
-  opt_in_threshold_hours: 4  # <4h estimated work = opt-in
+  opt_in_threshold_hours: 4 # <4h estimated work = opt-in
 
   # Which lenses are opt-in vs always-on
   # "always": Applied regardless of complexity
   # "opt-in": Only applied if work > threshold OR explicitly requested
   # "disabled": Never applied
   default_behavior:
-    inversion: "opt-in"      # Failure mode analysis
-    pre_mortem: "opt-in"     # Risk projection
-    evolution: "opt-in"      # Timelessness scoring
+    inversion: "opt-in" # Failure mode analysis
+    pre_mortem: "opt-in" # Risk projection
+    evolution: "opt-in" # Timelessness scoring
 
   # Override by priority (takes precedence over threshold)
   # P0-P1: Always apply all lenses (critical features need thorough analysis)
@@ -1120,18 +1101,18 @@ quality_lenses:
   priority_overrides:
     P0: "always"
     P1: "always"
-    P2: "threshold"  # Use opt_in_threshold_hours
+    P2: "threshold" # Use opt_in_threshold_hours
     P3: "opt-in"
     P4: "opt-in"
 
   # Risk factors that trigger lenses even for simple specs
   # If ANY of these apply, lenses are recommended regardless of threshold
   risk_factors:
-    - security_implications     # Auth, permissions, secrets
-    - data_integrity            # Database changes, migrations
-    - external_integrations     # Third-party APIs, webhooks
-    - user_facing_changes       # UI that affects many users
-    - breaking_changes          # API changes, deprecations
+    - security_implications # Auth, permissions, secrets
+    - data_integrity # Database changes, migrations
+    - external_integrations # Third-party APIs, webhooks
+    - user_facing_changes # UI that affects many users
+    - breaking_changes # API changes, deprecations
 
   # Skip conditions (ALL must be true to skip for P3-P4)
   skip_conditions:
@@ -1141,9 +1122,168 @@ quality_lenses:
     - estimated_under_threshold
     - pure_docs_or_config
 
-  # Quick-spec mode: automatically skip lenses
-  # When using /quick-spec, lenses are skipped by default
-  quick_spec_behavior: "skip"  # "skip" | "ask" | "minimal"
+# ================================================
+# SEMANTIC COVERAGE VALIDATION (v5.4.0+)
+# ================================================
+# Validates that specifications address all aspects of user workflows,
+# data flows, and integration impacts - not just structural completeness.
+#
+# Key Insight: A spec can be structurally complete (all files exist, all
+# sections filled) yet miss critical workflow aspects like error states,
+# data validation paths, or integration impacts.
+#
+# Reference:
+#   - instructions/utilities/post-spec-coverage-checklist.md
+#   - instructions/utilities/data-flow-tracing.md
+#   - instructions/utilities/integration-impact-analysis.md
+# Workflow: Step 2.8 in validate-quality.md, Step 12.5 in create-spec
+
+semantic_coverage:
+  enabled: true
+
+  # Score threshold - specs below this are warned/blocked
+  min_score: 0.85
+
+  # Enforcement mode
+  # "advisory": Log findings, no blocking
+  # "warning": Show warnings, require acknowledgment for P2+
+  # "blocking": Block on P1 findings
+  enforcement_mode: "warning"
+
+  # Which coverage checks to run
+  checks:
+    # Workflow coverage (UI & user interactions)
+    workflow_coverage:
+      enabled: true
+      weight: 0.40 # 40% of semantic score
+      checks:
+        - screens_identified
+        - navigation_flow
+        - empty_states
+        - loading_states
+        - error_states
+        - feedback_mechanisms
+
+    # Data flow coverage (entity lifecycle tracing)
+    data_flow_coverage:
+      enabled: true
+      weight: 0.35 # 35% of semantic score
+      checks:
+        - create_flow_complete
+        - read_flow_complete
+        - update_flow_complete
+        - delete_flow_complete
+        - validation_layers
+
+    # Integration coverage (impact on existing system)
+    integration_coverage:
+      enabled: true
+      weight: 0.25 # 25% of semantic score
+      checks:
+        - touchpoints_identified
+        - breaking_changes_documented
+        - affected_features_listed
+        - regression_plan_created
+
+  # Severity mapping for findings
+  severity:
+    P1_critical:
+      - "Data created but never displayed"
+      - "Missing server validation for user input"
+      - "Breaking API change without migration"
+      - "Missing error handling for critical path"
+      - "Security gap in permission checks"
+      - "Missing E2E test for user workflow"
+
+    P2_important:
+      - "Missing loading state"
+      - "Missing empty state"
+      - "Missing error state"
+      - "No client validation"
+      - "Breaking component changes"
+      - "Missing data migration strategy"
+
+    P3_nice_to_have:
+      - "No undo capability"
+      - "Missing optimistic updates"
+      - "Documentation gaps"
+
+  # Quick-spec mode: lighter validation
+  quick_spec_behavior:
+    enabled: true
+    skip_data_flow_tracing: true # Skip entity tracing for quick specs
+    skip_integration_impact: false # Still check integration
+    reduced_checks: true # Only run critical checks
+
+# ================================================
+# TASK COVERAGE VALIDATION (v5.4.1+)
+# ================================================
+# Validates that generated tasks fully cover specification requirements.
+# Runs after task generation to catch gaps before execution.
+#
+# Key Insight: A semantically complete spec may still produce incomplete tasks
+# if task generation misses workflow aspects, data operations, or integrations.
+#
+# Reference: instructions/utilities/task-coverage-validation.md
+# Workflow: Step 1.8 in create-tasks.md
+
+task_coverage:
+  enabled: true
+
+  # Score threshold - task sets below this are warned/blocked
+  min_score: 0.85
+
+  # Enforcement mode
+  # "advisory": Log gaps, no blocking
+  # "warning": Show warnings, require acknowledgment for P2+
+  # "blocking": Block on P1 gaps, auto-generate missing tasks
+  enforcement_mode: "warning"
+
+  # Coverage weights for scoring
+  weights:
+    workflow: 0.30 # Routes, components, states
+    data_flow: 0.35 # CRUD operations, validation
+    integration: 0.20 # Breaking changes, dependencies
+    testing: 0.15 # E2E tests, browser validation
+
+  # What to check in each category
+  checks:
+    workflow:
+      - routes_have_tasks
+      - components_have_state_coverage
+      - feedback_mechanisms_covered
+
+    data_flow:
+      - entities_have_crud_tasks
+      - validation_in_acceptance_criteria
+      - migration_tasks_if_needed
+
+    integration:
+      - breaking_changes_have_tasks
+      - external_deps_have_tasks
+      - affected_features_addressed
+
+    testing:
+      - user_flows_have_e2e_tasks
+      - e2e_blocks_implementation
+      - browser_validation_tasks
+
+  # Severity for missing coverage
+  severity:
+    P1_must_add:
+      - "Missing route/page task"
+      - "Missing entity CRUD task"
+      - "Missing E2E test task"
+      - "Missing breaking change migration task"
+      - "E2E test not blocking implementation"
+      - "Missing server validation in AC"
+
+    P2_should_add:
+      - "Missing empty state in AC"
+      - "Missing loading state in AC"
+      - "Missing error state in AC"
+      - "Missing browser validation task"
+      - "Missing client validation in AC"
 
 # ================================================
 # PRE-MORTEM LENS (v5.2+)
@@ -1160,10 +1300,10 @@ pre_mortem_lens:
 
   # Inherits from quality_lenses.priority_overrides
   # These settings are ADDITIONAL configuration for pre-mortem specific behavior
-  mandatory_for: ['P0', 'P1']  # Overridden by quality_lenses.priority_overrides
+  mandatory_for: ["P0", "P1"] # Overridden by quality_lenses.priority_overrides
 
   # Optional for P2-P4 features (apply if: external deps, data risks, security, complexity)
-  optional_for: ['P2', 'P3', 'P4']
+  optional_for: ["P2", "P3", "P4"]
 
   # Risk scoring configuration
   scoring:
@@ -1199,27 +1339,27 @@ pre_mortem_lens:
 
   # Risk categories to analyze
   categories:
-    - technical      # Architecture, performance, security, integration
-    - product        # UX, value proposition, adoption, market fit
-    - process        # Communication, coordination, timeline, resources
-    - external       # Dependencies, market changes, regulatory, competition
+    - technical # Architecture, performance, security, integration
+    - product # UX, value proposition, adoption, market fit
+    - process # Communication, coordination, timeline, resources
+    - external # Dependencies, market changes, regulatory, competition
 
   # Minimum requirements by priority
   requirements:
     P0_P1:
-      min_risks: 8           # At least 2 per category
+      min_risks: 8 # At least 2 per category
       min_mitigations: "all_above_threshold"
       early_warnings: 5
       time_budget_min: 15
     P2:
-      min_risks: 4           # At least 1 per category
+      min_risks: 4 # At least 1 per category
       min_mitigations: "score_above_16"
       early_warnings: 3
       time_budget_min: 10
     P3_P4:
       min_risks: 4
       min_mitigations: "critical_only"
-      early_warnings: 0      # Optional
+      early_warnings: 0 # Optional
       time_budget_min: 5
 
   # Output configuration
@@ -1231,8 +1371,8 @@ pre_mortem_lens:
 
   # Integration with other spec sections
   integration:
-    technical_spec: true     # Feed technical risks into architecture decisions
-    ux_ui_spec: true         # Feed product risks into user flow architecture
+    technical_spec: true # Feed technical risks into architecture decisions
+    ux_ui_spec: true # Feed product risks into user flow architecture
     implementation_plan: true # Feed process risks into timeline
     integration_requirements: true # Feed external risks into dependencies
 
@@ -1245,8 +1385,7 @@ pre_mortem_lens:
 # Solves: New code using different patterns than existing code (e.g., slugs vs IDs in URLs)
 #
 # Implementation:
-#   - instructions/agents/pattern-discovery-analyst.md - Pattern detection
-#   - instructions/agents/pattern-consistency-validator.md - Validation
+#   - instructions/agents/pattern-guardian.md - Pattern discovery and validation
 #   - templates/patterns/*.md.template - Documentation templates
 #   - Step 0.5 in create-spec.md, Step 4.5 in execute-tasks.md
 #

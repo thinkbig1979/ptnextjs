@@ -75,16 +75,16 @@ CHECK: .agent-os/patterns/
 Project patterns take PRECEDENCE
 ```
 
-**Step 2**: Invoke global skill:
+**Step 2**: Read standards and patterns:
 ```
-Skill(skill="agent-os-patterns")
+READ: standards/testing-standards.md
 
 READ relevant references:
-  - references/testing/vitest.md
-  - references/testing/playwright.md
-  - references/testing/convex.md
-  - references/testing/test-strategies.md
-  - references/global/coding-style.md
+  - standards/testing/patterns/vitest.md
+  - standards/testing/patterns/playwright.md
+  - standards/testing/patterns/convex.md
+  - standards/testing/test-strategies.md
+  - standards/global/coding-style.md
 ```
 
 **Verification**:

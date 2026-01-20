@@ -1,24 +1,29 @@
 ---
-version: 2.0.0
-last-updated: 2026-01-02
+version: 1.0.0
+last-updated: 2026-01-17
 related-files:
   - instructions/core/execute-tasks.md
 ---
 
-# Orchestrate Protocol
+# Run Protocol
 
-> **Purpose**: Force supervisor-orchestrated execution regardless of task structure
-> **Core Principle**: Always use supervisor -> PM -> subagent architecture
+> **Purpose**: Unified task execution with autonomous mode and supervisor orchestration
+> **Core Principle**: Supervisor -> PM -> subagent architecture for reliable execution
 > **Context Management**: Supervisor stays minimal (<5% context), spawns PM subagents
-> **v2.0**: Uses unified session ledger (`.agent-os/session-ledger.md`) for cross-session handoffs
+> **v1.0**: Consolidates `/orchestrate` and `/context-aware` into single `/run` command
 
-## When to Use
+## Overview
 
-Use `/orchestrate` instead of `/execute-tasks` when:
-- You want hands-off execution of a task list
-- Tasks don't naturally trigger parallel execution but you still want orchestration
-- You're running multi-session work and want built-in checkpointing
-- You want to minimize user intervention during execution
+`/run` is the unified command for task execution. By default, it uses autonomous
+execution with the supervisor pattern. Use `--quick` for simpler direct execution.
+
+## When to Use Each Mode
+
+| Mode | Use When |
+|------|----------|
+| `/run` (default) | Multi-session work, large specs, hands-off execution |
+| `/run --quick` | Few tasks, simple changes, faster startup |
+| `/run --supervisor` | Force supervisor pattern regardless of task count |
 
 ## Execution Flow
 
@@ -35,9 +40,9 @@ Phase 1: Task Collection (SIMPLIFIED - no decision logic)
 └─ NO decision about whether to orchestrate - always do it
 
 Phase 2: Supervisor Orchestration (ALWAYS USED)
-├─ Supervisor stays minimal (<5% context)
+├─ Supervisor stays minimal
 ├─ Spawn PM subagent for each wave
-├─ PM works until 85% context or wave complete
+├─ PM works until wave complete or PreCompact hook fires
 ├─ Checkpoint, spawn next PM
 └─ Continue until all tasks complete
 
@@ -163,7 +168,7 @@ WAIT for confirmation
 
 ```
 SUPERVISOR CONSTRAINTS:
-- Stay under 5% context usage
+- Stay minimal - dispatch and coordinate only
 - DO NOT do implementation work
 - Only: dispatch, collect status, checkpoint, dispatch next
 
@@ -194,12 +199,12 @@ ORCHESTRATED EXECUTION - PM SESSION
 You are a PM (Project Manager) subagent. Execute the assigned tasks
 autonomously until either:
 - All tasks in this wave complete
-- You reach 85% context usage
+- PreCompact hook fires (you'll see 'CONTEXT COMPACTION IMMINENT' message)
 
-CONTEXT PROTOCOL:
-- Monitor your context usage
-- At 85%, STOP and execute session ledger handoff
-- Write state to .agent-os/session-ledger.md (see execute-tasks.md Phase 3.4)
+PRECOMPACT PROTOCOL:
+- When you see 'CONTEXT COMPACTION IMMINENT', follow the graceful shutdown instructions
+- Wait for any subagents you spawned to complete
+- Write state to .agent-os/session-ledger.md (see execute-tasks.md Phase 3.1)
 - Save notes to Beads before stopping
 - Another PM will continue from session ledger checkpoint
 
@@ -355,12 +360,12 @@ DO NOT:
 - Accumulate context
 ```
 
-### PM Works Until Done or 85%
+### PM Works Until Done or PreCompact
 
 ```
 PM executes until:
 1. All wave tasks complete → return "completed"
-2. Context at 85% → save state, return "stopped_at_checkpoint"
+2. PreCompact hook fires → save state, return "stopped_at_checkpoint"
 3. Blocker encountered → return "blocked"
 ```
 
@@ -381,8 +386,7 @@ EVERY checkpoint includes:
 # config.yml
 orchestrate:
   enabled: true
-  supervisor_context_limit: 0.05  # 5%
-  pm_context_limit: 0.85          # 85%
   auto_checkpoint: true
   parallel_waves: true            # Run wave tasks in parallel when possible
+  # Context limits removed - PreCompact hook handles graceful shutdown automatically
 ```

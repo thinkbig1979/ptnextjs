@@ -2,7 +2,7 @@
 description: Create Agent OS tasks from approved spec with micro-granular task generation
 globs:
 alwaysApply: false
-version: 5.1.0
+version: 5.4.1
 encoding: UTF-8
 ---
 
@@ -264,9 +264,9 @@ Check for existing tasks and offer upgrade to v2.2.0 structure.
 
   Project patterns OVERRIDE global patterns.
 
-  **STEP 2: Global Skill**
+  **STEP 2: Standards & Patterns**
 
-  INVOKE: Skill(skill="agent-os-patterns")
+  READ: standards/testing-standards.md
 
   READ relevant references:
   | Task | Reference |
@@ -346,6 +346,150 @@ Check for existing tasks and offer upgrade to v2.2.0 structure.
   - [ ] Master tasks.md has pattern summary
   - [ ] Deviation protocol documented
 </pattern_constraints_for_tasks>
+
+</step>
+
+<step number="1.8" name="task_coverage_validation">
+
+### Step 1.8: Task Coverage Validation (v5.4.1+)
+
+**Purpose**: Validate that generated tasks fully cover the specification's semantic requirements before presenting to user.
+
+**Reference**: `@.agent-os/instructions/utilities/task-coverage-validation.md`
+
+**Trigger**: After all tasks generated (Step 2), before user review.
+
+```yaml
+task_coverage_validation:
+  # 1. Extract spec requirements
+  PARSE specifications:
+    - sub-specs/ux-ui-spec.md → routes, components, states
+    - database-schema.md → entities (tables/collections)
+    - api-spec.md → endpoints (mutations/queries)
+    - integration-requirements.md → touchpoints, breaking changes
+    - sub-specs/e2e-test-strategy.md → user flows, test tiers
+
+  BUILD requirements_inventory:
+    routes: [list of routes/pages]
+    entities: [list of data entities]
+    endpoints: [list of API endpoints]
+    user_flows: [list of E2E test flows]
+    integrations: [list of integration points]
+
+  # 2. Extract task coverage
+  PARSE tasks:
+    - tasks.md → task list
+    - tasks/*.md → acceptance criteria per task
+
+  BUILD task_coverage_map:
+    FOR each task:
+      - task_id
+      - type (impl-*, test-*, validate-*)
+      - target (entity, component, flow)
+      - acceptance_criteria_keywords
+
+  # 3. Map requirements to tasks
+  VALIDATE workflow_coverage:
+    FOR each route in requirements:
+      FIND: Task matching impl-page-* OR impl-route-*
+      IF NOT found: FLAG P1 gap
+    
+    FOR each component with states:
+      CHECK: Task AC includes empty/loading/error states
+      IF NOT: FLAG P2 gap
+
+  VALIDATE data_flow_coverage:
+    FOR each entity:
+      FIND: Create task (impl-form-*, impl-api-*-create)
+      FIND: Read task (impl-*-list, impl-api-*-query)
+      FIND: Update task (impl-edit-*, impl-api-*-update) IF specified
+      FIND: Delete task (impl-api-*-delete) IF specified
+      FIND: Validation in task AC (client AND server)
+      FLAG gaps by severity
+
+  VALIDATE integration_coverage:
+    FOR each breaking_change:
+      FIND: Migration/deprecation task
+      IF NOT found: FLAG P1 gap
+    
+    FOR each external_dependency:
+      FIND: Integration task
+      IF NOT found: FLAG P1 gap
+
+  VALIDATE testing_coverage:
+    FOR each user_flow in e2e_strategy:
+      FIND: test-user-flow-{name} task
+      IF NOT found: FLAG P1 gap
+      
+      CHECK: test task BLOCKS impl task
+      IF NOT: FLAG P1 gap
+
+  # 4. Calculate coverage score
+  CALCULATE:
+    workflow_score: (workflow_covered / workflow_total)
+    data_flow_score: (data_covered / data_total)
+    integration_score: (integration_covered / integration_total)
+    testing_score: (testing_covered / testing_total)
+    
+    total_score: weighted_average(
+      workflow_score * 0.30,
+      data_flow_score * 0.35,
+      integration_score * 0.20,
+      testing_score * 0.15
+    )
+
+  # 5. Enforcement
+  IF P1_gaps.count > 0:
+    BLOCK: "Task coverage incomplete"
+    OUTPUT: |
+      ⚠️ TASK COVERAGE GAPS FOUND
+      
+      P1 gaps require adding tasks before proceeding:
+      {list P1 gaps with suggested task to add}
+      
+      Options:
+      1. ADD TASKS - Add missing tasks now
+      2. ABORT - Return to task generation
+    
+    IF choice == "ADD TASKS":
+      FOR each P1_gap:
+        GENERATE: Missing task file
+        UPDATE: tasks.md with new task
+      RE-RUN: validation
+
+  ELIF total_score < 0.85:
+    WARN: "Task coverage score {score}% below threshold"
+    PROMPT: "P2 gaps found. Options:
+             1. ADD - Add missing tasks
+             2. CONTINUE - Proceed with gaps
+             3. ABORT - Return to task generation"
+
+  # 6. Output coverage report
+  OUTPUT: |
+    ═══════════════════════════════════════════════════════════════════
+    TASK COVERAGE VALIDATION
+    ═══════════════════════════════════════════════════════════════════
+    
+    Coverage Score: {total_score}% ({status})
+    
+    Workflow:    {workflow_score}% ({covered}/{total})
+    Data Flow:   {data_flow_score}% ({covered}/{total})
+    Integration: {integration_score}% ({covered}/{total})
+    Testing:     {testing_score}% ({covered}/{total})
+    
+    Gaps: {P1_count} P1, {P2_count} P2
+    
+    Status: {PASSED | BLOCKED | WARNED}
+    ═══════════════════════════════════════════════════════════════════
+```
+
+**Actions**:
+- Extract requirements from spec files
+- Map requirements to generated tasks
+- Calculate coverage scores
+- Flag gaps by severity
+- Block on P1 gaps, warn on P2
+- Generate missing task suggestions
 
 </step>
 
