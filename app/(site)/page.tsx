@@ -48,7 +48,7 @@ export default async function HomePage() {
       <FeaturedPartnersSection featuredPartners={featuredPartners} />
       <ServicesOverviewSection />
       <FeaturedBlogSection featuredPosts={featuredPosts} />
-      <CTASection companyInfo={companyInfo || undefined} />
+      <CTASection />
     </div>
   );
 }

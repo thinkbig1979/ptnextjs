@@ -2,12 +2,74 @@ import * as React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Wrench, ArrowLeft } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Wrench,
+  ArrowLeft,
+  Lightbulb,
+  Pencil,
+  FlaskConical,
+  Sliders,
+  Truck
+} from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Lighting Services | Paul Thames",
-  description: "Complete lighting services for superyachts including design consultation, custom manufacturing, installation, and commissioning support.",
+  description: "Full-service lighting development for superyachts - from concept and feasibility through engineering, prototyping, control integration, and project coordination.",
 };
+
+const serviceStages = [
+  {
+    number: 1,
+    icon: Lightbulb,
+    title: "Concept & Feasibility",
+    tagline: "Can it be done? Should it?",
+    details: [
+      "Initial exploration and technical assessment",
+      "Constraint identification",
+    ],
+  },
+  {
+    number: 2,
+    icon: Pencil,
+    title: "Engineering & Design",
+    tagline: "Technical specification development",
+    details: [
+      "Detailed design documentation",
+      "Integration planning",
+    ],
+  },
+  {
+    number: 3,
+    icon: FlaskConical,
+    title: "Prototyping & Validation",
+    tagline: "Make it real, test it",
+    details: [
+      "Physical prototypes for approval",
+      "Performance validation",
+    ],
+  },
+  {
+    number: 4,
+    icon: Sliders,
+    title: "Control Integration",
+    tagline: "Mapping, behavior, interfaces",
+    details: [
+      "Control system configuration",
+      "Scene and sequence programming",
+    ],
+  },
+  {
+    number: 5,
+    icon: Truck,
+    title: "Project Coordination",
+    tagline: "Delivery without bothering the GC",
+    details: [
+      "Installation support",
+      "Commissioning assistance",
+    ],
+  },
+];
 
 export default function CustomLightingServicesPage() {
   return (
@@ -29,38 +91,75 @@ export default function CustomLightingServicesPage() {
             <Wrench className="w-12 h-12 text-white" />
           </div>
           <h1 className="text-4xl md:text-6xl font-cormorant font-bold mb-8 text-accent">
-            Lighting Services
+            From Concept to Coordination
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-12 font-poppins-light leading-relaxed">
-            From design consultation to installation and commissioning, we support every stage of your lighting project.
+            Full-service lighting development for projects that demand more than off-the-shelf.
           </p>
         </div>
 
-        {/* Coming Soon Notice */}
-        <div className="mb-16 text-center">
-          <div className="inline-flex items-center px-6 py-3 bg-accent/10 border border-accent/20 rounded-full">
-            <span className="text-accent font-poppins-medium text-lg">Coming Soon</span>
-          </div>
-          <p className="mt-6 text-muted-foreground font-poppins-light max-w-2xl mx-auto">
-            We are preparing detailed information about our end-to-end lighting services, covering every phase from initial concept to final commissioning.
-          </p>
-        </div>
-
-        {/* Placeholder Content */}
+        {/* Service Timeline */}
         <div className="mb-20">
-          <div className="bg-muted/30 rounded-2xl p-12 border border-border text-center">
-            <h2 className="text-2xl md:text-3xl font-cormorant font-bold mb-6 text-foreground">
-              Service Stages
-            </h2>
-            <p className="text-lg text-muted-foreground font-poppins-light max-w-2xl mx-auto mb-8">
-              Our comprehensive lighting services will guide you through design consultation, technical specification, custom manufacturing, installation support, and commissioning assistance.
-            </p>
-            <div className="flex flex-wrap justify-center gap-3">
-              {["Design Consultation", "Technical Specification", "Custom Manufacturing", "Installation Support", "Commissioning"].map((tag) => (
-                <span key={tag} className="px-4 py-2 bg-accent/10 text-accent rounded-full text-sm font-poppins-medium">
-                  {tag}
-                </span>
-              ))}
+          <div className="relative">
+            {/* Vertical line connector (hidden on mobile, visible on md+) */}
+            <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-accent/20 -translate-x-1/2" />
+
+            <div className="space-y-8 md:space-y-0">
+              {serviceStages.map((stage, index) => {
+                const IconComponent = stage.icon;
+                const isEven = index % 2 === 0;
+
+                return (
+                  <div key={stage.number} className="relative md:flex md:items-center md:min-h-[200px]">
+                    {/* Timeline dot (desktop only) */}
+                    <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 z-10">
+                      <div className="w-14 h-14 bg-accent rounded-full flex items-center justify-center text-white font-cormorant font-bold text-xl shadow-lg border-4 border-background">
+                        {stage.number}
+                      </div>
+                    </div>
+
+                    {/* Card - alternating sides on desktop */}
+                    <div className={`md:w-1/2 ${isEven ? 'md:pr-16' : 'md:ml-auto md:pl-16'}`}>
+                      <Card className="hover-lift border-accent/10 hover:border-accent/30 transition-colors">
+                        <CardContent className="p-6">
+                          <div className="flex items-start gap-4">
+                            {/* Mobile number badge */}
+                            <div className="md:hidden flex-shrink-0 w-10 h-10 bg-accent rounded-full flex items-center justify-center text-white font-cormorant font-bold text-lg">
+                              {stage.number}
+                            </div>
+
+                            {/* Icon */}
+                            <div className="hidden md:flex flex-shrink-0 w-12 h-12 bg-accent/10 rounded-lg items-center justify-center">
+                              <IconComponent className="w-6 h-6 text-accent" />
+                            </div>
+
+                            {/* Content */}
+                            <div className="flex-1 min-w-0">
+                              <h3 className="text-xl md:text-2xl font-cormorant font-bold text-foreground mb-1">
+                                {stage.title}
+                              </h3>
+                              <p className="text-accent font-poppins-medium text-sm mb-3">
+                                {stage.tagline}
+                              </p>
+                              <ul className="space-y-1.5">
+                                {stage.details.map((detail, detailIndex) => (
+                                  <li
+                                    key={detailIndex}
+                                    className="text-muted-foreground font-poppins-light text-sm flex items-start gap-2"
+                                  >
+                                    <span className="text-accent mt-1.5 text-xs">&#9679;</span>
+                                    {detail}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -72,11 +171,11 @@ export default function CustomLightingServicesPage() {
               Ready to Start Your Lighting Project?
             </h2>
             <p className="text-xl mb-8 max-w-2xl mx-auto text-muted-foreground font-poppins-light">
-              Contact us to discuss your lighting service requirements.
+              Contact us to discuss your custom lighting requirements and discover how we can bring your vision to life.
             </p>
             <Button size="lg" asChild className="bg-accent hover:bg-accent/90 text-white font-bold px-10 py-4 rounded-full">
               <a href="mailto:info@paulthames.com?subject=Lighting Services Inquiry">
-                Contact Us
+                Start a Conversation
               </a>
             </Button>
           </div>

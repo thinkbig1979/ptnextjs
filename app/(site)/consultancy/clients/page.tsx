@@ -1,13 +1,45 @@
 import * as React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Users, ArrowLeft } from "lucide-react";
+import { Users, ArrowLeft, ClipboardCheck, FileText, CheckSquare, Headphones } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Consultancy for Clients | Paul Thames",
-  description: "Demand-side consultancy services for yacht owners, shipyards, and project managers seeking expert technical guidance in superyacht technology.",
+  description: "Technical clarity for owners, designers, and shipyards at critical decision points. Expert consultancy services for superyacht technology specifications and project support.",
 };
+
+const clientServices = [
+  {
+    icon: ClipboardCheck,
+    title: "Specification Review & Improvement",
+    what: "Audit existing specifications for gaps, ambiguities, and risks",
+    who: "Anyone with existing specs needing validation",
+    when: "Before going to tender",
+  },
+  {
+    icon: FileText,
+    title: "Specification Creation",
+    what: "Build technical specifications from requirements",
+    who: "Projects starting without formal specs",
+    when: "Early design phase",
+  },
+  {
+    icon: CheckSquare,
+    title: "Proposal / Compliance Review",
+    what: "Evaluate vendor proposals against specifications",
+    who: "Procurement decisions",
+    when: "Tender evaluation phase",
+  },
+  {
+    icon: Headphones,
+    title: "On-Demand Project Support",
+    what: "Technical guidance during build",
+    who: "Projects needing expert input without full-time commitment",
+    when: "Throughout build phase",
+  },
+];
 
 export default function ConsultancyClientsPage() {
   return (
@@ -29,39 +61,55 @@ export default function ConsultancyClientsPage() {
             <Users className="w-12 h-12 text-white" />
           </div>
           <h1 className="text-4xl md:text-6xl font-cormorant font-bold mb-8 text-accent">
-            Consultancy for Clients
+            For Clients
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-12 font-poppins-light leading-relaxed">
-            Demand-side services for yacht owners, shipyards, and project managers seeking expert technical guidance.
+            Technical clarity for owners, designers, and shipyards at critical decision points.
           </p>
         </div>
 
-        {/* Coming Soon Notice */}
+        {/* Target Audience */}
         <div className="mb-16 text-center">
-          <div className="inline-flex items-center px-6 py-3 bg-accent/10 border border-accent/20 rounded-full">
-            <span className="text-accent font-poppins-medium text-lg">Coming Soon</span>
+          <div className="flex flex-wrap justify-center gap-3">
+            {["Yacht Owners", "Interior Designers", "Shipyards", "Project Managers"].map((audience) => (
+              <span key={audience} className="px-4 py-2 bg-accent/10 text-accent rounded-full text-sm font-poppins-medium">
+                {audience}
+              </span>
+            ))}
           </div>
-          <p className="mt-6 text-muted-foreground font-poppins-light max-w-2xl mx-auto">
-            We are preparing detailed information about our client-focused consultancy services, including technical advisory, project oversight, and vendor selection guidance.
-          </p>
         </div>
 
-        {/* Placeholder Content */}
+        {/* Services Grid */}
         <div className="mb-20">
-          <div className="bg-muted/30 rounded-2xl p-12 border border-border text-center">
-            <h2 className="text-2xl md:text-3xl font-cormorant font-bold mb-6 text-foreground">
-              Services for Yacht Owners & Project Stakeholders
-            </h2>
-            <p className="text-lg text-muted-foreground font-poppins-light max-w-2xl mx-auto mb-8">
-              Our client consultancy services will include technical due diligence, system architecture guidance, vendor evaluation, and ongoing project oversight for superyacht technology implementations.
-            </p>
-            <div className="flex flex-wrap justify-center gap-3">
-              {["Technical Advisory", "Project Oversight", "Vendor Selection", "System Integration"].map((tag) => (
-                <span key={tag} className="px-4 py-2 bg-accent/10 text-accent rounded-full text-sm font-poppins-medium">
-                  {tag}
-                </span>
-              ))}
-            </div>
+          <div className="grid md:grid-cols-2 gap-8">
+            {clientServices.map((service) => (
+              <Card key={service.title} className="h-full">
+                <CardHeader>
+                  <div className="flex items-center mb-4">
+                    <div className="w-14 h-14 bg-accent rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                      <service.icon className="w-7 h-7 text-white" />
+                    </div>
+                    <CardTitle className="text-xl md:text-2xl font-cormorant">{service.title}</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-3">
+                    <div className="flex items-start">
+                      <span className="text-accent font-poppins-medium text-sm min-w-[4rem]">What:</span>
+                      <span className="text-muted-foreground font-poppins-light text-base ml-2">{service.what}</span>
+                    </div>
+                    <div className="flex items-start">
+                      <span className="text-accent font-poppins-medium text-sm min-w-[4rem]">For:</span>
+                      <span className="text-muted-foreground font-poppins-light text-base ml-2">{service.who}</span>
+                    </div>
+                    <div className="flex items-start">
+                      <span className="text-accent font-poppins-medium text-sm min-w-[4rem]">When:</span>
+                      <span className="text-muted-foreground font-poppins-light text-base ml-2">{service.when}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
 
