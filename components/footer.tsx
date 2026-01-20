@@ -27,14 +27,14 @@ export function Footer({ companyInfo }: FooterProps): React.JSX.Element {
           <div className="space-y-4">
             <h2 className="font-poppins-medium text-sm font-semibold">Discover</h2>
             <div className="space-y-2">
-              <Link href="/discovery-platform" className="block font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors">
-                Discovery Platform
-              </Link>
               <Link href="/vendors" className="block font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors">
                 Vendors
               </Link>
               <Link href="/products" className="block font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors">
                 Products
+              </Link>
+              <Link href="/yachts" className="block font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors">
+                Yachts
               </Link>
             </div>
           </div>

@@ -19,23 +19,23 @@ export default async function HomePage() {
     payloadCMSDataService.getBlogPosts({ featured: true })
   ]);
 
-  // Define the two-pillar data structure with exact pt2 content
+  // Define the two-pillar data structure - updated for rebrand
   const leftPillarData = {
     title: "Discovery Platform",
     subtitle: "Enabling the industry to explore innovative tech products, services, and proven suppliers. Fast and transparent.",
     description: "Enabling the industry to explore innovative tech products, services, and proven suppliers. Fast and transparent.",
     founders: [],
-    ctaText: "Learn More",
-    ctaUrl: "/discovery-platform"
+    ctaText: "Explore Vendors",
+    ctaUrl: "/vendors"
   };
 
   const rightPillarData = {
-    title: "Expertise & Bespoke Solutions",
-    subtitle: "Senior technical leadership, scoped discovery, and access to our curated PT Collective.",
-    description: "Senior technical leadership, scoped discovery, and access to our curated PT Collective.",
+    title: "Consultancy Services",
+    subtitle: "Lightweight, owner-aligned consultancy delivering clarity early — before change becomes expensive.",
+    description: "Lightweight, owner-aligned consultancy delivering clarity early — before change becomes expensive.",
     founders: [],
     ctaText: "Learn More",
-    ctaUrl: "/bespoke-solutions"
+    ctaUrl: "/consultancy"
   };
 
   // Credibility stats for the homepage

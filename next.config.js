@@ -3,6 +3,22 @@ const path = require('path');
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   distDir: process.env.NEXT_DIST_DIR || '.next',
+
+  // Redirects for deprecated routes (rebrand migration)
+  async redirects() {
+    return [
+      {
+        source: '/discovery-platform',
+        destination: '/vendors',
+        permanent: true,
+      },
+      {
+        source: '/bespoke-solutions',
+        destination: '/consultancy',
+        permanent: true,
+      },
+    ];
+  },
   // NOTE: Payload CMS requires server-side rendering
   // Static export is incompatible with Payload CMS
   // Docker deployment uses standalone mode for optimized containerization

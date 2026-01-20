@@ -44,7 +44,7 @@ export default async function ContactPage() {
       <div className="container max-w-screen-xl">
         {/* Header */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-6xl font-cormorant font-bold mb-6">
+          <h1 className="text-4xl md:text-6xl font-cormorant font-bold mb-6 text-accent">
             Contact Us
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-poppins-light leading-relaxed">

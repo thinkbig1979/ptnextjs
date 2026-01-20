@@ -26,8 +26,8 @@ const navigationItems: NavigationItem[] = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
   {
-    href: "/discovery-platform",
-    label: "Discovery Platform",
+    href: "/vendors",
+    label: "Discovery",
     submenu: [
       { href: "/vendors", label: "Vendors" },
       { href: "/products", label: "Products & Services" },
@@ -36,7 +36,14 @@ const navigationItems: NavigationItem[] = [
       { href: "/vendor/login", label: "Vendor Login" },
     ]
   },
-  { href: "/bespoke-solutions", label: "Bespoke Solutions" },
+  {
+    href: "/custom-lighting",
+    label: "Services",
+    submenu: [
+      { href: "/custom-lighting", label: "Custom Lighting" },
+      { href: "/consultancy", label: "Consultancy" },
+    ]
+  },
   { href: "/blog", label: "Blog" },
   { href: "/contact", label: "Contact" },
 ];

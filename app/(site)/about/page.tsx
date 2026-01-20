@@ -80,30 +80,30 @@ export default function AboutPage() {
                   Led by: Roel (Commercial Founder)
                 </p>
                 <Button asChild className="bg-accent hover:bg-accent/90 text-white">
-                  <Link href="/discovery-platform">Learn More</Link>
+                  <Link href="/vendors">Explore Vendors</Link>
                 </Button>
               </CardContent>
             </Card>
 
-            {/* Bespoke Solutions Overview */}
+            {/* Consultancy Services Overview */}
             <Card className="hover-lift">
               <CardHeader>
                 <div className="flex items-center mb-6">
                   <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mr-4">
                     <Compass className="w-8 h-8 text-white" />
                   </div>
-                  <CardTitle className="text-2xl font-cormorant">Expertise & Bespoke Solutions</CardTitle>
+                  <CardTitle className="text-2xl font-cormorant">Consultancy Services</CardTitle>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
                 <p className="text-muted-foreground font-poppins-light">
-                  Delivery-oriented services providing senior technical leadership, scoped discovery work, fast pilots, and guided access to specialist expertise.
+                  Lightweight, owner-aligned consultancy delivering clarity early — before change becomes expensive.
                 </p>
                 <p className="text-sm text-muted-foreground/80 font-poppins-light">
                   Led by: Edwin (Technical Founder / CTO)
                 </p>
                 <Button asChild className="bg-accent hover:bg-accent/90 text-white">
-                  <Link href="/bespoke-solutions">Learn More</Link>
+                  <Link href="/consultancy">Learn More</Link>
                 </Button>
               </CardContent>
             </Card>
