@@ -67,7 +67,7 @@ export function CustomLightingPreviewSection({ className }: CustomLightingPrevie
               key={highlight.title}
               className="text-center p-6 rounded-xl bg-card/60 backdrop-blur-sm border border-accent/10 hover:border-accent/30 transition-colors"
             >
-              <div className="w-14 h-14 bg-accent/10 border border-accent/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <div className="w-14 h-14 bg-accent/10 border border-accent/20 rounded-lg flex items-center justify-center mx-auto mb-4" aria-hidden="true">
                 <highlight.icon className="w-7 h-7 text-accent" />
               </div>
               <h3 className="text-xl font-cormorant font-bold text-accent mb-2">

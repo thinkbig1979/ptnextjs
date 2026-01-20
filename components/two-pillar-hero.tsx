@@ -54,10 +54,11 @@ export function TwoPillarHero({
         <div className="absolute inset-0 -z-10 opacity-30">
           <Image
             src={heroImage}
-            alt="Hero Background"
+            alt="" // Decorative background image
             fill
             className="object-cover"
             priority
+            aria-hidden="true"
           />
         </div>
       )}
@@ -135,13 +136,13 @@ function PillarSection({ pillar, icon }: PillarSectionProps) {
     <div className="bg-card/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-accent/10 hover:border-accent/30 hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
       <div className="space-y-6">
         {/* Icon */}
-        <div className="w-16 h-16 bg-accent/10 border border-accent/20 rounded-full flex items-center justify-center mx-auto">
+        <div className="w-16 h-16 bg-accent/10 border border-accent/20 rounded-full flex items-center justify-center mx-auto" aria-hidden="true">
           {icon}
         </div>
 
-        <h2 className="text-3xl md:text-4xl font-cormorant font-bold text-primary text-center">
+        <h3 className="text-3xl md:text-4xl font-cormorant font-bold text-primary text-center">
           {pillar.title}
-        </h2>
+        </h3>
 
         <p className="text-lg text-muted-foreground font-poppins-light leading-relaxed text-center">
           {pillar.description}
@@ -184,7 +185,7 @@ function PillarSection({ pillar, icon }: PillarSectionProps) {
           <ul className="space-y-3 text-left">
             {pillar.features.map((feature) => (
               <li key={`feature-${feature}`} className="flex items-center gap-3">
-                <svg className="w-5 h-5 text-accent flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-5 h-5 text-accent flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
                 </svg>
                 <span className="text-muted-foreground">{feature}</span>

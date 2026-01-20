@@ -30,7 +30,7 @@ export function LightingConceptCard({
       )}
     >
       <CardHeader>
-        <div className="w-16 h-16 bg-accent/10 border border-accent/20 rounded-lg flex items-center justify-center mx-auto mb-4 transition-colors duration-300 group-hover:bg-accent/15">
+        <div className="w-16 h-16 bg-accent/10 border border-accent/20 rounded-lg flex items-center justify-center mx-auto mb-4 transition-colors duration-300 group-hover:bg-accent/15" aria-hidden="true">
           <Icon className="w-8 h-8 text-accent" />
         </div>
         <CardTitle className="text-xl font-cormorant">{title}</CardTitle>

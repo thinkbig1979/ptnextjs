@@ -37,7 +37,7 @@ export function TimelineVisualization({
         : "md:grid-cols-4";
 
   return (
-    <div className={cn("relative", className)}>
+    <div className={cn("relative", className)} role="list" aria-label="Project phases timeline">
       {/* Timeline connecting line - horizontal on md+ only */}
       <div
         className="hidden md:block absolute top-1/2 left-0 right-0 h-1 bg-border -translate-y-1/2"
@@ -52,7 +52,7 @@ export function TimelineVisualization({
         )}
       >
         {phases.map((phase, index) => (
-          <div key={phase.name} className="relative text-center">
+          <div key={phase.name} className="relative text-center" role="listitem">
             {/* Phase indicator circle */}
             <div
               className={cn(
@@ -61,6 +61,7 @@ export function TimelineVisualization({
                   ? "bg-accent text-white ring-4 ring-accent/20"
                   : "bg-muted text-muted-foreground"
               )}
+              aria-hidden="true"
             >
               <span className="text-lg font-bold">{index + 1}</span>
             </div>

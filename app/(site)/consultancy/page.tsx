@@ -60,7 +60,7 @@ export default function ConsultancyPage() {
       <div className="container max-w-screen-xl">
         {/* Header */}
         <div className="text-center mb-16">
-          <div className="w-24 h-24 bg-accent rounded-full flex items-center justify-center mx-auto mb-8">
+          <div className="w-24 h-24 bg-accent rounded-full flex items-center justify-center mx-auto mb-8" aria-hidden="true">
             <Lightbulb className="w-12 h-12 text-white" />
           </div>
           <h1 className="text-4xl md:text-6xl font-cormorant font-bold mb-6 text-accent">
@@ -117,7 +117,7 @@ export default function ConsultancyPage() {
             <Card className="hover-lift">
               <CardHeader>
                 <div className="flex items-center mb-4">
-                  <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mr-4">
+                  <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mr-4" aria-hidden="true">
                     <Users className="w-8 h-8 text-white" />
                   </div>
                   <div>
@@ -135,7 +135,7 @@ export default function ConsultancyPage() {
                 <div className="space-y-3">
                   {clientServices.map((service) => (
                     <div key={service.name} className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0">
+                      <div className="w-8 h-8 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
                         <service.icon className="w-4 h-4 text-accent" />
                       </div>
                       <span className="text-sm font-poppins-medium">{service.name}</span>
@@ -156,7 +156,7 @@ export default function ConsultancyPage() {
             <Card className="hover-lift">
               <CardHeader>
                 <div className="flex items-center mb-4">
-                  <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mr-4">
+                  <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mr-4" aria-hidden="true">
                     <Building2 className="w-8 h-8 text-white" />
                   </div>
                   <div>
@@ -174,7 +174,7 @@ export default function ConsultancyPage() {
                 <div className="space-y-3">
                   {supplierServices.map((service) => (
                     <div key={service.name} className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0">
+                      <div className="w-8 h-8 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0" aria-hidden="true">
                         <service.icon className="w-4 h-4 text-accent" />
                       </div>
                       <span className="text-sm font-poppins-medium">{service.name}</span>

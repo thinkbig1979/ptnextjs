@@ -129,7 +129,7 @@ export default function CustomLightingPage() {
                     </p>
                     <span className="inline-flex items-center text-accent font-poppins-medium text-sm group-hover:translate-x-1 transition-transform">
                       Explore
-                      <ArrowRight className="ml-2 w-4 h-4" />
+                      <ArrowRight className="ml-2 w-4 h-4" aria-hidden="true" />
                     </span>
                   </CardContent>
                 </Card>
