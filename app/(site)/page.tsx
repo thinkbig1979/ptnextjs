@@ -1,6 +1,8 @@
 import { TwoPillarHero } from "@/components/two-pillar-hero";
+import { CredibilityStats } from "@/components/credibility-stats";
 import { CallPaulSection } from "@/components/call-paul-section";
 import { CustomLightingPreviewSection } from "@/components/custom-lighting-preview-section";
+import { ConsultancyPreviewSection } from "@/components/consultancy-preview-section";
 import { FeaturedPartnersSection } from "@/components/featured-partners-section";
 import { ServicesOverviewSection } from "@/components/services-overview-section";
 import { FeaturedBlogSection } from "@/components/featured-blog-section";
@@ -36,6 +38,14 @@ export default async function HomePage() {
     ctaUrl: "/bespoke-solutions"
   };
 
+  // Credibility stats for the homepage
+  const credibilityStats = [
+    { value: 15, label: "Years Experience", suffix: "+" },
+    { value: 200, label: "Projects Delivered", suffix: "+" },
+    { value: 50, label: "Industry Partners", suffix: "+" },
+    { value: 100, label: "Client Satisfaction", suffix: "%" },
+  ];
+
   return (
     <div className="min-h-screen">
       <TwoPillarHero
@@ -45,8 +55,14 @@ export default async function HomePage() {
         rightPillar={rightPillarData}
         heroImage="/heroimagePT-min.png"
       />
+      <CredibilityStats
+        stats={credibilityStats}
+        title="Trusted by the Industry"
+        description="Building lasting relationships through expertise and dedication to excellence."
+      />
       <CallPaulSection />
       <CustomLightingPreviewSection />
+      <ConsultancyPreviewSection />
       <FeaturedPartnersSection featuredPartners={featuredPartners} />
       <ServicesOverviewSection />
       <FeaturedBlogSection featuredPosts={featuredPosts} />
