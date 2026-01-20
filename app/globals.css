@@ -271,6 +271,149 @@
     -ms-hyphens: auto;
   }
 
+  /* ==========================================================================
+     Abstract Visual System - Pixel Grid & Light Field Utilities
+     ========================================================================== */
+
+  /* Pixel Grid Background - Static grid pattern suggesting LED pixels */
+  .pixel-grid-bg {
+    background-image:
+      linear-gradient(to right, hsl(var(--border)) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--border)) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  /* Light Field Gradients - Radial gradients suggesting light behavior */
+  .light-field {
+    background: radial-gradient(
+      ellipse at 30% 50%,
+      hsl(var(--accent) / 0.15) 0%,
+      transparent 50%
+    );
+  }
+
+  .light-field-center {
+    background: radial-gradient(
+      ellipse at 50% 50%,
+      hsl(var(--accent) / 0.12) 0%,
+      transparent 50%
+    );
+  }
+
+  .light-field-right {
+    background: radial-gradient(
+      ellipse at 70% 50%,
+      hsl(var(--accent) / 0.15) 0%,
+      transparent 50%
+    );
+  }
+
+  /* Combined Pixel Field - Pixel grid with light field overlay for hero sections */
+  .pixel-field {
+    position: relative;
+    background-image:
+      linear-gradient(to right, hsl(var(--border)) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--border)) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  .pixel-field::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      ellipse at 30% 50%,
+      hsl(var(--accent) / 0.15) 0%,
+      transparent 50%
+    );
+    pointer-events: none;
+  }
+
+  /* Pixel Field Dark - Optimized for dark mode hero sections */
+  .pixel-field-dark {
+    position: relative;
+    background-image:
+      linear-gradient(to right, hsl(var(--border) / 0.5) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--border) / 0.5) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  .pixel-field-dark::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      ellipse at 30% 50%,
+      hsl(var(--accent) / 0.2) 0%,
+      transparent 55%
+    );
+    pointer-events: none;
+  }
+
+  /* Glow Accent - Subtle accent color glow for text/elements */
+  .glow-accent {
+    text-shadow: 0 0 20px hsl(var(--accent) / 0.3),
+                 0 0 40px hsl(var(--accent) / 0.15);
+  }
+
+  /* Dark mode adjustments for visual system */
+  .dark .pixel-grid-bg {
+    background-image:
+      linear-gradient(to right, hsl(var(--border) / 0.6) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--border) / 0.6) 1px, transparent 1px);
+  }
+
+  .dark .light-field {
+    background: radial-gradient(
+      ellipse at 30% 50%,
+      hsl(var(--accent) / 0.2) 0%,
+      transparent 55%
+    );
+  }
+
+  .dark .light-field-center {
+    background: radial-gradient(
+      ellipse at 50% 50%,
+      hsl(var(--accent) / 0.18) 0%,
+      transparent 55%
+    );
+  }
+
+  .dark .light-field-right {
+    background: radial-gradient(
+      ellipse at 70% 50%,
+      hsl(var(--accent) / 0.2) 0%,
+      transparent 55%
+    );
+  }
+
+  .dark .pixel-field::before {
+    background: radial-gradient(
+      ellipse at 30% 50%,
+      hsl(var(--accent) / 0.2) 0%,
+      transparent 55%
+    );
+  }
+
+  .dark .glow-accent {
+    text-shadow: 0 0 25px hsl(var(--accent) / 0.4),
+                 0 0 50px hsl(var(--accent) / 0.2);
+  }
+
+  /* Respect reduced motion preferences - disable any potential animations */
+  @media (prefers-reduced-motion: reduce) {
+    .pixel-grid-bg,
+    .light-field,
+    .light-field-center,
+    .light-field-right,
+    .pixel-field,
+    .pixel-field-dark,
+    .glow-accent {
+      animation: none;
+      transition: none;
+    }
+  }
+
   /* Mobile button highlighting fixes */
   @media (max-width: 768px) {
     button:focus,
