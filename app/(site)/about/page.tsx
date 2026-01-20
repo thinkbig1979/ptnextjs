@@ -2,12 +2,7 @@ import * as React from "react";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Grid, Compass, Anchor, Settings, Box, Users } from "lucide-react";
-import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
-import { OptimizedImage } from "@/components/ui/optimized-image";
 import { Button } from "@/components/ui/button";
-
-// Force dynamic rendering - database not available at Docker build time
-export const dynamic = 'force-dynamic';
 
 const valuePropositions = [
   {
@@ -32,10 +27,7 @@ const valuePropositions = [
   },
 ];
 
-export default async function AboutPage() {
-  // Fetch data at build time
-  const teamMembers = await payloadCMSDataService.getTeamMembers();
-
+export default function AboutPage() {
   return (
     <div className="min-h-screen py-12">
       <div className="container max-w-screen-xl">
@@ -85,7 +77,7 @@ export default async function AboutPage() {
                   A searchable online platform, listing yacht tech vendors, manufacturers, and solution providers.
                 </p>
                 <p className="text-sm text-muted-foreground/80 font-poppins-light">
-                  Led by: Roel (sales & BD), Thijs (marketing strategy & digital), Nigel (relationships & events)
+                  Led by: Roel (Commercial Founder)
                 </p>
                 <Button asChild className="bg-accent hover:bg-accent/90 text-white">
                   <Link href="/discovery-platform">Learn More</Link>
@@ -147,49 +139,53 @@ export default async function AboutPage() {
           </div>
         </div>
 
-        {/* Team - Using existing team data */}
-        {teamMembers.length > 0 && (
-          <div className="mb-20">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-cormorant font-bold mb-4 text-accent">Our Team</h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-poppins-light">
-                Meet the experts behind Paul Thames&apos; success in superyacht technology
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {teamMembers.map((member, index) => (
-                <div key={member?.id || index}>
-                  <Card className="h-full hover-lift">
-                    <CardHeader className="text-center">
-                      <div className="w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden">
-                        <OptimizedImage
-                          src={member?.image}
-                          alt={member?.name || 'Team member'}
-                          fallbackType="team"
-                          width={80}
-                          height={80}
-                          className="object-cover w-full h-full"
-                          sizes="80px"
-                          iconSize="md"
-                        />
-                      </div>
-                      <CardTitle className="font-cormorant">{member?.name}</CardTitle>
-                      <CardDescription className="font-poppins-medium text-accent">
-                        {member?.role}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="text-center">
-                      <p className="text-sm text-muted-foreground font-poppins-light">
-                        {member?.bio}
-                      </p>
-                    </CardContent>
-                  </Card>
-                </div>
-              ))}
-            </div>
+        {/* Founders Section */}
+        <div className="mb-20">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-cormorant font-bold mb-4 text-accent">Our Founders</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-poppins-light">
+              Meet the founders behind Paul Thames
+            </p>
           </div>
-        )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {/* Roel - Commercial Founder */}
+            <Card className="h-full hover-lift">
+              <CardHeader className="text-center">
+                <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden bg-accent/10 flex items-center justify-center">
+                  <Users className="w-12 h-12 text-accent" />
+                </div>
+                <CardTitle className="text-xl font-cormorant">Roel</CardTitle>
+                <CardDescription className="font-poppins-medium text-accent">
+                  Commercial Founder
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="text-center">
+                <p className="text-sm text-muted-foreground font-poppins-light">
+                  Leads sales, business development, and strategic partnerships. Driving growth of the Discovery Platform and building relationships across the superyacht industry.
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Edwin - Technical Founder */}
+            <Card className="h-full hover-lift">
+              <CardHeader className="text-center">
+                <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden bg-accent/10 flex items-center justify-center">
+                  <Settings className="w-12 h-12 text-accent" />
+                </div>
+                <CardTitle className="text-xl font-cormorant">Edwin</CardTitle>
+                <CardDescription className="font-poppins-medium text-accent">
+                  Technical Founder / CTO
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="text-center">
+                <p className="text-sm text-muted-foreground font-poppins-light">
+                  Leads technical strategy, bespoke solutions delivery, and platform development. Bringing deep expertise in superyacht technology systems and integration.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
 
         {/* Call to Action */}
         <div className="text-center">

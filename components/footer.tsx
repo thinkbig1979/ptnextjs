@@ -23,59 +23,70 @@ export function Footer({ companyInfo }: FooterProps): React.JSX.Element {
             </p>
           </div>
 
-          {/* Quick Links */}
+          {/* Discover */}
           <div className="space-y-4">
-            <h2 className="font-poppins-medium text-sm font-semibold">Quick Links</h2>
+            <h2 className="font-poppins-medium text-sm font-semibold">Discover</h2>
             <div className="space-y-2">
+              <Link href="/discovery-platform" className="block font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors">
+                Discovery Platform
+              </Link>
               <Link href="/vendors" className="block font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors">
                 Vendors
               </Link>
               <Link href="/products" className="block font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors">
-                Products & Services
-              </Link>
-              <Link href="/about" className="block font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors">
-                About Us
+                Products
               </Link>
             </div>
           </div>
 
-          {/* Contact */}
-          <address className="space-y-4 not-italic">
-            <h2 className="font-poppins-medium text-sm font-semibold">Contact</h2>
-            <div className="space-y-2">
-              <a
-                href={`mailto:${companyInfo?.email || "contact@paulthames.com"}`}
-                className="flex items-center space-x-2 font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors"
-                aria-label={`Email us at ${companyInfo?.email || "contact@paulthames.com"}`}
-              >
-                <Mail className="h-4 w-4" />
-                <span>{companyInfo?.email || "contact@paulthames.com"}</span>
-              </a>
-              <a
-                href={`tel:${(companyInfo?.phone || "+31 20 123 4567").replace(/[\s\-\(\)]/g, '')}`}
-                className="flex items-center space-x-2 font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors"
-                aria-label={`Call us at ${companyInfo?.phone || "+31 20 123 4567"}`}
-              >
-                <Phone className="h-4 w-4" />
-                <span>{companyInfo?.phone || "+31 20 123 4567"}</span>
-              </a>
-              <div className="flex items-center space-x-2 font-poppins-light text-sm text-muted-foreground">
-                <MapPin className="h-4 w-4" />
-                <span>Amsterdam, Netherlands</span>
-              </div>
-            </div>
-          </address>
-
-          {/* Resources */}
+          {/* Services */}
           <div className="space-y-4">
-            <h2 className="font-poppins-medium text-sm font-semibold">Resources</h2>
+            <h2 className="font-poppins-medium text-sm font-semibold">Services</h2>
             <div className="space-y-2">
+              <Link href="/custom-lighting" className="block font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors">
+                Custom Lighting
+              </Link>
+              <Link href="/consultancy" className="block font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors">
+                Consultancy
+              </Link>
+            </div>
+          </div>
+
+          {/* Company */}
+          <div className="space-y-4">
+            <h2 className="font-poppins-medium text-sm font-semibold">Company</h2>
+            <div className="space-y-2">
+              <Link href="/about" className="block font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors">
+                About
+              </Link>
               <Link href="/blog" className="block font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors">
                 Blog
               </Link>
               <Link href="/contact" className="block font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors">
-                Contact Us
+                Contact
               </Link>
+              <address className="not-italic pt-2 space-y-2">
+                <a
+                  href={`mailto:${companyInfo?.email || "contact@paulthames.com"}`}
+                  className="flex items-center space-x-2 font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors"
+                  aria-label={`Email us at ${companyInfo?.email || "contact@paulthames.com"}`}
+                >
+                  <Mail className="h-4 w-4" />
+                  <span>{companyInfo?.email || "contact@paulthames.com"}</span>
+                </a>
+                <a
+                  href={`tel:${(companyInfo?.phone || "+31 20 123 4567").replace(/[\s\-\(\)]/g, '')}`}
+                  className="flex items-center space-x-2 font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors"
+                  aria-label={`Call us at ${companyInfo?.phone || "+31 20 123 4567"}`}
+                >
+                  <Phone className="h-4 w-4" />
+                  <span>{companyInfo?.phone || "+31 20 123 4567"}</span>
+                </a>
+                <div className="flex items-center space-x-2 font-poppins-light text-sm text-muted-foreground">
+                  <MapPin className="h-4 w-4" />
+                  <span>Amsterdam, Netherlands</span>
+                </div>
+              </address>
             </div>
           </div>
         </div>
