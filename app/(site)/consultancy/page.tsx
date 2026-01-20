@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { TimelineVisualization } from "@/components/timeline-visualization";
 import {
   Lightbulb,
   Users,
@@ -94,40 +95,10 @@ export default function ConsultancyPage() {
           </div>
 
           {/* Timeline */}
-          <div className="relative">
-            {/* Timeline line */}
-            <div className="hidden md:block absolute top-1/2 left-0 right-0 h-1 bg-border -translate-y-1/2" />
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
-              {projectPhases.map((phase, index) => (
-                <div key={phase.name} className="relative text-center">
-                  {/* Phase indicator */}
-                  <div className={`
-                    w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center relative z-10
-                    ${phase.active
-                      ? 'bg-accent text-white ring-4 ring-accent/20'
-                      : 'bg-muted text-muted-foreground'
-                    }
-                  `}>
-                    <span className="text-lg font-bold">{index + 1}</span>
-                  </div>
-                  <h3 className={`text-xl font-cormorant font-bold mb-2 ${phase.active ? 'text-accent' : 'text-muted-foreground'}`}>
-                    {phase.name}
-                  </h3>
-                  <p className="text-sm text-muted-foreground font-poppins-light">
-                    {phase.description}
-                  </p>
-                  {phase.active && (
-                    <div className="mt-2">
-                      <span className="inline-block px-3 py-1 bg-accent/10 text-accent text-xs font-poppins-medium rounded-full">
-                        We support here
-                      </span>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
+          <TimelineVisualization
+            phases={projectPhases}
+            activeLabel="We support here"
+          />
         </div>
 
         {/* Two Paths Section */}

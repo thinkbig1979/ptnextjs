@@ -1,10 +1,11 @@
 import * as React from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PixelGridBackground } from "@/components/pixel-grid-background";
 import { LightFieldGradient } from "@/components/light-field-gradient";
+import { LightingConceptCard } from "@/components/lighting-concept-card";
 import { ArrowRight, Grid3X3, Layers, Cpu } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -84,19 +85,12 @@ export default function CustomLightingPage() {
 
           <div className="grid md:grid-cols-3 gap-8">
             {coreConcepts.map((concept) => (
-              <Card key={concept.title} className="text-center border-accent/10 bg-card/50 backdrop-blur-sm">
-                <CardHeader>
-                  <div className="w-16 h-16 bg-accent/10 border border-accent/20 rounded-lg flex items-center justify-center mx-auto mb-4">
-                    <concept.icon className="w-8 h-8 text-accent" />
-                  </div>
-                  <CardTitle className="text-xl font-cormorant">{concept.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-muted-foreground font-poppins-light text-base leading-relaxed">
-                    {concept.description}
-                  </CardDescription>
-                </CardContent>
-              </Card>
+              <LightingConceptCard
+                key={concept.title}
+                icon={concept.icon}
+                title={concept.title}
+                description={concept.description}
+              />
             ))}
           </div>
         </div>
