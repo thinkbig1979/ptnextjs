@@ -15,13 +15,13 @@ export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://paulthames.com'),
-  title: "Paul Thames - Superyacht Technology Excellence",
-  description: "Amsterdam's premier superyacht technology consultancy, connecting discerning yacht owners with cutting-edge marine technology solutions.",
-  keywords: "superyacht, marine technology, yacht technology, Amsterdam, navigation systems, marine electronics",
+  title: "Paul Thames | Technical Consultancy & Custom Lighting",
+  description: "Technical project consultancy, vendor consultancy, and bespoke pixel LED solutions for superyachts and high-end architecture.",
+  keywords: "superyacht consultancy, pixel LED lighting, marine technology, yacht lighting, technical advisory, AV/IT systems, vendor consultancy",
   authors: [{ name: "Paul Thames" }],
   openGraph: {
-    title: "Paul Thames - Superyacht Technology Excellence",
-    description: "Amsterdam's premier superyacht technology consultancy, connecting discerning yacht owners with cutting-edge marine technology solutions.",
+    title: "Paul Thames | Technical Consultancy & Custom Lighting",
+    description: "Technical project consultancy, vendor consultancy, and bespoke pixel LED solutions for superyachts and high-end architecture.",
     type: "website",
     locale: "en_US",
   },
