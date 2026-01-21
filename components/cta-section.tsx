@@ -27,14 +27,14 @@ export function CTASection(): React.JSX.Element {
             <Button asChild size="lg" variant="secondary" className="group">
               <Link href="/contact">
                 <Mail className="mr-2 h-4 w-4" />
-                Start a Conversation
+                Discuss Your Project
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
 
             <Button asChild size="lg" variant="outline" className="border-accent-foreground/30 hover:bg-accent-foreground/10">
               <Link href="/consultancy">
-                View Our Approach
+                View Services
               </Link>
             </Button>
           </div>

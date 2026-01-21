@@ -42,14 +42,6 @@ type NavItem = NavItemSimple | NavItemWithChildren;
 const navigationItems: NavItem[] = [
   { href: "/", label: "Home" },
   {
-    label: "Consultancy",
-    children: [
-      { href: "/consultancy", label: "Overview" },
-      { href: "/consultancy/clients", label: "For Clients" },
-      { href: "/consultancy/suppliers", label: "For Suppliers" },
-    ],
-  },
-  {
     label: "Custom Lighting",
     children: [
       { href: "/custom-lighting", label: "Overview" },
@@ -59,7 +51,15 @@ const navigationItems: NavItem[] = [
     ],
   },
   {
-    label: "Platform",
+    label: "Consultancy",
+    children: [
+      { href: "/consultancy", label: "Overview" },
+      { href: "/consultancy/clients", label: "For Project Teams" },
+      { href: "/consultancy/suppliers", label: "For Industry Suppliers" },
+    ],
+  },
+  {
+    label: "Industry Directory",
     children: [
       { href: "/vendors", label: "Vendors" },
       { href: "/products", label: "Products" },

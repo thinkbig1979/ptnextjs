@@ -19,13 +19,13 @@ export function Footer({ companyInfo }: FooterProps): React.JSX.Element {
               <span className="font-cormorant text-xl font-bold">Paul Thames</span>
             </div>
             <p className="font-poppins-light text-sm text-muted-foreground">
-              {companyInfo?.tagline || "Excellence in superyacht technology solutions"}
+              {companyInfo?.tagline || "Clarity at Critical Decision Points"}
             </p>
           </div>
 
-          {/* Discover */}
+          {/* Industry Directory */}
           <div className="space-y-4">
-            <h2 className="font-poppins-medium text-sm font-semibold">Discover</h2>
+            <h2 className="font-poppins-medium text-sm font-semibold">Industry Directory</h2>
             <div className="space-y-2">
               <Link href="/vendors" className="block font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors">
                 Vendors

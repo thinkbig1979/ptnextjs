@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Search, Settings } from "lucide-react";
+import { Lightbulb, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/ui/logo";
 import Image from "next/image";
@@ -35,7 +35,7 @@ interface TwoPillarHeroProps {
 
 export function TwoPillarHero({
   introTitle = "Marine Technology Excellence",
-  introDescription = "Amsterdam's premier marine technology consultancy offering two distinct pathways to superyacht innovation",
+  introDescription = "Technical consultancy and custom lighting for superyachts and high-end architecture",
   leftPillar,
   rightPillar,
   heroImage,
@@ -113,11 +113,11 @@ export function TwoPillarHero({
               Our Two Pillars
             </h2>
             <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-            {/* Left Pillar */}
-            <PillarSection pillar={leftPillar} icon={<Search className="w-8 h-8 text-accent" />} />
+            {/* Left Pillar - Custom Lighting (Primary) */}
+            <PillarSection pillar={leftPillar} icon={<Lightbulb className="w-8 h-8 text-accent" />} />
 
-            {/* Right Pillar */}
-            <PillarSection pillar={rightPillar} icon={<Settings className="w-8 h-8 text-accent" />} />
+            {/* Right Pillar - Technical Consultancy */}
+            <PillarSection pillar={rightPillar} icon={<Users className="w-8 h-8 text-accent" />} />
             </div>
           </div>
         </div>

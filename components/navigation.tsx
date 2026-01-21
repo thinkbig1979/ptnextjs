@@ -20,28 +20,29 @@ interface NavigationItem {
   href: string;
   label: string;
   submenu?: NavigationItem[];
+  hideOverview?: boolean;
 }
 
 const navigationItems: NavigationItem[] = [
   { href: "/", label: "Home" },
-  { href: "/about", label: "About" },
+  { href: "/about", label: "About Us" },
+  { href: "/custom-lighting", label: "Custom Lighting" },
   {
-    href: "/vendors",
-    label: "Discovery",
+    href: "/consultancy",
+    label: "Consultancy",
+    hideOverview: true,
     submenu: [
-      { href: "/vendors", label: "Vendors" },
-      { href: "/products", label: "Products & Services" },
-      { href: "/yachts", label: "Yachts" },
-      { href: "/info-for-vendors", label: "Info For Vendors" },
-      { href: "/vendor/login", label: "Vendor Login" },
+      { href: "/consultancy/clients", label: "For Project Teams" },
+      { href: "/consultancy/suppliers", label: "For Industry Suppliers" },
     ]
   },
   {
-    href: "/custom-lighting",
-    label: "Services",
+    href: "/vendors",
+    label: "Industry Directory",
     submenu: [
-      { href: "/custom-lighting", label: "Custom Lighting" },
-      { href: "/consultancy", label: "Consultancy" },
+      { href: "/products", label: "Products" },
+      { href: "/yachts", label: "Yachts" },
+      { href: "/vendor/login", label: "Vendor Login" },
     ]
   },
   { href: "/blog", label: "Blog" },
@@ -88,14 +89,16 @@ export function Navigation(): React.JSX.Element {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="start" className="w-56">
-                    <DropdownMenuItem asChild>
-                      <Link
-                        href={item.href}
-                        className="w-full cursor-pointer"
-                      >
-                        {item.label} Overview
-                      </Link>
-                    </DropdownMenuItem>
+                    {!item.hideOverview && (
+                      <DropdownMenuItem asChild>
+                        <Link
+                          href={item.href}
+                          className="w-full cursor-pointer"
+                        >
+                          {item.label} Overview
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
                     {item.submenu.map((subItem) => (
                       <DropdownMenuItem key={subItem.href} asChild>
                         <Link

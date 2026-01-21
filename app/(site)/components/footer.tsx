@@ -15,7 +15,7 @@ export function Footer({ companyInfo }: FooterProps) {
   // Default company info if not provided
   const company = companyInfo || {
     name: 'Paul Thames',
-    tagline: 'Connecting Superyacht Technology Excellence',
+    tagline: 'Clarity at Critical Decision Points',
     email: 'info@paulthames.com',
     phone: '+31 20 555 0123',
     address: 'Amsterdam, Netherlands'
@@ -35,18 +35,18 @@ export function Footer({ companyInfo }: FooterProps) {
             </p>
           </div>
 
-          {/* Quick Links */}
+          {/* Services */}
           <div className="space-y-4">
-            <h3 className="font-poppins-medium text-sm font-semibold">Quick Links</h3>
+            <h3 className="font-poppins-medium text-sm font-semibold">Services</h3>
             <div className="space-y-2">
+              <Link href="/custom-lighting" className="block font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors">
+                Custom Lighting
+              </Link>
+              <Link href="/consultancy" className="block font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors">
+                Consultancy
+              </Link>
               <Link href="/vendors" className="block font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors">
-                Vendors
-              </Link>
-              <Link href="/products" className="block font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors">
-                Products & Services
-              </Link>
-              <Link href="/about" className="block font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors">
-                About Us
+                Industry Directory
               </Link>
             </div>
           </div>
@@ -70,15 +70,18 @@ export function Footer({ companyInfo }: FooterProps) {
             </div>
           </div>
 
-          {/* Resources */}
+          {/* Company */}
           <div className="space-y-4">
-            <h3 className="font-poppins-medium text-sm font-semibold">Resources</h3>
+            <h3 className="font-poppins-medium text-sm font-semibold">Company</h3>
             <div className="space-y-2">
+              <Link href="/about" className="block font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors">
+                About Us
+              </Link>
               <Link href="/blog" className="block font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors">
                 Blog
               </Link>
               <Link href="/contact" className="block font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors">
-                Contact Us
+                Contact
               </Link>
             </div>
           </div>

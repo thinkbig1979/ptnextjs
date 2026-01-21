@@ -1,71 +1,66 @@
 import * as React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { PixelGridBackground } from "@/components/pixel-grid-background";
-import { ArrowRight, Grid3X3, Layers, Cpu, Sparkles } from "lucide-react";
+import { ArrowRight, Handshake, Target, Users, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface CustomLightingPreviewSectionProps {
+interface VendorConsultancyPreviewSectionProps {
   className?: string;
 }
 
-const highlights = [
+const vendorHighlights = [
   {
-    icon: Grid3X3,
-    title: "Pixel Control",
-    description: "Each pixel individually addressable",
+    icon: Target,
+    title: "Proposition Testing",
+    description: "Candid evaluation of product positioning and market fit for superyacht projects",
   },
   {
-    icon: Layers,
-    title: "Architectural Integration",
-    description: "Lighting that becomes part of the structure",
+    icon: TrendingUp,
+    title: "Market Strategy",
+    description: "Guidance on reaching specifiers, shipyards, and project decision-makers",
   },
   {
-    icon: Cpu,
-    title: "Intelligent Systems",
-    description: "Advanced mapping and behavior control",
+    icon: Users,
+    title: "Platform Visibility",
+    description: "Access to project teams through directory listings and curated introductions",
   },
 ];
 
 /**
- * CustomLightingPreviewSection - A prominent homepage section showcasing
- * the custom lighting capability with pixel grid visual effects.
+ * VendorConsultancyPreviewSection - Homepage preview of vendor consultancy services.
  *
  * Features:
- * - PixelGridBackground in prominent variant for visual impact
- * - Clear messaging about bespoke pixel LED solutions
- * - Three highlight cards showing core capabilities
- * - CTA linking to the full custom-lighting page
+ * - Key value proposition for manufacturers, distributors, and innovators
+ * - Three highlight cards showing vendor-focused services
+ * - CTA linking to the full vendor consultancy page
  */
-export function CustomLightingPreviewSection({ className }: CustomLightingPreviewSectionProps) {
+export function VendorConsultancyPreviewSection({ className }: VendorConsultancyPreviewSectionProps) {
   return (
-    <PixelGridBackground
-      variant="prominent"
-      as="section"
-      aria-label="Custom Lighting Preview"
-      className={cn("py-20 md:py-28", className)}
+    <section
+      aria-label="Vendor Consultancy Services Preview"
+      className={cn("py-20 md:py-28 bg-background", className)}
     >
       <div className="container max-w-screen-xl">
         {/* Section Header */}
         <div className="text-center mb-12">
           <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-6" aria-hidden="true">
-            <Sparkles className="w-8 h-8 text-white" />
+            <Handshake className="w-8 h-8 text-white" />
           </div>
           <p className="text-sm uppercase tracking-widest text-accent font-poppins-medium mb-4">
-            Bespoke Engineering
+            For Industry Suppliers
           </p>
           <h2 className="text-4xl md:text-5xl font-cormorant font-bold mb-6 text-accent">
-            Bespoke Pixel LED Solutions
+            Vendor Consultancy
           </h2>
           <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto font-poppins-light leading-relaxed">
-            Engineered lighting systems, not catalogue fixtures. Designed and built per project
-            for superyachts and high-end architecture, with each pixel individually controlled.
+            For manufacturers, distributors, and technology providers entering or expanding
+            in the superyacht market. Practical guidance on positioning, pricing, and market access.
           </p>
         </div>
 
-        {/* Highlight Cards */}
+        {/* Vendor Highlight Cards */}
         <div className="grid md:grid-cols-3 gap-6 mb-12">
-          {highlights.map((highlight) => (
+          {vendorHighlights.map((highlight) => (
             <div
               key={highlight.title}
               className="text-center p-6 rounded-xl bg-card/60 backdrop-blur-sm border border-accent/10 hover:border-accent/30 transition-colors"
@@ -90,15 +85,15 @@ export function CustomLightingPreviewSection({ className }: CustomLightingPrevie
             size="lg"
             className="bg-accent hover:bg-accent/90 text-white font-bold px-10 py-4 rounded-full group"
           >
-            <Link href="/custom-lighting">
-              See How It Works
+            <Link href="/consultancy/suppliers">
+              View Supplier Services
               <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </Button>
         </div>
       </div>
-    </PixelGridBackground>
+    </section>
   );
 }
 
-export default CustomLightingPreviewSection;
+export default VendorConsultancyPreviewSection;

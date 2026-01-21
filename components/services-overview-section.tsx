@@ -48,7 +48,7 @@ export function ServicesOverviewSection() {
             Technology Categories
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-poppins-light">
-            Comprehensive solutions across all aspects of superyacht technology and systems integration
+            Browse vendors by system type or technology category
           </p>
         </div>
 

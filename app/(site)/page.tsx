@@ -1,8 +1,8 @@
 import { TwoPillarHero } from "@/components/two-pillar-hero";
-import { CredibilityStats } from "@/components/credibility-stats";
 import { CallPaulSection } from "@/components/call-paul-section";
 import { CustomLightingPreviewSection } from "@/components/custom-lighting-preview-section";
 import { ConsultancyPreviewSection } from "@/components/consultancy-preview-section";
+import { VendorConsultancyPreviewSection } from "@/components/vendor-consultancy-preview-section";
 import { FeaturedPartnersSection } from "@/components/featured-partners-section";
 import { ServicesOverviewSection } from "@/components/services-overview-section";
 import { FeaturedBlogSection } from "@/components/featured-blog-section";
@@ -21,48 +21,36 @@ export default async function HomePage() {
 
   // Define the two-pillar data structure - updated for rebrand
   const leftPillarData = {
-    title: "Discovery Platform",
-    subtitle: "Enabling the industry to explore innovative tech products, services, and proven suppliers. Fast and transparent.",
-    description: "Enabling the industry to explore innovative tech products, services, and proven suppliers. Fast and transparent.",
+    title: "Custom Pixel LED Lighting",
+    subtitle: "Engineered systems, not catalogue fixtures. Designed and built per project for superyachts and high-end architecture, interior and exterior.",
+    description: "Engineered systems, not catalogue fixtures. Designed and built per project for superyachts and high-end architecture, interior and exterior.",
     founders: [],
-    ctaText: "Explore Vendors",
-    ctaUrl: "/vendors"
+    ctaText: "View Projects",
+    ctaUrl: "/custom-lighting"
   };
 
   const rightPillarData = {
-    title: "Consultancy Services",
-    subtitle: "Lightweight, owner-aligned consultancy delivering clarity early — before change becomes expensive.",
-    description: "Lightweight, owner-aligned consultancy delivering clarity early — before change becomes expensive.",
+    title: "Technical Consultancy",
+    subtitle: "Decision support for project teams and industry vendors. Clarity before change becomes expensive.",
+    description: "Decision support for project teams and industry vendors. Clarity before change becomes expensive.",
     founders: [],
-    ctaText: "Learn More",
+    ctaText: "View Services",
     ctaUrl: "/consultancy"
   };
-
-  // Credibility stats for the homepage
-  const credibilityStats = [
-    { value: 15, label: "Years Experience", suffix: "+" },
-    { value: 200, label: "Projects Delivered", suffix: "+" },
-    { value: 50, label: "Industry Partners", suffix: "+" },
-    { value: 100, label: "Client Satisfaction", suffix: "%" },
-  ];
 
   return (
     <div className="min-h-screen">
       <TwoPillarHero
-        introTitle="The Bridge Between Yachting Projects & Technology"
-        introDescription="In a crowded market, we provide clarity by connecting stakeholders in yachting projects with the right technology and experts. When off-the-shelf simply will not do, we leverage our network to bring you high quality tailored solutions."
+        introTitle="Clarity at Critical Decision Points"
+        introDescription="Independent technical consultancy and bespoke pixel LED lighting for superyachts and high-end architecture. Project teams gain clarity at critical decision points. Suppliers gain access to qualified specifiers."
         leftPillar={leftPillarData}
         rightPillar={rightPillarData}
         heroImage="/heroimagePT-min.png"
       />
-      <CredibilityStats
-        stats={credibilityStats}
-        title="Trusted by the Industry"
-        description="Building lasting relationships through expertise and dedication to excellence."
-      />
       <CallPaulSection />
       <CustomLightingPreviewSection />
       <ConsultancyPreviewSection />
+      <VendorConsultancyPreviewSection />
       <FeaturedPartnersSection featuredPartners={featuredPartners} />
       <ServicesOverviewSection />
       <FeaturedBlogSection featuredPosts={featuredPosts} />

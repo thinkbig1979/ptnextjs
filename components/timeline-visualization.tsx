@@ -5,6 +5,8 @@ export interface TimelinePhase {
   name: string;
   description: string;
   active?: boolean;
+  /** Primary phases where impact is greatest */
+  primary?: boolean;
 }
 
 export interface TimelineVisualizationProps {
@@ -78,7 +80,7 @@ export function TimelineVisualization({
             <p className="text-sm text-muted-foreground font-poppins-light">
               {phase.description}
             </p>
-            {phase.active && activeLabel && (
+            {phase.primary && activeLabel && (
               <div className="mt-2">
                 <span className="inline-block px-3 py-1 bg-accent/10 text-accent text-xs font-poppins-medium rounded-full">
                   {activeLabel}
