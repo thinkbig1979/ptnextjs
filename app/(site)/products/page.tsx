@@ -26,7 +26,11 @@ function serializeProductForClient(product: Product) {
     partnerName: product.partnerName,
     vendorName: product.vendorName,
     vendor: product.vendor ? { id: product.vendor.id, partner: product.vendor.partner } : undefined,
-    mainImage: product.mainImage ? { url: product.mainImage.url } : undefined,
+    mainImage: product.mainImage ? { url: product.mainImage.url, altText: product.mainImage.altText } : undefined,
+    // Fields used for "Comparable" badge display
+    comparisonMetrics: product.comparisonMetrics,
+    specifications: product.specifications,
+    integrationCompatibility: product.integrationCompatibility,
   };
 }
 
