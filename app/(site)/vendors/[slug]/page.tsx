@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -231,11 +232,18 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
 
               {/* Reviews Tab */}
               <TabsContent value="reviews" className="space-y-6 mt-6">
-                <VendorReviewsWrapper
-                  vendorId={vendor.id}
-                  vendorSlug={vendor.slug || slug}
-                  vendorReviews={vendor.vendorReviews}
-                />
+                <Suspense fallback={<div className="space-y-4 animate-pulse">
+                  <div className="h-8 bg-muted/20 rounded w-32" />
+                  {[...Array(3)].map((_, i) => (
+                    <div key={`review-skeleton-${i}`} className="h-24 bg-muted/20 rounded-lg" />
+                  ))}
+                </div>}>
+                  <VendorReviewsWrapper
+                    vendorId={vendor.id}
+                    vendorSlug={vendor.slug || slug}
+                    vendorReviews={vendor.vendorReviews}
+                  />
+                </Suspense>
               </TabsContent>
 
               {/* Products Tab - Tier 2+ only */}
@@ -263,7 +271,12 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <VendorDetailClient vendor={vendor} />
+                  <Suspense fallback={<div className="space-y-2 animate-pulse">
+                    <div className="h-10 bg-muted/20 rounded w-full" />
+                    <div className="h-10 bg-muted/20 rounded w-full" />
+                  </div>}>
+                    <VendorDetailClient vendor={vendor} />
+                  </Suspense>
 
                   <Separator />
 

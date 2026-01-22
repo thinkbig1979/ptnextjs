@@ -49,7 +49,12 @@ export function VendorCard({
   const showFeaturedStar = featured || vendor.featured; // Show star for all featured vendors
 
   return (
-    <Link href={`/vendors/${vendor.slug}`} className="block">
+    <Link href={`/vendors/${vendor.slug}`} className="block" style={{
+      // content-visibility: auto skips rendering off-screen items
+      contentVisibility: 'auto',
+      // contain-intrinsic-size provides estimated size for layout calculation
+      containIntrinsicSize: 'auto 180px',
+    }}>
       <Card className="h-full min-h-[180px] transition-all duration-200 hover:shadow-lg hover:scale-[1.02] cursor-pointer" data-testid="vendor-card">
         <CardContent className="p-4">
           {/* Mobile: Vertical Layout */}

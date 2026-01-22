@@ -17,6 +17,62 @@ import {
 
 const ITEMS_PER_PAGE = 12;
 
+/**
+ * Memoized vendor list item component
+ * Prevents unnecessary re-renders when other vendors in the list change
+ */
+const MemoizedVendorListItem = React.memo(function VendorListItem({
+  vendor,
+  isHighlighted,
+}: {
+  vendor: VendorWithDistance;
+  isHighlighted: boolean;
+}) {
+  return (
+    <li
+      className="list-none"
+      style={{
+        contentVisibility: 'auto',
+        containIntrinsicSize: 'auto 180px',
+      }}
+    >
+      <VendorCard
+        vendor={vendor}
+        featured={vendor?.featured || isHighlighted}
+        showTierBadge={true}
+      />
+    </li>
+  );
+});
+
+/**
+ * Memoized vendor grid component
+ * Prevents re-rendering the entire grid when unrelated parent state changes
+ */
+const MemoizedVendorGrid = React.memo(function VendorGrid({
+  vendors,
+  highlightedVendor,
+}: {
+  vendors: VendorWithDistance[];
+  highlightedVendor: string;
+}) {
+  return (
+    <ul
+      role="list"
+      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12 list-none p-0 m-0"
+      aria-label="Vendors list"
+    >
+      {vendors.map((vendor) => (
+        <MemoizedVendorListItem
+          key={vendor?.id}
+          vendor={vendor}
+          isHighlighted={highlightedVendor === vendor?.name}
+        />
+      ))}
+    </ul>
+  );
+});
+
 interface VendorsClientProps {
   initialVendors: Vendor[];
   initialCategories: string[];
@@ -91,7 +147,7 @@ export function VendorsClient({
       initialProducts.map((p) => p.category).filter(Boolean) as string[]
     );
     return Array.from(uniqueCategories)
-      .sort()
+      .toSorted()
       .map((cat) => ({
         id: cat,
         name: cat,
@@ -105,22 +161,35 @@ export function VendorsClient({
       }));
   }, [initialProducts]);
 
-  // Calculate product counts per vendor for selected category
+  // Build a pre-indexed Map of vendor product counts by category for O(1) lookups
+  // This Map is built once and reused, avoiding re-iteration when productCategory changes
+  const productCountsByCategory = React.useMemo(() => {
+    const indexMap = new Map<string, Map<string, number>>();
+
+    for (const product of initialProducts) {
+      const category = product.category;
+      const vendorId = product.vendorId || product.partnerId;
+
+      if (!category || !vendorId) continue;
+
+      if (!indexMap.has(category)) {
+        indexMap.set(category, new Map());
+      }
+
+      const vendorCounts = indexMap.get(category)!;
+      vendorCounts.set(vendorId, (vendorCounts.get(vendorId) || 0) + 1);
+    }
+
+    return indexMap;
+  }, [initialProducts]);
+
+  // Get product counts for selected category from pre-built index (O(1) lookup)
   const vendorProductCounts = React.useMemo(() => {
     if (!productCategory) return {};
-    return initialProducts
-      .filter((p) => p.category === productCategory)
-      .reduce(
-        (acc, p) => {
-          const vendorId = p.vendorId || p.partnerId;
-          if (vendorId) {
-            acc[vendorId] = (acc[vendorId] || 0) + 1;
-          }
-          return acc;
-        },
-        {} as Record<string, number>
-      );
-  }, [initialProducts, productCategory]);
+    const categoryMap = productCountsByCategory.get(productCategory);
+    if (!categoryMap) return {};
+    return Object.fromEntries(categoryMap);
+  }, [productCountsByCategory, productCategory]);
 
   // Filter vendors based on search, category, and partner status
   const filteredVendors = React.useMemo(() => {
@@ -177,7 +246,8 @@ export function VendorsClient({
 
     // Sort vendors: Featured vendors first, then non-featured
     // Within each group, maintain the existing order (including location distance if applicable)
-    filtered = filtered.sort((a, b) => {
+    // Using toSorted() for immutability safety - doesn't mutate the original array
+    return filtered.toSorted((a, b) => {
       // First priority: highlighted vendor (from URL parameter)
       if (highlightedVendor) {
         if (a?.name === highlightedVendor) return -1;
@@ -195,8 +265,6 @@ export function VendorsClient({
       // Third priority: maintain existing order (location distance, etc.)
       return 0;
     });
-
-    return filtered;
   }, [
     baseVendorsForFiltering,
     searchQuery,
@@ -283,34 +351,43 @@ export function VendorsClient({
   );
 
   // Enhanced handlers that also update URL
+  // Use startTransition for non-urgent state updates to maintain UI responsiveness
   const handleSearchChange = React.useCallback(
     (query: string) => {
-      setSearchQuery(query);
-      updateUrlParams({ search: query });
+      React.startTransition(() => {
+        setSearchQuery(query);
+        updateUrlParams({ search: query });
+      });
     },
     [updateUrlParams],
   );
 
   const handleCategoryChange = React.useCallback(
     (category: string) => {
-      setSelectedCategory(category);
-      updateUrlParams({ category });
+      React.startTransition(() => {
+        setSelectedCategory(category);
+        updateUrlParams({ category });
+      });
     },
     [updateUrlParams],
   );
 
   const handleProductCategoryChange = React.useCallback(
     (category: string | null) => {
-      setProductCategory(category);
-      updateUrlParams({ productCategory: category });
+      React.startTransition(() => {
+        setProductCategory(category);
+        updateUrlParams({ productCategory: category });
+      });
     },
     [updateUrlParams],
   );
 
   const handleVendorViewChange = React.useCallback(
     (view: "partners" | "all") => {
-      setVendorView(view);
-      updateUrlParams({ view });
+      React.startTransition(() => {
+        setVendorView(view);
+        updateUrlParams({ view });
+      });
     },
     [updateUrlParams],
   );
@@ -417,26 +494,11 @@ export function VendorsClient({
         </p>
       </motion.div>
 
-      {/* Vendors Grid */}
-      <ul
-        role="list"
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12 list-none p-0 m-0"
-        aria-label="Vendors list"
-      >
-        {paginatedVendors.map((vendor) => {
-          const isHighlighted = highlightedVendor === vendor?.name;
-
-          return (
-            <li key={vendor?.id} className="list-none">
-              <VendorCard
-                vendor={vendor}
-                featured={vendor?.featured || isHighlighted}
-                showTierBadge={true}
-              />
-            </li>
-          );
-        })}
-      </ul>
+      {/* Vendors Grid - Using memoized components to prevent unnecessary re-renders */}
+      <MemoizedVendorGrid
+        vendors={paginatedVendors}
+        highlightedVendor={highlightedVendor}
+      />
 
       {/* No Results */}
       {filteredVendors.length === 0 && (

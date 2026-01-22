@@ -95,27 +95,28 @@ export function OwnerReviews({
       );
     }
 
-    // Sort reviews
+    // Sort reviews using toSorted() for immutability safety
     if (filtered.length > 0) {
-      filtered = [...filtered].sort((a, b) => {
-      let aValue: any, bValue: any;
+      return filtered.toSorted((a, b) => {
+        let aValue: number;
+        let bValue: number;
 
-      switch (sortBy) {
-        case 'rating':
-          aValue = a.rating;
-          bValue = b.rating;
-          break;
-        case 'helpful':
-          aValue = a.helpful || 0;
-          bValue = b.helpful || 0;
-          break;
-        default: // date
-          aValue = new Date(a.installationDate || '').getTime();
-          bValue = new Date(b.installationDate || '').getTime();
-      }
+        switch (sortBy) {
+          case 'rating':
+            aValue = a.rating;
+            bValue = b.rating;
+            break;
+          case 'helpful':
+            aValue = a.helpful || 0;
+            bValue = b.helpful || 0;
+            break;
+          default: // date
+            aValue = new Date(a.installationDate || '').getTime();
+            bValue = new Date(b.installationDate || '').getTime();
+        }
 
-      return sortOrder === 'asc' ? aValue - bValue : bValue - aValue;
-    });
+        return sortOrder === 'asc' ? aValue - bValue : bValue - aValue;
+      });
     }
 
     return filtered;

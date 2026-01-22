@@ -26,15 +26,20 @@ export function ProductCard({
   // Determine if product is published
   const isPublished = product.publishedAt != null || (product as any).published === true;
 
+  // Extract primitive values for dependency optimization
+  const productCategory = product.category;
+  const productCategories = (product as any).categories;
+
   // Extract categories - handle both array of Category objects or strings
+  // Using primitives in dependency array to avoid unnecessary re-computations
   const categories = React.useMemo(() => {
-    if (!product.category && !(product as any).categories) {
+    if (!productCategory && !productCategories) {
       return [];
     }
 
     // Handle categories array (relationship field)
-    if ((product as any).categories) {
-      const cats = (product as any).categories;
+    if (productCategories) {
+      const cats = productCategories;
       if (Array.isArray(cats)) {
         return cats.map((cat: Category | string) => {
           if (typeof cat === 'string') {
@@ -46,12 +51,12 @@ export function ProductCard({
     }
 
     // Handle legacy category field (single string)
-    if (product.category) {
-      return [product.category];
+    if (productCategory) {
+      return [productCategory];
     }
 
     return [];
-  }, [product]);
+  }, [productCategory, productCategories]);
 
   // Get short description
   const getShortDescription = () => {

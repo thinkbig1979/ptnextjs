@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Suspense } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,9 +14,11 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 600;
 
 export default async function BlogPage() {
-  // Fetch data at build time
-  const blogPosts = await payloadCMSDataService.getAllBlogPosts();
-  const categories = await payloadCMSDataService.getBlogCategories();
+  // Fetch data in parallel to eliminate waterfall
+  const [blogPosts, categories] = await Promise.all([
+    payloadCMSDataService.getAllBlogPosts(),
+    payloadCMSDataService.getBlogCategories(),
+  ]);
   const blogCategories = categories.map(cat => cat.name);
   
   const featuredPost = blogPosts.find(post => post?.featured);
@@ -87,10 +90,19 @@ export default async function BlogPage() {
         )}
 
         {/* Client-side Interactive Blog Content */}
-        <BlogClient 
-          blogPosts={blogPosts}
-          categories={blogCategories}
-        />
+        <Suspense fallback={<div className="space-y-8 animate-pulse">
+          <div className="h-6 bg-muted/20 rounded w-48" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[...Array(6)].map((_, i) => (
+              <div key={`blog-skeleton-${i}`} className="h-96 bg-muted/20 rounded-lg" />
+            ))}
+          </div>
+        </div>}>
+          <BlogClient
+            blogPosts={blogPosts}
+            categories={blogCategories}
+          />
+        </Suspense>
       </div>
     </div>
   );

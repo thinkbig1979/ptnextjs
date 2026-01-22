@@ -154,6 +154,7 @@
     "jsonwebtoken": "^9.0.3",
     "leaflet": "^1.9.4",
     "lodash": "4.17.21",
+    "lru-cache": "^11.2.4",
     "lucide-react": "0.446.0",
     "markdown-it": "^14.1.0",
     "marked": "^16.2.1",

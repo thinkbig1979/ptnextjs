@@ -43,11 +43,19 @@ const nextConfig = {
   // Enhanced experimental features for platform vision
   experimental: {
     optimizePackageImports: [
+      // External packages
       '@radix-ui/react-accordion',
       '@radix-ui/react-dialog',
       '@radix-ui/react-select',
       'framer-motion',
-      'lucide-react'
+      'lucide-react',
+      // Internal barrel files - prevents bundle bloat from re-exports
+      '@/components/product-comparison',
+      '@/components/enhanced-profiles',
+      '@/components/case-studies',
+      '@/lib/transformers',
+      '@/lib/repositories',
+      '@/lib/cache'
     ]
   },
 

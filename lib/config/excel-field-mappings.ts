@@ -393,11 +393,27 @@ export const VENDOR_FIELD_MAPPINGS: FieldMapping[] = [
     description: 'Comma-separated list of service areas/regions',
     example: 'Mediterranean, Caribbean, Pacific Northwest',
     // Transform CSV string to array of objects for Payload CMS
-    importTransform: (value: string) =>
-      value.split(',').map(s => s.trim()).filter(s => s.length > 0).map(area => ({ area })),
-    // Export objects back to CSV string
-    exportTransform: (val: unknown) =>
-      Array.isArray(val) ? val.map((item: { area?: string }) => item?.area || '').filter(Boolean).join(', ') : ''
+    // Combined iteration: split, trim, filter empty, and transform in single pass
+    importTransform: (value: string) => {
+      const result: { area: string }[] = [];
+      for (const part of value.split(',')) {
+        const trimmed = part.trim();
+        if (trimmed.length > 0) {
+          result.push({ area: trimmed });
+        }
+      }
+      return result;
+    },
+    // Export objects back to CSV string (combined iteration)
+    exportTransform: (val: unknown) => {
+      if (!Array.isArray(val)) return '';
+      const parts: string[] = [];
+      for (const item of val) {
+        const area = (item as { area?: string })?.area;
+        if (area) parts.push(area);
+      }
+      return parts.join(', ');
+    }
   },
   // Company values (aligned with tierConfig.ts - available from Tier 1)
   {
@@ -411,11 +427,27 @@ export const VENDOR_FIELD_MAPPINGS: FieldMapping[] = [
     description: 'Comma-separated list of company values/principles',
     example: 'Quality, Innovation, Integrity, Sustainability',
     // Transform CSV string to array of objects for Payload CMS
-    importTransform: (value: string) =>
-      value.split(',').map(s => s.trim()).filter(s => s.length > 0).map(v => ({ value: v })),
-    // Export objects back to CSV string
-    exportTransform: (val: unknown) =>
-      Array.isArray(val) ? val.map((item: { value?: string }) => item?.value || '').filter(Boolean).join(', ') : ''
+    // Combined iteration: split, trim, filter empty, and transform in single pass
+    importTransform: (value: string) => {
+      const result: { value: string }[] = [];
+      for (const part of value.split(',')) {
+        const trimmed = part.trim();
+        if (trimmed.length > 0) {
+          result.push({ value: trimmed });
+        }
+      }
+      return result;
+    },
+    // Export objects back to CSV string (combined iteration)
+    exportTransform: (val: unknown) => {
+      if (!Array.isArray(val)) return '';
+      const parts: string[] = [];
+      for (const item of val) {
+        const value = (item as { value?: string })?.value;
+        if (value) parts.push(value);
+      }
+      return parts.join(', ');
+    }
   },
 
   // ============================================================

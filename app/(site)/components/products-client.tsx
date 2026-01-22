@@ -176,19 +176,26 @@ export function ProductsClient({ initialProducts, initialCategories, initialVend
   }, [router, searchParams]);
 
   // Enhanced handlers that also update URL
+  // Use startTransition for non-urgent state updates to maintain UI responsiveness
   const handleSearchChange = React.useCallback((query: string) => {
-    setSearchQuery(query);
-    updateUrlParams({ search: query });
+    React.startTransition(() => {
+      setSearchQuery(query);
+      updateUrlParams({ search: query });
+    });
   }, [updateUrlParams]);
 
   const handleCategoryChange = React.useCallback((category: string) => {
-    setSelectedCategory(category);
-    updateUrlParams({ category });
+    React.startTransition(() => {
+      setSelectedCategory(category);
+      updateUrlParams({ category });
+    });
   }, [updateUrlParams]);
 
   const handleVendorViewChange = React.useCallback((view: "partners" | "all") => {
-    setVendorView(view);
-    updateUrlParams({ view });
+    React.startTransition(() => {
+      setVendorView(view);
+      updateUrlParams({ view });
+    });
   }, [updateUrlParams]);
 
   // Reset page when filters change
@@ -256,6 +263,12 @@ export function ProductsClient({ initialProducts, initialCategories, initialVend
             initial={{ opacity: 0, y: 30 }}
             animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
             transition={{ duration: 0.6, delay: 0.1 * index }}
+            style={{
+              // content-visibility: auto skips rendering off-screen items
+              contentVisibility: 'auto',
+              // contain-intrinsic-size provides estimated size for layout calculation
+              containIntrinsicSize: 'auto 400px',
+            }}
           >
             <Card
               className="h-full hover-lift cursor-pointer group overflow-hidden flex flex-col"

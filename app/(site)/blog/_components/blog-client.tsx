@@ -36,6 +36,19 @@ export function BlogClient({ blogPosts, categories }: BlogClientProps) {
   const [selectedCategory, setSelectedCategory] = React.useState("all");
   const [currentPage, setCurrentPage] = React.useState(1);
 
+  // Enhanced handlers with startTransition for non-urgent state updates
+  const handleSearchChange = React.useCallback((query: string) => {
+    React.startTransition(() => {
+      setSearchQuery(query);
+    });
+  }, []);
+
+  const handleCategoryChange = React.useCallback((category: string) => {
+    React.startTransition(() => {
+      setSelectedCategory(category);
+    });
+  }, []);
+
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
@@ -55,7 +68,8 @@ export function BlogClient({ blogPosts, categories }: BlogClientProps) {
       filtered = filtered.filter(post => post?.category === selectedCategory);
     }
 
-    return filtered.sort((a, b) => new Date(b?.publishedAt || '').getTime() - new Date(a?.publishedAt || '').getTime());
+    // Using toSorted() for immutability safety - doesn't mutate the original array
+    return filtered.toSorted((a, b) => new Date(b?.publishedAt || '').getTime() - new Date(a?.publishedAt || '').getTime());
   }, [searchQuery, selectedCategory, blogPosts]);
 
   // Paginate results
@@ -82,10 +96,10 @@ export function BlogClient({ blogPosts, categories }: BlogClientProps) {
         <div data-testid="blog-category-filter">
           <SearchFilter
             searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
+            onSearchChange={handleSearchChange}
             categories={categories}
             selectedCategory={selectedCategory}
-            onCategoryChange={setSelectedCategory}
+            onCategoryChange={handleCategoryChange}
             placeholder="Search articles by title, content, or tags..."
           />
         </div>
@@ -112,6 +126,12 @@ export function BlogClient({ blogPosts, categories }: BlogClientProps) {
             initial={{ opacity: 0, y: 30 }}
             animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
             transition={{ duration: 0.6, delay: 0.1 * index }}
+            style={{
+              // content-visibility: auto skips rendering off-screen items
+              contentVisibility: 'auto',
+              // contain-intrinsic-size provides estimated size for layout calculation
+              containIntrinsicSize: 'auto 420px',
+            }}
           >
             <Card className="h-full hover-lift cursor-pointer group overflow-hidden" data-testid="blog-post-card">
               <Link href={`/blog/${post?.slug}`} className="block h-full">

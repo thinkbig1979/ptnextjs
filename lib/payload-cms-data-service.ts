@@ -3,6 +3,7 @@
  * Replicates TinaCMSDataService interface but fetches from Payload CMS database
  */
 
+import { cache } from 'react';
 import { lexicalToPlainText, type LexicalDocument } from './transformers/markdown-to-lexical';
 import { getPayloadClient } from './utils/get-payload-config';
 import type {
@@ -1853,3 +1854,93 @@ class PayloadCMSDataService {
 // Export singleton instance
 export const payloadCMSDataService = new PayloadCMSDataService();
 export default payloadCMSDataService;
+
+/**
+ * React.cache() wrapped functions for per-request deduplication
+ *
+ * These functions are memoized per-request in React Server Components.
+ * Multiple components calling the same function within a single request
+ * will share the same result, preventing redundant database queries.
+ *
+ * @example
+ * // In a React Server Component:
+ * import { cachedGetAllVendors } from '@/lib/payload-cms-data-service';
+ * const vendors = await cachedGetAllVendors();
+ */
+
+export const cachedGetAllVendors = cache(
+  async () => payloadCMSDataService.getAllVendors()
+);
+
+export const cachedGetAllProducts = cache(
+  async () => payloadCMSDataService.getAllProducts()
+);
+
+export const cachedGetAllBlogPosts = cache(
+  async () => payloadCMSDataService.getAllBlogPosts()
+);
+
+export const cachedGetCategories = cache(
+  async () => payloadCMSDataService.getCategories()
+);
+
+export const cachedGetBlogCategories = cache(
+  async () => payloadCMSDataService.getBlogCategories()
+);
+
+export const cachedGetTags = cache(
+  async () => payloadCMSDataService.getTags()
+);
+
+export const cachedGetTeamMembers = cache(
+  async () => payloadCMSDataService.getTeamMembers()
+);
+
+export const cachedGetCompanyInfo = cache(
+  async () => payloadCMSDataService.getCompanyInfo()
+);
+
+export const cachedGetYachts = cache(
+  async () => payloadCMSDataService.getYachts()
+);
+
+export const cachedGetFeaturedVendors = cache(
+  async () => payloadCMSDataService.getFeaturedVendors()
+);
+
+export const cachedGetFeaturedPartners = cache(
+  async () => payloadCMSDataService.getFeaturedPartners()
+);
+
+export const cachedGetFeaturedYachts = cache(
+  async () => payloadCMSDataService.getFeaturedYachts()
+);
+
+// Parameterized cached functions
+export const cachedGetVendorBySlug = cache(
+  async (slug: string) => payloadCMSDataService.getVendorBySlug(slug)
+);
+
+export const cachedGetProductBySlug = cache(
+  async (slug: string) => payloadCMSDataService.getProductBySlug(slug)
+);
+
+export const cachedGetBlogPostBySlug = cache(
+  async (slug: string) => payloadCMSDataService.getBlogPostBySlug(slug)
+);
+
+export const cachedGetYachtBySlug = cache(
+  async (slug: string) => payloadCMSDataService.getYachtBySlug(slug)
+);
+
+export const cachedGetCategoryBySlug = cache(
+  async (slug: string) => payloadCMSDataService.getCategoryBySlug(slug)
+);
+
+export const cachedGetTagBySlug = cache(
+  async (slug: string) => payloadCMSDataService.getTagBySlug(slug)
+);
+
+export const cachedGetProductsByVendor = cache(
+  async (vendorId: string) => payloadCMSDataService.getProductsByVendor(vendorId)
+);

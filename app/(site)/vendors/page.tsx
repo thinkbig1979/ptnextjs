@@ -3,6 +3,48 @@ import { Suspense } from "react";
 import { VendorsClient } from "@/app/(site)/components/vendors-client";
 import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
 import { Metadata } from "next";
+import type { Vendor, Product } from "@/lib/types";
+
+/**
+ * Extract only required fields for VendorsClient to minimize RSC serialization
+ * This reduces the page weight by not sending unused vendor fields to the client
+ */
+function serializeVendorForClient(vendor: Vendor) {
+  return {
+    id: vendor.id,
+    slug: vendor.slug,
+    name: vendor.name,
+    description: vendor.description,
+    logo: vendor.logo,
+    tier: vendor.tier,
+    featured: vendor.featured,
+    partner: vendor.partner,
+    foundedYear: vendor.foundedYear,
+    founded: vendor.founded,
+    category: vendor.category,
+    tags: vendor.tags,
+    locations: vendor.locations?.map(loc => ({
+      id: loc.id,
+      city: loc.city,
+      country: loc.country,
+      latitude: loc.latitude,
+      longitude: loc.longitude,
+      isHQ: loc.isHQ,
+    })),
+  };
+}
+
+/**
+ * Extract only required fields for product filtering
+ */
+function serializeProductForClient(product: Product) {
+  return {
+    id: product.id,
+    category: product.category,
+    vendorId: product.vendorId,
+    partnerId: product.partnerId,
+  };
+}
 
 // Force dynamic rendering - database not available at Docker build time
 export const dynamic = 'force-dynamic';
@@ -55,9 +97,13 @@ export default async function VendorsPage({ searchParams }: VendorsPageProps) {
     payloadCMSDataService.getAllProducts(),
     payloadCMSDataService.getCategories()
   ]);
-  
+
   const categoryNames = categories.map(cat => cat.name);
-  
+
+  // Minimize RSC serialization by extracting only required fields
+  const serializedVendors = vendors.map(serializeVendorForClient);
+  const serializedProducts = products.map(serializeProductForClient);
+
   console.log(`📋 Static generation: Loaded ${vendors.length} vendors, ${products.length} products, ${categories.length} categories`);
 
   return (
@@ -73,7 +119,7 @@ export default async function VendorsPage({ searchParams }: VendorsPageProps) {
           </p>
         </div>
 
-        {/* Client component with all data passed as props */}
+        {/* Client component with minimized serialized data */}
         <Suspense fallback={<div className="space-y-8 animate-pulse">
           <div className="h-6 bg-muted/20 rounded w-48" />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -83,9 +129,9 @@ export default async function VendorsPage({ searchParams }: VendorsPageProps) {
           </div>
         </div>}>
           <VendorsClient
-            initialVendors={vendors}
+            initialVendors={serializedVendors as Vendor[]}
             initialCategories={categoryNames}
-            initialProducts={products}
+            initialProducts={serializedProducts as Product[]}
             pageTitle="vendors"
           />
         </Suspense>
