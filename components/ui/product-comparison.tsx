@@ -4,7 +4,7 @@ import * as React from "react";
 import { GitCompare, Plus, X } from "lucide-react";
 import { toast } from "sonner";
 
-import { Product } from "@/lib/types";
+import { SerializedProduct } from "@/lib/types";
 
 // Hoisted RegExp for camelCase to Title Case conversion (avoids recreation on each render)
 const CAMEL_CASE_REGEX = /([A-Z])/g;
@@ -23,8 +23,8 @@ import { OptimizedImage } from "./optimized-image";
 
 
 interface ComparisonContextType {
-  comparedProducts: Product[];
-  addToComparison: (product: Product) => void;
+  comparedProducts: SerializedProduct[];
+  addToComparison: (product: SerializedProduct) => void;
   removeFromComparison: (productId: string) => void;
   clearComparison: () => void;
   isComparing: (productId: string) => boolean;
@@ -33,9 +33,9 @@ interface ComparisonContextType {
 const ComparisonContext = React.createContext<ComparisonContextType | undefined>(undefined);
 
 export function ComparisonProvider({ children }: { children: React.ReactNode }): React.ReactElement {
-  const [comparedProducts, setComparedProducts] = React.useState<Product[]>([]);
+  const [comparedProducts, setComparedProducts] = React.useState<SerializedProduct[]>([]);
 
-  const addToComparison = React.useCallback((product: Product) => {
+  const addToComparison = React.useCallback((product: SerializedProduct) => {
     setComparedProducts(prev => {
       if (prev.find(p => p.id === product.id)) {
         return prev; // Already in comparison
@@ -87,7 +87,7 @@ export function useComparison() {
   return context;
 }
 
-export function CompareButton({ product }: { product: Product }): React.ReactElement {
+export function CompareButton({ product }: { product: SerializedProduct }): React.ReactElement {
   const { addToComparison, removeFromComparison, isComparing, comparedProducts } = useComparison();
   const isInComparison = isComparing(product.id);
   const isAtLimit = comparedProducts.length >= 3 && !isInComparison;
@@ -196,7 +196,7 @@ export function ComparisonFloatingButton(): React.ReactElement | null {
   );
 }
 
-function ProductComparisonTable({ products }: { products: Product[] }): React.ReactElement {
+function ProductComparisonTable({ products }: { products: SerializedProduct[] }): React.ReactElement {
   if (products.length === 0) {
     return (
       <div className="text-center py-8">

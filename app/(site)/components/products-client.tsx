@@ -16,15 +16,15 @@ import Link from "next/link";
 import { parseFilterParams } from "@/lib/utils";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { CompareButton, ComparisonFloatingButton } from "@/components/ui/product-comparison";
-import { Product, Vendor, Feature } from "@/lib/types";
+import { Feature, SerializedProduct, SerializedVendorMinimal } from "@/lib/types";
 import { getDescriptionPreview } from "@/lib/utils/lexical-helpers";
 
 const ITEMS_PER_PAGE = 12;
 
 interface ProductsClientProps {
-  initialProducts: Product[];
+  initialProducts: SerializedProduct[];
   initialCategories: string[];
-  initialVendors: Vendor[];
+  initialVendors: SerializedVendorMinimal[];
 }
 
 export function ProductsClient({ initialProducts, initialCategories, initialVendors }: ProductsClientProps) {
@@ -73,7 +73,7 @@ export function ProductsClient({ initialProducts, initialCategories, initialVend
     return initialVendors.reduce((lookup, vendor) => {
       lookup[vendor.id] = vendor;
       return lookup;
-    }, {} as Record<string, Vendor>);
+    }, {} as Record<string, SerializedVendorMinimal>);
   }, [initialVendors]);
 
   // Filter products based on search, category, partner, and vendor view

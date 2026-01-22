@@ -8,7 +8,7 @@ import { VendorToggle } from "@/components/ui/vendor-toggle";
 import { parseFilterParams } from "@/lib/utils";
 import { VendorCard } from "@/components/vendors/VendorCard";
 import { CategorySelect } from "@/components/vendors/CategorySelect";
-import { Vendor, Product, VendorCoordinates, Category } from "@/lib/types";
+import { VendorCoordinates, SerializedVendor, SerializedProductMinimal } from "@/lib/types";
 import { VendorSearchBar } from "@/components/VendorSearchBar";
 import {
   useLocationFilter,
@@ -16,6 +16,9 @@ import {
 } from "@/hooks/useLocationFilter";
 
 const ITEMS_PER_PAGE = 12;
+
+/** Type alias for vendor with distance computed from SerializedVendor */
+type SerializedVendorWithDistance = VendorWithDistance<SerializedVendor>;
 
 /**
  * Memoized vendor list item component
@@ -25,7 +28,7 @@ const MemoizedVendorListItem = React.memo(function VendorListItem({
   vendor,
   isHighlighted,
 }: {
-  vendor: VendorWithDistance;
+  vendor: SerializedVendorWithDistance;
   isHighlighted: boolean;
 }) {
   return (
@@ -53,7 +56,7 @@ const MemoizedVendorGrid = React.memo(function VendorGrid({
   vendors,
   highlightedVendor,
 }: {
-  vendors: VendorWithDistance[];
+  vendors: SerializedVendorWithDistance[];
   highlightedVendor: string;
 }) {
   return (
@@ -74,9 +77,9 @@ const MemoizedVendorGrid = React.memo(function VendorGrid({
 });
 
 interface VendorsClientProps {
-  initialVendors: Vendor[];
+  initialVendors: SerializedVendor[];
   initialCategories: string[];
-  initialProducts?: Product[];
+  initialProducts?: SerializedProductMinimal[];
   showPartnersOnly?: boolean; // Filter to show only partners (partner: true)
   showNonPartnersOnly?: boolean; // Filter to show only non-partners (partner: false or undefined)
   pageTitle?: string; // For dynamic page title in results
@@ -193,7 +196,7 @@ export function VendorsClient({
 
   // Filter vendors based on search, category, and partner status
   const filteredVendors = React.useMemo(() => {
-    let filtered: VendorWithDistance[] = baseVendorsForFiltering;
+    let filtered: SerializedVendorWithDistance[] = baseVendorsForFiltering;
 
     // Apply partner filter based on vendorView toggle
     if (vendorView === "partners") {

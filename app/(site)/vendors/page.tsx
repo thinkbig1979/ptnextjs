@@ -3,13 +3,13 @@ import { Suspense } from "react";
 import { VendorsClient } from "@/app/(site)/components/vendors-client";
 import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
 import { Metadata } from "next";
-import type { Vendor, Product } from "@/lib/types";
+import type { Vendor, Product, SerializedVendor, SerializedVendorLocation, SerializedProductMinimal } from "@/lib/types";
 
 /**
  * Extract only required fields for VendorsClient to minimize RSC serialization
  * This reduces the page weight by not sending unused vendor fields to the client
  */
-function serializeVendorForClient(vendor: Vendor) {
+function serializeVendorForClient(vendor: Vendor): SerializedVendor {
   return {
     id: vendor.id,
     slug: vendor.slug,
@@ -23,7 +23,7 @@ function serializeVendorForClient(vendor: Vendor) {
     founded: vendor.founded,
     category: vendor.category,
     tags: vendor.tags,
-    locations: vendor.locations?.map(loc => ({
+    locations: vendor.locations?.map((loc): SerializedVendorLocation => ({
       id: loc.id,
       city: loc.city,
       country: loc.country,
@@ -37,7 +37,7 @@ function serializeVendorForClient(vendor: Vendor) {
 /**
  * Extract only required fields for product filtering
  */
-function serializeProductForClient(product: Product) {
+function serializeProductForClient(product: Product): SerializedProductMinimal {
   return {
     id: product.id,
     category: product.category,
@@ -129,9 +129,9 @@ export default async function VendorsPage({ searchParams }: VendorsPageProps) {
           </div>
         </div>}>
           <VendorsClient
-            initialVendors={serializedVendors as Vendor[]}
+            initialVendors={serializedVendors}
             initialCategories={categoryNames}
-            initialProducts={serializedProducts as Product[]}
+            initialProducts={serializedProducts}
             pageTitle="vendors"
           />
         </Suspense>

@@ -432,6 +432,99 @@ export interface Partner extends Vendor {
 }
 
 // ============================================================================
+// RSC SERIALIZATION TYPES
+// These types represent the serialized shapes passed from Server Components
+// to Client Components. They contain only the fields needed by the client,
+// reducing RSC payload size and avoiding "as Type[]" casts.
+// ============================================================================
+
+/**
+ * Serialized vendor location for client components.
+ * Contains only the fields needed for map display and location filtering.
+ * Used in: vendors/page.tsx serializeVendorForClient()
+ */
+export interface SerializedVendorLocation {
+  id?: string;
+  city?: string;
+  country?: string;
+  latitude?: number;
+  longitude?: number;
+  isHQ?: boolean;
+}
+
+/**
+ * Serialized vendor for vendor listing pages.
+ * Contains only the fields needed by VendorsClient for display and filtering.
+ * Used in: vendors/page.tsx serializeVendorForClient()
+ */
+export interface SerializedVendor {
+  id: string;
+  slug?: string;
+  name: string;
+  description: string;
+  logo?: string;
+  tier?: 'free' | 'tier1' | 'tier2' | 'tier3';
+  featured?: boolean;
+  partner?: boolean;
+  foundedYear?: number;
+  founded?: number;
+  category?: string;
+  tags?: string[];
+  locations?: SerializedVendorLocation[];
+}
+
+/**
+ * Minimal serialized vendor for product page vendor lookup.
+ * Contains only the fields needed to determine if a vendor is a partner.
+ * Used in: products/page.tsx serializeVendorForProductLookup()
+ */
+export interface SerializedVendorMinimal {
+  id: string;
+  partner?: boolean;
+}
+
+/**
+ * Serialized product for product listing pages.
+ * Contains only the fields needed by ProductsClient for display and filtering.
+ * Used in: products/page.tsx serializeProductForClient()
+ */
+export interface SerializedProduct {
+  id: string;
+  slug?: string;
+  name: string;
+  description: string;
+  shortDescription?: string;
+  price?: string;
+  image?: string;
+  category?: string;
+  tags?: string[];
+  features?: Array<{ id: string; title: string }>;
+  images?: Array<{ url: string; isMain: boolean; altText?: string }>;
+  vendorId?: string;
+  partnerId?: string;
+  partnerName?: string;
+  vendorName?: string;
+  vendor?: SerializedVendorMinimal;
+  mainImage?: { url: string; altText?: string };
+  // Fields used for "Comparable" badge display
+  comparisonMetrics?: Product['comparisonMetrics'];
+  specifications?: ProductSpecification[];
+  integrationCompatibility?: string[];
+}
+
+/**
+ * Minimal serialized product for vendor page product filtering.
+ * Contains only the fields needed to filter products by category/vendor.
+ * Used in: vendors/page.tsx serializeProductForClient()
+ */
+export interface SerializedProductMinimal {
+  id: string;
+  category?: string;
+  vendorId?: string;
+  partnerId?: string;
+}
+
+// ============================================================================
 // USER TYPES (for Payload CMS authentication)
 // ============================================================================
 

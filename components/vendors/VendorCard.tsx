@@ -8,11 +8,11 @@ import { OptimizedImage } from '@/components/ui/optimized-image';
 import { TierBadge } from '@/components/vendors/TierBadge';
 import { YearsInBusinessDisplay } from '@/components/vendors/YearsInBusinessDisplay';
 import { MapPin, Star } from 'lucide-react';
-import type { Vendor } from '@/lib/types';
+import type { Vendor, SerializedVendor } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export interface VendorCardProps {
-  vendor: Vendor;
+  vendor: Vendor | SerializedVendor;
   featured?: boolean;
   showTierBadge?: boolean;
 }

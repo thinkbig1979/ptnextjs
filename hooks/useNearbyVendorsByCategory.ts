@@ -1,8 +1,8 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useLocationFilter, VendorWithDistance } from '@/hooks/useLocationFilter';
-import type { Vendor, Product, VendorCoordinates } from '@/lib/types';
+import { VendorWithDistance, VendorForLocation } from '@/hooks/useLocationFilter';
+import type { Product, VendorCoordinates, VendorLocation } from '@/lib/types';
 
 export interface UseNearbyVendorsByCategoryOptions {
   userLocation: VendorCoordinates | null;
@@ -12,12 +12,12 @@ export interface UseNearbyVendorsByCategoryOptions {
   maxResults?: number; // Default: 10
 }
 
-export interface VendorWithCategoryCount extends VendorWithDistance {
+export type VendorWithCategoryCount<T extends VendorForLocation = VendorForLocation> = VendorWithDistance<T> & {
   productsInCategory: number; // Count of products in specified category
-}
+};
 
-export interface UseNearbyVendorsByCategoryResult {
-  vendors: VendorWithCategoryCount[];
+export interface UseNearbyVendorsByCategoryResult<T extends VendorForLocation> {
+  vendors: VendorWithCategoryCount<T>[];
   isLoading: boolean;
   error: Error | null;
 }
@@ -28,7 +28,7 @@ export interface UseNearbyVendorsByCategoryResult {
  * Combines location-based filtering with product category matching.
  * Useful for product pages to show "Other vendors near you offering similar products"
  *
- * @param vendors - All available vendors
+ * @param vendors - All available vendors (Vendor or SerializedVendor)
  * @param products - All available products
  * @param options - Filter options (location, category, exclusions, limits)
  * @returns Vendors within radius that offer products in the category, sorted by distance
@@ -46,11 +46,11 @@ export interface UseNearbyVendorsByCategoryResult {
  *   }
  * );
  */
-export function useNearbyVendorsByCategory(
-  vendors: Vendor[],
+export function useNearbyVendorsByCategory<T extends VendorForLocation>(
+  vendors: T[],
   products: Product[],
   options: UseNearbyVendorsByCategoryOptions
-): UseNearbyVendorsByCategoryResult {
+): UseNearbyVendorsByCategoryResult<T> {
   const {
     userLocation,
     category,
@@ -121,7 +121,7 @@ export function useNearbyVendorsByCategory(
 
       // Step 6: If no user location, return vendors without distance filtering
       if (!userLocation) {
-        const vendorsWithCounts: VendorWithCategoryCount[] = vendorsToFilter.map(
+        const vendorsWithCounts: VendorWithCategoryCount<T>[] = vendorsToFilter.map(
           (vendor) => ({
             ...vendor,
             productsInCategory: productCountsByVendor[vendor.id] || 0,
@@ -138,7 +138,7 @@ export function useNearbyVendorsByCategory(
 
       // Step 7: Apply location filtering using existing hook logic
       // We'll create VendorWithDistance results and then add productsInCategory
-      const vendorsWithDistances: VendorWithCategoryCount[] = [];
+      const vendorsWithDistances: VendorWithCategoryCount<T>[] = [];
 
       vendorsToFilter.forEach((vendor) => {
         // Get all eligible locations for this vendor (tier-aware)
@@ -180,7 +180,7 @@ export function useNearbyVendorsByCategory(
               return null;
             }
           })
-          .filter((item): item is { location: any; distance: number } => item !== null);
+          .filter((item): item is { location: NormalizedLocation; distance: number } => item !== null);
 
         // Find the closest location within radius
         const closestLocation = locationsWithDistances
@@ -228,9 +228,21 @@ export function useNearbyVendorsByCategory(
 // Helper functions (copied from useLocationFilter for self-contained implementation)
 
 /**
+ * Location type returned by getVendorLocations - normalized for internal use
+ */
+interface NormalizedLocation {
+  id?: string;
+  city?: string;
+  country?: string;
+  latitude?: number;
+  longitude?: number;
+  isHQ?: boolean;
+}
+
+/**
  * Extracts all eligible locations for a vendor based on tier
  */
-function getVendorLocations(vendor: Vendor): any[] {
+function getVendorLocations(vendor: VendorForLocation): NormalizedLocation[] {
   // Handle locations array (multi-location support)
   if (vendor.locations && vendor.locations.length > 0) {
     const tier = vendor.tier || 'free';
@@ -254,7 +266,7 @@ function getVendorLocations(vendor: Vendor): any[] {
 
   // Fallback to legacy location field (backward compatibility)
   if (vendor.location && typeof vendor.location !== 'string') {
-    const location = vendor.location as any;
+    const location = vendor.location as VendorLocation;
     if (location.latitude !== undefined && location.longitude !== undefined) {
       // Mark legacy location as HQ for consistency
       return [{ ...location, isHQ: true }];

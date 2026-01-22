@@ -1,15 +1,27 @@
 'use client';
 
 import { useMemo } from 'react';
-import { Vendor, VendorCoordinates, VendorLocation } from '@/lib/types';
+import { VendorCoordinates, VendorLocation, SerializedVendorLocation } from '@/lib/types';
 import { calculateDistance } from '@/lib/utils/location';
+
+/**
+ * Base type for vendors that can be used with location filtering.
+ * Both Vendor and SerializedVendor satisfy this interface.
+ */
+export interface VendorForLocation {
+  id: string;
+  name: string;
+  tier?: 'free' | 'tier1' | 'tier2' | 'tier3';
+  location?: VendorLocation | string;
+  locations?: (VendorLocation | SerializedVendorLocation)[];
+}
 
 /**
  * Extracts coordinates from a vendor's location field
  * Handles both VendorLocation objects and legacy string locations
  * @deprecated Use getVendorLocations for multi-location support
  */
-function getVendorCoordinates(vendor: Vendor): VendorCoordinates | null {
+function getVendorCoordinates(vendor: VendorForLocation): VendorCoordinates | null {
   if (!vendor.location) return null;
 
   // Handle legacy string location (no coordinates)
@@ -28,12 +40,24 @@ function getVendorCoordinates(vendor: Vendor): VendorCoordinates | null {
 }
 
 /**
+ * Location type returned by getVendorLocations - normalized for internal use
+ */
+interface NormalizedLocation {
+  id?: string;
+  city?: string;
+  country?: string;
+  latitude?: number;
+  longitude?: number;
+  isHQ?: boolean;
+}
+
+/**
  * Extracts all eligible locations for a vendor based on tier
  * Supports both new locations[] array and legacy location object
  * @param vendor - Vendor to get locations from
- * @returns Array of eligible VendorLocation objects with coordinates
+ * @returns Array of eligible location objects with coordinates
  */
-function getVendorLocations(vendor: Vendor): VendorLocation[] {
+function getVendorLocations(vendor: VendorForLocation): NormalizedLocation[] {
   // NEW: Handle locations array (multi-location support)
   if (vendor.locations && vendor.locations.length > 0) {
     const tier = vendor.tier || 'free';
@@ -67,16 +91,20 @@ function getVendorLocations(vendor: Vendor): VendorLocation[] {
   return [];
 }
 
-export interface VendorWithDistance extends Vendor {
+/**
+ * Extended vendor type with distance information.
+ * Generic to preserve the input vendor type (Vendor or SerializedVendor).
+ */
+export type VendorWithDistance<T extends VendorForLocation = VendorForLocation> = T & {
   /** Calculated distance from user location in kilometers */
   distance?: number;
   /** The specific location that matched the search (for multi-location vendors) */
-  matchedLocation?: VendorLocation;
-}
+  matchedLocation?: NormalizedLocation;
+};
 
-export interface UseLocationFilterResult {
+export interface UseLocationFilterResult<T extends VendorForLocation> {
   /** Vendors filtered by distance */
-  filteredVendors: VendorWithDistance[];
+  filteredVendors: VendorWithDistance<T>[];
   /** Number of vendors with valid coordinates */
   vendorsWithCoordinates: number;
   /** Number of vendors without coordinates */
@@ -88,7 +116,7 @@ export interface UseLocationFilterResult {
 /**
  * Custom hook for filtering vendors by location proximity
  *
- * @param vendors - Array of all vendors
+ * @param vendors - Array of all vendors (Vendor or SerializedVendor)
  * @param userLocation - User's current location coordinates (null if not set)
  * @param maxDistance - Maximum distance in kilometers for filtering
  * @returns Filtered vendors with calculated distances and metadata
@@ -100,11 +128,11 @@ export interface UseLocationFilterResult {
  *   100
  * );
  */
-export function useLocationFilter(
-  vendors: Vendor[],
+export function useLocationFilter<T extends VendorForLocation>(
+  vendors: T[],
   userLocation: VendorCoordinates | null,
   maxDistance: number
-): UseLocationFilterResult {
+): UseLocationFilterResult<T> {
   const result = useMemo(() => {
     // Count vendors with/without coordinates (using new multi-location aware function)
     const vendorsWithCoordinates = vendors.filter(v => getVendorLocations(v).length > 0).length;
@@ -123,7 +151,7 @@ export function useLocationFilter(
     console.log(`🎯 Searching from coordinates: lat=${userLocation.latitude}, lng=${userLocation.longitude}, radius=${maxDistance}km`);
 
     // Calculate distances and filter vendors (NEW: multi-location support)
-    const vendorsWithDistances: VendorWithDistance[] = vendors
+    const vendorsWithDistances: VendorWithDistance<T>[] = vendors
       .map(vendor => {
         // Get all eligible vendor locations (tier-aware)
         const eligibleLocations = getVendorLocations(vendor);
@@ -209,7 +237,7 @@ export function useLocationFilter(
  * Helper hook for getting vendors within a specific distance
  * (simplified version without metadata)
  *
- * @param vendors - Array of all vendors
+ * @param vendors - Array of all vendors (Vendor or SerializedVendor)
  * @param userLocation - User's current location coordinates
  * @param maxDistance - Maximum distance in kilometers
  * @returns Array of vendors within distance, sorted by proximity
@@ -217,18 +245,18 @@ export function useLocationFilter(
  * @example
  * const nearbyVendors = useNearbyVendors(vendors, userLocation, 50);
  */
-export function useNearbyVendors(
-  vendors: Vendor[],
+export function useNearbyVendors<T extends VendorForLocation>(
+  vendors: T[],
   userLocation: VendorCoordinates | null,
   maxDistance: number
-): VendorWithDistance[] {
+): VendorWithDistance<T>[] {
   return useLocationFilter(vendors, userLocation, maxDistance).filteredVendors;
 }
 
 /**
  * Helper hook for checking if a specific vendor is nearby
  *
- * @param vendor - Vendor to check
+ * @param vendor - Vendor to check (Vendor or SerializedVendor)
  * @param userLocation - User's current location coordinates
  * @param maxDistance - Maximum distance in kilometers
  * @returns Object with isNearby flag and calculated distance
@@ -236,8 +264,8 @@ export function useNearbyVendors(
  * @example
  * const { isNearby, distance } = useIsVendorNearby(vendor, userLocation, 100);
  */
-export function useIsVendorNearby(
-  vendor: Vendor,
+export function useIsVendorNearby<T extends VendorForLocation>(
+  vendor: T,
   userLocation: VendorCoordinates | null,
   maxDistance: number
 ): { isNearby: boolean; distance?: number } {
