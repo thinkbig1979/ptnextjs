@@ -3,19 +3,20 @@ import { Suspense } from "react";
 import { ProductsClient } from "@/app/(site)/components/products-client";
 import { ComparisonProvider } from "@/components/ui/product-comparison";
 import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
-import type { Product, Vendor } from "@/lib/types";
+import type { Product, Vendor, SerializedProduct, SerializedVendorMinimal } from "@/lib/types";
 
 /**
  * Extract only required fields for ProductsClient to minimize RSC serialization
  * This reduces the page weight by not sending unused product fields to the client
  */
-function serializeProductForClient(product: Product) {
+function serializeProductForClient(product: Product): SerializedProduct {
   return {
     id: product.id,
     slug: product.slug,
     name: product.name,
     description: product.description,
     shortDescription: product.shortDescription,
+    price: product.price,
     image: product.image,
     category: product.category,
     tags: product.tags,
@@ -37,7 +38,7 @@ function serializeProductForClient(product: Product) {
 /**
  * Extract only required fields for vendor lookup in product filtering
  */
-function serializeVendorForProductLookup(vendor: Vendor) {
+function serializeVendorForProductLookup(vendor: Vendor): SerializedVendorMinimal {
   return {
     id: vendor.id,
     partner: vendor.partner,
@@ -101,9 +102,9 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             </div>
           </div>}>
             <ProductsClient
-              initialProducts={serializedProducts as Product[]}
+              initialProducts={serializedProducts}
               initialCategories={categoryNames}
-              initialVendors={serializedVendors as Vendor[]}
+              initialVendors={serializedVendors}
             />
           </Suspense>
         </ComparisonProvider>
