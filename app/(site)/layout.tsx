@@ -1,44 +1,46 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "../globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
-import { Navigation } from "@/components/navigation";
-import { Footer } from "@/components/footer";
-import { Toaster } from "@/components/ui/sonner";
-import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
-import { AuthProvider } from "@/lib/context/AuthContext";
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import '../globals.css';
+import { ThemeProvider } from '@/components/theme-provider';
+import { Navigation } from '@/components/navigation';
+import { Footer } from '@/components/footer';
+import { Toaster } from '@/components/ui/sonner';
+import { payloadCMSDataService } from '@/lib/payload-cms-data-service';
+import { AuthProvider } from '@/lib/context/AuthContext';
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] });
 
 // Force dynamic rendering - database not available at Docker build time
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://paulthames.com'),
-  title: "Paul Thames | Technical Consultancy & Custom Lighting",
-  description: "Technical project consultancy, vendor consultancy, and bespoke pixel LED solutions for superyachts and high-end architecture.",
-  keywords: "superyacht consultancy, pixel LED lighting, marine technology, yacht lighting, technical advisory, AV/IT systems, vendor consultancy",
-  authors: [{ name: "Paul Thames" }],
+  title: 'Paul Thames | Technical Consultancy & Creative Lighting',
+  description:
+    'Technical consultancy for project teams and vendors, plus creative lighting solutions for superyachts and high-end architecture.',
+  keywords:
+    'superyacht consultancy, creative lighting, marine technology, yacht lighting, technical advisory, AV/IT systems, vendor consultancy',
+  authors: [{ name: 'Paul Thames' }],
   openGraph: {
-    title: "Paul Thames | Technical Consultancy & Custom Lighting",
-    description: "Technical project consultancy, vendor consultancy, and bespoke pixel LED solutions for superyachts and high-end architecture.",
-    type: "website",
-    locale: "en_US",
+    title: 'Paul Thames | Technical Consultancy & Creative Lighting',
+    description:
+      'Technical consultancy for project teams and vendors, plus creative lighting solutions for superyachts and high-end architecture.',
+    type: 'website',
+    locale: 'en_US',
   },
 };
 
-export default async function SiteLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function SiteLayout({ children }: { children: React.ReactNode }) {
   // Fetch company info for footer (skip during Docker builds)
   let companyInfo = null;
   if (process.env.SKIP_BUILD_DB !== 'true') {
     try {
       companyInfo = await payloadCMSDataService.getCompanyInfo();
     } catch (error) {
-      console.warn('⚠️  Could not fetch company info (DB unavailable):', error instanceof Error ? error.message : error);
+      console.warn(
+        '⚠️  Could not fetch company info (DB unavailable):',
+        error instanceof Error ? error.message : error
+      );
     }
   }
 
@@ -128,9 +130,7 @@ export default async function SiteLayout({
           >
             <div className="min-h-screen flex flex-col">
               <Navigation />
-              <main className="flex-1">
-                {children}
-              </main>
+              <main className="flex-1">{children}</main>
               <Footer companyInfo={companyInfo || undefined} />
             </div>
             <Toaster />

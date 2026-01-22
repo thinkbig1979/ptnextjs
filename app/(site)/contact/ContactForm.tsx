@@ -22,7 +22,7 @@ interface ContactFormProps {
 const TOPICS = [
   { value: 'general', label: 'General Inquiry' },
   { value: 'discovery', label: 'Discovery Platform' },
-  { value: 'lighting', label: 'Custom Lighting' },
+  { value: 'lighting', label: 'Creative Lighting' },
   { value: 'consultancy', label: 'Consultancy Services' },
   { value: 'partnership', label: 'Partnership Opportunities' },
 ] as const;
@@ -42,9 +42,7 @@ export function ContactForm({ email }: ContactFormProps) {
     message: '',
   });
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -57,8 +55,7 @@ export function ContactForm({ email }: ContactFormProps) {
     e.preventDefault();
 
     // Find the topic label for the subject line
-    const topicLabel =
-      TOPICS.find((t) => t.value === formData.topic)?.label || 'General Inquiry';
+    const topicLabel = TOPICS.find((t) => t.value === formData.topic)?.label || 'General Inquiry';
 
     // Build the email subject
     const subject = `[Paul Thames Website] ${topicLabel}`;
@@ -81,8 +78,7 @@ ${formData.message}
     window.location.href = mailtoLink;
   };
 
-  const isFormValid =
-    formData.topic && formData.name && formData.email && formData.message;
+  const isFormValid = formData.topic && formData.name && formData.email && formData.message;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">

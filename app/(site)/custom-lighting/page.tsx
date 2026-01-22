@@ -1,69 +1,79 @@
-import * as React from "react";
-import type { Metadata } from "next";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { PixelGridBackground } from "@/components/pixel-grid-background";
-import { LightingConceptCard } from "@/components/lighting-concept-card";
-import { Grid3X3, Layers, Cpu, Anchor, Building2, Hotel, Home } from "lucide-react";
+import * as React from 'react';
+import type { Metadata } from 'next';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { PixelGridBackground } from '@/components/pixel-grid-background';
+import { LightingConceptCard } from '@/components/lighting-concept-card';
+import { Grid3X3, Layers, Cpu, Anchor, Building2, Hotel, Home } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: "Custom Lighting | Bespoke Pixel LED Systems | Paul Thames",
-  description: "Engineered pixel LED lighting systems for superyachts and high-end architecture. Each pixel individually controlled, designed and built per project.",
+  title: 'Creative Lighting Solutions | Paul Thames',
+  description:
+    "Pixel-based fixtures, custom content, and complete programming for superyachts and high-end architecture. When traditional lighting won't do.",
 };
 
 const coreApproach = [
   {
     icon: Grid3X3,
-    title: "Pixel-Level Control",
-    description: "Each pixel individually addressable. Thousands of discrete light sources orchestrated together, enabling dynamic scenes and precise atmospheric control.",
+    title: 'Bespoke Fixtures',
+    description:
+      'Pixel-based fixtures custom-designed for each project. Form factors, materials, and pixel density tailored to the application.',
   },
   {
     icon: Layers,
-    title: "Architectural Integration",
-    description: "Lighting that becomes part of the structure. Embedded into architectural elements, invisible during the day, transformative at night.",
+    title: 'Custom Content',
+    description:
+      'Animations, scenes, and behaviors designed to bring fixtures to life. From subtle ambience to dramatic effects.',
   },
   {
     icon: Cpu,
-    title: "Intelligent Mapping",
-    description: "Advanced control systems translate creative vision into precise pixel behavior, from subtle ambient scenes to dramatic effects.",
+    title: 'Full Programming',
+    description:
+      'Complete system integration and control. Ready to work with building management systems and user interfaces.',
   },
 ];
 
 const capabilities = [
   {
-    title: "Custom Pixel Fixtures",
-    description: "Bespoke form factors designed for specific applications. LED arrays in custom housings, optimized for integration.",
+    title: 'Bespoke Fixtures',
+    description:
+      'Custom form factors designed for specific applications. Housings, optics, and materials optimized for each project.',
   },
   {
-    title: "Modules & Assemblies",
-    description: "Pre-assembled, tested components. Modular building blocks with scalable system architecture.",
+    title: 'Content Creation',
+    description:
+      'Custom animations, scenes, and dynamic behaviors. Visual storytelling through light.',
   },
   {
-    title: "Control-Ready Systems",
-    description: "Complete solutions with integrated control interfaces, ready for building system integration.",
+    title: 'Programming & Integration',
+    description:
+      'Complete control system programming. Building management and user interface integration.',
   },
 ];
 
 const applications = [
   {
     icon: Anchor,
-    title: "Superyachts",
-    description: "Interior and exterior: decks, ceilings, stairs, architectural features. Marine-grade throughout.",
+    title: 'Superyachts',
+    description:
+      'Interior and exterior: decks, ceilings, stairs, architectural features. Marine-grade throughout.',
   },
   {
     icon: Building2,
-    title: "Architecture",
-    description: "Facades, lobbies, statement features. Modular systems with building control integration.",
+    title: 'Architecture',
+    description:
+      'Facades, lobbies, statement features. Modular systems with building control integration.',
   },
   {
     icon: Hotel,
-    title: "Hospitality",
-    description: "Hotels, restaurants, bars. Scene-based control for atmosphere and brand identity.",
+    title: 'Hospitality',
+    description:
+      'Hotels, restaurants, bars. Scene-based control for atmosphere and brand identity.',
   },
   {
     icon: Home,
-    title: "Residential",
-    description: "High-end homes and private spaces. Discreet integration with intuitive control.",
+    title: 'Residential',
+    description: 'High-end homes and private spaces. Discreet integration with intuitive control.',
   },
 ];
 
@@ -74,17 +84,18 @@ export default function CustomLightingPage() {
       <PixelGridBackground
         variant="prominent"
         as="section"
-        aria-label="Custom Lighting Hero"
+        aria-label="Creative Lighting Hero"
         className="py-24 md:py-32"
       >
         <div className="container max-w-screen-xl">
           <div className="text-center">
             <h1 className="text-5xl md:text-7xl font-cormorant font-bold mb-6 text-accent">
-              Bespoke Pixel LED Systems
+              Creative Lighting Solutions
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto font-poppins-light leading-relaxed">
-              Engineered lighting systems, not catalogue fixtures. Designed and built per project
-              for superyachts and high-end architecture, interior and exterior.
+              Pixel-based fixtures with custom content and complete programming for superyachts and
+              high-end architecture. Pixel-level control enables effects traditional lighting can't
+              achieve.
             </p>
           </div>
         </div>
@@ -126,13 +137,17 @@ export default function CustomLightingPage() {
               What You Get
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-poppins-light">
-              Every component engineered to specification. Direct collaboration with design teams and system integrators.
+              Every component engineered to specification. Direct collaboration with design teams
+              and system integrators.
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
             {capabilities.map((capability) => (
-              <Card key={capability.title} className="border-accent/10 hover:border-accent/30 transition-colors">
+              <Card
+                key={capability.title}
+                className="border-accent/10 hover:border-accent/30 transition-colors"
+              >
                 <CardContent className="p-8">
                   <h3 className="text-xl font-cormorant font-bold text-accent mb-3">
                     {capability.title}
@@ -155,23 +170,24 @@ export default function CustomLightingPage() {
               Applications
             </p>
             <h2 className="text-3xl md:text-4xl font-cormorant font-bold text-accent mb-4">
-              Where Custom Lighting Fits
+              Where Creative Lighting Fits
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-poppins-light">
-              Environments where standard solutions fall short.
+              Environments where traditional lighting falls short.
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {applications.map((app) => (
-              <Card key={app.title} className="border-accent/10 hover:border-accent/30 transition-colors">
+              <Card
+                key={app.title}
+                className="border-accent/10 hover:border-accent/30 transition-colors"
+              >
                 <CardContent className="p-6 text-center">
                   <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
                     <app.icon className="w-6 h-6 text-accent" />
                   </div>
-                  <h3 className="text-lg font-cormorant font-bold text-accent mb-2">
-                    {app.title}
-                  </h3>
+                  <h3 className="text-lg font-cormorant font-bold text-accent mb-2">{app.title}</h3>
                   <p className="text-muted-foreground font-poppins-light text-sm">
                     {app.description}
                   </p>
@@ -191,10 +207,14 @@ export default function CustomLightingPage() {
                 Discuss Your Project
               </h2>
               <p className="text-xl mb-8 max-w-2xl mx-auto text-muted-foreground font-poppins-light">
-                Share your requirements and explore how pixel-level control can work for your space.
+                Share your requirements and explore how creative lighting can work for your project.
               </p>
-              <Button size="lg" asChild className="bg-accent hover:bg-accent/90 text-white font-bold px-10 py-4 rounded-full">
-                <a href="mailto:info@paulthames.com?subject=Custom Lighting Inquiry">
+              <Button
+                size="lg"
+                asChild
+                className="bg-accent hover:bg-accent/90 text-white font-bold px-10 py-4 rounded-full"
+              >
+                <a href="mailto:info@paulthames.com?subject=Creative Lighting Inquiry">
                   Get in Touch
                 </a>
               </Button>
