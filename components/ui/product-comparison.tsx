@@ -6,6 +6,9 @@ import { toast } from "sonner";
 
 import { Product } from "@/lib/types";
 
+// Hoisted RegExp for camelCase to Title Case conversion (avoids recreation on each render)
+const CAMEL_CASE_REGEX = /([A-Z])/g;
+
 import { Badge } from "./badge";
 import { Button } from "./button";
 import {
@@ -216,18 +219,18 @@ function ProductComparisonTable({ products }: { products: Product[] }): React.Re
     )
   ));
 
-  // Helper function to format spec names
+  // Helper function to format spec names (uses hoisted regex)
   const formatSpecName = (name: string) => {
     return name
-      .replace(/([A-Z])/g, ' $1')
+      .replace(CAMEL_CASE_REGEX, ' $1')
       .replace(/^./, str => str.toUpperCase())
       .trim();
   };
 
-  // Helper function to format category names
+  // Helper function to format category names (uses hoisted regex)
   const formatCategoryName = (category: string) => {
     return category
-      .replace(/([A-Z])/g, ' $1')
+      .replace(CAMEL_CASE_REGEX, ' $1')
       .replace(/^./, str => str.toUpperCase())
       .trim();
   };

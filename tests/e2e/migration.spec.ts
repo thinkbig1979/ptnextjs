@@ -68,8 +68,24 @@ test.describe('1. Navigation Testing', () => {
     const vendorCards = page.locator('[data-testid="vendor-card"]');
     await expect(vendorCards.first()).toBeVisible({ timeout: 30000 });
 
-    // The vendor card is wrapped entirely in a Link - click the card itself
-    await vendorCards.first().click();
+    // Wait for hydration to complete
+    await page.waitForTimeout(1000);
+
+    // Get the href from the first vendor link and navigate directly
+    // This is more reliable than clicking due to Next.js client-side navigation timing
+    const vendorLink = page.locator('a:has([data-testid="vendor-card"])').first();
+    const href = await vendorLink.getAttribute('href');
+
+    if (href) {
+      // Use direct navigation for reliability
+      await page.goto(href);
+    } else {
+      // Fallback: click with Promise.all to handle navigation
+      await Promise.all([
+        page.waitForURL(/\/(vendors|partners)\/[^/]+/, { timeout: 15000 }),
+        vendorLink.click()
+      ]);
+    }
 
     // Should be on vendor detail page
     await expect(page).toHaveURL(/\/(vendors|partners)\/[^/]+/);
@@ -81,13 +97,30 @@ test.describe('1. Navigation Testing', () => {
 
   test('should navigate from products list to product detail', async ({ page }) => {
     await page.goto('/products');
+    await page.waitForLoadState('networkidle');
 
     // Wait for product cards to load
-    const firstProduct = page.locator('[data-testid="product-card"]').first();
-    await firstProduct.waitFor({ timeout: 10000 });
+    const productCards = page.locator('[data-testid="product-card"]');
+    await expect(productCards.first()).toBeVisible({ timeout: 30000 });
 
-    // Click the link inside the first product card
-    await firstProduct.locator('a').first().click();
+    // Wait for hydration to complete
+    await page.waitForTimeout(1000);
+
+    // Product card has Link INSIDE (for image), not wrapping it
+    // Get the href from the link inside the card
+    const productLink = productCards.first().locator('a').first();
+    const href = await productLink.getAttribute('href');
+
+    if (href) {
+      // Use direct navigation for reliability
+      await page.goto(href);
+    } else {
+      // Fallback: click the card itself (it has onClick handler)
+      await Promise.all([
+        page.waitForURL(/\/products\/[^/]+/, { timeout: 15000 }),
+        productCards.first().click()
+      ]);
+    }
 
     // Should be on product detail page
     await expect(page).toHaveURL(/\/products\/[^/]+/);

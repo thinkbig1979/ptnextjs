@@ -1,381 +1,427 @@
 ---
-version: 1.0.0
-last-updated: 2026-01-17
+version: 2.0.0
+last-updated: 2026-01-20
 related-files:
-  - instructions/core/execute-tasks.md
+  - instructions/core/orchestrate.md
+  - instructions/utilities/beads-integration-guide.md
 ---
 
-# Run Protocol
+# 2-Layer Execution Protocol
 
-> **Purpose**: Unified task execution with autonomous mode and supervisor orchestration
-> **Core Principle**: Supervisor -> PM -> subagent architecture for reliable execution
-> **Context Management**: Supervisor stays minimal (<5% context), spawns PM subagents
-> **v1.0**: Consolidates `/orchestrate` and `/context-aware` into single `/run` command
+> **Purpose**: Simple, efficient task execution for straightforward work
+> **Architecture**: Orchestrator → Workers (parallel)
+> **Use When**: < 10 tasks, single session likely sufficient
+> **For Complex Work**: Use `/orchestrate` (3-layer) instead
 
 ## Overview
 
-`/run` is the unified command for task execution. By default, it uses autonomous
-execution with the supervisor pattern. Use `--quick` for simpler direct execution.
-
-## When to Use Each Mode
-
-| Mode | Use When |
-|------|----------|
-| `/run` (default) | Multi-session work, large specs, hands-off execution |
-| `/run --quick` | Few tasks, simple changes, faster startup |
-| `/run --supervisor` | Force supervisor pattern regardless of task count |
-
-## Execution Flow
-
 ```
-Phase 0: Pre-Flight (same as execute-tasks)
-├─ Quality hooks verification
-├─ Repository health check
-└─ Branch setup
-
-Phase 1: Task Collection (SIMPLIFIED - no decision logic)
-├─ Collect tasks from source
-├─ Create Beads tasks if needed
-├─ Group into waves (parallel when possible, sequential otherwise)
-└─ NO decision about whether to orchestrate - always do it
-
-Phase 2: Supervisor Orchestration (ALWAYS USED)
-├─ Supervisor stays minimal
-├─ Spawn PM subagent for each wave
-├─ PM works until wave complete or PreCompact hook fires
-├─ Checkpoint, spawn next PM
-└─ Continue until all tasks complete
-
-Phase 3-4: (same as execute-tasks)
-├─ Verify deliverables
-├─ Run tests
-└─ Final commit
+┌─────────────────────────────────────────────────────────────┐
+│ ORCHESTRATOR                                                │
+│ - Analyzes tasks, groups into waves                         │
+│ - Spawns workers directly (parallel within wave)            │
+│ - Collects results, handles failures                        │
+│ - PreCompact → workers finalize, create session ledger      │
+└────────────────────────┬────────────────────────────────────┘
+                         │ spawns (parallel)
+┌────────────────────────▼────────────────────────────────────┐
+│ WORKERS (specialized)                                       │
+│ - implementation-specialist, test-architect, etc.           │
+│ - Execute single task each                                  │
+│ - bd comments every 5-10 calls                              │
+│ - Report status back to orchestrator                        │
+└─────────────────────────────────────────────────────────────┘
 ```
+
+## When to Use
+
+| Criteria | 2-Layer (`/run`) | 3-Layer (`/orchestrate`) |
+|----------|------------------|--------------------------|
+| Task count | < 10 | 10+ |
+| Complexity | Simple/medium | Complex |
+| Sessions | Single | Multi-session expected |
+| Parallelism | Parallel workers | PM coordinates workers |
 
 ---
 
-<pre_flight_check>
-  EXECUTE: @.agent-os/instructions/meta/pre-flight.md
-</pre_flight_check>
-
 ## Phase 0: Pre-Flight
 
-Same as execute-tasks. See: `instructions/core/execute-tasks.md` Phase 0
-
 ```bash
-# Quick summary
-CHECK: Quality hooks installed
-CHECK: Repository health (git status, bd doctor)
-SETUP: Working branch
+# Quick health check
+git status --short
+bd doctor --quiet
+
+# Check for session resume
+IF exists .agent-os/session-ledger.md:
+  READ: session-ledger.md
+  DISPLAY:
+    "═══════════════════════════════════════════════════════════
+     SESSION LEDGER DETECTED
+     ═══════════════════════════════════════════════════════════
+
+     Task: [from ledger]
+     Stopped At: [from ledger]
+     Next Action: [from ledger]
+
+     Options:
+     1. resume - Continue from checkpoint
+     2. new - Start fresh (archives ledger)
+     ═══════════════════════════════════════════════════════════"
+
+  WAIT for choice
+
+  IF resume:
+    LOAD handoff context
+    SKIP to Phase 2
+
+  IF new:
+    ARCHIVE: mv session-ledger.md → ledgers/LEDGER-{name}-{date}.md
+
+# Branch setup
+IF spec folder provided:
+  BRANCH = spec folder name
+ELSE:
+  BRANCH = "work/[description]"
+
+git checkout -b ${BRANCH} 2>/dev/null || git checkout ${BRANCH}
+
+CONFIRM: "Pre-flight complete. Branch: ${BRANCH}"
 ```
 
 ---
 
 ## Phase 1: Task Collection
 
-### 1.1: Determine Task Source
-
-```
-PARSE input:
-
+```bash
+# 1.1: Identify task source
 IF <SPEC_FOLDER> provided:
-  SOURCE = "spec"
-  READ: .agent-os/specs/{SPEC_FOLDER}/tasks.md
-  READ: .agent-os/specs/{SPEC_FOLDER}/tasks/*.md
-
-ELIF --beads OR no args:
-  SOURCE = "beads"
-  EXECUTE: bd ready --json
+  READ: .agent-os/specs/${SPEC_FOLDER}/tasks.md
+  TASKS = extract task list
 
 ELIF --tasks "T1, T2, ...":
-  SOURCE = "inline"
-  PARSE: Task list from argument
+  TASKS = parse inline tasks
 
-ELIF --file <path>:
-  SOURCE = "file"
-  READ: Task list from file
+ELSE:
+  TASKS = bd ready --json
 
-OUTPUT:
-  📋 Task Source: {SOURCE}
-  📊 Tasks found: {COUNT}
-```
+# 1.2: Check task count - recommend 3-layer if too many
+IF len(TASKS) > 10:
+  DISPLAY:
+    "⚠️  ${len(TASKS)} tasks detected.
+     Consider using /orchestrate (3-layer) for better context management.
 
-### 1.2: Create Beads Tasks (if needed)
+     Options:
+     1. continue - Proceed with 2-layer
+     2. switch - Use /orchestrate instead"
 
-```bash
-IF SOURCE == "spec" AND tasks not in Beads:
-  FOR each task in tasks.md:
-    bd create --title="[TITLE]" --type=task
-    CAPTURE: TASK_ID
+  WAIT for choice
 
-IF SOURCE == "inline" OR SOURCE == "file":
-  FOR each task:
-    bd create --title="[TASK]" --type=task
-    CAPTURE: TASK_ID
+# 1.3: Group into waves
+WAVES = group_by_dependencies(TASKS)
 
-# Verify all tasks exist in Beads
-bd list --json
-```
+# 1.4: Check gates (if enabled)
+IF config.gates.enabled:
+  FOR task in TASKS:
+    GATES = bd gate blocked --task=${task} --json
+    IF GATES not empty:
+      HANDLE gate (see beads-integration-guide.md)
 
-### 1.3: Group into Waves
-
-```
-ANALYZE dependencies:
-
-FOR each task:
-  CHECK: bd show {TASK_ID} → blocked_by
-
-GROUP tasks:
-  Wave 1: Tasks with no blockers (can run in parallel)
-  Wave 2: Tasks that depend on Wave 1
-  Wave N: Continue until all tasks assigned
-
-OUTPUT:
-  📊 Execution Plan:
-  Wave 1: [{TASK_IDS}] (parallel: {COUNT})
-  Wave 2: [{TASK_IDS}]
-  ...
-  Total waves: {N}
-```
-
-### 1.4: Confirm with User
-
-```
+# 1.5: Display plan
 DISPLAY:
-  "📋 ORCHESTRATED EXECUTION READY
+  "📋 EXECUTION PLAN (2-Layer)
 
-   Mode: Supervisor → PM → Subagents
-   Tasks: {COUNT} | Waves: {WAVE_COUNT}
+   Tasks: ${TASK_COUNT}
+   Waves: ${WAVE_COUNT}
 
-   This will run autonomously with checkpointing.
-   Intervention only needed for blockers.
+   Wave 1: [TASK_IDS] (parallel)
+   Wave 2: [TASK_IDS]
+   ...
 
-   Options:
-   1. proceed
-   2. show-tasks (list all)
-   3. abort"
+   [proceed / show-details / abort]"
 
 WAIT for confirmation
 ```
 
 ---
 
-## Phase 2: Supervisor Orchestration
-
-**CRITICAL**: This phase ALWAYS uses the supervisor pattern. No decision logic.
-
-### 2.1: Supervisor Role
-
-```
-SUPERVISOR CONSTRAINTS:
-- Stay minimal - dispatch and coordinate only
-- DO NOT do implementation work
-- Only: dispatch, collect status, checkpoint, dispatch next
-
-SUPERVISOR RESPONSIBILITIES:
-1. Dispatch PM subagent with task wave
-2. Receive status report
-3. Update Beads based on report
-4. Checkpoint if needed
-5. Dispatch next wave or PM continuation
-6. Repeat until complete
-```
-
-### 2.2: PM Dispatch Template
+## Phase 2: Worker Dispatch Loop
 
 ```
 FOR each wave:
 
-  # 1. Claim all tasks in wave
+  # 2.1: Claim tasks and set agent states
   FOR task in wave:
     bd update ${task} --status in_progress
+    WORKER_ID="aos-worker-${task}"
+    bd agent state ${WORKER_ID} spawning
 
-  # 2. Spawn PM subagent
-  Task(subagent_type: "general-purpose", prompt: "
+  # 2.2: Dispatch workers IN PARALLEL
+  FOR task in wave (PARALLEL):
+    WORKER_ID="aos-worker-${task}"
+    ROLE = determine_role(task)  # implementation-specialist, test-architect, etc.
+
+    Task(subagent_type: "general-purpose", prompt: "
+    ${WORKER_DISPATCH_TEMPLATE}
+    ")
+
+  # 2.3: Collect worker responses
+  FOR response in worker_responses:
+    PARSE: status, task_id, completed, remaining, blockers
+
+    IF status == "completed":
+      bd agent state ${WORKER_ID} done
+      bd close ${task_id} --reason="[summary]"
+
+    ELIF status == "stopped":
+      bd agent state ${WORKER_ID} stopped
+      SAVE checkpoint
+      ADD to continuation_queue
+
+    ELIF status == "blocked":
+      bd agent state ${WORKER_ID} stuck
+      DISPLAY blocker
+      PROMPT user for resolution
+
+  # 2.4: Handle continuations
+  IF continuation_queue not empty:
+    FOR checkpoint in continuation_queue:
+      SPAWN worker with checkpoint context
+
+  # 2.5: Wave checkpoint
+  bd sync
+  git add -A && git commit -m "checkpoint: wave ${WAVE_NUMBER} complete"
+
+  # 2.6: Next wave
+  WAVE_NUMBER++
+```
+
+### Worker Dispatch Template
+
+```
 ═══════════════════════════════════════════════════════════
-ORCHESTRATED EXECUTION - PM SESSION
+WORKER SESSION - ${TASK_ID}
 ═══════════════════════════════════════════════════════════
 
-You are a PM (Project Manager) subagent. Execute the assigned tasks
-autonomously until either:
-- All tasks in this wave complete
-- PreCompact hook fires (you'll see 'CONTEXT COMPACTION IMMINENT' message)
-
-PRECOMPACT PROTOCOL:
-- When you see 'CONTEXT COMPACTION IMMINENT', follow the graceful shutdown instructions
-- Wait for any subagents you spawned to complete
-- Write state to .agent-os/session-ledger.md (see execute-tasks.md Phase 3.1)
-- Save notes to Beads before stopping
-- Another PM will continue from session ledger checkpoint
-
-WAVE ASSIGNMENT:
-Tasks: ${WAVE_TASK_IDS}
-
-FOR each task:
-  1. bd show {TASK_ID}
-  2. Load required instructions/skills
-  3. Execute task
-  4. bd close {TASK_ID} when complete
-  5. Checkpoint: bd note, git commit
-
-MANDATORY: Return status report (format below)
+WORKER_ID: ${WORKER_ID}
+ROLE: ${ROLE}
 
 ═══════════════════════════════════════════════════════════
-INSTRUCTION LOADING
+AGENT STATE PROTOCOL
 ═══════════════════════════════════════════════════════════
 
-BEFORE each task:
-1. READ task details: bd show {TASK_ID}
-2. READ relevant instruction file if specified
-3. Skill invocations as needed
-4. CHECK patterns: .agent-os/patterns/ first
+ON START:
+  bd agent state ${WORKER_ID} working
+  bd comments add ${TASK_ID} "Worker starting: ${ROLE}"
+
+DURING WORK (every 5-10 tool calls):
+  bd comments add ${TASK_ID} "Progress: [what you just did]"
+  bd agent heartbeat ${WORKER_ID}
+
+ON KEY DECISIONS:
+  bd audit add --type=decision --text="[choice] because [rationale]"
+
+ON DISCOVERIES:
+  bd audit add --type=discovery --text="Found [what] at [location]"
+
+ON COMPLETE:
+  bd comments add ${TASK_ID} "Complete: [summary]"
+  bd agent state ${WORKER_ID} done
+
+ON STOP (PreCompact):
+  bd comments add ${TASK_ID} "Stopped at: [checkpoint]"
+  bd agent state ${WORKER_ID} stopped
+
+═══════════════════════════════════════════════════════════
+MANDATORY INSTRUCTION LOADING
+═══════════════════════════════════════════════════════════
+
+BEFORE work:
+1. READ: bd show ${TASK_ID}
+2. READ: @.agent-os/instructions/agents/${ROLE}.md
+3. CHECK: .agent-os/patterns/ for project-specific patterns
+4. CONFIRM: "Instructions loaded for ${ROLE}"
+
+═══════════════════════════════════════════════════════════
+TASK ASSIGNMENT
+═══════════════════════════════════════════════════════════
+
+TASK_ID: ${TASK_ID}
+TITLE: ${TASK_TITLE}
+
+DELIVERABLES:
+${DELIVERABLES}
+
+ACCEPTANCE CRITERIA:
+${ACCEPTANCE_CRITERIA}
+
+═══════════════════════════════════════════════════════════
+PRECOMPACT PROTOCOL
+═══════════════════════════════════════════════════════════
+
+WHEN you see 'CONTEXT COMPACTION IMMINENT':
+
+1. COMPLETE current subtask if quick (< 2 min)
+2. SAVE state:
+   bd comments add ${TASK_ID} "Stopped at: [exact checkpoint]"
+   bd agent state ${WORKER_ID} stopped
+3. REPORT to orchestrator immediately
 
 ═══════════════════════════════════════════════════════════
 STATUS REPORT FORMAT (MANDATORY)
 ═══════════════════════════════════════════════════════════
 
 ---
-STATUS: [completed | stopped_at_checkpoint | blocked]
-WAVE: {WAVE_NUMBER}
-COMPLETED_TASKS:
-- {TASK_ID}: {summary}
+STATUS: [completed | stopped | blocked]
+WORKER_ID: ${WORKER_ID}
+TASK_ID: ${TASK_ID}
 
-REMAINING_TASKS:
-- {TASK_ID}: {status}
+COMPLETED:
+- [bullet list of what was done]
+
+REMAINING:
+- [bullet list of what's left]
 
 FILES_MODIFIED:
-- {file}: {description}
+- [file]: [description]
 
 TESTS:
-- {passing/failing/not yet run}
+- [passing/failing/not run]
 
-STOPPED_AT: {exact point if stopped}
-NEXT_ACTION: {what next PM does first}
-BLOCKERS: {if any}
+${IF stopped}
+STOPPED_AT: [exact checkpoint - file:line or step]
+NEXT_ACTION: [what to do first when resumed]
+${ENDIF}
+
+${IF blocked}
+BLOCKER: [description]
+NEED: [what's needed to unblock]
+${ENDIF}
 ---
-")
-
-  # 3. Process response
-  PARSE: Status report
-
-  IF STATUS == "completed":
-    FOR task in completed_tasks:
-      VERIFY: bd show {task} → status == closed
-    CONTINUE to next wave
-
-  ELIF STATUS == "stopped_at_checkpoint":
-    DISPLAY: "⏸️ PM stopped at checkpoint"
-    SPAWN: Continuation PM with remaining tasks
-
-  ELIF STATUS == "blocked":
-    DISPLAY: "🚫 BLOCKED: {BLOCKERS}"
-    PROMPT: User for resolution
-```
-
-### 2.3: Wave Completion
-
-```
-AFTER each wave:
-
-  # Checkpoint
-  bd sync
-  git add -A && git commit -m "checkpoint: wave {N} complete"
-
-  # Status update
-  DISPLAY:
-    "✓ Wave {N}/{TOTAL} complete
-     Completed: {COMPLETED_COUNT}
-     Remaining: {REMAINING_COUNT}"
-
-  # Continue to next wave
-  IF more_waves:
-    CONTINUE to next wave
-  ELSE:
-    PROCEED to Phase 3
 ```
 
 ---
 
-## Phase 3: Post-Execution Verification
-
-Same as execute-tasks Phase 4. See: `instructions/core/execute-tasks.md`
+## Phase 3: Post-Execution
 
 ```bash
-# Quick summary
-VERIFY: All deliverables exist
-RUN: pnpm tsc --noEmit (if TypeScript)
-RUN: pnpm test
-CLOSE: All Beads tasks
-COMMIT: Final state
+# 3.1: Verify deliverables
+FOR task in completed_tasks:
+  VERIFY: deliverables exist
+  VERIFY: tests pass (if applicable)
+
+IF verification_failures:
+  DISPLAY failures
+  PROMPT: "Fix issues? [yes/no]"
+
+# 3.2: TypeScript check (if applicable)
+IF exists tsconfig.json:
+  RUN: pnpm tsc --noEmit
+  IF errors:
+    DISPLAY errors
+    PROMPT: "Fix? [yes/no]"
+
+# 3.3: Run tests
+RUN: pnpm test (or equivalent)
+
+IF test_failures:
+  DISPLAY failures
+  PROMPT: "Investigate? [yes/no]"
+
+# 3.4: Final commit
+git add -A
+git commit -m "feat: [description]
+
+Completed:
+- [task summaries]
+
+Co-Authored-By: Claude <noreply@anthropic.com>"
+
+bd sync
 ```
 
 ---
 
 ## Phase 4: Completion
 
+```bash
+# Check for remaining work
+REMAINING = bd ready --json
+
+IF len(REMAINING) > 0:
+  # More work exists - create session ledger
+  CREATE session-ledger.md (see below)
+
+  DISPLAY:
+    "📋 SESSION COMPLETE (more work remains)
+
+     ✅ Completed: ${COMPLETED_COUNT} tasks
+     📝 Remaining: ${len(REMAINING)} tasks
+
+     Session ledger: .agent-os/session-ledger.md
+
+     To continue: Start new session, will auto-detect ledger"
+
+ELSE:
+  # All done
+  DISPLAY:
+    "✅ EXECUTION COMPLETE
+
+     📊 Summary:
+     - Tasks: ${TASK_COUNT}
+     - Waves: ${WAVE_COUNT}
+     - Files modified: ${FILE_COUNT}
+
+     🔗 Branch: ${BRANCH}
+
+     Next:
+     1. git diff main...HEAD
+     2. gh pr create"
 ```
-DISPLAY:
-  "✅ ORCHESTRATED EXECUTION COMPLETE
-
-   📊 Summary:
-   - Tasks completed: {COUNT}
-   - Waves executed: {WAVE_COUNT}
-   - PM sessions: {PM_COUNT}
-   - Files modified: {FILE_COUNT}
-
-   📁 Deliverables:
-   {LIST}
-
-   🔗 Branch: {BRANCH}
-
-   Next steps:
-   1. git diff main...HEAD
-   2. gh pr create"
-
-# Final sync
-bd sync
-git push (if appropriate)
-```
-
-<post_flight_check>
-  EXECUTE: @.agent-os/instructions/meta/post-flight.md
-</post_flight_check>
 
 ---
 
-## Quick Reference
+## Orchestrator PreCompact
 
-### Supervisor Stays Minimal
+```bash
+WHEN 'CONTEXT COMPACTION IMMINENT':
 
-```
-DO:
-- Dispatch subagents
-- Collect status reports
-- Update Beads
-- Checkpoint
+1. STOP dispatching new workers
 
-DO NOT:
-- Read implementation code
-- Make implementation decisions
-- Accumulate context
-```
+2. TELL active workers to finalize:
+   (Workers will see their own PreCompact hooks)
 
-### PM Works Until Done or PreCompact
+3. WAIT for worker responses
 
-```
-PM executes until:
-1. All wave tasks complete → return "completed"
-2. PreCompact hook fires → save state, return "stopped_at_checkpoint"
-3. Blocker encountered → return "blocked"
-```
+4. CREATE session ledger:
 
-### Checkpointing
+   # Session Ledger
+   Created: ${TIMESTAMP}
+   Last Updated: ${NOW}
+   Mode: 2-Layer
 
-```
-EVERY checkpoint includes:
-1. bd note {TASK_ID} with current state
-2. git add -A && git commit
-3. bd sync
+   ## Progress
+   - Completed: ${COMPLETED_TASKS}
+   - In Progress: ${IN_PROGRESS_TASKS}
+   - Remaining: ${REMAINING_TASKS}
+
+   ## Worker Checkpoints
+   ${FOR each stopped worker}
+   - ${TASK_ID}:
+       stopped_at: ${checkpoint}
+       next_action: ${next}
+   ${ENDFOR}
+
+   ## Resume Instructions
+   1. Read this ledger
+   2. Continue from worker checkpoints
+   3. Then proceed to remaining tasks
+
+5. COMMIT:
+   git add -A
+   git commit -m "checkpoint: session handoff"
+   bd sync
+
+6. EXIT gracefully
 ```
 
 ---
@@ -383,10 +429,62 @@ EVERY checkpoint includes:
 ## Configuration
 
 ```yaml
-# config.yml
-orchestrate:
+run:
   enabled: true
-  auto_checkpoint: true
-  parallel_waves: true            # Run wave tasks in parallel when possible
-  # Context limits removed - PreCompact hook handles graceful shutdown automatically
+  mode: "2-layer"
+
+  # Recommend 3-layer threshold
+  recommend_orchestrate_threshold: 10
+
+  # Parallelism
+  max_parallel_workers: 5
+
+  # Beads
+  worker_comment_interval: 5
+  worker_heartbeat_interval: 10
+
+gates:
+  enabled: true
+  require_ci_gate: false          # CI gates OFF by default
+  auto_resolve_github: true
+  auto_resolve_bead: true
+  security_gate_on_sensitive: true
+  poll_interval: 30
 ```
+
+---
+
+## Quick Reference
+
+### Orchestrator Does:
+- Analyze tasks, group into waves
+- Spawn workers in parallel
+- Collect results
+- Handle blockers
+- Create session ledger on PreCompact
+
+### Workers Do:
+- Full implementation work
+- Read/write code
+- Run tests
+- bd comments every 5-10 calls
+- bd audit for decisions
+- Report status to orchestrator
+
+### Role Mapping
+
+| Task Type | Role |
+|-----------|------|
+| Implementation | implementation-specialist |
+| Tests (unit) | test-architect |
+| Tests (e2e) | test-architect |
+| Frontend | frontend-specialist |
+| Security review | security-sentinel |
+
+---
+
+## See Also
+
+- `/orchestrate` - 3-layer protocol for complex work
+- `beads-integration-guide.md` - Full Beads reference
+- `subagent-delegation-template.md` - Delegation patterns

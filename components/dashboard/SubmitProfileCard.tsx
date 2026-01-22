@@ -41,28 +41,35 @@ export function SubmitProfileCard() {
   const { vendor, isLoading, refreshVendor } = useVendorDashboard();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Extract primitive values for dependency optimization
+  // This prevents unnecessary useMemo re-runs when vendor object changes but these fields don't
+  const vendorDescription = vendor?.description;
+  const vendorLogo = vendor?.logo;
+  const vendorContactPhone = vendor?.contactPhone;
+
   /**
    * Check which mandatory fields are missing
+   * Using primitives in dependency array to avoid unnecessary re-computations
    */
   const missingFields = useMemo((): MissingField[] => {
     if (!vendor) return [];
 
     const missing: MissingField[] = [];
 
-    if (!vendor.description || vendor.description.trim() === '') {
+    if (!vendorDescription || vendorDescription.trim() === '') {
       missing.push({ field: 'description', label: 'Company Description' });
     }
 
-    if (!vendor.logo) {
+    if (!vendorLogo) {
       missing.push({ field: 'logo', label: 'Company Logo' });
     }
 
-    if (!vendor.contactPhone || vendor.contactPhone.trim() === '') {
+    if (!vendorContactPhone || vendorContactPhone.trim() === '') {
       missing.push({ field: 'contactPhone', label: 'Contact Phone' });
     }
 
     return missing;
-  }, [vendor]);
+  }, [vendor, vendorDescription, vendorLogo, vendorContactPhone]);
 
   const isReadyToSubmit = missingFields.length === 0;
   const isAlreadySubmitted = vendor?.profileSubmitted === true;

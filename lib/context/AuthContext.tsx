@@ -169,9 +169,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
    * Setup automatic token refresh and status sync
    * Refresh token every 50 minutes (tokens expire in 1 hour)
    * Sync user status every 5 minutes to catch approval status changes
+   *
+   * Note: Using user?.id as dependency instead of full user object
+   * to avoid unnecessary effect re-runs on user property changes.
    */
+  const userId = user?.id;
   useEffect(() => {
-    if (!user) return;
+    if (!userId) return;
 
     // Token refresh interval (50 minutes)
     const refreshInterval = setInterval(async () => {
@@ -205,7 +209,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       clearInterval(refreshInterval);
       clearInterval(statusSyncInterval);
     };
-  }, [user, logout, refreshUser]);
+  }, [userId, logout, refreshUser]);
 
   const value: AuthContextState = {
     user,

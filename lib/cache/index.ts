@@ -35,6 +35,8 @@ export type { CacheService } from './CacheService';
 
 // Implementations
 export { InMemoryCacheService, createCollectionPattern, createEntityTags } from './InMemoryCacheService';
+export { LRUCacheService, lruCacheService, createLRUCollectionPattern, createLRUEntityTags } from './LRUCacheService';
+export type { LRUCacheServiceOptions } from './LRUCacheService';
 
 // Default export - singleton instance with default TTL
 export { InMemoryCacheService as default } from './InMemoryCacheService';

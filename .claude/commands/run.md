@@ -1,91 +1,54 @@
 ---
-description: Unified task execution with autonomous mode and supervisor orchestration
+description: 2-Layer task execution (Orchestrator → Workers)
 globs:
 alwaysApply: false
-version: 1.0
+version: 2.0
 encoding: UTF-8
 ---
 
-# Run
+# Run (2-Layer)
 
-> **Unified Command**: Combines `/execute-tasks`, `/orchestrate`, and `/context-aware` into a single entry point for task execution.
+> **Simple Execution**: Orchestrator spawns workers directly in parallel
+> **For Complex Work**: Use `/orchestrate` (3-layer) instead
 
-## Overview
+## Architecture
 
-`/run` is the primary command for executing tasks. It supports multiple modes:
+```
+Orchestrator → Workers (parallel)
+```
 
-| Mode | Description | Use When |
-|------|-------------|----------|
-| **Default** | Autonomous execution with session ledger | Large task lists, multi-session work |
-| `--quick` | Direct execution without supervisor | Few tasks, simple work |
-| `--supervisor` | Force supervisor pattern | Always want orchestration |
+- Orchestrator analyzes tasks, groups into waves
+- Workers execute tasks in parallel within each wave
+- Good for < 10 tasks, single session expected
 
 ## Usage
 
 ```bash
-/run                           # Execute ready Beads tasks (autonomous mode)
+/run                           # Execute ready Beads tasks
 /run <SPEC_FOLDER>             # Execute all tasks for a spec
-/run --quick                   # Direct execution (no supervisor overhead)
-/run --supervisor              # Force supervisor pattern
 /run --tasks "T1, T2"          # Inline task list
 ```
 
-## Mode Details
+## When to Use
 
-### Default Mode (Autonomous)
-
-Full autonomous execution with:
-- Supervisor -> PM -> Subagent architecture
-- Session ledger (`.agent-os/session-ledger.md`) for cross-session handoffs
-- Automatic resume detection at session start
-- PreCompact hook integration for graceful context management
-
-**Best for**: Long-running work, complex specs, multi-session tasks
-
-### Quick Mode (`--quick`)
-
-Direct task execution without supervisor overhead:
-- Faster for small task lists (< 5 tasks)
-- No session ledger management
-- Uses standard `/execute-tasks` protocol
-
-**Best for**: Quick fixes, simple changes, few tasks
-
-### Supervisor Mode (`--supervisor`)
-
-Forces supervisor pattern regardless of task count:
-- Always uses supervisor -> PM architecture
-- Full checkpointing and handoff support
-- Minimal user intervention
-
-**Best for**: When you want hands-off execution regardless of task size
-
----
+| Criteria | `/run` (2-Layer) | `/orchestrate` (3-Layer) |
+|----------|------------------|--------------------------|
+| Task count | < 10 | 10+ |
+| Complexity | Simple/medium | Complex |
+| Sessions | Single | Multi-session |
+| Context | Workers use most | PM coordinates workers |
 
 ## Instructions
 
-### Default/Supervisor Mode
-
 @.agent-os/instructions/core/run.md
-
-### Quick Mode
-
-@.agent-os/instructions/core/execute-tasks.md
-
----
-
-## Session Resume
-
-Session start auto-detects `.agent-os/session-ledger.md` and offers to resume.
-No explicit `--resume` flag needed.
 
 ## Quick Reference
 
 | Goal | Command |
 |------|---------|
-| Run all ready tasks | `/run` |
+| Run ready tasks | `/run` |
 | Run spec tasks | `/run my-feature` |
-| Quick direct execution | `/run --quick` |
-| Force supervisor | `/run --supervisor` |
-| Check session state | `cat .agent-os/session-ledger.md` |
-| Check Beads state | `bd ready` |
+| Complex work | `/orchestrate` |
+| Check state | `bd ready` |
+
+ARGUMENTS: $ARGUMENTS

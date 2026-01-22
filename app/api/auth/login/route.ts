@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { authService } from '@/lib/services/auth-service';
 import { rateLimit } from '@/lib/middleware/rateLimit';
-import { logLoginSuccess, logLoginFailed } from '@/lib/services/audit-service';
+import { deferLogLoginSuccess, deferLogLoginFailed } from '@/lib/services/audit-service';
 import { decodeToken } from '@/lib/utils/jwt';
 
 // Rate limit: 5 attempts per 15 minutes per IP
@@ -35,8 +35,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       const decoded = decodeToken(login_response.tokens.accessToken);
       const token_id = decoded?.jti || 'unknown';
 
-      // Log successful login (non-blocking)
-      logLoginSuccess(
+      // Log successful login (deferred via Next.js after() - runs after response sent)
+      deferLogLoginSuccess(
         login_response.user.id,
         login_response.user.email,
         token_id,
@@ -72,9 +72,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       const message = error instanceof Error ? error.message : 'Authentication failed';
       console.error('[Login API] Error:', error);
 
-      // Log failed login attempt (non-blocking)
+      // Log failed login attempt (deferred via Next.js after() - runs after response sent)
       if (email_attempt) {
-        logLoginFailed(email_attempt, message, request);
+        deferLogLoginFailed(email_attempt, message, request);
       }
 
       // Return appropriate error status

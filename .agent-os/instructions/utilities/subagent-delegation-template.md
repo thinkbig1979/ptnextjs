@@ -73,10 +73,53 @@ From user's global CLAUDE.md:
 - Server management: Check if tests auto-start servers, kill conflicts
 
 ═══════════════════════════════════════════════════════════════════
+PROGRESS COMMENTS (bd comment)
+═══════════════════════════════════════════════════════════════════
+
+Use bd comment to add timestamped progress updates to tasks:
+
+FREQUENCY:
+- Every 5-10 tool calls, add a progress comment
+- Always comment on key milestones
+
+WHEN TO COMMENT:
+- At task start: bd comment ${TASK_ID} "Starting: reviewing requirements"
+- During work: bd comment ${TASK_ID} "Progress: implemented X, moving to Y"
+- On blockers: bd comment ${TASK_ID} "BLOCKED: [reason]"
+- On breakthroughs: bd comment ${TASK_ID} "Breakthrough: [discovery]"
+- At completion: bd comment ${TASK_ID} "Complete: all tests passing"
+
+COMMENT CONTENT:
+- Be specific about what was done and what's next
+- Include file names or function names when relevant
+- Note decisions made or deviations from plan
+- Keep comments concise but informative
+
+═══════════════════════════════════════════════════════════════════
+AGENT STATE PROTOCOL
+═══════════════════════════════════════════════════════════════════
+
+AGENT_ID: {AGENT_ID}
+
+ON START:
+  bd agent state {AGENT_ID} working
+
+DURING WORK (every 10 tool calls):
+  bd agent heartbeat {AGENT_ID}
+
+ON COMPLETE:
+  bd agent state {AGENT_ID} done
+
+ON STOP (checkpoint):
+  bd agent state {AGENT_ID} stopped
+
+═══════════════════════════════════════════════════════════════════
 TASK ASSIGNMENT
 ═══════════════════════════════════════════════════════════════════
 
 TASK: {TASK_TITLE}
+BEADS_ID: {TASK_ID}
+AGENT_ID: {AGENT_ID}
 ROLE: {AGENT_ROLE}
 PHASE: {PHASE_NAME}
 

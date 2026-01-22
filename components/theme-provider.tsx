@@ -5,6 +5,17 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 
 type ThemeProviderProps = React.ComponentProps<typeof NextThemesProvider>;
 
+// Hoisted RegExp patterns for Firefox mobile detection (avoids recreation on each render)
+const FIREFOX_MOBILE_REGEX = /Firefox.*Mobile/;
+const FIREFOX_REGEX = /Firefox/;
+const ANDROID_REGEX = /Android/;
+
+function isFirefoxMobile(): boolean {
+  if (typeof navigator === 'undefined') return false;
+  return FIREFOX_MOBILE_REGEX.test(navigator.userAgent) ||
+         (FIREFOX_REGEX.test(navigator.userAgent) && ANDROID_REGEX.test(navigator.userAgent));
+}
+
 // Enhanced system theme detection for Firefox mobile compatibility
 function detectSystemTheme(): 'light' | 'dark' {
   if (typeof window === 'undefined') return 'light';
@@ -73,13 +84,10 @@ function EnhancedThemeProvider({ children, ...props }: ThemeProviderProps): Reac
       mediaQuery.addListener(handleChange);
     }
 
-    // Firefox mobile specific: periodic check as fallback
-    const isFirefoxMobile = /Firefox.*Mobile/.test(navigator.userAgent) ||
-                           (/Firefox/.test(navigator.userAgent) && /Android/.test(navigator.userAgent));
-
+    // Firefox mobile specific: periodic check as fallback using hoisted regex
     let intervalId: NodeJS.Timeout | null = null;
 
-    if (isFirefoxMobile) {
+    if (isFirefoxMobile()) {
       // Check every 2 seconds for theme changes on Firefox mobile
       intervalId = setInterval(() => {
         const currentTheme = detectSystemTheme();

@@ -1,44 +1,52 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { ThemeToggle } from "./theme-toggle";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, ChevronDown } from "lucide-react";
-import { Logo } from "@/components/ui/logo";
+import * as React from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { cn } from '@/lib/utils';
+import { ThemeToggle } from './theme-toggle';
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Menu, ChevronDown } from 'lucide-react';
+import { Logo } from '@/components/ui/logo';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
 
 interface NavigationItem {
   href: string;
   label: string;
   submenu?: NavigationItem[];
+  hideOverview?: boolean;
 }
 
 const navigationItems: NavigationItem[] = [
-  { href: "/", label: "Home" },
-  { href: "/about", label: "About" },
+  { href: '/', label: 'Home' },
+  { href: '/about', label: 'About Us' },
+  { href: '/custom-lighting', label: 'Creative Lighting' },
   {
-    href: "/discovery-platform",
-    label: "Discovery Platform",
+    href: '/consultancy',
+    label: 'Consultancy',
+    hideOverview: true,
     submenu: [
-      { href: "/vendors", label: "Vendors" },
-      { href: "/products", label: "Products & Services" },
-      { href: "/yachts", label: "Yachts" },
-      { href: "/info-for-vendors", label: "Info For Vendors" },
-      { href: "/vendor/login", label: "Vendor Login" },
-    ]
+      { href: '/consultancy/clients', label: 'For Project Teams' },
+      { href: '/consultancy/suppliers', label: 'For Industry Suppliers' },
+    ],
   },
-  { href: "/bespoke-solutions", label: "Bespoke Solutions" },
-  { href: "/blog", label: "Blog" },
-  { href: "/contact", label: "Contact" },
+  {
+    href: '/vendors',
+    label: 'Industry Directory',
+    submenu: [
+      { href: '/products', label: 'Products' },
+      { href: '/yachts', label: 'Yachts' },
+      { href: '/vendor/login', label: 'Vendor Login' },
+    ],
+  },
+  { href: '/blog', label: 'Blog' },
+  { href: '/contact', label: 'Contact' },
 ];
 
 export function Navigation(): React.JSX.Element {
@@ -48,20 +56,27 @@ export function Navigation(): React.JSX.Element {
   const isActiveItem = (item: NavigationItem): boolean => {
     if (pathname === item.href) return true;
     if (item.submenu) {
-      return item.submenu.some(subItem => pathname === subItem.href);
+      return item.submenu.some((subItem) => pathname === subItem.href);
     }
     return false;
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60" role="banner">
+    <header
+      className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60"
+      role="banner"
+    >
       <div className="container flex h-20 sm:h-24 md:h-22 lg:h-26 max-w-screen-xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="flex items-center" aria-label="Paul Thames Home">
           <Logo size="mobile-nav" priority />
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center space-x-6" role="navigation" aria-label="Main navigation">
+        <nav
+          className="hidden lg:flex items-center space-x-6"
+          role="navigation"
+          aria-label="Main navigation"
+        >
           {navigationItems.map((item) => (
             <div key={item.href}>
               {item.submenu ? (
@@ -70,10 +85,10 @@ export function Navigation(): React.JSX.Element {
                     <Button
                       variant="ghost"
                       className={cn(
-                        "font-poppins-medium text-sm transition-colors hover:text-accent h-auto p-2",
+                        'font-poppins-medium text-sm transition-colors hover:text-accent h-auto p-2',
                         isActiveItem(item)
-                          ? "text-accent"
-                          : "text-foreground/80 hover:text-foreground"
+                          ? 'text-accent'
+                          : 'text-foreground/80 hover:text-foreground'
                       )}
                     >
                       {item.label}
@@ -81,20 +96,16 @@ export function Navigation(): React.JSX.Element {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="start" className="w-56">
-                    <DropdownMenuItem asChild>
-                      <Link
-                        href={item.href}
-                        className="w-full cursor-pointer"
-                      >
-                        {item.label} Overview
-                      </Link>
-                    </DropdownMenuItem>
+                    {!item.hideOverview && (
+                      <DropdownMenuItem asChild>
+                        <Link href={item.href} className="w-full cursor-pointer">
+                          {item.label} Overview
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
                     {item.submenu.map((subItem) => (
                       <DropdownMenuItem key={subItem.href} asChild>
-                        <Link
-                          href={subItem.href}
-                          className="w-full cursor-pointer"
-                        >
+                        <Link href={subItem.href} className="w-full cursor-pointer">
                           {subItem.label}
                         </Link>
                       </DropdownMenuItem>
@@ -105,10 +116,10 @@ export function Navigation(): React.JSX.Element {
                 <Link
                   href={item.href}
                   className={cn(
-                    "font-poppins-medium text-sm transition-colors hover:text-accent",
+                    'font-poppins-medium text-sm transition-colors hover:text-accent',
                     pathname === item.href
-                      ? "text-accent"
-                      : "text-foreground/80 hover:text-foreground"
+                      ? 'text-accent'
+                      : 'text-foreground/80 hover:text-foreground'
                   )}
                 >
                   {item.label}
@@ -137,10 +148,10 @@ export function Navigation(): React.JSX.Element {
                       href={item.href}
                       onClick={() => setIsOpen(false)}
                       className={cn(
-                        "font-poppins-medium text-lg transition-colors hover:text-accent block",
+                        'font-poppins-medium text-lg transition-colors hover:text-accent block',
                         isActiveItem(item)
-                          ? "text-accent"
-                          : "text-foreground/80 hover:text-foreground"
+                          ? 'text-accent'
+                          : 'text-foreground/80 hover:text-foreground'
                       )}
                     >
                       {item.label}
@@ -153,10 +164,10 @@ export function Navigation(): React.JSX.Element {
                             href={subItem.href}
                             onClick={() => setIsOpen(false)}
                             className={cn(
-                              "font-poppins-light text-base transition-colors hover:text-accent block",
+                              'font-poppins-light text-base transition-colors hover:text-accent block',
                               pathname === subItem.href
-                                ? "text-accent"
-                                : "text-foreground/60 hover:text-foreground"
+                                ? 'text-accent'
+                                : 'text-foreground/60 hover:text-foreground'
                             )}
                           >
                             {subItem.label}

@@ -1,10 +1,48 @@
-
-
 import * as React from "react";
 import { Suspense } from "react";
 import { ProductsClient } from "@/app/(site)/components/products-client";
 import { ComparisonProvider } from "@/components/ui/product-comparison";
 import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
+import type { Product, Vendor } from "@/lib/types";
+
+/**
+ * Extract only required fields for ProductsClient to minimize RSC serialization
+ * This reduces the page weight by not sending unused product fields to the client
+ */
+function serializeProductForClient(product: Product) {
+  return {
+    id: product.id,
+    slug: product.slug,
+    name: product.name,
+    description: product.description,
+    shortDescription: product.shortDescription,
+    image: product.image,
+    category: product.category,
+    tags: product.tags,
+    features: product.features?.map(f => ({ id: f.id, title: f.title })),
+    images: product.images?.map(img => ({ url: img.url, isMain: img.isMain, altText: img.altText })),
+    vendorId: product.vendorId,
+    partnerId: product.partnerId,
+    partnerName: product.partnerName,
+    vendorName: product.vendorName,
+    vendor: product.vendor ? { id: product.vendor.id, partner: product.vendor.partner } : undefined,
+    mainImage: product.mainImage ? { url: product.mainImage.url, altText: product.mainImage.altText } : undefined,
+    // Fields used for "Comparable" badge display
+    comparisonMetrics: product.comparisonMetrics,
+    specifications: product.specifications,
+    integrationCompatibility: product.integrationCompatibility,
+  };
+}
+
+/**
+ * Extract only required fields for vendor lookup in product filtering
+ */
+function serializeVendorForProductLookup(vendor: Vendor) {
+  return {
+    id: vendor.id,
+    partner: vendor.partner,
+  };
+}
 
 // Force dynamic rendering - database not available at Docker build time
 export const dynamic = 'force-dynamic';
@@ -30,9 +68,13 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     payloadCMSDataService.getCategories(),
     payloadCMSDataService.getAllVendors()
   ]);
-  
+
   const categoryNames = categories.map(cat => cat.name);
-  
+
+  // Minimize RSC serialization by extracting only required fields
+  const serializedProducts = products.map(serializeProductForClient);
+  const serializedVendors = vendors.map(serializeVendorForProductLookup);
+
   console.log(`📋 Static generation: Loaded ${products.length} products, ${categories.length} categories, ${vendors.length} vendors`);
 
   return (
@@ -48,7 +90,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           </p>
         </div>
 
-        {/* Client component with all data passed as props */}
+        {/* Client component with minimized serialized data */}
         <ComparisonProvider>
           <Suspense fallback={<div className="space-y-8 animate-pulse">
             <div className="h-6 bg-muted/20 rounded w-48" />
@@ -59,9 +101,9 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             </div>
           </div>}>
             <ProductsClient
-              initialProducts={products}
+              initialProducts={serializedProducts as Product[]}
               initialCategories={categoryNames}
-              initialVendors={vendors}
+              initialVendors={serializedVendors as Vendor[]}
             />
           </Suspense>
         </ComparisonProvider>

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { rotateTokens, decodeToken, verifyRefreshToken } from '@/lib/utils/jwt';
 import { rateLimit } from '@/lib/middleware/rateLimit';
-import { logTokenRefresh, logTokenRefreshFailed } from '@/lib/services/audit-service';
+import { deferLogTokenRefresh, deferLogTokenRefreshFailed } from '@/lib/services/audit-service';
 
 // Rate limit: 10 requests per minute per IP
 const REFRESH_RATE_LIMIT = {
@@ -44,9 +44,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       const new_decoded = decodeToken(accessToken);
       const new_token_id = new_decoded?.jti || 'unknown';
 
-      // Log token refresh event (non-blocking)
+      // Log token refresh event (deferred via Next.js after() - runs after response sent)
       if (old_decoded) {
-        logTokenRefresh(old_decoded.id, old_decoded.email, new_token_id, request);
+        deferLogTokenRefresh(old_decoded.id, old_decoded.email, new_token_id, request);
       }
 
       // Build success response
@@ -76,8 +76,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Token refresh failed';
 
-      // Log failed refresh attempt (non-blocking)
-      logTokenRefreshFailed(user_email, message, request);
+      // Log failed refresh attempt (deferred via Next.js after() - runs after response sent)
+      deferLogTokenRefreshFailed(user_email, message, request);
 
       if (message === 'Token expired') {
         return NextResponse.json(

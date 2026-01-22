@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { decodeToken } from '@/lib/utils/jwt';
-import { logLogout } from '@/lib/services/audit-service';
+import { deferLogLogout } from '@/lib/services/audit-service';
 
 /**
  * POST /api/auth/logout
@@ -13,8 +13,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   if (access_token) {
     const decoded = decodeToken(access_token);
     if (decoded) {
-      // Log logout event (non-blocking)
-      logLogout(decoded.id, decoded.email, request);
+      // Log logout event (deferred via Next.js after() - runs after response sent)
+      deferLogLogout(decoded.id, decoded.email, request);
     }
   }
 

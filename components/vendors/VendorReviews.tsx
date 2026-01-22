@@ -86,9 +86,9 @@ export function VendorReviews({
       );
     }
 
-    // Sort reviews
+    // Sort reviews using toSorted() for immutability safety
     if (filtered.length > 0) {
-      filtered = [...filtered].sort((a, b) => {
+      return filtered.toSorted((a, b) => {
         let aValue: number;
         let bValue: number;
 

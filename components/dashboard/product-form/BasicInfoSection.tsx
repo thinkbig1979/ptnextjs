@@ -17,6 +17,11 @@ import { FormSection } from './FormSection';
 import { HelpTooltip, CharacterCounter } from '@/components/help';
 import type { ExtendedProductFormValues } from './types';
 
+// Hoisted RegExp patterns for slug generation (avoids recreation on each call)
+const NON_ALPHANUMERIC_REGEX = /[^a-z0-9]+/g;
+const LEADING_TRAILING_DASH_REGEX = /^-+|-+$/g;
+const SLUG_VALIDATION_REGEX = /[^a-z0-9-]/g;
+
 interface BasicInfoSectionProps {
   control: Control<ExtendedProductFormValues>;
   watch: UseFormWatch<ExtendedProductFormValues>;
@@ -25,13 +30,13 @@ interface BasicInfoSectionProps {
 }
 
 /**
- * Generate URL-friendly slug from product name
+ * Generate URL-friendly slug from product name (uses hoisted regex)
  */
 function generateSlug(name: string): string {
   return name
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+    .replace(NON_ALPHANUMERIC_REGEX, '-')
+    .replace(LEADING_TRAILING_DASH_REGEX, '');
 }
 
 /**
@@ -201,10 +206,10 @@ export function BasicInfoSection({
                   {...field}
                   value={field.value || ''}
                   onChange={(e) => {
-                    // Only allow lowercase letters, numbers, and hyphens
+                    // Only allow lowercase letters, numbers, and hyphens (uses hoisted regex)
                     const value = e.target.value
                       .toLowerCase()
-                      .replace(/[^a-z0-9-]/g, '');
+                      .replace(SLUG_VALIDATION_REGEX, '');
                     field.onChange(value);
                   }}
                 />

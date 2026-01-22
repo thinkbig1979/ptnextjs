@@ -11,10 +11,10 @@ export function CallPaulSection({ className }: CallPaulSectionProps) {
     <section className={cn("py-16 px-6 bg-secondary/50 text-center", className)}>
       <div className="max-w-4xl mx-auto space-y-8">
         <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed">
-          Getting ready for a yacht new-build or refit project?
+          Planning a new build or refit?
         </p>
         <h2 className="text-4xl md:text-5xl font-cormorant font-extrabold text-accent">
-          Time to Call Paul!
+          Time to Call Paul
         </h2>
         <Button
           size="lg"
@@ -22,7 +22,7 @@ export function CallPaulSection({ className }: CallPaulSectionProps) {
           asChild
         >
           <a href="mailto:info@paulthames.com?subject=New Project Inquiry">
-            Start the Conversation
+            Discuss Your Project
           </a>
         </Button>
       </div>

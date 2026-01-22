@@ -4,10 +4,14 @@
  *
  * IMPORTANT: All logging is best-effort - failures are logged but never throw.
  * This ensures audit logging never blocks authentication operations.
+ *
+ * For optimal performance, use the deferrable versions of these functions
+ * with Next.js after() to run audit logging after the response is sent.
  */
 
 import { getPayloadClient } from '@/lib/utils/get-payload-config';
 import type { NextRequest } from 'next/server';
+import { after } from 'next/server';
 
 /**
  * Audit event types for authentication tracking
@@ -294,6 +298,191 @@ export async function logAccountStatusChange(
   );
 }
 
+/**
+ * Deferred audit logging using Next.js after()
+ *
+ * Schedules the audit log to be written after the response is sent,
+ * improving response time. The logging will still execute even if
+ * the client disconnects.
+ *
+ * @param logFn - The audit log function to execute
+ * @param args - Arguments to pass to the log function
+ */
+export function deferAuditLog<T extends unknown[]>(
+  logFn: (...args: T) => Promise<void>,
+  ...args: T
+): void {
+  after(async () => {
+    try {
+      await logFn(...args);
+    } catch (error) {
+      // Best-effort: log error but don't throw
+      console.error('Deferred audit log failed:', error);
+    }
+  });
+}
+
+/**
+ * Deferred version of logLoginSuccess
+ * Schedules login success logging to run after response is sent
+ */
+export function deferLogLoginSuccess(
+  user_id: string,
+  email: string,
+  token_id: string,
+  request: NextRequest
+): void {
+  // Capture request data before deferring (request may not be available later)
+  const ip_address = getClientIp(request);
+  const user_agent = request.headers.get('user-agent') || undefined;
+
+  after(async () => {
+    try {
+      const payload = await getPayloadClient();
+      await payload.create({
+        collection: 'audit_logs',
+        data: {
+          event: 'LOGIN_SUCCESS',
+          userId: user_id,
+          email,
+          ipAddress: ip_address,
+          userAgent: user_agent,
+          metadata: { tokenId: token_id },
+        },
+      });
+    } catch (error) {
+      console.error('Deferred login success audit log failed:', error);
+    }
+  });
+}
+
+/**
+ * Deferred version of logLoginFailed
+ * Schedules login failure logging to run after response is sent
+ */
+export function deferLogLoginFailed(
+  email: string,
+  reason: string,
+  request: NextRequest
+): void {
+  // Capture request data before deferring
+  const ip_address = getClientIp(request);
+  const user_agent = request.headers.get('user-agent') || undefined;
+
+  after(async () => {
+    try {
+      const payload = await getPayloadClient();
+      await payload.create({
+        collection: 'audit_logs',
+        data: {
+          event: 'LOGIN_FAILED',
+          email,
+          ipAddress: ip_address,
+          userAgent: user_agent,
+          metadata: { reason },
+        },
+      });
+    } catch (error) {
+      console.error('Deferred login failed audit log failed:', error);
+    }
+  });
+}
+
+/**
+ * Deferred version of logLogout
+ * Schedules logout logging to run after response is sent
+ */
+export function deferLogLogout(
+  user_id: string,
+  email: string,
+  request: NextRequest
+): void {
+  const ip_address = getClientIp(request);
+  const user_agent = request.headers.get('user-agent') || undefined;
+
+  after(async () => {
+    try {
+      const payload = await getPayloadClient();
+      await payload.create({
+        collection: 'audit_logs',
+        data: {
+          event: 'LOGOUT',
+          userId: user_id,
+          email,
+          ipAddress: ip_address,
+          userAgent: user_agent,
+        },
+      });
+    } catch (error) {
+      console.error('Deferred logout audit log failed:', error);
+    }
+  });
+}
+
+/**
+ * Deferred version of logTokenRefresh
+ * Schedules token refresh logging to run after response is sent
+ */
+export function deferLogTokenRefresh(
+  user_id: string,
+  email: string,
+  new_token_id: string,
+  request: NextRequest
+): void {
+  const ip_address = getClientIp(request);
+  const user_agent = request.headers.get('user-agent') || undefined;
+
+  after(async () => {
+    try {
+      const payload = await getPayloadClient();
+      await payload.create({
+        collection: 'audit_logs',
+        data: {
+          event: 'TOKEN_REFRESH',
+          userId: user_id,
+          email,
+          ipAddress: ip_address,
+          userAgent: user_agent,
+          metadata: { tokenId: new_token_id },
+        },
+      });
+    } catch (error) {
+      console.error('Deferred token refresh audit log failed:', error);
+    }
+  });
+}
+
+/**
+ * Deferred version of logTokenRefreshFailed
+ * Schedules token refresh failure logging to run after response is sent
+ */
+export function deferLogTokenRefreshFailed(
+  email: string,
+  reason: string,
+  request: NextRequest
+): void {
+  const ip_address = getClientIp(request);
+  const user_agent = request.headers.get('user-agent') || undefined;
+
+  after(async () => {
+    try {
+      const payload = await getPayloadClient();
+      await payload.create({
+        collection: 'audit_logs',
+        data: {
+          event: 'TOKEN_REFRESH_FAILED',
+          email,
+          ipAddress: ip_address,
+          userAgent: user_agent,
+          metadata: { reason },
+        },
+      });
+    } catch (error) {
+      console.error('Deferred token refresh failed audit log failed:', error);
+    }
+  });
+}
+
 // Export the audit service as a namespace-like object for consistency
 export const auditService = {
   getClientIp,
@@ -305,6 +494,13 @@ export const auditService = {
   logTokenRefreshFailed,
   logPasswordChanged,
   logAccountStatusChange,
+  // Deferred versions for use with Next.js after()
+  deferAuditLog,
+  deferLogLoginSuccess,
+  deferLogLoginFailed,
+  deferLogLogout,
+  deferLogTokenRefresh,
+  deferLogTokenRefreshFailed,
 };
 
 export default auditService;

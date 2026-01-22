@@ -6,6 +6,17 @@ import { Moon, Sun, Monitor } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 
+// Hoisted RegExp patterns for Firefox mobile detection (avoids recreation on each render)
+const FIREFOX_MOBILE_REGEX = /Firefox.*Mobile/;
+const FIREFOX_REGEX = /Firefox/;
+const ANDROID_REGEX = /Android/;
+
+function isFirefoxMobile(): boolean {
+  if (typeof navigator === 'undefined') return false;
+  return FIREFOX_MOBILE_REGEX.test(navigator.userAgent) ||
+         (FIREFOX_REGEX.test(navigator.userAgent) && ANDROID_REGEX.test(navigator.userAgent));
+}
+
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
@@ -15,11 +26,8 @@ export function ThemeToggle() {
   const detectSystemTheme = React.useCallback((): 'light' | 'dark' => {
     if (typeof window === 'undefined') return 'light';
     
-    // Firefox mobile specific detection
-    const isFirefoxMobile = /Firefox.*Mobile/.test(navigator.userAgent) || 
-                           (/Firefox/.test(navigator.userAgent) && /Android/.test(navigator.userAgent));
-    
-    if (isFirefoxMobile) {
+    // Firefox mobile specific detection using hoisted regex
+    if (isFirefoxMobile()) {
       // Use multiple detection methods for Firefox mobile
       try {
         // Method 1: Check CSS media query support
@@ -82,13 +90,10 @@ export function ThemeToggle() {
       mediaQuery.addListener(handleSystemThemeChange);
     }
 
-    // Firefox mobile: Additional polling fallback
-    const isFirefoxMobile = /Firefox.*Mobile/.test(navigator.userAgent) || 
-                           (/Firefox/.test(navigator.userAgent) && /Android/.test(navigator.userAgent));
-    
+    // Firefox mobile: Additional polling fallback using hoisted regex
     let pollInterval: NodeJS.Timeout | null = null;
-    
-    if (isFirefoxMobile) {
+
+    if (isFirefoxMobile()) {
       pollInterval = setInterval(() => {
         const currentTheme = detectSystemTheme();
         if (currentTheme !== detectedSystemTheme) {

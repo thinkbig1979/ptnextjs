@@ -23,7 +23,7 @@ export function FeaturedPartnersSection({ featuredPartners }: FeaturedPartnersSe
             Featured Technology Partners
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-poppins-light">
-            Discover our carefully curated selection of leading superyacht technology providers
+            Vetted suppliers across navigation, communication, entertainment, and systems integration
           </p>
         </div>
 

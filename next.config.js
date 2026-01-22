@@ -3,6 +3,22 @@ const path = require('path');
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   distDir: process.env.NEXT_DIST_DIR || '.next',
+
+  // Redirects for deprecated routes (rebrand migration)
+  async redirects() {
+    return [
+      {
+        source: '/discovery-platform',
+        destination: '/vendors',
+        permanent: true,
+      },
+      {
+        source: '/bespoke-solutions',
+        destination: '/consultancy',
+        permanent: true,
+      },
+    ];
+  },
   // NOTE: Payload CMS requires server-side rendering
   // Static export is incompatible with Payload CMS
   // Docker deployment uses standalone mode for optimized containerization
@@ -27,11 +43,19 @@ const nextConfig = {
   // Enhanced experimental features for platform vision
   experimental: {
     optimizePackageImports: [
+      // External packages
       '@radix-ui/react-accordion',
       '@radix-ui/react-dialog',
       '@radix-ui/react-select',
       'framer-motion',
-      'lucide-react'
+      'lucide-react',
+      // Internal barrel files - prevents bundle bloat from re-exports
+      '@/components/product-comparison',
+      '@/components/enhanced-profiles',
+      '@/components/case-studies',
+      '@/lib/transformers',
+      '@/lib/repositories',
+      '@/lib/cache'
     ]
   },
 

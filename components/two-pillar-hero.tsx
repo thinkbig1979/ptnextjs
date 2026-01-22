@@ -1,8 +1,10 @@
 import * as React from "react";
-import { Search, Settings } from "lucide-react";
+import { Lightbulb, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/ui/logo";
 import Image from "next/image";
+import { PixelGridBackground } from "@/components/pixel-grid-background";
+import { LightFieldGradient } from "@/components/light-field-gradient";
 
 interface FounderData {
   name: string;
@@ -33,7 +35,7 @@ interface TwoPillarHeroProps {
 
 export function TwoPillarHero({
   introTitle = "Marine Technology Excellence",
-  introDescription = "Amsterdam's premier marine technology consultancy offering two distinct pathways to superyacht innovation",
+  introDescription = "Technical consultancy and custom lighting for superyachts and high-end architecture",
   leftPillar,
   rightPillar,
   heroImage,
@@ -41,24 +43,39 @@ export function TwoPillarHero({
   className,
 }: TwoPillarHeroProps) {
   return (
-    <section className={cn("relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-background to-muted/20", className)}>
-      {/* Hero Background Image */}
+    <PixelGridBackground
+      variant="prominent"
+      as="section"
+      aria-label="Two Pillar Hero"
+      className={cn("relative min-h-screen flex items-center justify-center overflow-hidden", className)}
+    >
+      {/* Hero Background Image - rendered below the pixel grid */}
       {heroImage && (
-        <div className="absolute inset-0 opacity-40">
+        <div className="absolute inset-0 -z-10 opacity-30">
           <Image
             src={heroImage}
-            alt="Hero Background"
+            alt="" // Decorative background image
             fill
             className="object-cover"
             priority
+            aria-hidden="true"
           />
         </div>
       )}
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-accent blur-3xl"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-primary blur-3xl"></div>
-      </div>
+
+      {/* Light Field Gradient Overlay - adds ambient glow effect */}
+      <LightFieldGradient
+        position="center"
+        intensity="soft"
+        className="absolute inset-0 pointer-events-none"
+      />
+
+      {/* Secondary Light Field for depth - positioned right */}
+      <LightFieldGradient
+        position="right"
+        intensity="subtle"
+        className="absolute inset-0 pointer-events-none"
+      />
 
       <div className="container max-w-screen-xl px-4 py-20 relative z-10">
         <div className="text-center space-y-12">
@@ -96,16 +113,16 @@ export function TwoPillarHero({
               Our Two Pillars
             </h2>
             <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-            {/* Left Pillar */}
-            <PillarSection pillar={leftPillar} icon={<Search className="w-8 h-8 text-accent" />} />
+            {/* Left Pillar - Custom Lighting (Primary) */}
+            <PillarSection pillar={leftPillar} icon={<Lightbulb className="w-8 h-8 text-accent" />} />
 
-            {/* Right Pillar */}
-            <PillarSection pillar={rightPillar} icon={<Settings className="w-8 h-8 text-accent" />} />
+            {/* Right Pillar - Technical Consultancy */}
+            <PillarSection pillar={rightPillar} icon={<Users className="w-8 h-8 text-accent" />} />
             </div>
           </div>
         </div>
       </div>
-    </section>
+    </PixelGridBackground>
   );
 }
 
@@ -116,16 +133,16 @@ interface PillarSectionProps {
 
 function PillarSection({ pillar, icon }: PillarSectionProps) {
   return (
-    <div className="bg-card rounded-2xl p-8 shadow-lg border border-border/50 hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+    <div className="bg-card/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-accent/10 hover:border-accent/30 hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
       <div className="space-y-6">
         {/* Icon */}
-        <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto">
+        <div className="w-16 h-16 bg-accent/10 border border-accent/20 rounded-full flex items-center justify-center mx-auto" aria-hidden="true">
           {icon}
         </div>
 
-        <h2 className="text-3xl md:text-4xl font-cormorant font-bold text-primary text-center">
+        <h3 className="text-3xl md:text-4xl font-cormorant font-bold text-primary text-center">
           {pillar.title}
-        </h2>
+        </h3>
 
         <p className="text-lg text-muted-foreground font-poppins-light leading-relaxed text-center">
           {pillar.description}
@@ -168,7 +185,7 @@ function PillarSection({ pillar, icon }: PillarSectionProps) {
           <ul className="space-y-3 text-left">
             {pillar.features.map((feature) => (
               <li key={`feature-${feature}`} className="flex items-center gap-3">
-                <svg className="w-5 h-5 text-accent flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-5 h-5 text-accent flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
                 </svg>
                 <span className="text-muted-foreground">{feature}</span>
