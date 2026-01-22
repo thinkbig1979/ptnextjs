@@ -69,7 +69,7 @@ function useCategories() {
     async function fetchCategories() {
       try {
         setIsLoading(true);
-        const response = await fetch('/api/categories');
+        const response = await fetch('/api/public/categories');
         if (!response.ok) {
           throw new Error('Failed to fetch categories');
         }
@@ -113,7 +113,7 @@ function useTags() {
     async function fetchTags() {
       try {
         setIsLoading(true);
-        const response = await fetch('/api/tags');
+        const response = await fetch('/api/public/tags');
         if (!response.ok) {
           throw new Error('Failed to fetch tags');
         }
@@ -312,8 +312,8 @@ function MultiSelect<T extends { id: string | number; name: string }>({
  * - tags[] - Array of tag IDs
  *
  * Fetches available categories and tags from API endpoints:
- * - GET /api/categories
- * - GET /api/tags
+ * - GET /api/public/categories
+ * - GET /api/public/tags
  */
 export function CategoriesTagsSection({
   control,

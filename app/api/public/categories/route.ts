@@ -21,11 +21,14 @@ interface ErrorResponse {
 }
 
 /**
- * GET /api/categories
+ * GET /api/public/categories
  *
  * Public endpoint to fetch all published categories
  * Returns categories sorted alphabetically by name
  * Includes caching headers for performance
+ *
+ * Note: This is separate from Payload's /api/categories endpoint
+ * which is used by the admin panel for relationship queries.
  */
 export async function GET(
   _request: NextRequest

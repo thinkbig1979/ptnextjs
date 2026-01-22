@@ -21,11 +21,14 @@ interface ErrorResponse {
 }
 
 /**
- * GET /api/tags
+ * GET /api/public/tags
  *
  * Public endpoint to fetch all tags
  * Returns tags sorted alphabetically by name
  * Includes caching headers for performance
+ *
+ * Note: This is separate from Payload's /api/tags endpoint
+ * which is used by the admin panel for relationship queries.
  */
 export async function GET(
   _request: NextRequest
