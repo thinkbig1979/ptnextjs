@@ -171,7 +171,7 @@ describe('Tier-Based Access Control - Integration Tests', () => {
       expect(markers).toHaveLength(1);
     });
 
-    it('displays upgrade message for tier1 vendors with multiple locations', () => {
+    it('does not show upgrade message to public users for tier1 vendors', () => {
       const tier1WithMultipleLocations = {
         ...mockVendorTier1,
         locations: [mockLocationMonaco, mockLocationFortLauderdale],
@@ -184,9 +184,8 @@ describe('Tier-Based Access Control - Integration Tests', () => {
         />
       );
 
-      expect(
-        screen.getByText(/upgrade to see all locations/i)
-      ).toBeInTheDocument();
+      // Public-facing component should NOT show upgrade messaging
+      expect(screen.queryByText(/upgrade/i)).not.toBeInTheDocument();
     });
 
     it('displays all locations for tier3 vendors', () => {

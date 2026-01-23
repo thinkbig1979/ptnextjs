@@ -197,22 +197,8 @@ export function LocationsDisplaySection({
     );
   }
 
-  // Determine if we need to show upgrade message
-  const showUpgradeMessage =
-    (vendorTier === 'free' || vendorTier === 'tier1') &&
-    validLocations.length > filteredLocations.length;
-
   return (
     <div className="space-y-6" role="region" aria-label="Locations map">
-      {/* Upgrade Message */}
-      {showUpgradeMessage && (
-        <Card className="p-4 bg-blue-50 border-blue-200">
-          <p className="text-sm text-accent">
-            Upgrade to see all locations. Currently showing headquarters only.
-          </p>
-        </Card>
-      )}
-
       {/* Map Section */}
       <div className="rounded-lg overflow-hidden border border-border relative">
         {/* Back to HQ Button - shown when viewing a non-HQ location */}

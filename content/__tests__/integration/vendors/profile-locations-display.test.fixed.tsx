@@ -3,8 +3,8 @@
  *
  * Tests vendor profile public display with tier-based filtering:
  * - Tier 2+ vendors: All locations displayed on map and list
- * - Tier 1 vendors: Only HQ shown with upgrade message
- * - Free tier vendors: Only HQ shown with upgrade message
+ * - Tier 1 vendors: Only HQ shown (no upgrade messaging to public users)
+ * - Free tier vendors: Only HQ shown (no upgrade messaging to public users)
  */
 
 import React from 'react';
@@ -147,7 +147,7 @@ describe('Public Profile Locations Display - Integration Tests', () => {
       expect(markers[0].getAttribute('data-is-hq')).toBe('true');
     });
 
-    it('displays upgrade message for tier1 vendors with multiple locations', () => {
+    it('does not show upgrade message to public users for tier1 vendors', () => {
       const tier1WithMultipleLocations = {
         ...mockVendorTier1,
         locations: [mockLocationMonaco, mockLocationFortLauderdale],
@@ -160,12 +160,13 @@ describe('Public Profile Locations Display - Integration Tests', () => {
         />
       );
 
-      expect(
-        screen.getByText(/upgrade to see all locations/i)
-      ).toBeInTheDocument();
+      // Public-facing component should NOT show upgrade messaging
+      expect(screen.queryByText(/upgrade/i)).not.toBeInTheDocument();
+      // Should still show HQ marker
+      expect(screen.queryByTestId('marker')).toBeInTheDocument();
     });
 
-    it('shows location count indicator for tier1 with hidden locations', () => {
+    it('filters to HQ only for tier1 with hidden locations', () => {
       const tier1WithMultipleLocations = {
         ...mockVendorTier1,
         locations: [mockLocationMonaco, mockLocationFortLauderdale],
@@ -178,7 +179,9 @@ describe('Public Profile Locations Display - Integration Tests', () => {
         />
       );
 
-      expect(screen.getByText(/showing/i)).toBeInTheDocument();
+      // Should show only 1 marker (HQ)
+      const markers = screen.getAllByTestId('marker');
+      expect(markers).toHaveLength(1);
     });
   });
 
@@ -200,7 +203,7 @@ describe('Public Profile Locations Display - Integration Tests', () => {
       expect(markers).toHaveLength(1);
     });
 
-    it('displays upgrade message for free tier vendors', () => {
+    it('does not show upgrade message to public users for free tier vendors', () => {
       const freeWithLocations = {
         ...mockVendorFree,
         locations: [mockLocationMonaco],
@@ -213,9 +216,10 @@ describe('Public Profile Locations Display - Integration Tests', () => {
         />
       );
 
-      expect(
-        screen.getByText(/upgrade.*unlock.*locations/i)
-      ).toBeInTheDocument();
+      // Public-facing component should NOT show upgrade messaging
+      expect(screen.queryByText(/upgrade/i)).not.toBeInTheDocument();
+      // Should still show HQ marker
+      expect(screen.queryByTestId('marker')).toBeInTheDocument();
     });
   });
 

@@ -223,7 +223,7 @@ describe('LocationsDisplaySection', () => {
       expect(markers).toHaveLength(1);
     });
 
-    it('shows upgrade message for restricted tiers', () => {
+    it('does not show upgrade message to public users for restricted tiers', () => {
       render(
         <LocationsDisplaySection
           locations={mockLocations}
@@ -231,7 +231,8 @@ describe('LocationsDisplaySection', () => {
         />
       );
 
-      expect(screen.getByText(/upgrade to see all locations/i)).toBeInTheDocument();
+      // Public-facing component should NOT show upgrade messaging
+      expect(screen.queryByText(/upgrade/i)).not.toBeInTheDocument();
     });
   });
 
