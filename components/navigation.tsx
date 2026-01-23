@@ -21,6 +21,7 @@ interface NavigationItem {
   label: string;
   submenu?: NavigationItem[];
   hideOverview?: boolean;
+  overviewLabel?: string;
 }
 
 const navigationItems: NavigationItem[] = [
@@ -39,6 +40,7 @@ const navigationItems: NavigationItem[] = [
   {
     href: '/vendors',
     label: 'Industry Directory',
+    overviewLabel: 'Vendors',
     submenu: [
       { href: '/products', label: 'Products' },
       { href: '/yachts', label: 'Yachts' },
@@ -99,7 +101,7 @@ export function Navigation(): React.JSX.Element {
                     {!item.hideOverview && (
                       <DropdownMenuItem asChild>
                         <Link href={item.href} className="w-full cursor-pointer">
-                          {item.label} Overview
+                          {item.overviewLabel ?? `${item.label} Overview`}
                         </Link>
                       </DropdownMenuItem>
                     )}
