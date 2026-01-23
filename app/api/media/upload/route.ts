@@ -1,8 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPayloadClient } from '@/lib/utils/get-payload-config';
-import { validateToken } from '@/lib/auth';
+import { validateToken, verifyVendorOwnership } from '@/lib/auth';
 import { TierValidationService } from '@/lib/services/TierValidationService';
 import { type Tier, getMaxMedia, TIER_NAMES } from '@/lib/constants/tierConfig';
+
+interface SuccessResponse {
+  success: true;
+  url: string | null | undefined;
+  filename: string | undefined;
+  id: string | number;
+  vendorId: string | null;
+}
+
+interface ErrorResponse {
+  success: false;
+  error: {
+    code: 'VALIDATION_ERROR' | 'UNAUTHORIZED' | 'FORBIDDEN' | 'NOT_FOUND' | 'SERVER_ERROR';
+    message: string;
+    details?: string;
+  };
+}
 
 /**
  * POST /api/media/upload
@@ -19,13 +36,19 @@ import { type Tier, getMaxMedia, TIER_NAMES } from '@/lib/constants/tierConfig';
  * and that the vendor's tier allows media gallery access (tier1+)
  * before allowing the upload. Admin users can upload without a vendorId.
  */
-export async function POST(request: NextRequest): Promise<NextResponse> {
+export async function POST(request: NextRequest): Promise<NextResponse<SuccessResponse | ErrorResponse>> {
   try {
     // Authenticate user - only logged-in users can upload media
     const auth = await validateToken(request);
     if (!auth.success) {
       return NextResponse.json(
-        { error: auth.error, code: auth.code },
+        {
+          success: false,
+          error: {
+            code: 'UNAUTHORIZED',
+            message: auth.error,
+          },
+        },
         { status: auth.status }
       );
     }
@@ -39,7 +62,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     if (!file) {
       return NextResponse.json(
-        { error: 'No file provided' },
+        {
+          success: false,
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'No file provided',
+          },
+        },
         { status: 400 }
       );
     }
@@ -51,37 +80,45 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     if (!isAdmin) {
       if (!vendorId) {
         return NextResponse.json(
-          { error: 'Vendor ID is required for media uploads' },
+          {
+            success: false,
+            error: {
+              code: 'VALIDATION_ERROR',
+              message: 'Vendor ID is required for media uploads',
+            },
+          },
           { status: 400 }
         );
       }
 
-      // Verify user owns this vendor
-      const vendor = await payload.findByID({
-        collection: 'vendors',
-        id: vendorId,
-      });
-
-      if (!vendor) {
+      // Verify vendor ownership using the shared helper
+      const ownershipResult = await verifyVendorOwnership(user.id, vendorId, isAdmin);
+      if (!ownershipResult.success) {
         return NextResponse.json(
-          { error: 'Vendor not found' },
-          { status: 404 }
+          {
+            success: false,
+            error: {
+              code: ownershipResult.code,
+              message: ownershipResult.error,
+            },
+          },
+          { status: ownershipResult.status }
         );
       }
 
-      const vendorUserId = typeof vendor.user_id === 'object' ? vendor.user_id.id : vendor.user_id;
-      if (String(vendorUserId) !== String(user.id)) {
-        return NextResponse.json(
-          { error: 'You do not have permission to upload media for this vendor' },
-          { status: 403 }
-        );
-      }
+      const vendor = ownershipResult.vendor;
 
       // Verify vendor tier allows media gallery access (tier1+)
       const vendorTier = (vendor.tier || 'free') as Tier;
       if (!TierValidationService.canAccessFeature(vendorTier, 'media-gallery')) {
         return NextResponse.json(
-          { error: 'Media gallery requires Professional tier (tier1) or higher. Please upgrade your subscription.' },
+          {
+            success: false,
+            error: {
+              code: 'FORBIDDEN',
+              message: 'Media gallery requires Professional tier (tier1) or higher. Please upgrade your subscription.',
+            },
+          },
           { status: 403 }
         );
       }
@@ -99,10 +136,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         const tierName = TIER_NAMES[vendorTier];
         return NextResponse.json(
           {
-            error: `Media limit reached. ${tierName} tier allows up to ${maxMedia} media items. Please upgrade your subscription or delete existing media.`,
-            code: 'MEDIA_LIMIT_REACHED',
-            currentCount: existingMedia.totalDocs,
-            maxAllowed: maxMedia,
+            success: false,
+            error: {
+              code: 'FORBIDDEN',
+              message: `Media limit reached. ${tierName} tier allows up to ${maxMedia} media items. Please upgrade your subscription or delete existing media.`,
+              details: `Current count: ${existingMedia.totalDocs}, Max allowed: ${maxMedia}`,
+            },
           },
           { status: 403 }
         );
@@ -113,7 +152,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const acceptedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
     if (!acceptedTypes.includes(file.type)) {
       return NextResponse.json(
-        { error: 'Invalid file type. Only JPEG, PNG, WebP, and GIF images are allowed' },
+        {
+          success: false,
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'Invalid file type. Only JPEG, PNG, WebP, and GIF images are allowed',
+          },
+        },
         { status: 400 }
       );
     }
@@ -122,7 +167,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const maxSize = 10 * 1024 * 1024;
     if (file.size > maxSize) {
       return NextResponse.json(
-        { error: 'File size exceeds 10MB limit' },
+        {
+          success: false,
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'File size exceeds 10MB limit',
+          },
+        },
         { status: 400 }
       );
     }
@@ -159,7 +210,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   } catch (error) {
     console.error('Media upload error:', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Upload failed' },
+      {
+        success: false,
+        error: {
+          code: 'SERVER_ERROR',
+          message: error instanceof Error ? error.message : 'Upload failed',
+        },
+      },
       { status: 500 }
     );
   }

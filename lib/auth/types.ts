@@ -54,3 +54,25 @@ export interface VendorOwnershipSuccess extends AuthSuccess {
 }
 
 export type VendorOwnershipResult = VendorOwnershipSuccess | AuthError;
+
+/**
+ * Result type for vendor verification (without user context)
+ * Used by verifyVendorOwnership helper for already-authenticated requests
+ */
+export interface VendorVerificationSuccess {
+  success: true;
+  vendor: {
+    id: string;
+    user: string;
+    [key: string]: unknown;
+  };
+}
+
+export interface VendorVerificationError {
+  success: false;
+  error: string;
+  status: number;
+  code: 'NOT_FOUND' | 'FORBIDDEN';
+}
+
+export type VendorVerificationResult = VendorVerificationSuccess | VendorVerificationError;

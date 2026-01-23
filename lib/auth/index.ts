@@ -24,6 +24,7 @@ import type {
   AuthError,
   AuthUser,
   VendorOwnershipResult,
+  VendorVerificationResult,
 } from './types';
 
 // Re-export types for convenience
@@ -33,6 +34,9 @@ export type {
   AuthError,
   AuthUser,
   VendorOwnershipResult,
+  VendorVerificationResult,
+  VendorVerificationSuccess,
+  VendorVerificationError,
 } from './types';
 
 /**
@@ -309,6 +313,122 @@ export function requireVendorOwnership(
       };
     }
   };
+}
+
+/**
+ * Verify vendor ownership for an already-authenticated user
+ *
+ * Use this helper when you already have the authenticated user and need to verify
+ * they own a specific vendor. This is more efficient than requireVendorOwnership
+ * when the request has already been authenticated.
+ *
+ * @param userId - The authenticated user's ID
+ * @param vendorId - The vendor ID to verify ownership for
+ * @param isAdmin - Whether the user is an admin (bypasses ownership check)
+ * @returns VendorVerificationResult with vendor on success, or error details on failure
+ *
+ * @example
+ * ```typescript
+ * const result = await verifyVendorOwnership(user.id, vendorId, user.role === 'admin');
+ * if (!result.success) {
+ *   return NextResponse.json({ error: result.error }, { status: result.status });
+ * }
+ * const vendor = result.vendor;
+ * ```
+ */
+export async function verifyVendorOwnership(
+  userId: string,
+  vendorId: string,
+  isAdmin: boolean
+): Promise<VendorVerificationResult> {
+  try {
+    const payload = await getPayloadClient();
+
+    // Fetch the vendor
+    const vendor = await payload.findByID({
+      collection: 'vendors',
+      id: vendorId,
+    });
+
+    if (!vendor) {
+      return {
+        success: false,
+        error: 'Vendor not found',
+        status: 404,
+        code: 'NOT_FOUND',
+      };
+    }
+
+    // Admin bypass - can access any vendor
+    if (isAdmin) {
+      // Extract vendor user ID for consistency in return type
+      let vendorUserId: string;
+      if (typeof vendor.user === 'number') {
+        vendorUserId = String(vendor.user);
+      } else if (typeof vendor.user === 'string') {
+        vendorUserId = vendor.user;
+      } else if (vendor.user && typeof vendor.user === 'object') {
+        vendorUserId = String((vendor.user as { id: string | number }).id);
+      } else {
+        vendorUserId = 'admin-bypass';
+      }
+
+      return {
+        success: true,
+        vendor: {
+          ...vendor,
+          id: String(vendor.id),
+          user: vendorUserId,
+        },
+      };
+    }
+
+    // Extract vendor user ID for ownership check
+    // Handle various formats: number (raw ID), string (string ID), or object with id property
+    let vendorUserId: string;
+    if (typeof vendor.user === 'number') {
+      vendorUserId = String(vendor.user);
+    } else if (typeof vendor.user === 'string') {
+      vendorUserId = vendor.user;
+    } else if (vendor.user && typeof vendor.user === 'object') {
+      vendorUserId = String((vendor.user as { id: string | number }).id);
+    } else {
+      // Vendor has no user association - deny access
+      return {
+        success: false,
+        error: 'Vendor has no user association',
+        status: 403,
+        code: 'FORBIDDEN',
+      };
+    }
+
+    // Check ownership
+    if (String(vendorUserId) !== String(userId)) {
+      return {
+        success: false,
+        error: 'You do not have permission to access this vendor',
+        status: 403,
+        code: 'FORBIDDEN',
+      };
+    }
+
+    return {
+      success: true,
+      vendor: {
+        ...vendor,
+        id: String(vendor.id),
+        user: vendorUserId,
+      },
+    };
+  } catch (error) {
+    console.error('[Auth] Vendor ownership verification failed:', error);
+    return {
+      success: false,
+      error: 'Failed to verify vendor ownership',
+      status: 403,
+      code: 'FORBIDDEN',
+    };
+  }
 }
 
 /**

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPayloadClient } from '@/lib/utils/get-payload-config';
-import { validateToken } from '@/lib/auth';
+import { validateToken, verifyVendorOwnership } from '@/lib/auth';
 
 // Force dynamic rendering - disable Next.js route caching
 export const dynamic = 'force-dynamic';
@@ -64,41 +64,24 @@ export async function POST(
 
     const user = auth.user;
     const isAdmin = user.role === 'admin';
+
+    // Verify vendor ownership using the shared helper
+    const ownershipResult = await verifyVendorOwnership(user.id, vendorId, isAdmin);
+    if (!ownershipResult.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: ownershipResult.code,
+            message: ownershipResult.error,
+          },
+        },
+        { status: ownershipResult.status }
+      );
+    }
+
+    const vendor = ownershipResult.vendor;
     const payload = await getPayloadClient();
-
-    // Fetch the vendor to check ownership
-    const vendor = await payload.findByID({
-      collection: 'vendors',
-      id: vendorId,
-    });
-
-    if (!vendor) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'NOT_FOUND',
-            message: 'Vendor not found',
-          },
-        },
-        { status: 404 }
-      );
-    }
-
-    // Check authorization: user must own this vendor or be admin
-    const vendorUserId = typeof vendor.user_id === 'object' ? vendor.user_id.id : vendor.user_id;
-    if (!isAdmin && String(vendorUserId) !== String(user.id)) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'FORBIDDEN',
-            message: 'You do not have permission to update this vendor',
-          },
-        },
-        { status: 403 }
-      );
-    }
 
     // Parse form data
     const formData = await request.formData();
@@ -233,41 +216,24 @@ export async function DELETE(
 
     const user = auth.user;
     const isAdmin = user.role === 'admin';
+
+    // Verify vendor ownership using the shared helper
+    const ownershipResult = await verifyVendorOwnership(user.id, vendorId, isAdmin);
+    if (!ownershipResult.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: ownershipResult.code,
+            message: ownershipResult.error,
+          },
+        },
+        { status: ownershipResult.status }
+      );
+    }
+
+    const vendor = ownershipResult.vendor;
     const payload = await getPayloadClient();
-
-    // Fetch the vendor to check ownership
-    const vendor = await payload.findByID({
-      collection: 'vendors',
-      id: vendorId,
-    });
-
-    if (!vendor) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'NOT_FOUND',
-            message: 'Vendor not found',
-          },
-        },
-        { status: 404 }
-      );
-    }
-
-    // Check authorization: user must own this vendor or be admin
-    const vendorUserId = typeof vendor.user_id === 'object' ? vendor.user_id.id : vendor.user_id;
-    if (!isAdmin && String(vendorUserId) !== String(user.id)) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'FORBIDDEN',
-            message: 'You do not have permission to update this vendor',
-          },
-        },
-        { status: 403 }
-      );
-    }
 
     // Check if vendor has a logo
     if (!vendor.logo) {
@@ -284,7 +250,8 @@ export async function DELETE(
     }
 
     // Get the logo media ID
-    const logoId = typeof vendor.logo === 'object' ? vendor.logo.id : vendor.logo;
+    const vendorLogo = vendor.logo as { id: string | number } | string | number | null;
+    const logoId = typeof vendorLogo === 'object' && vendorLogo !== null ? vendorLogo.id : vendorLogo;
 
     // Remove logo reference from vendor
     await payload.update({
@@ -295,15 +262,17 @@ export async function DELETE(
       },
     });
 
-    // Delete the media document
-    try {
-      await payload.delete({
-        collection: 'media',
-        id: logoId,
-      });
-    } catch (deleteError) {
-      // Log but don't fail if media deletion fails (may already be deleted)
-      console.warn('Could not delete media document:', deleteError);
+    // Delete the media document (only if we have a valid ID)
+    if (logoId) {
+      try {
+        await payload.delete({
+          collection: 'media',
+          id: logoId,
+        });
+      } catch (deleteError) {
+        // Log but don't fail if media deletion fails (may already be deleted)
+        console.warn('Could not delete media document:', deleteError);
+      }
     }
 
     return NextResponse.json({

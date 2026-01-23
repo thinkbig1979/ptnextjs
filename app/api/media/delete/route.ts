@@ -1,6 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPayloadClient } from '@/lib/utils/get-payload-config';
-import { validateToken } from '@/lib/auth';
+import { validateToken, verifyVendorOwnership } from '@/lib/auth';
+
+interface SuccessResponse {
+  success: true;
+  message: string;
+  deletedId: string;
+}
+
+interface ErrorResponse {
+  success: false;
+  error: {
+    code: 'VALIDATION_ERROR' | 'UNAUTHORIZED' | 'FORBIDDEN' | 'NOT_FOUND' | 'SERVER_ERROR';
+    message: string;
+    details?: string;
+  };
+}
 
 /**
  * DELETE /api/media/delete
@@ -15,13 +30,19 @@ import { validateToken } from '@/lib/auth';
  * (via the vendor relationship) before allowing deletion.
  * Admin users can delete any media.
  */
-export async function DELETE(request: NextRequest): Promise<NextResponse> {
+export async function DELETE(request: NextRequest): Promise<NextResponse<SuccessResponse | ErrorResponse>> {
   try {
     // Authenticate user - only logged-in users can delete media
     const auth = await validateToken(request);
     if (!auth.success) {
       return NextResponse.json(
-        { error: auth.error, code: auth.code },
+        {
+          success: false,
+          error: {
+            code: 'UNAUTHORIZED',
+            message: auth.error,
+          },
+        },
         { status: auth.status }
       );
     }
@@ -34,7 +55,13 @@ export async function DELETE(request: NextRequest): Promise<NextResponse> {
 
     if (!mediaId) {
       return NextResponse.json(
-        { error: 'Media ID is required' },
+        {
+          success: false,
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'Media ID is required',
+          },
+        },
         { status: 400 }
       );
     }
@@ -50,7 +77,13 @@ export async function DELETE(request: NextRequest): Promise<NextResponse> {
 
     if (!media) {
       return NextResponse.json(
-        { error: 'Media not found' },
+        {
+          success: false,
+          error: {
+            code: 'NOT_FOUND',
+            message: 'Media not found',
+          },
+        },
         { status: 404 }
       );
     }
@@ -64,33 +97,31 @@ export async function DELETE(request: NextRequest): Promise<NextResponse> {
 
       if (!mediaVendorId) {
         return NextResponse.json(
-          { error: 'Media has no vendor association and cannot be deleted by non-admin users' },
+          {
+            success: false,
+            error: {
+              code: 'FORBIDDEN',
+              message: 'Media has no vendor association and cannot be deleted by non-admin users',
+            },
+          },
           { status: 403 }
         );
       }
 
-      // Find the user's vendor to verify ownership
-      const userVendors = await payload.find({
-        collection: 'vendors',
-        where: {
-          user_id: { equals: user.id },
-        },
-        limit: 1,
-      });
-
-      if (userVendors.docs.length === 0) {
+      // Verify vendor ownership using the shared helper
+      const ownershipResult = await verifyVendorOwnership(user.id, String(mediaVendorId), isAdmin);
+      if (!ownershipResult.success) {
+        // Map the error appropriately - if vendor not found, user doesn't have permission
         return NextResponse.json(
-          { error: 'You do not have a vendor profile' },
-          { status: 403 }
-        );
-      }
-
-      const userVendor = userVendors.docs[0];
-
-      // Verify the media belongs to the user's vendor
-      if (String(mediaVendorId) !== String(userVendor.id)) {
-        return NextResponse.json(
-          { error: 'You do not have permission to delete this media' },
+          {
+            success: false,
+            error: {
+              code: 'FORBIDDEN',
+              message: ownershipResult.code === 'NOT_FOUND'
+                ? 'You do not have a vendor profile'
+                : 'You do not have permission to delete this media',
+            },
+          },
           { status: 403 }
         );
       }
@@ -111,7 +142,13 @@ export async function DELETE(request: NextRequest): Promise<NextResponse> {
   } catch (error) {
     console.error('Media delete error:', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Delete failed' },
+      {
+        success: false,
+        error: {
+          code: 'SERVER_ERROR',
+          message: error instanceof Error ? error.message : 'Delete failed',
+        },
+      },
       { status: 500 }
     );
   }
