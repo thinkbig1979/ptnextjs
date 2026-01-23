@@ -12,7 +12,10 @@ export type TierFeature =
   | 'apiAccess'
   | 'customDomain'
   | 'promotionPack'
-  | 'editorialContent';
+  | 'editorialContent'
+  | 'media-gallery'
+  | 'excel-import'
+  | 'productManagement';
 
 /**
  * Tier hierarchy levels (0-3)
@@ -34,6 +37,9 @@ export const TIER_FEATURE_MAP: Record<TierFeature, number> = {
   customDomain: TIER_HIERARCHY.tier2,
   promotionPack: TIER_HIERARCHY.tier3,
   editorialContent: TIER_HIERARCHY.tier3,
+  'media-gallery': TIER_HIERARCHY.tier1,
+  'excel-import': TIER_HIERARCHY.tier2,
+  productManagement: TIER_HIERARCHY.tier2,
 };
 
 /**
@@ -44,6 +50,26 @@ export const MAX_LOCATIONS_PER_TIER: Record<Tier, number> = {
   tier1: 3,
   tier2: 10,
   tier3: 999,
+};
+
+/**
+ * Maximum products allowed per tier
+ */
+export const MAX_PRODUCTS_PER_TIER: Record<Tier, number> = {
+  free: 3,
+  tier1: 10,
+  tier2: 25,
+  tier3: 999, // Effectively unlimited
+};
+
+/**
+ * Maximum media items allowed per tier in the media gallery
+ */
+export const MAX_MEDIA_PER_TIER: Record<Tier, number> = {
+  free: 5,
+  tier1: 20,
+  tier2: 50,
+  tier3: 999, // Effectively unlimited
 };
 
 /**
@@ -129,13 +155,16 @@ export const TIER_FIELD_ACCESS: Record<Tier, string[]> = {
  */
 export const TIER_FEATURES: Record<Tier, TierFeature[]> = {
   free: [],
-  tier1: ['multipleLocations'],
-  tier2: ['multipleLocations', 'advancedAnalytics', 'apiAccess', 'customDomain'],
+  tier1: ['multipleLocations', 'media-gallery'],
+  tier2: ['multipleLocations', 'media-gallery', 'advancedAnalytics', 'apiAccess', 'customDomain', 'excel-import', 'productManagement'],
   tier3: [
     'multipleLocations',
+    'media-gallery',
     'advancedAnalytics',
     'apiAccess',
     'customDomain',
+    'excel-import',
+    'productManagement',
     'promotionPack',
     'editorialContent',
   ],
@@ -220,6 +249,38 @@ export function getMaxLocations(tier: Tier | undefined): number {
 export function canAddLocation(tier: Tier | undefined, currentLocationCount: number): boolean {
   const maxLocations = getMaxLocations(tier);
   return currentLocationCount < maxLocations;
+}
+
+/**
+ * Helper function to get maximum products for a tier
+ */
+export function getMaxProducts(tier: Tier | undefined): number {
+  if (!tier) return MAX_PRODUCTS_PER_TIER.free;
+  return MAX_PRODUCTS_PER_TIER[tier] ?? MAX_PRODUCTS_PER_TIER.free;
+}
+
+/**
+ * Helper function to check if can add more products
+ */
+export function canAddProduct(tier: Tier | undefined, currentProductCount: number): boolean {
+  const maxProducts = getMaxProducts(tier);
+  return currentProductCount < maxProducts;
+}
+
+/**
+ * Helper function to get maximum media items for a tier
+ */
+export function getMaxMedia(tier: Tier | undefined): number {
+  if (!tier) return MAX_MEDIA_PER_TIER.free;
+  return MAX_MEDIA_PER_TIER[tier] ?? MAX_MEDIA_PER_TIER.free;
+}
+
+/**
+ * Helper function to check if can add more media items
+ */
+export function canAddMedia(tier: Tier | undefined, currentMediaCount: number): boolean {
+  const maxMedia = getMaxMedia(tier);
+  return currentMediaCount < maxMedia;
 }
 
 /**

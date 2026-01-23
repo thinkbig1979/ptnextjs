@@ -5,7 +5,7 @@
  * Enforces tier hierarchy and feature access control.
  */
 
-import { Tier, TIER_HIERARCHY, MAX_LOCATIONS_PER_TIER } from './TierService';
+import { Tier, TierFeature, TIER_HIERARCHY, TIER_FEATURE_MAP, MAX_LOCATIONS_PER_TIER } from './TierService';
 
 export type TierValidationResult = {
   valid: boolean;
@@ -75,17 +75,8 @@ const TIER_FIELD_ACCESS = {
   ],
 } as const;
 
-// Features requiring specific tier levels
-const TIER_FEATURES = {
-  multipleLocations: 'tier1',
-  enhancedProfile: 'tier1',
-  productManagement: 'tier2',
-  advancedAnalytics: 'tier2',
-  apiAccess: 'tier2',
-  customDomain: 'tier2',
-  promotionPack: 'tier3',
-  editorialContent: 'tier3',
-} as const;
+// Note: Feature-to-tier mapping is imported from TIER_FEATURE_MAP via TierService
+// The authoritative source is lib/constants/tierConfig.ts
 
 // Helper function to capitalize field names
 const capitalizeField = (field: string): string => {
@@ -169,10 +160,9 @@ export class TierValidationService {
   /**
    * Check if a tier can access a specific feature
    */
-  static canAccessFeature(tier: Tier, feature: keyof typeof TIER_FEATURES): boolean {
-    const requiredTier = TIER_FEATURES[feature];
+  static canAccessFeature(tier: Tier, feature: TierFeature): boolean {
     const tierLevel = TIER_HIERARCHY[tier] ?? 0;
-    const requiredLevel = TIER_HIERARCHY[requiredTier as Tier] ?? 0;
+    const requiredLevel = TIER_FEATURE_MAP[feature] ?? TIER_HIERARCHY.tier2;
 
     return tierLevel >= requiredLevel;
   }
@@ -180,14 +170,13 @@ export class TierValidationService {
   /**
    * Get all features available for a tier
    */
-  static getTierFeatures(tier: Tier): string[] {
+  static getTierFeatures(tier: Tier): TierFeature[] {
     const tierLevel = TIER_HIERARCHY[tier] ?? 0;
-    const features: string[] = [];
+    const features: TierFeature[] = [];
 
-    for (const [feature, requiredTier] of Object.entries(TIER_FEATURES)) {
-      const requiredLevel = TIER_HIERARCHY[requiredTier as Tier] ?? 0;
+    for (const [feature, requiredLevel] of Object.entries(TIER_FEATURE_MAP)) {
       if (tierLevel >= requiredLevel) {
-        features.push(feature);
+        features.push(feature as TierFeature);
       }
     }
 

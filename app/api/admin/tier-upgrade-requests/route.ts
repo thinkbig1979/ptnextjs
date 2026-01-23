@@ -1,7 +1,21 @@
 /**
- * Admin API - Tier Upgrade Requests Management
+ * Admin API - Tier Change Requests Management (Upgrades and Downgrades)
  *
- * GET /api/admin/tier-upgrade-requests - List all tier upgrade requests with filtering
+ * This collection handles BOTH tier upgrade and downgrade requests.
+ * The requestType field distinguishes between them:
+ * - requestType: 'upgrade' - Vendor requesting higher tier
+ * - requestType: 'downgrade' - Vendor requesting lower tier
+ *
+ * GET /api/admin/tier-upgrade-requests - List tier change requests
+ *   Query params:
+ *   - status: Filter by status (pending, approved, rejected, cancelled)
+ *   - requestType: Filter by type ('upgrade' or 'downgrade')
+ *   - vendorId: Filter by vendor
+ *   - page, limit, sortBy, sortOrder: Pagination and sorting
+ *
+ * Approve/Reject routes:
+ * - PUT /api/admin/tier-upgrade-requests/[id]/approve - Approve request (works for both upgrades and downgrades)
+ * - PUT /api/admin/tier-upgrade-requests/[id]/reject - Reject request (works for both upgrades and downgrades)
  *
  * Authentication: Required (admin role)
  * Authorization: Admin only

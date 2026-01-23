@@ -4,37 +4,23 @@
  * Manages vendor subscription tiers:
  * - free: Single HQ location only
  * - tier1: Up to 3 locations
- * - tier2: Unlimited locations + premium features
+ * - tier2: Up to 10 locations + premium features
+ * - tier3: Unlimited locations + all features
+ *
+ * IMPORTANT: All tier configuration is centralized in lib/constants/tierConfig.ts
+ * This service provides helper methods but imports all constants from tierConfig.
  */
 
-export type Tier = 'free' | 'tier1' | 'tier2' | 'tier3';
-export type TierFeature = 'multipleLocations' | 'advancedAnalytics' | 'apiAccess' | 'customDomain' | 'promotionPack' | 'editorialContent' | 'media-gallery' | 'excel-import' | 'productManagement';
+import {
+  type Tier,
+  type TierFeature,
+  TIER_HIERARCHY,
+  TIER_FEATURE_MAP,
+  MAX_LOCATIONS_PER_TIER,
+} from '@/lib/constants/tierConfig';
 
-export const TIER_HIERARCHY: Record<Tier, number> = {
-  free: 0,
-  tier1: 1,
-  tier2: 2,
-  tier3: 3,
-};
-
-export const TIER_FEATURE_MAP: Record<TierFeature, number> = {
-  multipleLocations: TIER_HIERARCHY.tier2,
-  advancedAnalytics: TIER_HIERARCHY.tier2,
-  apiAccess: TIER_HIERARCHY.tier2,
-  customDomain: TIER_HIERARCHY.tier2,
-  promotionPack: TIER_HIERARCHY.tier3,
-  editorialContent: TIER_HIERARCHY.tier3,
-  'media-gallery': TIER_HIERARCHY.tier1,
-  'excel-import': TIER_HIERARCHY.tier2,
-  productManagement: TIER_HIERARCHY.tier2,
-};
-
-export const MAX_LOCATIONS_PER_TIER: Record<Tier, number> = {
-  free: 1,
-  tier1: 1,
-  tier2: 5,
-  tier3: 999,
-};
+// Re-export types and constants for backwards compatibility
+export { type Tier, type TierFeature, TIER_HIERARCHY, TIER_FEATURE_MAP, MAX_LOCATIONS_PER_TIER };
 
 export class TierService {
   static canAccessFeature(tier: Tier | undefined, feature: TierFeature): boolean {
