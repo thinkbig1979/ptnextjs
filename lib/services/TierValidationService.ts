@@ -79,6 +79,8 @@ const TIER_FIELD_ACCESS = {
 const TIER_FEATURES = {
   multipleLocations: 'tier1',
   enhancedProfile: 'tier1',
+  'media-gallery': 'tier1',
+  'excel-import': 'tier2',
   productManagement: 'tier2',
   advancedAnalytics: 'tier2',
   apiAccess: 'tier2',

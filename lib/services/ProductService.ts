@@ -7,6 +7,7 @@
 
 import type { Where } from 'payload';
 import { getPayloadClient } from '@/lib/utils/get-payload-config';
+import { canAddProduct, getMaxProducts, type Tier } from '@/lib/constants/tierConfig';
 
 export interface ProductFilters {
   published?: boolean;
@@ -316,6 +317,25 @@ export class ProductService {
       if (vendorUserId?.toString() !== userId.toString()) {
         throw new Error('Unauthorized: You can only create products for your own vendor');
       }
+    }
+
+    // Check product count limit based on vendor tier
+    const vendorTier = (vendor.tier || 'free') as Tier;
+    const existingProducts = await payload.find({
+      collection: 'products',
+      where: {
+        vendor: { equals: vendorId },
+      },
+      limit: 0, // We only need the count
+    });
+
+    const currentProductCount = existingProducts.totalDocs;
+    if (!canAddProduct(vendorTier, currentProductCount)) {
+      const maxProducts = getMaxProducts(vendorTier);
+      throw new Error(
+        `Product limit reached. Your ${vendorTier} tier allows a maximum of ${maxProducts} products. ` +
+        `You currently have ${currentProductCount} products. Please upgrade your subscription to add more.`
+      );
     }
 
     // Prepare product data

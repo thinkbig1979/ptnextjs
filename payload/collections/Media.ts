@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload';
+import { isAdmin } from '../access/rbac';
 
 const Media: CollectionConfig = {
   slug: 'media',
@@ -33,7 +34,58 @@ const Media: CollectionConfig = {
     adminThumbnail: 'thumbnail',
   },
   access: {
-    read: () => true, // Public read access
+    // Public read access for all media (images need to be publicly viewable)
+    read: () => true,
+    // Only admins can create media via Payload admin (vendors use /api/media/upload)
+    create: isAdmin,
+    // Admins can update all media, vendors can only update media associated with their vendor
+    update: async ({ req: { user, payload } }) => {
+      if (!user) return false;
+      if (user.role === 'admin') return true;
+      if (user.role !== 'vendor') return false;
+
+      // Find the vendor associated with this user
+      const vendors = await payload.find({
+        collection: 'vendors',
+        where: {
+          user: { equals: user.id },
+        },
+        limit: 1,
+      });
+
+      if (!vendors.docs[0]) return false;
+
+      // Return a where query that restricts to media owned by this vendor
+      return {
+        vendor: {
+          equals: vendors.docs[0].id,
+        },
+      };
+    },
+    // Admins can delete all media, vendors can only delete media associated with their vendor
+    delete: async ({ req: { user, payload } }) => {
+      if (!user) return false;
+      if (user.role === 'admin') return true;
+      if (user.role !== 'vendor') return false;
+
+      // Find the vendor associated with this user
+      const vendors = await payload.find({
+        collection: 'vendors',
+        where: {
+          user: { equals: user.id },
+        },
+        limit: 1,
+      });
+
+      if (!vendors.docs[0]) return false;
+
+      // Return a where query that restricts to media owned by this vendor
+      return {
+        vendor: {
+          equals: vendors.docs[0].id,
+        },
+      };
+    },
   },
   hooks: {
     beforeValidate: [
@@ -49,6 +101,18 @@ const Media: CollectionConfig = {
     ],
   },
   fields: [
+    {
+      name: 'vendor',
+      type: 'relationship',
+      relationTo: 'vendors',
+      label: 'Vendor',
+      admin: {
+        position: 'sidebar',
+        description: 'The vendor that owns this media file',
+      },
+      // Allow null for admin uploads or system media
+      required: false,
+    },
     {
       name: 'externalUrl',
       type: 'text',

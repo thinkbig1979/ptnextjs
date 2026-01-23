@@ -1,7 +1,10 @@
 /**
- * Admin API - Approve Tier Upgrade Request
+ * Admin API - Approve Tier Change Request (Upgrade or Downgrade)
  *
  * PUT /api/admin/tier-upgrade-requests/[id]/approve - Approve request and update vendor tier
+ *
+ * This route works for BOTH tier upgrade and downgrade requests.
+ * The vendor's tier is updated to the requestedTier regardless of direction.
  *
  * Authentication: Required (admin role)
  * Authorization: Admin only

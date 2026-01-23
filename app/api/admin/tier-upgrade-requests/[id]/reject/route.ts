@@ -1,7 +1,10 @@
 /**
- * Admin API - Reject Tier Upgrade Request
+ * Admin API - Reject Tier Change Request (Upgrade or Downgrade)
  *
  * PUT /api/admin/tier-upgrade-requests/[id]/reject - Reject request with reason
+ *
+ * This route works for BOTH tier upgrade and downgrade requests.
+ * A rejection reason is required (10-1000 characters).
  *
  * Authentication: Required (admin role)
  * Authorization: Admin only
