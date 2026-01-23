@@ -1,8 +1,7 @@
 import * as React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { MapPin, Mail, Clock } from "lucide-react";
 import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
-import { ContactForm } from "./ContactForm";
 
 // Force dynamic rendering - database not available at Docker build time
 export const dynamic = 'force-dynamic';
@@ -12,21 +11,18 @@ export default async function ContactPage() {
   const companyInfo = await payloadCMSDataService.getCompanyInfo();
 
   // Provide default values if companyInfo is null
-  const address = companyInfo?.address || "Amsterdam, Netherlands";
-  const phone = companyInfo?.phone || "+31 20 555 0123";
   const email = companyInfo?.email || "info@paulthames.com";
   const businessHours = companyInfo?.businessHours || "Monday - Friday: 9:00 AM - 5:00 PM CET";
 
   const contactInfo = [
     {
       icon: MapPin,
-      title: "Address",
-      details: [address],
-    },
-    {
-      icon: Phone,
-      title: "Phone",
-      details: [phone],
+      title: "Main Office",
+      details: [
+        "Herengracht 516",
+        "1017 CC Amsterdam",
+        "The Netherlands",
+      ],
     },
     {
       icon: Mail,
@@ -52,7 +48,7 @@ export default async function ContactPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Contact Information Cards */}
           {contactInfo.map((info, _index) => (
             <div key={info.title}>
@@ -77,21 +73,6 @@ export default async function ContactPage() {
               </Card>
             </div>
           ))}
-        </div>
-
-        {/* Contact Form Section */}
-        <div className="max-w-2xl mx-auto">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl md:text-4xl font-cormorant font-bold mb-4">
-              Send Us a Message
-            </h2>
-            <p className="text-muted-foreground font-poppins-light">
-              Fill out the form below and we will get back to you as soon as possible.
-            </p>
-          </div>
-          <Card className="p-6 md:p-8">
-            <ContactForm email={email} />
-          </Card>
         </div>
       </div>
     </div>
