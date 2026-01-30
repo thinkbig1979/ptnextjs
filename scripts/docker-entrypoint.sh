@@ -28,33 +28,20 @@ if [ "$DB_TYPE" = "postgres" ]; then
 fi
 
 # =============================================================================
-# DATABASE SCHEMA SYNCHRONIZATION
+# DATABASE SCHEMA SYNCHRONIZATION STRATEGY
 # =============================================================================
 # Payload CMS with push: true in payload.config.ts uses Drizzle's push mode
-# to automatically sync schema changes. However, this happens when Payload
-# initializes, which can race with the app startup.
+# to automatically sync schema changes. This happens when Payload initializes,
+# which occurs on the first request to a Payload-powered endpoint.
 #
-# To ensure schema changes are applied BEFORE the app serves requests:
-# - PostgreSQL: Run a dedicated schema sync script that initializes Payload
-# - SQLite: Run legacy migration script for custom migrations
+# Problem: The homepage may try to query new columns before Payload initializes.
+# Solution: After server starts, hit the Payload admin endpoint FIRST to trigger
+#           schema sync before warming up public pages.
+#
+# For SQLite: Run legacy migration script for custom migrations.
 # =============================================================================
 
-if [ "$DB_TYPE" = "postgres" ]; then
-    echo "🔄 Synchronizing PostgreSQL schema..."
-    echo "   This ensures new fields (like 'featured') are added to the database"
-
-    if [ -f "/app/sync-postgres-schema.js" ]; then
-        # Run the schema sync script which initializes Payload to trigger push mode
-        node /app/sync-postgres-schema.js || {
-            echo "⚠️  Schema sync script had issues, app will retry on startup"
-        }
-    else
-        echo "⚠️  Schema sync script not found, relying on app startup push"
-    fi
-
-    echo "✅ Schema synchronization step complete"
-
-elif [ "$DB_TYPE" = "sqlite" ] && [ -f "/app/run-migrations.js" ]; then
+if [ "$DB_TYPE" = "sqlite" ] && [ -f "/app/run-migrations.js" ]; then
     echo "🔄 Running SQLite migrations..."
     node /app/run-migrations.js
     echo "✅ Migrations complete"
@@ -83,6 +70,43 @@ while [ $PORT_ATTEMPTS -lt 60 ]; do
     PORT_ATTEMPTS=$((PORT_ATTEMPTS + 1))
     sleep 1
 done
+
+# =============================================================================
+# SCHEMA SYNC: Hit Payload admin endpoint FIRST
+# =============================================================================
+# This triggers Payload initialization which runs Drizzle push mode.
+# We do this BEFORE the health check and cache warmup to ensure schema
+# is synced before any public pages try to query new columns.
+# =============================================================================
+
+if [ "$DB_TYPE" = "postgres" ]; then
+    echo "🔄 Triggering Payload schema sync..."
+    echo "   Hitting /admin to initialize Payload and sync database schema"
+
+    SYNC_ATTEMPTS=0
+    while [ $SYNC_ATTEMPTS -lt 10 ]; do
+        # Request the admin page - this initializes Payload and triggers push mode
+        # We use --timeout=30 because schema sync can take time on first run
+        HTTP_CODE=$(wget --quiet --timeout=30 --server-response --spider "${SERVER_URL}/admin" 2>&1 | grep "HTTP/" | tail -1 | awk '{print $2}')
+
+        if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "302" ] || [ "$HTTP_CODE" = "307" ]; then
+            echo "   ✓ Payload initialized (HTTP $HTTP_CODE)"
+            echo "✅ Schema synchronization complete"
+            break
+        fi
+
+        SYNC_ATTEMPTS=$((SYNC_ATTEMPTS + 1))
+        if [ $SYNC_ATTEMPTS -lt 10 ]; then
+            echo "   ⏳ Waiting for Payload... (attempt $SYNC_ATTEMPTS/10)"
+            sleep 3
+        fi
+    done
+
+    if [ $SYNC_ATTEMPTS -eq 10 ]; then
+        echo "   ⚠️  Could not confirm Payload initialization"
+        echo "   Schema may sync on first admin access"
+    fi
+fi
 
 # Phase 2: Wait for health endpoint (confirms app is fully ready)
 echo "   Phase 2: Checking health endpoint..."

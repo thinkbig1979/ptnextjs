@@ -122,10 +122,11 @@ docker exec -i ptnextjs-postgres pg_restore -U ptnextjs -d ptnextjs < backup.dum
 When you add new fields to Payload collections (e.g., `featured` boolean on Products), the schema needs to sync to production PostgreSQL.
 
 **How it works:**
-1. `docker-entrypoint.sh` runs `sync-postgres-schema.js` before starting the app
-2. This script initializes Payload CMS which triggers Drizzle's `push` mode
-3. New columns are automatically added to the database
-4. Then the Next.js server starts
+1. `docker-entrypoint.sh` starts the Next.js server
+2. Before cache warmup, it hits `/admin` to trigger Payload initialization
+3. Payload's Drizzle adapter with `push: true` syncs the schema
+4. New columns are automatically added to the database
+5. Then public pages are warmed up (which can now query new columns)
 
 **Manual schema sync (if needed):**
 ```bash
@@ -165,7 +166,6 @@ docker compose --env-file .env.production logs app | grep -i "schema"
 | `docker-compose.yml` | Local dev PostgreSQL |
 | `docker-compose.production.example.yml` | Production template |
 | `scripts/migration/sqlite-to-postgres.ts` | SQLite to PostgreSQL data migration |
-| `scripts/sync-postgres-schema.js` | Runtime schema sync for Docker deployments |
-| `scripts/docker-entrypoint.sh` | Container startup script (runs schema sync) |
+| `scripts/docker-entrypoint.sh` | Container startup script (triggers schema sync via /admin) |
 | `.env.local` | Local environment (set USE_POSTGRES) |
 | `payload.config.ts` | Database adapter config (push: true enables auto-sync) |
