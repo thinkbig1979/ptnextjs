@@ -3,6 +3,7 @@ import { CallPaulSection } from '@/components/call-paul-section';
 import { CustomLightingPreviewSection } from '@/components/custom-lighting-preview-section';
 import { ConsultancyPreviewSection } from '@/components/consultancy-preview-section';
 import { VendorConsultancyPreviewSection } from '@/components/vendor-consultancy-preview-section';
+import { FeaturedProductsSection } from '@/components/featured-products-section';
 import { FeaturedPartnersSection } from '@/components/featured-partners-section';
 import { ServicesOverviewSection } from '@/components/services-overview-section';
 import { FeaturedBlogSection } from '@/components/featured-blog-section';
@@ -13,9 +14,10 @@ import { payloadCMSDataService } from '@/lib/payload-cms-data-service';
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
-  const [featuredPartners, featuredPosts] = await Promise.all([
+  const [featuredPartners, featuredPosts, featuredProducts] = await Promise.all([
     payloadCMSDataService.getFeaturedPartners(),
     payloadCMSDataService.getBlogPosts({ featured: true }),
+    payloadCMSDataService.getFeaturedProducts(),
   ]);
 
   return (
@@ -25,6 +27,7 @@ export default async function HomePage() {
       <CustomLightingPreviewSection />
       <ConsultancyPreviewSection />
       <VendorConsultancyPreviewSection />
+      <FeaturedProductsSection featuredProducts={featuredProducts} />
       <FeaturedPartnersSection featuredPartners={featuredPartners} />
       <ServicesOverviewSection />
       <FeaturedBlogSection featuredPosts={featuredPosts} />

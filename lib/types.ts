@@ -208,8 +208,8 @@ export interface VendorYachtProject {
  * Uses WGS84 coordinate system (standard for GPS/maps)
  */
 export interface VendorCoordinates {
-  latitude: number;   // -90 to 90
-  longitude: number;  // -180 to 180
+  latitude: number; // -90 to 90
+  longitude: number; // -180 to 180
 }
 
 /**
@@ -217,15 +217,15 @@ export interface VendorCoordinates {
  * All fields optional for backward compatibility
  */
 export interface VendorLocation {
-  id?: string;            // Unique location identifier
-  locationName?: string;  // Display name for this location (e.g., "Monaco Office", "Fort Lauderdale Branch")
-  address?: string;       // Full mailing address
-  city?: string;          // City name
-  country?: string;       // Country name
-  postalCode?: string;    // Postal/ZIP code
-  latitude?: number;      // Geographic latitude
-  longitude?: number;     // Geographic longitude
-  isHQ?: boolean;         // Whether this is the headquarters location (default: false)
+  id?: string; // Unique location identifier
+  locationName?: string; // Display name for this location (e.g., "Monaco Office", "Fort Lauderdale Branch")
+  address?: string; // Full mailing address
+  city?: string; // City name
+  country?: string; // Country name
+  postalCode?: string; // Postal/ZIP code
+  latitude?: number; // Geographic latitude
+  longitude?: number; // Geographic longitude
+  isHQ?: boolean; // Whether this is the headquarters location (default: false)
 }
 
 // ============================================================
@@ -656,7 +656,14 @@ export interface TierUpgradeRequestError {
   success: false;
   error: {
     /** Error code */
-    code: 'UNAUTHORIZED' | 'FORBIDDEN' | 'VALIDATION_ERROR' | 'NOT_FOUND' | 'DUPLICATE_REQUEST' | 'INVALID_STATUS' | 'SERVER_ERROR';
+    code:
+      | 'UNAUTHORIZED'
+      | 'FORBIDDEN'
+      | 'VALIDATION_ERROR'
+      | 'NOT_FOUND'
+      | 'DUPLICATE_REQUEST'
+      | 'INVALID_STATUS'
+      | 'SERVER_ERROR';
     /** Human-readable error message */
     message: string;
     /** Field-specific validation errors */
@@ -898,6 +905,7 @@ export interface Product {
   updatedAt?: string;
   publishedAt?: string;
   published?: boolean; // Used by vendor portal for publish status
+  featured?: boolean; // Featured on homepage
 
   // TinaCMS simplified relations
   vendorId?: string; // Resolved vendor ID
@@ -908,11 +916,11 @@ export interface Product {
   category?: string; // Resolved category name
   tags?: string[]; // Resolved tag names array
   seo?: SEO;
-  
+
   // Components (simplified structure)
   images: ProductImage[]; // Product images array
   features: Feature[]; // Product features array
-  
+
   // New CMS-driven components
   specifications?: ProductSpecification[]; // Technical specifications
   benefits?: ProductBenefit[]; // Product benefits
@@ -920,7 +928,7 @@ export interface Product {
   pricing?: ProductPricing; // Pricing configuration
   action_buttons?: ProductActionButton[]; // Configurable action buttons
   badges?: ProductBadge[]; // Product badges/certifications
-  
+
   // Computed/backward compatibility fields
   categoryName?: string; // Alias for category
   tagNames?: string[]; // Alias for tags
@@ -960,12 +968,12 @@ export interface BlogPost {
   image?: string; // TinaCMS uses direct string paths
   createdAt?: string;
   updatedAt?: string;
-  
+
   // TinaCMS simplified relations
   category?: string; // Resolved blog category name
   tags?: string[]; // Resolved tag names array
   seo?: SEO;
-  
+
   // Computed/backward compatibility fields
   published_at?: string; // Alias for publishedAt
   read_time?: string; // Alias for readTime
@@ -985,7 +993,7 @@ export interface TeamMember {
   createdAt?: string;
   updatedAt?: string;
   publishedAt?: string;
-  
+
   // Computed fields (for backward compatibility)
   imageUrl?: string; // Alias for image
 }
@@ -1007,11 +1015,11 @@ export interface CompanyInfo {
   createdAt?: string;
   updatedAt?: string;
   publishedAt?: string;
-  
+
   // Components
   social_media?: SocialMedia;
   seo?: SEO;
-  
+
   // Computed fields (for backward compatibility)
   logoUrl?: string; // Alias for logo
 }
@@ -1116,16 +1124,16 @@ export interface Yacht {
 
 // Legacy expense tracker types (keeping for backward compatibility)
 export type Expense = {
-  id: string
-  amount: number
-  category: string
-  description: string
-  date: Date
-}
+  id: string;
+  amount: number;
+  category: string;
+  description: string;
+  date: Date;
+};
 
 export type ExpenseFormData = Omit<Expense, 'id' | 'date'> & {
-  date: string
-}
+  date: string;
+};
 
 export const EXPENSE_CATEGORIES = [
   'Food',
@@ -1136,13 +1144,13 @@ export const EXPENSE_CATEGORIES = [
   'Healthcare',
   'Shopping',
   'Education',
-  'Other'
-] as const
+  'Other',
+] as const;
 
 export type DateRange = {
-  from: Date | undefined
-  to: Date | undefined
-}
+  from: Date | undefined;
+  to: Date | undefined;
+};
 
 // ===== Product API Types =====
 

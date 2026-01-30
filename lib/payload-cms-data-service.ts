@@ -155,6 +155,7 @@ interface PayloadProductDocument {
   ownerReviews?: PayloadRecord[];
   visualDemoContent?: PayloadRecord;
   published?: boolean;
+  featured?: boolean;
   createdAt?: string;
   updatedAt?: string;
   shortDescription?: string;
@@ -364,7 +365,9 @@ class PayloadCMSDataService {
    * Transforms Lexical rich text format to HTML string
    * Handles the conversion of Payload's Lexical editor format to displayable HTML
    */
-  private transformLexicalToHtml(lexicalData: PayloadLexicalDocument | string | null | undefined): string {
+  private transformLexicalToHtml(
+    lexicalData: PayloadLexicalDocument | string | null | undefined
+  ): string {
     if (!lexicalData) return '';
 
     // If it's already a string, return it
@@ -383,7 +386,9 @@ class PayloadCMSDataService {
    * Transforms Lexical rich text format to plain text string
    * Extracts only the text content without HTML tags
    */
-  private transformLexicalToPlainText(lexicalData: PayloadLexicalDocument | string | null | undefined): string {
+  private transformLexicalToPlainText(
+    lexicalData: PayloadLexicalDocument | string | null | undefined
+  ): string {
     if (!lexicalData) return '';
 
     // If it's already a string, return it
@@ -407,158 +412,179 @@ class PayloadCMSDataService {
   private lexicalNodeToHtml(nodes: PayloadLexicalNode[]): string {
     if (!Array.isArray(nodes)) return '';
 
-    return nodes.map(node => {
-      if (!node || !node.type) return '';
+    return nodes
+      .map((node) => {
+        if (!node || !node.type) return '';
 
-      switch (node.type) {
-        case 'paragraph':
-          const pChildren = node.children ? this.lexicalNodeToHtml(node.children) : '';
-          return `<p>${pChildren}</p>`;
+        switch (node.type) {
+          case 'paragraph':
+            const pChildren = node.children ? this.lexicalNodeToHtml(node.children) : '';
+            return `<p>${pChildren}</p>`;
 
-        case 'heading':
-          const hChildren = node.children ? this.lexicalNodeToHtml(node.children) : '';
-          const tag = node.tag || 'h2';
-          return `<${tag}>${hChildren}</${tag}>`;
+          case 'heading':
+            const hChildren = node.children ? this.lexicalNodeToHtml(node.children) : '';
+            const tag = node.tag || 'h2';
+            return `<${tag}>${hChildren}</${tag}>`;
 
-        case 'text':
-          let text = node.text || '';
-          // Apply formatting
-          if (node.format) {
-            if (node.format & 1) text = `<strong>${text}</strong>`; // Bold
-            if (node.format & 2) text = `<em>${text}</em>`; // Italic
-            if (node.format & 8) text = `<s>${text}</s>`; // Strikethrough
-            if (node.format & 16) text = `<code>${text}</code>`; // Code
-          }
-          return text;
+          case 'text':
+            let text = node.text || '';
+            // Apply formatting
+            if (node.format) {
+              if (node.format & 1) text = `<strong>${text}</strong>`; // Bold
+              if (node.format & 2) text = `<em>${text}</em>`; // Italic
+              if (node.format & 8) text = `<s>${text}</s>`; // Strikethrough
+              if (node.format & 16) text = `<code>${text}</code>`; // Code
+            }
+            return text;
 
-        case 'link':
-          const linkChildren = node.children ? this.lexicalNodeToHtml(node.children) : '';
-          return `<a href="${node.url || ''}"${node.target ? ` target="${node.target}"` : ''}>${linkChildren}</a>`;
+          case 'link':
+            const linkChildren = node.children ? this.lexicalNodeToHtml(node.children) : '';
+            return `<a href="${node.url || ''}"${node.target ? ` target="${node.target}"` : ''}>${linkChildren}</a>`;
 
-        case 'list':
-          const listTag = node.listType === 'number' || node.tag === 'ol' ? 'ol' : 'ul';
-          const listChildren = node.children ? this.lexicalNodeToHtml(node.children) : '';
-          return `<${listTag}>${listChildren}</${listTag}>`;
+          case 'list':
+            const listTag = node.listType === 'number' || node.tag === 'ol' ? 'ol' : 'ul';
+            const listChildren = node.children ? this.lexicalNodeToHtml(node.children) : '';
+            return `<${listTag}>${listChildren}</${listTag}>`;
 
-        case 'listitem':
-          const itemChildren = node.children ? this.lexicalNodeToHtml(node.children) : '';
-          return `<li>${itemChildren}</li>`;
+          case 'listitem':
+            const itemChildren = node.children ? this.lexicalNodeToHtml(node.children) : '';
+            return `<li>${itemChildren}</li>`;
 
-        case 'quote':
-          const quoteChildren = node.children ? this.lexicalNodeToHtml(node.children) : '';
-          return `<blockquote>${quoteChildren}</blockquote>`;
+          case 'quote':
+            const quoteChildren = node.children ? this.lexicalNodeToHtml(node.children) : '';
+            return `<blockquote>${quoteChildren}</blockquote>`;
 
-        case 'code':
-          const codeText = node.children ? node.children.map((c) => (c as { text?: string }).text || '').join('') : '';
-          return `<pre><code${node.language ? ` class="language-${node.language}"` : ''}>${codeText}</code></pre>`;
+          case 'code':
+            const codeText = node.children
+              ? node.children.map((c) => (c as { text?: string }).text || '').join('')
+              : '';
+            return `<pre><code${node.language ? ` class="language-${node.language}"` : ''}>${codeText}</code></pre>`;
 
-        case 'horizontalrule':
-          return '<hr />';
+          case 'horizontalrule':
+            return '<hr />';
 
-        default:
-          // For unknown node types, try to render children
-          if (node.children) {
-            return this.lexicalNodeToHtml(node.children);
-          }
-          return '';
-      }
-    }).join('');
+          default:
+            // For unknown node types, try to render children
+            if (node.children) {
+              return this.lexicalNodeToHtml(node.children);
+            }
+            return '';
+        }
+      })
+      .join('');
   }
 
   private transformPayloadVendor(doc: PayloadVendorDocument): Vendor {
     // ============================================================================
     // SECTION 1: CERTIFICATIONS ARRAY - Transform logo media paths
     // ============================================================================
-    const certifications = doc.certifications?.map((cert: PayloadRecord) => ({
-      name: cert.name || '',
-      issuer: cert.issuer || '',
-      issuedDate: cert.year ? `${cert.year}` : undefined,
-      expiryDate: cert.expiryDate || undefined,
-      credentialId: cert.certificateNumber || undefined,
-      credentialUrl: cert.verificationUrl || undefined,
-      logo: cert.logo?.url ? this.transformMediaPath(cert.logo.url) : undefined,
-    })) || [];
+    const certifications =
+      doc.certifications?.map((cert: PayloadRecord) => ({
+        name: cert.name || '',
+        issuer: cert.issuer || '',
+        issuedDate: cert.year ? `${cert.year}` : undefined,
+        expiryDate: cert.expiryDate || undefined,
+        credentialId: cert.certificateNumber || undefined,
+        credentialUrl: cert.verificationUrl || undefined,
+        logo: cert.logo?.url ? this.transformMediaPath(cert.logo.url) : undefined,
+      })) || [];
 
     // ============================================================================
     // SECTION 2: AWARDS ARRAY - Transform image media paths
     // ============================================================================
-    const awards: VendorAward[] = doc.awards?.map((award: PayloadRecord) => ({
-      title: award.title || '',
-      year: award.year || 0,
-      organization: award.organization || undefined,
-      category: award.category || undefined,
-      description: award.description || undefined,
-    })) || [];
+    const awards: VendorAward[] =
+      doc.awards?.map((award: PayloadRecord) => ({
+        title: award.title || '',
+        year: award.year || 0,
+        organization: award.organization || undefined,
+        category: award.category || undefined,
+        description: award.description || undefined,
+      })) || [];
 
     // ============================================================================
     // SECTION 3: SOCIAL PROOF GROUP - Preserve all numeric fields
     // ============================================================================
-    const socialProof: VendorSocialProof | undefined = doc.totalProjects || doc.clientSatisfactionScore || doc.repeatClientPercentage ? {
-      projectsCompleted: doc.totalProjects || undefined,
-      yearsInBusiness: doc.yearsInBusiness || undefined,
-      followers: doc.linkedinFollowers || doc.instagramFollowers || undefined,
-      customerList: undefined, // Not in Payload schema
-    } : undefined;
+    const socialProof: VendorSocialProof | undefined =
+      doc.totalProjects || doc.clientSatisfactionScore || doc.repeatClientPercentage
+        ? {
+            projectsCompleted: doc.totalProjects || undefined,
+            yearsInBusiness: doc.yearsInBusiness || undefined,
+            followers: doc.linkedinFollowers || doc.instagramFollowers || undefined,
+            customerList: undefined, // Not in Payload schema
+          }
+        : undefined;
 
     // ============================================================================
     // SECTION 4: VIDEO INTRO GROUP - Transform thumbnail media path
     // ============================================================================
-    const videoIntroduction = doc.videoUrl ? {
-      videoUrl: doc.videoUrl || '',
-      duration: doc.videoDuration || undefined,
-      thumbnail: doc.videoThumbnail?.url ? this.transformMediaPath(doc.videoThumbnail.url) : undefined,
-      transcript: undefined, // Not in Payload schema
-    } : undefined;
+    const videoIntroduction = doc.videoUrl
+      ? {
+          videoUrl: doc.videoUrl || '',
+          duration: doc.videoDuration || undefined,
+          thumbnail: doc.videoThumbnail?.url
+            ? this.transformMediaPath(doc.videoThumbnail.url)
+            : undefined,
+          transcript: undefined, // Not in Payload schema
+        }
+      : undefined;
 
     // ============================================================================
     // SECTION 5: CASE STUDIES ARRAY - Transform Lexical content, resolve yacht relationships, transform thumbnails
     // ============================================================================
-    const caseStudies = doc.caseStudies?.map((cs: PayloadRecord) => ({
-      title: cs.title || '',
-      client: cs.yachtName || undefined,
-      yacht: cs.yacht?.id?.toString() || undefined,
-      industry: undefined, // Not in Payload schema
-      challenge: this.transformLexicalToHtml(cs.challenge),
-      solution: this.transformLexicalToHtml(cs.solution),
-      results: this.transformLexicalToHtml(cs.results),
-      metrics: undefined, // Not in Payload schema
-      thumbnail: cs.images?.[0]?.image?.url ? this.transformMediaPath(cs.images[0].image.url) : undefined,
-      pdfUrl: undefined, // Not in Payload schema
-      publishedDate: cs.projectDate || undefined,
-    })) || [];
+    const caseStudies =
+      doc.caseStudies?.map((cs: PayloadRecord) => ({
+        title: cs.title || '',
+        client: cs.yachtName || undefined,
+        yacht: cs.yacht?.id?.toString() || undefined,
+        industry: undefined, // Not in Payload schema
+        challenge: this.transformLexicalToHtml(cs.challenge),
+        solution: this.transformLexicalToHtml(cs.solution),
+        results: this.transformLexicalToHtml(cs.results),
+        metrics: undefined, // Not in Payload schema
+        thumbnail: cs.images?.[0]?.image?.url
+          ? this.transformMediaPath(cs.images[0].image.url)
+          : undefined,
+        pdfUrl: undefined, // Not in Payload schema
+        publishedDate: cs.projectDate || undefined,
+      })) || [];
 
     // ============================================================================
     // SECTION 6: INNOVATIONS ARRAY - Transform Lexical description, transform image
     // ============================================================================
-    const innovationHighlights: VendorInnovationHighlight[] = doc.innovationHighlights?.map((innovation: PayloadRecord) => ({
-      technology: innovation.title || '',
-      description: this.transformLexicalToHtml(innovation.description),
-      uniqueApproach: innovation.patentNumber || undefined,
-      benefitsToClients: innovation.benefits?.map((b: PayloadRecord) => b.benefit) || undefined,
-    })) || [];
+    const innovationHighlights: VendorInnovationHighlight[] =
+      doc.innovationHighlights?.map((innovation: PayloadRecord) => ({
+        technology: innovation.title || '',
+        description: this.transformLexicalToHtml(innovation.description),
+        uniqueApproach: innovation.patentNumber || undefined,
+        benefitsToClients: innovation.benefits?.map((b: PayloadRecord) => b.benefit) || undefined,
+      })) || [];
 
     // ============================================================================
     // SECTION 7: TEAM MEMBERS ARRAY - Transform photo media path
     // ============================================================================
-    const teamMembers: TeamMember[] = doc.teamMembers?.map((member: PayloadRecord) => ({
-      id: member.id?.toString() || `member-${Date.now()}`,
-      name: member.name || '',
-      role: member.role || '',
-      bio: member.bio || '',
-      image: member.photo?.url ? this.transformMediaPath(member.photo.url) : undefined,
-      linkedin: member.linkedinUrl || undefined,
-    })) || [];
+    const teamMembers: TeamMember[] =
+      doc.teamMembers?.map((member: PayloadRecord) => ({
+        id: member.id?.toString() || `member-${Date.now()}`,
+        name: member.name || '',
+        role: member.role || '',
+        bio: member.bio || '',
+        image: member.photo?.url ? this.transformMediaPath(member.photo.url) : undefined,
+        linkedin: member.linkedinUrl || undefined,
+      })) || [];
 
     // ============================================================================
     // SECTION 8: YACHT PROJECTS ARRAY - Resolve yacht relationships, transform image
     // ============================================================================
-    const yachtProjects: VendorYachtProject[] = doc.yachtProjects?.map((project: PayloadRecord) => ({
-      yachtName: project.yacht?.name || '',
-      systems: project.systemsInstalled?.map((s: PayloadRecord) => s.system) || [],
-      projectYear: project.completionDate ? new Date(project.completionDate).getFullYear() : undefined,
-      role: project.role || undefined,
-      description: project.description || undefined,
-    })) || [];
+    const yachtProjects: VendorYachtProject[] =
+      doc.yachtProjects?.map((project: PayloadRecord) => ({
+        yachtName: project.yacht?.name || '',
+        systems: project.systemsInstalled?.map((s: PayloadRecord) => s.system) || [],
+        projectYear: project.completionDate
+          ? new Date(project.completionDate).getFullYear()
+          : undefined,
+        role: project.role || undefined,
+        description: project.description || undefined,
+      })) || [];
 
     // ============================================================================
     // SECTION 8: LOCATION - Transform from flat fields to VendorLocation object (legacy)
@@ -577,50 +603,52 @@ class PayloadCMSDataService {
     // ============================================================================
     // SECTION 9: LOCATIONS ARRAY - Multi-location support (Tier 2+)
     // ============================================================================
-    const locations: VendorLocation[] | undefined = doc.locations?.map((loc: PayloadRecord) => ({
-      id: loc.id || undefined,
-      locationName: loc.locationName || undefined,
-      address: loc.address || '',
-      city: loc.city || '',
-      state: loc.state || undefined,
-      postalCode: loc.postalCode || undefined,
-      country: loc.country || '',
-      latitude: loc.latitude,
-      longitude: loc.longitude,
-      isHQ: loc.isHQ || false,
-    })) || undefined;
+    const locations: VendorLocation[] | undefined =
+      doc.locations?.map((loc: PayloadRecord) => ({
+        id: loc.id || undefined,
+        locationName: loc.locationName || undefined,
+        address: loc.address || '',
+        city: loc.city || '',
+        state: loc.state || undefined,
+        postalCode: loc.postalCode || undefined,
+        country: loc.country || '',
+        latitude: loc.latitude,
+        longitude: loc.longitude,
+        isHQ: loc.isHQ || false,
+      })) || undefined;
 
     // ============================================================================
     // SECTION 10: VENDOR REVIEWS ARRAY - Transform review data
     // ============================================================================
-    const vendorReviews: VendorReview[] = doc.vendorReviews?.map((review: PayloadRecord) => ({
-      id: review.id?.toString() || '',
-      vendorId: doc.id?.toString() || '',
-      reviewerName: review.reviewerName || '',
-      reviewerRole: review.reviewerRole || '',
-      yachtName: review.yachtName,
-      projectType: review.projectType,
-      overallRating: review.overallRating || 0,
-      ratings: {
-        quality: review.ratings?.quality,
-        communication: review.ratings?.communication,
-        timeliness: review.ratings?.timeliness,
-        professionalism: review.ratings?.professionalism,
-        valueForMoney: review.ratings?.valueForMoney,
-      },
-      reviewText: review.reviewText,
-      reviewDate: review.reviewDate,
-      verified: review.verified || false,
-      featured: review.featured || false,
-      pros: review.pros || [],
-      cons: review.cons || [],
-    })) || [];
+    const vendorReviews: VendorReview[] =
+      doc.vendorReviews?.map((review: PayloadRecord) => ({
+        id: review.id?.toString() || '',
+        vendorId: doc.id?.toString() || '',
+        reviewerName: review.reviewerName || '',
+        reviewerRole: review.reviewerRole || '',
+        yachtName: review.yachtName,
+        projectType: review.projectType,
+        overallRating: review.overallRating || 0,
+        ratings: {
+          quality: review.ratings?.quality,
+          communication: review.ratings?.communication,
+          timeliness: review.ratings?.timeliness,
+          professionalism: review.ratings?.professionalism,
+          valueForMoney: review.ratings?.valueForMoney,
+        },
+        reviewText: review.reviewText,
+        reviewDate: review.reviewDate,
+        verified: review.verified || false,
+        featured: review.featured || false,
+        pros: review.pros || [],
+        cons: review.cons || [],
+      })) || [];
 
     return {
       id: doc.id ? doc.id.toString() : '',
       slug: doc.slug || '',
       name: doc.companyName || doc.name || '',
-      category: typeof doc.category === 'string' ? doc.category : (doc.category?.name || ''),
+      category: typeof doc.category === 'string' ? doc.category : doc.category?.name || '',
       description: this.transformLexicalToHtml(doc.description as PayloadLexicalDocument) || '',
       logo: this.transformMediaPath(doc.logo || ''),
       image: this.transformMediaPath(doc.image || ''),
@@ -630,7 +658,7 @@ class PayloadCMSDataService {
       location,
       locations,
       tier: doc.tier || 'free',
-      tags: doc.tags?.map((tag) => typeof tag === 'string' ? tag : (tag.name || '')) || [],
+      tags: doc.tags?.map((tag) => (typeof tag === 'string' ? tag : tag.name || '')) || [],
       featured: doc.featured || false,
       partner: doc.partner !== undefined ? doc.partner : false,
       services: (doc.services || []) as VendorService[],
@@ -646,7 +674,9 @@ class PayloadCMSDataService {
       clientSatisfactionScore: doc.clientSatisfactionScore,
       repeatClientPercentage: doc.repeatClientPercentage,
       videoUrl: doc.videoUrl,
-      videoThumbnail: doc.videoThumbnail?.url ? this.transformMediaPath(doc.videoThumbnail.url) : undefined,
+      videoThumbnail: doc.videoThumbnail?.url
+        ? this.transformMediaPath(doc.videoThumbnail.url)
+        : undefined,
       videoDuration: doc.videoDuration,
       videoTitle: doc.videoTitle,
       videoDescription: doc.videoDescription,
@@ -669,105 +699,127 @@ class PayloadCMSDataService {
     // ============================================================================
     // SECTION 1: COMPARISON METRICS - Convert array to nested object structure
     // ============================================================================
-    const comparisonMetrics: { [category: string]: { [key: string]: string | number | boolean } } = {};
+    const comparisonMetrics: { [category: string]: { [key: string]: string | number | boolean } } =
+      {};
     doc.comparisonMetrics?.forEach((metric: PayloadRecord) => {
       const category = metric.category || 'general';
       if (!comparisonMetrics[category]) {
         comparisonMetrics[category] = {};
       }
-      comparisonMetrics[category][metric.metricName || 'unknown'] = metric.numericValue || metric.value || '';
+      comparisonMetrics[category][metric.metricName || 'unknown'] =
+        metric.numericValue || metric.value || '';
     });
 
     // ============================================================================
     // SECTION 2: INTEGRATION COMPATIBILITY - Extract supported protocols as string array
     // ============================================================================
-    const integrationCompatibility = doc.integrationCompatibility?.supportedProtocols?.map((proto: PayloadRecord) => proto.protocol) || [];
+    const integrationCompatibility =
+      doc.integrationCompatibility?.supportedProtocols?.map(
+        (proto: PayloadRecord) => proto.protocol
+      ) || [];
 
     // ============================================================================
     // SECTION 2A: SYSTEM REQUIREMENTS - Transform system requirements object
     // ============================================================================
-    const systemRequirements: SystemRequirements | undefined = doc.integrationCompatibility?.systemRequirements ? {
-      powerSupply: doc.integrationCompatibility.systemRequirements.powerSupply || undefined,
-      mounting: doc.integrationCompatibility.systemRequirements.mounting || undefined,
-      operatingTemp: doc.integrationCompatibility.systemRequirements.operatingTemp || undefined,
-      certification: doc.integrationCompatibility.systemRequirements.certification || undefined,
-      ipRating: doc.integrationCompatibility.systemRequirements.ipRating || undefined,
-    } : undefined;
+    const systemRequirements: SystemRequirements | undefined = doc.integrationCompatibility
+      ?.systemRequirements
+      ? {
+          powerSupply: doc.integrationCompatibility.systemRequirements.powerSupply || undefined,
+          mounting: doc.integrationCompatibility.systemRequirements.mounting || undefined,
+          operatingTemp: doc.integrationCompatibility.systemRequirements.operatingTemp || undefined,
+          certification: doc.integrationCompatibility.systemRequirements.certification || undefined,
+          ipRating: doc.integrationCompatibility.systemRequirements.ipRating || undefined,
+        }
+      : undefined;
 
     // ============================================================================
     // SECTION 2B: COMPATIBILITY MATRIX - Transform compatibility matrix array
     // ============================================================================
-    const compatibilityMatrix: SystemCompatibility[] = doc.integrationCompatibility?.compatibilityMatrix?.map((item: PayloadRecord) => ({
-      system: item.system || '',
-      compatibility: item.compatibility || 'none',
-      notes: item.notes || undefined,
-      requirements: item.requirements?.map((req: PayloadRecord) => req.requirement).filter(Boolean) || undefined,
-      complexity: item.complexity || undefined,
-      estimatedCost: item.estimatedCost || undefined,
-    })) || [];
+    const compatibilityMatrix: SystemCompatibility[] =
+      doc.integrationCompatibility?.compatibilityMatrix?.map((item: PayloadRecord) => ({
+        system: item.system || '',
+        compatibility: item.compatibility || 'none',
+        notes: item.notes || undefined,
+        requirements:
+          item.requirements?.map((req: PayloadRecord) => req.requirement).filter(Boolean) ||
+          undefined,
+        complexity: item.complexity || undefined,
+        estimatedCost: item.estimatedCost || undefined,
+      })) || [];
 
     // ============================================================================
     // SECTION 3: OWNER REVIEWS ARRAY - Transform Lexical reviewText, resolve yacht relationships
     // ============================================================================
-    const ownerReviews: OwnerReview[] = doc.ownerReviews?.map((review: PayloadRecord) => ({
-      id: review.id?.toString() || `review-${Date.now()}`,
-      productId: doc.id?.toString() || '',
-      ownerName: review.reviewerName || '',
-      yachtName: review.yachtName || undefined,
-      yachtLength: undefined, // Not in Payload schema
-      rating: review.overallRating || 0,
-      title: review.reviewText ? this.transformLexicalToPlainText(review.reviewText).substring(0, 100) : '',
-      review: this.transformLexicalToPlainText(review.reviewText),
-      pros: review.pros?.map((p: PayloadRecord) => p.pro) || undefined,
-      cons: review.cons?.map((c: PayloadRecord) => c.con) || undefined,
-      installationDate: undefined, // Not in Payload schema
-      verified: review.verified || false,
-      helpful: undefined, // Not in Payload schema
-      images: undefined, // Not in Payload schema
-      useCase: undefined, // Not in Payload schema
-      flagged: false,
-      vendorResponse: undefined, // Not in Payload schema
-    })) || [];
+    const ownerReviews: OwnerReview[] =
+      doc.ownerReviews?.map((review: PayloadRecord) => ({
+        id: review.id?.toString() || `review-${Date.now()}`,
+        productId: doc.id?.toString() || '',
+        ownerName: review.reviewerName || '',
+        yachtName: review.yachtName || undefined,
+        yachtLength: undefined, // Not in Payload schema
+        rating: review.overallRating || 0,
+        title: review.reviewText
+          ? this.transformLexicalToPlainText(review.reviewText).substring(0, 100)
+          : '',
+        review: this.transformLexicalToPlainText(review.reviewText),
+        pros: review.pros?.map((p: PayloadRecord) => p.pro) || undefined,
+        cons: review.cons?.map((c: PayloadRecord) => c.con) || undefined,
+        installationDate: undefined, // Not in Payload schema
+        verified: review.verified || false,
+        helpful: undefined, // Not in Payload schema
+        images: undefined, // Not in Payload schema
+        useCase: undefined, // Not in Payload schema
+        flagged: false,
+        vendorResponse: undefined, // Not in Payload schema
+      })) || [];
 
     // ============================================================================
     // SECTION 4: VISUAL DEMO CONTENT - Transform to VisualDemoContent type
     // ============================================================================
-    const visualDemo: VisualDemoContent | undefined = doc.visualDemoContent?.model3d?.modelUrl ? {
-      type: '3d-model' as const,
-      title: doc.name || '',
-      description: doc.shortDescription || undefined,
-      imageUrl: doc.visualDemoContent?.model3d?.thumbnailImage?.url
-        ? this.transformMediaPath(doc.visualDemoContent.model3d.thumbnailImage.url)
-        : undefined,
-      modelUrl: doc.visualDemoContent?.model3d?.modelUrl || undefined,
-      videoUrl: doc.visualDemoContent?.videoWalkthrough?.videoUrl || undefined,
-      hotspots: doc.visualDemoContent?.interactiveHotspots?.flatMap((hotspotGroup: PayloadRecord) =>
-        hotspotGroup.hotspots?.map((hotspot: PayloadRecord) => ({
-          position: { x: hotspot.x || 0, y: hotspot.y || 0 },
-          title: hotspot.title || '',
-          description: hotspot.description || undefined,
-          action: 'info' as const,
-        })) || []
-      ) || undefined,
-      animations: undefined, // Not in Payload schema
-      cameraPositions: undefined, // Not in Payload schema
-      materials: undefined, // Not in Payload schema
-    } : doc.visualDemoContent?.videoWalkthrough?.videoUrl ? {
-      type: 'video' as const,
-      title: doc.name || '',
-      description: doc.shortDescription || undefined,
-      videoUrl: doc.visualDemoContent?.videoWalkthrough?.videoUrl || undefined,
-      imageUrl: doc.visualDemoContent?.videoWalkthrough?.thumbnail?.url
-        ? this.transformMediaPath(doc.visualDemoContent.videoWalkthrough.thumbnail.url)
-        : undefined,
-    } : doc.visualDemoContent?.images360 && doc.visualDemoContent.images360.length > 0 ? {
-      type: '360-image' as const,
-      title: doc.name || '',
-      description: doc.shortDescription || undefined,
-      imageUrl: doc.visualDemoContent?.images360?.[0]?.image?.url
-        ? this.transformMediaPath(doc.visualDemoContent.images360[0].image.url)
-        : undefined,
-    } : undefined;
+    const visualDemo: VisualDemoContent | undefined = doc.visualDemoContent?.model3d?.modelUrl
+      ? {
+          type: '3d-model' as const,
+          title: doc.name || '',
+          description: doc.shortDescription || undefined,
+          imageUrl: doc.visualDemoContent?.model3d?.thumbnailImage?.url
+            ? this.transformMediaPath(doc.visualDemoContent.model3d.thumbnailImage.url)
+            : undefined,
+          modelUrl: doc.visualDemoContent?.model3d?.modelUrl || undefined,
+          videoUrl: doc.visualDemoContent?.videoWalkthrough?.videoUrl || undefined,
+          hotspots:
+            doc.visualDemoContent?.interactiveHotspots?.flatMap(
+              (hotspotGroup: PayloadRecord) =>
+                hotspotGroup.hotspots?.map((hotspot: PayloadRecord) => ({
+                  position: { x: hotspot.x || 0, y: hotspot.y || 0 },
+                  title: hotspot.title || '',
+                  description: hotspot.description || undefined,
+                  action: 'info' as const,
+                })) || []
+            ) || undefined,
+          animations: undefined, // Not in Payload schema
+          cameraPositions: undefined, // Not in Payload schema
+          materials: undefined, // Not in Payload schema
+        }
+      : doc.visualDemoContent?.videoWalkthrough?.videoUrl
+        ? {
+            type: 'video' as const,
+            title: doc.name || '',
+            description: doc.shortDescription || undefined,
+            videoUrl: doc.visualDemoContent?.videoWalkthrough?.videoUrl || undefined,
+            imageUrl: doc.visualDemoContent?.videoWalkthrough?.thumbnail?.url
+              ? this.transformMediaPath(doc.visualDemoContent.videoWalkthrough.thumbnail.url)
+              : undefined,
+          }
+        : doc.visualDemoContent?.images360 && doc.visualDemoContent.images360.length > 0
+          ? {
+              type: '360-image' as const,
+              title: doc.name || '',
+              description: doc.shortDescription || undefined,
+              imageUrl: doc.visualDemoContent?.images360?.[0]?.image?.url
+                ? this.transformMediaPath(doc.visualDemoContent.images360[0].image.url)
+                : undefined,
+            }
+          : undefined;
 
     return {
       id: doc.id ? doc.id.toString() : '',
@@ -780,31 +832,36 @@ class PayloadCMSDataService {
       category: doc.categories?.[0]?.name || '',
       description: this.transformLexicalToHtml(doc.description as PayloadLexicalDocument) || '',
       image: this.transformMediaPath(mainImage?.url || ''),
-      images: doc.images?.map((img: PayloadRecord) => ({
-        id: img.url,
-        url: this.transformMediaPath(img.url || ''),
-        altText: img.altText || '',
-        isMain: img.isMain || false,
-      })) || [],
-      features: doc.features?.map((feature: PayloadRecord) => ({
-        id: feature.id || `feature-${Date.now()}`,
-        title: feature.title || '',
-        description: feature.description || undefined,
-        icon: feature.icon || undefined,
-        order: feature.order || undefined,
-      })) || [],
+      images:
+        doc.images?.map((img: PayloadRecord) => ({
+          id: img.url,
+          url: this.transformMediaPath(img.url || ''),
+          altText: img.altText || '',
+          isMain: img.isMain || false,
+        })) || [],
+      features:
+        doc.features?.map((feature: PayloadRecord) => ({
+          id: feature.id || `feature-${Date.now()}`,
+          title: feature.title || '',
+          description: feature.description || undefined,
+          icon: feature.icon || undefined,
+          order: feature.order || undefined,
+        })) || [],
       price: doc.price,
       tags: [],
       comparisonMetrics,
-      specifications: doc.specifications?.map((spec: PayloadRecord) => ({
-        label: spec.label,
-        value: spec.value,
-      })) || [],
+      specifications:
+        doc.specifications?.map((spec: PayloadRecord) => ({
+          label: spec.label,
+          value: spec.value,
+        })) || [],
       integrationCompatibility,
       systemRequirements,
       compatibilityMatrix,
       ownerReviews,
       visualDemo,
+      published: doc.published || false,
+      featured: doc.featured || false,
       vendor: vendor ? this.transformPayloadVendor(vendor) : undefined,
       partner: vendor ? this.transformPayloadVendor(vendor) : undefined,
     };
@@ -908,7 +965,7 @@ class PayloadCMSDataService {
 
     try {
       // Start from root if data has a root property
-      const rootNode = (typeof data === 'object' && 'root' in data) ? data.root : data;
+      const rootNode = typeof data === 'object' && 'root' in data ? data.root : data;
       return convertNode(rootNode as PayloadLexicalNode);
     } catch (error) {
       console.error('Error converting Lexical to HTML:', error);
@@ -966,76 +1023,96 @@ class PayloadCMSDataService {
     const heroImage = doc.heroImage?.url ? this.transformMediaPath(doc.heroImage.url) : undefined;
 
     // Transform gallery images
-    const gallery = doc.gallery?.map((item: PayloadRecord) => {
-      if (item.image?.url) {
-        return this.transformMediaPath(item.image.url);
-      }
-      return null;
-    }).filter((url): url is string => url !== null) || [];
+    const gallery =
+      doc.gallery
+        ?.map((item: PayloadRecord) => {
+          if (item.image?.url) {
+            return this.transformMediaPath(item.image.url);
+          }
+          return null;
+        })
+        .filter((url): url is string => url !== null) || [];
 
     // Transform timeline events
-    const timeline = doc.timeline?.map((event: PayloadRecord) => ({
-      date: event.date,
-      event: event.title || event.event || '',
-      description: event.description || '',
-      category: event.category || 'milestone',
-      location: undefined, // Not in Payload schema
-      images: event.image?.url ? [this.transformMediaPath(event.image.url)] : [],
-    })) || [];
-
-    // Transform supplier map with vendor and product relationships
-    const supplierMap = doc.supplierMap?.map((supplier: PayloadRecord) => {
-      const vendor = supplier.vendor;
-      const vendorData = vendor ? {
-        id: vendor.id?.toString() || '',
-        name: vendor.companyName || vendor.name || '',
-        slug: vendor.slug || '',
-        logo: vendor.logo?.url ? this.transformMediaPath(vendor.logo.url) : undefined,
-      } : null;
-
-      const products = supplier.products?.map((product: PayloadRecord) => ({
-        id: product.id?.toString() || '',
-        name: product.name || '',
-        slug: product.slug || '',
-        image: product.images?.[0]?.url ? this.transformMediaPath(product.images[0].url) : undefined,
+    const timeline =
+      doc.timeline?.map((event: PayloadRecord) => ({
+        date: event.date,
+        event: event.title || event.event || '',
+        description: event.description || '',
+        category: event.category || 'milestone',
+        location: undefined, // Not in Payload schema
+        images: event.image?.url ? [this.transformMediaPath(event.image.url)] : [],
       })) || [];
 
-      return {
-        vendorId: vendor?.id?.toString() || '',
-        vendorName: vendor?.companyName || vendor?.name || '',
-        discipline: supplier.systemCategory || '',
-        systems: products.map((p: PayloadRecord) => p.name),
-        role: 'primary' as const,
-        projectPhase: undefined,
-      };
-    }) || [];
+    // Transform supplier map with vendor and product relationships
+    const supplierMap =
+      doc.supplierMap?.map((supplier: PayloadRecord) => {
+        const vendor = supplier.vendor;
+        const vendorData = vendor
+          ? {
+              id: vendor.id?.toString() || '',
+              name: vendor.companyName || vendor.name || '',
+              slug: vendor.slug || '',
+              logo: vendor.logo?.url ? this.transformMediaPath(vendor.logo.url) : undefined,
+            }
+          : null;
+
+        const products =
+          supplier.products?.map((product: PayloadRecord) => ({
+            id: product.id?.toString() || '',
+            name: product.name || '',
+            slug: product.slug || '',
+            image: product.images?.[0]?.url
+              ? this.transformMediaPath(product.images[0].url)
+              : undefined,
+          })) || [];
+
+        return {
+          vendorId: vendor?.id?.toString() || '',
+          vendorName: vendor?.companyName || vendor?.name || '',
+          discipline: supplier.systemCategory || '',
+          systems: products.map((p: PayloadRecord) => p.name),
+          role: 'primary' as const,
+          projectPhase: undefined,
+        };
+      }) || [];
 
     // Transform sustainability metrics (flat fields in Payload -> grouped in frontend)
-    const sustainabilityScore = (doc.co2EmissionsTonsPerYear || doc.energyEfficiencyRating || doc.hybridPropulsion ||
-      doc.solarPanelCapacityKw || doc.batteryStorageKwh || doc.sustainabilityFeatures || doc.greenCertifications) ? {
-      co2Emissions: doc.co2EmissionsTonsPerYear,
-      energyEfficiency: undefined, // Would need to calculate from rating
-      wasteManagement: undefined,
-      waterConservation: undefined,
-      materialSustainability: undefined,
-      overallScore: undefined,
-      certifications: doc.greenCertifications?.map((c: PayloadRecord) => c.certification) || [],
-    } : undefined;
+    const sustainabilityScore =
+      doc.co2EmissionsTonsPerYear ||
+      doc.energyEfficiencyRating ||
+      doc.hybridPropulsion ||
+      doc.solarPanelCapacityKw ||
+      doc.batteryStorageKwh ||
+      doc.sustainabilityFeatures ||
+      doc.greenCertifications
+        ? {
+            co2Emissions: doc.co2EmissionsTonsPerYear,
+            energyEfficiency: undefined, // Would need to calculate from rating
+            wasteManagement: undefined,
+            waterConservation: undefined,
+            materialSustainability: undefined,
+            overallScore: undefined,
+            certifications:
+              doc.greenCertifications?.map((c: PayloadRecord) => c.certification) || [],
+          }
+        : undefined;
 
     // Transform maintenance history with vendor resolution
-    const maintenanceHistory = doc.maintenanceHistory?.map((record: PayloadRecord) => {
-      const vendor = record.vendor;
-      return {
-        date: record.date,
-        type: record.type || 'routine',
-        system: '', // Not in Payload schema
-        description: record.description || '',
-        vendor: vendor ? vendor.companyName || vendor.name : undefined,
-        cost: record.cost,
-        nextService: undefined, // Not in Payload schema
-        status: 'completed' as const,
-      };
-    }) || [];
+    const maintenanceHistory =
+      doc.maintenanceHistory?.map((record: PayloadRecord) => {
+        const vendor = record.vendor;
+        return {
+          date: record.date,
+          type: record.type || 'routine',
+          system: '', // Not in Payload schema
+          description: record.description || '',
+          vendor: vendor ? vendor.companyName || vendor.name : undefined,
+          cost: record.cost,
+          nextService: undefined, // Not in Payload schema
+          status: 'completed' as const,
+        };
+      }) || [];
 
     return {
       id: doc.id.toString(),
@@ -1099,29 +1176,38 @@ class PayloadCMSDataService {
     const logo = this.transformMediaPath(doc.logo || '');
 
     // Transform social media (group field in Payload)
-    const social_media = doc.socialMedia ? {
-      id: 'social-media',
-      facebook: doc.socialMedia.facebook || undefined,
-      twitter: doc.socialMedia.twitter || undefined,
-      linkedin: doc.socialMedia.linkedin || undefined,
-      instagram: doc.socialMedia.instagram || undefined,
-      youtube: doc.socialMedia.youtube || undefined,
-    } : undefined;
+    const social_media = doc.socialMedia
+      ? {
+          id: 'social-media',
+          facebook: doc.socialMedia.facebook || undefined,
+          twitter: doc.socialMedia.twitter || undefined,
+          linkedin: doc.socialMedia.linkedin || undefined,
+          instagram: doc.socialMedia.instagram || undefined,
+          youtube: doc.socialMedia.youtube || undefined,
+        }
+      : undefined;
 
     // Transform SEO (group field in Payload)
-    const seo = doc.seo ? {
-      id: 'seo',
-      meta_title: doc.seo.metaTitle || undefined,
-      meta_description: doc.seo.metaDescription || undefined,
-      keywords: doc.seo.keywords || undefined,
-      og_image: doc.seo.ogImage ? {
-        id: typeof doc.seo.ogImage === 'string' ? doc.seo.ogImage : (doc.seo.ogImage.id?.toString() || ''),
-        name: '',
-        url: this.transformMediaPath(doc.seo.ogImage),
-      } : undefined,
-      canonical_url: undefined,
-      no_index: undefined,
-    } : undefined;
+    const seo = doc.seo
+      ? {
+          id: 'seo',
+          meta_title: doc.seo.metaTitle || undefined,
+          meta_description: doc.seo.metaDescription || undefined,
+          keywords: doc.seo.keywords || undefined,
+          og_image: doc.seo.ogImage
+            ? {
+                id:
+                  typeof doc.seo.ogImage === 'string'
+                    ? doc.seo.ogImage
+                    : doc.seo.ogImage.id?.toString() || '',
+                name: '',
+                url: this.transformMediaPath(doc.seo.ogImage),
+              }
+            : undefined,
+          canonical_url: undefined,
+          no_index: undefined,
+        }
+      : undefined;
 
     return {
       id: doc.id?.toString(),
@@ -1148,63 +1234,79 @@ class PayloadCMSDataService {
 
   // Vendors
   async getAllVendors(): Promise<Vendor[]> {
-    return this.getCached('vendors', async () => {
-      const payload = await getPayloadClient();
-      const result = await payload.find({
-        collection: 'vendors',
-        where: { published: { equals: true } },
-        limit: 1000,
-        depth: 2,
-      });
+    return this.getCached(
+      'vendors',
+      async () => {
+        const payload = await getPayloadClient();
+        const result = await payload.find({
+          collection: 'vendors',
+          where: { published: { equals: true } },
+          limit: 1000,
+          depth: 2,
+        });
 
-      return result.docs.map(doc => this.transformPayloadVendor(doc));
-    }, []); // Fallback to empty array during build
+        return result.docs.map((doc) => this.transformPayloadVendor(doc));
+      },
+      []
+    ); // Fallback to empty array during build
   }
 
-  async getVendors(params?: { category?: string; featured?: boolean; partnersOnly?: boolean }): Promise<Vendor[]> {
+  async getVendors(params?: {
+    category?: string;
+    featured?: boolean;
+    partnersOnly?: boolean;
+  }): Promise<Vendor[]> {
     const allVendors = await this.getAllVendors();
     let filtered = allVendors;
 
     if (params?.category && params.category !== 'all') {
-      filtered = filtered.filter(vendor => vendor.category === params.category);
+      filtered = filtered.filter((vendor) => vendor.category === params.category);
     }
 
     if (params?.featured) {
-      filtered = filtered.filter(vendor => vendor.featured);
+      filtered = filtered.filter((vendor) => vendor.featured);
     }
 
     if (params?.partnersOnly) {
-      filtered = filtered.filter(vendor => vendor.partner === true);
+      filtered = filtered.filter((vendor) => vendor.partner === true);
     }
 
     return filtered;
   }
 
   async getVendorBySlug(slug: string): Promise<Vendor | null> {
-    return this.getCached(`vendor:${slug}`, async () => {
-      const payload = await getPayloadClient();
-      const result = await payload.find({
-        collection: 'vendors',
-        where: { slug: { equals: slug } },
-        limit: 1,
-        depth: 2,
-      });
+    return this.getCached(
+      `vendor:${slug}`,
+      async () => {
+        const payload = await getPayloadClient();
+        const result = await payload.find({
+          collection: 'vendors',
+          where: { slug: { equals: slug } },
+          limit: 1,
+          depth: 2,
+        });
 
-      return result.docs[0] ? this.transformPayloadVendor(result.docs[0]) : null;
-    }, null); // Fallback to null during build
+        return result.docs[0] ? this.transformPayloadVendor(result.docs[0]) : null;
+      },
+      null
+    ); // Fallback to null during build
   }
 
   async getVendorById(id: string): Promise<Vendor | null> {
-    return this.getCached(`vendor-id:${id}`, async () => {
-      const payload = await getPayloadClient();
-      const doc = await payload.findByID({
-        collection: 'vendors',
-        id,
-        depth: 2,
-      });
+    return this.getCached(
+      `vendor-id:${id}`,
+      async () => {
+        const payload = await getPayloadClient();
+        const doc = await payload.findByID({
+          collection: 'vendors',
+          id,
+          depth: 2,
+        });
 
-      return doc ? this.transformPayloadVendor(doc) : null;
-    }, null); // Fallback to null during build
+        return doc ? this.transformPayloadVendor(doc) : null;
+      },
+      null
+    ); // Fallback to null during build
   }
 
   async getFeaturedVendors(): Promise<Vendor[]> {
@@ -1214,22 +1316,26 @@ class PayloadCMSDataService {
   // Partners (backward compatibility)
   async getAllPartners(): Promise<Partner[]> {
     const vendors = await this.getAllVendors();
-    return vendors.map(vendor => ({ ...vendor } as Partner));
+    return vendors.map((vendor) => ({ ...vendor }) as Partner);
   }
 
   async getPartners(params?: { category?: string; featured?: boolean }): Promise<Partner[]> {
     const vendors = await this.getVendors({ ...params, partnersOnly: true });
-    return vendors.map(vendor => ({ ...vendor } as Partner));
+    return vendors.map((vendor) => ({ ...vendor }) as Partner);
   }
 
   async getFeaturedPartners(): Promise<Partner[]> {
-    return this.getCached('featured-partners', async () => {
-      const allVendors = await this.getAllVendors();
-      const featuredPartners = allVendors.filter(
-        vendor => vendor.featured === true && vendor.partner === true
-      );
-      return featuredPartners.map(vendor => ({ ...vendor } as Partner));
-    }, []); // Fallback to empty array during build
+    return this.getCached(
+      'featured-partners',
+      async () => {
+        const allVendors = await this.getAllVendors();
+        const featuredPartners = allVendors.filter(
+          (vendor) => vendor.featured === true && vendor.partner === true
+        );
+        return featuredPartners.map((vendor) => ({ ...vendor }) as Partner);
+      },
+      []
+    ); // Fallback to empty array during build
   }
 
   async getPartnerBySlug(slug: string): Promise<Partner | null> {
@@ -1244,34 +1350,42 @@ class PayloadCMSDataService {
 
   // Products
   async getAllProducts(): Promise<Product[]> {
-    return this.getCached('products', async () => {
-      const payload = await getPayloadClient();
-      const result = await payload.find({
-        collection: 'products',
-        where: { published: { equals: true } },
-        limit: 1000,
-        depth: 3,
-      });
+    return this.getCached(
+      'products',
+      async () => {
+        const payload = await getPayloadClient();
+        const result = await payload.find({
+          collection: 'products',
+          where: { published: { equals: true } },
+          limit: 1000,
+          depth: 3,
+        });
 
-      const products = result.docs.map(doc => this.transformPayloadProduct(doc));
-      
-      // Filter out products from free tier or tier1 vendors
-      // Only show products from tier2+ vendors on the public products page
-      const filteredProducts = products.filter(product => {
-        const vendorTier = product.vendor?.tier;
-        return vendorTier && ['tier2', 'tier3'].includes(vendorTier);
-      });
+        const products = result.docs.map((doc) => this.transformPayloadProduct(doc));
 
-      return filteredProducts;
-    }, []); // Fallback to empty array during build
+        // Filter out products from free tier or tier1 vendors
+        // Only show products from tier2+ vendors on the public products page
+        const filteredProducts = products.filter((product) => {
+          const vendorTier = product.vendor?.tier;
+          return vendorTier && ['tier2', 'tier3'].includes(vendorTier);
+        });
+
+        return filteredProducts;
+      },
+      []
+    ); // Fallback to empty array during build
   }
 
-  async getProducts(params?: { category?: string; partnerId?: string; vendorId?: string }): Promise<Product[]> {
+  async getProducts(params?: {
+    category?: string;
+    partnerId?: string;
+    vendorId?: string;
+  }): Promise<Product[]> {
     const allProducts = await this.getAllProducts();
     let filtered = allProducts;
 
     if (params?.category && params.category !== 'all') {
-      filtered = filtered.filter(product => product.category === params.category);
+      filtered = filtered.filter((product) => product.category === params.category);
     }
 
     const targetId = params?.vendorId || params?.partnerId;
@@ -1279,7 +1393,7 @@ class PayloadCMSDataService {
       // Convert targetId to string for comparison (handles both number and string inputs)
       const targetIdStr = targetId.toString();
       filtered = filtered.filter(
-        product => product.vendorId === targetIdStr || product.partnerId === targetIdStr
+        (product) => product.vendorId === targetIdStr || product.partnerId === targetIdStr
       );
     }
 
@@ -1287,22 +1401,26 @@ class PayloadCMSDataService {
   }
 
   async getProductBySlug(slug: string): Promise<Product | null> {
-    return this.getCached(`product:${slug}`, async () => {
-      const payload = await getPayloadClient();
-      const result = await payload.find({
-        collection: 'products',
-        where: { slug: { equals: slug } },
-        limit: 1,
-        depth: 3,
-      });
+    return this.getCached(
+      `product:${slug}`,
+      async () => {
+        const payload = await getPayloadClient();
+        const result = await payload.find({
+          collection: 'products',
+          where: { slug: { equals: slug } },
+          limit: 1,
+          depth: 3,
+        });
 
-      return result.docs[0] ? this.transformPayloadProduct(result.docs[0]) : null;
-    }, null); // Fallback to null during build
+        return result.docs[0] ? this.transformPayloadProduct(result.docs[0]) : null;
+      },
+      null
+    ); // Fallback to null during build
   }
 
   async getProductById(id: string): Promise<Product | null> {
     const products = await this.getAllProducts();
-    return products.find(product => product.id === id) || null;
+    return products.find((product) => product.id === id) || null;
   }
 
   async getProductsByVendor(vendorId: string): Promise<Product[]> {
@@ -1313,37 +1431,72 @@ class PayloadCMSDataService {
     return this.getProducts({ partnerId });
   }
 
-  // Categories
-  async getCategories(): Promise<Category[]> {
-    return this.getCached('categories:all', async () => {
-      const payload = await getPayloadClient();
-      const result = await payload.find({
-        collection: 'categories',
-        limit: 1000,
-        depth: 1,
-      });
+  async getFeaturedProducts(): Promise<Product[]> {
+    return this.getCached(
+      'featured-products',
+      async () => {
+        // Fetch featured products directly without tier filtering
+        // Featured products should be shown regardless of vendor tier
+        const payload = await getPayloadClient();
+        const result = await payload.find({
+          collection: 'products',
+          where: {
+            published: { equals: true },
+            featured: { equals: true },
+          },
+          limit: 6,
+          depth: 3,
+        });
 
-      return result.docs.map(doc => this.transformCategory(doc as unknown as PayloadCategoryDocument));
-    }, []); // Fallback to empty array during build
+        return result.docs.map((doc) => this.transformPayloadProduct(doc));
+      },
+      []
+    );
   }
 
-  async getCategoryBySlug(slug: string): Promise<Category | null> {
-    return this.getCached(`category:${slug}`, async () => {
-      try {
+  // Categories
+  async getCategories(): Promise<Category[]> {
+    return this.getCached(
+      'categories:all',
+      async () => {
         const payload = await getPayloadClient();
         const result = await payload.find({
           collection: 'categories',
-          where: { slug: { equals: slug } },
-          limit: 1,
+          limit: 1000,
           depth: 1,
         });
 
-        return result.docs[0] ? this.transformCategory(result.docs[0] as unknown as PayloadCategoryDocument) : null;
-      } catch (error) {
-        console.error(`Error fetching category by slug ${slug}:`, error);
-        return null;
-      }
-    }, null); // Fallback to null during build
+        return result.docs.map((doc) =>
+          this.transformCategory(doc as unknown as PayloadCategoryDocument)
+        );
+      },
+      []
+    ); // Fallback to empty array during build
+  }
+
+  async getCategoryBySlug(slug: string): Promise<Category | null> {
+    return this.getCached(
+      `category:${slug}`,
+      async () => {
+        try {
+          const payload = await getPayloadClient();
+          const result = await payload.find({
+            collection: 'categories',
+            where: { slug: { equals: slug } },
+            limit: 1,
+            depth: 1,
+          });
+
+          return result.docs[0]
+            ? this.transformCategory(result.docs[0] as unknown as PayloadCategoryDocument)
+            : null;
+        } catch (error) {
+          console.error(`Error fetching category by slug ${slug}:`, error);
+          return null;
+        }
+      },
+      null
+    ); // Fallback to null during build
   }
 
   async getBlogCategories(): Promise<Category[]> {
@@ -1352,75 +1505,95 @@ class PayloadCMSDataService {
 
   // Tags
   async getTags(): Promise<Tag[]> {
-    return this.getCached('tags:all', async () => {
-      try {
-        const payload = await getPayloadClient();
-        const result = await payload.find({
-          collection: 'tags',
-          limit: 1000,
-          depth: 1,
-        });
+    return this.getCached(
+      'tags:all',
+      async () => {
+        try {
+          const payload = await getPayloadClient();
+          const result = await payload.find({
+            collection: 'tags',
+            limit: 1000,
+            depth: 1,
+          });
 
-        return result.docs.map(doc => this.transformTag(doc as unknown as PayloadTagDocument));
-      } catch (error) {
-        console.error('Error fetching tags:', error);
-        return [];
-      }
-    }, []); // Fallback to empty array during build
+          return result.docs.map((doc) => this.transformTag(doc as unknown as PayloadTagDocument));
+        } catch (error) {
+          console.error('Error fetching tags:', error);
+          return [];
+        }
+      },
+      []
+    ); // Fallback to empty array during build
   }
 
   async getTagBySlug(slug: string): Promise<Tag | null> {
-    return this.getCached(`tag:${slug}`, async () => {
-      try {
-        const payload = await getPayloadClient();
-        const result = await payload.find({
-          collection: 'tags',
-          where: { slug: { equals: slug } },
-          limit: 1,
-          depth: 1,
-        });
+    return this.getCached(
+      `tag:${slug}`,
+      async () => {
+        try {
+          const payload = await getPayloadClient();
+          const result = await payload.find({
+            collection: 'tags',
+            where: { slug: { equals: slug } },
+            limit: 1,
+            depth: 1,
+          });
 
-        return result.docs[0] ? this.transformTag(result.docs[0] as unknown as PayloadTagDocument) : null;
-      } catch (error) {
-        console.error(`Error fetching tag by slug ${slug}:`, error);
-        return null;
-      }
-    }, null); // Fallback to null during build
+          return result.docs[0]
+            ? this.transformTag(result.docs[0] as unknown as PayloadTagDocument)
+            : null;
+        } catch (error) {
+          console.error(`Error fetching tag by slug ${slug}:`, error);
+          return null;
+        }
+      },
+      null
+    ); // Fallback to null during build
   }
 
   async getPopularTags(limit: number = 10): Promise<Tag[]> {
-    return this.getCached(`tags:popular:${limit}`, async () => {
-      try {
-        const payload = await getPayloadClient();
-        const result = await payload.find({
-          collection: 'tags',
-          limit: limit,
-          depth: 1,
-          sort: '-usageCount', // Sort by usageCount descending
-        });
+    return this.getCached(
+      `tags:popular:${limit}`,
+      async () => {
+        try {
+          const payload = await getPayloadClient();
+          const result = await payload.find({
+            collection: 'tags',
+            limit: limit,
+            depth: 1,
+            sort: '-usageCount', // Sort by usageCount descending
+          });
 
-        return result.docs.map(doc => this.transformTag(doc as unknown as PayloadTagDocument));
-      } catch (error) {
-        console.error('Error fetching popular tags:', error);
-        return [];
-      }
-    }, []); // Fallback to empty array during build
+          return result.docs.map((doc) => this.transformTag(doc as unknown as PayloadTagDocument));
+        } catch (error) {
+          console.error('Error fetching popular tags:', error);
+          return [];
+        }
+      },
+      []
+    ); // Fallback to empty array during build
   }
 
   // Blog Posts
   async getAllBlogPosts(): Promise<BlogPost[]> {
-    return this.getCached('blog-posts', async () => {
-      const payload = await getPayloadClient();
-      const result = await payload.find({
-        collection: 'blog-posts',
-        where: { published: { equals: true } },
-        limit: 1000,
-        depth: 2,
-        sort: '-publishedAt',
-      });
+    return this.getCached(
+      'blog-posts',
+      async () => {
+        const payload = await getPayloadClient();
+        const result = await payload.find({
+          collection: 'blog-posts',
+          where: { published: { equals: true } },
+          limit: 1000,
+          depth: 2,
+          sort: '-publishedAt',
+        });
 
-      return result.docs.map(doc => this.transformPayloadBlogPost(doc as unknown as PayloadBlogDocument));
-    }, []); // Fallback to empty array during build
+        return result.docs.map((doc) =>
+          this.transformPayloadBlogPost(doc as unknown as PayloadBlogDocument)
+        );
+      },
+      []
+    ); // Fallback to empty array during build
   }
 
   async getBlogPosts(params?: { category?: string; featured?: boolean }): Promise<BlogPost[]> {
@@ -1428,67 +1601,83 @@ class PayloadCMSDataService {
     let filtered = allPosts;
 
     if (params?.category) {
-      filtered = filtered.filter(post => post.category === params.category);
+      filtered = filtered.filter((post) => post.category === params.category);
     }
 
     if (params?.featured) {
-      filtered = filtered.filter(post => post.featured);
+      filtered = filtered.filter((post) => post.featured);
     }
 
     return filtered;
   }
 
   async getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
-    return this.getCached(`blog-post:${slug}`, async () => {
-      const payload = await getPayloadClient();
-      const result = await payload.find({
-        collection: 'blog-posts',
-        where: { slug: { equals: slug } },
-        limit: 1,
-        depth: 2,
-      });
+    return this.getCached(
+      `blog-post:${slug}`,
+      async () => {
+        const payload = await getPayloadClient();
+        const result = await payload.find({
+          collection: 'blog-posts',
+          where: { slug: { equals: slug } },
+          limit: 1,
+          depth: 2,
+        });
 
-      return result.docs[0] ? this.transformPayloadBlogPost(result.docs[0] as unknown as PayloadBlogDocument) : null;
-    }, null); // Fallback to null during build
+        return result.docs[0]
+          ? this.transformPayloadBlogPost(result.docs[0] as unknown as PayloadBlogDocument)
+          : null;
+      },
+      null
+    ); // Fallback to null during build
   }
 
   // Team Members
   async getTeamMembers(): Promise<TeamMember[]> {
-    return this.getCached('team-members', async () => {
-      const payload = await getPayloadClient();
-      const result = await payload.find({
-        collection: 'team-members',
-        limit: 1000,
-        sort: 'order',
-      });
+    return this.getCached(
+      'team-members',
+      async () => {
+        const payload = await getPayloadClient();
+        const result = await payload.find({
+          collection: 'team-members',
+          limit: 1000,
+          sort: 'order',
+        });
 
-      return result.docs.map(doc => this.transformPayloadTeamMember(doc as unknown as PayloadTeamMemberDocument));
-    }, []); // Fallback to empty array during build
+        return result.docs.map((doc) =>
+          this.transformPayloadTeamMember(doc as unknown as PayloadTeamMemberDocument)
+        );
+      },
+      []
+    ); // Fallback to empty array during build
   }
 
   // Company Info
   async getCompanyInfo(): Promise<CompanyInfo | null> {
-    return this.getCached('company:info', async () => {
-      try {
-        const payload = await getPayloadClient();
-        const result = await payload.find({
-          collection: 'company-info',
-          limit: 1,
-          depth: 1,
-        });
+    return this.getCached(
+      'company:info',
+      async () => {
+        try {
+          const payload = await getPayloadClient();
+          const result = await payload.find({
+            collection: 'company-info',
+            limit: 1,
+            depth: 1,
+          });
 
-        const doc = result.docs[0];
-        if (!doc) {
-          console.warn('Company info not found in Payload CMS');
+          const doc = result.docs[0];
+          if (!doc) {
+            console.warn('Company info not found in Payload CMS');
+            return null;
+          }
+
+          return this.transformCompany(doc as unknown as PayloadCompanyDocument);
+        } catch (error) {
+          console.error('Error fetching company info:', error);
           return null;
         }
-
-        return this.transformCompany(doc as unknown as PayloadCompanyDocument);
-      } catch (error) {
-        console.error('Error fetching company info:', error);
-        return null;
-      }
-    }, null); // Fallback to null during build
+      },
+      null
+    ); // Fallback to null during build
   }
 
   // Search functionality
@@ -1497,7 +1686,7 @@ class PayloadCMSDataService {
     const searchLower = query.toLowerCase();
 
     return vendors.filter(
-      vendor =>
+      (vendor) =>
         vendor.name.toLowerCase().includes(searchLower) ||
         vendor.description.toLowerCase().includes(searchLower)
     );
@@ -1508,7 +1697,7 @@ class PayloadCMSDataService {
     const searchLower = query.toLowerCase();
 
     return partners.filter(
-      partner =>
+      (partner) =>
         partner.name.toLowerCase().includes(searchLower) ||
         partner.description.toLowerCase().includes(searchLower)
     );
@@ -1519,7 +1708,7 @@ class PayloadCMSDataService {
     const searchLower = query.toLowerCase();
 
     return products.filter(
-      product =>
+      (product) =>
         product.name.toLowerCase().includes(searchLower) ||
         product.description.toLowerCase().includes(searchLower)
     );
@@ -1530,7 +1719,7 @@ class PayloadCMSDataService {
     const searchLower = query.toLowerCase();
 
     return posts.filter(
-      post =>
+      (post) =>
         post.title.toLowerCase().includes(searchLower) ||
         post.excerpt.toLowerCase().includes(searchLower)
     );
@@ -1538,131 +1727,171 @@ class PayloadCMSDataService {
 
   // Yachts
   async getYachts(): Promise<Yacht[]> {
-    return this.getCached('yachts:all', async () => {
-      const payload = await getPayloadClient();
-      const result = await payload.find({
-        collection: 'yachts',
-        depth: 2, // Resolve vendor and product relationships in supplierMap
-        limit: 1000,
-        sort: '-launchYear', // Newest first
-      });
+    return this.getCached(
+      'yachts:all',
+      async () => {
+        const payload = await getPayloadClient();
+        const result = await payload.find({
+          collection: 'yachts',
+          depth: 2, // Resolve vendor and product relationships in supplierMap
+          limit: 1000,
+          sort: '-launchYear', // Newest first
+        });
 
-      return result.docs.map(doc => this.transformYacht(doc as unknown as PayloadYachtDocument));
-    }, []); // Fallback to empty array during build
+        return result.docs.map((doc) =>
+          this.transformYacht(doc as unknown as PayloadYachtDocument)
+        );
+      },
+      []
+    ); // Fallback to empty array during build
   }
 
   async getYachtBySlug(slug: string): Promise<Yacht | null> {
-    return this.getCached(`yacht:${slug}`, async () => {
-      const payload = await getPayloadClient();
-      const result = await payload.find({
-        collection: 'yachts',
-        where: { slug: { equals: slug } },
-        depth: 2,
-        limit: 1,
-      });
+    return this.getCached(
+      `yacht:${slug}`,
+      async () => {
+        const payload = await getPayloadClient();
+        const result = await payload.find({
+          collection: 'yachts',
+          where: { slug: { equals: slug } },
+          depth: 2,
+          limit: 1,
+        });
 
-      return result.docs[0] ? this.transformYacht(result.docs[0] as unknown as PayloadYachtDocument) : null;
-    }, null); // Fallback to null during build
+        return result.docs[0]
+          ? this.transformYacht(result.docs[0] as unknown as PayloadYachtDocument)
+          : null;
+      },
+      null
+    ); // Fallback to null during build
   }
 
   async getFeaturedYachts(): Promise<Yacht[]> {
-    return this.getCached('yachts:featured', async () => {
-      const payload = await getPayloadClient();
-      const result = await payload.find({
-        collection: 'yachts',
-        where: { featured: { equals: true } },
-        depth: 2,
-        limit: 100,
-        sort: '-launchYear',
-      });
+    return this.getCached(
+      'yachts:featured',
+      async () => {
+        const payload = await getPayloadClient();
+        const result = await payload.find({
+          collection: 'yachts',
+          where: { featured: { equals: true } },
+          depth: 2,
+          limit: 100,
+          sort: '-launchYear',
+        });
 
-      return result.docs.map(doc => this.transformYacht(doc as unknown as PayloadYachtDocument));
-    }, []); // Fallback to empty array during build
+        return result.docs.map((doc) =>
+          this.transformYacht(doc as unknown as PayloadYachtDocument)
+        );
+      },
+      []
+    ); // Fallback to empty array during build
   }
 
   async getYachtsByVendor(vendorSlug: string): Promise<Yacht[]> {
-    return this.getCached(`yachts:vendor:${vendorSlug}`, async () => {
-      // First get vendor ID from slug
-      const vendor = await this.getVendorBySlug(vendorSlug);
-      if (!vendor) return [];
+    return this.getCached(
+      `yachts:vendor:${vendorSlug}`,
+      async () => {
+        // First get vendor ID from slug
+        const vendor = await this.getVendorBySlug(vendorSlug);
+        if (!vendor) return [];
 
-      const payload = await getPayloadClient();
-      const result = await payload.find({
-        collection: 'yachts',
-        where: {
-          'supplierMap.vendor': { equals: vendor.id }
-        },
-        depth: 2,
-        limit: 1000,
-        sort: '-launchYear',
-      });
+        const payload = await getPayloadClient();
+        const result = await payload.find({
+          collection: 'yachts',
+          where: {
+            'supplierMap.vendor': { equals: vendor.id },
+          },
+          depth: 2,
+          limit: 1000,
+          sort: '-launchYear',
+        });
 
-      return result.docs.map(doc => this.transformYacht(doc as unknown as PayloadYachtDocument));
-    }, []); // Fallback to empty array during build
+        return result.docs.map((doc) =>
+          this.transformYacht(doc as unknown as PayloadYachtDocument)
+        );
+      },
+      []
+    ); // Fallback to empty array during build
   }
 
   // Utility methods for static generation
   async getVendorSlugs(): Promise<string[]> {
     const vendors = await this.getAllVendors();
-    return vendors.map(vendor => vendor.slug).filter(Boolean) as string[];
+    return vendors.map((vendor) => vendor.slug).filter(Boolean) as string[];
   }
 
   async getPartnerSlugs(): Promise<string[]> {
     const partners = await this.getAllPartners();
-    return partners.map(partner => partner.slug).filter(Boolean) as string[];
+    return partners.map((partner) => partner.slug).filter(Boolean) as string[];
   }
 
   async getProductSlugs(): Promise<string[]> {
     const products = await this.getAllProducts();
-    return products.map(product => product.slug || product.id).filter(Boolean) as string[];
+    return products.map((product) => product.slug || product.id).filter(Boolean) as string[];
   }
 
   async getBlogPostSlugs(): Promise<string[]> {
     const posts = await this.getAllBlogPosts();
-    return posts.map(post => post.slug).filter(Boolean) as string[];
+    return posts.map((post) => post.slug).filter(Boolean) as string[];
   }
 
   // Enhanced vendor profile methods (for Platform Vision features)
   async getVendorCertifications(vendorId: string): Promise<any[]> {
-    return this.getCached(`vendor-certifications:${vendorId}`, async () => {
-      const vendor = await this.getVendorById(vendorId);
-      return vendor?.certifications || [];
-    }, []); // Fallback to empty array during build
+    return this.getCached(
+      `vendor-certifications:${vendorId}`,
+      async () => {
+        const vendor = await this.getVendorById(vendorId);
+        return vendor?.certifications || [];
+      },
+      []
+    ); // Fallback to empty array during build
   }
 
   async getVendorAwards(vendorId: string): Promise<any[]> {
-    return this.getCached(`vendor-awards:${vendorId}`, async () => {
-      const vendor = await this.getVendorById(vendorId);
-      return vendor?.awards || [];
-    }, []); // Fallback to empty array during build
+    return this.getCached(
+      `vendor-awards:${vendorId}`,
+      async () => {
+        const vendor = await this.getVendorById(vendorId);
+        return vendor?.awards || [];
+      },
+      []
+    ); // Fallback to empty array during build
   }
 
   async getVendorSocialProof(vendorId: string): Promise<any> {
-    return this.getCached(`vendor-social-proof:${vendorId}`, async () => {
-      const vendor = await this.getVendorById(vendorId);
-      return vendor?.socialProof || {};
-    }, {}); // Fallback to empty object during build
+    return this.getCached(
+      `vendor-social-proof:${vendorId}`,
+      async () => {
+        const vendor = await this.getVendorById(vendorId);
+        return vendor?.socialProof || {};
+      },
+      {}
+    ); // Fallback to empty object during build
   }
 
   async getEnhancedVendorProfile(vendorId: string): Promise<any> {
-    return this.getCached(`enhanced-vendor:${vendorId}`, async () => {
-      const vendor = await this.getVendorById(vendorId);
-      if (!vendor) return null;
+    return this.getCached(
+      `enhanced-vendor:${vendorId}`,
+      async () => {
+        const vendor = await this.getVendorById(vendorId);
+        if (!vendor) return null;
 
-      return {
-        id: vendor.id,
-        name: vendor.name,
-        slug: vendor.slug,
-        certifications: vendor.certifications || [],
-        awards: vendor.awards || [],
-        socialProof: vendor.socialProof || {},
-        videoUrl: vendor.videoIntroduction?.videoUrl,
-        caseStudies: vendor.caseStudies || [],
-        innovationHighlights: vendor.innovationHighlights || [],
-        teamMembers: vendor.teamMembers || [],
-        yachtProjects: vendor.yachtProjects || [],
-      };
-    }, null); // Fallback to null during build
+        return {
+          id: vendor.id,
+          name: vendor.name,
+          slug: vendor.slug,
+          certifications: vendor.certifications || [],
+          awards: vendor.awards || [],
+          socialProof: vendor.socialProof || {},
+          videoUrl: vendor.videoIntroduction?.videoUrl,
+          caseStudies: vendor.caseStudies || [],
+          innovationHighlights: vendor.innovationHighlights || [],
+          teamMembers: vendor.teamMembers || [],
+          yachtProjects: vendor.yachtProjects || [],
+        };
+      },
+      null
+    ); // Fallback to null during build
   }
 
   async preloadEnhancedVendorData(vendorId: string): Promise<void> {
@@ -1685,22 +1914,22 @@ class PayloadCMSDataService {
       // Construct all possible cache keys for this vendor
       const keysToDelete = [
         // Direct lookups
-        `vendor:${vendorIdOrSlug}`,           // By slug
-        `vendor-id:${vendorIdOrSlug}`,        // By ID
-        `enhanced-vendor:${vendorIdOrSlug}`,  // Enhanced by either
-        
+        `vendor:${vendorIdOrSlug}`, // By slug
+        `vendor-id:${vendorIdOrSlug}`, // By ID
+        `enhanced-vendor:${vendorIdOrSlug}`, // Enhanced by either
+
         // Derived data caches
         `vendor-certifications:${vendorIdOrSlug}`,
         `vendor-awards:${vendorIdOrSlug}`,
         `vendor-social-proof:${vendorIdOrSlug}`,
-        
+
         // Related data caches
         `yachts:vendor:${vendorIdOrSlug}`,
         `products:vendor:${vendorIdOrSlug}`,
       ];
-      
+
       // Delete exact keys
-      keysToDelete.forEach(key => {
+      keysToDelete.forEach((key) => {
         if (this.cache.has(key)) {
           this.cache.delete(key);
         }
@@ -1708,7 +1937,7 @@ class PayloadCMSDataService {
 
       // Always clear lists since vendor was modified
       const listKeys = ['vendors', 'partners', 'featured-partners', 'products'];
-      listKeys.forEach(key => {
+      listKeys.forEach((key) => {
         if (this.cache.has(key)) {
           this.cache.delete(key);
         }
@@ -1726,11 +1955,9 @@ class PayloadCMSDataService {
   clearBlogCache(blogSlug?: string): void {
     if (blogSlug) {
       // Clear specific blog post cache
-      const keysToDelete = [
-        `blog-post:${blogSlug}`,
-      ];
+      const keysToDelete = [`blog-post:${blogSlug}`];
 
-      keysToDelete.forEach(key => {
+      keysToDelete.forEach((key) => {
         if (this.cache.has(key)) {
           this.cache.delete(key);
         }
@@ -1739,7 +1966,7 @@ class PayloadCMSDataService {
 
     // Always clear the blog posts list since it may be affected
     const listKeys = ['blog-posts', 'blog-categories', 'popular-tags'];
-    listKeys.forEach(key => {
+    listKeys.forEach((key) => {
       if (this.cache.has(key)) {
         this.cache.delete(key);
       }
@@ -1801,8 +2028,7 @@ class PayloadCMSDataService {
       const vendorIds = new Set(vendors.map((v) => v.id));
       const orphanedProducts = products.filter(
         (p) =>
-          (p.vendorId && !vendorIds.has(p.vendorId)) ||
-          (p.partnerId && !vendorIds.has(p.partnerId))
+          (p.vendorId && !vendorIds.has(p.vendorId)) || (p.partnerId && !vendorIds.has(p.partnerId))
       );
 
       if (orphanedProducts.length > 0) {
@@ -1868,79 +2094,63 @@ export default payloadCMSDataService;
  * const vendors = await cachedGetAllVendors();
  */
 
-export const cachedGetAllVendors = cache(
-  async () => payloadCMSDataService.getAllVendors()
+export const cachedGetAllVendors = cache(async () => payloadCMSDataService.getAllVendors());
+
+export const cachedGetAllProducts = cache(async () => payloadCMSDataService.getAllProducts());
+
+export const cachedGetAllBlogPosts = cache(async () => payloadCMSDataService.getAllBlogPosts());
+
+export const cachedGetCategories = cache(async () => payloadCMSDataService.getCategories());
+
+export const cachedGetBlogCategories = cache(async () => payloadCMSDataService.getBlogCategories());
+
+export const cachedGetTags = cache(async () => payloadCMSDataService.getTags());
+
+export const cachedGetTeamMembers = cache(async () => payloadCMSDataService.getTeamMembers());
+
+export const cachedGetCompanyInfo = cache(async () => payloadCMSDataService.getCompanyInfo());
+
+export const cachedGetYachts = cache(async () => payloadCMSDataService.getYachts());
+
+export const cachedGetFeaturedVendors = cache(async () =>
+  payloadCMSDataService.getFeaturedVendors()
 );
 
-export const cachedGetAllProducts = cache(
-  async () => payloadCMSDataService.getAllProducts()
+export const cachedGetFeaturedPartners = cache(async () =>
+  payloadCMSDataService.getFeaturedPartners()
 );
 
-export const cachedGetAllBlogPosts = cache(
-  async () => payloadCMSDataService.getAllBlogPosts()
-);
+export const cachedGetFeaturedYachts = cache(async () => payloadCMSDataService.getFeaturedYachts());
 
-export const cachedGetCategories = cache(
-  async () => payloadCMSDataService.getCategories()
-);
-
-export const cachedGetBlogCategories = cache(
-  async () => payloadCMSDataService.getBlogCategories()
-);
-
-export const cachedGetTags = cache(
-  async () => payloadCMSDataService.getTags()
-);
-
-export const cachedGetTeamMembers = cache(
-  async () => payloadCMSDataService.getTeamMembers()
-);
-
-export const cachedGetCompanyInfo = cache(
-  async () => payloadCMSDataService.getCompanyInfo()
-);
-
-export const cachedGetYachts = cache(
-  async () => payloadCMSDataService.getYachts()
-);
-
-export const cachedGetFeaturedVendors = cache(
-  async () => payloadCMSDataService.getFeaturedVendors()
-);
-
-export const cachedGetFeaturedPartners = cache(
-  async () => payloadCMSDataService.getFeaturedPartners()
-);
-
-export const cachedGetFeaturedYachts = cache(
-  async () => payloadCMSDataService.getFeaturedYachts()
+export const cachedGetFeaturedProducts = cache(async () =>
+  payloadCMSDataService.getFeaturedProducts()
 );
 
 // Parameterized cached functions
-export const cachedGetVendorBySlug = cache(
-  async (slug: string) => payloadCMSDataService.getVendorBySlug(slug)
+export const cachedGetVendorBySlug = cache(async (slug: string) =>
+  payloadCMSDataService.getVendorBySlug(slug)
 );
 
-export const cachedGetProductBySlug = cache(
-  async (slug: string) => payloadCMSDataService.getProductBySlug(slug)
+export const cachedGetProductBySlug = cache(async (slug: string) =>
+  payloadCMSDataService.getProductBySlug(slug)
 );
 
-export const cachedGetBlogPostBySlug = cache(
-  async (slug: string) => payloadCMSDataService.getBlogPostBySlug(slug)
+export const cachedGetBlogPostBySlug = cache(async (slug: string) =>
+  payloadCMSDataService.getBlogPostBySlug(slug)
 );
 
-export const cachedGetYachtBySlug = cache(
-  async (slug: string) => payloadCMSDataService.getYachtBySlug(slug)
+export const cachedGetYachtBySlug = cache(async (slug: string) =>
+  payloadCMSDataService.getYachtBySlug(slug)
 );
 
-export const cachedGetCategoryBySlug = cache(
-  async (slug: string) => payloadCMSDataService.getCategoryBySlug(slug)
+export const cachedGetCategoryBySlug = cache(async (slug: string) =>
+  payloadCMSDataService.getCategoryBySlug(slug)
 );
 
-export const cachedGetTagBySlug = cache(
-  async (slug: string) => payloadCMSDataService.getTagBySlug(slug)
+export const cachedGetTagBySlug = cache(async (slug: string) =>
+  payloadCMSDataService.getTagBySlug(slug)
 );
 
-export const cachedGetProductsByVendor = cache(
-  async (vendorId: string) => payloadCMSDataService.getProductsByVendor(vendorId)
+export const cachedGetProductsByVendor = cache(async (vendorId: string) =>
+  payloadCMSDataService.getProductsByVendor(vendorId)
 );

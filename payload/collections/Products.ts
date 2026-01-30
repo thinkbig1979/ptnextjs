@@ -8,7 +8,7 @@ const Products: CollectionConfig = {
   slug: 'products',
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'vendor', 'published', 'createdAt'],
+    defaultColumns: ['name', 'vendor', 'published', 'featured', 'createdAt'],
     group: 'Content',
   },
   access: {
@@ -189,6 +189,19 @@ const Products: CollectionConfig = {
       access: {
         // @ts-expect-error - Payload CMS 3.x canary types may have incompatibilities with field-level access
         update: isAdmin, // Only admins can publish products
+      },
+    },
+    {
+      name: 'featured',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        position: 'sidebar',
+        description: 'Feature this product on homepage',
+      },
+      access: {
+        // @ts-expect-error - Payload CMS 3.x canary types may have incompatibilities with field-level access
+        update: isAdmin, // Only admins can feature products
       },
     },
 
