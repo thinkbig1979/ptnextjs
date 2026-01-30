@@ -1,6 +1,6 @@
 #!/bin/sh
 # Docker entrypoint script for Next.js + Payload CMS
-# Handles database migrations and cache warmup before starting the application
+# Handles database schema synchronization and cache warmup before starting the application
 # Supports both PostgreSQL (production) and SQLite (development)
 
 set -e
@@ -27,14 +27,37 @@ if [ "$DB_TYPE" = "postgres" ]; then
     sleep 2
 fi
 
-# Run Payload migrations (only for SQLite - PostgreSQL uses Payload's auto-push)
-# Payload CMS with push: true in payload.config.ts auto-applies schema changes
-if [ "$DB_TYPE" = "sqlite" ] && [ -f "/app/run-migrations.js" ]; then
-    echo "🔄 Running database migrations..."
+# =============================================================================
+# DATABASE SCHEMA SYNCHRONIZATION
+# =============================================================================
+# Payload CMS with push: true in payload.config.ts uses Drizzle's push mode
+# to automatically sync schema changes. However, this happens when Payload
+# initializes, which can race with the app startup.
+#
+# To ensure schema changes are applied BEFORE the app serves requests:
+# - PostgreSQL: Run a dedicated schema sync script that initializes Payload
+# - SQLite: Run legacy migration script for custom migrations
+# =============================================================================
+
+if [ "$DB_TYPE" = "postgres" ]; then
+    echo "🔄 Synchronizing PostgreSQL schema..."
+    echo "   This ensures new fields (like 'featured') are added to the database"
+
+    if [ -f "/app/sync-postgres-schema.js" ]; then
+        # Run the schema sync script which initializes Payload to trigger push mode
+        node /app/sync-postgres-schema.js || {
+            echo "⚠️  Schema sync script had issues, app will retry on startup"
+        }
+    else
+        echo "⚠️  Schema sync script not found, relying on app startup push"
+    fi
+
+    echo "✅ Schema synchronization step complete"
+
+elif [ "$DB_TYPE" = "sqlite" ] && [ -f "/app/run-migrations.js" ]; then
+    echo "🔄 Running SQLite migrations..."
     node /app/run-migrations.js
     echo "✅ Migrations complete"
-else
-    echo "ℹ️  Skipping migrations (PostgreSQL uses Payload's auto-push)"
 fi
 
 # Start the Next.js server

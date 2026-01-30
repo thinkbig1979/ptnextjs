@@ -109,8 +109,9 @@ COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/payload.config.ts ./
 COPY --from=builder --chown=nextjs:nodejs /app/package.json ./
 
-# Copy migration scripts for runtime schema sync
+# Copy migration and schema sync scripts for runtime
 COPY --from=builder --chown=nextjs:nodejs /app/scripts/run-migrations.js ./run-migrations.js
+COPY --from=builder --chown=nextjs:nodejs /app/scripts/sync-postgres-schema.js ./sync-postgres-schema.js
 COPY --from=builder --chown=nextjs:nodejs /app/scripts/docker-entrypoint.sh ./docker-entrypoint.sh
 RUN chmod +x ./docker-entrypoint.sh
 

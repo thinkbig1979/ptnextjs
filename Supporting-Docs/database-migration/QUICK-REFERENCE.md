@@ -117,6 +117,36 @@ docker exec ptnextjs-postgres pg_dump -U ptnextjs -d ptnextjs -Fc > backup.dump
 docker exec -i ptnextjs-postgres pg_restore -U ptnextjs -d ptnextjs < backup.dump
 ```
 
+## Production Schema Synchronization
+
+When you add new fields to Payload collections (e.g., `featured` boolean on Products), the schema needs to sync to production PostgreSQL.
+
+**How it works:**
+1. `docker-entrypoint.sh` runs `sync-postgres-schema.js` before starting the app
+2. This script initializes Payload CMS which triggers Drizzle's `push` mode
+3. New columns are automatically added to the database
+4. Then the Next.js server starts
+
+**Manual schema sync (if needed):**
+```bash
+# Add a column manually
+docker exec -it ptnextjs-postgres psql -U ptnextjs -d ptnextjs -c \
+  "ALTER TABLE products ADD COLUMN IF NOT EXISTS featured BOOLEAN DEFAULT false;"
+
+# Check if column exists
+docker exec ptnextjs-postgres psql -U ptnextjs -d ptnextjs -c \
+  "SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'products';"
+```
+
+**Force schema resync:**
+```bash
+# Restart the app container to trigger schema sync
+docker compose --env-file .env.production restart app
+
+# Check container logs for sync status
+docker compose --env-file .env.production logs app | grep -i "schema"
+```
+
 ## Troubleshooting
 
 | Issue | Solution |
@@ -125,6 +155,8 @@ docker exec -i ptnextjs-postgres pg_restore -U ptnextjs -d ptnextjs < backup.dum
 | Connection refused | Check: `docker compose ps` and `docker compose logs postgres` |
 | Auth failed | Verify DATABASE_URL matches POSTGRES_PASSWORD in compose |
 | Duplicate ID errors | Reset sequences in PostgreSQL |
+| New field not in production | Restart app container or manually add column (see above) |
+| Schema sync fails on startup | Check logs: `docker logs ptnextjs-app`, verify DB connectivity |
 
 ## Files Reference
 
@@ -132,6 +164,8 @@ docker exec -i ptnextjs-postgres pg_restore -U ptnextjs -d ptnextjs < backup.dum
 |------|---------|
 | `docker-compose.yml` | Local dev PostgreSQL |
 | `docker-compose.production.example.yml` | Production template |
-| `scripts/migration/sqlite-to-postgres.ts` | Migration script |
+| `scripts/migration/sqlite-to-postgres.ts` | SQLite to PostgreSQL data migration |
+| `scripts/sync-postgres-schema.js` | Runtime schema sync for Docker deployments |
+| `scripts/docker-entrypoint.sh` | Container startup script (runs schema sync) |
 | `.env.local` | Local environment (set USE_POSTGRES) |
-| `payload.config.ts` | Database adapter config |
+| `payload.config.ts` | Database adapter config (push: true enables auto-sync) |
