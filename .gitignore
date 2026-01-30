@@ -63,6 +63,14 @@ migrations/
 # Agent OS test monitoring
 .agent-os/test-events/
 
+# Drift - cache and temporary files (keep config and patterns)
+.drift/cache/
+.drift/indexes/
+.drift/lake/
+.drift/views/
+.drift/reports/*.html
+.drift/reports/*.json
+
 # Test artifacts
 test-results/
 playwright-report/

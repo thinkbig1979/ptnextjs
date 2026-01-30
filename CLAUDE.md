@@ -150,3 +150,80 @@ npm run build          # Verify static generation works
 - [Payload CMS Docs](https://payloadcms.com/docs)
 - [Next.js App Router](https://nextjs.org/docs/app)
 - [shadcn/ui](https://ui.shadcn.com)
+
+# Drift - Architectural Pattern Enforcement
+
+Drift detects and enforces codebase patterns via MCP tools (49 available). It learns conventions from existing code and flags deviations.
+
+**Current health score: 95/100** | 751 approved patterns across 15 categories
+
+## Quick Start (MCP Tools)
+
+| Task                      | Tool                     | Purpose                                    |
+| ------------------------- | ------------------------ | ------------------------------------------ |
+| Check codebase health     | `drift_status`           | Health score and pattern summary           |
+| Start any coding task     | `drift_context`          | Get patterns, examples, files to modify    |
+| Find tool for your intent | `drift_capabilities`     | Navigation guide with tool recommendations |
+| Validate before writing   | `drift_prevalidate`      | Check code follows patterns before commit  |
+| Validate after writing    | `drift_validate_change`  | Verify generated code matches patterns     |
+
+## Common Workflows
+
+**Adding a feature:**
+```
+drift_context(intent="add_feature", focus="user authentication")
+  → drift_code_examples  → drift_validate_change
+```
+
+**Fixing a bug:**
+```
+drift_context(intent="fix_bug", focus="payment")
+  → drift_file_patterns → drift_callers
+```
+
+**Security review:**
+```
+drift_security_summary → drift_reachability → drift_error_handling
+```
+
+**Refactoring:**
+```
+drift_impact_analysis → drift_coupling → drift_test_topology
+```
+
+## Key MCP Tools by Category
+
+**Orchestration** (start here):
+- `drift_context` - Curated context for any task. **Always start here for code generation.**
+- `drift_package_context` - Package-specific context in monorepos
+
+**Surgical lookups** (fast, low token cost):
+- `drift_signature` - Function/class signature without reading files
+- `drift_callers` - Who calls this function
+- `drift_imports` - Correct import statements
+- `drift_type` - Expand type definitions
+- `drift_recent` - Recent changes in an area
+
+**Exploration**:
+- `drift_patterns_list` - List patterns by category/status
+- `drift_files_list` - Files with pattern counts
+- `drift_security_summary` - Security posture overview
+
+**Analysis**:
+- `drift_impact_analysis` - What breaks if you change X
+- `drift_coupling` - Module dependencies and cycles
+- `drift_test_topology` - Test coverage and mappings
+
+## Pattern Categories
+
+`structural`, `components`, `styling`, `api`, `auth`, `security`, `errors`, `types`, `logging`, `performance`, `accessibility`, `config`, `documentation`, `data-access`, `testing`
+
+## CLI Commands (Alternative)
+
+```bash
+drift status              # Health score and pattern summary
+drift check               # Check for violations (run before commits)
+drift check --staged      # Check only staged files
+```
+
+**Note**: The `.agent-os/hooks/` directory is excluded from certain API patterns as it contains internal tooling with different conventions.

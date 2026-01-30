@@ -3,7 +3,7 @@ import { Inter } from 'next/font/google';
 import '../globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Navigation } from '@/components/navigation';
-import { Footer } from '@/components/footer';
+import { FooterWrapper } from '@/components/footer-wrapper';
 import { Toaster } from '@/components/ui/sonner';
 import { payloadCMSDataService } from '@/lib/payload-cms-data-service';
 import { AuthProvider } from '@/lib/context/AuthContext';
@@ -131,7 +131,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
             <div className="min-h-screen flex flex-col">
               <Navigation />
               <main className="flex-1">{children}</main>
-              <Footer companyInfo={companyInfo || undefined} />
+              <FooterWrapper companyInfo={companyInfo || undefined} />
             </div>
             <Toaster />
           </ThemeProvider>

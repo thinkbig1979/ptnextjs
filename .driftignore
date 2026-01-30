@@ -1,0 +1,78 @@
+# Drift ignore patterns
+# Files and directories to ignore during scanning
+
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+.build/
+
+# Test coverage & reports
+coverage/
+test-results/
+playwright-report/
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Database files (not code patterns)
+*.db
+*.db-shm
+*.db-wal
+data/
+postgres-data/
+backups/
+
+# Generated files (not source patterns)
+*.tsbuildinfo
+payload-types.ts
+generated-schema.graphql
+tina/__generated__/
+.tina/__generated__/
+migrations/
+
+# Debug and test scripts (one-off files)
+*-debug.*
+*-simple.*
+debug-*.js
+debug-*.ts
+**/debug-client/**
+**/debug/**
+scripts/migrate-*
+scripts/test-*
+scripts/create-*
+scripts/cleanup-*
+
+# Environment files
+.env
+.env.*
+
+# Agent OS internals
+.agent-os/test-events/
+
+# Minified/bundled code
+*.min.js
+*.min.css
+*.bundle.js
