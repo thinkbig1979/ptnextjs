@@ -1,7 +1,7 @@
-import * as React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, Mail, Clock } from "lucide-react";
-import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
+import * as React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { MapPin, Phone, Mail, Clock } from 'lucide-react';
+import { payloadCMSDataService } from '@/lib/payload-cms-data-service';
 
 // Force dynamic rendering - database not available at Docker build time
 export const dynamic = 'force-dynamic';
@@ -11,27 +11,28 @@ export default async function ContactPage() {
   const companyInfo = await payloadCMSDataService.getCompanyInfo();
 
   // Provide default values if companyInfo is null
-  const email = companyInfo?.email || "info@paulthames.com";
-  const businessHours = companyInfo?.businessHours || "Monday - Friday: 9:00 AM - 5:00 PM CET";
+  const email = companyInfo?.email || 'info@paulthames.com';
+  const businessHours = companyInfo?.businessHours || 'Monday - Friday: 9:00 AM - 5:00 PM CET';
 
   const contactInfo = [
     {
       icon: MapPin,
-      title: "Main Office",
-      details: [
-        "Herengracht 516",
-        "1017 CC Amsterdam",
-        "The Netherlands",
-      ],
+      title: 'Main Office',
+      details: ['Herengracht 516', '1017 CC Amsterdam', 'The Netherlands'],
+    },
+    {
+      icon: Phone,
+      title: 'Phone',
+      details: ['+31 6 54657080'],
     },
     {
       icon: Mail,
-      title: "Email",
+      title: 'Email',
       details: [email],
     },
     {
       icon: Clock,
-      title: "Business Hours",
+      title: 'Business Hours',
       details: [businessHours],
     },
   ];
@@ -44,11 +45,12 @@ export default async function ContactPage() {
             Contact Us
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-poppins-light leading-relaxed">
-            Ready to explore cutting-edge superyacht technology? Get in touch with our experts today.
+            Ready to explore cutting-edge superyacht technology? Get in touch with our experts
+            today.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Contact Information Cards */}
           {contactInfo.map((info, _index) => (
             <div key={info.title}>
@@ -64,7 +66,10 @@ export default async function ContactPage() {
                 <CardContent className="text-center">
                   <div className="space-y-1">
                     {info.details.map((detail, idx) => (
-                      <p key={`${info.title}-detail-${idx}`} className="text-sm text-muted-foreground font-poppins-light">
+                      <p
+                        key={`${info.title}-detail-${idx}`}
+                        className="text-sm text-muted-foreground font-poppins-light"
+                      >
                         {detail}
                       </p>
                     ))}

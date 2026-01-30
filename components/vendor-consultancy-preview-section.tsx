@@ -1,28 +1,58 @@
-import * as React from "react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Handshake, Target, Users, TrendingUp } from "lucide-react";
-import { cn } from "@/lib/utils";
+import * as React from 'react';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import {
+  ArrowRight,
+  Handshake,
+  Target,
+  Users,
+  TrendingUp,
+  UserCheck,
+  Building2,
+  Network,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface VendorConsultancyPreviewSectionProps {
   className?: string;
 }
 
+const networkStats = [
+  {
+    icon: UserCheck,
+    value: '21',
+    label: 'Sales Agents',
+    description: 'Across major yachting markets',
+  },
+  {
+    icon: Building2,
+    value: 'Direct',
+    label: 'Yard Access',
+    description: 'Contacts at every major shipyard',
+  },
+  {
+    icon: Network,
+    value: 'Global',
+    label: 'Hub Network',
+    description: 'Presence in all yachting hubs',
+  },
+];
+
 const vendorHighlights = [
   {
     icon: Target,
-    title: "Proposition Testing",
-    description: "Candid evaluation of product positioning and market fit for superyacht projects",
+    title: 'Proposition Testing',
+    description: 'Candid evaluation of product positioning and market fit for superyacht projects',
   },
   {
     icon: TrendingUp,
-    title: "Market Strategy",
-    description: "Guidance on reaching specifiers, shipyards, and project decision-makers",
+    title: 'Market Strategy',
+    description: 'Guidance on reaching specifiers, shipyards, and project decision-makers',
   },
   {
     icon: Users,
-    title: "Platform Visibility",
-    description: "Access to project teams through directory listings and curated introductions",
+    title: 'Platform Visibility',
+    description: 'Access to project teams through directory listings and curated introductions',
   },
 ];
 
@@ -34,16 +64,21 @@ const vendorHighlights = [
  * - Three highlight cards showing vendor-focused services
  * - CTA linking to the full vendor consultancy page
  */
-export function VendorConsultancyPreviewSection({ className }: VendorConsultancyPreviewSectionProps) {
+export function VendorConsultancyPreviewSection({
+  className,
+}: VendorConsultancyPreviewSectionProps) {
   return (
     <section
       aria-label="Vendor Consultancy Services Preview"
-      className={cn("py-20 md:py-28 bg-background", className)}
+      className={cn('py-20 md:py-28 bg-background', className)}
     >
       <div className="container max-w-screen-xl">
         {/* Section Header */}
         <div className="text-center mb-12">
-          <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-6" aria-hidden="true">
+          <div
+            className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-6"
+            aria-hidden="true"
+          >
             <Handshake className="w-8 h-8 text-white" />
           </div>
           <p className="text-sm uppercase tracking-widest text-accent font-poppins-medium mb-4">
@@ -53,9 +88,29 @@ export function VendorConsultancyPreviewSection({ className }: VendorConsultancy
             Vendor Consultancy
           </h2>
           <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto font-poppins-light leading-relaxed">
-            For manufacturers, distributors, and technology providers entering or expanding
-            in the superyacht market. Practical guidance on positioning, pricing, and market access.
+            For manufacturers, distributors, and technology providers entering or expanding in the
+            superyacht market. Practical guidance on positioning, pricing, and market access.
           </p>
+        </div>
+
+        {/* Network Stats */}
+        <div className="grid md:grid-cols-3 gap-6 mb-12">
+          {networkStats.map((stat) => (
+            <div
+              key={stat.label}
+              className="text-center p-6 rounded-xl bg-accent/5 border border-accent/20"
+            >
+              <div
+                className="w-12 h-12 bg-accent rounded-full flex items-center justify-center mx-auto mb-3"
+                aria-hidden="true"
+              >
+                <stat.icon className="w-6 h-6 text-white" />
+              </div>
+              <p className="text-3xl font-cormorant font-bold text-accent mb-1">{stat.value}</p>
+              <p className="text-sm font-poppins-medium text-foreground mb-1">{stat.label}</p>
+              <p className="text-xs text-muted-foreground font-poppins-light">{stat.description}</p>
+            </div>
+          ))}
         </div>
 
         {/* Vendor Highlight Cards */}
@@ -65,7 +120,10 @@ export function VendorConsultancyPreviewSection({ className }: VendorConsultancy
               key={highlight.title}
               className="text-center p-6 rounded-xl bg-card/60 backdrop-blur-sm border border-accent/10 hover:border-accent/30 transition-colors"
             >
-              <div className="w-14 h-14 bg-accent/10 border border-accent/20 rounded-lg flex items-center justify-center mx-auto mb-4" aria-hidden="true">
+              <div
+                className="w-14 h-14 bg-accent/10 border border-accent/20 rounded-lg flex items-center justify-center mx-auto mb-4"
+                aria-hidden="true"
+              >
                 <highlight.icon className="w-7 h-7 text-accent" />
               </div>
               <h3 className="text-xl font-cormorant font-bold text-accent mb-2">

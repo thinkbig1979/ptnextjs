@@ -3,7 +3,17 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Target, TrendingUp, Eye, Flag, CheckCircle, ArrowRight } from 'lucide-react';
+import {
+  Target,
+  TrendingUp,
+  Eye,
+  Flag,
+  CheckCircle,
+  ArrowRight,
+  UserCheck,
+  Building2,
+  Network,
+} from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Vendor Consultancy | Paul Thames',
@@ -57,6 +67,27 @@ const targetAudience = [
   'Startups',
 ];
 
+const networkStats = [
+  {
+    icon: UserCheck,
+    value: '21',
+    label: 'Sales Agents',
+    description: 'Across major yachting markets',
+  },
+  {
+    icon: Building2,
+    value: 'Direct',
+    label: 'Yard Access',
+    description: 'Contacts at every major shipyard',
+  },
+  {
+    icon: Network,
+    value: 'Global',
+    label: 'Hub Network',
+    description: 'Presence in all yachting hubs',
+  },
+];
+
 export default function ConsultancySuppliersPage() {
   return (
     <div className="min-h-screen py-12">
@@ -85,6 +116,38 @@ export default function ConsultancySuppliersPage() {
               >
                 {audience}
               </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Network Stats */}
+        <div className="mb-20">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl md:text-4xl font-cormorant font-bold mb-4 text-accent">
+              Our Network
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-poppins-light">
+              Direct access to decision-makers across the superyacht industry.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            {networkStats.map((stat) => (
+              <div
+                key={stat.label}
+                className="text-center p-6 rounded-xl bg-accent/5 border border-accent/20"
+              >
+                <div
+                  className="w-12 h-12 bg-accent rounded-full flex items-center justify-center mx-auto mb-3"
+                  aria-hidden="true"
+                >
+                  <stat.icon className="w-6 h-6 text-white" />
+                </div>
+                <p className="text-3xl font-cormorant font-bold text-accent mb-1">{stat.value}</p>
+                <p className="text-sm font-poppins-medium text-foreground mb-1">{stat.label}</p>
+                <p className="text-xs text-muted-foreground font-poppins-light">
+                  {stat.description}
+                </p>
+              </div>
             ))}
           </div>
         </div>

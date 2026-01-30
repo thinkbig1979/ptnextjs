@@ -1,5 +1,6 @@
 import * as React from 'react';
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { PixelGridBackground } from '@/components/pixel-grid-background';
@@ -77,6 +78,29 @@ const applications = [
   },
 ];
 
+const showcaseImages = [
+  {
+    src: '/media/creative-lighting/bar-with-dj.webp',
+    alt: 'LED pixel lighting in a yacht bar area with DJ booth',
+    title: 'Bar & Entertainment',
+  },
+  {
+    src: '/media/creative-lighting/exterioir-sofa.webp',
+    alt: 'Exterior sofa area with ambient pixel lighting',
+    title: 'Exterior Lounges',
+  },
+  {
+    src: '/media/creative-lighting/gangway.webp',
+    alt: 'Yacht gangway with integrated LED lighting',
+    title: 'Gangways',
+  },
+  {
+    src: '/media/creative-lighting/table.webp',
+    alt: 'Custom illuminated table with pixel LED integration',
+    title: 'Custom Furniture',
+  },
+];
+
 export default function CustomLightingPage() {
   return (
     <div className="min-h-screen">
@@ -100,6 +124,40 @@ export default function CustomLightingPage() {
           </div>
         </div>
       </PixelGridBackground>
+
+      {/* Image Showcase */}
+      <section className="py-20 bg-secondary/30">
+        <div className="container max-w-screen-xl">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-widest text-accent font-poppins-medium mb-4">
+              Project Examples
+            </p>
+            <h2 className="text-3xl md:text-4xl font-cormorant font-bold text-accent">
+              Creative Lighting in Action
+            </h2>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {showcaseImages.map((image) => (
+              <div
+                key={image.src}
+                className="relative aspect-square rounded-xl overflow-hidden group"
+              >
+                <Image
+                  src={image.src}
+                  alt={image.alt}
+                  fill
+                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  sizes="(max-width: 768px) 50vw, 25vw"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <p className="absolute bottom-3 left-3 right-3 text-white text-sm font-poppins-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  {image.title}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Core Approach Section */}
       <section className="py-20">
