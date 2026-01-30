@@ -2716,12 +2716,13 @@
       ],
       "metadata": {
         "firstSeen": "2026-01-30T12:33:29.791Z",
-        "lastSeen": "2026-01-30T12:33:29.791Z",
+        "lastSeen": "2026-01-30T15:51:49.156Z",
         "source": "auto-detected",
         "tags": [
           "api",
           "response-envelope"
-        ]
+        ],
+        "approvedAt": "2026-01-30T15:51:49.156Z"
       },
       "severity": "warning",
       "autoFixable": false
@@ -3451,12 +3452,13 @@
       "outliers": [],
       "metadata": {
         "firstSeen": "2026-01-30T12:33:29.792Z",
-        "lastSeen": "2026-01-30T12:33:29.792Z",
+        "lastSeen": "2026-01-30T15:51:49.389Z",
         "source": "auto-detected",
         "tags": [
           "api",
           "response-envelope"
-        ]
+        ],
+        "approvedAt": "2026-01-30T15:51:49.389Z"
       },
       "severity": "info",
       "autoFixable": false
@@ -4186,12 +4188,13 @@
       "outliers": [],
       "metadata": {
         "firstSeen": "2026-01-30T12:33:29.805Z",
-        "lastSeen": "2026-01-30T12:33:29.805Z",
+        "lastSeen": "2026-01-30T15:51:49.602Z",
         "source": "auto-detected",
         "tags": [
           "api",
           "response-envelope"
-        ]
+        ],
+        "approvedAt": "2026-01-30T15:51:49.602Z"
       },
       "severity": "info",
       "autoFixable": false
@@ -4389,12 +4392,13 @@
       "outliers": [],
       "metadata": {
         "firstSeen": "2026-01-30T12:33:29.805Z",
-        "lastSeen": "2026-01-30T12:33:29.805Z",
+        "lastSeen": "2026-01-30T15:51:49.819Z",
         "source": "auto-detected",
         "tags": [
           "api",
           "response-envelope"
-        ]
+        ],
+        "approvedAt": "2026-01-30T15:51:49.819Z"
       },
       "severity": "info",
       "autoFixable": false
@@ -4550,12 +4554,13 @@
       "outliers": [],
       "metadata": {
         "firstSeen": "2026-01-30T12:33:29.809Z",
-        "lastSeen": "2026-01-30T12:33:29.809Z",
+        "lastSeen": "2026-01-30T15:51:50.042Z",
         "source": "auto-detected",
         "tags": [
           "api",
           "response-envelope"
-        ]
+        ],
+        "approvedAt": "2026-01-30T15:51:50.042Z"
       },
       "severity": "info",
       "autoFixable": false
@@ -4992,12 +4997,13 @@
       ],
       "metadata": {
         "firstSeen": "2026-01-30T12:33:29.828Z",
-        "lastSeen": "2026-01-30T12:33:29.828Z",
+        "lastSeen": "2026-01-30T15:51:50.293Z",
         "source": "auto-detected",
         "tags": [
           "api",
           "http-methods"
-        ]
+        ],
+        "approvedAt": "2026-01-30T15:51:50.293Z"
       },
       "severity": "error",
       "autoFixable": false
@@ -5139,12 +5145,13 @@
       "outliers": [],
       "metadata": {
         "firstSeen": "2026-01-30T12:33:29.828Z",
-        "lastSeen": "2026-01-30T12:33:29.828Z",
+        "lastSeen": "2026-01-30T15:51:50.535Z",
         "source": "auto-detected",
         "tags": [
           "api",
           "http-methods"
-        ]
+        ],
+        "approvedAt": "2026-01-30T15:51:50.535Z"
       },
       "severity": "info",
       "autoFixable": false
@@ -5693,12 +5700,13 @@
       ],
       "metadata": {
         "firstSeen": "2026-01-30T12:33:29.832Z",
-        "lastSeen": "2026-01-30T12:33:29.832Z",
+        "lastSeen": "2026-01-30T15:51:50.770Z",
         "source": "auto-detected",
         "tags": [
           "api",
           "route-structure"
-        ]
+        ],
+        "approvedAt": "2026-01-30T15:51:50.770Z"
       },
       "severity": "warning",
       "autoFixable": false
@@ -6134,12 +6142,13 @@
       "outliers": [],
       "metadata": {
         "firstSeen": "2026-01-30T12:33:29.832Z",
-        "lastSeen": "2026-01-30T12:33:29.832Z",
+        "lastSeen": "2026-01-30T15:51:51.017Z",
         "source": "auto-detected",
         "tags": [
           "api",
           "route-structure"
-        ]
+        ],
+        "approvedAt": "2026-01-30T15:51:51.017Z"
       },
       "severity": "info",
       "autoFixable": false
@@ -6547,12 +6556,13 @@
       "outliers": [],
       "metadata": {
         "firstSeen": "2026-01-30T12:33:29.832Z",
-        "lastSeen": "2026-01-30T12:33:29.832Z",
+        "lastSeen": "2026-01-30T15:51:51.283Z",
         "source": "auto-detected",
         "tags": [
           "api",
           "response-envelope"
-        ]
+        ],
+        "approvedAt": "2026-01-30T15:51:51.283Z"
       },
       "severity": "info",
       "autoFixable": false
@@ -6645,12 +6655,13 @@
       "outliers": [],
       "metadata": {
         "firstSeen": "2026-01-30T12:33:29.832Z",
-        "lastSeen": "2026-01-30T12:33:29.832Z",
+        "lastSeen": "2026-01-30T15:51:51.533Z",
         "source": "auto-detected",
         "tags": [
           "api",
           "http-methods"
-        ]
+        ],
+        "approvedAt": "2026-01-30T15:51:51.533Z"
       },
       "severity": "info",
       "autoFixable": false
@@ -6729,12 +6740,13 @@
       "outliers": [],
       "metadata": {
         "firstSeen": "2026-01-30T12:33:29.832Z",
-        "lastSeen": "2026-01-30T12:33:29.832Z",
+        "lastSeen": "2026-01-30T15:51:51.778Z",
         "source": "auto-detected",
         "tags": [
           "api",
           "route-structure"
-        ]
+        ],
+        "approvedAt": "2026-01-30T15:51:51.778Z"
       },
       "severity": "info",
       "autoFixable": false
@@ -6771,12 +6783,13 @@
       "outliers": [],
       "metadata": {
         "firstSeen": "2026-01-30T12:33:29.832Z",
-        "lastSeen": "2026-01-30T12:33:29.832Z",
+        "lastSeen": "2026-01-30T15:51:52.000Z",
         "source": "auto-detected",
         "tags": [
           "api",
           "response-envelope"
-        ]
+        ],
+        "approvedAt": "2026-01-30T15:51:52.000Z"
       },
       "severity": "info",
       "autoFixable": false
@@ -6841,12 +6854,13 @@
       "outliers": [],
       "metadata": {
         "firstSeen": "2026-01-30T12:33:29.832Z",
-        "lastSeen": "2026-01-30T12:33:29.832Z",
+        "lastSeen": "2026-01-30T15:51:52.245Z",
         "source": "auto-detected",
         "tags": [
           "api",
           "http-methods"
-        ]
+        ],
+        "approvedAt": "2026-01-30T15:51:52.245Z"
       },
       "severity": "info",
       "autoFixable": false
@@ -6911,12 +6925,13 @@
       "outliers": [],
       "metadata": {
         "firstSeen": "2026-01-30T12:33:29.832Z",
-        "lastSeen": "2026-01-30T12:33:29.832Z",
+        "lastSeen": "2026-01-30T15:51:52.480Z",
         "source": "auto-detected",
         "tags": [
           "api",
           "http-methods"
-        ]
+        ],
+        "approvedAt": "2026-01-30T15:51:52.480Z"
       },
       "severity": "info",
       "autoFixable": false
@@ -6967,12 +6982,13 @@
       "outliers": [],
       "metadata": {
         "firstSeen": "2026-01-30T12:33:29.832Z",
-        "lastSeen": "2026-01-30T12:33:29.832Z",
+        "lastSeen": "2026-01-30T15:51:52.737Z",
         "source": "auto-detected",
         "tags": [
           "api",
           "http-methods"
-        ]
+        ],
+        "approvedAt": "2026-01-30T15:51:52.737Z"
       },
       "severity": "info",
       "autoFixable": false
@@ -7023,12 +7039,13 @@
       "outliers": [],
       "metadata": {
         "firstSeen": "2026-01-30T12:33:29.832Z",
-        "lastSeen": "2026-01-30T12:33:29.832Z",
+        "lastSeen": "2026-01-30T15:51:52.995Z",
         "source": "auto-detected",
         "tags": [
           "api",
           "response-envelope"
-        ]
+        ],
+        "approvedAt": "2026-01-30T15:51:52.995Z"
       },
       "severity": "info",
       "autoFixable": false
@@ -7072,12 +7089,13 @@
       "outliers": [],
       "metadata": {
         "firstSeen": "2026-01-30T12:33:29.832Z",
-        "lastSeen": "2026-01-30T12:33:29.832Z",
+        "lastSeen": "2026-01-30T15:51:53.330Z",
         "source": "auto-detected",
         "tags": [
           "api",
           "http-methods"
-        ]
+        ],
+        "approvedAt": "2026-01-30T15:51:53.330Z"
       },
       "severity": "info",
       "autoFixable": false
@@ -7114,17 +7132,18 @@
       "outliers": [],
       "metadata": {
         "firstSeen": "2026-01-30T12:33:29.832Z",
-        "lastSeen": "2026-01-30T12:33:29.832Z",
+        "lastSeen": "2026-01-30T15:51:53.590Z",
         "source": "auto-detected",
         "tags": [
           "api",
           "response-envelope"
-        ]
+        ],
+        "approvedAt": "2026-01-30T15:51:53.590Z"
       },
       "severity": "info",
       "autoFixable": false
     }
   ],
-  "lastUpdated": "2026-01-30T12:33:29.888Z",
-  "checksum": "8e472c1cc711242b"
+  "lastUpdated": "2026-01-30T16:03:30.453Z",
+  "checksum": "2544e4b8ad863f13"
 }

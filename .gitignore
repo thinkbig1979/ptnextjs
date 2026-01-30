@@ -63,13 +63,23 @@ migrations/
 # Agent OS test monitoring
 .agent-os/test-events/
 
-# Drift - cache and temporary files (keep config and patterns)
+# Drift - architectural pattern detection
+# Keep: config.json, manifest.json, patterns/*.json (approval status)
+# Ignore: generated/cached data, backups, analysis results
 .drift/cache/
 .drift/indexes/
 .drift/lake/
 .drift/views/
-.drift/reports/*.html
-.drift/reports/*.json
+.drift/history/
+.drift/audit/
+.drift/boundaries/
+.drift/call-graph/
+.drift/contracts/
+.drift/constraints/
+.drift/dna/
+.drift/reports/
+.drift/patterns/**/.backups/
+.drift/patterns/**/locations/
 
 # Test artifacts
 test-results/
