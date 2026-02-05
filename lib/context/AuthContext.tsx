@@ -127,7 +127,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setError(null);
 
     // Redirect to login page
-    router.push('/login');
+    router.push('/vendor/login');
   }, [router]);
 
   /**
@@ -149,7 +149,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       } else if (response.status === 401) {
         // Token expired or invalid
         setUser(null);
-        router.push('/login');
+        router.push('/vendor/login');
       }
     } catch (err) {
       console.error('Refresh user failed:', err);

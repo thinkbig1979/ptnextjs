@@ -969,7 +969,7 @@ export async function sendUserApprovedEmail(
       throw new Error('Unable to load user-approved template');
     }
 
-    const loginUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/login`;
+    const loginUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/vendor/login`;
 
     const html = renderTemplate(template, {
       loginUrl,
