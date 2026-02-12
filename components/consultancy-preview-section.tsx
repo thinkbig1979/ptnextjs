@@ -1,36 +1,43 @@
-import * as React from "react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { TimelineVisualization, TimelinePhase } from "@/components/timeline-visualization";
-import { ArrowRight, ClipboardCheck, FileSearch, MessageSquare, Settings } from "lucide-react";
-import { cn } from "@/lib/utils";
+import * as React from 'react';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { TimelineVisualization, TimelinePhase } from '@/components/timeline-visualization';
+import {
+  ArrowRight,
+  ClipboardCheck,
+  FileSearch,
+  MessageSquare,
+  Settings,
+  Quote,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface ConsultancyPreviewSectionProps {
   className?: string;
 }
 
 const projectPhases: TimelinePhase[] = [
-  { name: "Concept", description: "Initial ideas and requirements", active: true, primary: true },
-  { name: "Design", description: "Architecture and specifications", active: true, primary: true },
-  { name: "Build", description: "Construction and integration", active: true },
-  { name: "Deliver", description: "Commissioning and handover", active: true },
+  { name: 'Concept', description: 'Initial ideas and requirements', active: true, primary: true },
+  { name: 'Design', description: 'Architecture and specifications', active: true, primary: true },
+  { name: 'Build', description: 'Construction and integration', active: true },
+  { name: 'Deliver', description: 'Commissioning and handover', active: true },
 ];
 
 const serviceHighlights = [
   {
     icon: FileSearch,
-    title: "Specification Review",
-    description: "Independent analysis of technical specifications and equipment choices",
+    title: 'Specification Review',
+    description: 'Independent analysis of technical specifications and equipment choices',
   },
   {
     icon: Settings,
-    title: "Specification Creation",
-    description: "Developing clear, unbiased specifications for complex systems",
+    title: 'Specification Creation',
+    description: 'Developing clear, unbiased specifications for complex systems',
   },
   {
     icon: MessageSquare,
-    title: "On-Demand Support",
-    description: "Technical guidance at critical decision points throughout the project",
+    title: 'On-Demand Support',
+    description: 'Technical guidance at critical decision points throughout the project',
   },
 ];
 
@@ -47,12 +54,15 @@ export function ConsultancyPreviewSection({ className }: ConsultancyPreviewSecti
   return (
     <section
       aria-label="Project Consultancy Services Preview"
-      className={cn("py-20 md:py-28 bg-secondary/30", className)}
+      className={cn('py-20 md:py-28 bg-secondary/30', className)}
     >
       <div className="container max-w-screen-xl">
         {/* Section Header */}
         <div className="text-center mb-12">
-          <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-6" aria-hidden="true">
+          <div
+            className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-6"
+            aria-hidden="true"
+          >
             <ClipboardCheck className="w-8 h-8 text-white" />
           </div>
           <p className="text-sm uppercase tracking-widest text-accent font-poppins-medium mb-4">
@@ -83,13 +93,11 @@ export function ConsultancyPreviewSection({ className }: ConsultancyPreviewSecti
               Project Support at Every Stage
             </h3>
             <p className="text-muted-foreground font-poppins-light">
-              The earlier we&apos;re involved, the greater the impact. But we can step in at any stage.
+              The earlier we&apos;re involved, the greater the impact. But we can step in at any
+              stage.
             </p>
           </div>
-          <TimelineVisualization
-            phases={projectPhases}
-            activeLabel="Greatest impact here"
-          />
+          <TimelineVisualization phases={projectPhases} activeLabel="Greatest impact here" />
         </div>
 
         {/* Service Highlight Cards */}
@@ -99,7 +107,10 @@ export function ConsultancyPreviewSection({ className }: ConsultancyPreviewSecti
               key={highlight.title}
               className="text-center p-6 rounded-xl bg-card/60 backdrop-blur-sm border border-accent/10 hover:border-accent/30 transition-colors"
             >
-              <div className="w-14 h-14 bg-accent/10 border border-accent/20 rounded-lg flex items-center justify-center mx-auto mb-4" aria-hidden="true">
+              <div
+                className="w-14 h-14 bg-accent/10 border border-accent/20 rounded-lg flex items-center justify-center mx-auto mb-4"
+                aria-hidden="true"
+              >
                 <highlight.icon className="w-7 h-7 text-accent" />
               </div>
               <h3 className="text-xl font-cormorant font-bold text-accent mb-2">
@@ -110,6 +121,19 @@ export function ConsultancyPreviewSection({ className }: ConsultancyPreviewSecti
               </p>
             </div>
           ))}
+        </div>
+
+        {/* Testimonial Quote */}
+        <div className="max-w-2xl mx-auto mb-12">
+          <div className="bg-accent/5 border border-accent/20 rounded-xl p-6 md:p-8 text-center relative">
+            <Quote className="w-6 h-6 text-accent/30 mx-auto mb-3" aria-hidden="true" />
+            <p className="text-lg md:text-xl font-cormorant font-bold text-accent italic mb-4">
+              &ldquo;In a nutshell, Edwin is a good chap who knows what he is talking about.&rdquo;
+            </p>
+            <p className="text-sm text-muted-foreground font-poppins-light">
+              Klaus Waibel, Captain / Owner&apos;s Representative (Feadship Project 823)
+            </p>
+          </div>
         </div>
 
         {/* CTA Button */}

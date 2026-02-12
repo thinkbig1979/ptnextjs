@@ -26,7 +26,12 @@ interface NavigationItem {
 
 const navigationItems: NavigationItem[] = [
   { href: '/', label: 'Home' },
-  { href: '/about', label: 'About Us' },
+  {
+    href: '/about',
+    label: 'About Us',
+    overviewLabel: 'About Us',
+    submenu: [{ href: '/testimonials', label: 'Testimonials' }],
+  },
   { href: '/custom-lighting', label: 'Creative Lighting' },
   {
     href: '/consultancy',
