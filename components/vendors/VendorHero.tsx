@@ -7,7 +7,7 @@ import { TierBadge } from '@/components/vendors/TierBadge';
 import { YearsInBusinessDisplay } from '@/components/vendors/YearsInBusinessDisplay';
 import { MapPin, Package } from 'lucide-react';
 import type { Vendor } from '@/lib/types';
-import { formatVendorLocation } from '@/lib/utils/location';
+import { formatVendorLocation, getHQLocation } from '@/lib/utils/location';
 
 export interface VendorHeroProps {
   vendor: Vendor;
@@ -80,10 +80,10 @@ export function VendorHero({ vendor, productCount }: VendorHeroProps): React.JSX
 
       {/* Quick Info */}
       <div className="flex items-center flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
-        {formatVendorLocation(vendor.location) && (
+        {formatVendorLocation(getHQLocation(vendor.locations)) && (
           <div className="flex items-center space-x-1">
             <MapPin className="w-4 h-4" />
-            <span>{formatVendorLocation(vendor.location)}</span>
+            <span>{formatVendorLocation(getHQLocation(vendor.locations))}</span>
           </div>
         )}
         {/* Only show product count for Tier 2+ vendors */}

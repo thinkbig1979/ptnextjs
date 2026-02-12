@@ -32,11 +32,8 @@ export function NearbyVendorCard({
   vendor,
   distance,
 }: NearbyVendorCardProps): React.JSX.Element {
-  // Get location display info (supports both legacy location and new locations array)
   const getLocationDisplay = () => {
-    // Try new locations array first
     if (vendor.locations && vendor.locations.length > 0) {
-      // Prefer HQ location if available
       const hqLocation = vendor.locations.find(loc => loc.isHQ === true);
       const displayLocation = hqLocation || vendor.locations[0];
 
@@ -46,15 +43,6 @@ export function NearbyVendorCard({
       };
     }
 
-    // Fallback to legacy location field
-    if (vendor.location && typeof vendor.location !== 'string') {
-      return {
-        city: vendor.location.city || 'Unknown',
-        country: vendor.location.country || '',
-      };
-    }
-
-    // No location data available
     return {
       city: 'Location',
       country: 'Unknown',

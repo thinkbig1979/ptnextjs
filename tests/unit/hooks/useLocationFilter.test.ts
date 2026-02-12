@@ -34,7 +34,7 @@ describe('useLocationFilter', () => {
     {
       id: '1',
       name: 'Monaco Vendor',
-      location: monacoCoords,
+      locations: [{ ...monacoCoords, isHQ: true, city: 'Monaco', country: 'Monaco' }],
       description: '',
       category: [],
       featured: false,
@@ -43,7 +43,7 @@ describe('useLocationFilter', () => {
     {
       id: '2',
       name: 'Nice Vendor',
-      location: niceCoords,
+      locations: [{ ...niceCoords, isHQ: true, city: 'Nice', country: 'France' }],
       description: '',
       category: [],
       featured: false,
@@ -52,7 +52,7 @@ describe('useLocationFilter', () => {
     {
       id: '3',
       name: 'Paris Vendor',
-      location: parisCoords,
+      locations: [{ ...parisCoords, isHQ: true, city: 'Paris', country: 'France' }],
       description: '',
       category: [],
       featured: false,
@@ -61,7 +61,7 @@ describe('useLocationFilter', () => {
     {
       id: '4',
       name: 'London Vendor',
-      location: londonCoords,
+      locations: [{ ...londonCoords, isHQ: true, city: 'London', country: 'UK' }],
       description: '',
       category: [],
       featured: false,
@@ -70,7 +70,7 @@ describe('useLocationFilter', () => {
     {
       id: '5',
       name: 'No Location Vendor',
-      location: 'Legacy String Location',
+      locations: [],
       description: '',
       category: [],
       featured: false,
@@ -325,16 +325,15 @@ describe('useLocationFilter', () => {
 
       expect(vendor).toHaveProperty('id');
       expect(vendor).toHaveProperty('name');
-      expect(vendor).toHaveProperty('location');
+      expect(vendor).toHaveProperty('locations');
       expect(vendor).toHaveProperty('distance');
     });
 
-    it('should handle vendors with legacy string locations', () => {
+    it('should handle vendors with empty locations array', () => {
       const { result } = renderHook(() =>
         useLocationFilter(vendors, monacoCoords, 100)
       );
 
-      // Should not crash with string locations
       expect(result.current).toBeDefined();
       expect(result.current.vendorsWithoutCoordinates).toBe(1);
     });
@@ -450,32 +449,7 @@ describe('useLocationFilter', () => {
   });
 
   describe('Multi-Location Support (New Feature)', () => {
-    describe('Legacy Single Location Format (Backward Compatibility)', () => {
-      it('should filter vendors with single location object (legacy)', () => {
-        const legacyVendors: Vendor[] = [
-          {
-            id: '1',
-            name: 'Monaco Vendor',
-            location: monacoCoords,
-            description: '',
-            category: [],
-            featured: false,
-            partner: false,
-          },
-        ];
-
-        mockCalculateDistance.mockReturnValue(0);
-
-        const { result } = renderHook(() =>
-          useLocationFilter(legacyVendors, monacoCoords, 50)
-        );
-
-        expect(result.current.filteredVendors).toHaveLength(1);
-        expect(result.current.filteredVendors[0].distance).toBe(0);
-      });
-    });
-
-    describe('New Multi-Location Format', () => {
+    describe('Multi-Location Format', () => {
       it('should filter vendors with locations array (new format)', () => {
         const multiLocationVendors: Vendor[] = [
           {
@@ -781,42 +755,6 @@ describe('useLocationFilter', () => {
       });
     });
 
-    describe('Backward Compatibility Verification', () => {
-      it('should work with mix of old and new format vendors', () => {
-        const mixedVendors: Vendor[] = [
-          {
-            id: '1',
-            name: 'Legacy Vendor',
-            location: monacoCoords,
-            description: '',
-            category: [],
-            featured: false,
-            partner: false,
-          },
-          {
-            id: '2',
-            name: 'New Vendor',
-            tier: 'tier2',
-            locations: [
-              { ...niceCoords, isHQ: true, address: 'HQ', city: 'Nice', country: 'France' },
-            ],
-            description: '',
-            category: [],
-            featured: false,
-            partner: false,
-          },
-        ];
-
-        mockCalculateDistance.mockReturnValue(20);
-
-        const { result } = renderHook(() =>
-          useLocationFilter(mixedVendors, monacoCoords, 50)
-        );
-
-        // Both vendors should be included
-        expect(result.current.filteredVendors).toHaveLength(2);
-      });
-    });
   });
 
   describe('Performance and Memoization', () => {

@@ -249,12 +249,9 @@ export class ExcelExportService {
    * Extract HQ location field from vendor locations array
    */
   private static getHQLocationField(vendor: Record<string, unknown>, fieldName: string): string | null {
-    // Find HQ location from locations array
     const locations = (vendor.locations as Array<Record<string, unknown>>) || [];
     const hqLocation = locations.find((loc) => loc.isHQ === true);
-
-    // Fall back to legacy location field if no HQ found in array
-    const location = hqLocation || vendor.location;
+    const location = hqLocation || locations[0];
 
     if (!location) return null;
 

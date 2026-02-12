@@ -1,22 +1,26 @@
 import { VendorLocation, VendorCoordinates } from '../types';
 
 /**
+ * Returns the HQ location from a vendor's locations array,
+ * falling back to the first location if no HQ is designated.
+ * @param locations - Vendor locations array
+ * @returns The HQ location, or undefined if no locations exist
+ */
+export function getHQLocation(locations?: VendorLocation[]): VendorLocation | undefined {
+  if (!locations || locations.length === 0) return undefined;
+  return locations.find(loc => loc.isHQ) || locations[0];
+}
+
+/**
  * Formats vendor location for display
- * Handles both legacy string locations and new structured location objects
- * @param location - Vendor location (string or object)
+ * @param location - Vendor location object
  * @returns Formatted location string for display
  */
-export function formatVendorLocation(location: VendorLocation | string | undefined): string {
+export function formatVendorLocation(location: VendorLocation | undefined): string {
   if (!location) {
     return '';
   }
 
-  // Handle legacy string location
-  if (typeof location === 'string') {
-    return location;
-  }
-
-  // Handle structured location object
   // Priority: City, Country > Address > City > Country
   if (location.city && location.country) {
     return `${location.city}, ${location.country}`;

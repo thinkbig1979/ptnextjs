@@ -12,31 +12,7 @@ export interface VendorForLocation {
   id: string;
   name: string;
   tier?: 'free' | 'tier1' | 'tier2' | 'tier3';
-  location?: VendorLocation | string;
   locations?: (VendorLocation | SerializedVendorLocation)[];
-}
-
-/**
- * Extracts coordinates from a vendor's location field
- * Handles both VendorLocation objects and legacy string locations
- * @deprecated Use getVendorLocations for multi-location support
- */
-function getVendorCoordinates(vendor: VendorForLocation): VendorCoordinates | null {
-  if (!vendor.location) return null;
-
-  // Handle legacy string location (no coordinates)
-  if (typeof vendor.location === 'string') return null;
-
-  // Extract coordinates from VendorLocation object
-  const location = vendor.location as VendorLocation;
-  if (location.latitude !== undefined && location.longitude !== undefined) {
-    return {
-      latitude: location.latitude,
-      longitude: location.longitude,
-    };
-  }
-
-  return null;
 }
 
 /**
@@ -53,7 +29,7 @@ interface NormalizedLocation {
 
 /**
  * Extracts all eligible locations for a vendor based on tier
- * Supports both new locations[] array and legacy location object
+ * Extracts all locations from a vendor's locations array based on tier
  * @param vendor - Vendor to get locations from
  * @returns Array of eligible location objects with coordinates
  */
@@ -77,15 +53,6 @@ function getVendorLocations(vendor: VendorForLocation): NormalizedLocation[] {
     });
 
     return eligibleLocations;
-  }
-
-  // LEGACY: Handle single location object (backward compatibility)
-  if (vendor.location && typeof vendor.location !== 'string') {
-    const location = vendor.location as VendorLocation;
-    if (location.latitude !== undefined && location.longitude !== undefined) {
-      // Mark legacy location as HQ for consistency
-      return [{ ...location, isHQ: true }];
-    }
   }
 
   return [];
@@ -270,14 +237,15 @@ export function useIsVendorNearby<T extends VendorForLocation>(
   maxDistance: number
 ): { isNearby: boolean; distance?: number } {
   return useMemo(() => {
-    const vendorCoords = getVendorCoordinates(vendor);
+    const locations = getVendorLocations(vendor);
+    const firstLoc = locations[0];
 
-    if (!userLocation || !vendorCoords) {
+    if (!userLocation || !firstLoc || firstLoc.latitude === undefined || firstLoc.longitude === undefined) {
       return { isNearby: false, distance: undefined };
     }
 
     try {
-      const distance = calculateDistance(userLocation, vendorCoords, 'km');
+      const distance = calculateDistance(userLocation, { latitude: firstLoc.latitude, longitude: firstLoc.longitude }, 'km');
       const isNearby = distance <= maxDistance;
 
       return { isNearby, distance };

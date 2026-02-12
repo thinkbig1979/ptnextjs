@@ -77,12 +77,6 @@ interface PayloadVendorDocument {
   website?: string;
   founded?: number;
   foundedYear?: number;
-  location?: string;
-  location_address?: string;
-  location_city?: string;
-  location_country?: string;
-  location_latitude?: number;
-  location_longitude?: number;
   locations?: Array<{
     id?: string;
     locationName?: string;
@@ -587,21 +581,7 @@ class PayloadCMSDataService {
       })) || [];
 
     // ============================================================================
-    // SECTION 8: LOCATION - Transform from flat fields to VendorLocation object (legacy)
-    // ============================================================================
-    const location: string | VendorLocation =
-      doc.location_latitude !== undefined && doc.location_longitude !== undefined
-        ? {
-            address: doc.location_address || '',
-            city: doc.location_city || '',
-            country: doc.location_country || '',
-            latitude: doc.location_latitude,
-            longitude: doc.location_longitude,
-          }
-        : doc.location || '';
-
-    // ============================================================================
-    // SECTION 9: LOCATIONS ARRAY - Multi-location support (Tier 2+)
+    // SECTION 8: LOCATIONS ARRAY - Multi-location support (Tier 2+)
     // ============================================================================
     const locations: VendorLocation[] | undefined =
       doc.locations?.map((loc: PayloadRecord) => ({
@@ -655,7 +635,6 @@ class PayloadCMSDataService {
       website: doc.website || '',
       founded: doc.founded,
       foundedYear: doc.foundedYear || doc.founded, // Fallback to founded for backward compatibility
-      location,
       locations,
       tier: doc.tier || 'free',
       tags: doc.tags?.map((tag) => (typeof tag === 'string' ? tag : tag.name || '')) || [],

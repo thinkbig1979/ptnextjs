@@ -19,8 +19,7 @@ import { OptimizedImage } from "@/components/ui/optimized-image";
 import { notFound } from "next/navigation";
 import VendorDetailClient from "./_components/vendor-detail-client";
 import { Metadata } from "next";
-import { formatVendorLocation } from "@/lib/utils/location";
-import { isVendorLocationObject } from "@/lib/utils/type-guards";
+import { formatVendorLocation, getHQLocation } from "@/lib/utils/location";
 import { VendorLocationSection } from "./_components/vendor-location-section";
 import { LocationsDisplaySection } from "@/components/vendors/LocationsDisplaySection";
 import { VendorHero } from "@/components/vendors/VendorHero";
@@ -294,10 +293,10 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
                           <span>{vendor.founded}</span>
                         </div>
                       )}
-                      {formatVendorLocation(vendor.location) && (
+                      {formatVendorLocation(getHQLocation(vendor.locations)) && (
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Location:</span>
-                          <span>{formatVendorLocation(vendor.location)}</span>
+                          <span>{formatVendorLocation(getHQLocation(vendor.locations))}</span>
                         </div>
                       )}
                       {/* Only show product count for Tier 2+ vendors */}
@@ -336,13 +335,15 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
             </div>
 
             {/* Location Map and Info */}
-            {vendor.location && isVendorLocationObject(vendor.location) &&
-             vendor.location.latitude !== undefined && vendor.location.longitude !== undefined && (
-              <VendorLocationSection
-                vendorName={vendor.name}
-                location={vendor.location}
-              />
-            )}
+            {(() => {
+              const hqLoc = getHQLocation(vendor.locations);
+              return hqLoc && hqLoc.latitude !== undefined && hqLoc.longitude !== undefined ? (
+                <VendorLocationSection
+                  vendorName={vendor.name}
+                  location={hqLoc as typeof hqLoc & { latitude: number; longitude: number }}
+                />
+              ) : null;
+            })()}
           </div>
         </div>
       </div>

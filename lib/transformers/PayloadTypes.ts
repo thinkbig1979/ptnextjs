@@ -46,12 +46,6 @@ export interface PayloadVendorDocument {
   website?: string;
   founded?: number;
   foundedYear?: number;
-  location?: string;
-  location_address?: string;
-  location_city?: string;
-  location_country?: string;
-  location_latitude?: number;
-  location_longitude?: number;
   locations?: Array<{
     id?: string;
     locationName?: string;

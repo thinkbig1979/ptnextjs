@@ -148,7 +148,6 @@ describe('NearbyVendorCard', () => {
     it('should handle missing location data gracefully', () => {
       const vendor = createMockVendor({
         locations: undefined,
-        location: undefined,
       });
 
       render(<NearbyVendorCard vendor={vendor} />);
@@ -156,20 +155,14 @@ describe('NearbyVendorCard', () => {
       expect(screen.getByText('Location, Unknown')).toBeInTheDocument();
     });
 
-    it('should fallback to legacy location field when locations array is empty', () => {
+    it('should show fallback when locations array is empty', () => {
       const vendor = createMockVendor({
         locations: [],
-        location: {
-          city: 'Cannes',
-          country: 'France',
-          latitude: 43.5528,
-          longitude: 7.0174,
-        } as any,
       });
 
       render(<NearbyVendorCard vendor={vendor} />);
 
-      expect(screen.getByText('Cannes, France')).toBeInTheDocument();
+      expect(screen.getByText('Location, Unknown')).toBeInTheDocument();
     });
 
     it('should handle partial location data (missing city)', () => {

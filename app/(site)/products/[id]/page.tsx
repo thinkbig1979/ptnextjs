@@ -21,7 +21,7 @@ import Link from "next/link";
 import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import { notFound, redirect } from "next/navigation";
-import { formatVendorLocation } from "@/lib/utils/location";
+import { formatVendorLocation, getHQLocation } from "@/lib/utils/location";
 import { extractDescriptionText, getDescriptionPreview } from "@/lib/utils/lexical-helpers";
 import ProductDetailClient from "./_components/product-detail-client";
 import ProductReviewsClient from "./_components/product-reviews-client";
@@ -211,7 +211,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                       </Link>
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      {formatVendorLocation(partner.location)} {formatVendorLocation(partner.location) && '•'} Est. {partner.founded}
+                      {formatVendorLocation(getHQLocation(partner.locations))} {formatVendorLocation(getHQLocation(partner.locations)) && '•'} Est. {partner.founded}
                     </div>
                   </div>
                 </div>

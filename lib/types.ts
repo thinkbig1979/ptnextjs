@@ -350,8 +350,7 @@ export interface Vendor {
   image?: string; // TinaCMS uses direct string paths
   website?: string;
   founded?: number;
-  location?: VendorLocation | string; // Legacy single location (deprecated, use locations array)
-  locations?: VendorLocation[]; // New: Array of office locations (multi-location support)
+  locations?: VendorLocation[]; // Array of office locations (multi-location support)
   tier?: 'free' | 'tier1' | 'tier2' | 'tier3'; // Vendor subscription tier (affects multi-location access)
   featured?: boolean;
   partner?: boolean; // New field: indicates if vendor is also a strategic partner

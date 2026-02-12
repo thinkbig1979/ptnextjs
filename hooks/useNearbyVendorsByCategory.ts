@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import { VendorWithDistance, VendorForLocation } from '@/hooks/useLocationFilter';
-import type { Product, VendorCoordinates, VendorLocation } from '@/lib/types';
+import type { Product, VendorCoordinates } from '@/lib/types';
 
 export interface UseNearbyVendorsByCategoryOptions {
   userLocation: VendorCoordinates | null;
@@ -262,15 +262,6 @@ function getVendorLocations(vendor: VendorForLocation): NormalizedLocation[] {
     });
 
     return eligibleLocations;
-  }
-
-  // Fallback to legacy location field (backward compatibility)
-  if (vendor.location && typeof vendor.location !== 'string') {
-    const location = vendor.location as VendorLocation;
-    if (location.latitude !== undefined && location.longitude !== undefined) {
-      // Mark legacy location as HQ for consistency
-      return [{ ...location, isHQ: true }];
-    }
   }
 
   return [];

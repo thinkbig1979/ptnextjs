@@ -8,8 +8,8 @@ import { VendorLocation } from '@/lib/types';
 interface VendorLocationCardProps {
   /** Vendor name for display */
   name: string;
-  /** Location data (can be string for legacy or VendorLocation object) */
-  location?: VendorLocation | string;
+  /** Location data */
+  location?: VendorLocation;
   /** Optional distance from user location (in km) */
   distance?: number;
   /** Optional className for styling */
@@ -22,26 +22,6 @@ export function VendorLocationCard({
   distance,
   className = '',
 }: VendorLocationCardProps) {
-  // Handle legacy string location
-  if (typeof location === 'string') {
-    return (
-      <Card className={className} data-testid="vendor-location-card">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <MapPin className="w-5 h-5 text-primary" />
-            Location
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div data-testid="vendor-location">
-            <p className="text-base">{location}</p>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  // Handle VendorLocation object
   if (!location) {
     return (
       <Card className={className} data-testid="vendor-location-card">

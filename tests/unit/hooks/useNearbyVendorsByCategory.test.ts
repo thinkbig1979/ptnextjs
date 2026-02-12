@@ -983,27 +983,17 @@ describe('useNearbyVendorsByCategory', () => {
     });
   });
 
-  describe('Legacy Location Format (Backward Compatibility)', () => {
-    it('should handle vendors with legacy location field', () => {
-      const legacyVendors: Vendor[] = [
+  describe('Vendors Without Locations', () => {
+    it('should exclude vendors with empty locations array', () => {
+      const vendorsWithoutLocations: Vendor[] = [
         {
           id: 'vendor-1',
-          name: 'Legacy Vendor',
+          name: 'No Location Vendor',
           description: 'Test',
           category: [],
           featured: false,
           partner: false,
-          location: monacoCoords, // Legacy single location
-        },
-      ];
-
-      const legacyProducts: Product[] = [
-        {
-          id: 'prod-1',
-          name: 'Test Product',
-          description: 'Test',
-          category: 'Navigation',
-          vendorId: 'vendor-1',
+          locations: [],
         },
       ];
 
@@ -1015,39 +1005,9 @@ describe('useNearbyVendorsByCategory', () => {
       };
 
       const { result } = renderHook(() =>
-        useNearbyVendorsByCategory(legacyVendors, legacyProducts, options)
+        useNearbyVendorsByCategory(vendorsWithoutLocations, mockProducts, options)
       );
 
-      expect(result.current.vendors).toHaveLength(1);
-      expect(result.current.vendors[0].id).toBe('vendor-1');
-      expect(result.current.vendors[0].distance).toBe(0);
-    });
-
-    it('should exclude vendors with legacy string location', () => {
-      const vendorsWithStringLocation: Vendor[] = [
-        {
-          id: 'vendor-1',
-          name: 'String Location Vendor',
-          description: 'Test',
-          category: [],
-          featured: false,
-          partner: false,
-          location: 'Monaco, Monaco', // String location (legacy)
-        },
-      ];
-
-      const options: UseNearbyVendorsByCategoryOptions = {
-        userLocation: monacoCoords,
-        category: 'Navigation',
-        radius: 100,
-        maxResults: 10,
-      };
-
-      const { result } = renderHook(() =>
-        useNearbyVendorsByCategory(vendorsWithStringLocation, mockProducts, options)
-      );
-
-      // Should exclude vendors without proper coordinates
       expect(result.current.vendors).toHaveLength(0);
     });
   });

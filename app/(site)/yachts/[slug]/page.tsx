@@ -6,7 +6,7 @@ import { Separator } from '@/components/ui/separator';
 import { OptimizedImage } from '@/components/ui/optimized-image';
 import { payloadCMSDataService } from '@/lib/payload-cms-data-service';
 import { YachtTimelineEvent, YachtCustomization } from '@/lib/types';
-import { formatVendorLocation } from '@/lib/utils/location';
+import { formatVendorLocation, getHQLocation } from '@/lib/utils/location';
 
 // Force dynamic rendering - database not available at Docker build time
 export const dynamic = 'force-dynamic';
@@ -331,9 +331,9 @@ fallbackType="company"
                                           <span className="text-foreground">{supplier.vendorName}</span>
                                         )}
                                       </h4>
-                                      {formatVendorLocation(vendor?.location) && (
+                                      {formatVendorLocation(getHQLocation(vendor?.locations)) && (
                                         <p className="text-sm text-muted-foreground font-poppins-light">
-                                          📍 {formatVendorLocation(vendor?.location)}
+                                          📍 {formatVendorLocation(getHQLocation(vendor?.locations))}
                                         </p>
                                       )}
                                     </div>
