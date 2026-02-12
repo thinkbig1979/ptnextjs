@@ -40,6 +40,7 @@ const navigationItems: NavigationItem[] = [
     submenu: [
       { href: '/consultancy/clients', label: 'For Project Teams' },
       { href: '/consultancy/suppliers', label: 'For Industry Suppliers' },
+      { href: '/testimonials', label: 'Testimonials' },
     ],
   },
   {
