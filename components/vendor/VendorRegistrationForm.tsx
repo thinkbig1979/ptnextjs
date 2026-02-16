@@ -144,14 +144,14 @@ export function VendorRegistrationForm() {
 
   const password = form.watch('password');
   const passwordStrength = calculatePasswordStrength(password || '');
+  const captchaRequired = !!process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY && process.env.NEXT_PUBLIC_DISABLE_CAPTCHA !== 'true';
 
   /**
    * Handle form submission
    */
   const onSubmit = async (data: RegistrationFormData) => {
     // Check hCaptcha if configured (skip in test mode)
-    const captchaDisabled = process.env.NEXT_PUBLIC_DISABLE_CAPTCHA === 'true';
-    if (process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY && !captchaDisabled && !captchaToken) {
+    if (captchaRequired && !captchaToken) {
       toast({
         title: 'Verification Required',
         description: 'Please complete the captcha challenge',
@@ -419,15 +419,22 @@ export function VendorRegistrationForm() {
 
         {/* hCaptcha - Always use light theme for consistency across light/dark modes */}
         {/* Skip captcha in test mode (NEXT_PUBLIC_DISABLE_CAPTCHA=true) */}
-        {process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY && process.env.NEXT_PUBLIC_DISABLE_CAPTCHA !== 'true' && (
-          <div className="flex justify-center" data-testid="hcaptcha-container">
-            <HCaptcha
-              sitekey={process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY}
-              theme="light"
-              onVerify={handleCaptchaVerify}
-              onExpire={handleCaptchaExpire}
-              onError={handleCaptchaError}
-            />
+        {captchaRequired && (
+          <div className="space-y-2">
+            <div className="flex justify-center" data-testid="hcaptcha-container">
+              <HCaptcha
+                sitekey={process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY!}
+                theme="light"
+                onVerify={handleCaptchaVerify}
+                onExpire={handleCaptchaExpire}
+                onError={handleCaptchaError}
+              />
+            </div>
+            {captchaToken ? (
+              <p className="text-center text-sm text-green-600">Verification complete</p>
+            ) : (
+              <p className="text-center text-sm text-muted-foreground">Please complete the verification above to continue</p>
+            )}
           </div>
         )}
 
@@ -435,10 +442,7 @@ export function VendorRegistrationForm() {
         <Button
           type="submit"
           className="w-full"
-          disabled={
-            isSubmitting ||
-            (!!process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY && process.env.NEXT_PUBLIC_DISABLE_CAPTCHA !== 'true' && !captchaToken)
-          }
+          disabled={isSubmitting || (captchaRequired && !captchaToken)}
           aria-label="Register"
         >
           {isSubmitting ? (

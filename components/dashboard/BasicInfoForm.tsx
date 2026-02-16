@@ -12,6 +12,7 @@ import { Loader2, Save } from 'lucide-react';
 import { basicInfoSchema, type BasicInfoFormData } from '@/lib/validation/vendorSchemas';
 import { Vendor } from '@/lib/types';
 import { useVendorDashboard } from '@/lib/context/VendorDashboardContext';
+import { useToast } from '@/components/ui/use-toast';
 import { HelpTooltip, CharacterCounter } from '@/components/help';
 
 export interface BasicInfoFormProps {
@@ -34,6 +35,7 @@ export interface BasicInfoFormProps {
  */
 export function BasicInfoForm({ vendor, onSubmit }: BasicInfoFormProps) {
   const { updateVendor, saveVendor, markDirty, isSaving } = useVendorDashboard();
+  const { toast } = useToast();
 
   const {
     register,
@@ -119,6 +121,25 @@ export function BasicInfoForm({ vendor, onSubmit }: BasicInfoFormProps) {
   const handleFormError = (formErrors: Record<string, { message?: string }>): void => {
     if (process.env.NODE_ENV !== 'production') {
       console.error('[BasicInfoForm] Validation failed:', formErrors);
+    }
+
+    const errorCount = Object.keys(formErrors).length;
+    const firstErrorField = Object.keys(formErrors)[0];
+    const firstErrorMessage = formErrors[firstErrorField]?.message;
+
+    toast({
+      title: 'Please fix form errors',
+      description: errorCount === 1
+        ? firstErrorMessage || 'A field has a validation error'
+        : `${errorCount} fields need attention`,
+      variant: 'destructive',
+    });
+
+    // Scroll to first error field
+    const errorElement = document.getElementById(firstErrorField);
+    if (errorElement) {
+      errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      errorElement.focus();
     }
   };
 

@@ -8,9 +8,9 @@ import {
 } from "@/lib/utils/hcaptcha";
 import { rateLimit } from "@/lib/middleware/rateLimit";
 
-// Rate limit: 3 attempts per hour per IP (strict for registration)
+// Rate limit: 6 attempts per hour per IP
 const REGISTER_RATE_LIMIT = {
-  maxRequests: 3,
+  maxRequests: 6,
   windowMs: 60 * 60 * 1000, // 1 hour
   identifier: "/api/portal/vendors/register",
 };
