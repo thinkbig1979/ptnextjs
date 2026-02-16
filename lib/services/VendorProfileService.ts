@@ -38,26 +38,39 @@ export interface ValidationResult {
 function transformArrayFieldsForPayload(data: Record<string, unknown>): Record<string, unknown> {
   const transformed = { ...data };
 
-  // Transform serviceAreas: string[] -> {area: string}[]
-  if (Array.isArray(transformed.serviceAreas)) {
-    transformed.serviceAreas = transformed.serviceAreas.map((item: unknown) => {
-      if (typeof item === 'string') {
-        return { area: item };
-      }
-      // Already an object, pass through
-      return item;
-    });
+  // Strip logo if it's a URL string - Payload expects a media ID (number) for upload fields
+  if (typeof transformed.logo === 'string') {
+    delete transformed.logo;
   }
 
-  // Transform companyValues: string[] -> {value: string}[]
+  // Transform serviceAreas: string[] -> {area: string}[], filtering empty entries
+  if (Array.isArray(transformed.serviceAreas)) {
+    transformed.serviceAreas = transformed.serviceAreas
+      .filter((item: unknown) => {
+        if (typeof item === 'string') return item.trim() !== '';
+        return item != null;
+      })
+      .map((item: unknown) => {
+        if (typeof item === 'string') {
+          return { area: item };
+        }
+        return item;
+      });
+  }
+
+  // Transform companyValues: string[] -> {value: string}[], filtering empty entries
   if (Array.isArray(transformed.companyValues)) {
-    transformed.companyValues = transformed.companyValues.map((item: unknown) => {
-      if (typeof item === 'string') {
-        return { value: item };
-      }
-      // Already an object, pass through
-      return item;
-    });
+    transformed.companyValues = transformed.companyValues
+      .filter((item: unknown) => {
+        if (typeof item === 'string') return item.trim() !== '';
+        return item != null;
+      })
+      .map((item: unknown) => {
+        if (typeof item === 'string') {
+          return { value: item };
+        }
+        return item;
+      });
   }
 
   return transformed;

@@ -19,7 +19,7 @@ const ALLOWED_UPDATE_FIELDS = new Set([
   'companyName',
   'slug',
   'description',
-  'logo',
+  // 'logo' is an upload field (media relationship) - managed separately via upload endpoint
   'contactEmail',
   'contactPhone',
   'website',
@@ -69,6 +69,23 @@ function filterVendorPayload(vendor: any): Record<string, any> {
 
     // Skip empty arrays - they may be tier-restricted fields
     if (Array.isArray(value) && value.length === 0) {
+      return;
+    }
+
+    // Filter empty entries from array fields (e.g., companyValues, serviceAreas)
+    // Payload requires non-empty values for required sub-fields
+    if (Array.isArray(value)) {
+      const cleanedArray = value.filter((item: any) => {
+        if (typeof item === 'string') return item.trim() !== '';
+        if (typeof item === 'object' && item !== null) {
+          // Filter objects with empty required fields (e.g., { value: '' })
+          const vals = Object.values(item).filter(v => v !== null && v !== undefined);
+          return vals.some(v => typeof v === 'string' ? v.trim() !== '' : true);
+        }
+        return true;
+      });
+      if (cleanedArray.length === 0) return;
+      filtered[key] = cleanedArray;
       return;
     }
 
