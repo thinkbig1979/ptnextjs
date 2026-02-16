@@ -18,7 +18,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Lock } from 'lucide-react';
+import { Lock, Info } from 'lucide-react';
 import { Vendor } from '@/lib/types';
 import { TierService, Tier } from '@/lib/services/TierService';
 import { useVendorDashboard } from '@/lib/context/VendorDashboardContext';
@@ -262,6 +262,14 @@ export function ProfileEditTabs({ vendor }: ProfileEditTabsProps) {
             </TabsList>
 
             <div className="mt-6">
+              {activeTab !== 'basic' && activeTab !== 'locations' && (
+                <div className="flex items-start gap-2.5 p-3 mb-6 rounded-lg bg-blue-50/70 dark:bg-blue-950/20 border border-blue-200/60 dark:border-blue-800/40 text-sm text-blue-800 dark:text-blue-300">
+                  <Info className="h-4 w-4 mt-0.5 shrink-0" />
+                  <p>
+                    All fields in this section are optional. Empty fields are simply hidden from your public profile, so fill in only what's relevant to your business.
+                  </p>
+                </div>
+              )}
               {CurrentTabComponent && (
                 <CurrentTabComponent vendor={vendor} onSubmit={handleFormSave} />
               )}
@@ -294,6 +302,16 @@ export function ProfileEditTabs({ vendor }: ProfileEditTabsProps) {
                 </div>
                 <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                   Upgrade to unlock: {lockedTabs.map((t) => t.label).join(', ')}
+                </p>
+              </div>
+            )}
+
+            {/* Optional fields info note (mobile) */}
+            {activeTab !== 'basic' && activeTab !== 'locations' && (
+              <div className="flex items-start gap-2.5 p-3 mb-6 rounded-lg bg-blue-50/70 dark:bg-blue-950/20 border border-blue-200/60 dark:border-blue-800/40 text-sm text-blue-800 dark:text-blue-300">
+                <Info className="h-4 w-4 mt-0.5 shrink-0" />
+                <p>
+                  All fields in this section are optional. Empty fields are simply hidden from your public profile, so fill in only what's relevant to your business.
                 </p>
               </div>
             )}

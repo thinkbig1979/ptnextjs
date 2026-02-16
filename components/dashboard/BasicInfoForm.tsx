@@ -151,7 +151,7 @@ export function BasicInfoForm({ vendor, onSubmit }: BasicInfoFormProps) {
         <CardHeader>
           <CardTitle>Basic Information</CardTitle>
           <CardDescription>
-            Core company details visible to all visitors.
+            Core company details visible to all visitors. Fields marked with <span className="text-red-500 font-medium">*</span> are required. Other fields are optional and will be hidden from your profile if left empty.
           </CardDescription>
         </CardHeader>
 

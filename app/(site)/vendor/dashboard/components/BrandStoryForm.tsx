@@ -347,7 +347,7 @@ export function BrandStoryForm({ vendor, onSubmit }: BrandStoryFormProps) {
               />
             </CardTitle>
             <CardDescription>
-              Showcase your achievements and credibility.
+              Showcase your achievements and credibility. Only include numbers you can verify. Empty fields won't appear on your profile.
             </CardDescription>
           </CardHeader>
 
@@ -462,7 +462,7 @@ export function BrandStoryForm({ vendor, onSubmit }: BrandStoryFormProps) {
               Video Introduction
             </CardTitle>
             <CardDescription>
-              Add a video to introduce your company to potential clients.
+              Add a video to introduce your company to potential clients. Leave blank if you don't have one yet.
             </CardDescription>
           </CardHeader>
 
