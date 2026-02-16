@@ -125,34 +125,39 @@ export function BrandStoryForm({ vendor, onSubmit }: BrandStoryFormProps) {
       return;
     }
 
-    if (onSubmit) {
-      await onSubmit(data);
-    } else {
-      // Update vendor in context
-      updateVendor({
-        website: data.website || undefined,
-        linkedinUrl: data.linkedinUrl || undefined,
-        twitterUrl: data.twitterUrl || undefined,
-        foundedYear: data.foundedYear || undefined,
-        longDescription: data.longDescription || undefined,
-        totalProjects: data.totalProjects || undefined,
-        employeeCount: data.employeeCount || undefined,
-        linkedinFollowers: data.linkedinFollowers || undefined,
-        instagramFollowers: data.instagramFollowers || undefined,
-        clientSatisfactionScore: data.clientSatisfactionScore || undefined,
-        repeatClientPercentage: data.repeatClientPercentage || undefined,
-        videoUrl: data.videoUrl || undefined,
-        videoThumbnail: data.videoThumbnail || undefined,
-        videoDuration: data.videoDuration || undefined,
-        videoTitle: data.videoTitle || undefined,
-        videoDescription: data.videoDescription || undefined,
-        serviceAreas: data.serviceAreas?.map((area: any) => typeof area === 'string' ? area : area.value || '') || undefined,
-        companyValues: data.companyValues?.map((val: any) => typeof val === 'string' ? val : val.value || '') || undefined,
-      });
-    }
+    try {
+      if (onSubmit) {
+        await onSubmit(data);
+      } else {
+        // Update vendor in context
+        updateVendor({
+          website: data.website || undefined,
+          linkedinUrl: data.linkedinUrl || undefined,
+          twitterUrl: data.twitterUrl || undefined,
+          foundedYear: data.foundedYear || undefined,
+          longDescription: data.longDescription || undefined,
+          totalProjects: data.totalProjects || undefined,
+          employeeCount: data.employeeCount || undefined,
+          linkedinFollowers: data.linkedinFollowers || undefined,
+          instagramFollowers: data.instagramFollowers || undefined,
+          clientSatisfactionScore: data.clientSatisfactionScore || undefined,
+          repeatClientPercentage: data.repeatClientPercentage || undefined,
+          videoUrl: data.videoUrl || undefined,
+          videoThumbnail: data.videoThumbnail || undefined,
+          videoDuration: data.videoDuration || undefined,
+          videoTitle: data.videoTitle || undefined,
+          videoDescription: data.videoDescription || undefined,
+          serviceAreas: data.serviceAreas?.map((area: any) => typeof area === 'string' ? area : area.value || '') || undefined,
+          companyValues: data.companyValues?.map((val: any) => typeof val === 'string' ? val : val.value || '') || undefined,
+        });
+      }
 
-    // Reset form dirty state
-    reset(data);
+      // Reset form dirty state only on success
+      reset(data);
+    } catch {
+      // Error toast is handled by saveVendor in VendorDashboardContext
+      // Re-throw so react-hook-form knows the submission failed
+    }
   };
 
   // Show upgrade prompt for Free tier users

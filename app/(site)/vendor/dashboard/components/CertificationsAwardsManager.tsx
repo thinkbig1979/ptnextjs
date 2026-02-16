@@ -229,7 +229,7 @@ export function CertificationsAwardsManager({ vendor }: CertificationsAwardsMana
     setDeletingAwardIndex(null);
   };
 
-  // FIX #1: Save all changes using correct two-step pattern
+  // Save all changes using correct two-step pattern
   const handleSave = async () => {
     if (!hasAccess) return;
 
@@ -241,8 +241,10 @@ export function CertificationsAwardsManager({ vendor }: CertificationsAwardsMana
         awards: awards.length > 0 ? awards : undefined,
       });
 
-      // Step 2: Save to API (no parameters)
+      // Step 2: Save to API
       await saveVendor();
+    } catch {
+      // Error toast is handled by saveVendor in VendorDashboardContext
     } finally {
       setIsSaving(false);
     }

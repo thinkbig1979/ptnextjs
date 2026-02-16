@@ -171,6 +171,8 @@ export function TeamMembersManager({ vendor }: TeamMembersManagerProps) {
     setIsSaving(true);
     try {
       await saveVendor();
+    } catch {
+      // Error toast is handled by saveVendor in VendorDashboardContext
     } finally {
       setIsSaving(false);
     }
@@ -224,6 +226,8 @@ export function TeamMembersManager({ vendor }: TeamMembersManagerProps) {
     setIsSaving(true);
     try {
       await saveVendor();
+    } catch {
+      // Error toast is handled by saveVendor in VendorDashboardContext
     } finally {
       setIsSaving(false);
     }
@@ -263,6 +267,8 @@ export function TeamMembersManager({ vendor }: TeamMembersManagerProps) {
     setIsSaving(true);
     try {
       await saveVendor();
+    } catch {
+      // Error toast is handled by saveVendor in VendorDashboardContext
     } finally {
       setIsSaving(false);
     }

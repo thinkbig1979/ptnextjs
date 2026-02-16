@@ -214,6 +214,8 @@ export function CaseStudiesManager({ vendor }: CaseStudiesManagerProps) {
     setIsSaving(true);
     try {
       await saveVendor();
+    } catch {
+      // Error toast is handled by saveVendor in VendorDashboardContext
     } finally {
       setIsSaving(false);
     }

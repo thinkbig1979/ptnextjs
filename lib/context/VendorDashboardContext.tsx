@@ -5,6 +5,7 @@ import useSWR from 'swr';
 import { Vendor } from '@/lib/types';
 import { computeYearsInBusiness } from '@/components/vendors/YearsInBusinessDisplay';
 import { toast } from 'sonner';
+import { VendorApiError } from '@/lib/api/vendorClient';
 
 /**
  * Fields that are allowed to be updated via the API
@@ -236,11 +237,14 @@ export function VendorDashboardProvider({
       const responseData = await response.json();
 
       if (!response.ok) {
-        // Handle nested error structure from API
-        const errorMessage = typeof responseData.error === 'string'
-          ? responseData.error
-          : responseData.error?.message || 'Failed to save vendor';
-        throw new Error(errorMessage);
+        // Parse structured error from API and throw VendorApiError
+        const errObj = typeof responseData.error === 'object' ? responseData.error : {};
+        throw new VendorApiError(
+          errObj.code || (response.status === 401 || response.status === 403 ? 'UNAUTHORIZED' : 'UNKNOWN_ERROR'),
+          errObj.message || (typeof responseData.error === 'string' ? responseData.error : 'Failed to save vendor'),
+          errObj.fields,
+          errObj.details
+        );
       }
 
       // Extract vendor from nested data structure: { success: true, data: { vendor, message } }
@@ -256,7 +260,36 @@ export function VendorDashboardProvider({
       if (process.env.NODE_ENV !== 'production') {
         console.error('[VendorDashboardContext] Error saving vendor:', error);
       }
-      toast.error(error instanceof Error ? error.message : 'Failed to save profile');
+
+      // Show error-type-specific toast messages
+      if (error instanceof VendorApiError) {
+        switch (error.code) {
+          case 'VALIDATION_ERROR':
+            toast.error('Please fix the highlighted fields', {
+              description: error.fields ? Object.values(error.fields).join(', ') : error.message,
+            });
+            break;
+          case 'UNAUTHORIZED':
+          case 'FORBIDDEN':
+            toast.error('Session expired', {
+              description: 'Please log in again to continue editing.',
+            });
+            break;
+          case 'TIER_PERMISSION_DENIED':
+            toast.error('Feature not available', {
+              description: error.message || 'This feature requires a higher subscription tier.',
+            });
+            break;
+          default:
+            toast.error(error.message || 'Failed to save profile');
+        }
+      } else if (error instanceof TypeError && error.message === 'Failed to fetch') {
+        toast.error('Network error', {
+          description: 'Check your internet connection and try again.',
+        });
+      } else {
+        toast.error(error instanceof Error ? error.message : 'Failed to save profile');
+      }
       throw error;
     } finally {
       setIsSaving(false);
