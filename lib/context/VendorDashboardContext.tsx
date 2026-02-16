@@ -28,7 +28,7 @@ const ALLOWED_UPDATE_FIELDS = new Set([
   // Relational arrays are managed separately - DO NOT include:
   // 'certifications', 'awards', 'teamMembers', 'caseStudies', 'locations'
   'foundedYear',
-  'longDescription',
+  // 'longDescription' is a richText field (Lexical JSON) - plain text from Textarea will cause validation errors
   'totalProjects',
   'employeeCount',
   'linkedinFollowers',
@@ -36,7 +36,7 @@ const ALLOWED_UPDATE_FIELDS = new Set([
   'clientSatisfactionScore',
   'repeatClientPercentage',
   'videoUrl',
-  'videoThumbnail',
+  // 'videoThumbnail' is an upload field (media relationship) - same as logo, managed separately
   'videoDuration',
   'videoTitle',
   'videoDescription',
@@ -86,6 +86,23 @@ function filterVendorPayload(vendor: any): Record<string, any> {
       });
       if (cleanedArray.length === 0) return;
       filtered[key] = cleanedArray;
+      return;
+    }
+
+    // Coerce videoDuration to number - Payload expects number, form may send string
+    if (key === 'videoDuration' && typeof value === 'string') {
+      const str = value.trim();
+      if (str === '') return;
+      // Handle "MM:SS" format
+      const mmssMatch = str.match(/^(\d+):(\d{1,2})$/);
+      if (mmssMatch) {
+        filtered[key] = parseInt(mmssMatch[1], 10) * 60 + parseInt(mmssMatch[2], 10);
+      } else {
+        const parsed = parseInt(str, 10);
+        if (!isNaN(parsed)) {
+          filtered[key] = parsed;
+        }
+      }
       return;
     }
 

@@ -43,6 +43,11 @@ function transformArrayFieldsForPayload(data: Record<string, unknown>): Record<s
     delete transformed.logo;
   }
 
+  // Strip videoThumbnail if it's a URL string - same as logo, Payload expects a media ID (number)
+  if (typeof transformed.videoThumbnail === 'string') {
+    delete transformed.videoThumbnail;
+  }
+
   // Transform serviceAreas: string[] -> {area: string}[], filtering empty entries
   if (Array.isArray(transformed.serviceAreas)) {
     transformed.serviceAreas = transformed.serviceAreas
