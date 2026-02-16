@@ -28,22 +28,70 @@ export interface ValidationResult {
 }
 
 /**
- * Transform serviceAreas/companyValues from string arrays to object arrays
+ * Convert plain text to minimal Lexical JSON for richText fields.
+ * Splits on newlines to create separate paragraphs.
+ */
+function plainTextToLexicalJson(text: string): Record<string, unknown> {
+  const paragraphs = text.split(/\n+/).filter(p => p.trim());
+  return {
+    root: {
+      type: 'root',
+      children: paragraphs.map(p => ({
+        type: 'paragraph',
+        children: [{ type: 'text', text: p.trim(), detail: 0, format: 0, mode: 'normal', style: '', version: 1 }],
+        direction: 'ltr',
+        format: '',
+        indent: 0,
+        textFormat: 0,
+        version: 1,
+      })),
+      direction: 'ltr',
+      format: '',
+      indent: 0,
+      version: 1,
+    },
+  };
+}
+
+/**
+ * Check if a value is already Lexical JSON (has root.type === 'root')
+ */
+function isLexicalJson(value: unknown): boolean {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'root' in value &&
+    typeof (value as Record<string, unknown>).root === 'object'
+  );
+}
+
+/**
+ * Strip upload fields that are URL strings (Payload expects media IDs).
+ * Returns the value unchanged if it's a number (valid media ID) or nullish.
+ */
+function stripUploadUrlString(value: unknown): unknown {
+  if (typeof value === 'string') return undefined;
+  return value;
+}
+
+/**
+ * Transform frontend data to match Payload CMS schema.
  *
- * Frontend may send: ["Mediterranean", "Caribbean"]
- * Payload expects:   [{area: "Mediterranean"}, {area: "Caribbean"}]
- *
- * Also handles already-object format (passthrough)
+ * Handles:
+ * - Upload fields sent as URL strings (logo, videoThumbnail, sub-field uploads)
+ * - serviceAreas/companyValues string-to-object conversion
+ * - certifications: certificateUrl → verificationUrl, strip logo URLs
+ * - teamMembers: image → strip (upload URL), linkedin → linkedinUrl, order → displayOrder
+ * - caseStudies: plain text → Lexical JSON for richText fields, strip image URLs
+ * - mediaGallery: component format → Payload schema
  */
 function transformArrayFieldsForPayload(data: Record<string, unknown>): Record<string, unknown> {
   const transformed = { ...data };
 
-  // Strip logo if it's a URL string - Payload expects a media ID (number) for upload fields
+  // Strip top-level upload fields if they're URL strings
   if (typeof transformed.logo === 'string') {
     delete transformed.logo;
   }
-
-  // Strip videoThumbnail if it's a URL string - same as logo, Payload expects a media ID (number)
   if (typeof transformed.videoThumbnail === 'string') {
     delete transformed.videoThumbnail;
   }
@@ -75,6 +123,160 @@ function transformArrayFieldsForPayload(data: Record<string, unknown>): Record<s
           return { value: item };
         }
         return item;
+      });
+  }
+
+  // Transform certifications: fix field name mismatches, strip upload URLs
+  if (Array.isArray(transformed.certifications)) {
+    transformed.certifications = transformed.certifications
+      .filter((item: unknown) => item != null && typeof item === 'object')
+      .map((item: unknown) => {
+        const cert = item as Record<string, unknown>;
+        const result: Record<string, unknown> = {
+          name: cert.name,
+          issuer: cert.issuer,
+          year: cert.year,
+        };
+        if (cert.expiryDate) result.expiryDate = cert.expiryDate;
+        if (cert.certificateNumber) result.certificateNumber = cert.certificateNumber;
+        // Component uses 'certificateUrl', Payload expects 'verificationUrl'
+        const verUrl = cert.verificationUrl || cert.certificateUrl;
+        if (verUrl && typeof verUrl === 'string' && verUrl.trim()) {
+          result.verificationUrl = verUrl;
+        }
+        // Strip logo URL strings (Payload expects media ID for upload field)
+        const logoVal = stripUploadUrlString(cert.logo);
+        if (logoVal !== undefined) result.logo = logoVal;
+        return result;
+      });
+  }
+
+  // Transform awards: strip upload URL for image field
+  if (Array.isArray(transformed.awards)) {
+    transformed.awards = transformed.awards
+      .filter((item: unknown) => item != null && typeof item === 'object')
+      .map((item: unknown) => {
+        const award = item as Record<string, unknown>;
+        const result: Record<string, unknown> = {
+          title: award.title,
+          organization: award.organization,
+          year: award.year,
+        };
+        if (award.category) result.category = award.category;
+        if (award.description) result.description = award.description;
+        // Strip image URL strings (Payload expects media ID for upload field)
+        const imgVal = stripUploadUrlString(award.image);
+        if (imgVal !== undefined) result.image = imgVal;
+        return result;
+      });
+  }
+
+  // Transform teamMembers: rename fields, strip upload URLs, remove synthetic fields
+  if (Array.isArray(transformed.teamMembers)) {
+    transformed.teamMembers = transformed.teamMembers
+      .filter((item: unknown) => item != null && typeof item === 'object')
+      .map((item: unknown) => {
+        const member = item as Record<string, unknown>;
+        const result: Record<string, unknown> = {
+          name: member.name,
+          role: member.role,
+        };
+        if (member.bio) result.bio = member.bio;
+        if (member.email) result.email = member.email;
+        // Component uses 'linkedin', Payload expects 'linkedinUrl'
+        const linkedinVal = member.linkedinUrl || member.linkedin;
+        if (linkedinVal && typeof linkedinVal === 'string' && linkedinVal.trim()) {
+          result.linkedinUrl = linkedinVal;
+        }
+        // Component uses 'order', Payload expects 'displayOrder'
+        const orderVal = member.displayOrder ?? member.order;
+        if (orderVal !== undefined && orderVal !== null) {
+          result.displayOrder = typeof orderVal === 'string' ? parseInt(orderVal, 10) : orderVal;
+        }
+        // Component uses 'image' (URL string), Payload expects 'photo' (upload/media ID)
+        // Strip URL strings, keep numeric media IDs
+        const photoVal = stripUploadUrlString(member.photo || member.image);
+        if (photoVal !== undefined) result.photo = photoVal;
+        // Do NOT copy synthetic fields: id, createdAt, updatedAt
+        return result;
+      });
+  }
+
+  // Transform caseStudies: convert richText fields, strip image URLs
+  if (Array.isArray(transformed.caseStudies)) {
+    transformed.caseStudies = transformed.caseStudies
+      .filter((item: unknown) => item != null && typeof item === 'object')
+      .map((item: unknown) => {
+        const cs = item as Record<string, unknown>;
+        const result: Record<string, unknown> = {
+          title: cs.title,
+          featured: cs.featured ?? false,
+        };
+        if (cs.yachtName) result.yachtName = cs.yachtName;
+        if (cs.yacht) result.yacht = cs.yacht;
+        if (cs.projectDate) result.projectDate = cs.projectDate;
+        if (cs.testimonyQuote) result.testimonyQuote = cs.testimonyQuote;
+        if (cs.testimonyAuthor) result.testimonyAuthor = cs.testimonyAuthor;
+        if (cs.testimonyRole) result.testimonyRole = cs.testimonyRole;
+        // Convert challenge/solution/results: plain text → Lexical JSON
+        for (const field of ['challenge', 'solution', 'results'] as const) {
+          const val = cs[field];
+          if (typeof val === 'string' && val.trim()) {
+            result[field] = plainTextToLexicalJson(val);
+          } else if (isLexicalJson(val)) {
+            result[field] = val; // Already Lexical JSON, pass through
+          }
+        }
+        // Strip image URLs - Payload expects [{image: mediaId}], not string URLs
+        // Keep only entries with numeric media IDs
+        if (Array.isArray(cs.images)) {
+          const validImages = cs.images
+            .filter((img: unknown) => {
+              if (typeof img === 'object' && img !== null) {
+                const imgObj = img as Record<string, unknown>;
+                return typeof imgObj.image === 'number';
+              }
+              return false;
+            });
+          if (validImages.length > 0) result.images = validImages;
+        }
+        return result;
+      });
+  }
+
+  // Transform mediaGallery: component format → Payload schema
+  if (Array.isArray(transformed.mediaGallery)) {
+    transformed.mediaGallery = transformed.mediaGallery
+      .filter((item: unknown) => item != null && typeof item === 'object')
+      .map((item: unknown) => {
+        const media = item as Record<string, unknown>;
+        const result: Record<string, unknown> = {
+          type: media.type || 'image',
+        };
+        // For images: component uses 'url' for uploaded image URL, Payload expects 'media' (upload ID)
+        // Only keep numeric media IDs, strip URL strings
+        if (media.type === 'image') {
+          const mediaVal = media.media ?? media.url;
+          if (typeof mediaVal === 'number') {
+            result.media = mediaVal;
+          }
+          // else: strip - can't send URL string to upload field
+        }
+        // For videos: component uses 'url' (embed URL), Payload expects 'videoUrl'
+        if (media.type === 'video') {
+          const videoUrl = media.videoUrl ?? media.url;
+          if (typeof videoUrl === 'string' && videoUrl.trim()) {
+            result.videoUrl = videoUrl;
+          }
+        }
+        if (media.caption) result.caption = media.caption;
+        if (media.altText) result.altText = media.altText;
+        if (media.album) result.album = media.album;
+        if (media.order !== undefined && media.order !== null) {
+          result.order = typeof media.order === 'string' ? parseInt(media.order as string, 10) : media.order;
+        }
+        // Do NOT copy: id, filename, videoPlatform, thumbnailUrl, uploadedAt
+        return result;
       });
   }
 

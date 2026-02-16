@@ -25,8 +25,13 @@ const ALLOWED_UPDATE_FIELDS = new Set([
   'website',
   'linkedinUrl',
   'twitterUrl',
-  // Relational arrays are managed separately - DO NOT include:
-  // 'certifications', 'awards', 'teamMembers', 'caseStudies', 'locations'
+  // Array fields - transformed server-side by VendorProfileService before reaching Payload
+  'certifications',
+  'awards',
+  'teamMembers',
+  'caseStudies',
+  'mediaGallery',
+  // 'locations' is managed separately via its own save flow
   'foundedYear',
   // 'longDescription' is a richText field (Lexical JSON) - plain text from Textarea will cause validation errors
   'totalProjects',
