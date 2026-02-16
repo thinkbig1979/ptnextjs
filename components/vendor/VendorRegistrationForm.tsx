@@ -17,7 +17,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 import { Loader2, Eye, EyeOff } from 'lucide-react';
 import { HelpTooltip } from '@/components/help';
 
@@ -105,7 +105,6 @@ function calculatePasswordStrength(password: string): 'Weak' | 'Medium' | 'Stron
  */
 export function VendorRegistrationForm() {
   const router = useRouter();
-  const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -152,11 +151,7 @@ export function VendorRegistrationForm() {
   const onSubmit = async (data: RegistrationFormData) => {
     // Check hCaptcha if configured (skip in test mode)
     if (captchaRequired && !captchaToken) {
-      toast({
-        title: 'Verification Required',
-        description: 'Please complete the captcha challenge',
-        variant: 'destructive',
-      });
+      toast.error('Please complete the captcha challenge');
       return;
     }
 
@@ -187,11 +182,7 @@ export function VendorRegistrationForm() {
               type: 'manual',
               message: 'Email already exists'
             });
-            toast({
-              title: 'Registration Failed',
-              description: 'Email already exists',
-              variant: 'destructive',
-            });
+            toast.error('Email already exists');
             return;
           }
 
@@ -200,31 +191,19 @@ export function VendorRegistrationForm() {
               type: 'manual',
               message: 'Company name already exists'
             });
-            toast({
-              title: 'Registration Failed',
-              description: 'Company name already exists',
-              variant: 'destructive',
-            });
+            toast.error('Company name already exists');
             return;
           }
         }
 
         if (response.status === 400) {
           // Validation errors from backend
-          toast({
-            title: 'Validation Error',
-            description: result.error?.message || 'Please check your form inputs',
-            variant: 'destructive',
-          });
+          toast.error(result.error?.message || 'Please check your form inputs');
           return;
         }
 
         if (response.status === 500) {
-          toast({
-            title: 'Server Error',
-            description: result.error?.message || 'Internal server error',
-            variant: 'destructive',
-          });
+          toast.error(result.error?.message || 'Internal server error');
           return;
         }
 
@@ -233,10 +212,7 @@ export function VendorRegistrationForm() {
       }
 
       // Success
-      toast({
-        title: 'Registration Successful',
-        description: 'Your account is pending approval',
-      });
+      toast.success('Your account is pending approval');
 
       // Clear form and captcha
       form.reset();
@@ -248,11 +224,7 @@ export function VendorRegistrationForm() {
       // Network or unexpected errors
       console.error('Registration error:', error);
 
-      toast({
-        title: 'Connection Error',
-        description: 'Unable to connect to the server',
-        variant: 'destructive',
-      });
+      toast.error('Unable to connect to the server');
     } finally {
       setIsSubmitting(false);
     }

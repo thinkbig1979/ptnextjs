@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { OwnerReviews } from '@/components/product-comparison';
 import type { OwnerReview, Product } from '@/lib/types';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 interface ProductReviewsClientProps {
   product: Product;
@@ -14,8 +14,6 @@ export default function ProductReviewsClient({ product, initialReviews }: Produc
   const [reviews, setReviews] = useState<OwnerReview[]>(initialReviews);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedRating, setSelectedRating] = useState<number | null>(null);
-  const { toast } = useToast();
-
   const handleSubmitReview = async (reviewData: Partial<OwnerReview> & { captchaToken?: string }) => {
     setIsSubmitting(true);
 
@@ -40,10 +38,7 @@ export default function ProductReviewsClient({ product, initialReviews }: Produc
       const data = await response.json();
 
       if (response.ok) {
-        toast({
-          title: "Review Submitted!",
-          description: data.message || "Thank you for your review. It will be reviewed by our team before being published.",
-        });
+        toast.success(data.message || "Thank you for your review. It will be reviewed by our team before being published.");
 
         // Optimistically add the new review to the list
         const newReview: OwnerReview = {
@@ -72,11 +67,7 @@ export default function ProductReviewsClient({ product, initialReviews }: Produc
 
     } catch (error) {
       console.error('Error submitting review:', error);
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to submit review. Please try again.",
-        variant: "destructive",
-      });
+      toast.error(error instanceof Error ? error.message : "Failed to submit review. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

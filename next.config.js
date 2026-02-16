@@ -14,8 +14,13 @@ const nextConfig = {
       },
       {
         source: '/bespoke-solutions',
-        destination: '/consultancy',
+        destination: '/consultancy/clients',
         permanent: true,
+      },
+      {
+        source: '/consultancy',
+        destination: '/consultancy/clients',
+        permanent: false,
       },
     ];
   },

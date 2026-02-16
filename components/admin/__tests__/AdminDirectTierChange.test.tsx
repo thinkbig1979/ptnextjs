@@ -9,11 +9,15 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import AdminDirectTierChange from '../AdminDirectTierChange';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
-// Mock useToast hook
-jest.mock('@/hooks/use-toast', () => ({
-  useToast: jest.fn(),
+// Mock sonner
+jest.mock('sonner', () => ({
+  toast: Object.assign(jest.fn(), {
+    success: jest.fn(),
+    error: jest.fn(),
+    info: jest.fn(),
+  }),
 }));
 
 // Mock fetch
@@ -45,7 +49,6 @@ async function selectTier(user: ReturnType<typeof userEvent.setup>, tierLabel: s
 }
 
 describe('AdminDirectTierChange', () => {
-  const mockToast = jest.fn();
   const mockOnSuccess = jest.fn();
 
   const defaultProps = {
@@ -57,7 +60,6 @@ describe('AdminDirectTierChange', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    (useToast as jest.Mock).mockReturnValue({ toast: mockToast });
   });
 
   afterEach(() => {
@@ -191,10 +193,8 @@ describe('AdminDirectTierChange', () => {
     });
 
     // Success toast should be shown
-    expect(mockToast).toHaveBeenCalledWith(
-      expect.objectContaining({
-        title: 'Tier updated',
-      })
+    expect(toast.success).toHaveBeenCalledWith(
+      expect.stringContaining('has been changed to')
     );
 
     // onSuccess callback should be called
@@ -224,12 +224,7 @@ describe('AdminDirectTierChange', () => {
 
     // Error toast should be shown
     await waitFor(() => {
-      expect(mockToast).toHaveBeenCalledWith(
-        expect.objectContaining({
-          title: 'Error',
-          variant: 'destructive',
-        })
-      );
+      expect(toast.error).toHaveBeenCalledWith('Vendor not found');
     });
 
     // onSuccess should NOT be called

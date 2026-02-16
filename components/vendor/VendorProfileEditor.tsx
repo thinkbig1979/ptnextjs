@@ -18,7 +18,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 import { TierGate } from '@/components/shared/TierGate';
 import { Loader2, Save, Package } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -112,7 +112,6 @@ export interface VendorProfileEditorProps {
  */
 export function VendorProfileEditor({ initialData }: VendorProfileEditorProps) {
   const router = useRouter();
-  const { toast } = useToast();
   const { tier, refreshUser } = useAuth();
   const [isLoading, setIsLoading] = useState(!initialData);
   const [isSaving, setIsSaving] = useState(false);
@@ -153,21 +152,13 @@ export function VendorProfileEditor({ initialData }: VendorProfileEditorProps) {
 
         if (!response.ok) {
           if (response.status === 401) {
-            toast({
-              title: 'Authentication Required',
-              description: 'Please log in to access your profile',
-              variant: 'destructive',
-            });
+            toast.error('Please log in to access your profile');
             router.push('/vendor/login');
             return;
           }
 
           if (response.status === 404) {
-            toast({
-              title: 'Profile Not Found',
-              description: 'Your vendor profile could not be found',
-              variant: 'destructive',
-            });
+            toast.error('Your vendor profile could not be found');
             return;
           }
 
@@ -180,18 +171,14 @@ export function VendorProfileEditor({ initialData }: VendorProfileEditorProps) {
         populateForm(data.vendor);
       } catch (error) {
         console.error('Error fetching profile:', error);
-        toast({
-          title: 'Error',
-          description: 'Failed to load your profile data',
-          variant: 'destructive',
-        });
+        toast.error('Failed to load your profile data');
       } finally {
         setIsLoading(false);
       }
     }
 
     fetchProfile();
-  }, [initialData, toast, router]);
+  }, [initialData, router]);
 
   /**
    * Populate form with vendor data
@@ -215,11 +202,7 @@ export function VendorProfileEditor({ initialData }: VendorProfileEditorProps) {
    */
   const onSubmit = async (data: ProfileFormData) => {
     if (!vendorId) {
-      toast({
-        title: 'Error',
-        description: 'Vendor ID not available',
-        variant: 'destructive',
-      });
+      toast.error('Vendor ID not available');
       return;
     }
 
@@ -237,10 +220,7 @@ export function VendorProfileEditor({ initialData }: VendorProfileEditorProps) {
 
       // If no fields changed, show message and return
       if (Object.keys(changedFields).length === 0) {
-        toast({
-          title: 'No Changes',
-          description: 'No fields were modified',
-        });
+        toast.info('No fields were modified');
         return;
       }
 
@@ -258,11 +238,7 @@ export function VendorProfileEditor({ initialData }: VendorProfileEditorProps) {
       if (!response.ok) {
         // Handle tier restriction errors
         if (response.status === 403) {
-          toast({
-            title: 'Tier Restriction',
-            description: result.error?.message || 'Upgrade required to edit these fields',
-            variant: 'destructive',
-          });
+          toast.error(result.error?.message || 'Upgrade required to edit these fields');
           return;
         }
 
@@ -277,11 +253,7 @@ export function VendorProfileEditor({ initialData }: VendorProfileEditorProps) {
             });
           }
 
-          toast({
-            title: 'Validation Error',
-            description: result.error?.message || 'Please check your form inputs',
-            variant: 'destructive',
-          });
+          toast.error(result.error?.message || 'Please check your form inputs');
           return;
         }
 
@@ -289,10 +261,7 @@ export function VendorProfileEditor({ initialData }: VendorProfileEditorProps) {
       }
 
       // Success
-      toast({
-        title: 'Profile Updated',
-        description: result.data?.message || 'Your profile has been updated successfully',
-      });
+      toast.success(result.data?.message || 'Your profile has been updated successfully');
 
       // Update local state with new data
       setVendorData(result.data.vendor);
@@ -302,11 +271,7 @@ export function VendorProfileEditor({ initialData }: VendorProfileEditorProps) {
       await refreshUser();
     } catch (error) {
       console.error('Error updating profile:', error);
-      toast({
-        title: 'Update Failed',
-        description: error instanceof Error ? error.message : 'Failed to update profile',
-        variant: 'destructive',
-      });
+      toast.error(error instanceof Error ? error.message : 'Failed to update profile');
     } finally {
       setIsSaving(false);
     }

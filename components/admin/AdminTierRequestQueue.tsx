@@ -29,7 +29,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 /**
  * API Response Types
@@ -114,8 +114,6 @@ export default function AdminTierRequestQueue(): React.ReactElement {
   const [selectedRequest, setSelectedRequest] = useState<TierUpgradeRequest | null>(null);
   const [rejectionReason, setRejectionReason] = useState<string>('');
 
-  const { toast } = useToast();
-
   // Rejection reason validation constants
   const REJECTION_REASON_MIN_LENGTH = 10;
   const REJECTION_REASON_MAX_LENGTH = 1000;
@@ -178,15 +176,11 @@ export default function AdminTierRequestQueue(): React.ReactElement {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to load pending tier requests';
       setError(message);
-      toast({
-        title: 'Error',
-        description: message,
-        variant: 'destructive',
-      });
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }
-  }, [requestTypeFilter, toast]);
+  }, [requestTypeFilter]);
 
   /**
    * Fetch pending requests on mount and when filter changes
@@ -237,23 +231,15 @@ export default function AdminTierRequestQueue(): React.ReactElement {
       // Remove request from list
       setRequests((prev) => prev.filter((r) => r.id !== selectedRequest.id));
 
-      // Show success toast
       const requestTypeName = selectedRequest.requestType === 'upgrade' ? 'upgrade' : 'downgrade';
-      toast({
-        title: 'Tier Request Approved',
-        description: `${selectedRequest.vendor.companyName}'s ${requestTypeName} to ${TIER_LABELS[selectedRequest.requestedTier]} has been approved successfully.`,
-      });
+      toast.success(`${selectedRequest.vendor.companyName}'s ${requestTypeName} to ${TIER_LABELS[selectedRequest.requestedTier]} has been approved successfully.`);
 
       // Close dialog
       setApproveDialogOpen(false);
       setSelectedRequest(null);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to approve tier request';
-      toast({
-        title: 'Error',
-        description: message,
-        variant: 'destructive',
-      });
+      toast.error(message);
 
       // Close dialog on error
       setApproveDialogOpen(false);
@@ -272,11 +258,7 @@ export default function AdminTierRequestQueue(): React.ReactElement {
     // Validate rejection reason
     const validationError = getRejectionReasonError(rejectionReason);
     if (validationError) {
-      toast({
-        title: 'Validation Error',
-        description: validationError,
-        variant: 'destructive',
-      });
+      toast.error(validationError);
       return;
     }
 
@@ -302,12 +284,8 @@ export default function AdminTierRequestQueue(): React.ReactElement {
       // Remove request from list
       setRequests((prev) => prev.filter((r) => r.id !== selectedRequest.id));
 
-      // Show success toast
       const requestTypeName = selectedRequest.requestType === 'upgrade' ? 'upgrade' : 'downgrade';
-      toast({
-        title: 'Tier Request Rejected',
-        description: `${selectedRequest.vendor.companyName}'s ${requestTypeName} request has been rejected.`,
-      });
+      toast.success(`${selectedRequest.vendor.companyName}'s ${requestTypeName} request has been rejected.`);
 
       // Close dialog
       setRejectDialogOpen(false);
@@ -315,11 +293,7 @@ export default function AdminTierRequestQueue(): React.ReactElement {
       setRejectionReason('');
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to reject tier request';
-      toast({
-        title: 'Error',
-        description: message,
-        variant: 'destructive',
-      });
+      toast.error(message);
 
       // Close dialog on error
       setRejectDialogOpen(false);

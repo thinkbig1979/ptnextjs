@@ -59,7 +59,7 @@ export function Footer({ companyInfo }: FooterProps): React.JSX.Element {
                 Creative Lighting
               </Link>
               <Link
-                href="/consultancy"
+                href="/consultancy/clients"
                 className="block font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors"
               >
                 Consultancy

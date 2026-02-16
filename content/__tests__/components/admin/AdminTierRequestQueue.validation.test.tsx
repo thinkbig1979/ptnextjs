@@ -14,22 +14,23 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import AdminTierRequestQueue from '@/components/admin/AdminTierRequestQueue';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
-// Mock useToast hook
-jest.mock('@/hooks/use-toast', () => ({
-  useToast: jest.fn(),
+// Mock sonner
+jest.mock('sonner', () => ({
+  toast: Object.assign(jest.fn(), {
+    success: jest.fn(),
+    error: jest.fn(),
+    info: jest.fn(),
+  }),
 }));
 
 // Mock fetch
 global.fetch = jest.fn();
 
 describe('AdminTierRequestQueue - Rejection Reason Validation', () => {
-  const mockToast = jest.fn();
-
   beforeEach(() => {
     jest.clearAllMocks();
-    (useToast as jest.Mock).mockReturnValue({ toast: mockToast });
   });
 
   afterEach(() => {

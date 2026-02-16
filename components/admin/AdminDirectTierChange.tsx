@@ -28,7 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 /**
  * Tier Type Definition
@@ -82,8 +82,6 @@ export default function AdminDirectTierChange({
   const [confirmDialogOpen, setConfirmDialogOpen] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  const { toast } = useToast();
-
   // All available tiers
   const allTiers: TierType[] = ['free', 'tier1', 'tier2', 'tier3'];
 
@@ -102,11 +100,7 @@ export default function AdminDirectTierChange({
    */
   const handleChangeTierClick = (): void => {
     if (!hasChanged) {
-      toast({
-        title: 'No change',
-        description: 'Please select a different tier.',
-        variant: 'default',
-      });
+      toast.info('Please select a different tier.');
       return;
     }
     setConfirmDialogOpen(true);
@@ -138,11 +132,7 @@ export default function AdminDirectTierChange({
       }
 
       // Success
-      toast({
-        title: 'Tier updated',
-        description: `${vendorName} has been changed to ${TIER_NAMES[selectedTier as keyof typeof TIER_NAMES]}.`,
-        variant: 'default',
-      });
+      toast.success(`${vendorName} has been changed to ${TIER_NAMES[selectedTier as keyof typeof TIER_NAMES]}.`);
 
       setConfirmDialogOpen(false);
 
@@ -152,11 +142,7 @@ export default function AdminDirectTierChange({
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to update tier';
-      toast({
-        title: 'Error',
-        description: message,
-        variant: 'destructive',
-      });
+      toast.error(message);
     } finally {
       setIsSubmitting(false);
     }

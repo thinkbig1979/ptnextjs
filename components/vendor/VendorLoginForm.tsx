@@ -15,7 +15,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 import { useAuth } from '@/lib/context/AuthContext';
 import { Loader2, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
@@ -44,7 +44,6 @@ type LoginFormData = z.infer<typeof loginSchema>;
  */
 export function VendorLoginForm() {
   const router = useRouter();
-  const { toast } = useToast();
   const { login } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -68,10 +67,7 @@ export function VendorLoginForm() {
       await login(data.email, data.password);
 
       // Success - redirect to vendor dashboard
-      toast({
-        title: 'Login Successful',
-        description: 'Welcome back!',
-      });
+      toast.success('Welcome back!');
 
       router.push('/vendor/dashboard');
     } catch (error) {
@@ -80,30 +76,14 @@ export function VendorLoginForm() {
 
       // Display appropriate error based on error message
       if (errorMessage.includes('Invalid email or password')) {
-        toast({
-          title: 'Login Failed',
-          description: 'Invalid email or password',
-          variant: 'destructive',
-        });
+        toast.error('Invalid email or password');
       } else if (errorMessage.includes('pending approval') || errorMessage.includes('awaiting admin approval')) {
-        toast({
-          title: 'Account Pending',
-          description: 'Your account is awaiting admin approval',
-          variant: 'destructive',
-        });
+        toast.error('Your account is awaiting admin approval');
       } else if (errorMessage.includes('rejected') || errorMessage.includes('has been rejected')) {
-        toast({
-          title: 'Account Rejected',
-          description: 'Your account has been rejected. Contact support.',
-          variant: 'destructive',
-        });
+        toast.error('Your account has been rejected. Contact support.');
       } else {
         // Generic error
-        toast({
-          title: 'Login Failed',
-          description: errorMessage,
-          variant: 'destructive',
-        });
+        toast.error(errorMessage);
       }
     } finally {
       setIsSubmitting(false);

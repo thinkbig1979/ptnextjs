@@ -22,7 +22,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 /**
  * API Response Types
@@ -77,8 +77,6 @@ export default function AdminApprovalQueue(): React.ReactElement {
   const [selectedVendor, setSelectedVendor] = useState<PendingVendor | null>(null);
   const [rejectionReason, setRejectionReason] = useState<string>('');
 
-  const { toast } = useToast();
-
   /**
    * Fetch pending vendors from API
    * Wrapped in useCallback to stabilize the function reference
@@ -103,15 +101,11 @@ export default function AdminApprovalQueue(): React.ReactElement {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to load pending vendors';
       setError(message);
-      toast({
-        title: 'Error',
-        description: message,
-        variant: 'destructive',
-      });
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }
-  }, [toast]);
+  }, []);
 
   /**
    * Fetch pending vendors on mount
@@ -159,22 +153,14 @@ export default function AdminApprovalQueue(): React.ReactElement {
       // Remove vendor from list
       setVendors((prev) => prev.filter((v) => v.user.id !== selectedVendor.user.id));
 
-      // Show success toast
-      toast({
-        title: 'Vendor Approved',
-        description: `${selectedVendor.vendor?.companyName || selectedVendor.user.email} has been approved successfully.`,
-      });
+      toast.success(`${selectedVendor.vendor?.companyName || selectedVendor.user.email} has been approved successfully.`);
 
       // Close dialog
       setApproveDialogOpen(false);
       setSelectedVendor(null);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to approve vendor';
-      toast({
-        title: 'Error',
-        description: message,
-        variant: 'destructive',
-      });
+      toast.error(message);
 
       // Close dialog on error
       setApproveDialogOpen(false);
@@ -192,11 +178,7 @@ export default function AdminApprovalQueue(): React.ReactElement {
 
     // Validate rejection reason
     if (!rejectionReason.trim()) {
-      toast({
-        title: 'Error',
-        description: 'Please provide a reason for rejection.',
-        variant: 'destructive',
-      });
+      toast.error('Please provide a reason for rejection.');
       return;
     }
 
@@ -220,11 +202,7 @@ export default function AdminApprovalQueue(): React.ReactElement {
       // Remove vendor from list
       setVendors((prev) => prev.filter((v) => v.user.id !== selectedVendor.user.id));
 
-      // Show success toast
-      toast({
-        title: 'Vendor Rejected',
-        description: `${selectedVendor.vendor?.companyName || selectedVendor.user.email} has been rejected.`,
-      });
+      toast.success(`${selectedVendor.vendor?.companyName || selectedVendor.user.email} has been rejected.`);
 
       // Close dialog
       setRejectDialogOpen(false);
@@ -232,11 +210,7 @@ export default function AdminApprovalQueue(): React.ReactElement {
       setRejectionReason('');
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to reject vendor';
-      toast({
-        title: 'Error',
-        description: message,
-        variant: 'destructive',
-      });
+      toast.error(message);
 
       // Close dialog on error
       setRejectDialogOpen(false);
