@@ -214,7 +214,18 @@ function transformArrayFieldsForPayload(data: Record<string, unknown>): Record<s
         };
         if (cs.yachtName) result.yachtName = cs.yachtName;
         if (cs.yacht) result.yacht = cs.yacht;
-        if (cs.projectDate) result.projectDate = cs.projectDate;
+        // projectDate: form sends "YYYY-MM" (month input), Payload expects ISO timestamp
+        // Convert partial dates to full ISO, strip empty strings
+        if (cs.projectDate && typeof cs.projectDate === 'string' && cs.projectDate.trim()) {
+          const dateStr = cs.projectDate.trim();
+          // "2024-03" → "2024-03-01T00:00:00.000Z"
+          if (/^\d{4}-\d{2}$/.test(dateStr)) {
+            result.projectDate = `${dateStr}-01T00:00:00.000Z`;
+          } else {
+            // Already a full date string or ISO - pass through
+            result.projectDate = dateStr;
+          }
+        }
         if (cs.testimonyQuote) result.testimonyQuote = cs.testimonyQuote;
         if (cs.testimonyAuthor) result.testimonyAuthor = cs.testimonyAuthor;
         if (cs.testimonyRole) result.testimonyRole = cs.testimonyRole;
@@ -282,6 +293,9 @@ function transformArrayFieldsForPayload(data: Record<string, unknown>): Record<s
 
   return transformed;
 }
+
+// Export for testing
+export { plainTextToLexicalJson, isLexicalJson, transformArrayFieldsForPayload };
 
 export class VendorProfileService {
   /**

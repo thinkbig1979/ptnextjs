@@ -99,18 +99,23 @@ export function BasicInfoForm({ vendor, onSubmit }: BasicInfoFormProps) {
     if (onSubmit) {
       await onSubmit(data);
     } else {
-      // Update vendor in context
-      updateVendor({
+      const updates = {
         name: data.companyName,
         slug: data.slug,
         description: data.description,
         logo: data.logo || undefined,
         contactEmail: data.contactEmail,
         contactPhone: data.contactPhone || undefined,
-      });
+      };
 
-      // Save to backend
-      await saveVendor();
+      // Merge with current vendor data to create complete snapshot
+      const mergedVendor = { ...vendor, ...updates };
+
+      // Update context state (for UI reactivity)
+      updateVendor(updates);
+
+      // Pass merged data directly to saveVendor - don't rely on setState flushing
+      await saveVendor(mergedVendor as Vendor);
     }
 
     // Reset form dirty state

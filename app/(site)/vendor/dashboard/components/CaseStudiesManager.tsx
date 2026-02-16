@@ -21,6 +21,7 @@ import { TierService } from '@/lib/services/TierService';
 import { TierUpgradePrompt } from '@/components/dashboard/TierUpgradePrompt';
 import { caseStudySchema, type CaseStudyFormData } from '@/lib/validation/vendorSchemas';
 import { HelpTooltip } from '@/components/help';
+import { extractDescriptionText } from '@/lib/utils/lexical-helpers';
 
 // Default values for form
 const CASE_STUDY_DEFAULT_VALUES: CaseStudyFormData = {
@@ -116,6 +117,10 @@ export function CaseStudiesManager({ vendor }: CaseStudiesManagerProps) {
     setEditingIndex(index);
     reset({
       ...caseStudy,
+      // Convert Lexical JSON objects back to plain text for textarea editing
+      challenge: extractDescriptionText(caseStudy.challenge),
+      solution: extractDescriptionText(caseStudy.solution),
+      results: extractDescriptionText(caseStudy.results),
       images: caseStudy.images || null,
     });
     setImageUrls(caseStudy.images || []);
@@ -209,11 +214,12 @@ export function CaseStudiesManager({ vendor }: CaseStudiesManagerProps) {
     return matchesSearch && matchesFeatured;
   });
 
-  // Save changes to backend
+  // Save changes to backend - pass merged data directly to avoid React setState race condition
   const handleSaveChanges = async () => {
     setIsSaving(true);
     try {
-      await saveVendor();
+      const mergedVendor = { ...vendor, caseStudies };
+      await saveVendor(mergedVendor as Vendor);
     } catch {
       // Error toast is handled by saveVendor in VendorDashboardContext
     } finally {
@@ -355,13 +361,13 @@ export function CaseStudiesManager({ vendor }: CaseStudiesManagerProps) {
                         <div>
                           <h4 className="text-sm font-medium mb-1">Challenge</h4>
                           <p className="text-sm text-muted-foreground line-clamp-2">
-                            {caseStudy.challenge}
+                            {extractDescriptionText(caseStudy.challenge)}
                           </p>
                         </div>
                         <div>
                           <h4 className="text-sm font-medium mb-1">Solution</h4>
                           <p className="text-sm text-muted-foreground line-clamp-2">
-                            {caseStudy.solution}
+                            {extractDescriptionText(caseStudy.solution)}
                           </p>
                         </div>
                         {caseStudy.testimonyQuote && (

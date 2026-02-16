@@ -167,10 +167,11 @@ export function TeamMembersManager({ vendor }: TeamMembersManagerProps) {
     setDeleteDialogOpen(false);
     setDeletingIndex(null);
 
-    // Auto-save
+    // Auto-save - pass merged data directly to avoid React setState race condition
+    const mergedVendor = { ...vendor, teamMembers: updatedMembers };
     setIsSaving(true);
     try {
-      await saveVendor();
+      await saveVendor(mergedVendor as Vendor);
     } catch {
       // Error toast is handled by saveVendor in VendorDashboardContext
     } finally {
@@ -222,10 +223,11 @@ export function TeamMembersManager({ vendor }: TeamMembersManagerProps) {
     setModalOpen(false);
     reset(TEAM_MEMBER_DEFAULT_VALUES);
 
-    // Auto-save
+    // Auto-save - pass merged data directly to avoid React setState race condition
+    const mergedVendor = { ...vendor, teamMembers: updatedMembers };
     setIsSaving(true);
     try {
-      await saveVendor();
+      await saveVendor(mergedVendor as Vendor);
     } catch {
       // Error toast is handled by saveVendor in VendorDashboardContext
     } finally {
@@ -263,10 +265,11 @@ export function TeamMembersManager({ vendor }: TeamMembersManagerProps) {
     updateVendor({ teamMembers });
     markDirty(true);
 
-    // Auto-save
+    // Auto-save - pass merged data directly to avoid React setState race condition
+    const mergedVendor = { ...vendor, teamMembers };
     setIsSaving(true);
     try {
-      await saveVendor();
+      await saveVendor(mergedVendor as Vendor);
     } catch {
       // Error toast is handled by saveVendor in VendorDashboardContext
     } finally {

@@ -626,7 +626,6 @@ const Vendors: CollectionConfig = {
         {
           name: 'projectDate',
           type: 'date',
-          required: true,
           admin: {
             description: 'Project completion date',
           },

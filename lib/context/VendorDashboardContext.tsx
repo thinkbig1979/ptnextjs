@@ -58,7 +58,8 @@ const ALLOWED_UPDATE_FIELDS = new Set([
  * a computed field that mirrors 'companyName'. Only 'companyName' should be sent
  * to the API to ensure updates persist correctly.
  */
-function filterVendorPayload(vendor: any): Record<string, any> {
+// Exported for testing - pure function, no React dependency
+export function filterVendorPayload(vendor: any): Record<string, any> {
   const filtered: Record<string, any> = {};
 
   Object.entries(vendor).forEach(([key, value]) => {

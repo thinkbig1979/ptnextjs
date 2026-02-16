@@ -229,20 +229,25 @@ export function CertificationsAwardsManager({ vendor }: CertificationsAwardsMana
     setDeletingAwardIndex(null);
   };
 
-  // Save all changes using correct two-step pattern
+  // Save all changes - pass merged data directly to avoid React setState race condition
   const handleSave = async () => {
     if (!hasAccess) return;
 
     setIsSaving(true);
     try {
-      // Step 1: Update context state
-      updateVendor({
+      const updates = {
         certifications: certifications.length > 0 ? certifications : undefined,
         awards: awards.length > 0 ? awards : undefined,
-      });
+      };
 
-      // Step 2: Save to API
-      await saveVendor();
+      // Merge with current vendor data to create complete snapshot
+      const mergedVendor = { ...vendor, ...updates };
+
+      // Update context state (for UI reactivity)
+      updateVendor(updates);
+
+      // Pass merged data directly to saveVendor - don't rely on setState flushing
+      await saveVendor(mergedVendor as Vendor);
     } catch {
       // Error toast is handled by saveVendor in VendorDashboardContext
     } finally {
