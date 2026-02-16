@@ -180,7 +180,7 @@ describe('MaintenanceHistory', () => {
     const user = userEvent.setup();
     render(<MaintenanceHistory records={mockMaintenanceRecords} expandable={true} />);
 
-    const expandButton = screen.getByTestId('expand-record-0');
+    const expandButton = screen.getByTestId('expand-record-2024-04-05-Safety-inspection');
     expect(expandButton).toBeInTheDocument();
 
     await user.click(expandButton);
