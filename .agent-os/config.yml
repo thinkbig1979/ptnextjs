@@ -1,10 +1,11 @@
-# Agent OS Configuration v5.4.1
+# Agent OS Configuration v5.7.0
 # Clean configuration with sane defaults for compound engineering integration
 #
 # TOKEN EFFICIENCY NOTE:
 # - This file is loaded once per session (not repeatedly)
 # - Agents access specific sections via key lookup, not full-file parsing
 # - Unused sections do not consume additional context tokens
+# v5.7.0: Implementation Guardrails & Codebase Sweep - Verify Target, Reference Audit, /sweep command
 # v5.4.1: Task Coverage Validation - Ensures tasks fully cover spec requirements
 # v5.4.0: Semantic Coverage Validation - Workflow, data flow, and integration coverage checks
 # v5.3.0: Mandatory Session Ledger - Session ledger required when remaining work exists
@@ -24,7 +25,7 @@
 # v4.0.0: Test Failure Handling Protocol - Orchestrated test execution with subagent delegation
 # v3.3.0: Test Execution Monitoring - Real-time streaming, hung test detection, test/code alignment
 
-agent_os_version: 5.5.0
+agent_os_version: 5.7.0
 
 # ================================================
 # CONFIGURATION HIERARCHY
@@ -281,7 +282,7 @@ deliverable_verification:
 # discipline that strict RED-GREEN-REFACTOR provides. Enable when you want
 # stricter test-first workflow.
 tdd_enforcement:
-  enabled: false  # Set true to enable TDD enforcement
+  enabled: false # Set true to enable TDD enforcement
 
   # Enforcement level: strict | standard | relaxed
   # - strict: Block implementation without passing tests (production)
@@ -291,28 +292,28 @@ tdd_enforcement:
 
   # Test-first workflow enforcement
   test_first:
-    enabled: false  # Set true for test-first requirement
+    enabled: false # Set true for test-first requirement
     block_implementation: false # Set true for strict enforcement
     require_passing_tests: true
     allow_refactoring: true
 
   # Minimal implementation principle
   minimal_implementation:
-    enabled: false  # Set true to enforce simplicity checks
+    enabled: false # Set true to enforce simplicity checks
     enforce_simplicity: true
     check_complexity: true
     max_lines_per_function: 50
 
   # TDD cycle tracking (RED-GREEN-REFACTOR)
   cycle_tracking:
-    enabled: false  # Set true to track TDD cycles
+    enabled: false # Set true to track TDD cycles
     state_directory: ".agent-os/tdd-state"
     persist_history: true
     track_metrics: true
 
   # TDD workflow hooks
   hooks:
-    enabled: false  # Set true to enable TDD hooks
+    enabled: false # Set true to enable TDD hooks
     pre_implementation: true # Validate tests exist before implementation
     post_test: true # Validate tests pass after changes
     pre_commit: false # Optional: Validate before git commit
@@ -2046,3 +2047,59 @@ e2e_repair_protocol:
     total_100_tests: "5min"
     total_250_tests: "10min"
     total_500_tests: "15min"
+
+# ================================================
+# IMPLEMENTATION GUARDRAILS (v5.7.0+)
+# ================================================
+# Verify Target and Reference Audit protocols for the implementation specialist.
+# These prevent the two most common implementation errors:
+# 1. Editing the wrong file (wrong component, wrong handler)
+# 2. Missing stale references after multi-file changes
+
+implementation_guardrails:
+  enabled: true
+
+  # Verify Target: Trace import/render chain before editing files
+  verify_target:
+    enabled: true
+    # enforcement_mode: "advisory" logs a reminder, "warning" shows alert, "blocking" prevents edits
+    enforcement_mode: "advisory"
+    # Skip verification when user provides explicit file paths
+    trust_user_paths: true
+
+  # Reference Audit: Grep all references after multi-file changes
+  reference_audit:
+    enabled: true
+    enforcement_mode: "advisory"
+    # Trigger audit when this many files are modified in a single task
+    file_threshold: 3
+    # Include test files in the audit
+    include_tests: true
+    # Include barrel files (index.ts) in the audit
+    include_barrel_files: true
+
+# ================================================
+# CODEBASE SWEEP (v5.7.0+)
+# ================================================
+# Configuration for the /sweep command.
+# Automated codebase maintenance: dead exports, unused deps, type errors, stale refs.
+
+codebase_sweep:
+  enabled: true
+
+  # Which categories to check
+  categories:
+    typescript: true
+    dead_exports: true
+    unused_deps: true
+    stale_refs: true
+    code_markers: true
+    large_files: true
+
+  # Thresholds
+  thresholds:
+    large_file_lines: 500
+
+  # Safety: Only auto-fix SAFE findings, report REVIEW findings
+  auto_fix: true
+  enforcement_mode: "advisory" # advisory | warning

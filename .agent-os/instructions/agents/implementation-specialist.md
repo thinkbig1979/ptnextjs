@@ -4,7 +4,7 @@ description: "Core feature implementation and business logic"
 phase: core_implementation
 context_window: 20480
 specialization: [implementation, business-logic, algorithms, data-structures]
-version: 5.1.0
+version: 5.7.0
 ---
 
 # Implementation Specialist
@@ -27,6 +27,52 @@ Core Feature Implementation Specialist - robust, efficient, maintainable busines
 - Data models and schemas
 - Performance constraints
 - Integration points (APIs, services)
+
+## Verify Target (MANDATORY - v5.7.0+)
+
+**Before editing ANY file, you MUST verify you are editing the correct target.**
+
+This prevents the most common and costly implementation error: editing a file that looks right based on its name but is not the file actually rendered/used in the running application.
+
+### For UI Components
+
+```yaml
+BEFORE editing a UI component:
+  1. IDENTIFY the page route or layout that renders the view
+  2. TRACE the import chain from that route to find the EXACT component file
+  3. CONFIRM: "The component rendered at [route/view] is [file_path]"
+  4. ONLY THEN proceed to edit
+
+NEVER assume a file is correct based on filename alone.
+Files like AppSidebar.tsx vs app-sidebar.tsx, InlineComments vs SidebarComments
+may coexist — only one is rendered in the target view.
+```
+
+### For Backend/API Files
+
+```yaml
+BEFORE editing a backend file:
+  1. IDENTIFY the API route or function entry point
+  2. TRACE: Which file handles this route? Which service does it call?
+  3. CONFIRM: "The handler for [endpoint/action] is [file_path]"
+  4. ONLY THEN proceed to edit
+```
+
+### For Multi-File Changes
+
+```yaml
+BEFORE a cross-cutting change:
+  1. LIST all files you intend to modify
+  2. FOR EACH file: Verify it is imported/used by the target feature
+  3. CHECK: Are there similarly-named files that could cause confusion?
+  4. CONFIRM the full file list before making any edits
+```
+
+### Verification Shortcut
+
+When the user provides explicit file paths, trust those paths. This protocol is for when YOU are identifying which files to edit.
+
+---
 
 ## Pattern Loading (MANDATORY - v5.0+)
 
@@ -230,6 +276,62 @@ class AuthenticationService {
   }
 }
 ```
+
+## Post-Implementation Reference Audit (v5.7.0+)
+
+**After completing multi-file changes, you MUST run a reference consistency audit.**
+
+This catches the "missed file" problem where types, interfaces, or functions are updated in some files but stale references remain elsewhere, causing runtime errors or type mismatches.
+
+### When to Run
+
+```yaml
+TRIGGER reference audit when:
+  - You modified a type, interface, or function signature
+  - You renamed or moved an export
+  - You changed a shared constant or configuration value
+  - You updated a schema or data model
+  - You modified more than 3 files in a single task
+
+SKIP when:
+  - Changes are purely cosmetic (comments, formatting)
+  - Single-file changes with no exports modified
+  - Test-only changes
+```
+
+### Audit Protocol
+
+```yaml
+FOR EACH modified type/interface/function/export:
+  1. GREP for all references across the codebase
+     - Search for: import statements, type references, function calls
+     - Include: re-exports from barrel files (index.ts)
+  2. VERIFY each reference is consistent with your changes
+     - Correct argument types
+     - Correct return type usage
+     - Correct property access
+  3. LIST any file that imports/uses the changed symbol but was NOT updated
+
+IF inconsistencies found:
+  - FIX them before completing the task
+  - DO NOT leave stale references for a follow-up task
+
+IF no inconsistencies found:
+  - STATE: "Reference audit passed: [N] references verified across [M] files"
+```
+
+### Common Missed References
+
+```yaml
+WATCH FOR:
+  - Barrel files (index.ts) that re-export changed types
+  - Test files that import changed interfaces
+  - Mock files that mirror changed function signatures
+  - Documentation files with embedded type examples
+  - Seed/fixture files with changed schema shapes
+```
+
+---
 
 ## Coordination
 

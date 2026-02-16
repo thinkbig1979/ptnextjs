@@ -1,6 +1,6 @@
 ---
-version: 5.6.0
-last-updated: 2026-01-20
+version: 5.7.0
+last-updated: 2026-02-08
 related-files:
   - docs/GETTING_STARTED.md
   - docs/ARCHITECTURE.md
@@ -9,7 +9,7 @@ related-files:
 
 # CLAUDE.md
 
-Agent OS v5.6.0 - Structured workflows for AI agents to build products systematically.
+Agent OS v5.7.0 - Structured workflows for AI agents to build products systematically.
 
 ## What is Agent OS?
 
@@ -128,6 +128,12 @@ bd sync                               # Sync with git (always run at session end
 /e2e --auto                              # Auto-fix in priority order
 /e2e --health                            # Quick smoke test check
 /e2e --tier=core                         # Run specific tier
+
+# Codebase Health (v5.7.0+)
+/sweep                                   # Full sweep: analyze + safe fixes
+/sweep --dry-run                         # Analysis only, no fixes
+/sweep --category=types                  # Only TypeScript errors
+/sweep --category=deps                   # Only unused dependencies
 ```
 
 ## Checklists
