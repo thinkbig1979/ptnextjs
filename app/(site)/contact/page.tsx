@@ -6,6 +6,11 @@ import { payloadCMSDataService } from '@/lib/payload-cms-data-service';
 // Force dynamic rendering - database not available at Docker build time
 export const dynamic = 'force-dynamic';
 
+export const metadata = {
+  title: 'Contact Paul Thames | Superyacht Technical Consultancy',
+  description: 'Get in touch with Paul Thames for superyacht technical consultancy, creative lighting, and vendor advisory services.',
+};
+
 export default async function ContactPage() {
   // Fetch company info at build time
   const companyInfo = await payloadCMSDataService.getCompanyInfo();

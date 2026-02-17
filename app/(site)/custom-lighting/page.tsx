@@ -8,7 +8,7 @@ import { LightingConceptCard } from '@/components/lighting-concept-card';
 import { Grid3X3, Layers, Cpu, Anchor, Building2, Hotel, Home } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Creative Lighting Solutions | Paul Thames',
+  title: 'Creative Lighting Solutions | Pixel-Based Fixtures for Superyachts',
   description:
     "Pixel-based fixtures, custom content, and complete programming for superyachts and high-end architecture. When traditional lighting won't do.",
 };

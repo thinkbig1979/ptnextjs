@@ -13,6 +13,11 @@ import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
 export const dynamic = 'force-dynamic';
 export const revalidate = 600;
 
+export const metadata = {
+  title: 'Blog | Superyacht Technology Insights from Paul Thames',
+  description: 'Expert insights on superyacht AV/IT systems, security, and custom lighting from industry veterans Edwin Edelenbos and Roel van der Zwet.',
+};
+
 export default async function BlogPage() {
   // Fetch data in parallel to eliminate waterfall
   const [blogPosts, categories] = await Promise.all([

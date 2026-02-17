@@ -5,7 +5,7 @@ import { Quote, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-  title: "Testimonials | Paul Thames",
+  title: "Testimonials | What Clients Say About Paul Thames",
   description: "What clients, captains, and industry professionals say about working with Edwin Edelenbos on superyacht AV/IT, lighting, and technology projects.",
 };
 

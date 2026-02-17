@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Vendor Consultancy | Paul Thames',
+  title: 'Vendor Consultancy | Market Access for Marine Technology',
   description:
     'Market access and visibility for manufacturers, distributors, and technology providers in the superyacht industry. Proposition testing, market strategy, and directory listings.',
 };

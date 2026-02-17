@@ -50,6 +50,11 @@ export const dynamic = 'force-dynamic';
 // ISR: Revalidate every 10s in dev, 5min in production
 export const revalidate = 300; // ISR: Revalidate every 5 minutes
 
+export const metadata = {
+  title: 'Services & Products | Paul Thames Superyacht Solutions',
+  description: 'Discover Paul Thames technical consultancy and creative lighting services for superyachts, including project advisory and custom programming.',
+};
+
 interface ProductsPageProps {
   searchParams?: Promise<{
     category?: string;

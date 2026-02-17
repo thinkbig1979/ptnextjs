@@ -1,32 +1,31 @@
+# *
 User-agent: *
 Allow: /
-
-# Sitemap
-Sitemap: https://paulthamessuperyachttechnology.com/sitemap.xml
-
-# Crawl delays and specific directives
-Crawl-delay: 1
-
-# Block admin areas
 Disallow: /admin/
 Disallow: /api/
-
-# Block development files
 Disallow: /_next/
 Disallow: /scripts/
 Disallow: /migration-scripts/
+Disallow: /vendor/
 
-# Allow important pages
-Allow: /
-Allow: /products
-Allow: /partners
-Allow: /blog
-Allow: /about
-Allow: /contact
-
-# Additional crawling hints
-User-agent: Googlebot
+# GPTBot
+User-agent: GPTBot
 Allow: /
 
-User-agent: Bingbot
+# ClaudeBot
+User-agent: ClaudeBot
 Allow: /
+
+# PerplexityBot
+User-agent: PerplexityBot
+Allow: /
+
+# Google-Extended
+User-agent: Google-Extended
+Allow: /
+
+# Host
+Host: https://paulthames.com
+
+# Sitemaps
+Sitemap: https://paulthames.com/sitemap.xml

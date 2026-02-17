@@ -99,7 +99,7 @@ export function ThreeServiceHero({
           {/* Headline */}
           <div className="space-y-6">
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-cormorant font-bold tracking-tight">
-              <span className="text-primary">Experience and Expertise,</span>
+              <span className="text-primary">Experience and Expertise, </span>
               <span className="block text-accent">Applied</span>
             </h1>
 

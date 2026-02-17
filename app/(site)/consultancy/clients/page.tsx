@@ -7,7 +7,7 @@ import { TimelineVisualization } from '@/components/timeline-visualization';
 import { ClipboardCheck, FileText, CheckSquare, Headphones, ArrowRight, Quote } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Project Consultancy | Paul Thames',
+  title: 'Project Consultancy | Technical Advisory for Superyacht Projects',
   description:
     'Technical clarity for owners, designers, and shipyards at critical decision points. Specification review, creation, and on-demand support for superyacht projects.',
 };
