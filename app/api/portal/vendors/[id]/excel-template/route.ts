@@ -71,7 +71,7 @@ export async function GET(
     const filename = ExcelTemplateService.generateFilename(vendor.name as string | undefined, numericTier);
 
     // Return Excel file with proper headers
-    return new NextResponse(buffer, {
+    return new NextResponse(Uint8Array.from(buffer), {
       status: 200,
       headers: {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
