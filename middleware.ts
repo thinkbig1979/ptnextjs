@@ -8,7 +8,6 @@ import { jwtVerify } from 'jose';
  * Features:
  * - Protects vendor dashboard routes with token signature validation
  * - Applies security headers to all API routes
- * - HSTS header in production
  * - Redirects unauthenticated users to login page
  *
  * Note: Uses 'jose' library instead of 'jsonwebtoken' for Edge Runtime compatibility.
@@ -120,14 +119,7 @@ export async function middleware(request: NextRequest) {
     // Modern browsers use CSP, but this provides fallback protection
     response.headers.set('X-XSS-Protection', '1; mode=block');
 
-    // Strict-Transport-Security: Enforces HTTPS in production
-    // Forces browsers to only use HTTPS for future requests
-    if (process.env.NODE_ENV === 'production') {
-      response.headers.set(
-        'Strict-Transport-Security',
-        'max-age=31536000; includeSubDomains'
-      );
-    }
+    // HSTS is handled by OpenResty reverse proxy with includeSubDomains and preload
 
     // Referrer-Policy: Controls referrer information
     response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
