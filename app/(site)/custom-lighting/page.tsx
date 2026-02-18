@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { PixelGridBackground } from '@/components/pixel-grid-background';
 import { LightingConceptCard } from '@/components/lighting-concept-card';
 import { Grid3X3, Layers, Cpu, Anchor, Building2, Hotel, Home } from 'lucide-react';
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 export const metadata: Metadata = {
   title: 'Creative Lighting Solutions | Pixel-Based Fixtures for Superyachts',
@@ -104,6 +105,13 @@ const showcaseImages = [
 export default function CustomLightingPage() {
   return (
     <div className="min-h-screen">
+      <div className="container max-w-screen-xl pt-6">
+        <Breadcrumbs items={[
+          { label: 'Home', href: '/' },
+          { label: 'Custom Lighting', href: '/custom-lighting' },
+        ]} />
+      </div>
+
       {/* Hero Section */}
       <PixelGridBackground
         variant="prominent"

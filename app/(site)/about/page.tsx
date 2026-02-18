@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 export const metadata: Metadata = {
   title: 'About Us | Paul Thames',
@@ -31,6 +32,11 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen py-12">
       <div className="container max-w-screen-xl">
+        <Breadcrumbs items={[
+          { label: 'Home', href: '/' },
+          { label: 'About', href: '/about' },
+        ]} />
+
         {/* Header */}
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-6xl font-cormorant font-bold mb-6 text-accent">

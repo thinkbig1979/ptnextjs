@@ -9,6 +9,9 @@ import { notFound } from "next/navigation";
 import BlogPostClient from "./_components/blog-post-client";
 import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
 import { OptimizedImage } from "@/components/ui/optimized-image";
+import JsonLd from "@/components/seo/JsonLd";
+import { getArticleSchema } from "@/lib/seo-config";
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 // Force dynamic rendering - database not available at Docker build time
 export const dynamic = 'force-dynamic';
@@ -65,9 +68,25 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     .filter(p => p.id !== post.id && p.category === post.category)
     .slice(0, 3);
 
+  const articleSchema = getArticleSchema({
+    title: post.title,
+    description: post.excerpt,
+    publishedAt: post.publishedAt,
+    updatedAt: post.updatedAt || post.publishedAt,
+    author: post.author,
+    image: post.image,
+  });
+
   return (
     <div className="min-h-screen py-12">
+      <JsonLd data={articleSchema} />
       <div className="container max-w-4xl">
+        <Breadcrumbs items={[
+          { label: 'Home', href: '/' },
+          { label: 'Blog', href: '/blog' },
+          { label: post.title, href: `/blog/${slug}` },
+        ]} />
+
         {/* Back Button */}
         <div className="mb-8">
           <Button asChild variant="ghost" className="group">

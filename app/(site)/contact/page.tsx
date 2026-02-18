@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 import { payloadCMSDataService } from '@/lib/payload-cms-data-service';
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 // Force dynamic rendering - database not available at Docker build time
 export const dynamic = 'force-dynamic';
@@ -44,6 +45,11 @@ export default async function ContactPage() {
   return (
     <div className="min-h-screen py-12">
       <div className="container max-w-screen-xl">
+        <Breadcrumbs items={[
+          { label: 'Home', href: '/' },
+          { label: 'Contact', href: '/contact' },
+        ]} />
+
         {/* Header */}
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-6xl font-cormorant font-bold mb-6 text-accent">

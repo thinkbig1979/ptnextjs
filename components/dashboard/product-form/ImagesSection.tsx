@@ -47,7 +47,7 @@ function ImagePreview({ url }: { url: string }) {
   return (
     <img
       src={url}
-      alt=""
+      alt="Product image preview"
       className="h-16 w-16 object-cover rounded"
       onError={() => setError(true)}
     />

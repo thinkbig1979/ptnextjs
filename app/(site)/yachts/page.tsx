@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { YachtCard } from '@/components/yacht-profiles/YachtCard';
 import { payloadCMSDataService } from '@/lib/payload-cms-data-service';
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 // Force dynamic rendering - database not available at Docker build time
 export const dynamic = 'force-dynamic';
@@ -15,6 +16,11 @@ export default async function YachtsPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <Breadcrumbs items={[
+        { label: 'Home', href: '/' },
+        { label: 'Yacht Profiles', href: '/yachts' },
+      ]} />
+
       <div className="mb-8">
         <h1 className="text-4xl font-cormorant font-bold mb-4">
           Yacht Profiles

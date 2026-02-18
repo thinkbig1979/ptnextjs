@@ -4,6 +4,7 @@ import { VendorsClient } from "@/app/(site)/components/vendors-client";
 import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
 import { Metadata } from "next";
 import type { Vendor, Product, SerializedVendor, SerializedVendorLocation, SerializedProductMinimal } from "@/lib/types";
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 /**
  * Extract only required fields for VendorsClient to minimize RSC serialization
@@ -109,6 +110,11 @@ export default async function VendorsPage({ searchParams }: VendorsPageProps) {
   return (
     <div className="min-h-screen py-12">
       <div className="container max-w-screen-xl">
+        <Breadcrumbs items={[
+          { label: 'Home', href: '/' },
+          { label: 'Vendors', href: '/vendors' },
+        ]} />
+
         {/* Static Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-6xl font-cormorant font-bold mb-4">

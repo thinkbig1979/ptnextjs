@@ -4,6 +4,7 @@ import { ProductsClient } from "@/app/(site)/components/products-client";
 import { ComparisonProvider } from "@/components/ui/product-comparison";
 import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
 import type { Product, Vendor, SerializedProduct, SerializedVendorMinimal } from "@/lib/types";
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 /**
  * Extract only required fields for ProductsClient to minimize RSC serialization
@@ -86,6 +87,11 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   return (
     <div className="min-h-screen py-12">
       <div className="container max-w-screen-xl">
+        <Breadcrumbs items={[
+          { label: 'Home', href: '/' },
+          { label: 'Products', href: '/products' },
+        ]} />
+
         {/* Static Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-6xl font-cormorant font-bold mb-4">

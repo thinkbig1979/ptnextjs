@@ -73,7 +73,7 @@ export function ThreeServiceHero({
       {/* Hero Background Image */}
       {heroImage && (
         <div className="absolute inset-0 -z-10 opacity-30">
-          <Image src={heroImage} alt="" fill className="object-cover" priority aria-hidden="true" />
+          <Image src={heroImage} alt="Paul Thames superyacht technology hero background" fill className="object-cover" priority aria-hidden="true" />
         </div>
       )}
 

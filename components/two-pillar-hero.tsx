@@ -54,7 +54,7 @@ export function TwoPillarHero({
         <div className="absolute inset-0 -z-10 opacity-30">
           <Image
             src={heroImage}
-            alt="" // Decorative background image
+            alt="Paul Thames superyacht services hero background"
             fill
             className="object-cover"
             priority

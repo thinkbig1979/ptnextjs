@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Quote, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 export const metadata: Metadata = {
   title: "Testimonials | What Clients Say About Paul Thames",
@@ -116,6 +117,11 @@ export default function TestimonialsPage() {
   return (
     <div className="min-h-screen py-12">
       <div className="container max-w-screen-xl">
+        <Breadcrumbs items={[
+          { label: 'Home', href: '/' },
+          { label: 'Testimonials', href: '/testimonials' },
+        ]} />
+
         {/* Header */}
         <div className="text-center mb-16">
           <p className="text-sm uppercase tracking-widest text-accent font-poppins-medium mb-4">

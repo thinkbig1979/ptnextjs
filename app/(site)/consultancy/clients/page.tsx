@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { TimelineVisualization } from '@/components/timeline-visualization';
 import { ClipboardCheck, FileText, CheckSquare, Headphones, ArrowRight, Quote } from 'lucide-react';
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 export const metadata: Metadata = {
   title: 'Project Consultancy | Technical Advisory for Superyacht Projects',
@@ -56,6 +57,12 @@ export default function ConsultancyClientsPage() {
   return (
     <div className="min-h-screen py-12">
       <div className="container max-w-screen-xl">
+        <Breadcrumbs items={[
+          { label: 'Home', href: '/' },
+          { label: 'Consultancy', href: '/consultancy/clients' },
+          { label: 'Project Clients', href: '/consultancy/clients' },
+        ]} />
+
         {/* Header */}
         <div className="text-center mb-16">
           <p className="text-sm uppercase tracking-widest text-accent font-poppins-medium mb-4">

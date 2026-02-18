@@ -14,6 +14,7 @@ import {
   Building2,
   Network,
 } from 'lucide-react';
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 export const metadata: Metadata = {
   title: 'Vendor Consultancy | Market Access for Marine Technology',
@@ -92,6 +93,12 @@ export default function ConsultancySuppliersPage() {
   return (
     <div className="min-h-screen py-12">
       <div className="container max-w-screen-xl">
+        <Breadcrumbs items={[
+          { label: 'Home', href: '/' },
+          { label: 'Consultancy', href: '/consultancy/suppliers' },
+          { label: 'Vendor Suppliers', href: '/consultancy/suppliers' },
+        ]} />
+
         {/* Header */}
         <div className="text-center mb-16">
           <p className="text-sm uppercase tracking-widest text-accent font-poppins-medium mb-4">

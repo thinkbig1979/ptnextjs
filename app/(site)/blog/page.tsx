@@ -8,6 +8,7 @@ import Link from "next/link";
 import { formatDate } from "@/lib/utils";
 import { BlogClient } from "./_components/blog-client";
 import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 // Force dynamic rendering - database not available at Docker build time
 export const dynamic = 'force-dynamic';
@@ -31,6 +32,11 @@ export default async function BlogPage() {
   return (
     <div className="min-h-screen py-12">
       <div className="container max-w-screen-xl">
+        <Breadcrumbs items={[
+          { label: 'Home', href: '/' },
+          { label: 'Blog', href: '/blog' },
+        ]} />
+
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-6xl font-cormorant font-bold mb-4">
