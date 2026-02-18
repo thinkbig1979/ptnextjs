@@ -32,7 +32,7 @@ const defaultServices: ServiceCardData[] = [
     audienceTag: 'Bespoke Fixtures & Programming',
     description:
       "Pixel-based fixtures, custom content, and full programming for projects where traditional lighting won't do",
-    ctaText: 'Learn More',
+    ctaText: 'Explore Creative Lighting',
     ctaUrl: '/custom-lighting',
   },
   {
@@ -40,7 +40,7 @@ const defaultServices: ServiceCardData[] = [
     title: 'Project Consultancy',
     audienceTag: 'For Project Teams',
     description: 'Experienced guidance and practical advice where it counts',
-    ctaText: 'Learn More',
+    ctaText: 'View Project Consultancy',
     ctaUrl: '/consultancy/clients',
   },
   {
@@ -48,7 +48,7 @@ const defaultServices: ServiceCardData[] = [
     title: 'Supplier Consultancy',
     audienceTag: 'For Industry Vendors',
     description: 'Market positioning and access to decision makers and qualified specifiers',
-    ctaText: 'Learn More',
+    ctaText: 'View Supplier Consultancy',
     ctaUrl: '/consultancy/suppliers',
   },
 ];

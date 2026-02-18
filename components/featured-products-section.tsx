@@ -68,7 +68,7 @@ export function FeaturedProductsSection({
                     <p className="text-sm text-muted-foreground mb-4">By {product.vendorName}</p>
                   )}
                   <div className="flex items-center text-accent text-sm font-medium group-hover:text-accent/80 transition-colors">
-                    <span>View product</span>
+                    <span>View {product.name}</span>
                     <ArrowRight className="ml-2 h-3 w-3 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </CardContent>

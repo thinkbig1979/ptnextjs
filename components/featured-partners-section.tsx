@@ -58,7 +58,7 @@ export function FeaturedPartnersSection({ featuredPartners }: FeaturedPartnersSe
                     <span>{formatVendorLocation(getHQLocation(partner?.locations))}</span>
                   </div>
                   <div className="flex items-center text-accent text-sm font-medium group-hover:text-accent/80 transition-colors">
-                    <span>Learn more</span>
+                    <span>View {partner?.name} profile</span>
                     <ArrowRight className="ml-2 h-3 w-3 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </CardContent>

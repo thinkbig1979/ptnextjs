@@ -449,7 +449,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                                 {getDescriptionPreview(partner.description, 120) || 'Partner description coming soon.'}
                               </div>
                               <div className="flex items-center text-accent text-sm mt-2">
-                                <span className="mr-1">Learn more</span>
+                                <span className="mr-1">View {partner.name} profile</span>
                                 <ExternalLink className="w-3 h-3" />
                               </div>
                             </div>

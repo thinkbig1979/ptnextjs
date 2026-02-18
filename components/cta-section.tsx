@@ -34,7 +34,7 @@ export function CTASection(): React.JSX.Element {
 
             <Button asChild size="lg" variant="outline" className="border-accent-foreground/30 hover:bg-accent-foreground/10">
               <Link href="/consultancy/clients">
-                View Services
+                View Consultancy Services
               </Link>
             </Button>
           </div>
