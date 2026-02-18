@@ -1,0 +1,561 @@
+{
+  "command": "show",
+  "query": "react",
+  "status_filter": "open",
+  "total": 7,
+  "summary": {
+    "by_tier": {
+      "T3": 7
+    },
+    "by_detector": {
+      "react": 7
+    },
+    "files": 6
+  },
+  "by_file": {
+    "app/(site)/vendor/dashboard/components/CaseStudiesManager.tsx": [
+      {
+        "id": "react::app/(site)/vendor/dashboard/components/CaseStudiesManager.tsx::setCaseStudies",
+        "tier": 3,
+        "confidence": "medium",
+        "summary": "State sync anti-pattern: useEffect only calls setCaseStudies",
+        "detail": {
+          "line": 82,
+          "setters": [
+            "setCaseStudies"
+          ]
+        }
+      },
+      {
+        "id": "react::app/(site)/vendor/dashboard/components/CaseStudiesManager.tsx::bool_state::(mixed)",
+        "tier": 3,
+        "confidence": "low",
+        "summary": "Boolean state explosion: 4 boolean useState hooks (modalOpen, deleteDialogOpen, filterFeatured, isSaving)",
+        "detail": {
+          "count": 4,
+          "setters": [
+            "setModalOpen",
+            "setDeleteDialogOpen",
+            "setFilterFeatured",
+            "setIsSaving"
+          ],
+          "states": [
+            "modalOpen",
+            "deleteDialogOpen",
+            "filterFeatured",
+            "isSaving"
+          ],
+          "line": 68
+        }
+      }
+    ],
+    "app/(site)/vendor/dashboard/components/CertificationsAwardsManager.tsx": [
+      {
+        "id": "react::app/(site)/vendor/dashboard/components/CertificationsAwardsManager.tsx::setAwards, setCertifications",
+        "tier": 3,
+        "confidence": "medium",
+        "summary": "State sync anti-pattern: useEffect only calls setAwards, setCertifications",
+        "detail": {
+          "line": 105,
+          "setters": [
+            "setAwards",
+            "setCertifications"
+          ]
+        }
+      }
+    ],
+    "app/(site)/vendor/dashboard/components/TeamMembersManager.tsx": [
+      {
+        "id": "react::app/(site)/vendor/dashboard/components/TeamMembersManager.tsx::setTeamMembers",
+        "tier": 3,
+        "confidence": "medium",
+        "summary": "State sync anti-pattern: useEffect only calls setTeamMembers",
+        "detail": {
+          "line": 94,
+          "setters": [
+            "setTeamMembers"
+          ]
+        }
+      }
+    ],
+    "components/LocationSearchFilter.tsx": [
+      {
+        "id": "react::components/LocationSearchFilter.tsx::bool_state::setIs",
+        "tier": 3,
+        "confidence": "low",
+        "summary": "Boolean state explosion: 3 boolean useState hooks (isLoading, isAdvancedOpen, isSearchActive)",
+        "detail": {
+          "count": 3,
+          "setters": [
+            "setIsLoading",
+            "setIsAdvancedOpen",
+            "setIsSearchActive"
+          ],
+          "states": [
+            "isLoading",
+            "isAdvancedOpen",
+            "isSearchActive"
+          ],
+          "line": 33
+        }
+      }
+    ],
+    "components/dashboard/MediaGalleryManager.tsx": [
+      {
+        "id": "react::components/dashboard/MediaGalleryManager.tsx::bool_state::setIs",
+        "tier": 3,
+        "confidence": "low",
+        "summary": "Boolean state explosion: 4 boolean useState hooks (isDragging, isSaving, isAddDialogOpen, isEditDialogOpen)",
+        "detail": {
+          "count": 4,
+          "setters": [
+            "setIsDragging",
+            "setIsSaving",
+            "setIsAddDialogOpen",
+            "setIsEditDialogOpen"
+          ],
+          "states": [
+            "isDragging",
+            "isSaving",
+            "isAddDialogOpen",
+            "isEditDialogOpen"
+          ],
+          "line": 57
+        }
+      }
+    ],
+    "components/vendor/LocationMapPreview.tsx": [
+      {
+        "id": "react::components/vendor/LocationMapPreview.tsx::setIsClient",
+        "tier": 3,
+        "confidence": "medium",
+        "summary": "State sync anti-pattern: useEffect only calls setIsClient",
+        "detail": {
+          "line": 52,
+          "setters": [
+            "setIsClient"
+          ]
+        }
+      }
+    ]
+  },
+  "total_matching": 7,
+  "noise_budget": 10,
+  "noise_global_budget": 0,
+  "narrative": {
+    "phase": "first_scan",
+    "headline": "\u26a0 39 security findings \u2014 review before other cleanup. First scan complete. 2675 open findings across 3 dimensions.",
+    "dimensions": {
+      "lowest_dimensions": [
+        {
+          "name": "Naming Quality",
+          "strict": 0.0,
+          "issues": 0,
+          "impact": 0.0,
+          "subjective": true,
+          "impact_description": "re-review to improve"
+        },
+        {
+          "name": "Error Consistency",
+          "strict": 0.0,
+          "issues": 0,
+          "impact": 0.0,
+          "subjective": true,
+          "impact_description": "re-review to improve"
+        },
+        {
+          "name": "Abstraction Fit",
+          "strict": 0.0,
+          "issues": 0,
+          "impact": 0.0,
+          "subjective": true,
+          "impact_description": "re-review to improve"
+        }
+      ],
+      "biggest_gap_dimensions": [],
+      "stagnant_dimensions": []
+    },
+    "actions": [
+      {
+        "priority": 1,
+        "type": "auto_fix",
+        "detector": "logs",
+        "count": 199,
+        "description": "199 logs findings \u2014 run `desloppify fix debug-logs --dry-run` to preview, then apply",
+        "command": "desloppify fix debug-logs --dry-run",
+        "impact": 0.0,
+        "dimension": "Code quality",
+        "lane": "cleanup"
+      },
+      {
+        "priority": 2,
+        "type": "auto_fix",
+        "detector": "exports",
+        "count": 1092,
+        "description": "1092 exports findings \u2014 run `desloppify fix dead-exports --dry-run` to preview, then apply",
+        "command": "desloppify fix dead-exports --dry-run",
+        "impact": 0.0,
+        "dimension": "Code quality",
+        "lane": "cleanup"
+      },
+      {
+        "priority": 3,
+        "type": "auto_fix",
+        "detector": "smells",
+        "count": 284,
+        "description": "284 smells findings \u2014 run `desloppify fix dead-useeffect --dry-run` to preview, then apply",
+        "command": "desloppify fix dead-useeffect --dry-run",
+        "impact": 0.0,
+        "dimension": "Code quality",
+        "lane": "cleanup"
+      },
+      {
+        "priority": 4,
+        "type": "reorganize",
+        "detector": "orphaned",
+        "count": 176,
+        "description": "176 orphaned findings \u2014 delete dead files or relocate with `desloppify move`. Use `desloppify next` to start",
+        "command": "desloppify show orphaned --status open",
+        "impact": 0.0,
+        "dimension": "Code quality",
+        "lane": "restructure"
+      },
+      {
+        "priority": 5,
+        "type": "reorganize",
+        "detector": "flat_dirs",
+        "count": 4,
+        "description": "4 flat_dirs findings \u2014 create subdirectories and use `desloppify move`. Use `desloppify next` to start",
+        "command": "desloppify show flat_dirs --status open",
+        "impact": 0.0,
+        "dimension": "Code quality",
+        "lane": "restructure"
+      },
+      {
+        "priority": 6,
+        "type": "reorganize",
+        "detector": "naming",
+        "count": 3,
+        "description": "3 naming findings \u2014 rename files with `desloppify move` to fix conventions. Use `desloppify next` to start",
+        "command": "desloppify show naming --status open",
+        "impact": 0.0,
+        "dimension": "Code quality",
+        "lane": "restructure"
+      },
+      {
+        "priority": 7,
+        "type": "reorganize",
+        "detector": "single_use",
+        "count": 20,
+        "description": "20 single_use findings \u2014 inline or relocate with `desloppify move`. Use `desloppify next` to start",
+        "command": "desloppify show single_use --status open",
+        "impact": 0.0,
+        "dimension": "Code quality",
+        "lane": "restructure"
+      },
+      {
+        "priority": 8,
+        "type": "reorganize",
+        "detector": "facade",
+        "count": 3,
+        "description": "3 facade findings \u2014 flatten re-export facades or consolidate barrel files. Use `desloppify next` to start",
+        "command": "desloppify show facade --status open",
+        "impact": 0.0,
+        "dimension": "Code quality",
+        "lane": "restructure"
+      },
+      {
+        "priority": 9,
+        "type": "refactor",
+        "detector": "structural",
+        "count": 85,
+        "description": "85 structural findings \u2014 decompose large files \u2014 extract logic into focused modules",
+        "command": "desloppify show structural --status open",
+        "impact": 0.0,
+        "dimension": "File health",
+        "lane": "refactor"
+      },
+      {
+        "priority": 10,
+        "type": "refactor",
+        "detector": "props",
+        "count": 5,
+        "description": "5 props findings \u2014 split bloated components, extract sub-components",
+        "command": "desloppify show props --status open",
+        "impact": 0.0,
+        "dimension": "Code quality",
+        "lane": "refactor"
+      },
+      {
+        "priority": 11,
+        "type": "refactor",
+        "detector": "react",
+        "count": 7,
+        "description": "7 react findings \u2014 refactor React antipatterns (state sync, provider nesting, hook bloat)",
+        "command": "desloppify show react --status open",
+        "impact": 0.0,
+        "dimension": "Code quality",
+        "lane": "refactor"
+      },
+      {
+        "priority": 12,
+        "type": "refactor",
+        "detector": "dupes",
+        "count": 9,
+        "description": "9 dupes findings \u2014 extract shared utility or consolidate duplicates",
+        "command": "desloppify show dupes --status open",
+        "impact": 0.0,
+        "dimension": "Duplication",
+        "lane": "refactor"
+      },
+      {
+        "priority": 13,
+        "type": "refactor",
+        "detector": "test_coverage",
+        "count": 370,
+        "description": "370 test_coverage findings \u2014 add tests for untested production modules \u2014 prioritize by import count",
+        "command": "desloppify show test_coverage --status open",
+        "impact": 0.0,
+        "dimension": "Test health",
+        "lane": "test_coverage"
+      },
+      {
+        "priority": 14,
+        "type": "manual_fix",
+        "detector": "deprecated",
+        "count": 4,
+        "description": "4 deprecated findings \u2014 remove deprecated symbols or migrate callers",
+        "command": "desloppify show deprecated --status open",
+        "impact": 0.0,
+        "dimension": "Code quality",
+        "lane": "refactor"
+      },
+      {
+        "priority": 15,
+        "type": "manual_fix",
+        "detector": "security",
+        "count": 39,
+        "description": "39 security findings \u2014 review and fix security findings \u2014 prioritize by severity",
+        "command": "desloppify show security --status open",
+        "impact": 0.0,
+        "dimension": "Security",
+        "lane": "refactor"
+      },
+      {
+        "priority": 16,
+        "type": "manual_fix",
+        "detector": "subjective_review",
+        "count": 375,
+        "description": "375 files need design review \u2014 run `desloppify review --prepare` to generate review context",
+        "command": "desloppify review --prepare",
+        "impact": 0.0,
+        "dimension": "Test health",
+        "lane": "refactor"
+      }
+    ],
+    "strategy": {
+      "fixer_leverage": {
+        "auto_fixable_count": 1575,
+        "total_count": 2675,
+        "coverage": 0.589,
+        "impact_ratio": 0.0,
+        "recommendation": "strong"
+      },
+      "lanes": {
+        "cleanup": {
+          "actions": [
+            1,
+            3,
+            2
+          ],
+          "file_count": 479,
+          "total_impact": 0.0,
+          "automation": "full",
+          "run_first": true
+        },
+        "restructure": {
+          "actions": [
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "file_count": 204,
+          "total_impact": 0.0,
+          "automation": "manual",
+          "run_first": false
+        },
+        "refactor": {
+          "actions": [
+            9,
+            10,
+            11,
+            12,
+            14,
+            15,
+            16
+          ],
+          "file_count": 432,
+          "total_impact": 0.0,
+          "automation": "manual",
+          "run_first": false
+        },
+        "test_coverage": {
+          "actions": [
+            13
+          ],
+          "file_count": 367,
+          "total_impact": 0.0,
+          "automation": "manual",
+          "run_first": false
+        }
+      },
+      "can_parallelize": true,
+      "hint": "Run fixers first \u2014 they cover 59% of findings. Then 3 independent workstreams, safe to parallelize. Rescan after each phase to verify."
+    },
+    "tools": {
+      "fixers": [
+        {
+          "name": "debug-logs",
+          "detector": "logs",
+          "open_count": 199,
+          "command": "desloppify fix debug-logs --dry-run"
+        },
+        {
+          "name": "dead-exports",
+          "detector": "exports",
+          "open_count": 1092,
+          "command": "desloppify fix dead-exports --dry-run"
+        },
+        {
+          "name": "dead-useeffect",
+          "detector": "smells",
+          "open_count": 284,
+          "command": "desloppify fix dead-useeffect --dry-run"
+        },
+        {
+          "name": "empty-if-chain",
+          "detector": "smells",
+          "open_count": 284,
+          "command": "desloppify fix empty-if-chain --dry-run"
+        }
+      ],
+      "move": {
+        "available": true,
+        "relevant": true,
+        "reason": "176 orphaned files + 20 single-use files + 4 flat directories + 3 naming issues",
+        "usage": "desloppify move <source> <dest> [--dry-run]"
+      },
+      "plan": {
+        "command": "desloppify plan",
+        "description": "Generate prioritized markdown cleanup plan"
+      },
+      "badge": {
+        "generated": true,
+        "in_readme": false,
+        "path": "scorecard.png",
+        "recommendation": "Add to README: <img src=\"scorecard.png\" width=\"100%\">"
+      }
+    },
+    "debt": {
+      "overall_gap": 0.0,
+      "wontfix_count": 0,
+      "worst_dimension": null,
+      "worst_gap": 0.0,
+      "trend": "stable"
+    },
+    "milestone": null,
+    "primary_action": {
+      "priority": 1,
+      "type": "auto_fix",
+      "detector": "logs",
+      "command": "desloppify fix debug-logs --dry-run",
+      "description": "199 logs findings \u2014 run `desloppify fix debug-logs --dry-run` to preview, then apply",
+      "impact": 0.0,
+      "lane": "cleanup",
+      "count": 199
+    },
+    "why_now": "39 security findings remain open, so risk reduction should be first.",
+    "verification_step": {
+      "command": "desloppify scan",
+      "reason": "Re-scan to verify the change and catch cascading findings before reporting progress.",
+      "success_signal": "Open findings drop and strict score direction remains positive."
+    },
+    "risk_flags": [
+      {
+        "type": "security_open",
+        "severity": "high",
+        "message": "39 open security findings still require manual review.",
+        "command": "desloppify show security --status open"
+      }
+    ],
+    "strict_target": {
+      "target": 95.0,
+      "current": 56.6,
+      "gap": 38.4,
+      "state": "below",
+      "warning": null
+    },
+    "reminders": [
+      {
+        "type": "auto_fixers_available",
+        "message": "1575 findings are auto-fixable. Run `desloppify fix debug-logs --dry-run`.",
+        "command": "desloppify fix debug-logs --dry-run",
+        "severity": "medium",
+        "priority": 20,
+        "stage": "execution"
+      },
+      {
+        "type": "dry_run_first",
+        "message": "Always --dry-run first, review changes, then apply.",
+        "command": null,
+        "severity": "low",
+        "priority": 21,
+        "stage": "execution"
+      },
+      {
+        "type": "fp_calibration_security_script",
+        "message": "40% of security findings in script zone are false positives. Consider reviewing detection rules for script files.",
+        "command": null,
+        "severity": "medium",
+        "priority": 40,
+        "stage": "calibration"
+      },
+      {
+        "type": "zone_classification",
+        "message": "307 of 713 files classified as non-production (2 config, 4 generated, 49 script, 223 test, 29 vendor). Override with `desloppify zone set <file> production` if any are misclassified.",
+        "command": "desloppify zone show",
+        "severity": "info",
+        "priority": 55,
+        "stage": "calibration"
+      }
+    ],
+    "reminder_history": {
+      "report_scores": 1,
+      "auto_fixers_available": 2,
+      "dry_run_first": 2,
+      "zone_classification": 2,
+      "fp_calibration_security_script": 1
+    }
+  },
+  "config": {
+    "review_max_age_days": 30,
+    "holistic_max_age_days": 30,
+    "generate_scorecard": true,
+    "badge_path": "scorecard.png",
+    "exclude": [],
+    "ignore": [],
+    "ignore_metadata": {},
+    "zone_overrides": {},
+    "review_dimensions": [],
+    "review_allow_custom_dimensions": false,
+    "review_custom_dimensions": [],
+    "large_files_threshold": 0,
+    "props_threshold": 0,
+    "finding_noise_budget": 10,
+    "finding_noise_global_budget": 0,
+    "target_strict_score": 95,
+    "languages": {}
+  }
+}
