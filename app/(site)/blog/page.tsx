@@ -9,14 +9,29 @@ import { formatDate } from "@/lib/utils";
 import { BlogClient } from "./_components/blog-client";
 import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
 import Breadcrumbs from '@/components/Breadcrumbs';
+import JsonLd from '@/components/seo/JsonLd';
+import { SITE_CONFIG } from '@/lib/seo-config';
+import type { Metadata } from 'next';
 
 // Force dynamic rendering - database not available at Docker build time
 export const dynamic = 'force-dynamic';
 export const revalidate = 600;
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Blog | Superyacht Technology Insights from Paul Thames',
   description: 'Expert insights on superyacht AV/IT systems, security, and custom lighting from industry veterans Edwin Edelenbos and Roel van der Zwet.',
+  openGraph: {
+    title: 'Blog | Superyacht Technology Insights from Paul Thames',
+    description: 'Expert insights on superyacht AV/IT systems, security, and custom lighting from industry veterans Edwin Edelenbos and Roel van der Zwet.',
+    url: 'https://paulthames.com/blog',
+  },
+  twitter: {
+    title: 'Blog | Superyacht Technology Insights from Paul Thames',
+    description: 'Expert insights on superyacht AV/IT systems, security, and custom lighting from industry veterans Edwin Edelenbos and Roel van der Zwet.',
+  },
+  alternates: {
+    canonical: '/blog',
+  },
 };
 
 export default async function BlogPage() {
@@ -29,8 +44,27 @@ export default async function BlogPage() {
   
   const featuredPost = blogPosts.find(post => post?.featured);
 
+  const blogSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Blog | Superyacht Technology Insights from Paul Thames',
+    description: 'Expert insights on superyacht AV/IT systems, security, and custom lighting from industry veterans Edwin Edelenbos and Roel van der Zwet.',
+    url: `${SITE_CONFIG.url}/blog`,
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: blogPosts.length,
+      itemListElement: blogPosts.map((post, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: post.title,
+        url: `${SITE_CONFIG.url}/blog/${post.slug}`,
+      })),
+    },
+  };
+
   return (
     <div className="min-h-screen py-12">
+      <JsonLd data={blogSchema} />
       <div className="container max-w-screen-xl">
         <Breadcrumbs items={[
           { label: 'Home', href: '/' },

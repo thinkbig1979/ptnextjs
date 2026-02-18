@@ -34,7 +34,7 @@ export const metadata: Metadata = {
       'Market access and visibility for manufacturers, distributors, and technology providers in the superyacht industry. Proposition testing, market strategy, and directory listings.',
   },
   alternates: {
-    canonical: 'https://paulthames.com/consultancy/suppliers',
+    canonical: '/consultancy/suppliers',
   },
 };
 

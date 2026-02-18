@@ -83,7 +83,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
       ...(post.image && { images: [post.image] }),
     },
     alternates: {
-      canonical: `${SITE_CONFIG.url}/blog/${slug}`,
+      canonical: `/blog/${slug}`,
     },
   };
 }

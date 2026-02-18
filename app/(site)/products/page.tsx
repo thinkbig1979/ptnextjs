@@ -6,6 +6,8 @@ import { ComparisonProvider } from "@/components/ui/product-comparison";
 import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
 import type { Product, Vendor, SerializedProduct, SerializedVendorMinimal } from "@/lib/types";
 import Breadcrumbs from '@/components/Breadcrumbs';
+import JsonLd from '@/components/seo/JsonLd';
+import { getServiceSchema } from '@/lib/seo-config';
 
 /**
  * Extract only required fields for ProductsClient to minimize RSC serialization
@@ -65,7 +67,7 @@ export const metadata: Metadata = {
     description: 'Discover Paul Thames technical consultancy and creative lighting services for superyachts, including project advisory and custom programming.',
   },
   alternates: {
-    canonical: 'https://paulthames.com/products',
+    canonical: '/products',
   },
 };
 
@@ -97,8 +99,14 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
 
   console.log(`📋 Static generation: Loaded ${products.length} products, ${categories.length} categories, ${vendors.length} vendors`);
 
+  const serviceSchema = getServiceSchema({
+    name: 'Superyacht Technology Products & Services',
+    description: 'Technical consultancy and creative lighting services for superyachts, including project advisory, custom programming, and a curated directory of marine technology products.',
+  });
+
   return (
     <div className="min-h-screen py-12">
+      <JsonLd data={serviceSchema} />
       <div className="container max-w-screen-xl">
         <Breadcrumbs items={[
           { label: 'Home', href: '/' },

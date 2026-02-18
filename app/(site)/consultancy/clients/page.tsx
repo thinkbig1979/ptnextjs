@@ -25,7 +25,7 @@ export const metadata: Metadata = {
       'Technical clarity for owners, designers, and shipyards at critical decision points. Specification review, creation, and on-demand support for superyacht projects.',
   },
   alternates: {
-    canonical: 'https://paulthames.com/consultancy/clients',
+    canonical: '/consultancy/clients',
   },
 };
 

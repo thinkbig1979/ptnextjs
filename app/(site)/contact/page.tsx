@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 import { payloadCMSDataService } from '@/lib/payload-cms-data-service';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import JsonLd from '@/components/seo/JsonLd';
+import { SITE_CONFIG } from '@/lib/seo-config';
 
 // Force dynamic rendering - database not available at Docker build time
 export const dynamic = 'force-dynamic';
@@ -21,7 +23,7 @@ export const metadata: Metadata = {
     description: 'Get in touch with Paul Thames for superyacht technical consultancy, creative lighting, and vendor advisory services.',
   },
   alternates: {
-    canonical: 'https://paulthames.com/contact',
+    canonical: '/contact',
   },
 };
 
@@ -32,6 +34,29 @@ export default async function ContactPage() {
   // Provide default values if companyInfo is null
   const email = companyInfo?.email || 'info@paulthames.com';
   const businessHours = companyInfo?.businessHours || 'Monday - Friday: 9:00 AM - 5:00 PM CET';
+
+  const contactPointSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    name: SITE_CONFIG.name,
+    description: SITE_CONFIG.description,
+    url: SITE_CONFIG.url,
+    telephone: '+31 6 54657080',
+    email,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'Herengracht 516',
+      addressLocality: 'Amsterdam',
+      postalCode: '1017 CC',
+      addressCountry: 'NL',
+    },
+    openingHoursSpecification: {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+      opens: '09:00',
+      closes: '17:00',
+    },
+  };
 
   const contactInfo = [
     {
@@ -57,6 +82,7 @@ export default async function ContactPage() {
   ];
   return (
     <div className="min-h-screen py-12">
+      <JsonLd data={contactPointSchema} />
       <div className="container max-w-screen-xl">
         <Breadcrumbs items={[
           { label: 'Home', href: '/' },

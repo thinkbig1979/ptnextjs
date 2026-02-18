@@ -5,6 +5,8 @@ import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
 import { Metadata } from "next";
 import type { Vendor, Product, SerializedVendor, SerializedVendorLocation, SerializedProductMinimal } from "@/lib/types";
 import Breadcrumbs from '@/components/Breadcrumbs';
+import JsonLd from '@/components/seo/JsonLd';
+import { SITE_CONFIG } from '@/lib/seo-config';
 
 /**
  * Extract only required fields for VendorsClient to minimize RSC serialization
@@ -107,8 +109,23 @@ export default async function VendorsPage({ searchParams }: VendorsPageProps) {
 
   console.log(`📋 Static generation: Loaded ${vendors.length} vendors, ${products.length} products, ${categories.length} categories`);
 
+  const itemListSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Superyacht Technology Vendors',
+    description: 'Directory of superyacht technology vendors and marine electronics suppliers.',
+    numberOfItems: vendors.length,
+    itemListElement: vendors.map((vendor, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: vendor.name,
+      url: `${SITE_CONFIG.url}/vendors/${vendor.slug}`,
+    })),
+  };
+
   return (
     <div className="min-h-screen py-12">
+      <JsonLd data={itemListSchema} />
       <div className="container max-w-screen-xl">
         <Breadcrumbs items={[
           { label: 'Home', href: '/' },

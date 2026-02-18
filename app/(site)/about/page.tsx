@@ -23,7 +23,7 @@ export const metadata: Metadata = {
       'Edwin Edelenbos and Roel van der Zwet bring 25+ combined years in superyacht technology. Technical depth meets commercial expertise.',
   },
   alternates: {
-    canonical: 'https://paulthames.com/about',
+    canonical: '/about',
   },
 };
 

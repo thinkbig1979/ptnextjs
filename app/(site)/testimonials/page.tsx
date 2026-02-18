@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     description: "What clients, captains, and industry professionals say about working with Edwin Edelenbos on superyacht AV/IT, lighting, and technology projects.",
   },
   alternates: {
-    canonical: "https://paulthames.com/testimonials",
+    canonical: "/testimonials",
   },
 };
 

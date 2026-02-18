@@ -26,7 +26,7 @@ export const metadata: Metadata = {
       "Pixel-based fixtures, custom content, and complete programming for superyachts and high-end architecture. When traditional lighting won't do.",
   },
   alternates: {
-    canonical: 'https://paulthames.com/custom-lighting',
+    canonical: '/custom-lighting',
   },
 };
 
