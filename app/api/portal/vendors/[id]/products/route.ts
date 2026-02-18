@@ -107,16 +107,6 @@ export async function GET(
         filters
       );
 
-      // Log successful fetch
-      console.log('[ProductsList] Products fetched:', {
-        vendorId,
-        userId: user.id,
-        isAdmin,
-        filters,
-        count: products.length,
-        timestamp: new Date().toISOString(),
-      });
-
       return NextResponse.json(
         {
           success: true,
@@ -237,13 +227,6 @@ export async function POST(
       vendorTier = (vendor?.tier as Tier) || 'free';
 
       if (!TierValidationService.canAccessFeature(vendorTier, 'productManagement')) {
-        console.log('[TierValidation] Product creation blocked:', {
-          vendorId,
-          tier: vendorTier,
-          feature: 'productManagement',
-          timestamp: new Date().toISOString(),
-        });
-
         return NextResponse.json(
           {
             success: false,
@@ -316,17 +299,6 @@ export async function POST(
         user.id.toString(),
         isAdmin
       );
-
-      // Log successful creation
-      console.log('[ProductCreate] Product created:', {
-        productId: product.id,
-        vendorId,
-        userId: user.id,
-        isAdmin,
-        name: validation.data.name,
-        published: validation.data.published,
-        timestamp: new Date().toISOString(),
-      });
 
       return NextResponse.json(
         {

@@ -74,14 +74,6 @@ export async function GET(
         isAdmin
       );
 
-      console.log('[ProductGet] Product fetched:', {
-        vendorId,
-        productId,
-        userId: user.id,
-        productName: product.name,
-        timestamp: new Date().toISOString(),
-      });
-
       return NextResponse.json(
         {
           success: true,
@@ -188,14 +180,6 @@ export async function PUT(
       vendorTier = (vendor?.tier as Tier) || 'free';
 
       if (!TierValidationService.canAccessFeature(vendorTier, 'productManagement')) {
-        console.log('[TierValidation] Product update blocked:', {
-          vendorId,
-          productId,
-          tier: vendorTier,
-          feature: 'productManagement',
-          timestamp: new Date().toISOString(),
-        });
-
         return NextResponse.json(
           {
             success: false,
@@ -263,14 +247,6 @@ export async function PUT(
         user.id.toString(),
         isAdmin
       );
-
-      console.log('[ProductUpdate] Product updated:', {
-        vendorId,
-        productId,
-        userId: user.id,
-        productName: updatedProduct.name,
-        timestamp: new Date().toISOString(),
-      });
 
       return NextResponse.json(
         {
@@ -378,13 +354,6 @@ export async function DELETE(
         user.id.toString(),
         isAdmin
       );
-
-      console.log('[ProductDelete] Product deleted:', {
-        vendorId,
-        productId,
-        userId: user.id,
-        timestamp: new Date().toISOString(),
-      });
 
       return NextResponse.json(
         {

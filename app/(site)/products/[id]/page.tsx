@@ -41,14 +41,11 @@ export const revalidate = 300; // ISR: Revalidate every 5 minutes
 export async function generateStaticParams() {
   // Skip database calls during Docker builds (no DB available)
   if (process.env.SKIP_BUILD_DB === 'true') {
-    console.log('📋 Skipping product static params (SKIP_BUILD_DB=true)');
     return [];
   }
   try {
-    console.log('🏗️  Generating static params for product pages...');
     const products = await payloadCMSDataService.getAllProducts();
-    console.log(`📋 Found ${products.length} products for static generation`);
-    
+
     // Generate params for both IDs and slugs for backward compatibility
     const params = products.flatMap((product) => {
       const result = [{ id: product.id }]; // Always include numeric ID
@@ -57,12 +54,7 @@ export async function generateStaticParams() {
       }
       return result;
     });
-    
-    console.log(`✅ Generated ${params.length} static product params`);
-    if (params.length > 0) {
-      console.log('🔗 Sample product URLs:', params.slice(0, 3).map(p => p.id), '...');
-    }
-    
+
     return params;
   } catch (error) {
     // Return empty array on error - pages will be generated on-demand via ISR
@@ -105,8 +97,6 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
     notFound();
   }
 
-  console.log(`✅ Loading product: ${product.name}`);
-
   // Fetch additional data for VendorsNearYou component in parallel
   const [partner, allVendors, allProducts] = await Promise.all([
     product.partnerId ? payloadCMSDataService.getPartnerById(product.partnerId) : Promise.resolve(null),
@@ -114,10 +104,6 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
     payloadCMSDataService.getAllProducts(),
   ]);
 
-  if (partner) {
-    console.log(`🤝 Partner found: ${partner.name}`);
-  }
-  
   // Use CMS specifications if available, otherwise fallback to defaults
   const specifications = Array.isArray(product.specifications) && product.specifications.length > 0 
     ? product.specifications.sort((a, b) => (a.order || 0) - (b.order || 0))

@@ -102,14 +102,6 @@ export async function PUT(
       data: updateData,
     });
 
-    // Log the tier change
-    console.log('[Admin Tier Update]', {
-      vendorId,
-      previousTier: vendor.tier || 'free',
-      newTier: tier,
-      timestamp: new Date().toISOString(),
-    });
-
     return NextResponse.json({
       message: 'Vendor tier updated successfully',
       vendor: {

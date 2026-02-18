@@ -99,19 +99,11 @@ export class LRUCacheService implements CacheService {
       cached.accessCount++;
       this.hits++;
 
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`📋 LRU Cache hit for ${key} (accessed ${cached.accessCount} times)`);
-      }
-
       return cached.data;
     }
 
     // Cache miss - fetch new data
     this.misses++;
-
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`🔄 LRU Cache miss - Fetching ${key}...`);
-    }
 
     const data = await fetcher();
 
@@ -125,10 +117,6 @@ export class LRUCacheService implements CacheService {
 
     this.cache.set(key, entry, { ttl });
 
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`✅ LRU Cached ${key} (${this.cache.size} total entries)`);
-    }
-
     return data;
   }
 
@@ -138,10 +126,6 @@ export class LRUCacheService implements CacheService {
   invalidate(key: string): void {
     if (this.cache.has(key)) {
       this.cache.delete(key);
-
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`🗑️ LRU Invalidated cache key: ${key}`);
-      }
     }
   }
 
@@ -166,10 +150,6 @@ export class LRUCacheService implements CacheService {
     keysToDelete.forEach((key) => {
       this.cache.delete(key);
     });
-
-    if (process.env.NODE_ENV === 'development' && keysToDelete.length > 0) {
-      console.log(`🗑️ LRU Invalidated ${keysToDelete.length} cache entries matching pattern: ${pattern}`);
-    }
   }
 
   /**
@@ -190,24 +170,15 @@ export class LRUCacheService implements CacheService {
     keysToDelete.forEach((key) => {
       this.cache.delete(key);
     });
-
-    if (process.env.NODE_ENV === 'development' && keysToDelete.length > 0) {
-      console.log(`🗑️ LRU Invalidated ${keysToDelete.length} cache entries with tags: ${tags.join(', ')}`);
-    }
   }
 
   /**
    * Clear all cache entries
    */
   clear(): void {
-    const size = this.cache.size;
     this.cache.clear();
     this.hits = 0;
     this.misses = 0;
-
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`🗑️ LRU Cleared all ${size} cache entries`);
-    }
   }
 
   /**

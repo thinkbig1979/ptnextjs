@@ -292,7 +292,6 @@ class PayloadCMSDataService {
   private async getCached<T>(key: string, fetcher: () => Promise<T>, fallback?: T): Promise<T> {
     // Skip database calls during Docker builds - return fallback
     if (this.shouldSkipDatabase()) {
-      console.log(`📋 Skipping database call for ${key} (SKIP_BUILD_DB=true)`);
       if (fallback !== undefined) {
         return fallback;
       }
@@ -305,14 +304,7 @@ class PayloadCMSDataService {
 
     if (cached && now - cached.timestamp < this.CACHE_TTL) {
       cached.accessCount++;
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`📋 Cache hit for ${key} (accessed ${cached.accessCount} times)`);
-      }
       return cached.data as T;
-    }
-
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`🔄 Cache miss - Fetching ${key} from Payload CMS...`);
     }
 
     const data = await fetcher();
@@ -321,10 +313,6 @@ class PayloadCMSDataService {
       timestamp: now,
       accessCount: 1,
     });
-
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`✅ Cached ${key} (${this.cache.size} total entries)`);
-    }
 
     return data;
   }
@@ -1982,8 +1970,6 @@ class PayloadCMSDataService {
     const errors: string[] = [];
 
     try {
-      console.log('🔍 Validating Payload CMS content...');
-
       // Validate required data exists
       const [vendors, products, categories] = await Promise.all([
         this.getAllVendors(),
@@ -2033,9 +2019,6 @@ class PayloadCMSDataService {
         errors.push(`Duplicate product slugs found: ${duplicateProductSlugs.join(', ')}`);
       }
 
-      console.log(
-        `✅ Payload CMS validation complete: ${errors.length === 0 ? 'PASSED' : 'FAILED'}`
-      );
 
       if (errors.length > 0) {
         console.error('❌ Payload CMS validation errors:', errors);

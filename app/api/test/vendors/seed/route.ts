@@ -177,7 +177,6 @@ export async function POST(request: NextRequest): Promise<NextResponse<SeedRespo
               });
             }
             existingVendorIds.push(existingVendors.docs[0].id as string);
-            console.log(`[Vendor Seed] Vendor exists, password/status/tier updated: ${vendorData.companyName} (${vendorData.email}) - status: ${vendorData.status || 'approved'}, tier: ${vendorData.tier || 'unchanged'}`);
             continue;
           }
         }
@@ -232,11 +231,9 @@ export async function POST(request: NextRequest): Promise<NextResponse<SeedRespo
     // Invalidate cache for newly created vendors
     if (createdVendorIds.length > 0) {
       try {
-        console.log('[Vendor Seed] Invalidating cache for vendor pages...');
         revalidatePath('/vendors/');
         revalidatePath('/');
         revalidatePath('/api/vendors');
-        console.log('[Vendor Seed] Cache invalidation complete');
       } catch (cacheError) {
         console.error('[Vendor Seed] Cache invalidation failed:', cacheError);
       }

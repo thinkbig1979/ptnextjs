@@ -1817,7 +1817,6 @@ const Vendors: CollectionConfig = {
         try {
           // Handle new vendor registration (admin notification)
           if (operation === 'create') {
-            console.log('[EmailService] Sending vendor registered email...');
             // Extract userId from the user relationship (can be number, string, or object with id)
             const userId = typeof doc.user === 'object' && doc.user !== null
               ? String(doc.user.id)
@@ -1839,7 +1838,6 @@ const Vendors: CollectionConfig = {
 
             // Profile published - published changed from false to true
             if (!wasPublished && isNowPublished) {
-              console.log('[EmailService] Sending profile published email...');
               await sendProfilePublishedEmail({
                 companyName: doc.companyName,
                 contactEmail: doc.contactEmail,
@@ -1850,7 +1848,6 @@ const Vendors: CollectionConfig = {
 
             // Vendor rejected - published changed from true to false (edge case)
             if (wasPublished && !isNowPublished) {
-              console.log('[EmailService] Sending vendor rejected email...');
               await sendVendorRejectedEmail({
                 companyName: doc.companyName,
                 contactEmail: doc.contactEmail,

@@ -80,5 +80,4 @@ export const afterChangeHook: CollectionAfterChangeHook = async ({
  */
 export const afterDeleteHook: CollectionAfterDeleteHook = async ({ doc, req }) => {
   // Future: Cleanup related products, locations, etc.
-  console.log(`Vendor ${doc.companyName} (${doc.id}) deleted`);
 };

@@ -82,8 +82,7 @@ interface ProductsPageProps {
 
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
-  console.log('🏗️  Rendering Products page (static generation) with searchParams:', resolvedSearchParams);
-  
+
   // Fetch all data at build time for static generation
   const [products, categories, vendors] = await Promise.all([
     payloadCMSDataService.getAllProducts(),
@@ -96,8 +95,6 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   // Minimize RSC serialization by extracting only required fields
   const serializedProducts = products.map(serializeProductForClient);
   const serializedVendors = vendors.map(serializeVendorForProductLookup);
-
-  console.log(`📋 Static generation: Loaded ${products.length} products, ${categories.length} categories, ${vendors.length} vendors`);
 
   const serviceSchema = getServiceSchema({
     name: 'Superyacht Technology Products & Services',

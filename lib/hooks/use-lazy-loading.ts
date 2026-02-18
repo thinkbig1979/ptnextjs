@@ -178,7 +178,7 @@ interface UsePerformanceMetricsReturn {
 }
 
 export function usePerformanceMetrics({
-  name,
+  name: _name,
   enabled = true
 }: UsePerformanceMetricsOptions): UsePerformanceMetricsReturn {
   const [duration, setDuration] = useState<number | null>(null)
@@ -195,10 +195,6 @@ export function usePerformanceMetrics({
     const measureDuration = endTime - startTimeRef.current
     setDuration(measureDuration)
 
-    // Log to console in development
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`Performance [${name}]: ${measureDuration.toFixed(2)}ms`)
-    }
   }
 
   return { startMeasure, endMeasure, duration }

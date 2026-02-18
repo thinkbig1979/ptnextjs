@@ -87,8 +87,6 @@ export async function POST(request: NextRequest) {
       data: { tier },
     });
 
-    console.log(`[Test API] Reset vendor ${email} tier to ${tier} (vendor ID: ${vendor.id})`);
-
     return NextResponse.json({
       success: true,
       vendorId: vendor.id,

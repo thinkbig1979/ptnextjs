@@ -278,7 +278,6 @@ const Users: CollectionConfig = {
 
           // User approved - status changed to 'approved'
           if (isNowStatus === 'approved' && wasStatus !== 'approved') {
-            console.log('[EmailService] Sending user approved email...');
             await sendUserApprovedEmail({
               email: doc.email,
             });
@@ -286,7 +285,6 @@ const Users: CollectionConfig = {
 
           // User rejected - status changed to 'rejected'
           if (isNowStatus === 'rejected' && wasStatus !== 'rejected') {
-            console.log('[EmailService] Sending user rejected email...');
             await sendUserRejectedEmail({
               email: doc.email,
               vendorName,

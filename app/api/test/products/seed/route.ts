@@ -63,7 +63,6 @@ async function verifyVendorExists(
     } catch (error) {
       // Vendor not found or other error
       if (attempt < maxRetries) {
-        console.log(`[Product Seed] Vendor ${vendorId} not found on attempt ${attempt}, retrying in ${retryDelay}ms...`);
         await new Promise((resolve) => setTimeout(resolve, retryDelay));
       }
     }
@@ -205,7 +204,6 @@ export async function POST(request: NextRequest): Promise<NextResponse<SeedRespo
           }
 
           existingProductIds.push(existingProduct.id as string);
-          console.log(`[Product Seed] Product exists, updated: ${productData.name} (${slug})`);
           continue;
         }
 
@@ -223,7 +221,6 @@ export async function POST(request: NextRequest): Promise<NextResponse<SeedRespo
         });
 
         createdProductIds.push(createdProduct.id as string);
-        console.log(`[Product Seed] Created product: ${productData.name} (${slug})`);
       } catch (productError) {
         const errorMessage = productError instanceof Error ? productError.message : 'Unknown error';
         errors[`product_${i}_${productData.name}`] = errorMessage;
@@ -234,10 +231,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<SeedRespo
     // Invalidate cache for newly created products
     if (createdProductIds.length > 0) {
       try {
-        console.log('[Product Seed] Invalidating cache for product pages...');
         revalidatePath('/products/');
         revalidatePath('/');
-        console.log('[Product Seed] Cache invalidation complete');
       } catch (cacheError) {
         console.error('[Product Seed] Cache invalidation failed:', cacheError);
       }

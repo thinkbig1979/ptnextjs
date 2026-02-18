@@ -312,10 +312,8 @@ const TierUpgradeRequests: CollectionConfig = {
             };
 
             if (isUpgrade) {
-              console.log('[EmailService] Sending tier upgrade request email...');
               await sendTierUpgradeRequestedEmail(emailData);
             } else {
-              console.log('[EmailService] Sending tier downgrade request email...');
               await sendTierDowngradeRequestedEmail(emailData);
             }
             return doc;
@@ -345,10 +343,8 @@ const TierUpgradeRequests: CollectionConfig = {
             // Tier request approved - status changed from pending to approved
             if (currentStatus === 'approved') {
               if (isUpgrade) {
-                console.log('[EmailService] Sending tier upgrade approved email...');
                 await sendTierUpgradeApprovedEmail(emailData);
               } else {
-                console.log('[EmailService] Sending tier downgrade approved email...');
                 await sendTierDowngradeApprovedEmail(emailData);
               }
             }
@@ -356,10 +352,8 @@ const TierUpgradeRequests: CollectionConfig = {
             // Tier request rejected - status changed from pending to rejected
             if (currentStatus === 'rejected') {
               if (isUpgrade) {
-                console.log('[EmailService] Sending tier upgrade rejected email...');
                 await sendTierUpgradeRejectedEmail(emailData, doc.rejectionReason || 'No reason provided');
               } else {
-                console.log('[EmailService] Sending tier downgrade rejected email...');
                 await sendTierDowngradeRejectedEmail(emailData, doc.rejectionReason || 'No reason provided');
               }
             }

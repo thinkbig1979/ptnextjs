@@ -104,12 +104,6 @@ export function SubmitProfileCard() {
           result.error?.message || 'Failed to submit profile';
         toast.error(errorMessage);
 
-        if (result.error?.missingFields) {
-          console.log(
-            '[SubmitProfileCard] Missing fields:',
-            result.error.missingFields
-          );
-        }
         return;
       }
 

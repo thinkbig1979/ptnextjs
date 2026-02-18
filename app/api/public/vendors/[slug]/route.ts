@@ -132,14 +132,6 @@ export async function GET(
       // Filter fields based on vendor's tier
       const filteredVendor = filterFieldsByTier(vendor);
 
-      // Log successful fetch (for analytics/monitoring)
-      console.log('[VendorPublicGet] Public vendor profile fetched:', {
-        identifier: slugOrId,
-        isNumericId,
-        tier: vendor.tier,
-        timestamp: new Date().toISOString(),
-      });
-
       // Return with cache headers for performance
       return NextResponse.json(
         {

@@ -184,7 +184,6 @@ export async function POST(
     try {
       // Send email to admin
       await sendProfileSubmittedAdminEmail(emailData);
-      console.log('[ProfileSubmission] Admin notification sent');
     } catch (emailError) {
       console.error(
         '[ProfileSubmission] Failed to send admin email:',
@@ -195,20 +194,12 @@ export async function POST(
     try {
       // Send confirmation email to vendor
       await sendProfileSubmittedVendorEmail(emailData);
-      console.log('[ProfileSubmission] Vendor confirmation sent');
     } catch (emailError) {
       console.error(
         '[ProfileSubmission] Failed to send vendor email:',
         emailError
       );
     }
-
-    // Log successful submission
-    console.log('[ProfileSubmission] Profile submitted:', {
-      vendorId,
-      companyName: vendor.companyName,
-      timestamp: new Date().toISOString(),
-    });
 
     return NextResponse.json(
       {

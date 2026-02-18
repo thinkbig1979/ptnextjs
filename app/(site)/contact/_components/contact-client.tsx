@@ -41,9 +41,6 @@ export function ContactClient() {
       // Simulate form submission
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // In a real application, you would send this data to your API
-      console.log('Form submitted:', formData);
-      
       toast.success("Message sent successfully! We'll get back to you soon.");
       
       // Reset form

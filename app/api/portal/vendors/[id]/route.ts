@@ -97,20 +97,6 @@ export async function GET(
         );
       }
 
-      // Log successful fetch
-      console.log('[VendorGet] Vendor profile fetched:', {
-        id,
-        byUserId,
-        userId: user.id,
-        vendorId: vendor.id,
-        tier: vendor.tier,
-        hasCompanyName: 'companyName' in vendor,
-        hasName: 'name' in vendor,
-        companyNameValue: vendor.companyName,
-        nameValue: vendor.name,
-        timestamp: new Date().toISOString(),
-      });
-
       return NextResponse.json(
         {
           success: true,
@@ -211,23 +197,10 @@ export async function PUT(
     // Parse request body
     const body = await request.json();
 
-    // DEBUG: Log received body for troubleshooting 400 errors
-    console.log('[VendorUpdate] Received body:', JSON.stringify(body, null, 2));
-
     // Validate input
     const validationResult = safeValidateVendorUpdate(body);
 
     if (!validationResult.success) {
-      // DEBUG: Log exact validation errors
-      console.error('[VendorUpdate] Validation FAILED:', {
-        receivedFields: Object.keys(body),
-        errors: validationResult.error.errors.map(e => ({
-          path: e.path.join('.'),
-          message: e.message,
-          code: e.code,
-        })),
-      });
-
       const fieldErrors: Record<string, string> = {};
       validationResult.error.errors.forEach((error) => {
         const field = error.path[0] as string;
@@ -277,14 +250,6 @@ export async function PUT(
         }
       );
 
-      // Log successful update
-      console.log('[VendorUpdate] Vendor profile updated:', {
-        vendorId,
-        userId: user.id,
-        updatedFields: Object.keys(updateData),
-        timestamp: new Date().toISOString(),
-      });
-
       // Clear the PayloadCMS data service cache for this vendor
       const { payloadCMSDataService } = await import('@/lib/payload-cms-data-service');
       // Clear by both ID and slug to ensure all cache keys are invalidated
@@ -292,14 +257,12 @@ export async function PUT(
       if (updatedVendor.slug && typeof updatedVendor.slug === 'string') {
         payloadCMSDataService.clearVendorCache(updatedVendor.slug);
       }
-      console.log('[VendorUpdate] Cleared data service cache for vendor:', vendorId, updatedVendor.slug);
 
       // Revalidate the vendor's public profile page (ISR on-demand)
       if (updatedVendor.slug) {
         try {
           revalidatePath(`/vendors/${updatedVendor.slug}`);
           revalidatePath('/vendors'); // Also revalidate the vendors listing page
-          console.log('[VendorUpdate] Revalidated vendor pages:', `/vendors/${updatedVendor.slug}`, '/vendors');
         } catch (revalidateError) {
           console.error('[VendorUpdate] Failed to revalidate pages:', revalidateError);
           // Don't fail the request if revalidation fails
@@ -444,23 +407,10 @@ export async function PATCH(
     // Parse request body
     const body = await request.json();
 
-    // DEBUG: Log received body for troubleshooting 400 errors
-    console.log('[VendorUpdate] Received body:', JSON.stringify(body, null, 2));
-
     // Validate input
     const validationResult = safeValidateVendorUpdate(body);
 
     if (!validationResult.success) {
-      // DEBUG: Log exact validation errors
-      console.error('[VendorUpdate] Validation FAILED:', {
-        receivedFields: Object.keys(body),
-        errors: validationResult.error.errors.map(e => ({
-          path: e.path.join('.'),
-          message: e.message,
-          code: e.code,
-        })),
-      });
-
       const fieldErrors: Record<string, string> = {};
       validationResult.error.errors.forEach((error) => {
         const field = error.path[0] as string;
@@ -569,14 +519,6 @@ export async function PATCH(
       data: filteredData,
     });
 
-    // Log successful update
-    console.log('[VendorUpdate] Vendor profile updated:', {
-      vendorId,
-      userId: user.id,
-      updatedFields: Object.keys(filteredData),
-      timestamp: new Date().toISOString(),
-    });
-
     // Clear the PayloadCMS data service cache for this vendor
     const { payloadCMSDataService } = await import('@/lib/payload-cms-data-service');
     // Clear by both ID and slug to ensure all cache keys are invalidated
@@ -584,14 +526,12 @@ export async function PATCH(
     if (updatedVendor.slug && typeof updatedVendor.slug === 'string') {
       payloadCMSDataService.clearVendorCache(updatedVendor.slug);
     }
-    console.log('[VendorUpdate] Cleared data service cache for vendor:', vendorId, updatedVendor.slug);
 
     // Revalidate the vendor's public profile page (ISR on-demand)
     if (updatedVendor.slug) {
       try {
         revalidatePath(`/vendors/${updatedVendor.slug}`);
         revalidatePath('/vendors'); // Also revalidate the vendors listing page
-        console.log('[VendorUpdate] Revalidated vendor pages:', `/vendors/${updatedVendor.slug}`, '/vendors');
       } catch (revalidateError) {
         console.error('[VendorUpdate] Failed to revalidate pages:', revalidateError);
         // Don't fail the request if revalidation fails

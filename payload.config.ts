@@ -15,7 +15,6 @@ if (process.env.USE_POSTGRES !== 'true') {
     sqliteAdapter = require('@payloadcms/db-sqlite').sqliteAdapter;
   } catch {
     // SQLite adapter not available (expected in PostgreSQL-only builds)
-    console.log('SQLite adapter not available - using PostgreSQL only');
   }
 }
 
@@ -90,11 +89,6 @@ if (usePostgres) {
     '  1. Set USE_POSTGRES=true and provide DATABASE_URL for PostgreSQL, or\n' +
     '  2. Ensure @payloadcms/db-sqlite is installed for SQLite development'
   );
-}
-
-// Log which database is being used
-if (process.env.NODE_ENV === 'development') {
-  console.log(`📦 Database: ${usePostgres ? 'PostgreSQL' : 'SQLite'}`);
 }
 
 export default buildConfig({

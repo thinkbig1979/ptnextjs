@@ -42,25 +42,17 @@ export const revalidate = 60;
 export async function generateStaticParams() {
   // Skip database calls during Docker builds (no DB available)
   if (process.env.SKIP_BUILD_DB === 'true') {
-    console.log('📋 Skipping vendor static params (SKIP_BUILD_DB=true)');
     return [];
   }
   try {
-    console.log('🏗️  Generating static params for vendor pages...');
     const vendors = await payloadCMSDataService.getAllVendors();
-    console.log(`📋 Found ${vendors.length} vendors for static generation`);
-    
+
     const params = vendors
       .filter(vendor => vendor.slug) // Only include vendors with valid slugs
       .map((vendor) => ({
         slug: vendor.slug,
       }));
-    
-    if (params.length > 0) {
-      console.log('🔗 Vendor slugs to generate:', params.slice(0, 3).map(p => p.slug), '...');
-    }
-    
-    console.log(`✅ Generated ${params.length} static vendor params`);
+
     return params;
   } catch (error) {
     // Return empty array on error - pages will be generated on-demand via ISR
@@ -153,16 +145,8 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
     notFound();
   }
 
-  console.log(`✅ Loading vendor: ${vendor.name} (Tier: ${vendor.tier || 'free'})`);
-  console.log(`🔍 DEBUG foundedYear:`, {
-    hasFoundedYear: 'foundedYear' in vendor,
-    foundedYearValue: vendor.foundedYear,
-    vendorKeys: Object.keys(vendor).sort(),
-  });
-
   // Find products from this vendor
   const vendorProducts = await payloadCMSDataService.getProductsByVendor(vendor.id);
-  console.log(`📦 Found ${vendorProducts.length} products for vendor: ${vendor.name}`);
 
   // Build Organization JSON-LD schema
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://paulthames.com';

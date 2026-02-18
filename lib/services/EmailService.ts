@@ -136,7 +136,6 @@ function validateEmailConfig(): {
 } {
   // Check if emails are disabled (test environment)
   if (!shouldSendEmails()) {
-    console.log('[EmailService] Emails disabled - test environment detected');
     return {
       valid: false,
       errors: ['Emails disabled in test environment'],

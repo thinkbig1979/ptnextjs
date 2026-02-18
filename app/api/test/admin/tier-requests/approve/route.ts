@@ -76,12 +76,9 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApproveRe
         },
       });
       adminId = newAdmin.id as string;
-      console.log('[Test Admin] Created test admin user:', adminId);
     } else {
       adminId = adminUser.docs[0].id as string;
     }
-
-    console.log('[Test Admin Approve] Using admin ID:', adminId, 'for request:', body.requestId);
 
     // Get the request
     const tierRequest = await payload.findByID({
@@ -126,8 +123,6 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApproveRe
         reviewedAt: new Date().toISOString(),
       },
     });
-
-    console.log('[Test Admin Approve] Success');
 
     return NextResponse.json(
       {

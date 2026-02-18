@@ -92,8 +92,7 @@ interface VendorsPageProps {
 
 export default async function VendorsPage({ searchParams }: VendorsPageProps) {
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
-  console.log('🏗️  Rendering Vendors page (static generation) with searchParams:', resolvedSearchParams);
-  
+
   // Fetch all data at build time for static generation
   const [vendors, products, categories] = await Promise.all([
     payloadCMSDataService.getAllVendors(),
@@ -106,8 +105,6 @@ export default async function VendorsPage({ searchParams }: VendorsPageProps) {
   // Minimize RSC serialization by extracting only required fields
   const serializedVendors = vendors.map(serializeVendorForClient);
   const serializedProducts = products.map(serializeProductForClient);
-
-  console.log(`📋 Static generation: Loaded ${vendors.length} vendors, ${products.length} products, ${categories.length} categories`);
 
   const itemListSchema = {
     '@context': 'https://schema.org',

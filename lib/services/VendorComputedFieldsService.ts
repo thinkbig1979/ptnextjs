@@ -60,21 +60,11 @@ export class VendorComputedFieldsService {
     // Create shallow copy to avoid mutation
     const enriched = { ...vendor } as T & VendorWithComputed;
 
-    console.log('[VendorComputedFields] Before enrichment:', {
-      hasCompanyName: 'companyName' in vendor,
-      hasName: 'name' in vendor,
-      hasFoundedYear: 'foundedYear' in vendor,
-      companyNameValue: vendor.companyName,
-      nameValue: vendor.companyName,
-      foundedYearValue: vendor.foundedYear,
-    });
-
     // Map Payload field names to Vendor interface
     // Payload schema uses 'companyName', but Vendor interface uses 'name'
     // ALWAYS sync name from companyName to ensure fresh data after updates
     if ('companyName' in vendor) {
       enriched.name = vendor.companyName as string;
-      console.log('[VendorComputedFields] Synced companyName to name:', enriched.name);
     }
 
     // Compute years in business if foundedYear exists
@@ -84,13 +74,6 @@ export class VendorComputedFieldsService {
       );
     }
 
-    console.log('[VendorComputedFields] After enrichment:', {
-      hasName: 'name' in enriched,
-      nameValue: enriched.name,
-      hasFoundedYear: 'foundedYear' in enriched,
-      foundedYearValue: enriched.foundedYear,
-      yearsInBusiness: enriched.yearsInBusiness,
-    });
 
     return enriched;
   }

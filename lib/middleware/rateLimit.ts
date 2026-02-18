@@ -208,7 +208,6 @@ export function clearRateLimits(): boolean {
   }
 
   rateLimitStore.clear();
-  console.log('[RateLimit] All rate limit entries cleared');
   return true;
 }
 
@@ -231,7 +230,6 @@ export function clearRateLimitForIp(ip: string): boolean {
   }
 
   keysToDelete.forEach(key => rateLimitStore.delete(key));
-  console.log(`[RateLimit] Cleared ${keysToDelete.length} rate limit entries for IP: ${ip}`);
   return keysToDelete.length > 0;
 }
 

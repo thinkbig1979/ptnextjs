@@ -27,7 +27,6 @@ export function sanitizeForTier(data: Record<string, unknown>, tier: Tier | unde
   const sanitized = { ...data };
   TIER2_FIELDS.forEach(field => {
     if (field in sanitized) {
-      console.log(`[TierValidation] Stripping field '${field}' for tier '${tier || 'free'}'`);
       delete sanitized[field];
     }
   });

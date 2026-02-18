@@ -38,8 +38,6 @@ export async function createNotification(
       },
     });
 
-    console.log(`[NotificationService] Created notification for user ${payload.userId}: ${payload.type}`);
-
     return {
       success: true,
       notification: notification as unknown as Notification,
@@ -151,8 +149,6 @@ export async function markAsRead(
       },
     });
 
-    console.log(`[NotificationService] Marked notification ${notificationId} as read`);
-
     return {
       success: true,
     };
@@ -198,8 +194,6 @@ export async function markAllAsRead(
       });
       count++;
     }
-
-    console.log(`[NotificationService] Marked ${count} notifications as read for user ${userId}`);
 
     return {
       success: true,
@@ -257,7 +251,6 @@ export async function notifyAdminOfTierRequest(
       });
     }
 
-    console.log(`[NotificationService] Notified admins of tier ${requestType} request from ${vendorName}`);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     console.error('[NotificationService] Failed to notify admins:', errorMessage);
@@ -294,7 +287,6 @@ export async function notifyVendorOfApproval(
       },
     });
 
-    console.log(`[NotificationService] Notified user ${userId} of tier ${requestType} approval`);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     console.error('[NotificationService] Failed to notify vendor of approval:', errorMessage);
@@ -332,7 +324,6 @@ export async function notifyVendorOfRejection(
       },
     });
 
-    console.log(`[NotificationService] Notified user ${userId} of tier ${requestType} rejection`);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     console.error('[NotificationService] Failed to notify vendor of rejection:', errorMessage);

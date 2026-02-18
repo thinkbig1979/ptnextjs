@@ -24,16 +24,12 @@ export const revalidate = 3600; // ISR: Revalidate every hour in production
 export async function generateStaticParams() {
   // Skip database calls during Docker builds (no DB available)
   if (process.env.SKIP_BUILD_DB === 'true') {
-    console.log('📋 Skipping blog static params (SKIP_BUILD_DB=true)');
     return [];
   }
   try {
-    console.log('🏗️  Generating static params for blog post pages...');
     const blogPostSlugs = await payloadCMSDataService.getBlogPostSlugs();
-    console.log(`📋 Found ${blogPostSlugs.length} blog posts for static generation`);
-    
+
     const params = blogPostSlugs.map((slug) => ({ slug }));
-    console.log(`✅ Generated ${params.length} static blog post params`);
     return params;
   } catch (error) {
     // Return empty array on error - pages will be generated on-demand via ISR
@@ -99,8 +95,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     console.warn(`⚠️  Blog post not found for slug: ${slug}`);
     notFound();
   }
-
-  console.log(`✅ Loading blog post: ${post.title}`);
 
   // Get related posts (simplified version for static generation)
   const allBlogPosts = await payloadCMSDataService.getAllBlogPosts();

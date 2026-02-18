@@ -160,8 +160,6 @@ const BlogPosts: CollectionConfig = {
     afterChange: [
       // Clear caches and trigger ISR revalidation after blog post changes
       async ({ doc, operation, previousDoc }) => {
-        console.log(`[BlogPosts] afterChange triggered: operation=${operation}, slug=${doc.slug}`);
-
         try {
           // Clear in-memory data service cache for blog posts
           // This ensures fresh data is fetched on the next request
@@ -172,7 +170,6 @@ const BlogPosts: CollectionConfig = {
             payloadCMSDataService.clearBlogCache(previousDoc.slug);
           }
 
-          console.log('[BlogPosts] In-memory cache cleared');
         } catch (cacheError) {
           console.error('[BlogPosts] Failed to clear cache:', cacheError);
         }
@@ -188,7 +185,6 @@ const BlogPosts: CollectionConfig = {
             revalidatePath(`/blog/${previousDoc.slug}`);
           }
 
-          console.log(`[BlogPosts] ISR revalidation triggered for /blog and /blog/${doc.slug}`);
         } catch (revalidateError) {
           console.error('[BlogPosts] Failed to trigger ISR revalidation:', revalidateError);
         }
@@ -199,12 +195,9 @@ const BlogPosts: CollectionConfig = {
     afterDelete: [
       // Clear caches and trigger ISR revalidation after blog post deletion
       async ({ doc }) => {
-        console.log(`[BlogPosts] afterDelete triggered: slug=${doc.slug}`);
-
         try {
           // Clear in-memory data service cache
           payloadCMSDataService.clearBlogCache(doc.slug);
-          console.log('[BlogPosts] In-memory cache cleared after deletion');
         } catch (cacheError) {
           console.error('[BlogPosts] Failed to clear cache after deletion:', cacheError);
         }
@@ -213,7 +206,6 @@ const BlogPosts: CollectionConfig = {
           // Trigger ISR revalidation
           revalidatePath('/blog');
           revalidatePath(`/blog/${doc.slug}`);
-          console.log(`[BlogPosts] ISR revalidation triggered after deletion`);
         } catch (revalidateError) {
           console.error('[BlogPosts] Failed to trigger ISR revalidation after deletion:', revalidateError);
         }

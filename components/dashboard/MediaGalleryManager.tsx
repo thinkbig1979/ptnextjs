@@ -201,9 +201,8 @@ export function MediaGalleryManager({ vendor, onSubmit }: MediaGalleryManagerPro
     const response = await uploadFile({
       url: '/api/media/upload',
       file,
-      onProgress: (progress) => {
+      onProgress: (_progress) => {
         // Could add progress indicator here if needed
-        console.log('Upload progress:', progress.percentage);
       }
     });
 

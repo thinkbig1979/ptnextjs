@@ -87,7 +87,6 @@ export async function POST(request: NextRequest): Promise<NextResponse<RejectRes
         },
       });
       adminId = newAdmin.id as string;
-      console.log('[Test Admin] Created test admin user:', adminId);
     } else {
       adminId = adminUser.docs[0].id as string;
     }
@@ -123,8 +122,6 @@ export async function POST(request: NextRequest): Promise<NextResponse<RejectRes
         rejectionReason: body.rejectionReason,
       },
     });
-
-    console.log('[Test Admin Reject] Success');
 
     return NextResponse.json(
       {

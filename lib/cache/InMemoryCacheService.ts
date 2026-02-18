@@ -46,19 +46,11 @@ export class InMemoryCacheService implements CacheService {
       cached.accessCount++;
       this.hits++;
 
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`📋 Cache hit for ${key} (accessed ${cached.accessCount} times)`);
-      }
-
       return cached.data as T;
     }
 
     // Cache miss - fetch new data
     this.misses++;
-
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`🔄 Cache miss - Fetching ${key}...`);
-    }
 
     const data = await fetcher();
 
@@ -70,10 +62,6 @@ export class InMemoryCacheService implements CacheService {
       tags: options?.tags,
     });
 
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`✅ Cached ${key} (${this.cache.size} total entries)`);
-    }
-
     return data;
   }
 
@@ -83,10 +71,6 @@ export class InMemoryCacheService implements CacheService {
   invalidate(key: string): void {
     if (this.cache.has(key)) {
       this.cache.delete(key);
-
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`🗑️ Invalidated cache key: ${key}`);
-      }
     }
   }
 
@@ -111,10 +95,6 @@ export class InMemoryCacheService implements CacheService {
     keysToDelete.forEach(key => {
       this.cache.delete(key);
     });
-
-    if (process.env.NODE_ENV === 'development' && keysToDelete.length > 0) {
-      console.log(`🗑️ Invalidated ${keysToDelete.length} cache entries matching pattern: ${pattern}`);
-    }
   }
 
   /**
@@ -134,24 +114,15 @@ export class InMemoryCacheService implements CacheService {
     keysToDelete.forEach(key => {
       this.cache.delete(key);
     });
-
-    if (process.env.NODE_ENV === 'development' && keysToDelete.length > 0) {
-      console.log(`🗑️ Invalidated ${keysToDelete.length} cache entries with tags: ${tags.join(', ')}`);
-    }
   }
 
   /**
    * Clear all cache entries
    */
   clear(): void {
-    const size = this.cache.size;
     this.cache.clear();
     this.hits = 0;
     this.misses = 0;
-
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`🗑️ Cleared all ${size} cache entries`);
-    }
   }
 
   /**

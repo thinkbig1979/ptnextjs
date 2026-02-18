@@ -132,8 +132,6 @@ export async function DELETE(
       console.error('[Admin Vendor Delete] Cache invalidation failed:', cacheError);
     }
 
-    console.log(`[Admin Vendor Delete] Deleted vendor ${vendorId}: ${productsDeleted} products, user: ${userDeleted}`);
-
     return NextResponse.json({
       success: true,
       deleted: {
@@ -222,8 +220,6 @@ export async function PATCH(
     } catch (cacheError) {
       console.error('[Admin Vendor Update] Cache invalidation failed:', cacheError);
     }
-
-    console.log(`[Admin Vendor Update] Updated vendor ${vendorId}`);
 
     return NextResponse.json({
       success: true,

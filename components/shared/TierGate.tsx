@@ -108,8 +108,7 @@ export function TierGate({
             type="button"
             className="inline-flex items-center gap-1 text-sm font-medium text-accent dark:text-accent hover:text-accent dark:hover:text-accent underline"
             onClick={() => {
-              // In a real app, this would navigate to upgrade page
-              console.log('Navigate to upgrade page');
+              // TODO: Navigate to upgrade page
             }}
           >
             <ArrowUpCircle className="h-4 w-4" />

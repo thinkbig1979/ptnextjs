@@ -74,30 +74,17 @@ export function ProfileEditTabs({ vendor }: ProfileEditTabsProps) {
    * Updates vendor state and saves to backend
    */
   const handleFormSave = async (data: any) => {
-    console.log('[ProfileEditTabs] handleFormSave called with:', data);
-
     // Pass through form data as-is - API expects companyName field
     const vendorUpdates: Partial<Vendor> = { ...data };
 
-    console.log('[ProfileEditTabs] Vendor updates:', vendorUpdates);
-
     // Merge updates with current vendor data to avoid stale closure issue
     const updatedVendor = { ...vendor, ...vendorUpdates };
-    console.log('[ProfileEditTabs] Merged vendor data:', updatedVendor);
 
     // Update local state
-    console.log('[ProfileEditTabs] Calling updateVendor');
     updateVendor(vendorUpdates);
 
     // Pass the updated vendor directly to avoid race condition
-    console.log('[ProfileEditTabs] Calling saveVendor with updated data');
-    try {
-      await saveVendor(updatedVendor);
-      console.log('[ProfileEditTabs] saveVendor completed successfully');
-    } catch (error) {
-      console.error('[ProfileEditTabs] saveVendor failed:', error);
-      throw error;
-    }
+    await saveVendor(updatedVendor);
   };
 
   // Track viewport size to determine which UI to render

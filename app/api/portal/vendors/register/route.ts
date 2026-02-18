@@ -162,11 +162,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             const errorMessage = getHCaptchaErrorMessage(
               captchaResult["error-codes"],
             );
-            console.log("[VendorRegistration] Captcha verification failed:", {
-              errors: captchaResult["error-codes"],
-              timestamp: new Date().toISOString(),
-            });
-
             return NextResponse.json(
               {
                 success: false,
@@ -284,15 +279,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
           vendorId = vendor.id;
 
-          // Log successful registration
-          console.log("[VendorRegistration] New vendor registered:", {
-            vendorId: vendorId.toString(),
-            userId: userId.toString(),
-            companyName: data.companyName,
-            email: data.contactEmail,
-            timestamp: new Date().toISOString(),
-          });
-
           // Return success response
           return NextResponse.json(
             {
@@ -314,10 +300,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
                 id: userId,
                 overrideAccess: true,
               });
-              console.log(
-                "[VendorRegistration] Rolled back user creation:",
-                userId,
-              );
             } catch (rollbackError) {
               console.error(
                 "[VendorRegistration] Failed to rollback user creation:",
