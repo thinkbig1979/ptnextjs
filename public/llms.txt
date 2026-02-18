@@ -2,6 +2,8 @@
 
 > Superyacht technology consultancy providing technical project advisory, vendor market access, and creative lighting solutions.
 
+For detailed information including full team bios, testimonials, and technical expertise areas, see [llms-full.txt](https://paulthames.com/llms-full.txt).
+
 ## About
 
 Paul Thames is a specialist consultancy serving the superyacht industry, founded by Edwin Edelenbos and Roel van der Zwet. The company bridges the gap between technology suppliers and superyacht projects, offering technical credibility, commercial structure, and market access. Services span from hands-on project advisory for owners, designers, and shipyards to market entry support for technology manufacturers, alongside bespoke lighting design for superyachts and architectural spaces.

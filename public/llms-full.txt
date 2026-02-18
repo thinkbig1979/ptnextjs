@@ -1,0 +1,212 @@
+# Paul Thames - Comprehensive Guide
+
+> Superyacht technology consultancy providing technical project advisory, vendor market access, and creative lighting solutions.
+
+For a concise overview, see [llms.txt](https://paulthames.com/llms.txt).
+
+## About
+
+Paul Thames is a specialist consultancy serving the superyacht industry, founded by Edwin Edelenbos and Roel van der Zwet. The company bridges the gap between technology suppliers and superyacht projects, offering technical credibility, commercial structure, and market access. Services span from hands-on project advisory for owners, designers, and shipyards to market entry support for technology manufacturers, alongside bespoke lighting design for superyachts and architectural spaces.
+
+### Why Paul Thames Exists
+
+After years working across shipyards, integrators, and technology suppliers, the founders kept seeing the same pattern: projects struggling not because the technology was wrong, but because the right expertise wasn't connected to the right people at the right time. Owners' teams needed independent guidance. Shipyards needed specialists they could trust. Suppliers needed access to decision-makers. Paul Thames exists to reduce that friction, bringing technical credibility, commercial relationships, and enough experience to know what actually works in superyacht projects.
+
+### What This Combination Means
+
+- **Technical Credibility**: Deep system knowledge from years on actual yacht projects, understanding technical realities beyond brochures.
+- **Industry Relationships**: Established connections across shipyards, integrators, suppliers, and owners' teams built over decades.
+- **Commercial Clarity**: Understanding of what it takes to succeed in this market, from positioning to pricing to reaching the right people.
+
+## Services
+
+### Technical Project Consultancy
+
+Independent technical advisory for owners, designers, and shipyards at critical decision points in superyacht projects. Decision support when clarity matters most, before change becomes expensive. The earlier the involvement, the greater the impact, but support is available at any stage.
+
+**Target audience**: Yacht Owners, Interior Designers, Shipyards, Project Managers
+
+**Specific services**:
+
+- **Specification Review**: Audit existing specifications for gaps, ambiguities, and risks. For anyone with existing specs needing validation, typically before going to tender.
+- **Specification Creation**: Build technical specifications from requirements. For projects starting without formal specs, typically in early design phase.
+- **Proposal Review**: Evaluate vendor proposals against specifications. For procurement decisions during tender evaluation phase.
+- **On-Demand Support**: Technical guidance during build. For projects needing expert input without full-time commitment, available throughout build phase.
+
+**Project phases covered**: Concept, Design, Build, Deliver. Greatest impact during concept and design phases where decisions have the biggest impact and corrections cost the least.
+
+**Disciplines**: AV/IT systems, lighting systems, control systems, system architecture, technical analysis.
+
+**Independence**: The advisory is independent of vendors, focused on evaluating specifications, auditing proposals, and providing unbiased technical guidance.
+
+### Vendor Consultancy
+
+Market access and visibility for manufacturers, distributors, and technology providers entering or expanding within the superyacht industry. Practical guidance on positioning, pricing, and market access.
+
+**Target audience**: Equipment Manufacturers, Technology Providers, Distributors, Startups
+
+**Specific services**:
+
+- **Proposition Testing**: Validate product-market fit for the superyacht sector. Includes market assessment, competitive positioning, and pricing strategy review. Outcome: clear go/no-go recommendation with supporting analysis.
+- **Market Strategy**: Go-to-market planning and execution support. Includes brand positioning, channel strategy, and lead generation approach. Outcome: actionable strategy with implementation roadmap.
+- **Platform Visibility**: Reach decision-makers through the industry directory. Includes vendor profile listing, product showcases, and featured placements. Outcome: direct exposure to qualified project teams.
+- **Waving the Flag**: Ongoing market presence and brand visibility. Includes exposure to 10,000+ industry decision makers, inclusion in content, events, and sales meetings, regular reporting and direct outreach. Outcome: sustained brand presence and warm introductions.
+
+**Industry network**: 21 sales agents across major yachting markets, direct contacts at every major shipyard, presence in all global yachting hubs.
+
+**Value proposition**: Industry insights and relationships without full-time overhead. Candid feedback on what works in this market and what doesn't.
+
+### Creative Lighting Solutions
+
+Custom pixel-based lighting fixtures, content creation, and programming for superyachts and high-end architecture. Pixel-level control enables effects traditional lighting cannot achieve.
+
+**Core approach**:
+
+- **Bespoke Fixtures**: Pixel-based fixtures custom-designed for each project. Form factors, materials, and pixel density tailored to the application. Custom housings, optics, and materials optimized for each project.
+- **Custom Content**: Animations, scenes, and behaviors designed to bring fixtures to life. From subtle ambience to dramatic effects. Visual storytelling through light.
+- **Full Programming**: Complete system integration and control. Ready to work with building management systems and user interfaces.
+
+**Applications**:
+
+- **Superyachts**: Interior and exterior: decks, ceilings, stairs, architectural features. Marine-grade throughout.
+- **Architecture**: Facades, lobbies, statement features. Modular systems with building control integration.
+- **Hospitality**: Hotels, restaurants, bars. Scene-based control for atmosphere and brand identity.
+- **Residential**: High-end homes and private spaces. Discreet integration with intuitive control.
+
+### Vendor Directory
+
+A curated directory of superyacht technology vendors and marine electronics suppliers, providing product discovery for specifiers and visibility for manufacturers.
+
+## Key People
+
+### Edwin Edelenbos, Technical Partner
+
+Edwin has spent nearly two decades designing and delivering AV/IT, lighting, and control systems for superyachts. His career spans hands-on project management at Van Berge Henegouwen, innovation leadership at Oceanco, and project lead roles on Feadship newbuilds.
+
+Beyond his time with integrators and shipyards, Edwin has also worked directly on owner's teams, representing owner interests on both refit and newbuild projects. This gives him first-hand understanding of what owners actually need from their technical advisors.
+
+He specialises in system architecture, technical analysis, and translating complex requirements into solutions that actually work. His engineering background (MSc from TU Delft) combined with real project experience means he can work across disciplines, from design teams to shipyards to owners' representatives.
+
+**Background**:
+- 18+ years in superyacht AV/IT, lighting, and control systems
+- MSc Industrial Design Engineering, TU Delft
+- Former Manager of Innovation at Oceanco
+- Former CTO at Van Berge Henegouwen
+- Project Lead on multiple Feadship newbuilds
+- Owner's team representative on refit and newbuild projects
+
+### Roel van der Zwet, Commercial Partner
+
+Roel brings 15+ years of commercial leadership, including eight years at YachtCloud where he grew from Commercial Director to Managing Director. Before yachting, he held global commercial roles at Nexans and built experience across B2B sales, marketing strategy, and business development.
+
+His strength is connecting people and companies, understanding what suppliers need to reach the market and what project teams need to find the right partners. His MBA from the University of Amsterdam provides the strategic foundation; his years in the industry provide the relationships and market knowledge.
+
+**Background**:
+- 15+ years in commercial leadership and business development
+- MBA, University of Amsterdam
+- Former Managing Director at YachtCloud (8 years)
+- Former Global Segment Manager Marine at Nexans
+- Co-Founder of Diagram (asset management technology)
+
+## Client Testimonials
+
+### Klaus Waibel, Captain / Owner's Representative
+*Project 823, Royal Van Lent Shipyard (2020-2023)*
+
+"In a nutshell, Edwin is a good chap who knows what he is talking about." Edwin's knowledge and advice on choosing the best equipment was invaluable, with deep knowledge not only of the marketplace but also the equipment itself and the best method of integration. Handled challenging changes in supply company project managers in a professional and calm manner.
+
+### Carlos Morales, Director General, Astilleros de Mallorca
+
+"We had signed the 'Cristiano Ronaldo' of AV/IT!" Known Edwin since his Oceanco years. Astonished by his technical knowledge, as well as his ability to explain high-tech concepts easily to non-experts. Client oriented, making the design process enjoyable. An exceptional professional and a great human being.
+
+### Klaudio Marcelic, Owner's Representative and Captain, M/Y DAR
+*90m new build*
+
+"He became a truly trusted advisor to myself and my team." Edwin played a crucial role in the design and project management of the AV, IT and lighting systems. Excellent ability to understand and interpret requirements, and to present solutions clearly to everyone involved. Honest, transparent, and a pleasure to work with.
+
+### Derek Munro, Director, Yacht Consultancy Ltd. UK
+*Project Y712 - 106m SY Black Pearl, Oceanco*
+
+"Very knowledgeable about current and future technology and very passionate about his field." Edwin was always very informative in an unbiased way. Enjoyed discussions about future technologies and best practice for installation of all equipment.
+
+### Glenn Dalby, Captain & Project Manager
+*90m yacht*
+
+"One of the very best." Over the last 2 decades, among the world's most talented AV and IT engineers and project managers. Communication prowess coupled with an immediate and clinically accurate interpretation of a client's expectations and preferences stand out.
+
+### Ian Grey, AV/IT Engineer
+*100m+ yacht*
+
+"His knowledge of the sector is second to none." Advice is invaluable on any yacht project. Recommends his services for anyone looking for advice or consultation on a refit or new build project.
+
+### Confidential, Owner's Representative
+*115m yacht - AVIT, Events, and Security systems*
+
+"He covered everything in great detail with some excellent ideas." During the specification phase, Edwin built up the AVIT, Events and Security systems. Structured everything simply and efficiently, enabling smooth contractor engagement after spec finalization.
+
+### Nigel Sherlock, Representative / Ambassador / Facilitator
+
+"Whenever Edwin is involved I have a deep sense of comfort." Extremely intelligent with a vast wealth of knowledge and experience. A very analytical and inquisitive mind with the ability to think outside of the box. Honest, transparent, ethical, driven to deliver the best possible solution for clients.
+
+### Chris Horn, Crestron Programmer, Elixir Programming And Design UK
+*ETO on 80m+ yachts*
+
+"Passionate about raising technical standards within the industry." Deep technical understanding of AVIT systems onboard yachts. Not afraid to take on cutting edge technologies and integrate them into systems. Passionate about making sure owners have reliable and enjoyable systems onboard.
+
+### Tony Boklepp, AV/IT Officer
+*90m newbuild, 2-year project*
+
+"His deep knowledge and insights were crucial to the project." Deep knowledge and insights into AV, IT and lighting systems. Excellent interpersonal skills and able to mediate between all the various parties involved.
+
+### Lucio Prosperi, Captain, M.Y. Yasmine of the Sea
+*80m yacht - extensive refit (2018-19)*
+
+"The right person to act as independent consultant." Helped review, modify and upgrade proposals for a new AV and IT system on board. Comments and reports after survey visits were constructive and helpful, contributing to a successful project at full owner satisfaction.
+
+### Peter Aarts, Director of Operations, SuperYacht Times
+
+"The ability to explain difficult things in a simple and trustworthy way." Outstanding experience in AV/IT. Easy to connect with and always comes up with a solution.
+
+## Technical Expertise Areas
+
+- **AV/IT Systems**: Audio-visual and information technology system design, specification, and project management for superyachts. Integration of entertainment, communication, and operational systems.
+- **Lighting Systems**: Conventional and pixel-based lighting design. Bespoke LED fixture design, content creation, and control system programming.
+- **Control Systems**: Building management, automation, and user interface integration. Crestron programming, system integration across multiple platforms.
+- **System Architecture**: End-to-end system design covering network infrastructure, distributed audio/video, control interfaces, and security systems.
+- **Specification Writing**: Detailed technical specifications for tender, covering system requirements, performance criteria, and integration standards.
+- **Proposal Evaluation**: Independent assessment of vendor proposals against project specifications, including technical compliance, commercial terms, and risk analysis.
+- **Project Management**: Technical project management across concept, design, build, and delivery phases. Coordination between owners' teams, design studios, shipyards, and subcontractors.
+
+## Industry Context
+
+Paul Thames operates within the superyacht industry, specifically focused on technology systems for vessels typically 50m and above. The company works with:
+
+- **Shipyards**: Including Feadship (Royal Van Lent), Oceanco, and others across the Netherlands and Mediterranean
+- **Owner's Representatives**: Independent advisors who manage builds on behalf of yacht owners
+- **Interior Design Studios**: Firms specializing in superyacht interior design who require technical input for AV/IT and lighting integration
+- **Technology Integrators**: Companies such as Van Berge Henegouwen that install and commission onboard systems
+- **Equipment Manufacturers**: Companies producing AV, IT, lighting, and control equipment for the marine sector
+
+The superyacht technology market is characterized by high customization, long project timelines (2-5 years for newbuilds), and the need for specialist knowledge that bridges design intent with technical reality.
+
+## Blog
+
+The Paul Thames blog covers superyacht technology topics, industry insights, project experiences, and technical guidance. Published at https://paulthames.com/blog.
+
+## Contact
+
+- Website: https://paulthames.com
+- Email: info@paulthames.com
+
+## Links
+
+- Website: https://paulthames.com
+- About: https://paulthames.com/about
+- Project Consultancy: https://paulthames.com/consultancy/clients
+- Vendor Consultancy: https://paulthames.com/consultancy/suppliers
+- Custom Lighting: https://paulthames.com/custom-lighting
+- Vendors: https://paulthames.com/vendors
+- Products: https://paulthames.com/products
+- Blog: https://paulthames.com/blog
+- Testimonials: https://paulthames.com/testimonials
+- Contact: https://paulthames.com/contact
