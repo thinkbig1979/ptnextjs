@@ -39,12 +39,7 @@ export function Footer({ companyInfo }: FooterProps): React.JSX.Element {
               >
                 Products
               </Link>
-              <Link
-                href="/yachts"
-                className="block font-poppins-light text-sm text-muted-foreground hover:text-accent transition-colors"
-              >
-                Yachts
-              </Link>
+              {/* Yachts link temporarily disabled - feature not ready */}
             </div>
           </div>
 

@@ -84,6 +84,11 @@ const nextConfig = {
         destination: '/consultancy/clients',
         permanent: false,
       },
+      {
+        source: '/yachts',
+        destination: '/',
+        permanent: false, // temporary - feature not yet ready
+      },
     ];
   },
   // NOTE: Payload CMS requires server-side rendering

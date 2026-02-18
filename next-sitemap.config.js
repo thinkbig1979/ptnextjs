@@ -6,7 +6,7 @@ module.exports = {
   changefreq: 'weekly',
   priority: 0.7,
   sitemapSize: 7000,
-  exclude: ['/admin*', '/api/*', '/_next/*', '/vendor/*'],
+  exclude: ['/admin*', '/api/*', '/_next/*', '/vendor/*', '/yachts', '/yachts/*'],
   transform: async (config, path) => {
     let priority = 0.7
 
@@ -21,7 +21,7 @@ module.exports = {
 
     if (['/about', '/contact', '/blog', '/vendors', '/products'].includes(path)) {
       priority = 0.9
-    } else if (path.startsWith('/consultancy/') || path === '/custom-lighting' || path === '/testimonials' || path === '/yachts') {
+    } else if (path.startsWith('/consultancy/') || path === '/custom-lighting' || path === '/testimonials') {
       priority = 0.8
     } else if (path.startsWith('/blog/') && path !== '/blog') {
       priority = 0.6

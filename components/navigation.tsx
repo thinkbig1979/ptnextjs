@@ -49,7 +49,7 @@ const navigationItems: NavigationItem[] = [
     overviewLabel: 'Vendors',
     submenu: [
       { href: '/products', label: 'Products' },
-      { href: '/yachts', label: 'Yachts' },
+      // { href: '/yachts', label: 'Yachts' }, // Temporarily disabled - feature not ready
       { href: '/vendor/login', label: 'Vendor Login' },
     ],
   },
