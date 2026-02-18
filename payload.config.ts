@@ -1,6 +1,7 @@
 import { buildConfig } from 'payload';
 import { postgresAdapter } from '@payloadcms/db-postgres';
 import { lexicalEditor } from '@payloadcms/richtext-lexical';
+import sharp from 'sharp';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -92,6 +93,7 @@ if (usePostgres) {
 }
 
 export default buildConfig({
+  sharp,
   // Server URL configuration
   // In development, use the actual port Next.js is running on
   // In production, use NEXT_PUBLIC_SERVER_URL environment variable
