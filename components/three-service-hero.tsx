@@ -57,7 +57,7 @@ export function ThreeServiceHero({
   headline = 'Experience and Expertise, Applied',
   intro = 'Bringing practical services and solutions to projects and vendors in the superyacht and high-end architecture industries.',
   services = defaultServices,
-  heroImage = '/heroimagePT-min.png',
+  heroImage = '/heroimagePT-min-1.webp',
   className,
 }: ThreeServiceHeroProps) {
   return (
