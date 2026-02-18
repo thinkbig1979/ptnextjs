@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,7 +11,7 @@ import BlogPostClient from "./_components/blog-post-client";
 import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
 import { OptimizedImage } from "@/components/ui/optimized-image";
 import JsonLd from "@/components/seo/JsonLd";
-import { getArticleSchema } from "@/lib/seo-config";
+import { getArticleSchema, SITE_CONFIG } from "@/lib/seo-config";
 import Breadcrumbs from '@/components/Breadcrumbs';
 
 // Force dynamic rendering - database not available at Docker build time
@@ -46,6 +47,45 @@ interface BlogPostPageProps {
   params: Promise<{
     slug: string;
   }>;
+}
+
+export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await payloadCMSDataService.getBlogPostBySlug(slug);
+
+  if (!post) {
+    return { title: 'Post Not Found' };
+  }
+
+  const description = post.excerpt?.slice(0, 160) || SITE_CONFIG.description;
+
+  return {
+    title: `${post.title} | ${SITE_CONFIG.name}`,
+    description,
+    openGraph: {
+      title: `${post.title} | ${SITE_CONFIG.name}`,
+      description,
+      type: 'article',
+      locale: SITE_CONFIG.locale,
+      siteName: SITE_CONFIG.name,
+      url: `${SITE_CONFIG.url}/blog/${slug}`,
+      ...(post.image && {
+        images: [{ url: post.image, width: 1200, height: 630, alt: post.title }],
+      }),
+      publishedTime: post.publishedAt,
+      ...(post.updatedAt && { modifiedTime: post.updatedAt }),
+      authors: [post.author],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${post.title} | ${SITE_CONFIG.name}`,
+      description,
+      ...(post.image && { images: [post.image] }),
+    },
+    alternates: {
+      canonical: `${SITE_CONFIG.url}/blog/${slug}`,
+    },
+  };
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
