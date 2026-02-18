@@ -10,6 +10,18 @@ import { getReviewSchema } from '@/lib/seo-config';
 export const metadata: Metadata = {
   title: "Testimonials | What Clients Say About Paul Thames",
   description: "What clients, captains, and industry professionals say about working with Edwin Edelenbos on superyacht AV/IT, lighting, and technology projects.",
+  openGraph: {
+    title: "Testimonials | What Clients Say About Paul Thames",
+    description: "What clients, captains, and industry professionals say about working with Edwin Edelenbos on superyacht AV/IT, lighting, and technology projects.",
+    url: "https://paulthames.com/testimonials",
+  },
+  twitter: {
+    title: "Testimonials | What Clients Say About Paul Thames",
+    description: "What clients, captains, and industry professionals say about working with Edwin Edelenbos on superyacht AV/IT, lighting, and technology projects.",
+  },
+  alternates: {
+    canonical: "https://paulthames.com/testimonials",
+  },
 };
 
 interface Testimonial {

@@ -14,6 +14,20 @@ export const metadata: Metadata = {
   title: 'Creative Lighting Solutions | Pixel-Based Fixtures for Superyachts',
   description:
     "Pixel-based fixtures, custom content, and complete programming for superyachts and high-end architecture. When traditional lighting won't do.",
+  openGraph: {
+    title: 'Creative Lighting Solutions | Pixel-Based Fixtures for Superyachts',
+    description:
+      "Pixel-based fixtures, custom content, and complete programming for superyachts and high-end architecture. When traditional lighting won't do.",
+    url: 'https://paulthames.com/custom-lighting',
+  },
+  twitter: {
+    title: 'Creative Lighting Solutions | Pixel-Based Fixtures for Superyachts',
+    description:
+      "Pixel-based fixtures, custom content, and complete programming for superyachts and high-end architecture. When traditional lighting won't do.",
+  },
+  alternates: {
+    canonical: 'https://paulthames.com/custom-lighting',
+  },
 };
 
 const coreApproach = [

@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import { ProductsClient } from "@/app/(site)/components/products-client";
 import { ComparisonProvider } from "@/components/ui/product-comparison";
 import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
@@ -51,9 +52,21 @@ export const dynamic = 'force-dynamic';
 // ISR: Revalidate every 10s in dev, 5min in production
 export const revalidate = 300; // ISR: Revalidate every 5 minutes
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Services & Products | Paul Thames Superyacht Solutions',
   description: 'Discover Paul Thames technical consultancy and creative lighting services for superyachts, including project advisory and custom programming.',
+  openGraph: {
+    title: 'Services & Products | Paul Thames Superyacht Solutions',
+    description: 'Discover Paul Thames technical consultancy and creative lighting services for superyachts, including project advisory and custom programming.',
+    url: 'https://paulthames.com/products',
+  },
+  twitter: {
+    title: 'Services & Products | Paul Thames Superyacht Solutions',
+    description: 'Discover Paul Thames technical consultancy and creative lighting services for superyachts, including project advisory and custom programming.',
+  },
+  alternates: {
+    canonical: 'https://paulthames.com/products',
+  },
 };
 
 interface ProductsPageProps {

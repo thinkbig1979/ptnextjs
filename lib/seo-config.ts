@@ -54,7 +54,7 @@ export const PAGE_DESCRIPTIONS = {
     'Market access and visibility for manufacturers, distributors, and technology providers in the superyacht industry. Proposition testing, market strategy, and directory listings.',
 } as const
 
-export const ORGANIZATION_SCHEMA = {
+export const PROFESSIONAL_SERVICE_SCHEMA = {
   '@context': 'https://schema.org',
   '@type': 'ProfessionalService',
   name: SITE_CONFIG.name,
@@ -66,6 +66,24 @@ export const ORGANIZATION_SCHEMA = {
     addressLocality: SITE_CONFIG.address.locality,
     addressCountry: SITE_CONFIG.address.country,
   },
+}
+
+export const ORGANIZATION_SCHEMA = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: SITE_CONFIG.name,
+  url: SITE_CONFIG.url,
+  logo: `${SITE_CONFIG.url}/logo.png`,
+  description: SITE_CONFIG.description,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: SITE_CONFIG.address.locality,
+    addressCountry: SITE_CONFIG.address.country,
+  },
+  founder: [
+    { '@type': 'Person', name: 'Edwin Edelenbos' },
+    { '@type': 'Person', name: 'Roel van der Zwet' },
+  ],
 }
 
 export const PERSON_SCHEMAS = {

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import type { Metadata } from 'next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 import { payloadCMSDataService } from '@/lib/payload-cms-data-service';
@@ -7,9 +8,21 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 // Force dynamic rendering - database not available at Docker build time
 export const dynamic = 'force-dynamic';
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Contact Paul Thames | Superyacht Technical Consultancy',
   description: 'Get in touch with Paul Thames for superyacht technical consultancy, creative lighting, and vendor advisory services.',
+  openGraph: {
+    title: 'Contact Paul Thames | Superyacht Technical Consultancy',
+    description: 'Get in touch with Paul Thames for superyacht technical consultancy, creative lighting, and vendor advisory services.',
+    url: 'https://paulthames.com/contact',
+  },
+  twitter: {
+    title: 'Contact Paul Thames | Superyacht Technical Consultancy',
+    description: 'Get in touch with Paul Thames for superyacht technical consultancy, creative lighting, and vendor advisory services.',
+  },
+  alternates: {
+    canonical: 'https://paulthames.com/contact',
+  },
 };
 
 export default async function ContactPage() {

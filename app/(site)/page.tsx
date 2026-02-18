@@ -10,7 +10,7 @@ import { FeaturedBlogSection } from '@/components/featured-blog-section';
 import { CTASection } from '@/components/cta-section';
 import { payloadCMSDataService } from '@/lib/payload-cms-data-service';
 import JsonLd from '@/components/seo/JsonLd';
-import { ORGANIZATION_SCHEMA } from '@/lib/seo-config';
+import { ORGANIZATION_SCHEMA, PROFESSIONAL_SERVICE_SCHEMA } from '@/lib/seo-config';
 
 // Force dynamic rendering - database not available at Docker build time
 export const dynamic = 'force-dynamic';
@@ -25,6 +25,7 @@ export default async function HomePage() {
   return (
     <div className="min-h-screen">
       <JsonLd data={ORGANIZATION_SCHEMA} />
+      <JsonLd data={PROFESSIONAL_SERVICE_SCHEMA} />
       <ThreeServiceHero />
       <CallPaulSection />
       <CustomLightingPreviewSection />

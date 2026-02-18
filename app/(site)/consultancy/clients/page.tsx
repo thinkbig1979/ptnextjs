@@ -13,6 +13,20 @@ export const metadata: Metadata = {
   title: 'Project Consultancy | Technical Advisory for Superyacht Projects',
   description:
     'Technical clarity for owners, designers, and shipyards at critical decision points. Specification review, creation, and on-demand support for superyacht projects.',
+  openGraph: {
+    title: 'Project Consultancy | Technical Advisory for Superyacht Projects',
+    description:
+      'Technical clarity for owners, designers, and shipyards at critical decision points. Specification review, creation, and on-demand support for superyacht projects.',
+    url: 'https://paulthames.com/consultancy/clients',
+  },
+  twitter: {
+    title: 'Project Consultancy | Technical Advisory for Superyacht Projects',
+    description:
+      'Technical clarity for owners, designers, and shipyards at critical decision points. Specification review, creation, and on-demand support for superyacht projects.',
+  },
+  alternates: {
+    canonical: 'https://paulthames.com/consultancy/clients',
+  },
 };
 
 const projectPhases = [

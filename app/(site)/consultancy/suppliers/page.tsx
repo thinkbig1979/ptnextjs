@@ -22,6 +22,20 @@ export const metadata: Metadata = {
   title: 'Vendor Consultancy | Market Access for Marine Technology',
   description:
     'Market access and visibility for manufacturers, distributors, and technology providers in the superyacht industry. Proposition testing, market strategy, and directory listings.',
+  openGraph: {
+    title: 'Vendor Consultancy | Market Access for Marine Technology',
+    description:
+      'Market access and visibility for manufacturers, distributors, and technology providers in the superyacht industry. Proposition testing, market strategy, and directory listings.',
+    url: 'https://paulthames.com/consultancy/suppliers',
+  },
+  twitter: {
+    title: 'Vendor Consultancy | Market Access for Marine Technology',
+    description:
+      'Market access and visibility for manufacturers, distributors, and technology providers in the superyacht industry. Proposition testing, market strategy, and directory listings.',
+  },
+  alternates: {
+    canonical: 'https://paulthames.com/consultancy/suppliers',
+  },
 };
 
 const services = [

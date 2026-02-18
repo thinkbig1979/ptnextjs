@@ -30,6 +30,7 @@ import { VendorTeamSection } from "@/components/vendors/VendorTeamSection";
 import { VendorProductsSection } from "@/components/vendors/VendorProductsSection";
 import { VendorMediaGallery } from "@/components/vendors/VendorMediaGallery";
 import VendorReviewsWrapper from "./_components/vendor-reviews-wrapper";
+import JsonLd from "@/components/seo/JsonLd";
 
 // Force dynamic rendering - database not available at Docker build time
 export const dynamic = 'force-dynamic';
@@ -163,8 +164,78 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
   const vendorProducts = await payloadCMSDataService.getProductsByVendor(vendor.id);
   console.log(`📦 Found ${vendorProducts.length} products for vendor: ${vendor.name}`);
 
+  // Build Organization JSON-LD schema
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://paulthames.com';
+  const organizationSchema: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": vendor.name,
+    "description": vendor.longDescription || vendor.description,
+    "url": vendor.website || `${baseUrl}/vendors/${vendor.slug || slug}`,
+  };
+
+  // Add logo if available
+  if (vendor.logo) {
+    organizationSchema.logo = vendor.logo.startsWith('http')
+      ? vendor.logo
+      : `${baseUrl}${vendor.logo}`;
+  }
+
+  // Add image if available
+  if (vendor.image) {
+    organizationSchema.image = vendor.image.startsWith('http')
+      ? vendor.image
+      : `${baseUrl}${vendor.image}`;
+  }
+
+  // Add category as keywords
+  if (vendor.category || (vendor.tags && vendor.tags.length > 0)) {
+    organizationSchema.keywords = [
+      vendor.category,
+      ...(vendor.tags || []),
+    ].filter(Boolean).join(', ');
+  }
+
+  // Add founding date if available
+  if (vendor.foundedYear) {
+    organizationSchema.foundingDate = String(vendor.foundedYear);
+  } else if (vendor.founded) {
+    organizationSchema.foundingDate = String(vendor.founded);
+  }
+
+  // Add contact info if available
+  if (vendor.contactEmail || vendor.contactPhone) {
+    organizationSchema.contactPoint = {
+      "@type": "ContactPoint",
+      ...(vendor.contactEmail && { email: vendor.contactEmail }),
+      ...(vendor.contactPhone && { telephone: vendor.contactPhone }),
+    };
+  }
+
+  // Add social media links as sameAs
+  const sameAs: string[] = [];
+  if (vendor.website) sameAs.push(vendor.website);
+  if (vendor.linkedinUrl) sameAs.push(vendor.linkedinUrl);
+  if (vendor.twitterUrl) sameAs.push(vendor.twitterUrl);
+  if (sameAs.length > 0) {
+    organizationSchema.sameAs = sameAs;
+  }
+
+  // Add address from HQ location if available
+  const hqLocation = getHQLocation(vendor.locations);
+  if (hqLocation && (hqLocation.address || hqLocation.city || hqLocation.country)) {
+    organizationSchema.address = {
+      "@type": "PostalAddress",
+      ...(hqLocation.address && { streetAddress: hqLocation.address }),
+      ...(hqLocation.city && { addressLocality: hqLocation.city }),
+      ...(hqLocation.country && { addressCountry: hqLocation.country }),
+      ...(hqLocation.postalCode && { postalCode: hqLocation.postalCode }),
+    };
+  }
+
   return (
     <div className="min-h-screen py-12">
+      <JsonLd data={organizationSchema} />
       <div className="container max-w-6xl">
         {/* Back Button */}
         <div className="mb-8">
