@@ -102,6 +102,9 @@ export function getArticleSchema({
   author?: string
   image?: string
 }) {
+  // Fall back to default if author is empty or looks like an email address
+  const authorName = author && !author.includes('@') ? author : 'Edwin Edelenbos'
+
   return {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -109,7 +112,7 @@ export function getArticleSchema({
     image: image || SITE_CONFIG.ogImage,
     author: {
       '@type': 'Person',
-      name: author,
+      name: authorName,
     },
     publisher: {
       '@type': 'Organization',

@@ -25,7 +25,10 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_GB',
     url: 'https://paulthames.com',
-    title: 'Paul Thames | Technical Consultancy & Creative Lighting',
+    title: {
+      template: '%s | Paul Thames',
+      default: 'Paul Thames | Technical Consultancy & Creative Lighting',
+    },
     description:
       'Technical consultancy for project teams and vendors, plus creative lighting solutions for superyachts and high-end architecture.',
     siteName: 'Paul Thames',
@@ -40,7 +43,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Paul Thames | Technical Consultancy & Creative Lighting',
+    title: {
+      template: '%s | Paul Thames',
+      default: 'Paul Thames | Technical Consultancy & Creative Lighting',
+    },
     description:
       'Technical consultancy for project teams and vendors, plus creative lighting solutions for superyachts and high-end architecture.',
     images: ['/og-image.png'],
