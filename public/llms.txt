@@ -1,0 +1,42 @@
+# Paul Thames
+
+> Superyacht technology consultancy providing technical project advisory, vendor market access, and creative lighting solutions.
+
+## About
+
+Paul Thames is a specialist consultancy serving the superyacht industry, founded by Edwin Edelenbos and Roel van der Zwet. The company bridges the gap between technology suppliers and superyacht projects, offering technical credibility, commercial structure, and market access. Services span from hands-on project advisory for owners, designers, and shipyards to market entry support for technology manufacturers, alongside bespoke lighting design for superyachts and architectural spaces.
+
+## Services
+
+### Technical Project Consultancy
+
+Independent technical advisory for owners, designers, and shipyards at critical decision points in superyacht projects. Covers concept through delivery, including specification review, specification creation, proposal evaluation, and on-demand technical support for AV/IT, lighting, and control systems.
+
+### Vendor Consultancy
+
+Market access and visibility for manufacturers, distributors, and technology providers entering or expanding within the superyacht industry. Services include proposition testing (product-market fit validation, competitive positioning, pricing strategy), go-to-market planning, and platform visibility through the Paul Thames vendor directory.
+
+### Creative Lighting Solutions
+
+Custom pixel-based lighting fixtures, content creation, and programming for superyachts and architectural spaces. Design, fabrication, and integration of bespoke LED installations with control system programming.
+
+### Vendor Directory
+
+A curated directory of superyacht technology vendors and marine electronics suppliers, providing product discovery for specifiers and visibility for manufacturers.
+
+## Key People
+
+- Edwin Edelenbos, Technical Partner: 18+ years in superyacht AV/IT, lighting, and control systems. Background includes work with integrators, shipyards, and directly with yacht owners.
+- Roel van der Zwet, Commercial Partner: 15+ years in commercial leadership and business development. Former Managing Director at YachtCloud (8 years).
+
+## Links
+
+- Website: https://paulthames.com
+- About: https://paulthames.com/about
+- Project Consultancy: https://paulthames.com/consultancy/clients
+- Vendor Consultancy: https://paulthames.com/consultancy/suppliers
+- Custom Lighting: https://paulthames.com/custom-lighting
+- Vendors: https://paulthames.com/vendors
+- Products: https://paulthames.com/products
+- Blog: https://paulthames.com/blog
+- Contact: https://paulthames.com/contact

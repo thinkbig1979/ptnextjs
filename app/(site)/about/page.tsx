@@ -4,6 +4,8 @@ import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import JsonLd from '@/components/seo/JsonLd';
+import { PERSON_SCHEMAS } from '@/lib/seo-config';
 
 export const metadata: Metadata = {
   title: 'About Us | Paul Thames',
@@ -31,6 +33,8 @@ const roelExperience = [
 export default function AboutPage() {
   return (
     <div className="min-h-screen py-12">
+      <JsonLd data={PERSON_SCHEMAS.edwin} />
+      <JsonLd data={PERSON_SCHEMAS.roel} />
       <div className="container max-w-screen-xl">
         <Breadcrumbs items={[
           { label: 'Home', href: '/' },

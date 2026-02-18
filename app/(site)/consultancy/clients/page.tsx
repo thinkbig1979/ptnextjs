@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { TimelineVisualization } from '@/components/timeline-visualization';
 import { ClipboardCheck, FileText, CheckSquare, Headphones, ArrowRight, Quote } from 'lucide-react';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import JsonLd from '@/components/seo/JsonLd';
+import { getFAQSchema, getServiceSchema } from '@/lib/seo-config';
 
 export const metadata: Metadata = {
   title: 'Project Consultancy | Technical Advisory for Superyacht Projects',
@@ -53,9 +55,30 @@ const services = [
 
 const targetAudience = ['Yacht Owners', 'Interior Designers', 'Shipyards', 'Project Managers'];
 
+const faqs = [
+  {
+    question: 'What consultancy services do you offer for superyacht projects?',
+    answer: 'Specification review, specification creation, vendor proposal evaluation, and on-demand technical support throughout the project lifecycle.',
+  },
+  {
+    question: 'Who is this consultancy for?',
+    answer: 'Yacht owners, interior designers, shipyards, and project managers seeking independent technical guidance at critical decision points.',
+  },
+  {
+    question: 'When should I engage a technical consultant?',
+    answer: 'The earlier the better. Early project phases are where decisions have the biggest impact and corrections cost the least, but support is available at any stage.',
+  },
+  {
+    question: 'Is the consultancy independent of vendors?',
+    answer: 'Yes. The advisory is independent, focused on evaluating specifications, auditing proposals, and providing unbiased technical guidance.',
+  },
+];
+
 export default function ConsultancyClientsPage() {
   return (
     <div className="min-h-screen py-12">
+      <JsonLd data={getServiceSchema({ name: 'Technical Project Consultancy', description: 'Technical clarity for owners, designers, and shipyards at critical decision points. Specification review, creation, and on-demand support for superyacht projects.' })} />
+      <JsonLd data={getFAQSchema(faqs)} />
       <div className="container max-w-screen-xl">
         <Breadcrumbs items={[
           { label: 'Home', href: '/' },
