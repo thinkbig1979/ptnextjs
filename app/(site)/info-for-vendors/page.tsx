@@ -59,12 +59,12 @@ const teamLeaders = [
   {
     name: "Roel",
     role: "Sales & Business Development",
-    image: "/roel.png",
+    image: "/roel.webp",
   },
   {
     name: "Thijs",
     role: "Marketing Strategy & Digital",
-    image: "/thijs.png",
+    image: "/thijs.webp",
   },
   {
     name: "Nigel",

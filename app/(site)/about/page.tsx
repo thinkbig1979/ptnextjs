@@ -108,7 +108,7 @@ export default function AboutPage() {
                 <div className="flex items-start gap-6 mb-6">
                   <div className="relative w-24 h-24 rounded-full overflow-hidden flex-shrink-0 border-2 border-accent/20">
                     <Image
-                      src="/edwin.png"
+                      src="/edwin.webp"
                       alt="Edwin Edelenbos"
                       fill
                       className="object-cover object-top"
@@ -167,7 +167,7 @@ export default function AboutPage() {
                 <div className="flex items-start gap-6 mb-6">
                   <div className="relative w-24 h-24 rounded-full overflow-hidden flex-shrink-0 border-2 border-accent/20">
                     <Image
-                      src="/roel.png"
+                      src="/roel.webp"
                       alt="Roel van der Zwet"
                       fill
                       className="object-cover object-top"
