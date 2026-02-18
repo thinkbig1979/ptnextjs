@@ -1,12 +1,13 @@
 # SEO Implementation Guide
 
-This guide explains how to use `next-seo` and `next-sitemap` to implement the SEO audit recommendations.
+This guide explains how to use the Next.js built-in Metadata API, a custom `JsonLd` component, and `next-sitemap` to implement the SEO audit recommendations.
 
 ## Installation Complete ✅
 
-**Packages installed:**
-- `next-seo@^7.2.0`
-- `next-sitemap@^4.2.3`
+**Approach:**
+- Next.js built-in `Metadata` export for page titles, descriptions, OG tags, and canonical URLs
+- Custom `JsonLd` component for structured data (JSON-LD schema markup)
+- `next-sitemap` for sitemap and robots.txt generation
 
 **Configuration files created:**
 - `next-sitemap.config.js` - Sitemap & robots.txt generation
@@ -38,43 +39,48 @@ npm run postbuild
 
 ---
 
-### 2. Using Next-SEO for Meta Tags
+### 2. Using the Next.js Metadata API for Meta Tags
+
+Next.js App Router pages use the `Metadata` export to define titles, descriptions, Open Graph tags, and canonical URLs. This is handled at build time with no client-side component needed.
 
 #### Basic Usage (Homepage)
 
 ```typescript
 // app/(site)/page.tsx
-import { NextSeo } from 'next-seo'
+import type { Metadata } from 'next'
 import { SITE_CONFIG } from '@/lib/seo-config'
+
+export const metadata: Metadata = {
+  title: SITE_CONFIG.title,
+  description: SITE_CONFIG.description,
+  alternates: {
+    canonical: SITE_CONFIG.url,
+  },
+  openGraph: {
+    url: SITE_CONFIG.url,
+    title: SITE_CONFIG.title,
+    description: SITE_CONFIG.description,
+    images: [
+      {
+        url: `${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`,
+        width: 1200,
+        height: 630,
+        alt: SITE_CONFIG.title,
+      },
+    ],
+    siteName: SITE_CONFIG.name,
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: SITE_CONFIG.twitter,
+    creator: SITE_CONFIG.twitter,
+  },
+}
 
 export default function HomePage() {
   return (
     <>
-      <NextSeo
-        title={SITE_CONFIG.title}
-        description={SITE_CONFIG.description}
-        canonical={SITE_CONFIG.url}
-        openGraph={{
-          url: SITE_CONFIG.url,
-          title: SITE_CONFIG.title,
-          description: SITE_CONFIG.description,
-          images: [
-            {
-              url: `${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`,
-              width: 1200,
-              height: 630,
-              alt: SITE_CONFIG.title,
-            },
-          ],
-          siteName: SITE_CONFIG.name,
-          type: 'website',
-        }}
-        twitter={{
-          handle: SITE_CONFIG.twitter,
-          site: SITE_CONFIG.twitter,
-          cardType: 'summary_large_image',
-        }}
-      />
       {/* page content */}
     </>
   )
@@ -83,51 +89,57 @@ export default function HomePage() {
 
 #### Blog Post Example
 
+For dynamic routes, use `generateMetadata` to create metadata based on route params:
+
 ```typescript
 // app/(site)/blog/[slug]/page.tsx
-import { NextSeo, ArticleJsonLd } from 'next-seo'
-import { getArticleSchema } from '@/lib/seo-config'
+import type { Metadata } from 'next'
+import JsonLd from '@/components/seo/JsonLd'
+import { getArticleSchema, SITE_CONFIG } from '@/lib/seo-config'
+
+export async function generateMetadata({ params }): Promise<Metadata> {
+  const post = await getBlogPost(params.slug)
+
+  return {
+    title: post.title,
+    description: post.excerpt,
+    alternates: {
+      canonical: `${SITE_CONFIG.url}/blog/${params.slug}`,
+    },
+    openGraph: {
+      type: 'article',
+      url: `${SITE_CONFIG.url}/blog/${params.slug}`,
+      title: post.title,
+      description: post.excerpt,
+      images: [
+        {
+          url: post.ogImage || `${SITE_CONFIG.url}/og-image.png`,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
+      publishedTime: post.publishedAt,
+      modifiedTime: post.updatedAt,
+      authors: [post.author || 'Edwin Edelenbos'],
+    },
+  }
+}
 
 export default async function BlogPost({ params }) {
   const post = await getBlogPost(params.slug)
 
   return (
     <>
-      <NextSeo
-        title={post.title}
-        description={post.excerpt}
-        canonical={`${SITE_CONFIG.url}/blog/${params.slug}`}
-        openGraph={{
-          type: 'article',
-          url: `${SITE_CONFIG.url}/blog/${params.slug}`,
-          title: post.title,
-          description: post.excerpt,
-          images: [
-            {
-              url: post.ogImage || `${SITE_CONFIG.url}/og-image.png`,
-              width: 1200,
-              height: 630,
-              alt: post.title,
-            },
-          ],
-          article: {
-            publishedTime: post.publishedAt,
-            modifiedTime: post.updatedAt,
-            authors: [post.author || 'Edwin Edelenbos'],
-          },
-        }}
-      />
-      <ArticleJsonLd
-        url={`${SITE_CONFIG.url}/blog/${params.slug}`}
-        title={post.title}
-        images={[post.ogImage || `${SITE_CONFIG.url}/og-image.png`]}
-        datePublished={post.publishedAt}
-        dateModified={post.updatedAt}
-        authorName={post.author || 'Edwin Edelenbos'}
-        publisherName={SITE_CONFIG.name}
-        publisherLogo={`${SITE_CONFIG.url}/logo.png`}
-        description={post.excerpt}
-      />
+      <JsonLd data={getArticleSchema({
+        title: post.title,
+        description: post.excerpt,
+        url: `${SITE_CONFIG.url}/blog/${params.slug}`,
+        imageUrl: post.ogImage || `${SITE_CONFIG.url}/og-image.png`,
+        datePublished: post.publishedAt,
+        dateModified: post.updatedAt,
+        authorName: post.author || 'Edwin Edelenbos',
+      })} />
       {/* blog post content */}
     </>
   )
@@ -142,13 +154,18 @@ export default async function BlogPost({ params }) {
 
 ```typescript
 // app/(site)/page.tsx
+import type { Metadata } from 'next'
 import JsonLd from '@/components/seo/JsonLd'
-import { ORGANIZATION_SCHEMA } from '@/lib/seo-config'
+import { ORGANIZATION_SCHEMA, SITE_CONFIG } from '@/lib/seo-config'
+
+export const metadata: Metadata = {
+  title: SITE_CONFIG.title,
+  description: SITE_CONFIG.description,
+}
 
 export default function HomePage() {
   return (
     <>
-      <NextSeo {...} />
       <JsonLd data={ORGANIZATION_SCHEMA} />
       {/* page content */}
     </>
@@ -160,16 +177,18 @@ export default function HomePage() {
 
 ```typescript
 // app/(site)/about/page.tsx
+import type { Metadata } from 'next'
 import JsonLd from '@/components/seo/JsonLd'
-import { PERSON_SCHEMAS } from '@/lib/seo-config'
+import { PERSON_SCHEMAS, PAGE_TITLES, PAGE_DESCRIPTIONS } from '@/lib/seo-config'
+
+export const metadata: Metadata = {
+  title: PAGE_TITLES.about,
+  description: PAGE_DESCRIPTIONS.about,
+}
 
 export default function AboutPage() {
   return (
     <>
-      <NextSeo
-        title={PAGE_TITLES.about}
-        description={PAGE_DESCRIPTIONS.about}
-      />
       <JsonLd data={PERSON_SCHEMAS.edwin} />
       <JsonLd data={PERSON_SCHEMAS.roel} />
       {/* about page content */}
@@ -182,8 +201,14 @@ export default function AboutPage() {
 
 ```typescript
 // app/(site)/consultancy/clients/page.tsx
+import type { Metadata } from 'next'
 import JsonLd from '@/components/seo/JsonLd'
 import { getServiceSchema, PAGE_TITLES, PAGE_DESCRIPTIONS } from '@/lib/seo-config'
+
+export const metadata: Metadata = {
+  title: PAGE_TITLES.consultancyClients,
+  description: PAGE_DESCRIPTIONS.consultancyClients,
+}
 
 export default function ConsultancyClientsPage() {
   const serviceSchema = getServiceSchema({
@@ -193,10 +218,6 @@ export default function ConsultancyClientsPage() {
 
   return (
     <>
-      <NextSeo
-        title={PAGE_TITLES.consultancyClients}
-        description={PAGE_DESCRIPTIONS.consultancyClients}
-      />
       <JsonLd data={serviceSchema} />
       {/* page content */}
     </>
@@ -208,8 +229,14 @@ export default function ConsultancyClientsPage() {
 
 ```typescript
 // app/(site)/contact/page.tsx
+import type { Metadata } from 'next'
 import JsonLd from '@/components/seo/JsonLd'
-import { getFAQSchema } from '@/lib/seo-config'
+import { getFAQSchema, PAGE_TITLES, PAGE_DESCRIPTIONS } from '@/lib/seo-config'
+
+export const metadata: Metadata = {
+  title: PAGE_TITLES.contact,
+  description: PAGE_DESCRIPTIONS.contact,
+}
 
 export default function ContactPage() {
   const faqs = [
@@ -225,10 +252,6 @@ export default function ContactPage() {
 
   return (
     <>
-      <NextSeo
-        title={PAGE_TITLES.contact}
-        description={PAGE_DESCRIPTIONS.contact}
-      />
       <JsonLd data={getFAQSchema(faqs)} />
       {/* page content with FAQ section */}
       <section className="faq-section">
@@ -252,7 +275,7 @@ export default function ContactPage() {
 ### Week 1 - Critical Fixes (~10 hours)
 
 - [ ] **Fix sitemap URL** - Done! (automated with next-sitemap)
-- [ ] **Add canonical tags** - Use NextSeo `canonical` prop
+- [ ] **Add canonical tags** - Use `alternates.canonical` in Metadata export
 - [ ] **Add Organization schema** - Use `ORGANIZATION_SCHEMA`
 - [ ] **Create unique titles** - Use `PAGE_TITLES` config
 - [ ] **Create OG image** - Design 1200x630px image, add to `/public/og-image.png`
@@ -260,7 +283,7 @@ export default function ContactPage() {
 
 ### Week 2 - High Priority (~8 hours)
 
-- [ ] **Add Article schema** - Use `getArticleSchema()` helper
+- [ ] **Add Article schema** - Use `getArticleSchema()` helper with `<JsonLd />` component
 - [ ] **Optimize hero image** - Use next/image (already installed)
 - [ ] **Create unique descriptions** - Use `PAGE_DESCRIPTIONS` config
 - [ ] **Add missing alt text** - Manual to image tags
@@ -330,22 +353,20 @@ lighthouse https://paulthames.com --view
 ### Using Page-Specific SEO
 
 ```typescript
-import { NextSeo } from 'next-seo'
+import type { Metadata } from 'next'
 import { PAGE_TITLES, PAGE_DESCRIPTIONS } from '@/lib/seo-config'
 
-export const metadata = {
+export const metadata: Metadata = {
   title: PAGE_TITLES.customLighting,
   description: PAGE_DESCRIPTIONS.customLighting,
+  alternates: {
+    canonical: 'https://paulthames.com/custom-lighting',
+  },
 }
 
 export default function Page() {
   return (
     <>
-      <NextSeo
-        title={PAGE_TITLES.customLighting}
-        description={PAGE_DESCRIPTIONS.customLighting}
-        canonical="https://paulthames.com/custom-lighting"
-      />
       {/* content */}
     </>
   )
@@ -355,37 +376,44 @@ export default function Page() {
 ### Dynamic SEO with Payload CMS
 
 ```typescript
-import { NextSeo, ArticleJsonLd } from 'next-seo'
+import type { Metadata } from 'next'
+import JsonLd from '@/components/seo/JsonLd'
 import { getArticleSchema, SITE_CONFIG } from '@/lib/seo-config'
+
+export async function generateMetadata({ params }): Promise<Metadata> {
+  const page = await getPayloadPage(params.slug)
+
+  return {
+    title: page.title,
+    description: page.excerpt,
+    alternates: {
+      canonical: `${SITE_CONFIG.url}/${params.slug}`,
+    },
+    openGraph: {
+      type: page.type === 'blog' ? 'article' : 'website',
+      title: page.title,
+      description: page.excerpt,
+      images: page.image
+        ? [{ url: page.image, width: 1200, height: 630, alt: page.title }]
+        : undefined,
+    },
+  }
+}
 
 export default async function DynamicPage({ params }) {
   const page = await getPayloadPage(params.slug)
 
   return (
     <>
-      <NextSeo
-        title={page.title}
-        description={page.excerpt}
-        canonical={`${SITE_CONFIG.url}/${params.slug}`}
-        openGraph={{
-          type: page.type === 'blog' ? 'article' : 'website',
+      {page.type === 'blog' && (
+        <JsonLd data={getArticleSchema({
           title: page.title,
           description: page.excerpt,
-          images: page.image
-            ? [{ url: page.image, width: 1200, height: 630, alt: page.title }]
-            : undefined,
-        }}
-      />
-      {page.type === 'blog' && (
-        <ArticleJsonLd
-          url={`${SITE_CONFIG.url}/${params.slug}`}
-          title={page.title}
-          datePublished={page.createdAt}
-          dateModified={page.updatedAt}
-          authorName={page.author}
-          publisherName={SITE_CONFIG.name}
-          publisherLogo={`${SITE_CONFIG.url}/logo.png`}
-        />
+          url: `${SITE_CONFIG.url}/${params.slug}`,
+          datePublished: page.createdAt,
+          dateModified: page.updatedAt,
+          authorName: page.author,
+        })} />
       )}
       {/* content */}
     </>
@@ -399,15 +427,15 @@ export default async function DynamicPage({ params }) {
 
 1. **Create OG Image** - Design and add `/public/og-image.png` (1200x630px)
 2. **Add Logo** - Ensure `/public/logo.png` exists for schema
-3. **Implement NextSeo** - Add to layouts or individual pages
-4. **Add Schema** - Use JsonLd component for structured data
+3. **Export Metadata** - Add `metadata` or `generateMetadata` exports to all pages
+4. **Add Schema** - Use `JsonLd` component for structured data
 5. **Test** - Run build and verify sitemap/schema
 
 ---
 
 ## Resources
 
-- [Next-SEO Documentation](https://github.com/garmeeh/next-seo)
+- [Next.js Metadata API Documentation](https://nextjs.org/docs/app/building-your-application/optimizing/metadata)
 - [Next-Sitemap Documentation](https://github.com/iamvishnusankar/next-sitemap)
 - [Schema.org](https://schema.org/)
 - [Google Rich Results Test](https://search.google.com/test/rich-results)

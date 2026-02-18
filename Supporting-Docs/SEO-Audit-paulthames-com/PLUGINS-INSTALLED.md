@@ -4,8 +4,9 @@
 
 | Package | Version | Purpose |
 |---------|---------|---------|
-| `next-seo` | ^7.2.0 | Meta tags, Open Graph, Schema markup |
 | `next-sitemap` | ^4.2.3 | Sitemap & robots.txt generation |
+
+**Note:** Meta tags, Open Graph, and canonical URLs are handled by the Next.js built-in Metadata API (no additional package needed). Structured data (JSON-LD) is handled by a custom `JsonLd` component.
 
 ---
 
@@ -73,34 +74,40 @@ Sitemap: https://paulthames.com/sitemap.xml
 
 ## Quick Start Guide
 
-### 1. Add Next-SEO to a Page
+### 1. Add Metadata to a Page
+
+Use the Next.js `Metadata` export for static pages:
 
 ```typescript
-import { NextSeo } from 'next-seo'
+// app/(site)/page.tsx
+import type { Metadata } from 'next'
 import { SITE_CONFIG } from '@/lib/seo-config'
+
+export const metadata: Metadata = {
+  title: SITE_CONFIG.title,
+  description: SITE_CONFIG.description,
+  alternates: {
+    canonical: SITE_CONFIG.url,
+  },
+  openGraph: {
+    url: SITE_CONFIG.url,
+    title: SITE_CONFIG.title,
+    description: SITE_CONFIG.description,
+    images: [{
+      url: `${SITE_CONFIG.url}/og-image.png`,
+      width: 1200,
+      height: 630,
+      alt: SITE_CONFIG.title,
+    }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+  },
+}
 
 export default function HomePage() {
   return (
     <>
-      <NextSeo
-        title={SITE_CONFIG.title}
-        description={SITE_CONFIG.description}
-        canonical={SITE_CONFIG.url}
-        openGraph={{
-          url: SITE_CONFIG.url,
-          title: SITE_CONFIG.title,
-          description: SITE_CONFIG.description,
-          images: [{
-            url: `${SITE_CONFIG.url}/og-image.png`,
-            width: 1200,
-            height: 630,
-            alt: SITE_CONFIG.title,
-          }],
-        }}
-        twitter={{
-          cardType: 'summary_large_image',
-        }}
-      />
       {/* page content */}
     </>
   )
@@ -116,7 +123,6 @@ import { ORGANIZATION_SCHEMA } from '@/lib/seo-config'
 export default function HomePage() {
   return (
     <>
-      <NextSeo {...} />
       <JsonLd data={ORGANIZATION_SCHEMA} />
       {/* page content */}
     </>
@@ -127,29 +133,31 @@ export default function HomePage() {
 ### 3. Use Pre-Defined Titles & Descriptions
 
 ```typescript
+import type { Metadata } from 'next'
 import { PAGE_TITLES, PAGE_DESCRIPTIONS } from '@/lib/seo-config'
 
-<NextSeo
-  title={PAGE_TITLES.blog}
-  description={PAGE_DESCRIPTIONS.blog}
-/>
+export const metadata: Metadata = {
+  title: PAGE_TITLES.blog,
+  description: PAGE_DESCRIPTIONS.blog,
+}
 ```
 
 ### 4. Add Article Schema for Blog Posts
 
 ```typescript
-import { ArticleJsonLd } from 'next-seo'
+import JsonLd from '@/components/seo/JsonLd'
 import { getArticleSchema, SITE_CONFIG } from '@/lib/seo-config'
 
-<ArticleJsonLd
-  url={`${SITE_CONFIG.url}/blog/${post.slug}`}
-  title={post.title}
-  datePublished={post.publishedAt}
-  dateModified={post.updatedAt}
-  authorName={post.author}
-  publisherName={SITE_CONFIG.name}
-  publisherLogo={`${SITE_CONFIG.url}/logo.png`}
-/>
+// In component body:
+<JsonLd data={getArticleSchema({
+  title: post.title,
+  description: post.excerpt,
+  url: `${SITE_CONFIG.url}/blog/${post.slug}`,
+  imageUrl: post.ogImage || `${SITE_CONFIG.url}/og-image.png`,
+  datePublished: post.publishedAt,
+  dateModified: post.updatedAt,
+  authorName: post.author || 'Edwin Edelenbos',
+})} />
 ```
 
 ---
@@ -183,7 +191,7 @@ A manual `sitemap.xml` has been created in `public/` with all known pages. To up
 ### Week 1 - Critical Fixes (~10 hours)
 
 1. **[x] Fix sitemap domain** - ✅ Done
-2. **[ ] Add canonical tags** - Use `NextSeo canonical` prop
+2. **[ ] Add canonical tags** - Use `alternates.canonical` in Metadata export
 3. **[ ] Add Organization schema** - Use `<JsonLd data={ORGANIZATION_SCHEMA} />`
 4. **[ ] Create unique titles** - Use `PAGE_TITLES` config
 5. **[ ] Create OG image** - Design 1200x630px, save to `/public/og-image.png`
@@ -191,7 +199,7 @@ A manual `sitemap.xml` has been created in `public/` with all known pages. To up
 
 ### Week 2 - High Priority (~8 hours)
 
-7. **[ ] Add Article schema** - Use `ArticleJsonLd` component
+7. **[ ] Add Article schema** - Use `<JsonLd data={getArticleSchema({ ... })} />`
 8. **[ ] Optimize hero image** - Already using `next/image`
 9. **[ ] Create unique descriptions** - Use `PAGE_DESCRIPTIONS` config
 10. **[ ] Add missing alt text** - Manual to `img` tags
@@ -220,12 +228,12 @@ A manual `sitemap.xml` has been created in `public/` with all known pages. To up
 
 ## Resources
 
-- [next-seo Documentation](https://github.com/garmeeh/next-seo)
-- [next-sitemap Documentation](https://github.com/iamvishnusankar/next-sitemap)
+- [Next.js Metadata API Documentation](https://nextjs.org/docs/app/building-your-application/optimizing/metadata)
+- [Next-Sitemap Documentation](https://github.com/iamvishnusankar/next-sitemap)
 - [Schema.org](https://schema.org/)
 - [Google Rich Results Test](https://search.google.com/test/rich-results)
 
 ---
 
 **Status:** ✅ Installation complete and configured
-**Next Step:** Implement Next-SEO and schema markup on pages
+**Next Step:** Add Metadata exports and JsonLd schema markup to pages
