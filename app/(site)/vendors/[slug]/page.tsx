@@ -104,7 +104,7 @@ export async function generateMetadata({ params }: VendorDetailPageProps): Promi
     description: enhancedDescription,
     keywords,
     openGraph: {
-      title: `${vendor.name} | Vendors | Paul Thames`,
+      title: `${vendor.name} | Vendors`,
       description: enhancedDescription,
       type: "website",
       url: `/vendors/${slug}`,
@@ -112,7 +112,7 @@ export async function generateMetadata({ params }: VendorDetailPageProps): Promi
     },
     twitter: {
       card: "summary_large_image",
-      title: `${vendor.name} | Vendors | Paul Thames`,
+      title: `${vendor.name} | Vendors`,
       description: enhancedDescription,
       images: vendor.image ? [vendor.image] : undefined,
     },

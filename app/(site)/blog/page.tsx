@@ -21,12 +21,12 @@ export const metadata: Metadata = {
   title: 'Blog | Superyacht Technology Insights from Paul Thames',
   description: 'Expert insights on superyacht AV/IT systems, security, and custom lighting from industry veterans Edwin Edelenbos and Roel van der Zwet.',
   openGraph: {
-    title: 'Blog | Superyacht Technology Insights from Paul Thames',
+    title: 'Blog | Superyacht Technology Insights',
     description: 'Expert insights on superyacht AV/IT systems, security, and custom lighting from industry veterans Edwin Edelenbos and Roel van der Zwet.',
     url: 'https://paulthames.com/blog',
   },
   twitter: {
-    title: 'Blog | Superyacht Technology Insights from Paul Thames',
+    title: 'Blog | Superyacht Technology Insights',
     description: 'Expert insights on superyacht AV/IT systems, security, and custom lighting from industry veterans Edwin Edelenbos and Roel van der Zwet.',
   },
   alternates: {

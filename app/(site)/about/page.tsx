@@ -12,13 +12,13 @@ export const metadata: Metadata = {
   description:
     'Edwin Edelenbos and Roel van der Zwet bring 25+ combined years in superyacht technology. Technical depth meets commercial expertise.',
   openGraph: {
-    title: 'About Us | Paul Thames',
+    title: 'About Us',
     description:
       'Edwin Edelenbos and Roel van der Zwet bring 25+ combined years in superyacht technology. Technical depth meets commercial expertise.',
     url: 'https://paulthames.com/about',
   },
   twitter: {
-    title: 'About Us | Paul Thames',
+    title: 'About Us',
     description:
       'Edwin Edelenbos and Roel van der Zwet bring 25+ combined years in superyacht technology. Technical depth meets commercial expertise.',
   },

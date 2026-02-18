@@ -66,14 +66,14 @@ export const metadata: Metadata = {
     "yacht systems vendors"
   ],
   openGraph: {
-    title: "Vendors | Paul Thames - Superyacht Technology Solutions",
+    title: "Vendors | Superyacht Technology Solutions",
     description: "Explore our comprehensive directory of superyacht technology vendors and marine electronics suppliers.",
     type: "website",
     url: "/vendors",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Vendors | Paul Thames - Superyacht Technology Solutions", 
+    title: "Vendors | Superyacht Technology Solutions", 
     description: "Explore our comprehensive directory of superyacht technology vendors and marine electronics suppliers.",
   },
   alternates: {

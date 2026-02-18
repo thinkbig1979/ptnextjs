@@ -1,63 +1,57 @@
-# SEO Action Plan v2: paulthames.com
+# SEO Action Plan v3: paulthames.com
 
-**Based on Audit v2:** February 18, 2026
-**Current Score:** 78/100
-**Target:** 88+ within 60 days
+**Based on Audit v3:** February 18, 2026
+**Current Score:** 84/100
+**Target:** 92+ within 60 days
 
 ---
 
-## Resolved Since v1 (no action needed)
+## Resolved Since v2 (no action needed)
 
-- ~~Empty sitemap~~ — Now runtime-generated from DB
-- ~~Generic blog titles~~ — Now article-specific with full OG/Twitter/canonical
-- ~~Homepage canonical~~ — Correct
-- ~~Thin content on most pages~~ — Expanded to 1000+ words
-- ~~No schema markup~~ — Comprehensive coverage added
-- ~~No llms.txt~~ — Present and serving
-- ~~/yachts thin content~~ — Redirected (307 → /)
-- ~~Meta keywords tag~~ — Not present
+- ~~Empty sitemap~~ — Runtime-generated from DB (v1)
+- ~~Generic blog titles~~ — Article-specific with full OG/Twitter/canonical (v1)
+- ~~No schema markup~~ — Comprehensive coverage (v1)
+- ~~No llms.txt~~ — Present and serving (v1)
+- ~~No vendor detail schema~~ — Organization schema now present (v3)
+- ~~Blog article schema has wrong/empty author~~ — Now correct Person: Edwin Edelenbos (v3)
+- ~~X-Powered-By header exposed~~ — Removed (v3)
+- ~~No Content-Security-Policy~~ — Now present in report-only mode (v3)
+- ~~No llms-full.txt~~ — Now present and comprehensive (v3)
 
 ---
 
 ## Priority Definitions
 
-- **High** — Directly impacts how pages appear in search results and social shares
-- **Medium** — Improves authority signals and content quality
-- **Low** — Polish and optimization
+- **High** — Directly impacts search results appearance, social sharing, or crawlability
+- **Medium** — Improves authority signals, content quality, or structured data completeness
+- **Low** — Polish, optimization, and future-proofing
 
 ---
 
 ## HIGH PRIORITY
 
-### 1. Fix OG Title Mismatch on 8 Pages
+### 1. Fix OG Title Double Branding on ~8 Pages
 
-**Impact:** Social shares show generic site name instead of page-specific title
-**Effort:** 1-2 hours (code change)
+**Impact:** Social share previews show redundant branding like "About Us | Paul Thames | Paul Thames"
+**Effort:** 30 minutes
 **Affects:** /about, /blog, /contact, /custom-lighting, /consultancy/clients, /consultancy/suppliers, /products, /testimonials
+**Points:** +1
 
-**Root cause:** These pages use static `metadata` exports which inherit OG tags from the root layout. The root layout's `openGraph.title` overrides page-specific titles.
+**Root cause:** The layout template appends "| Paul Thames" via `openGraph.title.template: '%s | Paul Thames'`, but each page's `openGraph.title` already ends with "| Paul Thames".
 
-**Fix:** Add explicit `openGraph` to each page's metadata export, or refactor the root layout to use a title template:
+**Fix:** Remove "| Paul Thames" suffix from each page's `openGraph.title`, letting the template add it once:
 
 ```typescript
-// Option A: Per-page (safest)
-// In each page's metadata export, add:
-openGraph: {
-  title: 'Page Title | Paul Thames',
-  description: 'Page-specific description',
-},
+// Before (in about/page.tsx):
+openGraph: { title: 'About Us | Paul Thames' }
+// Renders: "About Us | Paul Thames | Paul Thames"
 
-// Option B: Root layout template approach
-// In layout.tsx, change openGraph to use template:
-openGraph: {
-  title: {
-    template: '%s | Paul Thames',
-    default: 'Paul Thames | Technical Consultancy & Creative Lighting',
-  },
-},
+// After:
+openGraph: { title: 'About Us' }
+// Renders: "About Us | Paul Thames"
 ```
 
-**Verification:** Share any page URL on LinkedIn/Twitter preview tools — title should match the page.
+**Verification:** `curl -s https://paulthames.com/about | grep 'og:title'`
 
 ---
 
@@ -65,169 +59,202 @@ openGraph: {
 
 **Impact:** E-E-A-T authority signals, reader value, potential reciprocal links
 **Effort:** 30-60 minutes (content edit in CMS)
+**Points:** +3
 
-**Blog Post 1 (Pixel Perfect)** mentions without linking:
+**Blog Post 1 (Pixel Perfect)** — Link these vendor mentions:
 - Viveur — lighting manufacturer
 - Imersu — immersive technology
 - Panoblu — pixel lighting
 
-**Blog Post 2 (Owner's Nephew)** mentions without linking:
+**Blog Post 2 (Owner's Nephew)** — Link these vendor mentions:
 - Panoblu IR — thermal imaging
 - Liiontek — battery management
 - Cydome — cybersecurity
 - NEGU — secure connectivity
 - DZ Technologies — AI surveillance
 
-**Action:** Link each vendor name to their website. These are organic, editorial links that demonstrate industry knowledge and provide reader value.
+**Action:** Link each vendor name to their official website. These are editorial links demonstrating industry knowledge.
 
 ---
 
-### 3. Fix Blog Article Schema Author Field
+### 3. Address Empty Products Page
 
-**Impact:** Author attribution in search results
-**Effort:** 15 minutes (code fix)
+**Impact:** Currently shows "Showing 0 of 0 products" to users and crawlers — harms UX and SEO
+**Effort:** 15 minutes for quick fix, 2-3 hours for content expansion
+**Points:** +2
 
-**Issues found:**
-- Blog post 1: Article schema has empty `author` field
-- Blog post 2: Article schema has `author: "admin@paulthames.com"` (email, not a name)
+**Quick fix options (pick one):**
+1. **Remove from navigation and sitemap** until products are added
+2. **Add descriptive content** explaining what will be available (services overview, categories)
+3. **Redirect to /vendors** if products are vendor-sourced
 
-**Fix:** Ensure `getArticleSchema()` in `lib/seo-config.ts` outputs a proper Person author:
-```json
-"author": {
-  "@type": "Person",
-  "name": "Edwin Edelenbos"
-}
-```
-
----
-
-### 4. Expand /products Page Content
-
-**Impact:** Currently ~250 words — thin content risk for a key service page
-**Effort:** 2-3 hours (content writing)
-**Target:** 600+ words
-
-**Suggested additions:**
-- Brief description of each service area (consultancy, lighting, vendor advisory)
-- How the services connect (the Paul Thames approach)
-- Clear CTAs to the relevant detail pages
+**Long-term:** Populate with actual product/service listings.
 
 ---
 
 ## MEDIUM PRIORITY
 
-### 5. Add Schema to Vendor Detail Pages
+### 4. Complete Review Schema on Testimonials Page
 
-**Impact:** Rich results for vendor profiles
+**Impact:** Only 3 of 10 testimonials have Review schema — missing 7 rich result opportunities
 **Effort:** 1 hour (code change)
+**Points:** +1
 
-`/vendors/channel-28` has no JSON-LD schema. Add Organization or LocalBusiness schema:
-
+Add Review schema markup to all 10 testimonials, not just 3. Each should include:
 ```json
 {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "Channel 28",
-  "description": "...",
-  "address": { ... },
-  "url": "..."
+  "@type": "Review",
+  "reviewRating": { "@type": "Rating", "ratingValue": "5" },
+  "author": { "@type": "Person", "name": "Reviewer Name" },
+  "reviewBody": "Testimonial text",
+  "itemReviewed": { "@type": "ProfessionalService", "name": "Paul Thames" }
 }
 ```
 
-This will automatically apply to all vendor detail pages as more vendors are added.
+---
+
+### 5. Add SameAs to Organization Schema
+
+**Impact:** Improves Knowledge Panel presence and entity recognition
+**Effort:** 15 minutes
+**Points:** +1
+
+Add social profile URLs to the Organization/ProfessionalService schema on the homepage:
+
+```json
+"sameAs": [
+  "https://linkedin.com/company/paulthames",
+  "https://twitter.com/paulthames",
+  "https://instagram.com/paulthames"
+]
+```
 
 ---
 
-### 6. Add External Links to Service Pages
+### 6. Fix Vendor Detail Schema Contact Info
+
+**Impact:** Channel 28's Organization schema incorrectly shows Paul Thames contact details
+**Effort:** 30 minutes
+**Points:** +1
+
+The Organization schema on `/vendors/channel-28` should use Channel 28's own email/phone, not Paul Thames's contact info. Update the schema generation to pull vendor-specific contact details.
+
+---
+
+### 7. Expand About Page Title
+
+**Impact:** "About Us | Paul Thames" (24 chars) wastes title tag space
+**Effort:** 5 minutes
+**Points:** +0.5
+
+**Suggested:** "About Us | Edwin Edelenbos & Roel van der Zwet | Paul Thames" (61 chars)
+
+This adds founder names as searchable keywords.
+
+---
+
+### 8. Add External Links to Service Pages
 
 **Impact:** Authority signals beyond blog content
 **Effort:** 1 hour (content edit)
+**Points:** +1
 
-**Opportunities:**
-- `/custom-lighting`: Link to LED technology standards, pixel mapping technology references
-- `/consultancy/clients`: Link to IMO regulations, classification society resources
-- `/consultancy/suppliers`: Link to superyacht industry associations
-
-**Target:** 2-3 relevant external links per service page.
+Target 2-3 relevant external links per service page:
+- `/custom-lighting`: LED technology standards, pixel mapping references
+- `/consultancy/clients`: IMO regulations, classification societies
+- `/consultancy/suppliers`: Superyacht industry associations
 
 ---
 
-### 7. Consider Edge Caching for Static-ish Pages
+### 9. Edge Caching for Static Pages
 
 **Impact:** Performance for repeat visitors and crawlers
 **Effort:** 30 minutes (config change)
+**Points:** +2
 
-Current HTML cache-control: `private, no-cache, no-store, max-age=0, must-revalidate`
+Current: `Cache-Control: private, no-cache, no-store, max-age=0, must-revalidate`
+Target: `Cache-Control: public, s-maxage=3600, stale-while-revalidate=86400`
 
-For pages that change infrequently (about, contact, testimonials), consider:
-```
-Cache-Control: public, s-maxage=3600, stale-while-revalidate=86400
-```
-
-This lets the reverse proxy serve cached responses while revalidating in the background.
+Apply to static-ish pages: /about, /contact, /testimonials, /custom-lighting, service pages.
 
 ---
 
 ## LOW PRIORITY
 
-### 8. Remove X-Powered-By Header
+### 10. Promote CSP to Enforcement Mode
 
-**Impact:** Minor security hardening
-**Effort:** 5 minutes
-
-In `next.config.js`:
-```javascript
-module.exports = {
-  poweredByHeader: false,
-}
-```
-
----
-
-### 9. Deduplicate HSTS Header
-
-**Impact:** Cleanliness — currently sent twice (app + OpenResty)
-**Effort:** 10 minutes (reverse proxy config)
-
-Remove one of the two HSTS headers. The OpenResty one with `includeSubDomains; preload` is the correct one to keep.
-
----
-
-### 10. Add Content-Security-Policy Header
-
-**Impact:** Security hardening
+**Impact:** Security hardening (currently report-only)
 **Effort:** 1-2 hours (needs testing)
+**Points:** +0.5
 
-Currently missing. A basic CSP would prevent XSS and injection attacks. Start with report-only mode to avoid breaking anything.
+Monitor CSP reports for violations, then switch from `Content-Security-Policy-Report-Only` to `Content-Security-Policy`.
 
 ---
 
-### 11. Continue Blog Cadence
+### 11. Self-Host Google Fonts
 
-**Impact:** Long-term organic growth
+**Impact:** Removes external dependency, improves privacy and performance
+**Effort:** 30 minutes
+**Points:** +0.5
+
+Download the font files, serve from `/public/fonts/`, update CSS references.
+
+---
+
+### 12. Convert Blog Post 2 Featured Image to WebP
+
+**Impact:** Consistency, slight performance improvement
+**Effort:** 10 minutes
+**Points:** +0.5
+
+Blog post 2 uses `Shutterstock_1915446079.jpg` — convert to WebP like all other images.
+
+---
+
+### 13. Increase Blog Cadence
+
+**Impact:** Long-term organic growth and AI citability
 **Effort:** Ongoing
+**Points:** +2 over time
 
-Current pace: ~1 post every 2 months. Maintain or slightly increase. Quality matters more than quantity for this niche. 2-3 deeply technical posts per quarter is ideal for the superyacht consultancy audience.
+Current pace: ~1 post every 2 months. For B2B thought leadership in a niche market, 2-3 deeply technical posts per quarter is ideal. Topic ideas:
+- AV/IT integration case studies
+- Superyacht refit technology trends
+- Vendor selection guides for specific systems
+
+---
+
+### 14. Add Case Studies Section
+
+**Impact:** Major E-E-A-T boost for consultancy positioning
+**Effort:** Significant (new content section)
+**Points:** +3 over time
+
+Project case studies with real outcomes would be the single highest-impact content investment. Even 2-3 anonymized case studies would significantly strengthen authority signals.
 
 ---
 
 ## Implementation Timeline
 
 ### This Week (~3 hours)
-- [ ] Fix OG title mismatch (items 1)
-- [ ] Fix blog author schema (item 3)
+- [ ] Fix OG title mismatch (item 1)
 - [ ] Add external links to blog posts (item 2)
+- [ ] Address empty products page (item 3)
+- [ ] Expand About page title (item 7)
+- [ ] Add SameAs to Organization schema (item 5)
 
 ### Next 2 Weeks (~4 hours)
-- [ ] Expand /products page (item 4)
-- [ ] Add schema to vendor detail pages (item 5)
-- [ ] Add external links to service pages (item 6)
+- [ ] Complete Review schema on all testimonials (item 4)
+- [ ] Fix vendor detail schema contact info (item 6)
+- [ ] Add external links to service pages (item 8)
+- [ ] Edge caching configuration (item 9)
 
 ### When Convenient
-- [ ] Edge caching configuration (item 7)
-- [ ] Remove X-Powered-By (item 8)
-- [ ] Deduplicate HSTS (item 9)
-- [ ] Content-Security-Policy (item 10)
+- [ ] Promote CSP to enforcement (item 10)
+- [ ] Self-host Google Fonts (item 11)
+- [ ] Convert blog post 2 image to WebP (item 12)
+- [ ] Increase blog cadence (item 13)
+- [ ] Plan case studies section (item 14)
 
 ---
 
@@ -235,16 +262,19 @@ Current pace: ~1 post every 2 months. Maintain or slightly increase. Quality mat
 
 | Fix | Points |
 |-----|--------|
-| OG title fix (8 pages) | +3 |
-| External links in content | +3 |
-| Blog author schema | +1 |
-| Products page expansion | +2 |
-| Vendor schema | +1 |
-| External links on service pages | +1 |
-| **Total potential** | **+11 → 89/100** |
+| OG title double-branding fix (8 pages) | +1 |
+| External links in blog content | +3 |
+| Products page fix | +2 |
+| Edge caching | +2 |
+| Complete testimonial schema | +1 |
+| SameAs on Organization | +1 |
+| Service page external links | +1 |
+| Vendor schema fix | +1 |
+| Minor fixes (title, fonts, image) | +1.5 |
+| **Total potential** | **+13.5 → ~90/100** |
 
 ---
 
-*Action Plan v2 — Generated February 18, 2026*
-*Based on Full SEO Audit v2 of paulthames.com*
-*Next Audit Recommended: 60 days*
+*Action Plan v3 — Generated February 18, 2026*
+*Based on Full SEO Audit v3 of paulthames.com*
+*Next Audit Recommended: April 18, 2026*

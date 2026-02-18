@@ -58,12 +58,12 @@ export const metadata: Metadata = {
   title: 'Services & Products | Paul Thames Superyacht Solutions',
   description: 'Discover Paul Thames technical consultancy and creative lighting services for superyachts, including project advisory and custom programming.',
   openGraph: {
-    title: 'Services & Products | Paul Thames Superyacht Solutions',
+    title: 'Services & Products | Superyacht Solutions',
     description: 'Discover Paul Thames technical consultancy and creative lighting services for superyachts, including project advisory and custom programming.',
     url: 'https://paulthames.com/products',
   },
   twitter: {
-    title: 'Services & Products | Paul Thames Superyacht Solutions',
+    title: 'Services & Products | Superyacht Solutions',
     description: 'Discover Paul Thames technical consultancy and creative lighting services for superyachts, including project advisory and custom programming.',
   },
   alternates: {

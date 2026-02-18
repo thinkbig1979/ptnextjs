@@ -14,12 +14,12 @@ export const metadata: Metadata = {
   title: 'Contact Paul Thames | Superyacht Technical Consultancy',
   description: 'Get in touch with Paul Thames for superyacht technical consultancy, creative lighting, and vendor advisory services.',
   openGraph: {
-    title: 'Contact Paul Thames | Superyacht Technical Consultancy',
+    title: 'Contact | Superyacht Technical Consultancy',
     description: 'Get in touch with Paul Thames for superyacht technical consultancy, creative lighting, and vendor advisory services.',
     url: 'https://paulthames.com/contact',
   },
   twitter: {
-    title: 'Contact Paul Thames | Superyacht Technical Consultancy',
+    title: 'Contact | Superyacht Technical Consultancy',
     description: 'Get in touch with Paul Thames for superyacht technical consultancy, creative lighting, and vendor advisory services.',
   },
   alternates: {

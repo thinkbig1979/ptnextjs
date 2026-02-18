@@ -59,7 +59,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     title: `${post.title} | ${SITE_CONFIG.name}`,
     description,
     openGraph: {
-      title: `${post.title} | ${SITE_CONFIG.name}`,
+      title: post.title,
       description,
       type: 'article',
       locale: SITE_CONFIG.locale,
@@ -74,7 +74,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${post.title} | ${SITE_CONFIG.name}`,
+      title: post.title,
       description,
       ...(post.image && { images: [post.image] }),
     },
