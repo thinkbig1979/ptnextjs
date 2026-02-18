@@ -98,8 +98,36 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             Products & Services
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-poppins-light">
-            Explore cutting-edge superyacht technology solutions from our trusted partners across all categories
+            Browse technology products and services from superyacht industry technology suppliers.
+            Filter by category or location, compare specifications, and see what solution fits your needs best.
           </p>
+        </div>
+
+        {/* What You'll Find Here */}
+        <div className="mb-12 max-w-3xl mx-auto space-y-4 text-muted-foreground font-poppins-light leading-relaxed">
+          <h2 className="text-2xl font-cormorant font-bold text-accent">What You'll Find Here</h2>
+          <p>
+            This directory brings together products and services from manufacturers, integrators,
+            and technology providers active in the superyacht sector. Each listing includes
+            specifications, vendor information, and other relevant details.
+          </p>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="bg-accent/5 rounded-xl p-5 border border-accent/10">
+              <h3 className="font-poppins-medium text-foreground mb-2 text-sm">For specifiers and project teams</h3>
+              <p className="text-sm">
+                Use category filters and side-by-side comparison to evaluate options during the
+                specification or tender phase. Products are listed by vendors with active industry presence.
+              </p>
+            </div>
+            <div className="bg-accent/5 rounded-xl p-5 border border-accent/10">
+              <h3 className="font-poppins-medium text-foreground mb-2 text-sm">For vendors</h3>
+              <p className="text-sm">
+                Products listed here are visible to designers, project managers, and owner's
+                representatives browsing for solutions. Listing is available to registered vendors
+                with an active directory profile.
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Client component with minimized serialized data */}

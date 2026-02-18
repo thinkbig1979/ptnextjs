@@ -56,8 +56,8 @@ export default async function ContactPage() {
             Contact Us
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-poppins-light leading-relaxed">
-            Ready to explore cutting-edge superyacht technology? Get in touch with our experts
-            today.
+            Whether you have a project question, need a second opinion on a specification, or
+            want to discuss how we can support your team, we're here to help.
           </p>
         </div>
 
@@ -89,6 +89,40 @@ export default async function ContactPage() {
               </Card>
             </div>
           ))}
+        </div>
+
+        {/* How We Work */}
+        <div className="mt-16">
+          <h2 className="text-3xl md:text-4xl font-cormorant font-bold mb-6 text-accent text-center">
+            How We Work
+          </h2>
+          <div className="max-w-3xl mx-auto space-y-6 text-muted-foreground font-poppins-light leading-relaxed">
+            <p>
+              Initial conversations are informal and without obligation. We'll discuss your
+              project, timeline, and what kind of support would be most useful, whether
+              that's a one-off specification review, ongoing technical advisory, or market
+              access for your products.
+            </p>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="bg-accent/5 rounded-xl p-6 border border-accent/10">
+                <h3 className="font-poppins-medium text-foreground mb-2">For project teams</h3>
+                <p className="text-sm">
+                  Share your project stage and technical requirements. We'll outline how our
+                  focused consultancy can add value at your current phase.
+                </p>
+              </div>
+              <div className="bg-accent/5 rounded-xl p-6 border border-accent/10">
+                <h3 className="font-poppins-medium text-foreground mb-2">For suppliers</h3>
+                <p className="text-sm">
+                  Tell us about your product and target market. We'll give you an honest
+                  assessment of the opportunity in superyacht and how to approach it.
+                </p>
+              </div>
+            </div>
+            <p className="text-sm text-center">
+              Response times are typically within one working day.
+            </p>
+          </div>
         </div>
       </div>
     </div>

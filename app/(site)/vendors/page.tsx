@@ -121,7 +121,32 @@ export default async function VendorsPage({ searchParams }: VendorsPageProps) {
             Technology Vendors
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-poppins-light">
-            Discover our comprehensive directory of superyacht technology vendors and marine electronics suppliers
+            A curated directory of superyacht technology vendors, marine electronics suppliers,
+            and specialist service providers. Search by category, location, or capability.
+          </p>
+        </div>
+
+        {/* About the Directory */}
+        <div className="mb-12 max-w-3xl mx-auto space-y-4 text-muted-foreground font-poppins-light leading-relaxed">
+          <h2 className="text-2xl font-cormorant font-bold text-accent">About the Directory</h2>
+          <p>
+            The vendor directory connects project teams with qualified suppliers across the
+            superyacht industry. Each profile includes company information, product listings,
+            service areas, and direct contact details.
+          </p>
+          <p>
+            Vendors range from established integrators and equipment manufacturers to specialist
+            providers in areas like AV/IT, lighting, security, navigation, and communications.
+            Profiles are maintained by the vendors themselves, keeping information current and accurate.
+          </p>
+          <p>
+            <span className="font-poppins-medium text-foreground">Looking to list your company?</span>{' '}
+            Vendor registration is open to manufacturers, distributors, integrators, and technology
+            providers serving the superyacht market.{' '}
+            <a href="/contact" className="text-accent hover:text-accent/80 transition-colors underline">
+              Contact us
+            </a>{' '}
+            to discuss listing options.
           </p>
         </div>
 

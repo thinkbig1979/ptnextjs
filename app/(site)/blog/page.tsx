@@ -43,7 +43,9 @@ export default async function BlogPage() {
             Industry Blog
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-poppins-light">
-            Insights, trends, and innovations in superyacht technology from industry experts
+            Practical insights on superyacht AV/IT, lighting, security, and control systems from
+            the Paul Thames team. Written from project experience, not press releases. Feel free
+            to contact us if you would like to discuss any of the topics we touch on.
           </p>
         </div>
 
