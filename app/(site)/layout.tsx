@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Cormorant, Poppins } from 'next/font/google';
 import '../globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Navigation } from '@/components/navigation';
@@ -8,7 +8,21 @@ import { Toaster } from '@/components/ui/sonner';
 import { payloadCMSDataService } from '@/lib/payload-cms-data-service';
 import { AuthProvider } from '@/lib/context/AuthContext';
 
-const inter = Inter({ subsets: ['latin'] });
+const cormorant = Cormorant({
+  subsets: ['latin'],
+  variable: '--font-cormorant',
+  display: 'swap',
+  weight: ['300', '400', '500', '600', '700'],
+  style: ['normal', 'italic'],
+});
+
+const poppins = Poppins({
+  subsets: ['latin'],
+  variable: '--font-poppins',
+  display: 'swap',
+  weight: ['300', '400', '500', '600', '700'],
+  style: ['normal', 'italic'],
+});
 
 // Force dynamic rendering - database not available at Docker build time
 export const dynamic = 'force-dynamic';
@@ -71,14 +85,11 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   }
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={`${cormorant.variable} ${poppins.variable}`} suppressHydrationWarning>
       <head>
         <meta name="color-scheme" content="light dark" />
         <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f8f9fb" />
         <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000029" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="stylesheet" href="/leaflet/leaflet.css" />
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -146,7 +157,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
           }}
         />
       </head>
-      <body className={inter.className} suppressHydrationWarning>
+      <body suppressHydrationWarning>
         <AuthProvider>
           <ThemeProvider
             attribute="class"

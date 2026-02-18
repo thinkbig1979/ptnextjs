@@ -137,6 +137,15 @@ const nextConfig = {
           },
         ],
       },
+      {
+        source: '/',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, s-maxage=3600, stale-while-revalidate=86400',
+          },
+        ],
+      },
     ];
   },
 
@@ -176,14 +185,11 @@ const nextConfig = {
     ignoreBuildErrors: false,
   },
   images: {
-    unoptimized: true,
-    domains: [
-      'images.unsplash.com',
-      'localhost',
-      // Add domains for enhanced profile media
-      'cdn.example.com',
-      'media.example.com'
-    ]
+    remotePatterns: [
+      { protocol: 'https', hostname: 'images.unsplash.com' },
+      { protocol: 'http', hostname: 'localhost' },
+      { protocol: 'https', hostname: 'paulthames.com' },
+    ],
   },
 
   // Enhanced experimental features for platform vision

@@ -20,9 +20,9 @@ const config = {
     },
     extend: {
       fontFamily: {
-        'cormorant': ['Cormorant', 'serif'],
-        'poppins-light': ['Poppins', 'sans-serif'],
-        'poppins-medium': ['Poppins', 'sans-serif'],
+        'cormorant': ['var(--font-cormorant)', 'serif'],
+        'poppins-light': ['var(--font-poppins)', 'sans-serif'],
+        'poppins-medium': ['var(--font-poppins)', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
