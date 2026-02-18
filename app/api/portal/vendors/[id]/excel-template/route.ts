@@ -13,7 +13,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { validateToken } from '@/lib/auth';
 import { ExcelTemplateService } from '@/lib/services/ExcelTemplateService';
 import { VendorProfileService } from '@/lib/services/VendorProfileService';
-import type { VendorTier as NumericVendorTier } from '@/lib/config/excel-field-mappings';
+import { convertTierToNumeric } from '@/lib/config/excel-field-mappings';
 
 interface RouteContext {
   params: Promise<{
@@ -21,25 +21,6 @@ interface RouteContext {
   }>;
 }
 
-
-/**
- * Convert string tier to numeric tier for Excel services
- */
-function convertTierToNumeric(tier: string | undefined): NumericVendorTier {
-  switch (tier) {
-    case 'tier1':
-      return 1;
-    case 'tier2':
-      return 2;
-    case 'tier3':
-      return 3;
-    case 'tier4':
-      return 4;
-    case 'free':
-    default:
-      return 0;
-  }
-}
 
 /**
  * GET /api/portal/vendors/[id]/excel-template

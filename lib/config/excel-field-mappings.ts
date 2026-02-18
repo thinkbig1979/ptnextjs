@@ -502,6 +502,28 @@ export const VENDOR_FIELD_MAPPINGS: FieldMapping[] = [
 ];
 
 /**
+ * Convert string tier identifier to numeric VendorTier
+ *
+ * @param tier - String tier identifier (e.g., 'tier1', 'tier2', 'free')
+ * @returns Numeric vendor tier (0-4)
+ */
+export function convertTierToNumeric(tier: string | undefined): VendorTier {
+  switch (tier) {
+    case 'tier1':
+      return 1;
+    case 'tier2':
+      return 2;
+    case 'tier3':
+      return 3;
+    case 'tier4':
+      return 4;
+    case 'free':
+    default:
+      return 0;
+  }
+}
+
+/**
  * Get field mappings accessible to a specific vendor tier
  *
  * @param tier - Vendor tier (0-4, where 0 = free, 1-4 = paid tiers)

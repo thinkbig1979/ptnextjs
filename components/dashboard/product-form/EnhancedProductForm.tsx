@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Loader2, Save, X } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
+import { extractTextFromDescription } from '@/lib/utils/lexical';
 
 import {
   ExtendedProductFormSchema,
@@ -34,25 +35,6 @@ interface EnhancedProductFormProps {
   currentTier?: TierLevel;
   onSuccess: (product: Product) => void;
   onCancel: () => void;
-}
-
-/**
- * Helper to extract plain text from Lexical JSON description
- */
-function extractTextFromDescription(description: unknown): string {
-  if (typeof description === 'string') return description;
-  if (!description || typeof description !== 'object') return '';
-
-  try {
-    const root = (description as { root?: { children?: { children?: { text?: string }[] }[] } }).root;
-    if (!root?.children) return '';
-
-    return root.children
-      .flatMap((para) => para.children?.map((child) => child.text || '') || [])
-      .join(' ');
-  } catch {
-    return '';
-  }
 }
 
 /**

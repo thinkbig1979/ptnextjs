@@ -6,35 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPayloadClient } from '@/lib/utils/get-payload-config';
 import { verifyHCaptchaToken, getHCaptchaErrorMessage } from '@/lib/utils/hcaptcha';
-
-// Helper to create Lexical rich text content
-function createLexicalContent(text: string) {
-  return {
-    root: {
-      type: 'root',
-      children: [
-        {
-          type: 'paragraph',
-          children: [
-            {
-              type: 'text',
-              text: text,
-              format: 0,
-              version: 1
-            }
-          ],
-          format: '',
-          indent: 0,
-          version: 1
-        }
-      ],
-      direction: 'ltr',
-      format: '',
-      indent: 0,
-      version: 1
-    }
-  };
-}
+import { createLexicalContent } from '@/lib/utils/lexical-helpers';
 
 export async function POST(
   request: NextRequest,

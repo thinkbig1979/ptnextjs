@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { extractTextFromDescription } from '@/lib/utils/lexical';
 import {
   Sheet,
   SheetContent,
@@ -206,21 +207,4 @@ export function ProductForm({
       </SheetContent>
     </Sheet>
   );
-}
-
-// Helper to extract plain text from Lexical JSON
-function extractTextFromDescription(description: unknown): string {
-  if (typeof description === 'string') return description;
-  if (!description || typeof description !== 'object') return '';
-
-  try {
-    const root = (description as { root?: { children?: { children?: { text?: string }[] }[] } }).root;
-    if (!root?.children) return '';
-
-    return root.children
-      .flatMap((para) => para.children?.map((child) => child.text || '') || [])
-      .join(' ');
-  } catch {
-    return '';
-  }
 }

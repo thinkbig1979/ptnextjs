@@ -19,7 +19,7 @@ import { ImportValidationService } from '@/lib/services/ImportValidationService'
 import { ImportExecutionService } from '@/lib/services/ImportExecutionService';
 import { VendorProfileService } from '@/lib/services/VendorProfileService';
 import { TierService } from '@/lib/services/TierService';
-import type { VendorTier as NumericVendorTier } from '@/lib/config/excel-field-mappings';
+import { convertTierToNumeric } from '@/lib/config/excel-field-mappings';
 
 interface RouteContext {
   params: Promise<{
@@ -29,25 +29,6 @@ interface RouteContext {
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
-
-/**
- * Convert string tier to numeric tier for Excel services
- */
-function convertTierToNumeric(tier: string | undefined): NumericVendorTier {
-  switch (tier) {
-    case 'tier1':
-      return 1;
-    case 'tier2':
-      return 2;
-    case 'tier3':
-      return 3;
-    case 'tier4':
-      return 4;
-    case 'free':
-    default:
-      return 0;
-  }
-}
 
 /**
  * POST /api/portal/vendors/[id]/excel-import

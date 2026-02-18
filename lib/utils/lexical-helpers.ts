@@ -60,6 +60,38 @@ export function extractDescriptionText(description: any): string {
 }
 
 /**
+ * Creates a Lexical rich text document from a plain text string.
+ * Used when programmatically creating content for Payload CMS rich text fields.
+ */
+export function createLexicalContent(text: string) {
+  return {
+    root: {
+      type: 'root',
+      children: [
+        {
+          type: 'paragraph',
+          children: [
+            {
+              type: 'text',
+              text: text,
+              format: 0,
+              version: 1
+            }
+          ],
+          format: '',
+          indent: 0,
+          version: 1
+        }
+      ],
+      direction: 'ltr',
+      format: '',
+      indent: 0,
+      version: 1
+    }
+  };
+}
+
+/**
  * Truncate text to a maximum length with ellipsis
  */
 export function truncateText(text: string, maxLength: number = 150): string {
