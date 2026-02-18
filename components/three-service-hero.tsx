@@ -57,7 +57,7 @@ export function ThreeServiceHero({
   headline = 'Experience and Expertise, Applied',
   intro = 'Bringing practical services and solutions to projects and vendors in the superyacht and high-end architecture industries.',
   services = defaultServices,
-  heroImage = '/heroimagePT-min.png',
+  heroImage = '/heroimagePT-min-1.webp',
   className,
 }: ThreeServiceHeroProps) {
   return (
@@ -73,7 +73,7 @@ export function ThreeServiceHero({
       {/* Hero Background Image */}
       {heroImage && (
         <div className="absolute inset-0 -z-10 opacity-30">
-          <Image src={heroImage} alt="" fill className="object-cover" priority aria-hidden="true" />
+          <Image src={heroImage} alt="Paul Thames superyacht technology hero background" fill className="object-cover" priority aria-hidden="true" />
         </div>
       )}
 
@@ -99,7 +99,7 @@ export function ThreeServiceHero({
           {/* Headline */}
           <div className="space-y-6">
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-cormorant font-bold tracking-tight">
-              <span className="text-primary">Experience and Expertise,</span>
+              <span className="text-primary">Experience and Expertise, </span>
               <span className="block text-accent">Applied</span>
             </h1>
 

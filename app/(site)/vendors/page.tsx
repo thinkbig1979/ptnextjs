@@ -4,6 +4,7 @@ import { VendorsClient } from "@/app/(site)/components/vendors-client";
 import { payloadCMSDataService } from "@/lib/payload-cms-data-service";
 import { Metadata } from "next";
 import type { Vendor, Product, SerializedVendor, SerializedVendorLocation, SerializedProductMinimal } from "@/lib/types";
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 /**
  * Extract only required fields for VendorsClient to minimize RSC serialization
@@ -109,13 +110,43 @@ export default async function VendorsPage({ searchParams }: VendorsPageProps) {
   return (
     <div className="min-h-screen py-12">
       <div className="container max-w-screen-xl">
+        <Breadcrumbs items={[
+          { label: 'Home', href: '/' },
+          { label: 'Vendors', href: '/vendors' },
+        ]} />
+
         {/* Static Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-6xl font-cormorant font-bold mb-4">
             Technology Vendors
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-poppins-light">
-            Discover our comprehensive directory of superyacht technology vendors and marine electronics suppliers
+            A curated directory of superyacht technology vendors, marine electronics suppliers,
+            and specialist service providers. Search by category, location, or capability.
+          </p>
+        </div>
+
+        {/* About the Directory */}
+        <div className="mb-12 max-w-3xl mx-auto space-y-4 text-muted-foreground font-poppins-light leading-relaxed">
+          <h2 className="text-2xl font-cormorant font-bold text-accent">About the Directory</h2>
+          <p>
+            The vendor directory connects project teams with qualified suppliers across the
+            superyacht industry. Each profile includes company information, product listings,
+            service areas, and direct contact details.
+          </p>
+          <p>
+            Vendors range from established integrators and equipment manufacturers to specialist
+            providers in areas like AV/IT, lighting, security, navigation, and communications.
+            Profiles are maintained by the vendors themselves, keeping information current and accurate.
+          </p>
+          <p>
+            <span className="font-poppins-medium text-foreground">Looking to list your company?</span>{' '}
+            Vendor registration is open to manufacturers, distributors, integrators, and technology
+            providers serving the superyacht market.{' '}
+            <a href="/contact" className="text-accent hover:text-accent/80 transition-colors underline">
+              Contact us
+            </a>{' '}
+            to discuss listing options.
           </p>
         </div>
 

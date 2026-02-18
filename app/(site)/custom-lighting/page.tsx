@@ -6,9 +6,12 @@ import { Button } from '@/components/ui/button';
 import { PixelGridBackground } from '@/components/pixel-grid-background';
 import { LightingConceptCard } from '@/components/lighting-concept-card';
 import { Grid3X3, Layers, Cpu, Anchor, Building2, Hotel, Home } from 'lucide-react';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import JsonLd from '@/components/seo/JsonLd';
+import { getFAQSchema } from '@/lib/seo-config';
 
 export const metadata: Metadata = {
-  title: 'Creative Lighting Solutions | Paul Thames',
+  title: 'Creative Lighting Solutions | Pixel-Based Fixtures for Superyachts',
   description:
     "Pixel-based fixtures, custom content, and complete programming for superyachts and high-end architecture. When traditional lighting won't do.",
 };
@@ -101,9 +104,36 @@ const showcaseImages = [
   },
 ];
 
+const faqs = [
+  {
+    question: 'What is pixel-based lighting?',
+    answer: 'Pixel-based lighting uses individually controllable LED pixels, enabling dynamic effects, animations, and scenes that traditional lighting cannot achieve.',
+  },
+  {
+    question: 'What types of fixtures do you create?',
+    answer: 'Bespoke pixel-based fixtures custom-designed for each project, with form factors, materials, housings, optics, and pixel density tailored to the specific application.',
+  },
+  {
+    question: 'What industries do you serve?',
+    answer: 'Superyachts, architecture, hospitality, and high-end residential. Environments where traditional lighting falls short.',
+  },
+  {
+    question: 'Do you handle the full process?',
+    answer: 'Yes. Services cover bespoke fixture design, custom content creation (animations, scenes, and dynamic behaviors), and complete programming and system integration.',
+  },
+];
+
 export default function CustomLightingPage() {
   return (
     <div className="min-h-screen">
+      <JsonLd data={getFAQSchema(faqs)} />
+      <div className="container max-w-screen-xl pt-6">
+        <Breadcrumbs items={[
+          { label: 'Home', href: '/' },
+          { label: 'Custom Lighting', href: '/custom-lighting' },
+        ]} />
+      </div>
+
       {/* Hero Section */}
       <PixelGridBackground
         variant="prominent"

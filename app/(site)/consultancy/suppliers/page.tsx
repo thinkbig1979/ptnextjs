@@ -14,9 +14,12 @@ import {
   Building2,
   Network,
 } from 'lucide-react';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import JsonLd from '@/components/seo/JsonLd';
+import { getFAQSchema, getServiceSchema } from '@/lib/seo-config';
 
 export const metadata: Metadata = {
-  title: 'Vendor Consultancy | Paul Thames',
+  title: 'Vendor Consultancy | Market Access for Marine Technology',
   description:
     'Market access and visibility for manufacturers, distributors, and technology providers in the superyacht industry. Proposition testing, market strategy, and directory listings.',
 };
@@ -88,10 +91,37 @@ const networkStats = [
   },
 ];
 
+const faqs = [
+  {
+    question: 'Who is the vendor consultancy for?',
+    answer: 'Equipment manufacturers, technology providers, distributors, and startups entering or expanding in the superyacht market.',
+  },
+  {
+    question: 'What services are available for suppliers?',
+    answer: 'Proposition testing to validate product-market fit, go-to-market strategy, platform visibility through directory listings and product showcases, and ongoing market presence.',
+  },
+  {
+    question: 'How does the industry network help suppliers?',
+    answer: 'A network of 21 sales agents across major yachting markets, direct contacts at every major shipyard, and presence in all yachting hubs provides direct access to decision-makers.',
+  },
+  {
+    question: 'Do I need to build my own superyacht industry network?',
+    answer: 'No. The consultancy provides industry insights, relationships, and consistent visibility without the overhead of building your own network.',
+  },
+];
+
 export default function ConsultancySuppliersPage() {
   return (
     <div className="min-h-screen py-12">
+      <JsonLd data={getServiceSchema({ name: 'Vendor Consultancy', description: 'Market access and visibility for manufacturers, distributors, and technology providers in the superyacht industry. Proposition testing, market strategy, and directory listings.' })} />
+      <JsonLd data={getFAQSchema(faqs)} />
       <div className="container max-w-screen-xl">
+        <Breadcrumbs items={[
+          { label: 'Home', href: '/' },
+          { label: 'Consultancy', href: '/consultancy/suppliers' },
+          { label: 'Vendor Suppliers', href: '/consultancy/suppliers' },
+        ]} />
+
         {/* Header */}
         <div className="text-center mb-16">
           <p className="text-sm uppercase tracking-widest text-accent font-poppins-medium mb-4">

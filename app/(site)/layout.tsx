@@ -22,11 +22,31 @@ export const metadata: Metadata = {
     'superyacht consultancy, creative lighting, marine technology, yacht lighting, technical advisory, AV/IT systems, vendor consultancy',
   authors: [{ name: 'Paul Thames' }],
   openGraph: {
+    type: 'website',
+    locale: 'en_GB',
+    url: 'https://paulthames.com',
     title: 'Paul Thames | Technical Consultancy & Creative Lighting',
     description:
       'Technical consultancy for project teams and vendors, plus creative lighting solutions for superyachts and high-end architecture.',
-    type: 'website',
-    locale: 'en_US',
+    siteName: 'Paul Thames',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Paul Thames - Technical Consultancy & Creative Lighting',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Paul Thames | Technical Consultancy & Creative Lighting',
+    description:
+      'Technical consultancy for project teams and vendors, plus creative lighting solutions for superyachts and high-end architecture.',
+    images: ['/og-image.png'],
+  },
+  alternates: {
+    canonical: './',
   },
 };
 

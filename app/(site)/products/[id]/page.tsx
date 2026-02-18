@@ -242,7 +242,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                       <div key={image.id} className="cursor-pointer hover:opacity-80 transition-opacity rounded-lg border overflow-hidden">
                         <OptimizedImage
                           src={image.url}
-                          alt={image.altText || product?.name || ''}
+                          alt={image.altText || product?.name || 'Product gallery image'}
                           fallbackType="product"
                           aspectRatio="square"
                           fill

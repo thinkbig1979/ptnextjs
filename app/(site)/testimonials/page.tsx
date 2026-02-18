@@ -3,9 +3,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Quote, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Breadcrumbs from '@/components/Breadcrumbs';
+import JsonLd from '@/components/seo/JsonLd';
+import { getReviewSchema } from '@/lib/seo-config';
 
 export const metadata: Metadata = {
-  title: "Testimonials | Paul Thames",
+  title: "Testimonials | What Clients Say About Paul Thames",
   description: "What clients, captains, and industry professionals say about working with Edwin Edelenbos on superyacht AV/IT, lighting, and technology projects.",
 };
 
@@ -112,10 +115,25 @@ const testimonials: Testimonial[] = [
   },
 ];
 
+const reviewSchemas = testimonials.slice(0, 3).map(t => getReviewSchema({
+  author: t.name,
+  ratingValue: 5,
+  reviewBody: t.highlight || t.quote.substring(0, 200),
+  itemReviewed: 'Superyacht Technical Consultancy',
+}));
+
 export default function TestimonialsPage() {
   return (
     <div className="min-h-screen py-12">
+      {reviewSchemas.map((schema, i) => (
+        <JsonLd key={i} data={schema} />
+      ))}
       <div className="container max-w-screen-xl">
+        <Breadcrumbs items={[
+          { label: 'Home', href: '/' },
+          { label: 'Testimonials', href: '/testimonials' },
+        ]} />
+
         {/* Header */}
         <div className="text-center mb-16">
           <p className="text-sm uppercase tracking-widest text-accent font-poppins-medium mb-4">
