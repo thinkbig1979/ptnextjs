@@ -93,68 +93,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000029" />
         <script
           dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  // Enhanced Firefox mobile theme detection
-                  function detectTheme() {
-                    const isFirefoxMobile = /Firefox.*Mobile/.test(navigator.userAgent) ||
-                                           (/Firefox/.test(navigator.userAgent) && /Android/.test(navigator.userAgent));
-
-                    // Get stored preference
-                    const stored = localStorage.getItem('theme-preference');
-                    if (stored && stored !== 'system') return stored;
-
-                    // System theme detection with Firefox mobile fallbacks
-                    if (window.matchMedia) {
-                      if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                        return 'dark';
-                      }
-
-                      // Firefox mobile specific fallbacks
-                      if (isFirefoxMobile) {
-                        // Try alternative detection methods
-                        try {
-                          const testEl = document.createElement('div');
-                          testEl.style.display = 'none';
-                          testEl.style.colorScheme = 'dark light';
-                          document.documentElement.appendChild(testEl);
-
-                          const computed = getComputedStyle(testEl);
-                          const isDark = computed.colorScheme && computed.colorScheme.includes('dark');
-
-                          document.documentElement.removeChild(testEl);
-
-                          if (isDark) return 'dark';
-
-                          // Time-based heuristic as last resort
-                          const hour = new Date().getHours();
-                          if (hour < 6 || hour > 20) return 'dark';
-
-                        } catch (e) {
-                          console.debug('Early theme detection failed:', e);
-                        }
-                      }
-                    }
-
-                    return 'light';
-                  }
-
-                  const theme = detectTheme();
-                  if (theme === 'dark') {
-                    document.documentElement.classList.add('dark');
-                  } else {
-                    document.documentElement.classList.remove('dark');
-                  }
-
-                  // Add a data attribute for debugging
-                  document.documentElement.setAttribute('data-initial-theme', theme);
-
-                } catch (e) {
-                  console.debug('Theme initialization failed:', e);
-                }
-              })();
-            `,
+            __html: `(function(){try{var s=localStorage.getItem('theme-preference');var t=s&&s!=='system'?s:window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';if(t==='dark')document.documentElement.classList.add('dark')}catch(e){}})()`,
           }}
         />
       </head>

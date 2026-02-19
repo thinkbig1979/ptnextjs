@@ -1,8 +1,5 @@
-"use client";
-
 import * as React from "react";
 import Image from "next/image";
-import { useTheme } from "next-themes";
 
 import { cn } from "@/lib/utils";
 
@@ -32,33 +29,29 @@ const sizesAttribute = {
   "mobile-nav": "(max-width: 640px) 256px, (max-width: 768px) 320px, (max-width: 1024px) 256px, 320px"
 };
 
+/**
+ * Server-rendered Logo component that uses CSS dark: classes to toggle
+ * between light/dark variants without waiting for JS hydration.
+ * This ensures the LCP image is discoverable from HTML immediately.
+ */
 export function Logo({ className, size = 'md', priority = false }: LogoProps): React.ReactElement {
-  const { theme, resolvedTheme } = useTheme();
-  const [mounted, setMounted] = React.useState(false);
-
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Show a placeholder during SSR to avoid hydration mismatch
-  if (!mounted) {
-    return (
-      <div className={cn("bg-muted animate-pulse rounded", sizeClasses[size], className)} />
-    );
-  }
-
-  const currentTheme = resolvedTheme || theme;
-  const logoSrc = currentTheme === 'dark'
-    ? '/media/company/logos/Paul-Thames-logo-PNG-white.png'
-    : '/media/company/logos/Paul-Thames-logo-PNG-black.png';
-
   return (
     <div className={cn("relative", sizeClasses[size], className)}>
+      {/* Light mode logo - hidden in dark mode */}
       <Image
-        src={logoSrc}
+        src="/media/company/logos/Paul-Thames-logo-PNG-black.png"
         alt="Paul Thames"
         fill
-        className="object-contain"
+        className="object-contain dark:hidden"
+        priority={priority}
+        sizes={sizesAttribute[size]}
+      />
+      {/* Dark mode logo - hidden in light mode */}
+      <Image
+        src="/media/company/logos/Paul-Thames-logo-PNG-white.png"
+        alt="Paul Thames"
+        fill
+        className="object-contain hidden dark:block"
         priority={priority}
         sizes={sizesAttribute[size]}
       />
