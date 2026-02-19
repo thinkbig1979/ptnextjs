@@ -13,8 +13,8 @@ export const SITE_CONFIG = {
   ogImage: '/og-image.png',
   author: 'Paul Thames',
   address: {
-    locality: 'London',
-    country: 'GB',
+    locality: 'Amsterdam',
+    country: 'NL',
   },
 }
 
@@ -80,6 +80,11 @@ export const ORGANIZATION_SCHEMA = {
     addressLocality: SITE_CONFIG.address.locality,
     addressCountry: SITE_CONFIG.address.country,
   },
+  sameAs: [
+    'https://www.linkedin.com/company/paul-thames',
+    'https://www.instagram.com/paulthamesglobal',
+    'https://www.superyachttimes.com/companies/paul-thames',
+  ],
   founder: [
     { '@type': 'Person', name: 'Edwin Edelenbos' },
     { '@type': 'Person', name: 'Roel van der Zwet' },
