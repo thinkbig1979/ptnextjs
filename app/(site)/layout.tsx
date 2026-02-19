@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Cormorant, Poppins } from 'next/font/google';
+import Script from 'next/script';
 import '../globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Navigation } from '@/components/navigation';
@@ -173,6 +174,11 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
             <Toaster />
           </ThemeProvider>
         </AuthProvider>
+      <Script
+          src="https://webanalytics.paulthames.com/script.js"
+          data-entity="paulthames-home"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );
