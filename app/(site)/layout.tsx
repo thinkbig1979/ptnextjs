@@ -96,6 +96,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
             __html: `(function(){try{var s=localStorage.getItem('theme-preference');var t=s&&s!=='system'?s:window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';if(t==='dark')document.documentElement.classList.add('dark')}catch(e){}})()`,
           }}
         />
+        <link rel="preload" as="image" href="/heroimagePT-min-1.webp" fetchPriority="high" />
       </head>
       <body suppressHydrationWarning>
         <AuthProvider>
