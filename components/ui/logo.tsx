@@ -25,7 +25,7 @@ const sizesAttribute = {
   lg: "(max-width: 768px) 256px, 320px",
   xl: "(max-width: 768px) 320px, 384px",
   "3xl": "(max-width: 640px) 640px, (max-width: 768px) 768px, (max-width: 1024px) 896px, 896px",
-  "6xl": "(max-width: 640px) 1024px, (max-width: 768px) 1152px, (max-width: 1024px) 1280px, (max-width: 1280px) 1408px, 1536px",
+  "6xl": "(max-width: 640px) 640px, (max-width: 768px) 768px, (max-width: 1024px) 896px, 896px",
   "mobile-nav": "(max-width: 640px) 256px, (max-width: 768px) 320px, (max-width: 1024px) 256px, 320px"
 };
 

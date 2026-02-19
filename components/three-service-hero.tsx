@@ -73,7 +73,7 @@ export function ThreeServiceHero({
       {/* Hero Background Image */}
       {heroImage && (
         <div className="absolute inset-0 -z-10 opacity-30">
-          <Image src={heroImage} alt="Paul Thames superyacht technology hero background" fill className="object-cover" sizes="100vw" priority fetchPriority="high" decoding="sync" aria-hidden="true" />
+          <Image src={heroImage} alt="Paul Thames superyacht technology hero background" fill className="object-cover" sizes="100vw" quality={60} priority fetchPriority="high" decoding="sync" aria-hidden="true" />
         </div>
       )}
 
