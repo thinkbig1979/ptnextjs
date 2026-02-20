@@ -3,43 +3,43 @@
   "created": "2026-02-18T08:35:46+00:00",
   "last_scan": "2026-02-18T09:59:37+00:00",
   "scan_count": 6,
-  "overall_score": 70.7,
-  "objective_score": 71.1,
-  "strict_score": 70.6,
+  "overall_score": 71.1,
+  "objective_score": 71.7,
+  "strict_score": 71.0,
   "stats": {
     "total": 2743,
-    "open": 2565,
-    "fixed": 5,
+    "open": 2236,
+    "fixed": 37,
     "auto_resolved": 53,
-    "wontfix": 53,
-    "false_positive": 67,
+    "wontfix": 206,
+    "false_positive": 211,
     "by_tier": {
       "1": {
-        "open": 143,
+        "open": 0,
         "fixed": 0,
         "auto_resolved": 30,
-        "wontfix": 27,
+        "wontfix": 170,
         "false_positive": 4
       },
       "2": {
-        "open": 1163,
-        "fixed": 0,
+        "open": 1160,
+        "fixed": 2,
         "auto_resolved": 7,
-        "wontfix": 1,
+        "wontfix": 2,
         "false_positive": 62
       },
       "3": {
-        "open": 877,
-        "fixed": 5,
+        "open": 696,
+        "fixed": 35,
         "auto_resolved": 8,
-        "wontfix": 25,
-        "false_positive": 1
+        "wontfix": 32,
+        "false_positive": 145
       },
       "4": {
-        "open": 382,
+        "open": 380,
         "fixed": 0,
         "auto_resolved": 8,
-        "wontfix": 0,
+        "wontfix": 2,
         "false_positive": 0
       }
     }
@@ -1346,11 +1346,11 @@
           121
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1368,11 +1368,11 @@
           87
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1391,11 +1391,11 @@
           16
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1417,11 +1417,11 @@
           84
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1446,11 +1446,11 @@
           271
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1487,11 +1487,11 @@
           382
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1524,11 +1524,11 @@
           247
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1555,11 +1555,11 @@
           333
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1580,11 +1580,11 @@
           426
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1606,11 +1606,11 @@
           671
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1629,11 +1629,11 @@
           98
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1656,11 +1656,11 @@
           451
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1679,11 +1679,11 @@
           363
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1703,11 +1703,11 @@
           112
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1727,11 +1727,11 @@
           143
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1754,11 +1754,11 @@
           196
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1777,11 +1777,11 @@
           229
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1805,11 +1805,11 @@
           315
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1828,11 +1828,11 @@
           344
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1854,11 +1854,11 @@
           122
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1880,11 +1880,11 @@
           202
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1903,11 +1903,11 @@
           243
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1926,11 +1926,11 @@
           292
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1950,11 +1950,11 @@
           335
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1974,11 +1974,11 @@
           373
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1997,11 +1997,11 @@
           425
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2020,11 +2020,11 @@
           484
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2043,11 +2043,11 @@
           525
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2066,11 +2066,11 @@
           558
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2091,11 +2091,11 @@
           607
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2114,11 +2114,11 @@
           755
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2137,11 +2137,11 @@
           809
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2160,11 +2160,11 @@
           844
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2183,11 +2183,11 @@
           885
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2208,11 +2208,11 @@
           208
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2235,11 +2235,11 @@
           293
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2261,11 +2261,11 @@
           365
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2285,11 +2285,11 @@
           408
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2318,11 +2318,11 @@
           705
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2341,11 +2341,11 @@
           743
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2365,11 +2365,11 @@
           810
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2387,11 +2387,11 @@
           825
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2409,11 +2409,11 @@
           836
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2450,11 +2450,11 @@
           238
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2477,11 +2477,11 @@
           195
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2518,11 +2518,11 @@
           519
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2543,11 +2543,11 @@
           538
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2580,11 +2580,11 @@
           610
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2604,11 +2604,11 @@
           831
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2626,11 +2626,11 @@
           85
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2648,11 +2648,11 @@
           60
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2671,11 +2671,11 @@
           123
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2704,11 +2704,11 @@
           184
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2728,11 +2728,11 @@
           186
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2751,11 +2751,11 @@
           148
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2774,11 +2774,11 @@
           42
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2797,11 +2797,11 @@
           52
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2819,11 +2819,11 @@
           60
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2841,11 +2841,11 @@
           67
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2863,11 +2863,11 @@
           80
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2896,11 +2896,11 @@
           235
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2920,11 +2920,11 @@
           124
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2960,11 +2960,11 @@
           794
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2983,11 +2983,11 @@
           434
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3007,11 +3007,11 @@
           520
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3041,11 +3041,11 @@
           255
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3082,11 +3082,11 @@
           282
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3104,11 +3104,11 @@
           275
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3127,11 +3127,11 @@
           23
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3150,11 +3150,11 @@
           53
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3175,11 +3175,11 @@
           81
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3200,11 +3200,11 @@
           112
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3223,11 +3223,11 @@
           131
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3247,11 +3247,11 @@
           150
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3278,11 +3278,11 @@
           555
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3302,11 +3302,11 @@
           401
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3330,11 +3330,11 @@
           563
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3359,11 +3359,11 @@
           570
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3391,11 +3391,11 @@
           587
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3414,11 +3414,11 @@
           265
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3443,11 +3443,11 @@
           594
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3475,11 +3475,11 @@
           604
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3505,11 +3505,11 @@
           616
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3530,11 +3530,11 @@
           358
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3555,11 +3555,11 @@
           366
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3580,11 +3580,11 @@
           372
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3603,11 +3603,11 @@
           374
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3626,11 +3626,11 @@
           421
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3650,11 +3650,11 @@
           434
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3673,11 +3673,11 @@
           453
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3696,11 +3696,11 @@
           442
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3718,11 +3718,11 @@
           446
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3741,11 +3741,11 @@
           537
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3764,11 +3764,11 @@
           619
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3804,11 +3804,11 @@
           179
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3840,11 +3840,11 @@
           366
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3863,11 +3863,11 @@
           77
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3885,11 +3885,11 @@
           73
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3907,11 +3907,11 @@
           486
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3930,11 +3930,11 @@
           353
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3953,11 +3953,11 @@
           396
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3978,11 +3978,11 @@
           474
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4003,11 +4003,11 @@
           71
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4027,11 +4027,11 @@
           129
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4052,11 +4052,11 @@
           164
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4076,11 +4076,11 @@
           197
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4106,11 +4106,11 @@
           285
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4128,11 +4128,11 @@
           26
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4150,11 +4150,11 @@
           47
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4174,11 +4174,11 @@
           96
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4197,11 +4197,11 @@
           304
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4222,11 +4222,11 @@
           364
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4245,11 +4245,11 @@
           40
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4269,11 +4269,11 @@
           77
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4293,11 +4293,11 @@
           127
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4317,11 +4317,11 @@
           163
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4341,11 +4341,11 @@
           217
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4369,11 +4369,11 @@
           264
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4410,11 +4410,11 @@
           371
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4435,11 +4435,11 @@
           117
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4459,11 +4459,11 @@
           49
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4481,11 +4481,11 @@
           75
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4504,11 +4504,11 @@
           100
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4528,11 +4528,11 @@
           141
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4552,11 +4552,11 @@
           125
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4574,11 +4574,11 @@
           88
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4597,11 +4597,11 @@
           168
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4620,11 +4620,11 @@
           178
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4648,11 +4648,11 @@
           172
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4675,11 +4675,11 @@
           190
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4700,11 +4700,11 @@
           148
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4722,11 +4722,11 @@
           185
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4760,11 +4760,11 @@
           188
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4785,11 +4785,11 @@
           117
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4807,11 +4807,11 @@
           87
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4829,11 +4829,11 @@
           102
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4851,11 +4851,11 @@
           30
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4878,11 +4878,11 @@
           62
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4900,11 +4900,11 @@
           57
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4926,11 +4926,11 @@
           122
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4951,11 +4951,11 @@
           133
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4976,11 +4976,11 @@
           141
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4998,11 +4998,11 @@
           152
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -28773,11 +28773,11 @@
         "line": 106,
         "kind": "props"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Domain-specific display components - many fields reflect the data model",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:33+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -28794,11 +28794,11 @@
         "line": 23,
         "kind": "props"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Domain-specific display components - many fields reflect the data model",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:33+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -28815,11 +28815,11 @@
         "line": 39,
         "kind": "props"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Domain-specific display components - many fields reflect the data model",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:33+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -28844,11 +28844,11 @@
         ],
         "direct_props": []
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Form section components - passthrough is intentional for form decomposition",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:33+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -28875,11 +28875,11 @@
           "watch"
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Form section components - passthrough is intentional for form decomposition",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:33+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29294,11 +29294,11 @@
       "detail": {
         "loc": 971
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -29313,11 +29313,11 @@
       "detail": {
         "loc": 841
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -29332,11 +29332,11 @@
       "detail": {
         "loc": 660
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Test files - executed by test runner, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -29351,11 +29351,11 @@
       "detail": {
         "loc": 658
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -29370,11 +29370,11 @@
       "detail": {
         "loc": 572
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29389,11 +29389,11 @@
       "detail": {
         "loc": 580
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -29408,11 +29408,11 @@
       "detail": {
         "loc": 578
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:32:45+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -29427,11 +29427,11 @@
       "detail": {
         "loc": 563
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -29446,11 +29446,11 @@
       "detail": {
         "loc": 513
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29465,11 +29465,11 @@
       "detail": {
         "loc": 513
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -29484,11 +29484,11 @@
       "detail": {
         "loc": 498
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29503,11 +29503,11 @@
       "detail": {
         "loc": 489
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Test files - executed by test runner, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -29522,11 +29522,11 @@
       "detail": {
         "loc": 419
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29541,11 +29541,11 @@
       "detail": {
         "loc": 380
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29560,11 +29560,11 @@
       "detail": {
         "loc": 411
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -29579,11 +29579,11 @@
       "detail": {
         "loc": 375
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:31:51+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29598,11 +29598,11 @@
       "detail": {
         "loc": 369
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Agent OS internal tooling - executed directly",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -29617,11 +29617,11 @@
       "detail": {
         "loc": 369
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -29636,11 +29636,11 @@
       "detail": {
         "loc": 362
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -29655,11 +29655,11 @@
       "detail": {
         "loc": 337
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29674,11 +29674,11 @@
       "detail": {
         "loc": 407
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29693,11 +29693,11 @@
       "detail": {
         "loc": 352
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -29712,11 +29712,11 @@
       "detail": {
         "loc": 343
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -29731,11 +29731,11 @@
       "detail": {
         "loc": 335
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -29750,11 +29750,11 @@
       "detail": {
         "loc": 334
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Test files - executed by test runner, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -29769,11 +29769,11 @@
       "detail": {
         "loc": 322
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -29788,11 +29788,11 @@
       "detail": {
         "loc": 329
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29807,11 +29807,11 @@
       "detail": {
         "loc": 302
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -29826,11 +29826,11 @@
       "detail": {
         "loc": 313
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29845,11 +29845,11 @@
       "detail": {
         "loc": 299
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29864,11 +29864,11 @@
       "detail": {
         "loc": 311
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29883,11 +29883,11 @@
       "detail": {
         "loc": 273
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -29902,11 +29902,11 @@
       "detail": {
         "loc": 274
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -29921,11 +29921,11 @@
       "detail": {
         "loc": 277
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29940,11 +29940,11 @@
       "detail": {
         "loc": 262
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:31:20+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29959,11 +29959,11 @@
       "detail": {
         "loc": 259
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -29978,11 +29978,11 @@
       "detail": {
         "loc": 250
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29997,11 +29997,11 @@
       "detail": {
         "loc": 252
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -30016,11 +30016,11 @@
       "detail": {
         "loc": 249
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:32:45+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30035,11 +30035,11 @@
       "detail": {
         "loc": 239
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -30054,11 +30054,11 @@
       "detail": {
         "loc": 242
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -30073,11 +30073,11 @@
       "detail": {
         "loc": 229
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30092,11 +30092,11 @@
       "detail": {
         "loc": 236
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:31:51+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30111,11 +30111,11 @@
       "detail": {
         "loc": 213
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30130,11 +30130,11 @@
       "detail": {
         "loc": 210
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Imported via EnhancedProductForm wrapper - desloppify missed indirect import",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:31:21+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30149,11 +30149,11 @@
       "detail": {
         "loc": 225
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -30168,11 +30168,11 @@
       "detail": {
         "loc": 223
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30187,11 +30187,11 @@
       "detail": {
         "loc": 224
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30206,11 +30206,11 @@
       "detail": {
         "loc": 204
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30225,11 +30225,11 @@
       "detail": {
         "loc": 204
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30244,11 +30244,11 @@
       "detail": {
         "loc": 202
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:32:45+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30263,11 +30263,11 @@
       "detail": {
         "loc": 200
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:31:20+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30282,11 +30282,11 @@
       "detail": {
         "loc": 200
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:31:20+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30301,11 +30301,11 @@
       "detail": {
         "loc": 196
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30320,11 +30320,11 @@
       "detail": {
         "loc": 187
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30339,11 +30339,11 @@
       "detail": {
         "loc": 166
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30358,11 +30358,11 @@
       "detail": {
         "loc": 191
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Migration scripts - executed directly",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "generated"
@@ -30377,11 +30377,11 @@
       "detail": {
         "loc": 186
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30396,11 +30396,11 @@
       "detail": {
         "loc": 186
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:31:51+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30415,11 +30415,11 @@
       "detail": {
         "loc": 182
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:32:45+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -30434,11 +30434,11 @@
       "detail": {
         "loc": 180
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30453,11 +30453,11 @@
       "detail": {
         "loc": 179
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30472,11 +30472,11 @@
       "detail": {
         "loc": 150
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30491,11 +30491,11 @@
       "detail": {
         "loc": 169
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30510,11 +30510,11 @@
       "detail": {
         "loc": 186
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30529,11 +30529,11 @@
       "detail": {
         "loc": 163
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30548,11 +30548,11 @@
       "detail": {
         "loc": 168
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30567,11 +30567,11 @@
       "detail": {
         "loc": 152
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js middleware entry point - auto-loaded by framework",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:32:46+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30586,11 +30586,11 @@
       "detail": {
         "loc": 159
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:32:45+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30605,11 +30605,11 @@
       "detail": {
         "loc": 159
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -30624,11 +30624,11 @@
       "detail": {
         "loc": 156
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "generated"
@@ -30643,11 +30643,11 @@
       "detail": {
         "loc": 155
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30662,11 +30662,11 @@
       "detail": {
         "loc": 155
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -30681,11 +30681,11 @@
       "detail": {
         "loc": 171
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30700,11 +30700,11 @@
       "detail": {
         "loc": 145
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -30719,11 +30719,11 @@
       "detail": {
         "loc": 148
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Agent OS internal tooling - executed directly",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -30738,11 +30738,11 @@
       "detail": {
         "loc": 148
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -30757,11 +30757,11 @@
       "detail": {
         "loc": 147
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30776,11 +30776,11 @@
       "detail": {
         "loc": 144
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -30795,11 +30795,11 @@
       "detail": {
         "loc": 147
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:33:57+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30814,11 +30814,11 @@
       "detail": {
         "loc": 147
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -30833,11 +30833,11 @@
       "detail": {
         "loc": 146
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30852,11 +30852,11 @@
       "detail": {
         "loc": 144
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:31:20+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30871,11 +30871,11 @@
       "detail": {
         "loc": 134
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30890,11 +30890,11 @@
       "detail": {
         "loc": 133
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30909,11 +30909,11 @@
       "detail": {
         "loc": 133
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Test files - executed by test runner, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -30947,11 +30947,11 @@
       "detail": {
         "loc": 169
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30966,11 +30966,11 @@
       "detail": {
         "loc": 129
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -30985,11 +30985,11 @@
       "detail": {
         "loc": 129
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -31004,11 +31004,11 @@
       "detail": {
         "loc": 128
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -31023,11 +31023,11 @@
       "detail": {
         "loc": 128
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:31:20+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -31042,11 +31042,11 @@
       "detail": {
         "loc": 128
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:31:51+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -31061,11 +31061,11 @@
       "detail": {
         "loc": 119
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -31080,11 +31080,11 @@
       "detail": {
         "loc": 156
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -31099,11 +31099,11 @@
       "detail": {
         "loc": 103
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -31118,11 +31118,11 @@
       "detail": {
         "loc": 119
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -31137,11 +31137,11 @@
       "detail": {
         "loc": 118
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -31156,11 +31156,11 @@
       "detail": {
         "loc": 118
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:31:51+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -31175,11 +31175,11 @@
       "detail": {
         "loc": 117
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:31:51+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -31194,11 +31194,11 @@
       "detail": {
         "loc": 95
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -31213,11 +31213,11 @@
       "detail": {
         "loc": 113
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -31232,11 +31232,11 @@
       "detail": {
         "loc": 110
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -31251,11 +31251,11 @@
       "detail": {
         "loc": 109
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -31270,11 +31270,11 @@
       "detail": {
         "loc": 108
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -31289,11 +31289,11 @@
       "detail": {
         "loc": 107
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -31308,11 +31308,11 @@
       "detail": {
         "loc": 103
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -31327,11 +31327,11 @@
       "detail": {
         "loc": 102
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -31346,11 +31346,11 @@
       "detail": {
         "loc": 100
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -31365,11 +31365,11 @@
       "detail": {
         "loc": 98
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -31384,11 +31384,11 @@
       "detail": {
         "loc": 95
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -31403,11 +31403,11 @@
       "detail": {
         "loc": 95
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -31422,11 +31422,11 @@
       "detail": {
         "loc": 92
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -31441,11 +31441,11 @@
       "detail": {
         "loc": 90
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -31460,11 +31460,11 @@
       "detail": {
         "loc": 88
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -31479,11 +31479,11 @@
       "detail": {
         "loc": 88
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -31498,11 +31498,11 @@
       "detail": {
         "loc": 87
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:31:20+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -31517,11 +31517,11 @@
       "detail": {
         "loc": 86
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -31536,11 +31536,11 @@
       "detail": {
         "loc": 85
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -31555,11 +31555,11 @@
       "detail": {
         "loc": 83
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -31574,11 +31574,11 @@
       "detail": {
         "loc": 82
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -31593,11 +31593,11 @@
       "detail": {
         "loc": 81
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -31612,11 +31612,11 @@
       "detail": {
         "loc": 81
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:31:20+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -31631,11 +31631,11 @@
       "detail": {
         "loc": 81
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:32:45+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -31650,11 +31650,11 @@
       "detail": {
         "loc": 80
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -31669,11 +31669,11 @@
       "detail": {
         "loc": 80
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -31688,11 +31688,11 @@
       "detail": {
         "loc": 80
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:32:45+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -31707,11 +31707,11 @@
       "detail": {
         "loc": 79
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -31726,11 +31726,11 @@
       "detail": {
         "loc": 77
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -31745,11 +31745,11 @@
       "detail": {
         "loc": 75
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -31764,11 +31764,11 @@
       "detail": {
         "loc": 72
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -31783,11 +31783,11 @@
       "detail": {
         "loc": 71
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -31802,11 +31802,11 @@
       "detail": {
         "loc": 71
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -31821,11 +31821,11 @@
       "detail": {
         "loc": 71
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:31:51+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -31840,11 +31840,11 @@
       "detail": {
         "loc": 68
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -31859,11 +31859,11 @@
       "detail": {
         "loc": 67
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:31:20+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -31878,11 +31878,11 @@
       "detail": {
         "loc": 67
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -31897,11 +31897,11 @@
       "detail": {
         "loc": 67
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Test files - executed by test runner, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -31916,11 +31916,11 @@
       "detail": {
         "loc": 66
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -31935,11 +31935,11 @@
       "detail": {
         "loc": 66
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -31954,11 +31954,11 @@
       "detail": {
         "loc": 66
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -31973,11 +31973,11 @@
       "detail": {
         "loc": 61
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:32:45+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -31992,11 +31992,11 @@
       "detail": {
         "loc": 60
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -32011,11 +32011,11 @@
       "detail": {
         "loc": 60
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -32030,11 +32030,11 @@
       "detail": {
         "loc": 60
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -32049,11 +32049,11 @@
       "detail": {
         "loc": 60
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -32068,11 +32068,11 @@
       "detail": {
         "loc": 58
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:33:57+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -32087,11 +32087,11 @@
       "detail": {
         "loc": 57
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -32106,11 +32106,11 @@
       "detail": {
         "loc": 55
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -32125,11 +32125,11 @@
       "detail": {
         "loc": 55
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -32144,11 +32144,11 @@
       "detail": {
         "loc": 53
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -32163,11 +32163,11 @@
       "detail": {
         "loc": 51
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -32182,11 +32182,11 @@
       "detail": {
         "loc": 49
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -32201,11 +32201,11 @@
       "detail": {
         "loc": 49
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -32220,11 +32220,11 @@
       "detail": {
         "loc": 49
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:32:45+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -32239,11 +32239,11 @@
       "detail": {
         "loc": 48
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -32258,11 +32258,11 @@
       "detail": {
         "loc": 46
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -32277,11 +32277,11 @@
       "detail": {
         "loc": 45
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:31:51+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -32296,11 +32296,11 @@
       "detail": {
         "loc": 44
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -32315,11 +32315,11 @@
       "detail": {
         "loc": 44
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:31:51+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -32334,11 +32334,11 @@
       "detail": {
         "loc": 41
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -32353,11 +32353,11 @@
       "detail": {
         "loc": 41
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -32372,11 +32372,11 @@
       "detail": {
         "loc": 40
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -32391,11 +32391,11 @@
       "detail": {
         "loc": 39
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -32410,11 +32410,11 @@
       "detail": {
         "loc": 36
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -32429,11 +32429,11 @@
       "detail": {
         "loc": 35
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Scripts executed directly via ts-node/tsx, not imported",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -32448,11 +32448,11 @@
       "detail": {
         "loc": 34
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Agent OS internal tooling - executed directly",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:58+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -32467,11 +32467,11 @@
       "detail": {
         "loc": 32
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -32486,11 +32486,11 @@
       "detail": {
         "loc": 32
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -32505,11 +32505,11 @@
       "detail": {
         "loc": 31
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -32524,11 +32524,11 @@
       "detail": {
         "loc": 31
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -32543,11 +32543,11 @@
       "detail": {
         "loc": 30
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -32562,11 +32562,11 @@
       "detail": {
         "loc": 29
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:31:51+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -32600,11 +32600,11 @@
       "detail": {
         "loc": 18
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Next.js App Router pages/layouts - entry points via file-system routing, not explicit imports",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:49+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -32619,11 +32619,11 @@
       "detail": {
         "loc": 17
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:31:20+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -32647,11 +32647,11 @@
         ],
         "kind": "file"
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:22+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -32675,11 +32675,11 @@
         ],
         "kind": "file"
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:22+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -32703,11 +32703,11 @@
         ],
         "kind": "file"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Has 2 active importers - valid barrel file",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:25+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -32737,11 +32737,11 @@
           "optimized-avatar.tsx"
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Mixed naming conventions reflect different origins (shadcn/ui, custom, Payload) - standardizing risks breaking imports",
       "first_seen": "2026-02-18T08:36:15+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:34+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -32769,11 +32769,11 @@
           "yacht-projects.ts"
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Mixed naming conventions reflect different origins (shadcn/ui, custom, Payload) - standardizing risks breaking imports",
       "first_seen": "2026-02-18T08:36:15+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:34+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -32799,11 +32799,11 @@
           "VendorSearchBar.tsx"
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Mixed naming conventions reflect different origins (shadcn/ui, custom, Payload) - standardizing risks breaking imports",
       "first_seen": "2026-02-18T08:36:15+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:34+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -57907,11 +57907,11 @@
           "url.ts"
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Mixed naming conventions reflect different origins (shadcn/ui, custom, Payload) - standardizing risks breaking imports",
       "first_seen": "2026-02-18T09:31:04+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:29:34+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -59087,10 +59087,10 @@
       }
     },
     "Code quality": {
-      "score": 73.0,
-      "strict": 72.6,
+      "score": 75.7,
+      "strict": 75.2,
       "checks": 4007,
-      "issues": 1219,
+      "issues": 1064,
       "tier": 3,
       "detectors": {
         "unused": {
@@ -59119,9 +59119,9 @@
         },
         "props": {
           "potential": 167,
-          "pass_rate": 0.9826347305389221,
-          "issues": 5,
-          "weighted_failures": 2.9
+          "pass_rate": 1.0,
+          "issues": 0,
+          "weighted_failures": 0.0
         },
         "smells": {
           "potential": 456,
@@ -59137,9 +59137,9 @@
         },
         "orphaned": {
           "potential": 437,
-          "pass_rate": 0.7693363844393587,
-          "issues": 144,
-          "weighted_failures": 100.80000000000025
+          "pass_rate": 0.9983981693363845,
+          "issues": 1,
+          "weighted_failures": 0.7
         },
         "flat_dirs": {
           "potential": 204,
@@ -59149,15 +59149,15 @@
         },
         "naming": {
           "potential": 199,
-          "pass_rate": 0.9939698492462312,
-          "issues": 4,
-          "weighted_failures": 1.2
+          "pass_rate": 1.0,
+          "issues": 0,
+          "weighted_failures": 0.0
         },
         "facade": {
           "potential": 437,
-          "pass_rate": 0.9938215102974829,
-          "issues": 3,
-          "weighted_failures": 2.7
+          "pass_rate": 1.0,
+          "issues": 0,
+          "weighted_failures": 0.0
         },
         "patterns": {
           "potential": 65,

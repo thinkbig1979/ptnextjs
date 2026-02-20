@@ -203,8 +203,6 @@ const nextConfig = {
       'lucide-react',
       // Internal barrel files - prevents bundle bloat from re-exports
       '@/components/product-comparison',
-      '@/components/enhanced-profiles',
-      '@/components/case-studies',
       '@/lib/transformers',
       '@/lib/repositories',
       '@/lib/cache'

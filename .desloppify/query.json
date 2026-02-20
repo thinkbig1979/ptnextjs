@@ -1,6 +1,6 @@
 {
   "command": "show",
-  "query": "logs",
+  "query": "orphaned",
   "status_filter": "open",
   "total": 0,
   "findings": [],
