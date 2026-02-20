@@ -457,9 +457,6 @@ class PayloadCMSDataService {
   }
 
   private transformPayloadVendor(doc: PayloadVendorDocument): Vendor {
-    // ============================================================================
-    // SECTION 1: CERTIFICATIONS ARRAY - Transform logo media paths
-    // ============================================================================
     const certifications =
       doc.certifications?.map((cert: PayloadRecord) => ({
         name: cert.name || '',
@@ -471,9 +468,6 @@ class PayloadCMSDataService {
         logo: cert.logo?.url ? this.transformMediaPath(cert.logo.url) : undefined,
       })) || [];
 
-    // ============================================================================
-    // SECTION 2: AWARDS ARRAY - Transform image media paths
-    // ============================================================================
     const awards: VendorAward[] =
       doc.awards?.map((award: PayloadRecord) => ({
         title: award.title || '',
@@ -483,9 +477,6 @@ class PayloadCMSDataService {
         description: award.description || undefined,
       })) || [];
 
-    // ============================================================================
-    // SECTION 3: SOCIAL PROOF GROUP - Preserve all numeric fields
-    // ============================================================================
     const socialProof: VendorSocialProof | undefined =
       doc.totalProjects || doc.clientSatisfactionScore || doc.repeatClientPercentage
         ? {
@@ -496,9 +487,6 @@ class PayloadCMSDataService {
           }
         : undefined;
 
-    // ============================================================================
-    // SECTION 4: VIDEO INTRO GROUP - Transform thumbnail media path
-    // ============================================================================
     const videoIntroduction = doc.videoUrl
       ? {
           videoUrl: doc.videoUrl || '',
@@ -510,9 +498,6 @@ class PayloadCMSDataService {
         }
       : undefined;
 
-    // ============================================================================
-    // SECTION 5: CASE STUDIES ARRAY - Transform Lexical content, resolve yacht relationships, transform thumbnails
-    // ============================================================================
     const caseStudies =
       doc.caseStudies?.map((cs: PayloadRecord) => ({
         title: cs.title || '',
@@ -530,9 +515,6 @@ class PayloadCMSDataService {
         publishedDate: cs.projectDate || undefined,
       })) || [];
 
-    // ============================================================================
-    // SECTION 6: INNOVATIONS ARRAY - Transform Lexical description, transform image
-    // ============================================================================
     const innovationHighlights: VendorInnovationHighlight[] =
       doc.innovationHighlights?.map((innovation: PayloadRecord) => ({
         technology: innovation.title || '',
@@ -541,9 +523,6 @@ class PayloadCMSDataService {
         benefitsToClients: innovation.benefits?.map((b: PayloadRecord) => b.benefit) || undefined,
       })) || [];
 
-    // ============================================================================
-    // SECTION 7: TEAM MEMBERS ARRAY - Transform photo media path
-    // ============================================================================
     const teamMembers: TeamMember[] =
       doc.teamMembers?.map((member: PayloadRecord) => ({
         id: member.id?.toString() || `member-${Date.now()}`,
@@ -554,9 +533,6 @@ class PayloadCMSDataService {
         linkedin: member.linkedinUrl || undefined,
       })) || [];
 
-    // ============================================================================
-    // SECTION 8: YACHT PROJECTS ARRAY - Resolve yacht relationships, transform image
-    // ============================================================================
     const yachtProjects: VendorYachtProject[] =
       doc.yachtProjects?.map((project: PayloadRecord) => ({
         yachtName: project.yacht?.name || '',
@@ -568,9 +544,6 @@ class PayloadCMSDataService {
         description: project.description || undefined,
       })) || [];
 
-    // ============================================================================
-    // SECTION 8: LOCATIONS ARRAY - Multi-location support (Tier 2+)
-    // ============================================================================
     const locations: VendorLocation[] | undefined =
       doc.locations?.map((loc: PayloadRecord) => ({
         id: loc.id || undefined,
@@ -585,9 +558,6 @@ class PayloadCMSDataService {
         isHQ: loc.isHQ || false,
       })) || undefined;
 
-    // ============================================================================
-    // SECTION 10: VENDOR REVIEWS ARRAY - Transform review data
-    // ============================================================================
     const vendorReviews: VendorReview[] =
       doc.vendorReviews?.map((review: PayloadRecord) => ({
         id: review.id?.toString() || '',
@@ -663,9 +633,6 @@ class PayloadCMSDataService {
     const vendor = doc.vendor;
     const mainImage = doc.images?.find((img: PayloadRecord) => img.isMain) || doc.images?.[0];
 
-    // ============================================================================
-    // SECTION 1: COMPARISON METRICS - Convert array to nested object structure
-    // ============================================================================
     const comparisonMetrics: { [category: string]: { [key: string]: string | number | boolean } } =
       {};
     doc.comparisonMetrics?.forEach((metric: PayloadRecord) => {
@@ -677,17 +644,11 @@ class PayloadCMSDataService {
         metric.numericValue || metric.value || '';
     });
 
-    // ============================================================================
-    // SECTION 2: INTEGRATION COMPATIBILITY - Extract supported protocols as string array
-    // ============================================================================
     const integrationCompatibility =
       doc.integrationCompatibility?.supportedProtocols?.map(
         (proto: PayloadRecord) => proto.protocol
       ) || [];
 
-    // ============================================================================
-    // SECTION 2A: SYSTEM REQUIREMENTS - Transform system requirements object
-    // ============================================================================
     const systemRequirements: SystemRequirements | undefined = doc.integrationCompatibility
       ?.systemRequirements
       ? {
@@ -699,9 +660,6 @@ class PayloadCMSDataService {
         }
       : undefined;
 
-    // ============================================================================
-    // SECTION 2B: COMPATIBILITY MATRIX - Transform compatibility matrix array
-    // ============================================================================
     const compatibilityMatrix: SystemCompatibility[] =
       doc.integrationCompatibility?.compatibilityMatrix?.map((item: PayloadRecord) => ({
         system: item.system || '',
@@ -714,9 +672,6 @@ class PayloadCMSDataService {
         estimatedCost: item.estimatedCost || undefined,
       })) || [];
 
-    // ============================================================================
-    // SECTION 3: OWNER REVIEWS ARRAY - Transform Lexical reviewText, resolve yacht relationships
-    // ============================================================================
     const ownerReviews: OwnerReview[] =
       doc.ownerReviews?.map((review: PayloadRecord) => ({
         id: review.id?.toString() || `review-${Date.now()}`,
@@ -740,9 +695,6 @@ class PayloadCMSDataService {
         vendorResponse: undefined, // Not in Payload schema
       })) || [];
 
-    // ============================================================================
-    // SECTION 4: VISUAL DEMO CONTENT - Transform to VisualDemoContent type
-    // ============================================================================
     const visualDemo: VisualDemoContent | undefined = doc.visualDemoContent?.model3d?.modelUrl
       ? {
           type: '3d-model' as const,

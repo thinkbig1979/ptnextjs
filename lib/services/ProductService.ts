@@ -128,15 +128,15 @@ export class ProductService {
   }
 
   /**
-   * Verify that user owns the product (or is admin)
+   * Require that user owns the product (or is admin), throw if not
    *
-   * @param productId - Product ID to verify
+   * @param productId - Product ID to check
    * @param userId - User ID making the request
    * @param isAdmin - Whether user is admin
    * @returns Product object if authorized
    * @throws Error if product not found or unauthorized
    */
-  private static async verifyOwnership(
+  private static async requireOwnership(
     productId: string,
     userId: string,
     isAdmin: boolean
@@ -276,7 +276,7 @@ export class ProductService {
     isAdmin: boolean
   ): Promise<Record<string, unknown>> {
     // Verify ownership will throw if not found or unauthorized
-    const product = await this.verifyOwnership(productId, userId, isAdmin);
+    const product = await this.requireOwnership(productId, userId, isAdmin);
     return product;
   }
 
@@ -446,83 +446,29 @@ export class ProductService {
   ): Promise<Record<string, unknown>> {
     const payload = await getPayloadClient();
 
-    // Verify ownership (will throw if unauthorized)
-    await this.verifyOwnership(productId, userId, isAdmin);
+    await this.requireOwnership(productId, userId, isAdmin);
 
-    // Prepare update data
+    // Build update payload from provided fields
     const updateData: Record<string, unknown> = {};
 
-    // Only include fields that are provided
-    if (data.name !== undefined) {
-      updateData.name = data.name;
-    }
+    const passthroughFields = [
+      'name', 'slug', 'shortDescription', 'images', 'categories',
+      'specifications', 'published', 'tags', 'price', 'pricing',
+      'features', 'benefits', 'services', 'actionButtons', 'badges',
+      'comparisonMetrics',
+    ] as const;
 
-    if (data.slug !== undefined) {
-      updateData.slug = data.slug;
-    }
-
-    if (data.description !== undefined) {
-      if (typeof data.description === 'string') {
-        updateData.description = this.textToLexical(data.description);
-      } else {
-        updateData.description = data.description;
+    for (const field of passthroughFields) {
+      if (data[field] !== undefined) {
+        updateData[field] = data[field];
       }
     }
 
-    if (data.shortDescription !== undefined) {
-      updateData.shortDescription = data.shortDescription;
-    }
-
-    if (data.images !== undefined) {
-      updateData.images = data.images;
-    }
-
-    if (data.categories !== undefined) {
-      updateData.categories = data.categories;
-    }
-
-    if (data.specifications !== undefined) {
-      updateData.specifications = data.specifications;
-    }
-
-    if (data.published !== undefined) {
-      updateData.published = data.published;
-    }
-
-    if (data.tags !== undefined) {
-      updateData.tags = data.tags;
-    }
-
-    if (data.price !== undefined) {
-      updateData.price = data.price;
-    }
-
-    if (data.pricing !== undefined) {
-      updateData.pricing = data.pricing;
-    }
-
-    if (data.features !== undefined) {
-      updateData.features = data.features;
-    }
-
-    if (data.benefits !== undefined) {
-      updateData.benefits = data.benefits;
-    }
-
-    if (data.services !== undefined) {
-      updateData.services = data.services;
-    }
-
-    if (data.actionButtons !== undefined) {
-      updateData.actionButtons = data.actionButtons;
-    }
-
-    if (data.badges !== undefined) {
-      updateData.badges = data.badges;
-    }
-
-    if (data.comparisonMetrics !== undefined) {
-      updateData.comparisonMetrics = data.comparisonMetrics;
+    // Description needs Lexical conversion when provided as plain text
+    if (data.description !== undefined) {
+      updateData.description = typeof data.description === 'string'
+        ? this.textToLexical(data.description)
+        : data.description;
     }
 
     // Update product
@@ -551,7 +497,7 @@ export class ProductService {
     const payload = await getPayloadClient();
 
     // Verify ownership (will throw if unauthorized)
-    await this.verifyOwnership(productId, userId, isAdmin);
+    await this.requireOwnership(productId, userId, isAdmin);
 
     // Delete product
     await payload.delete({
@@ -578,7 +524,7 @@ export class ProductService {
     const payload = await getPayloadClient();
 
     // Verify ownership (will throw if unauthorized)
-    await this.verifyOwnership(productId, userId, isAdmin);
+    await this.requireOwnership(productId, userId, isAdmin);
 
     // Update publish status
     const product = await payload.update({

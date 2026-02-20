@@ -42,7 +42,6 @@ export abstract class BaseRepository implements Repository {
    * Clear all cached data for this repository
    */
   clearCache(): void {
-    // Subclasses can override if they need specific cache clearing logic
     if (this.cache) {
       this.cache.clear();
     }
