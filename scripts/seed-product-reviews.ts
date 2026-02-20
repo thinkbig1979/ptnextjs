@@ -5,35 +5,7 @@
 
 import { getPayload } from 'payload';
 import config from '../payload.config';
-
-// Helper to create Lexical rich text content
-function createLexicalContent(text: string) {
-  return {
-    root: {
-      type: 'root',
-      children: [
-        {
-          type: 'paragraph',
-          children: [
-            {
-              type: 'text',
-              text: text,
-              format: 0,
-              version: 1
-            }
-          ],
-          format: '',
-          indent: 0,
-          version: 1
-        }
-      ],
-      direction: 'ltr',
-      format: '',
-      indent: 0,
-      version: 1
-    }
-  };
-}
+import { createLexicalContent } from '../lib/utils/lexical-helpers';
 
 // Sample review templates by product category
 const reviewTemplates = {

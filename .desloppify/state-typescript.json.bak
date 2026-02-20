@@ -3,36 +3,36 @@
   "created": "2026-02-18T08:35:46+00:00",
   "last_scan": "2026-02-18T09:59:37+00:00",
   "scan_count": 6,
-  "overall_score": 70.6,
-  "objective_score": 71.0,
+  "overall_score": 70.7,
+  "objective_score": 71.1,
   "strict_score": 70.6,
   "stats": {
     "total": 2743,
-    "open": 2605,
-    "fixed": 2,
+    "open": 2565,
+    "fixed": 5,
     "auto_resolved": 53,
-    "wontfix": 18,
-    "false_positive": 65,
+    "wontfix": 53,
+    "false_positive": 67,
     "by_tier": {
       "1": {
-        "open": 155,
+        "open": 143,
         "fixed": 0,
         "auto_resolved": 30,
-        "wontfix": 15,
+        "wontfix": 27,
         "false_positive": 4
       },
       "2": {
-        "open": 1166,
+        "open": 1163,
         "fixed": 0,
         "auto_resolved": 7,
-        "wontfix": 0,
-        "false_positive": 60
+        "wontfix": 1,
+        "false_positive": 62
       },
       "3": {
-        "open": 902,
-        "fixed": 2,
+        "open": 877,
+        "fixed": 5,
         "auto_resolved": 8,
-        "wontfix": 3,
+        "wontfix": 25,
         "false_positive": 1
       },
       "4": {
@@ -1076,11 +1076,11 @@
           376
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Migration script requires console output for user feedback during execution",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:08+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -1098,11 +1098,11 @@
           234
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Migration script requires console output for user feedback during execution",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:08+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -1122,11 +1122,11 @@
           513
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Migration script requires console output for user feedback during execution",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:08+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -1145,11 +1145,11 @@
           280
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Migration script requires console output for user feedback during execution",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:08+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -1168,11 +1168,11 @@
           323
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Migration script requires console output for user feedback during execution",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:08+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -1190,11 +1190,11 @@
           345
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Migration script requires console output for user feedback during execution",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:08+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -1212,11 +1212,11 @@
           355
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Migration script requires console output for user feedback during execution",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:08+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -1235,11 +1235,11 @@
           473
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Migration script requires console output for user feedback during execution",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:08+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -1257,11 +1257,11 @@
           480
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Migration script requires console output for user feedback during execution",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:08+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -1279,11 +1279,11 @@
           565
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Migration script requires console output for user feedback during execution",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:08+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -1301,11 +1301,11 @@
           567
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Migration script requires console output for user feedback during execution",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:08+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -1323,11 +1323,11 @@
           569
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Migration script requires console output for user feedback during execution",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:08+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -28895,11 +28895,11 @@
         "loc": 280,
         "sole_importer": "app/(site)/vendors/[slug]/page.tsx"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard component/module decomposition - single import is valid architecture",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:35+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -28915,11 +28915,11 @@
         "loc": 242,
         "sole_importer": "app/(site)/vendor/dashboard/data-management/page.tsx"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard React component decomposition for readability and separation of concerns",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:17+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -28935,11 +28935,11 @@
         "loc": 236,
         "sole_importer": "app/(site)/vendor/dashboard/products/page.tsx"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard React component decomposition for readability and separation of concerns",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:17+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -28955,11 +28955,11 @@
         "loc": 226,
         "sole_importer": "app/(site)/vendor/dashboard/page.tsx"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard React component decomposition for readability and separation of concerns",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:17+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -28975,11 +28975,11 @@
         "loc": 227,
         "sole_importer": "app/(site)/vendor/dashboard/subscription/page.tsx"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard React component decomposition for readability and separation of concerns",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:17+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -28995,11 +28995,11 @@
         "loc": 219,
         "sole_importer": "payload.config.ts"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard component/module decomposition - single import is valid architecture",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:35+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29015,11 +29015,11 @@
         "loc": 226,
         "sole_importer": "app/api/public/products/route.ts"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard component/module decomposition - single import is valid architecture",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:35+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29035,11 +29035,11 @@
         "loc": 218,
         "sole_importer": "app/(payload)/admin/importMap.ts"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard component/module decomposition - single import is valid architecture",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:35+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29055,11 +29055,11 @@
         "loc": 218,
         "sole_importer": "app/(site)/components/vendors-client.tsx"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard component/module decomposition - single import is valid architecture",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:35+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29075,11 +29075,11 @@
         "loc": 215,
         "sole_importer": "components/products/VendorsNearYou.tsx"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard component/module decomposition - single import is valid architecture",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:35+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29095,11 +29095,11 @@
         "loc": 212,
         "sole_importer": "scripts/run-blog-image-migration.ts"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard component/module decomposition - single import is valid architecture",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:35+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "generated"
@@ -29115,11 +29115,11 @@
         "loc": 202,
         "sole_importer": "components/navigation.tsx"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard component/module decomposition - single import is valid architecture",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:35+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29135,11 +29135,11 @@
         "loc": 45,
         "sole_importer": "app/(site)/custom-lighting/page.tsx"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard React component decomposition for readability and separation of concerns",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:17+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29155,11 +29155,11 @@
         "loc": 45,
         "sole_importer": "app/(site)/page.tsx"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard React component decomposition for readability and separation of concerns",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:17+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29175,11 +29175,11 @@
         "loc": 40,
         "sole_importer": "app/(site)/vendor/dashboard/subscription/page.tsx"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard React component decomposition for readability and separation of concerns",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:17+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29195,11 +29195,11 @@
         "loc": 40,
         "sole_importer": "components/hero-section.tsx"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard React component decomposition for readability and separation of concerns",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:17+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29215,11 +29215,11 @@
         "loc": 35,
         "sole_importer": "scripts/migrate-to-payload.ts"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard component/module decomposition - single import is valid architecture",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:35+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -29235,11 +29235,11 @@
         "loc": 31,
         "sole_importer": "app/(site)/page.tsx"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard React component decomposition for readability and separation of concerns",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:17+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29255,11 +29255,11 @@
         "loc": 28,
         "sole_importer": "components/dashboard/ExcelImportCard.tsx"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard component/module decomposition - single import is valid architecture",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:35+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29275,11 +29275,11 @@
         "loc": 27,
         "sole_importer": "app/(site)/layout.tsx"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard React component decomposition for readability and separation of concerns",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:17+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -48329,11 +48329,11 @@
           "setTeamMembers"
         ]
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:22:33+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -57454,11 +57454,11 @@
           }
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Agent OS internal tooling - separate copy is intentional",
       "first_seen": "2026-02-18T08:36:20+00:00",
       "last_seen": "2026-02-18T09:31:10+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:20+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -57642,11 +57642,11 @@
           }
         ]
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:20+00:00",
       "last_seen": "2026-02-18T09:31:10+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:12+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -57689,11 +57689,11 @@
           }
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Semantically distinct audit log functions - similar structure but different event types",
       "first_seen": "2026-02-18T08:36:20+00:00",
       "last_seen": "2026-02-18T09:31:10+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:21+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -57736,11 +57736,11 @@
           }
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Repository migration - BlogRepository_new is an incremental replacement",
       "first_seen": "2026-02-18T08:36:20+00:00",
       "last_seen": "2026-02-18T09:31:10+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:21+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -58406,11 +58406,11 @@
           }
         ]
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T09:31:10+00:00",
       "last_seen": "2026-02-18T09:31:10+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:12+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -58853,11 +58853,11 @@
         "content": "            dangerouslySetInnerHTML={{ __html: post.content }}",
         "remediation": "Sanitize HTML with DOMPurify before using dangerouslySetInnerHTML"
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "CMS content from Payload - trusted source, standard rendering pattern",
       "first_seen": "2026-02-18T09:58:37+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:06+00:00",
       "reopen_count": 0,
       "zone": "production",
       "lang": "typescript"
@@ -58876,11 +58876,11 @@
         "content": "              dangerouslySetInnerHTML={{ __html: yacht.description }}",
         "remediation": "Sanitize HTML with DOMPurify before using dangerouslySetInnerHTML"
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "CMS content from Payload - trusted source, standard rendering pattern",
       "first_seen": "2026-02-18T09:58:37+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:06+00:00",
       "reopen_count": 0,
       "zone": "production",
       "lang": "typescript"
@@ -59087,10 +59087,10 @@
       }
     },
     "Code quality": {
-      "score": 72.7,
+      "score": 73.0,
       "strict": 72.6,
       "checks": 4007,
-      "issues": 1231,
+      "issues": 1219,
       "tier": 3,
       "detectors": {
         "unused": {
@@ -59101,9 +59101,9 @@
         },
         "logs": {
           "potential": 456,
-          "pass_rate": 0.9736842105263158,
-          "issues": 12,
-          "weighted_failures": 12.0
+          "pass_rate": 1.0,
+          "issues": 0,
+          "weighted_failures": 0.0
         },
         "exports": {
           "potential": 1096,
@@ -59189,17 +59189,17 @@
       }
     },
     "Security": {
-      "score": 99.8,
-      "strict": 99.8,
+      "score": 100.0,
+      "strict": 100.0,
       "checks": 893,
-      "issues": 2,
+      "issues": 0,
       "tier": 4,
       "detectors": {
         "security": {
           "potential": 456,
-          "pass_rate": 0.9969298245614036,
-          "issues": 2,
-          "weighted_failures": 1.4
+          "pass_rate": 1.0,
+          "issues": 0,
+          "weighted_failures": 0.0
         },
         "cycles": {
           "potential": 437,

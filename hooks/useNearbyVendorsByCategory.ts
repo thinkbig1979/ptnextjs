@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { VendorWithDistance, VendorForLocation } from '@/hooks/useLocationFilter';
+import { VendorWithDistance, VendorForLocation, getVendorLocations, NormalizedLocation } from '@/hooks/useLocationFilter';
 import type { Product, VendorCoordinates } from '@/lib/types';
 
 export interface UseNearbyVendorsByCategoryOptions {
@@ -226,46 +226,6 @@ export function useNearbyVendorsByCategory<T extends VendorForLocation>(
 }
 
 // Helper functions (copied from useLocationFilter for self-contained implementation)
-
-/**
- * Location type returned by getVendorLocations - normalized for internal use
- */
-interface NormalizedLocation {
-  id?: string;
-  city?: string;
-  country?: string;
-  latitude?: number;
-  longitude?: number;
-  isHQ?: boolean;
-}
-
-/**
- * Extracts all eligible locations for a vendor based on tier
- */
-function getVendorLocations(vendor: VendorForLocation): NormalizedLocation[] {
-  // Handle locations array (multi-location support)
-  if (vendor.locations && vendor.locations.length > 0) {
-    const tier = vendor.tier || 'free';
-
-    // Tier-based filtering
-    const eligibleLocations = vendor.locations.filter((loc) => {
-      // Must have valid coordinates
-      if (loc.latitude === undefined || loc.longitude === undefined) return false;
-
-      // Tier 0/1: Only HQ location
-      if (tier === 'free' || tier === 'tier1') {
-        return loc.isHQ === true;
-      }
-
-      // Tier 2+: All locations
-      return true;
-    });
-
-    return eligibleLocations;
-  }
-
-  return [];
-}
 
 /**
  * Calculates distance between two coordinates using Haversine formula

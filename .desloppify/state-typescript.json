@@ -3,36 +3,36 @@
   "created": "2026-02-18T08:35:46+00:00",
   "last_scan": "2026-02-18T09:59:37+00:00",
   "scan_count": 6,
-  "overall_score": 70.6,
-  "objective_score": 71.0,
+  "overall_score": 70.7,
+  "objective_score": 71.1,
   "strict_score": 70.6,
   "stats": {
     "total": 2743,
-    "open": 2604,
-    "fixed": 3,
+    "open": 2422,
+    "fixed": 5,
     "auto_resolved": 53,
-    "wontfix": 18,
-    "false_positive": 65,
+    "wontfix": 196,
+    "false_positive": 67,
     "by_tier": {
       "1": {
-        "open": 155,
+        "open": 0,
         "fixed": 0,
         "auto_resolved": 30,
-        "wontfix": 15,
+        "wontfix": 170,
         "false_positive": 4
       },
       "2": {
-        "open": 1166,
+        "open": 1163,
         "fixed": 0,
         "auto_resolved": 7,
-        "wontfix": 0,
-        "false_positive": 60
+        "wontfix": 1,
+        "false_positive": 62
       },
       "3": {
-        "open": 901,
-        "fixed": 3,
+        "open": 877,
+        "fixed": 5,
         "auto_resolved": 8,
-        "wontfix": 3,
+        "wontfix": 25,
         "false_positive": 1
       },
       "4": {
@@ -1076,11 +1076,11 @@
           376
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Migration script requires console output for user feedback during execution",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:08+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -1098,11 +1098,11 @@
           234
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Migration script requires console output for user feedback during execution",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:08+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -1122,11 +1122,11 @@
           513
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Migration script requires console output for user feedback during execution",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:08+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -1145,11 +1145,11 @@
           280
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Migration script requires console output for user feedback during execution",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:08+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -1168,11 +1168,11 @@
           323
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Migration script requires console output for user feedback during execution",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:08+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -1190,11 +1190,11 @@
           345
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Migration script requires console output for user feedback during execution",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:08+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -1212,11 +1212,11 @@
           355
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Migration script requires console output for user feedback during execution",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:08+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -1235,11 +1235,11 @@
           473
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Migration script requires console output for user feedback during execution",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:08+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -1257,11 +1257,11 @@
           480
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Migration script requires console output for user feedback during execution",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:08+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -1279,11 +1279,11 @@
           565
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Migration script requires console output for user feedback during execution",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:08+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -1301,11 +1301,11 @@
           567
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Migration script requires console output for user feedback during execution",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:08+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -1323,11 +1323,11 @@
           569
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Migration script requires console output for user feedback during execution",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:08+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -1346,11 +1346,11 @@
           121
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1368,11 +1368,11 @@
           87
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1391,11 +1391,11 @@
           16
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1417,11 +1417,11 @@
           84
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1446,11 +1446,11 @@
           271
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1487,11 +1487,11 @@
           382
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1524,11 +1524,11 @@
           247
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1555,11 +1555,11 @@
           333
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1580,11 +1580,11 @@
           426
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1606,11 +1606,11 @@
           671
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1629,11 +1629,11 @@
           98
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1656,11 +1656,11 @@
           451
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1679,11 +1679,11 @@
           363
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1703,11 +1703,11 @@
           112
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1727,11 +1727,11 @@
           143
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1754,11 +1754,11 @@
           196
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1777,11 +1777,11 @@
           229
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1805,11 +1805,11 @@
           315
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1828,11 +1828,11 @@
           344
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1854,11 +1854,11 @@
           122
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1880,11 +1880,11 @@
           202
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1903,11 +1903,11 @@
           243
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1926,11 +1926,11 @@
           292
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1950,11 +1950,11 @@
           335
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1974,11 +1974,11 @@
           373
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -1997,11 +1997,11 @@
           425
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2020,11 +2020,11 @@
           484
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2043,11 +2043,11 @@
           525
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2066,11 +2066,11 @@
           558
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2091,11 +2091,11 @@
           607
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2114,11 +2114,11 @@
           755
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2137,11 +2137,11 @@
           809
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2160,11 +2160,11 @@
           844
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2183,11 +2183,11 @@
           885
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2208,11 +2208,11 @@
           208
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2235,11 +2235,11 @@
           293
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2261,11 +2261,11 @@
           365
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2285,11 +2285,11 @@
           408
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2318,11 +2318,11 @@
           705
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2341,11 +2341,11 @@
           743
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2365,11 +2365,11 @@
           810
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2387,11 +2387,11 @@
           825
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2409,11 +2409,11 @@
           836
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2450,11 +2450,11 @@
           238
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2477,11 +2477,11 @@
           195
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2518,11 +2518,11 @@
           519
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2543,11 +2543,11 @@
           538
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2580,11 +2580,11 @@
           610
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2604,11 +2604,11 @@
           831
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2626,11 +2626,11 @@
           85
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2648,11 +2648,11 @@
           60
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2671,11 +2671,11 @@
           123
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2704,11 +2704,11 @@
           184
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2728,11 +2728,11 @@
           186
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2751,11 +2751,11 @@
           148
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2774,11 +2774,11 @@
           42
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2797,11 +2797,11 @@
           52
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2819,11 +2819,11 @@
           60
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2841,11 +2841,11 @@
           67
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2863,11 +2863,11 @@
           80
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2896,11 +2896,11 @@
           235
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2920,11 +2920,11 @@
           124
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2960,11 +2960,11 @@
           794
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -2983,11 +2983,11 @@
           434
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3007,11 +3007,11 @@
           520
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3041,11 +3041,11 @@
           255
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3082,11 +3082,11 @@
           282
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3104,11 +3104,11 @@
           275
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3127,11 +3127,11 @@
           23
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3150,11 +3150,11 @@
           53
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3175,11 +3175,11 @@
           81
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3200,11 +3200,11 @@
           112
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3223,11 +3223,11 @@
           131
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3247,11 +3247,11 @@
           150
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3278,11 +3278,11 @@
           555
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3302,11 +3302,11 @@
           401
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3330,11 +3330,11 @@
           563
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3359,11 +3359,11 @@
           570
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3391,11 +3391,11 @@
           587
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3414,11 +3414,11 @@
           265
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3443,11 +3443,11 @@
           594
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3475,11 +3475,11 @@
           604
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3505,11 +3505,11 @@
           616
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3530,11 +3530,11 @@
           358
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3555,11 +3555,11 @@
           366
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3580,11 +3580,11 @@
           372
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3603,11 +3603,11 @@
           374
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3626,11 +3626,11 @@
           421
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3650,11 +3650,11 @@
           434
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3673,11 +3673,11 @@
           453
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3696,11 +3696,11 @@
           442
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3718,11 +3718,11 @@
           446
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3741,11 +3741,11 @@
           537
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3764,11 +3764,11 @@
           619
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3804,11 +3804,11 @@
           179
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3840,11 +3840,11 @@
           366
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3863,11 +3863,11 @@
           77
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3885,11 +3885,11 @@
           73
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3907,11 +3907,11 @@
           486
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3930,11 +3930,11 @@
           353
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3953,11 +3953,11 @@
           396
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -3978,11 +3978,11 @@
           474
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4003,11 +4003,11 @@
           71
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4027,11 +4027,11 @@
           129
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4052,11 +4052,11 @@
           164
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4076,11 +4076,11 @@
           197
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4106,11 +4106,11 @@
           285
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4128,11 +4128,11 @@
           26
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4150,11 +4150,11 @@
           47
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4174,11 +4174,11 @@
           96
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4197,11 +4197,11 @@
           304
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4222,11 +4222,11 @@
           364
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4245,11 +4245,11 @@
           40
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4269,11 +4269,11 @@
           77
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4293,11 +4293,11 @@
           127
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4317,11 +4317,11 @@
           163
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4341,11 +4341,11 @@
           217
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4369,11 +4369,11 @@
           264
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4410,11 +4410,11 @@
           371
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4435,11 +4435,11 @@
           117
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4459,11 +4459,11 @@
           49
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4481,11 +4481,11 @@
           75
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4504,11 +4504,11 @@
           100
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4528,11 +4528,11 @@
           141
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4552,11 +4552,11 @@
           125
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4574,11 +4574,11 @@
           88
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4597,11 +4597,11 @@
           168
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4620,11 +4620,11 @@
           178
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4648,11 +4648,11 @@
           172
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4675,11 +4675,11 @@
           190
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4700,11 +4700,11 @@
           148
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4722,11 +4722,11 @@
           185
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4760,11 +4760,11 @@
           188
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4785,11 +4785,11 @@
           117
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4807,11 +4807,11 @@
           87
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4829,11 +4829,11 @@
           102
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4851,11 +4851,11 @@
           30
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4878,11 +4878,11 @@
           62
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4900,11 +4900,11 @@
           57
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4926,11 +4926,11 @@
           122
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4951,11 +4951,11 @@
           133
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4976,11 +4976,11 @@
           141
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -4998,11 +4998,11 @@
           152
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Test infrastructure logging - needed for debugging test runs",
       "first_seen": "2026-02-18T08:35:46+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -28895,11 +28895,11 @@
         "loc": 280,
         "sole_importer": "app/(site)/vendors/[slug]/page.tsx"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard component/module decomposition - single import is valid architecture",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:35+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -28915,11 +28915,11 @@
         "loc": 242,
         "sole_importer": "app/(site)/vendor/dashboard/data-management/page.tsx"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard React component decomposition for readability and separation of concerns",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:17+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -28935,11 +28935,11 @@
         "loc": 236,
         "sole_importer": "app/(site)/vendor/dashboard/products/page.tsx"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard React component decomposition for readability and separation of concerns",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:17+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -28955,11 +28955,11 @@
         "loc": 226,
         "sole_importer": "app/(site)/vendor/dashboard/page.tsx"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard React component decomposition for readability and separation of concerns",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:17+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -28975,11 +28975,11 @@
         "loc": 227,
         "sole_importer": "app/(site)/vendor/dashboard/subscription/page.tsx"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard React component decomposition for readability and separation of concerns",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:17+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -28995,11 +28995,11 @@
         "loc": 219,
         "sole_importer": "payload.config.ts"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard component/module decomposition - single import is valid architecture",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:35+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29015,11 +29015,11 @@
         "loc": 226,
         "sole_importer": "app/api/public/products/route.ts"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard component/module decomposition - single import is valid architecture",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:35+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29035,11 +29035,11 @@
         "loc": 218,
         "sole_importer": "app/(payload)/admin/importMap.ts"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard component/module decomposition - single import is valid architecture",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:35+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29055,11 +29055,11 @@
         "loc": 218,
         "sole_importer": "app/(site)/components/vendors-client.tsx"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard component/module decomposition - single import is valid architecture",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:35+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29075,11 +29075,11 @@
         "loc": 215,
         "sole_importer": "components/products/VendorsNearYou.tsx"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard component/module decomposition - single import is valid architecture",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:35+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29095,11 +29095,11 @@
         "loc": 212,
         "sole_importer": "scripts/run-blog-image-migration.ts"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard component/module decomposition - single import is valid architecture",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:35+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "generated"
@@ -29115,11 +29115,11 @@
         "loc": 202,
         "sole_importer": "components/navigation.tsx"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard component/module decomposition - single import is valid architecture",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:35+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29135,11 +29135,11 @@
         "loc": 45,
         "sole_importer": "app/(site)/custom-lighting/page.tsx"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard React component decomposition for readability and separation of concerns",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:17+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29155,11 +29155,11 @@
         "loc": 45,
         "sole_importer": "app/(site)/page.tsx"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard React component decomposition for readability and separation of concerns",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:17+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29175,11 +29175,11 @@
         "loc": 40,
         "sole_importer": "app/(site)/vendor/dashboard/subscription/page.tsx"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard React component decomposition for readability and separation of concerns",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:17+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29195,11 +29195,11 @@
         "loc": 40,
         "sole_importer": "components/hero-section.tsx"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard React component decomposition for readability and separation of concerns",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:17+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29215,11 +29215,11 @@
         "loc": 35,
         "sole_importer": "scripts/migrate-to-payload.ts"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard component/module decomposition - single import is valid architecture",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:35+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -29235,11 +29235,11 @@
         "loc": 31,
         "sole_importer": "app/(site)/page.tsx"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard React component decomposition for readability and separation of concerns",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:17+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29255,11 +29255,11 @@
         "loc": 28,
         "sole_importer": "components/dashboard/ExcelImportCard.tsx"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard component/module decomposition - single import is valid architecture",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:35+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -29275,11 +29275,11 @@
         "loc": 27,
         "sole_importer": "app/(site)/layout.tsx"
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Standard React component decomposition for readability and separation of concerns",
       "first_seen": "2026-02-18T08:36:14+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:17+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -57454,11 +57454,11 @@
           }
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Agent OS internal tooling - separate copy is intentional",
       "first_seen": "2026-02-18T08:36:20+00:00",
       "last_seen": "2026-02-18T09:31:10+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:20+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -57642,11 +57642,11 @@
           }
         ]
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:20+00:00",
       "last_seen": "2026-02-18T09:31:10+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:12+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -57689,11 +57689,11 @@
           }
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Semantically distinct audit log functions - similar structure but different event types",
       "first_seen": "2026-02-18T08:36:20+00:00",
       "last_seen": "2026-02-18T09:31:10+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:21+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -57736,11 +57736,11 @@
           }
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Repository migration - BlogRepository_new is an incremental replacement",
       "first_seen": "2026-02-18T08:36:20+00:00",
       "last_seen": "2026-02-18T09:31:10+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:21+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -58406,11 +58406,11 @@
           }
         ]
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T09:31:10+00:00",
       "last_seen": "2026-02-18T09:31:10+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:28:12+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -58853,11 +58853,11 @@
         "content": "            dangerouslySetInnerHTML={{ __html: post.content }}",
         "remediation": "Sanitize HTML with DOMPurify before using dangerouslySetInnerHTML"
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "CMS content from Payload - trusted source, standard rendering pattern",
       "first_seen": "2026-02-18T09:58:37+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:06+00:00",
       "reopen_count": 0,
       "zone": "production",
       "lang": "typescript"
@@ -58876,11 +58876,11 @@
         "content": "              dangerouslySetInnerHTML={{ __html: yacht.description }}",
         "remediation": "Sanitize HTML with DOMPurify before using dangerouslySetInnerHTML"
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "CMS content from Payload - trusted source, standard rendering pattern",
       "first_seen": "2026-02-18T09:58:37+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:26:06+00:00",
       "reopen_count": 0,
       "zone": "production",
       "lang": "typescript"
@@ -59087,10 +59087,10 @@
       }
     },
     "Code quality": {
-      "score": 72.7,
+      "score": 73.0,
       "strict": 72.6,
       "checks": 4007,
-      "issues": 1231,
+      "issues": 1219,
       "tier": 3,
       "detectors": {
         "unused": {
@@ -59101,9 +59101,9 @@
         },
         "logs": {
           "potential": 456,
-          "pass_rate": 0.9736842105263158,
-          "issues": 12,
-          "weighted_failures": 12.0
+          "pass_rate": 1.0,
+          "issues": 0,
+          "weighted_failures": 0.0
         },
         "exports": {
           "potential": 1096,
@@ -59189,17 +59189,17 @@
       }
     },
     "Security": {
-      "score": 99.8,
-      "strict": 99.8,
+      "score": 100.0,
+      "strict": 100.0,
       "checks": 893,
-      "issues": 2,
+      "issues": 0,
       "tier": 4,
       "detectors": {
         "security": {
           "potential": 456,
-          "pass_rate": 0.9969298245614036,
-          "issues": 2,
-          "weighted_failures": 1.4
+          "pass_rate": 1.0,
+          "issues": 0,
+          "weighted_failures": 0.0
         },
         "cycles": {
           "potential": 437,

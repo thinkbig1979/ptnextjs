@@ -18,7 +18,7 @@ export interface VendorForLocation {
 /**
  * Location type returned by getVendorLocations - normalized for internal use
  */
-interface NormalizedLocation {
+export interface NormalizedLocation {
   id?: string;
   city?: string;
   country?: string;
@@ -33,7 +33,7 @@ interface NormalizedLocation {
  * @param vendor - Vendor to get locations from
  * @returns Array of eligible location objects with coordinates
  */
-function getVendorLocations(vendor: VendorForLocation): NormalizedLocation[] {
+export function getVendorLocations(vendor: VendorForLocation): NormalizedLocation[] {
   // NEW: Handle locations array (multi-location support)
   if (vendor.locations && vendor.locations.length > 0) {
     const tier = vendor.tier || 'free';
