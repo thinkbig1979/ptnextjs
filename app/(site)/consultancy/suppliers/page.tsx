@@ -132,7 +132,6 @@ export default function ConsultancySuppliersPage() {
       <div className="container max-w-screen-xl">
         <Breadcrumbs items={[
           { label: 'Home', href: '/' },
-          { label: 'Consultancy', href: '/consultancy/suppliers' },
           { label: 'Vendor Suppliers', href: '/consultancy/suppliers' },
         ]} />
 

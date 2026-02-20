@@ -20,7 +20,7 @@ export default function Breadcrumbs({ items }: BreadcrumbsProps) {
           {items.map((item, index) => {
             const isLast = index === items.length - 1;
             return (
-              <li key={item.href} className="flex items-center gap-1.5">
+              <li key={`${index}-${item.href}`} className="flex items-center gap-1.5">
                 {index > 0 && (
                   <span aria-hidden="true" className="text-muted-foreground/50">/</span>
                 )}
