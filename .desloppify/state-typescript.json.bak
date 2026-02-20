@@ -59744,7 +59744,7 @@
     }
   ],
   "reminder_history": {
-    "report_scores": 6,
+    "report_scores": 7,
     "auto_fixers_available": 3,
     "dry_run_first": 3,
     "zone_classification": 3,

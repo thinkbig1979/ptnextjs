@@ -1,12 +1,12 @@
 {
   "assessments": {
-    "naming_quality": 80,
-    "error_consistency": 65,
-    "abstraction_fitness": 75,
-    "logic_clarity": 80,
-    "ai_generated_debt": 65,
-    "type_safety": 70,
-    "contract_coherence": 75
+    "naming_quality": 83,
+    "error_consistency": 72,
+    "abstraction_fitness": 82,
+    "logic_clarity": 83,
+    "ai_generated_debt": 75,
+    "type_safety": 72,
+    "contract_coherence": 80
   },
   "findings": []
 }

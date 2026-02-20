@@ -1,23 +1,44 @@
 {
   "version": 1,
   "created": "2026-02-18T08:35:46+00:00",
-  "last_scan": "2026-02-20T16:05:00+00:00",
-  "scan_count": 10,
-  "overall_score": 72.9,
+  "last_scan": "2026-02-20T16:08:05+00:00",
+  "scan_count": 11,
+  "overall_score": 78.1,
   "objective_score": 100.0,
-  "strict_score": 72.9,
+  "strict_score": 78.1,
   "stats": {
-    "total": 1,
-    "open": 1,
-    "fixed": 0,
-    "auto_resolved": 0,
+    "total": 2743,
+    "open": 832,
+    "fixed": 45,
+    "auto_resolved": 550,
     "wontfix": 0,
-    "false_positive": 0,
+    "false_positive": 1316,
     "by_tier": {
-      "4": {
-        "open": 1,
+      "1": {
+        "open": 0,
         "fixed": 0,
-        "auto_resolved": 0,
+        "auto_resolved": 200,
+        "wontfix": 0,
+        "false_positive": 4
+      },
+      "2": {
+        "open": 23,
+        "fixed": 2,
+        "auto_resolved": 50,
+        "wontfix": 0,
+        "false_positive": 1158
+      },
+      "3": {
+        "open": 429,
+        "fixed": 43,
+        "auto_resolved": 290,
+        "wontfix": 0,
+        "false_positive": 154
+      },
+      "4": {
+        "open": 380,
+        "fixed": 0,
+        "auto_resolved": 10,
         "wontfix": 0,
         "false_positive": 0
       }
@@ -40981,11 +41002,11 @@
           47
         ]
       },
-      "status": "wontfix",
-      "note": "JSX-heavy pages, static templates, and framework boilerplate - large functions are inherent to page components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:59:57+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -41005,11 +41026,11 @@
           91
         ]
       },
-      "status": "wontfix",
-      "note": "JSX-heavy pages, static templates, and framework boilerplate - large functions are inherent to page components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:59:57+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -41029,11 +41050,11 @@
           127
         ]
       },
-      "status": "wontfix",
-      "note": "JSX-heavy pages, static templates, and framework boilerplate - large functions are inherent to page components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:59:57+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -41053,11 +41074,11 @@
           15
         ]
       },
-      "status": "wontfix",
-      "note": "JSX-heavy pages, static templates, and framework boilerplate - large functions are inherent to page components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:59:57+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -41077,11 +41098,11 @@
           140
         ]
       },
-      "status": "wontfix",
-      "note": "JSX-heavy pages, static templates, and framework boilerplate - large functions are inherent to page components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:59:57+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -41101,11 +41122,11 @@
           22
         ]
       },
-      "status": "wontfix",
-      "note": "API route handlers, page components, data transformers, and form components with inherent domain complexity",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:04:00+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -41125,11 +41146,11 @@
           53
         ]
       },
-      "status": "wontfix",
-      "note": "API route handlers, page components, data transformers, and form components with inherent domain complexity",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:04:00+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -41149,11 +41170,11 @@
           39
         ]
       },
-      "status": "wontfix",
-      "note": "API route handlers, page components, data transformers, and form components with inherent domain complexity",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:04:00+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -41173,11 +41194,11 @@
           38
         ]
       },
-      "status": "wontfix",
-      "note": "API route handlers, page components, data transformers, and form components with inherent domain complexity",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:04:00+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -41197,11 +41218,11 @@
           148
         ]
       },
-      "status": "wontfix",
-      "note": "API route handlers, page components, data transformers, and form components with inherent domain complexity",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:04:00+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -41221,11 +41242,11 @@
           195
         ]
       },
-      "status": "wontfix",
-      "note": "API route handlers, page components, data transformers, and form components with inherent domain complexity",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:04:00+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -41246,11 +41267,11 @@
           381
         ]
       },
-      "status": "wontfix",
-      "note": "API route handlers, page components, data transformers, and form components with inherent domain complexity",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:04:00+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -41270,11 +41291,11 @@
           88
         ]
       },
-      "status": "wontfix",
-      "note": "API route handlers, page components, data transformers, and form components with inherent domain complexity",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:04:00+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -41294,11 +41315,11 @@
           113
         ]
       },
-      "status": "wontfix",
-      "note": "Test-only API routes - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:34+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -41318,11 +41339,11 @@
           79
         ]
       },
-      "status": "wontfix",
-      "note": "Test-only API routes - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:34+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -41342,11 +41363,11 @@
           68
         ]
       },
-      "status": "wontfix",
-      "note": "API route handlers, page components, data transformers, and form components with inherent domain complexity",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:04:00+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -41366,11 +41387,11 @@
           104
         ]
       },
-      "status": "wontfix",
-      "note": "API route handlers, page components, data transformers, and form components with inherent domain complexity",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:04:00+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -41390,11 +41411,11 @@
           29
         ]
       },
-      "status": "wontfix",
-      "note": "API route handlers, page components, data transformers, and form components with inherent domain complexity",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:04:00+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -41414,11 +41435,11 @@
           107
         ]
       },
-      "status": "wontfix",
-      "note": "API route handlers, page components, data transformers, and form components with inherent domain complexity",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:04:00+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -41438,11 +41459,11 @@
           40
         ]
       },
-      "status": "wontfix",
-      "note": "API route handlers, page components, data transformers, and form components with inherent domain complexity",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:04:00+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -41462,11 +41483,11 @@
           20
         ]
       },
-      "status": "wontfix",
-      "note": "JSX-heavy pages, static templates, and framework boilerplate - large functions are inherent to page components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:59:57+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -41486,11 +41507,11 @@
           106
         ]
       },
-      "status": "wontfix",
-      "note": "API route handlers, page components, data transformers, and form components with inherent domain complexity",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:04:00+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -41510,11 +41531,11 @@
           47
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -41534,11 +41555,11 @@
           88
         ]
       },
-      "status": "wontfix",
-      "note": "API route handlers, page components, data transformers, and form components with inherent domain complexity",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:04:00+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -41558,11 +41579,11 @@
           29
         ]
       },
-      "status": "wontfix",
-      "note": "API route handlers, page components, data transformers, and form components with inherent domain complexity",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:04:00+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -41582,11 +41603,11 @@
           170
         ]
       },
-      "status": "wontfix",
-      "note": "API route handlers, page components, data transformers, and form components with inherent domain complexity",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:04:00+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -41606,11 +41627,11 @@
           227
         ]
       },
-      "status": "wontfix",
-      "note": "API route handlers, page components, data transformers, and form components with inherent domain complexity",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:04:00+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -41630,11 +41651,11 @@
           47
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -41654,11 +41675,11 @@
           17
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -41678,11 +41699,11 @@
           43
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -41702,11 +41723,11 @@
           43
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -41726,11 +41747,11 @@
           35
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -41750,11 +41771,11 @@
           49
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -41774,11 +41795,11 @@
           15
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -41798,11 +41819,11 @@
           13
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -41822,11 +41843,11 @@
           13
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -41846,11 +41867,11 @@
           793
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -41870,11 +41891,11 @@
           239
         ]
       },
-      "status": "wontfix",
-      "note": "Safe defaults in transformers prevent runtime crashes on malformed data",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:39+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -41894,11 +41915,11 @@
           390
         ]
       },
-      "status": "wontfix",
-      "note": "Safe defaults in transformers prevent runtime crashes on malformed data",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:39+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -41918,11 +41939,11 @@
           479
         ]
       },
-      "status": "wontfix",
-      "note": "Safe defaults in transformers prevent runtime crashes on malformed data",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:39+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -41942,11 +41963,11 @@
           255
         ]
       },
-      "status": "wontfix",
-      "note": "Safe defaults in transformers prevent runtime crashes on malformed data",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:39+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -41966,11 +41987,11 @@
           63
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -41990,11 +42011,11 @@
           91
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -42017,11 +42038,11 @@
           80
         ]
       },
-      "status": "wontfix",
-      "note": "Hardcoded URLs in form placeholders and component examples - appropriate for UI components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:00:51+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -42045,11 +42066,11 @@
           498
         ]
       },
-      "status": "wontfix",
-      "note": "Hardcoded URLs in form placeholders and component examples - appropriate for UI components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:00:51+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -42069,11 +42090,11 @@
           632
         ]
       },
-      "status": "wontfix",
-      "note": "Hardcoded URLs in form placeholders and component examples - appropriate for UI components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:00:51+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -42094,11 +42115,11 @@
           640
         ]
       },
-      "status": "wontfix",
-      "note": "Hardcoded URLs in form placeholders and component examples - appropriate for UI components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:00:51+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -42119,11 +42140,11 @@
           548
         ]
       },
-      "status": "wontfix",
-      "note": "Hardcoded URLs in form placeholders and component examples - appropriate for UI components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:00:51+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -42144,11 +42165,11 @@
           29
         ]
       },
-      "status": "wontfix",
-      "note": "JSX-heavy pages, static templates, and framework boilerplate - large functions are inherent to page components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:59:57+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -42168,11 +42189,11 @@
           76
         ]
       },
-      "status": "wontfix",
-      "note": "Hardcoded URLs in form placeholders and component examples - appropriate for UI components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:00:51+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -42192,11 +42213,11 @@
           243
         ]
       },
-      "status": "wontfix",
-      "note": "Hardcoded URLs in form placeholders and component examples - appropriate for UI components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:00:51+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -42216,11 +42237,11 @@
           642
         ]
       },
-      "status": "wontfix",
-      "note": "Hardcoded URLs in form placeholders and component examples - appropriate for UI components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:00:51+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -42240,11 +42261,11 @@
           266
         ]
       },
-      "status": "wontfix",
-      "note": "Hardcoded URLs in form placeholders and component examples - appropriate for UI components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:00:51+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -42264,11 +42285,11 @@
           184
         ]
       },
-      "status": "wontfix",
-      "note": "Hardcoded URLs in form placeholders and component examples - appropriate for UI components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:00:51+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -42289,11 +42310,11 @@
           74
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -42314,11 +42335,11 @@
           48
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -42341,11 +42362,11 @@
           84
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -42365,11 +42386,11 @@
           55
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -42416,11 +42437,11 @@
           232
         ]
       },
-      "status": "wontfix",
-      "note": "Hardcoded URLs in form placeholders and component examples - appropriate for UI components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:00:51+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -42473,11 +42494,11 @@
           32
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -42497,11 +42518,11 @@
           20
         ]
       },
-      "status": "wontfix",
-      "note": "JSX-heavy pages, static templates, and framework boilerplate - large functions are inherent to page components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:59:57+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -42526,11 +42547,11 @@
           151
         ]
       },
-      "status": "wontfix",
-      "note": "Payload CMS dynamic data requires any types at interop boundaries - dedicated type safety pass needed",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:55+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -42550,11 +42571,11 @@
           76
         ]
       },
-      "status": "wontfix",
-      "note": "Payload CMS dynamic data requires any types at interop boundaries - dedicated type safety pass needed",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:55+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -42574,11 +42595,11 @@
           29
         ]
       },
-      "status": "wontfix",
-      "note": "Payload CMS dynamic data requires any types at interop boundaries - dedicated type safety pass needed",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:55+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -42600,11 +42621,11 @@
           108
         ]
       },
-      "status": "wontfix",
-      "note": "Payload CMS dynamic data requires any types at interop boundaries - dedicated type safety pass needed",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:55+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -42625,11 +42646,11 @@
           14
         ]
       },
-      "status": "wontfix",
-      "note": "Payload CMS dynamic data requires any types at interop boundaries - dedicated type safety pass needed",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:55+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -42655,11 +42676,11 @@
           382
         ]
       },
-      "status": "wontfix",
-      "note": "JSX-heavy pages, static templates, and framework boilerplate - large functions are inherent to page components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:59:57+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -42679,11 +42700,11 @@
           40
         ]
       },
-      "status": "wontfix",
-      "note": "Payload CMS dynamic data requires any types at interop boundaries - dedicated type safety pass needed",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:55+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -42703,11 +42724,11 @@
           40
         ]
       },
-      "status": "wontfix",
-      "note": "Payload CMS dynamic data requires any types at interop boundaries - dedicated type safety pass needed",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:55+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -42727,11 +42748,11 @@
           39
         ]
       },
-      "status": "wontfix",
-      "note": "Payload CMS dynamic data requires any types at interop boundaries - dedicated type safety pass needed",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:55+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -42753,11 +42774,11 @@
           12
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -42780,11 +42801,11 @@
           44
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -42805,11 +42826,11 @@
           425
         ]
       },
-      "status": "wontfix",
-      "note": "Payload CMS dynamic data requires any types at interop boundaries - dedicated type safety pass needed",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:55+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -42832,11 +42853,11 @@
           433
         ]
       },
-      "status": "wontfix",
-      "note": "Payload CMS dynamic data requires any types at interop boundaries - dedicated type safety pass needed",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:55+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -42860,11 +42881,11 @@
           17
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -42884,11 +42905,11 @@
           9
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -42934,11 +42955,11 @@
           27
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -42958,11 +42979,11 @@
           22
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -42982,11 +43003,11 @@
           9
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -43008,11 +43029,11 @@
           364
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -43032,11 +43053,11 @@
           69
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional error handling - components show toasts, API routes return error responses",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -43056,11 +43077,11 @@
           198
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional error handling - components show toasts, API routes return error responses",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -43080,11 +43101,11 @@
           56
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional error handling - components show toasts, API routes return error responses",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -43104,11 +43125,11 @@
           74
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional error handling - components show toasts, API routes return error responses",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -43132,11 +43153,11 @@
           174
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional error handling - components show toasts, API routes return error responses",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -43156,11 +43177,11 @@
           510
         ]
       },
-      "status": "wontfix",
-      "note": "JSX-heavy pages, static templates, and framework boilerplate - large functions are inherent to page components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:59:57+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -43180,11 +43201,11 @@
           73
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional error handling - components show toasts, API routes return error responses",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -43204,11 +43225,11 @@
           137
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional error handling - components show toasts, API routes return error responses",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -43230,11 +43251,11 @@
           401
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional error handling - components show toasts, API routes return error responses",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -43255,11 +43276,11 @@
           362
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional error handling - components show toasts, API routes return error responses",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -43283,11 +43304,11 @@
           554
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional error handling - components show toasts, API routes return error responses",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -43308,11 +43329,11 @@
           198
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional error handling - components show toasts, API routes return error responses",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -43333,11 +43354,11 @@
           315
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional error handling - components show toasts, API routes return error responses",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -43357,11 +43378,11 @@
           169
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional error handling - components show toasts, API routes return error responses",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -43381,11 +43402,11 @@
           98
         ]
       },
-      "status": "wontfix",
-      "note": "Test-only API routes - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:34+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -43406,11 +43427,11 @@
           237
         ]
       },
-      "status": "wontfix",
-      "note": "Test-only API routes - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:34+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -43431,11 +43452,11 @@
           238
         ]
       },
-      "status": "wontfix",
-      "note": "Test-only API routes - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:34+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -43455,11 +43476,11 @@
           127
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional error handling - components show toasts, API routes return error responses",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -43480,11 +43501,11 @@
           116
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional error handling - components show toasts, API routes return error responses",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -43505,11 +43526,11 @@
           318
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional error handling - components show toasts, API routes return error responses",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -43529,11 +43550,11 @@
           154
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional error handling - components show toasts, API routes return error responses",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -43553,11 +43574,11 @@
           211
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional error handling - components show toasts, API routes return error responses",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -43579,11 +43600,11 @@
           377
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional error handling - components show toasts, API routes return error responses",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -43603,11 +43624,11 @@
           116
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional error handling - components show toasts, API routes return error responses",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -43627,11 +43648,11 @@
           160
         ]
       },
-      "status": "wontfix",
-      "note": "Payload CMS type casting at API/CMS boundaries - framework limitation",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:55+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -43651,11 +43672,11 @@
           20
         ]
       },
-      "status": "wontfix",
-      "note": "Payload CMS type casting at API/CMS boundaries - framework limitation",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:55+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -43676,11 +43697,11 @@
           476
         ]
       },
-      "status": "wontfix",
-      "note": "Payload CMS type casting at API/CMS boundaries - framework limitation",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:55+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -43700,11 +43721,11 @@
           302
         ]
       },
-      "status": "wontfix",
-      "note": "Payload CMS type casting at API/CMS boundaries - framework limitation",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:55+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -43724,11 +43745,11 @@
           36
         ]
       },
-      "status": "wontfix",
-      "note": "Payload CMS type casting at API/CMS boundaries - framework limitation",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:55+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -43748,11 +43769,11 @@
           73
         ]
       },
-      "status": "wontfix",
-      "note": "Payload CMS type casting at API/CMS boundaries - framework limitation",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:55+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -43772,11 +43793,11 @@
           9
         ]
       },
-      "status": "wontfix",
-      "note": "Payload CMS type casting at API/CMS boundaries - framework limitation",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:55+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -43796,11 +43817,11 @@
           383
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -43823,11 +43844,11 @@
           65
         ]
       },
-      "status": "wontfix",
-      "note": "Payload CMS type casting at API/CMS boundaries - framework limitation",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:55+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -43847,11 +43868,11 @@
           218
         ]
       },
-      "status": "wontfix",
-      "note": "Payload CMS type casting at API/CMS boundaries - framework limitation",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:55+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -43871,11 +43892,11 @@
           193
         ]
       },
-      "status": "wontfix",
-      "note": "Payload CMS type casting at API/CMS boundaries - framework limitation",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:55+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -43921,11 +43942,11 @@
           515
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -43945,11 +43966,11 @@
           38
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -43971,11 +43992,11 @@
           172
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -43996,11 +44017,11 @@
           199
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -44023,11 +44044,11 @@
           514
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -44047,11 +44068,11 @@
           474
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -44080,11 +44101,11 @@
           504
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -44106,11 +44127,11 @@
           155
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -44130,11 +44151,11 @@
           20
         ]
       },
-      "status": "wontfix",
-      "note": "JSX-heavy pages, static templates, and framework boilerplate - large functions are inherent to page components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:59:57+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -44155,11 +44176,11 @@
           189
         ]
       },
-      "status": "wontfix",
-      "note": "Next.js route handlers require async per framework, wrapper functions delegate to async services",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -44179,11 +44200,11 @@
           55
         ]
       },
-      "status": "wontfix",
-      "note": "Next.js route handlers require async per framework, wrapper functions delegate to async services",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -44203,11 +44224,11 @@
           55
         ]
       },
-      "status": "wontfix",
-      "note": "Next.js route handlers require async per framework, wrapper functions delegate to async services",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -44227,11 +44248,11 @@
           8
         ]
       },
-      "status": "wontfix",
-      "note": "Next.js route handlers require async per framework, wrapper functions delegate to async services",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -44251,11 +44272,11 @@
           8
         ]
       },
-      "status": "wontfix",
-      "note": "Next.js route handlers require async per framework, wrapper functions delegate to async services",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -44275,11 +44296,11 @@
           35
         ]
       },
-      "status": "wontfix",
-      "note": "Next.js route handlers require async per framework, wrapper functions delegate to async services",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -44299,11 +44320,11 @@
           10
         ]
       },
-      "status": "wontfix",
-      "note": "Next.js route handlers require async per framework, wrapper functions delegate to async services",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -44323,11 +44344,11 @@
           19
         ]
       },
-      "status": "wontfix",
-      "note": "Next.js route handlers require async per framework, wrapper functions delegate to async services",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -44348,11 +44369,11 @@
           41
         ]
       },
-      "status": "wontfix",
-      "note": "Next.js route handlers require async per framework, wrapper functions delegate to async services",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -44372,11 +44393,11 @@
           10
         ]
       },
-      "status": "wontfix",
-      "note": "Next.js route handlers require async per framework, wrapper functions delegate to async services",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -44396,11 +44417,11 @@
           14
         ]
       },
-      "status": "wontfix",
-      "note": "Next.js route handlers require async per framework, wrapper functions delegate to async services",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -44420,11 +44441,11 @@
           78
         ]
       },
-      "status": "wontfix",
-      "note": "Next.js route handlers require async per framework, wrapper functions delegate to async services",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -44444,11 +44465,11 @@
           19
         ]
       },
-      "status": "wontfix",
-      "note": "Next.js route handlers require async per framework, wrapper functions delegate to async services",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -44469,11 +44490,11 @@
           119
         ]
       },
-      "status": "wontfix",
-      "note": "Next.js route handlers require async per framework, wrapper functions delegate to async services",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -44493,11 +44514,11 @@
           70
         ]
       },
-      "status": "wontfix",
-      "note": "Next.js route handlers require async per framework, wrapper functions delegate to async services",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -44518,11 +44539,11 @@
           169
         ]
       },
-      "status": "wontfix",
-      "note": "Next.js route handlers require async per framework, wrapper functions delegate to async services",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -44543,11 +44564,11 @@
           118
         ]
       },
-      "status": "wontfix",
-      "note": "Next.js route handlers require async per framework, wrapper functions delegate to async services",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -44567,11 +44588,11 @@
           24
         ]
       },
-      "status": "wontfix",
-      "note": "Next.js route handlers require async per framework, wrapper functions delegate to async services",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -44592,11 +44613,11 @@
           126
         ]
       },
-      "status": "wontfix",
-      "note": "Next.js route handlers require async per framework, wrapper functions delegate to async services",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -44617,11 +44638,11 @@
           160
         ]
       },
-      "status": "wontfix",
-      "note": "Test-only API routes - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:34+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -44641,11 +44662,11 @@
           13
         ]
       },
-      "status": "wontfix",
-      "note": "Test-only API routes - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:34+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -44665,11 +44686,11 @@
           16
         ]
       },
-      "status": "wontfix",
-      "note": "Next.js route handlers require async per framework, wrapper functions delegate to async services",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -44689,11 +44710,11 @@
           93
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -44713,11 +44734,11 @@
           804
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -44738,11 +44759,11 @@
           219
         ]
       },
-      "status": "wontfix",
-      "note": "Next.js route handlers require async per framework, wrapper functions delegate to async services",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -44762,11 +44783,11 @@
           59
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -44786,11 +44807,11 @@
           155
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -44835,11 +44856,11 @@
           106
         ]
       },
-      "status": "wontfix",
-      "note": "Next.js route handlers require async per framework, wrapper functions delegate to async services",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -44861,11 +44882,11 @@
           406
         ]
       },
-      "status": "wontfix",
-      "note": "Next.js route handlers require async per framework, wrapper functions delegate to async services",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -44885,11 +44906,11 @@
           62
         ]
       },
-      "status": "wontfix",
-      "note": "Next.js route handlers require async per framework, wrapper functions delegate to async services",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -44909,11 +44930,11 @@
           35
         ]
       },
-      "status": "wontfix",
-      "note": "Next.js route handlers require async per framework, wrapper functions delegate to async services",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -44933,11 +44954,11 @@
           331
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -44957,11 +44978,11 @@
           81
         ]
       },
-      "status": "wontfix",
-      "note": "Next.js route handlers require async per framework, wrapper functions delegate to async services",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -44981,11 +45002,11 @@
           18
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -45006,11 +45027,11 @@
           177
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -45030,11 +45051,11 @@
           31
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -45054,11 +45075,11 @@
           54
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional graceful degradation in UI components and CMS hooks",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -45079,11 +45100,11 @@
           173
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional graceful degradation in UI components and CMS hooks",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -45103,11 +45124,11 @@
           56
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional graceful degradation in UI components and CMS hooks",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -45130,11 +45151,11 @@
           220
         ]
       },
-      "status": "wontfix",
-      "note": "Test-only API routes - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:34+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -45154,11 +45175,11 @@
           236
         ]
       },
-      "status": "wontfix",
-      "note": "Test-only API routes - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:34+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -45178,11 +45199,11 @@
           237
         ]
       },
-      "status": "wontfix",
-      "note": "Test-only API routes - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:34+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -45203,11 +45224,11 @@
           55
         ]
       },
-      "status": "wontfix",
-      "note": "JSX-heavy pages, static templates, and framework boilerplate - large functions are inherent to page components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:59:57+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -45227,11 +45248,11 @@
           47
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional graceful degradation in UI components and CMS hooks",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -45253,11 +45274,11 @@
           89
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional graceful degradation in UI components and CMS hooks",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -45278,11 +45299,11 @@
           204
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional graceful degradation in UI components and CMS hooks",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -45302,11 +45323,11 @@
           219
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional graceful degradation in UI components and CMS hooks",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -45326,11 +45347,11 @@
           68
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional graceful degradation in UI components and CMS hooks",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -45354,11 +45375,11 @@
           480
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional graceful degradation in UI components and CMS hooks",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -45381,11 +45402,11 @@
           209
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional graceful degradation in UI components and CMS hooks",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:39+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -45405,11 +45426,11 @@
           174
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional graceful degradation in UI components and CMS hooks",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:39+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -45429,11 +45450,11 @@
           237
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional graceful degradation in UI components and CMS hooks",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:39+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -45453,11 +45474,11 @@
           29
         ]
       },
-      "status": "wontfix",
-      "note": "JSX-heavy pages, static templates, and framework boilerplate - large functions are inherent to page components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:59:57+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -45477,11 +45498,11 @@
           216
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -45501,11 +45522,11 @@
           128
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -45525,11 +45546,11 @@
           87
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -45549,11 +45570,11 @@
           794
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -45574,11 +45595,11 @@
           54
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -45598,11 +45619,11 @@
           246
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -45626,11 +45647,11 @@
           294
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -45654,11 +45675,11 @@
           311
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -45678,11 +45699,11 @@
           334
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -45703,11 +45724,11 @@
           358
         ]
       },
-      "status": "wontfix",
-      "note": "Hardcoded colors in chart/map components - appropriate for data visualization",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:00+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -45727,11 +45748,11 @@
           80
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -45752,11 +45773,11 @@
           24
         ]
       },
-      "status": "wontfix",
-      "note": "Hardcoded colors in chart/map components - appropriate for data visualization",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:00+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -45776,11 +45797,11 @@
           668
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:03+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -45800,11 +45821,11 @@
           209
         ]
       },
-      "status": "wontfix",
-      "note": "JSX-heavy pages, static templates, and framework boilerplate - large functions are inherent to page components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:59:57+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -45833,11 +45854,11 @@
           124
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -45858,11 +45879,11 @@
           26
         ]
       },
-      "status": "wontfix",
-      "note": "JSX-heavy pages, static templates, and framework boilerplate - large functions are inherent to page components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:59:57+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -45882,11 +45903,11 @@
           411
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -45907,11 +45928,11 @@
           203
         ]
       },
-      "status": "wontfix",
-      "note": "Payload CMS dynamic typing requires occasional ts-ignore",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:39+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -45940,11 +45961,11 @@
           1404
         ]
       },
-      "status": "wontfix",
-      "note": "Payload CMS dynamic typing requires occasional ts-ignore",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:39+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -45965,11 +45986,11 @@
           294
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -46062,11 +46083,11 @@
           325
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -46086,11 +46107,11 @@
           29
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -46110,11 +46131,11 @@
           176
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -46134,11 +46155,11 @@
           711
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -46161,11 +46182,11 @@
           182
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -46185,11 +46206,11 @@
           209
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -46210,11 +46231,11 @@
           146
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -46258,11 +46279,11 @@
           107
         ]
       },
-      "status": "wontfix",
-      "note": "sort() on string arrays uses default lexicographic comparison which is correct",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:02:27+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -46282,11 +46303,11 @@
           186
         ]
       },
-      "status": "wontfix",
-      "note": "sort() on string arrays uses default lexicographic comparison which is correct",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:02:27+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -46307,11 +46328,11 @@
           90
         ]
       },
-      "status": "wontfix",
-      "note": "sort() on string arrays uses default lexicographic comparison which is correct",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:02:27+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -46331,11 +46352,11 @@
           116
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -46355,11 +46376,11 @@
           277
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -46403,11 +46424,11 @@
           99
         ]
       },
-      "status": "wontfix",
-      "note": "HTTP status codes, file size limits, timeout values are standard constants",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -46427,11 +46448,11 @@
           10
         ]
       },
-      "status": "wontfix",
-      "note": "HTTP status codes, file size limits, timeout values are standard constants",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -46451,11 +46472,11 @@
           9
         ]
       },
-      "status": "wontfix",
-      "note": "HTTP status codes, file size limits, timeout values are standard constants",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -46475,11 +46496,11 @@
           438
         ]
       },
-      "status": "wontfix",
-      "note": "HTTP status codes, file size limits, timeout values are standard constants",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -46499,11 +46520,11 @@
           167
         ]
       },
-      "status": "wontfix",
-      "note": "HTTP status codes, file size limits, timeout values are standard constants",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -46523,11 +46544,11 @@
           30
         ]
       },
-      "status": "wontfix",
-      "note": "HTTP status codes, file size limits, timeout values are standard constants",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -46547,11 +46568,11 @@
           119
         ]
       },
-      "status": "wontfix",
-      "note": "HTTP status codes, file size limits, timeout values are standard constants",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -46571,11 +46592,11 @@
           14
         ]
       },
-      "status": "wontfix",
-      "note": "HTTP status codes, file size limits, timeout values are standard constants",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -46599,11 +46620,11 @@
           533
         ]
       },
-      "status": "wontfix",
-      "note": "HTTP status codes, file size limits, timeout values are standard constants",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -46626,11 +46647,11 @@
           623
         ]
       },
-      "status": "wontfix",
-      "note": "HTTP status codes, file size limits, timeout values are standard constants",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -46651,11 +46672,11 @@
           36
         ]
       },
-      "status": "wontfix",
-      "note": "HTTP status codes, file size limits, timeout values are standard constants",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -46675,11 +46696,11 @@
           33
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -46723,11 +46744,11 @@
           18
         ]
       },
-      "status": "wontfix",
-      "note": "HTTP status codes, file size limits, timeout values are standard constants",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -46747,11 +46768,11 @@
           55
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -46773,11 +46794,11 @@
           76
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -46797,11 +46818,11 @@
           415
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -46821,11 +46842,11 @@
           293
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -46845,11 +46866,11 @@
           126
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -46871,11 +46892,11 @@
           23
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -46896,11 +46917,11 @@
           73
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -46925,11 +46946,11 @@
           401
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -46950,11 +46971,11 @@
           225
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -46975,11 +46996,11 @@
           200
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -47000,11 +47021,11 @@
           496
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -47024,11 +47045,11 @@
           20
         ]
       },
-      "status": "wontfix",
-      "note": "HTTP status codes, file size limits, timeout values are standard constants",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -47048,11 +47069,11 @@
           71
         ]
       },
-      "status": "wontfix",
-      "note": "Debug tags in notification API routes - structured logging prefixes are intentional",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:00+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -47072,11 +47093,11 @@
           52
         ]
       },
-      "status": "wontfix",
-      "note": "Debug tags in notification API routes - structured logging prefixes are intentional",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:00+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -47096,11 +47117,11 @@
           66
         ]
       },
-      "status": "wontfix",
-      "note": "Debug tags in notification API routes - structured logging prefixes are intentional",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:00+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -47128,11 +47149,11 @@
           569
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -47161,11 +47182,11 @@
           459
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -47185,11 +47206,11 @@
           65
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -47211,11 +47232,11 @@
           52
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -47238,11 +47259,11 @@
           434
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -47262,11 +47283,11 @@
           275
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -47294,11 +47315,11 @@
           76
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -47327,11 +47348,11 @@
           177
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -47425,11 +47446,11 @@
           636
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -47451,11 +47472,11 @@
           432
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -47499,11 +47520,11 @@
           626
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -47523,11 +47544,11 @@
           426
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -47547,11 +47568,11 @@
           76
         ]
       },
-      "status": "wontfix",
-      "note": "TODOs are tracked in issue tracker, not actionable as code smells",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:00+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -47571,11 +47592,11 @@
           119
         ]
       },
-      "status": "wontfix",
-      "note": "TODOs are tracked in issue tracker, not actionable as code smells",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:00+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -47595,11 +47616,11 @@
           315
         ]
       },
-      "status": "wontfix",
-      "note": "TODOs are tracked in issue tracker, not actionable as code smells",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:00+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -47626,11 +47647,11 @@
           336
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -47650,11 +47671,11 @@
           121
         ]
       },
-      "status": "wontfix",
-      "note": "TODOs are tracked in issue tracker, not actionable as code smells",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:00+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -47674,11 +47695,11 @@
           75
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -47698,11 +47719,11 @@
           225
         ]
       },
-      "status": "wontfix",
-      "note": "Switch covers all ImportStatus cases exhaustively",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:03:24+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -47722,11 +47743,11 @@
           52
         ]
       },
-      "status": "wontfix",
-      "note": "Switch handles all known cases for validation types - default case not needed",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:02:27+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -47746,11 +47767,11 @@
           391
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -47770,11 +47791,11 @@
           254
         ]
       },
-      "status": "wontfix",
-      "note": "Switch handles all known cases for validation types - default case not needed",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:02:27+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -47794,11 +47815,11 @@
           75
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -47818,11 +47839,11 @@
           179
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "script"
@@ -47842,11 +47863,11 @@
           30
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -47866,11 +47887,11 @@
           34
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -47939,11 +47960,11 @@
           }
         ]
       },
-      "status": "wontfix",
-      "note": "Payload CMS type variance - framework limitation",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:02:01+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -48001,11 +48022,11 @@
           }
         ]
       },
-      "status": "wontfix",
-      "note": "Payload CMS type variance - framework limitation",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:02:01+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -48052,11 +48073,11 @@
           }
         ]
       },
-      "status": "wontfix",
-      "note": "Test files, seed scripts, and agent-os tooling - large functions expected",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:58:04+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "test"
@@ -48111,11 +48132,11 @@
           }
         ]
       },
-      "status": "wontfix",
-      "note": "Payload CMS type variance - framework limitation",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:02:01+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -48176,11 +48197,11 @@
           }
         ]
       },
-      "status": "wontfix",
-      "note": "Payload CMS type variance - framework limitation",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:02:01+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -57976,11 +57997,11 @@
           18
         ]
       },
-      "status": "wontfix",
-      "note": "JSX-heavy pages, static templates, and framework boilerplate - large functions are inherent to page components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T09:31:09+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:59:57+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -58001,11 +58022,11 @@
           48
         ]
       },
-      "status": "wontfix",
-      "note": "JSX-heavy pages, static templates, and framework boilerplate - large functions are inherent to page components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T09:31:09+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:59:57+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -58025,11 +58046,11 @@
           20
         ]
       },
-      "status": "wontfix",
-      "note": "JSX-heavy pages, static templates, and framework boilerplate - large functions are inherent to page components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T09:31:09+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:59:57+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -58049,11 +58070,11 @@
           29
         ]
       },
-      "status": "wontfix",
-      "note": "JSX-heavy pages, static templates, and framework boilerplate - large functions are inherent to page components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T09:31:09+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:59:57+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -58074,11 +58095,11 @@
           39
         ]
       },
-      "status": "wontfix",
-      "note": "JSX-heavy pages, static templates, and framework boilerplate - large functions are inherent to page components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T09:31:09+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:59:57+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -58098,11 +58119,11 @@
           21
         ]
       },
-      "status": "wontfix",
-      "note": "JSX-heavy pages, static templates, and framework boilerplate - large functions are inherent to page components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T09:31:09+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:59:57+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -58122,11 +58143,11 @@
           63
         ]
       },
-      "status": "wontfix",
-      "note": "JSX-heavy pages, static templates, and framework boilerplate - large functions are inherent to page components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T09:31:09+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:59:57+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -58146,11 +58167,11 @@
           16
         ]
       },
-      "status": "wontfix",
-      "note": "JSX-heavy pages, static templates, and framework boilerplate - large functions are inherent to page components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T09:31:09+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:59:57+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -58171,11 +58192,11 @@
           154
         ]
       },
-      "status": "wontfix",
-      "note": "Hardcoded URLs in form placeholders and component examples - appropriate for UI components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T09:31:09+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:00:51+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -58195,11 +58216,11 @@
           110
         ]
       },
-      "status": "wontfix",
-      "note": "JSX-heavy pages, static templates, and framework boilerplate - large functions are inherent to page components",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T09:31:09+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T15:59:57+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -58219,11 +58240,11 @@
           28
         ]
       },
-      "status": "wontfix",
-      "note": "HTTP status codes, file size limits, timeout values are standard constants",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T09:31:09+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -58275,11 +58296,11 @@
           }
         ]
       },
-      "status": "wontfix",
-      "note": "Payload CMS type variance - framework limitation",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T09:31:09+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:02:01+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -58713,11 +58734,11 @@
           266
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional error handling - components show toasts, API routes return error responses",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T09:58:36+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -58737,11 +58758,11 @@
           161
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional error handling - components show toasts, API routes return error responses",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T09:58:36+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -58761,11 +58782,11 @@
           121
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional error handling - components show toasts, API routes return error responses",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T09:58:36+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -58785,11 +58806,11 @@
           166
         ]
       },
-      "status": "wontfix",
-      "note": "Intentional error handling - components show toasts, API routes return error responses",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T09:58:36+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:38+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -58809,11 +58830,11 @@
           111
         ]
       },
-      "status": "wontfix",
-      "note": "TODOs are tracked in issue tracker, not actionable as code smells",
+      "status": "auto_resolved",
+      "note": "Fixed despite wontfix \u2014 disappeared from scan (was wontfix)",
       "first_seen": "2026-02-18T09:58:36+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": "2026-02-20T16:01:00+00:00",
+      "resolved_at": "2026-02-20T16:08:05+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -58947,39 +58968,39 @@
   },
   "subjective_assessments": {
     "naming_quality": {
-      "score": 80,
+      "score": 83,
       "source": "per_file",
-      "assessed_at": "2026-02-20T15:22:45+00:00"
+      "assessed_at": "2026-02-20T16:08:05+00:00"
     },
     "error_consistency": {
-      "score": 65,
+      "score": 72,
       "source": "per_file",
-      "assessed_at": "2026-02-20T15:22:45+00:00"
+      "assessed_at": "2026-02-20T16:08:05+00:00"
     },
     "abstraction_fitness": {
-      "score": 75,
+      "score": 82,
       "source": "per_file",
-      "assessed_at": "2026-02-20T15:22:45+00:00"
+      "assessed_at": "2026-02-20T16:08:05+00:00"
     },
     "logic_clarity": {
-      "score": 80,
+      "score": 83,
       "source": "per_file",
-      "assessed_at": "2026-02-20T15:22:45+00:00"
+      "assessed_at": "2026-02-20T16:08:05+00:00"
     },
     "ai_generated_debt": {
-      "score": 65,
-      "source": "per_file",
-      "assessed_at": "2026-02-20T15:22:45+00:00"
-    },
-    "type_safety": {
-      "score": 70,
-      "source": "per_file",
-      "assessed_at": "2026-02-20T15:22:45+00:00"
-    },
-    "contract_coherence": {
       "score": 75,
       "source": "per_file",
-      "assessed_at": "2026-02-20T15:22:45+00:00"
+      "assessed_at": "2026-02-20T16:08:05+00:00"
+    },
+    "type_safety": {
+      "score": 72,
+      "source": "per_file",
+      "assessed_at": "2026-02-20T16:08:05+00:00"
+    },
+    "contract_coherence": {
+      "score": 80,
+      "source": "per_file",
+      "assessed_at": "2026-02-20T16:08:05+00:00"
     }
   },
   "lang_capabilities": {
@@ -59019,7 +59040,8 @@
       "react": 0,
       "security": 0,
       "subjective_review": 0,
-      "dupes": 0
+      "dupes": 0,
+      "review": 0
     }
   },
   "codebase_metrics": {
@@ -59032,7 +59054,7 @@
   "scan_completeness": {
     "typescript": "full"
   },
-  "scan_path": "src",
+  "scan_path": null,
   "ignore_integrity": {
     "ignored": 0,
     "raw_findings": 0,
@@ -59041,40 +59063,70 @@
     "ignored_by_detector": {},
     "ignored_by_tier": {},
     "ignored_findings": [],
-    "updated_at": "2026-02-20T16:05:00+00:00"
+    "updated_at": "2026-02-20T16:08:05+00:00"
   },
   "dimension_scores": {
     "Naming Quality": {
-      "score": 80.0,
-      "strict": 80.0,
+      "score": 83.0,
+      "strict": 83.0,
       "checks": 10,
       "issues": 0,
       "tier": 4,
       "detectors": {
         "subjective_assessment": {
           "potential": 10,
-          "pass_rate": 0.8,
+          "pass_rate": 0.83,
           "issues": 0,
-          "weighted_failures": 2.0
+          "weighted_failures": 1.7
         }
       }
     },
     "Error Consistency": {
-      "score": 65.0,
-      "strict": 65.0,
+      "score": 72.0,
+      "strict": 72.0,
       "checks": 10,
       "issues": 0,
       "tier": 4,
       "detectors": {
         "subjective_assessment": {
           "potential": 10,
-          "pass_rate": 0.65,
+          "pass_rate": 0.72,
           "issues": 0,
-          "weighted_failures": 3.5
+          "weighted_failures": 2.8
         }
       }
     },
     "Abstraction Fit": {
+      "score": 82.0,
+      "strict": 82.0,
+      "checks": 10,
+      "issues": 0,
+      "tier": 4,
+      "detectors": {
+        "subjective_assessment": {
+          "potential": 10,
+          "pass_rate": 0.82,
+          "issues": 0,
+          "weighted_failures": 1.8
+        }
+      }
+    },
+    "Logic Clarity": {
+      "score": 83.0,
+      "strict": 83.0,
+      "checks": 10,
+      "issues": 0,
+      "tier": 4,
+      "detectors": {
+        "subjective_assessment": {
+          "potential": 10,
+          "pass_rate": 0.83,
+          "issues": 0,
+          "weighted_failures": 1.7
+        }
+      }
+    },
+    "AI Generated Debt": {
       "score": 75.0,
       "strict": 75.0,
       "checks": 10,
@@ -59089,7 +59141,22 @@
         }
       }
     },
-    "Logic Clarity": {
+    "Type Safety": {
+      "score": 72.0,
+      "strict": 72.0,
+      "checks": 10,
+      "issues": 0,
+      "tier": 4,
+      "detectors": {
+        "subjective_assessment": {
+          "potential": 10,
+          "pass_rate": 0.72,
+          "issues": 0,
+          "weighted_failures": 2.8
+        }
+      }
+    },
+    "Contract Coherence": {
       "score": 80.0,
       "strict": 80.0,
       "checks": 10,
@@ -59101,51 +59168,6 @@
           "pass_rate": 0.8,
           "issues": 0,
           "weighted_failures": 2.0
-        }
-      }
-    },
-    "AI Generated Debt": {
-      "score": 65.0,
-      "strict": 65.0,
-      "checks": 10,
-      "issues": 0,
-      "tier": 4,
-      "detectors": {
-        "subjective_assessment": {
-          "potential": 10,
-          "pass_rate": 0.65,
-          "issues": 0,
-          "weighted_failures": 3.5
-        }
-      }
-    },
-    "Type Safety": {
-      "score": 70.0,
-      "strict": 70.0,
-      "checks": 10,
-      "issues": 0,
-      "tier": 4,
-      "detectors": {
-        "subjective_assessment": {
-          "potential": 10,
-          "pass_rate": 0.7,
-          "issues": 0,
-          "weighted_failures": 3.0
-        }
-      }
-    },
-    "Contract Coherence": {
-      "score": 75.0,
-      "strict": 75.0,
-      "checks": 10,
-      "issues": 0,
-      "tier": 4,
-      "detectors": {
-        "subjective_assessment": {
-          "potential": 10,
-          "pass_rate": 0.75,
-          "issues": 0,
-          "weighted_failures": 2.5
         }
       }
     }
@@ -59741,6 +59763,53 @@
           "strict": 75.0
         }
       }
+    },
+    {
+      "timestamp": "2026-02-20T16:08:05+00:00",
+      "lang": "typescript",
+      "tool_hash": "9882fab9bf67",
+      "strict_score": 78.1,
+      "objective_score": 100.0,
+      "overall_score": 78.1,
+      "open": 832,
+      "diff_new": 0,
+      "diff_resolved": 285,
+      "ignored": 0,
+      "ignored_by_detector": {},
+      "ignored_by_tier": {},
+      "raw_findings": 0,
+      "suppressed_pct": 0.0,
+      "ignore_patterns": 0,
+      "dimension_scores": {
+        "Naming Quality": {
+          "score": 83.0,
+          "strict": 83.0
+        },
+        "Error Consistency": {
+          "score": 72.0,
+          "strict": 72.0
+        },
+        "Abstraction Fit": {
+          "score": 82.0,
+          "strict": 82.0
+        },
+        "Logic Clarity": {
+          "score": 83.0,
+          "strict": 83.0
+        },
+        "AI Generated Debt": {
+          "score": 75.0,
+          "strict": 75.0
+        },
+        "Type Safety": {
+          "score": 72.0,
+          "strict": 72.0
+        },
+        "Contract Coherence": {
+          "score": 80.0,
+          "strict": 80.0
+        }
+      }
     }
   ],
   "reminder_history": {
@@ -59817,6 +59886,24 @@
       "finding_count": 0,
       "override_used": false,
       "override_note": ""
+    },
+    {
+      "at": "2026-02-20T16:08:05+00:00",
+      "mode": "per_file",
+      "changed_dimensions": [
+        "abstraction_fitness",
+        "ai_generated_debt",
+        "contract_coherence",
+        "error_consistency",
+        "logic_clarity",
+        "naming_quality",
+        "type_safety"
+      ],
+      "aggregate_delta": 37.0,
+      "max_dimension_delta": 10.0,
+      "finding_count": 0,
+      "override_used": true,
+      "override_note": "Re-assessed after 3 sessions of cleanup: removed 400 dead exports, 29 orphaned files, extracted 3 sub-components, replaced non-null assertions, extracted route helpers, removed AI-generated comments"
     }
   ]
 }
