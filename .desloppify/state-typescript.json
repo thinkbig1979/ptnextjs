@@ -8,11 +8,11 @@
   "strict_score": 70.6,
   "stats": {
     "total": 2743,
-    "open": 2611,
-    "fixed": 0,
+    "open": 2604,
+    "fixed": 3,
     "auto_resolved": 53,
-    "wontfix": 15,
-    "false_positive": 64,
+    "wontfix": 18,
+    "false_positive": 65,
     "by_tier": {
       "1": {
         "open": 155,
@@ -29,11 +29,11 @@
         "false_positive": 60
       },
       "3": {
-        "open": 908,
-        "fixed": 0,
+        "open": 901,
+        "fixed": 3,
         "auto_resolved": 8,
-        "wontfix": 0,
-        "false_positive": 0
+        "wontfix": 3,
+        "false_positive": 1
       },
       "4": {
         "open": 382,
@@ -48284,11 +48284,11 @@
           "setCaseStudies"
         ]
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:22:32+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -48307,11 +48307,11 @@
           "setCertifications"
         ]
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:22:33+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -48329,11 +48329,11 @@
           "setTeamMembers"
         ]
       },
-      "status": "open",
+      "status": "fixed",
       "note": null,
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:22:33+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -48351,11 +48351,11 @@
           "setIsClient"
         ]
       },
-      "status": "open",
-      "note": null,
+      "status": "false_positive",
+      "note": "Standard Next.js SSR hydration pattern for Leaflet maps",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:22:17+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -48383,11 +48383,11 @@
         ],
         "line": 68
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Booleans serve independent concerns (modal, delete dialog, filter, save state)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:22:24+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "vendor"
@@ -48415,11 +48415,11 @@
         ],
         "line": 57
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Booleans serve independent concerns (dragging, saving, add dialog, edit dialog)",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:22:26+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -48445,11 +48445,11 @@
         ],
         "line": 33
       },
-      "status": "open",
-      "note": null,
+      "status": "wontfix",
+      "note": "Three unrelated booleans (isLoading, isAdvancedOpen, isSearchActive) serve independent concerns",
       "first_seen": "2026-02-18T08:36:19+00:00",
       "last_seen": "2026-02-18T09:59:37+00:00",
-      "resolved_at": null,
+      "resolved_at": "2026-02-20T10:22:22+00:00",
       "reopen_count": 0,
       "lang": "typescript",
       "zone": "production"
@@ -59090,7 +59090,7 @@
       "score": 72.7,
       "strict": 72.6,
       "checks": 4007,
-      "issues": 1233,
+      "issues": 1231,
       "tier": 3,
       "detectors": {
         "unused": {
@@ -59131,9 +59131,9 @@
         },
         "react": {
           "potential": 28,
-          "pass_rate": 0.9785714285714285,
-          "issues": 2,
-          "weighted_failures": 0.6
+          "pass_rate": 1.0,
+          "issues": 0,
+          "weighted_failures": 0.0
         },
         "orphaned": {
           "potential": 437,

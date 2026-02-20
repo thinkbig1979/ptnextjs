@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
@@ -63,6 +63,13 @@ export function CaseStudiesManager({ vendor }: CaseStudiesManagerProps) {
   const [caseStudies, setCaseStudies] = useState<CaseStudyFormData[]>(
     (vendor.caseStudies as CaseStudyFormData[]) || []
   );
+  const [prevVendorCaseStudies, setPrevVendorCaseStudies] = useState(vendor.caseStudies);
+
+  // Sync with vendor prop changes (avoids useEffect double-render)
+  if (vendor.caseStudies !== prevVendorCaseStudies) {
+    setPrevVendorCaseStudies(vendor.caseStudies);
+    setCaseStudies((vendor.caseStudies as CaseStudyFormData[]) || []);
+  }
 
   // Modal states
   const [modalOpen, setModalOpen] = useState(false);
@@ -77,11 +84,6 @@ export function CaseStudiesManager({ vendor }: CaseStudiesManagerProps) {
 
   const tierLevel = TierService.getTierLevel(vendor.tier);
   const hasTierAccess = tierLevel >= 1;
-
-  // Sync with vendor prop changes
-  useEffect(() => {
-    setCaseStudies((vendor.caseStudies as CaseStudyFormData[]) || []);
-  }, [vendor.caseStudies]);
 
   // Form setup
   const {

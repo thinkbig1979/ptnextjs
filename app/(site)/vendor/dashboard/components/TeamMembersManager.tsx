@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -73,6 +73,13 @@ export interface TeamMembersManagerProps {
 export function TeamMembersManager({ vendor }: TeamMembersManagerProps) {
   const { updateVendor, saveVendor, markDirty } = useVendorDashboard();
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>(vendor.teamMembers || []);
+  const [prevVendorTeamMembers, setPrevVendorTeamMembers] = useState(vendor.teamMembers);
+
+  // Sync with vendor prop changes (avoids useEffect double-render)
+  if (vendor.teamMembers !== prevVendorTeamMembers) {
+    setPrevVendorTeamMembers(vendor.teamMembers);
+    setTeamMembers(vendor.teamMembers || []);
+  }
 
   // Modal states
   const [modalOpen, setModalOpen] = useState(false);
@@ -89,11 +96,6 @@ export function TeamMembersManager({ vendor }: TeamMembersManagerProps) {
 
   const tierLevel = TierService.getTierLevel(vendor.tier);
   const hasTierAccess = tierLevel >= 1;
-
-  // Sync with vendor prop changes
-  useEffect(() => {
-    setTeamMembers(vendor.teamMembers || []);
-  }, [vendor.teamMembers]);
 
   // Form setup
   const {

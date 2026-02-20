@@ -84,6 +84,18 @@ export function CertificationsAwardsManager({ vendor }: CertificationsAwardsMana
   const { updateVendor, saveVendor, markDirty } = useVendorDashboard();
   const [certifications, setCertifications] = useState<VendorCertification[]>(vendor.certifications || []);
   const [awards, setAwards] = useState<VendorAward[]>(vendor.awards || []);
+  const [prevVendorCerts, setPrevVendorCerts] = useState(vendor.certifications);
+  const [prevVendorAwards, setPrevVendorAwards] = useState(vendor.awards);
+
+  // Sync local state with vendor prop when it changes (avoids useEffect double-render)
+  if (vendor.certifications !== prevVendorCerts) {
+    setPrevVendorCerts(vendor.certifications);
+    setCertifications(vendor.certifications || []);
+  }
+  if (vendor.awards !== prevVendorAwards) {
+    setPrevVendorAwards(vendor.awards);
+    setAwards(vendor.awards || []);
+  }
 
   // Modal states
   const [certModalOpen, setCertModalOpen] = useState(false);
@@ -100,12 +112,6 @@ export function CertificationsAwardsManager({ vendor }: CertificationsAwardsMana
 
   const tierLevel = TierService.getTierLevel(vendor.tier);
   const hasAccess = tierLevel >= 1; // Tier 1+ required
-
-  // Sync local state with vendor prop when it changes (e.g., after save)
-  useEffect(() => {
-    setCertifications(vendor.certifications || []);
-    setAwards(vendor.awards || []);
-  }, [vendor.certifications, vendor.awards]);
 
   // Certification form (FIX #4: Use centralized defaults)
   const certForm = useForm<CertificationFormData>({
