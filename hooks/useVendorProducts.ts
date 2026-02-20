@@ -25,13 +25,13 @@ interface ProductsResponse {
   };
 }
 
-export interface UseVendorProductsOptions {
+interface UseVendorProductsOptions {
   published?: boolean;
   limit?: number;
   page?: number;
 }
 
-export interface UseVendorProductsReturn {
+interface UseVendorProductsReturn {
   products: Product[];
   total: number;
   page: number;
@@ -171,4 +171,3 @@ export function useVendorProducts(
   };
 }
 
-export default useVendorProducts;

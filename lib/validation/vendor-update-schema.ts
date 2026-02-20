@@ -392,7 +392,7 @@ export const vendorUpdateSchema = z.object({
     .nullable(),
 });
 
-export type VendorUpdateRequest = z.infer<typeof vendorUpdateSchema>;
+type VendorUpdateRequest = z.infer<typeof vendorUpdateSchema>;
 
 /**
  * Validate vendor update request data

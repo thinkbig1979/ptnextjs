@@ -94,7 +94,7 @@ export function createLexicalContent(text: string) {
 /**
  * Truncate text to a maximum length with ellipsis
  */
-export function truncateText(text: string, maxLength: number = 150): string {
+function truncateText(text: string, maxLength: number = 150): string {
   if (!text || text.length <= maxLength) {
     return text;
   }

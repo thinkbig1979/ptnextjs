@@ -15,7 +15,7 @@ export interface ProductFilters {
   search?: string;
 }
 
-export interface CreateProductData {
+interface CreateProductData {
   name: string;
   slug?: string | null;
   description: string | object;
@@ -82,7 +82,7 @@ export interface CreateProductData {
   }> | null;
 }
 
-export interface UpdateProductData extends Partial<CreateProductData> {}
+interface UpdateProductData extends Partial<CreateProductData> {}
 
 export class ProductService {
   /**
@@ -539,4 +539,3 @@ export class ProductService {
   }
 }
 
-export default ProductService;

@@ -5,7 +5,7 @@
  * These fields are computed from stored data rather than stored directly.
  */
 
-export interface VendorWithComputed {
+interface VendorWithComputed {
   yearsInBusiness?: number | null;
   name?: string; // Mapped from companyName for consistency
   [key: string]: unknown;
@@ -136,4 +136,3 @@ export class VendorComputedFieldsService {
   }
 }
 
-export default VendorComputedFieldsService;

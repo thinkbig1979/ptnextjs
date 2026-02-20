@@ -7,7 +7,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Lock, ArrowUpCircle } from 'lucide-react';
 
-export interface TierGateProps {
+interface TierGateProps {
   /**
    * Minimum tier required to access the content
    */

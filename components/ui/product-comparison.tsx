@@ -79,7 +79,7 @@ export function ComparisonProvider({ children }: { children: React.ReactNode }):
   );
 }
 
-export function useComparison() {
+function useComparison() {
   const context = React.useContext(ComparisonContext);
   if (context === undefined) {
     throw new Error('useComparison must be used within a ComparisonProvider');

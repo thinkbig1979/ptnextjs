@@ -141,7 +141,7 @@ export function calculateDistance(
  * const vendorLocation = { latitude: 43.7500, longitude: 7.4300 };
  * const isNearby = isWithinDistance(userLocation, vendorLocation, 80); // true
  */
-export function isWithinDistance(
+function isWithinDistance(
   origin: VendorCoordinates,
   target: VendorCoordinates,
   maxDistance: number,

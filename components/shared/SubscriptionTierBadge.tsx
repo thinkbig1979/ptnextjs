@@ -1,7 +1,7 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 
-export interface SubscriptionTierBadgeProps {
+interface SubscriptionTierBadgeProps {
   tier: 'free' | 'tier1' | 'tier2';
   className?: string;
 }

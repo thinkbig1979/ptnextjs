@@ -9,20 +9,20 @@ import { z } from 'zod';
 
 // Re-export all schemas from API validation (single source of truth)
 export {
-  ProductImageSchema,
-  SpecificationSchema,
-  FeatureSchema,
-  PricingSchema,
-  ActionButtonSchema,
-  BadgeSchema,
-  SeoSchema,
+  
+  
+  
+  
+  
+  
+  
   type ProductImage,
-  type Specification,
-  type Feature,
-  type Pricing,
-  type ActionButton,
+  
+  
+  
+  
   type Badge,
-  type Seo,
+  
 } from '@/lib/validation/product-schema';
 
 // Import base schemas for ExtendedProductFormSchema
@@ -152,7 +152,7 @@ export type TierLevel = 'free' | 'tier1' | 'tier2' | 'tier3';
 /**
  * Form section configuration for collapsible sections
  */
-export interface FormSectionConfig {
+interface FormSectionConfig {
   id: string;
   title: string;
   description?: string;
@@ -163,7 +163,7 @@ export interface FormSectionConfig {
 /**
  * Array field item with order property for drag-and-drop reordering
  */
-export interface OrderableItem {
+interface OrderableItem {
   order?: number | null;
 }
 
@@ -194,7 +194,7 @@ export interface TagOption {
 /**
  * Form submission result
  */
-export interface FormSubmissionResult {
+interface FormSubmissionResult {
   success: boolean;
   data?: Record<string, unknown>;
   error?: {

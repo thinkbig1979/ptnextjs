@@ -337,4 +337,3 @@ export function ImagesSection({
   );
 }
 
-export default ImagesSection;

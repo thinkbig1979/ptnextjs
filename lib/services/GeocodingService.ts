@@ -4,7 +4,7 @@
 
 import { VendorLocation } from '@/lib/types';
 
-export interface GeocodingResult {
+interface GeocodingResult {
   latitude: number;
   longitude: number;
   address?: string;
@@ -12,7 +12,7 @@ export interface GeocodingResult {
   country?: string;
 }
 
-export interface GeocodeError {
+interface GeocodeError {
   code: 'NETWORK_ERROR' | 'NOT_FOUND' | 'RATE_LIMITED' | 'INVALID_RESPONSE' | 'TIMEOUT';
   message: string;
 }
@@ -70,7 +70,7 @@ function cacheResult(address: string, result: GeocodingResult): void {
   }
 }
 
-export async function geocodeAddress(address: string): Promise<GeocodingResult> {
+async function geocodeAddress(address: string): Promise<GeocodingResult> {
   if (!address || typeof address !== 'string') {
     throw {
       code: 'INVALID_RESPONSE',
@@ -146,7 +146,7 @@ export async function geocodeAddress(address: string): Promise<GeocodingResult> 
   }
 }
 
-export function parseGeocodingResult(result: GeocodingResult): Partial<VendorLocation> {
+function parseGeocodingResult(result: GeocodingResult): Partial<VendorLocation> {
   return {
     latitude: result.latitude,
     longitude: result.longitude,
@@ -156,7 +156,7 @@ export function parseGeocodingResult(result: GeocodingResult): Partial<VendorLoc
   };
 }
 
-export class GeocodingService {
+class GeocodingService {
   static async geocode(address: string): Promise<GeocodingResult> {
     return geocodeAddress(address);
   }

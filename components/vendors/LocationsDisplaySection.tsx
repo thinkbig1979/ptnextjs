@@ -27,7 +27,7 @@ function MapController({ center, zoom }: { center: [number, number]; zoom: numbe
   return null;
 }
 
-export interface LocationsDisplaySectionProps {
+interface LocationsDisplaySectionProps {
   locations: VendorLocation[];
   vendorTier?: string;
   isLoading?: boolean;
@@ -278,4 +278,3 @@ export function LocationsDisplaySection({
   );
 }
 
-export default LocationsDisplaySection;

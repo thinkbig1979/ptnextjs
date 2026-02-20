@@ -28,16 +28,7 @@ import type {
 } from './types';
 
 // Re-export types for convenience
-export type {
-  AuthResult,
-  AuthSuccess,
-  AuthError,
-  AuthUser,
-  VendorOwnershipResult,
-  VendorVerificationResult,
-  VendorVerificationSuccess,
-  VendorVerificationError,
-} from './types';
+;
 
 /**
  * Extract JWT token from request
@@ -447,6 +438,6 @@ export function isAuthError(result: AuthResult | VendorOwnershipResult): result 
  * @param result - The result to check
  * @returns True if the result is successful
  */
-export function isAuthSuccess(result: AuthResult): result is AuthSuccess {
+function isAuthSuccess(result: AuthResult): result is AuthSuccess {
   return result.success === true;
 }

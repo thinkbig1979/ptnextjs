@@ -3,7 +3,7 @@
 import { useCallback, useMemo } from 'react';
 import TierService, { Tier, TierFeature } from '@/lib/services/TierService';
 
-export interface UseTierAccessResult {
+interface UseTierAccessResult {
   hasAccess: boolean;
   tier: Tier;
   upgradePath: Tier;
@@ -52,4 +52,3 @@ export function useTierAccess(
   };
 }
 
-export default useTierAccess;

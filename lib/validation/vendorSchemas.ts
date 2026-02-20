@@ -115,7 +115,7 @@ export const certificationSchema = z.object({
   ),
 });
 
-export type CertificationFormData = z.infer<typeof certificationSchema>;
+type CertificationFormData = z.infer<typeof certificationSchema>;
 
 // Award Schema
 export const awardSchema = z.object({
@@ -130,7 +130,7 @@ export const awardSchema = z.object({
   ),
 });
 
-export type AwardFormData = z.infer<typeof awardSchema>;
+type AwardFormData = z.infer<typeof awardSchema>;
 
 // Case Study Schema
 export const caseStudySchema = z.object({
@@ -167,7 +167,7 @@ export const teamMemberSchema = z.object({
   displayOrder: z.number().int().min(0).optional().nullable(),
 });
 
-export type TeamMemberFormData = z.infer<typeof teamMemberSchema>;
+type TeamMemberFormData = z.infer<typeof teamMemberSchema>;
 
 // Location Schema - matches vendor-update-schema.ts API contract
 export const locationSchema = z.object({
@@ -182,4 +182,4 @@ export const locationSchema = z.object({
   isHQ: z.boolean().optional().nullable(),
 });
 
-export type LocationFormData = z.infer<typeof locationSchema>;
+type LocationFormData = z.infer<typeof locationSchema>;

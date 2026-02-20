@@ -226,4 +226,3 @@ export function SeoSection({
   );
 }
 
-export default SeoSection;

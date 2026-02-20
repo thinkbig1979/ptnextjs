@@ -4,7 +4,7 @@ import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Calendar } from 'lucide-react';
 
-export interface YearsInBusinessDisplayProps {
+interface YearsInBusinessDisplayProps {
   foundedYear?: number | null;
   showLabel?: boolean;
   variant?: 'badge' | 'inline';
@@ -71,4 +71,3 @@ export function YearsInBusinessDisplay({
   );
 }
 
-export default YearsInBusinessDisplay;

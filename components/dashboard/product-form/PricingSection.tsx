@@ -200,4 +200,3 @@ export function PricingSection({
   );
 }
 
-export default PricingSection;

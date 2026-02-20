@@ -7,7 +7,7 @@ import { TierBadge } from '@/components/vendors/TierBadge';
 import { formatDistance } from '@/lib/utils/location';
 import type { Vendor } from '@/lib/types';
 
-export interface NearbyVendorCardProps {
+interface NearbyVendorCardProps {
   vendor: Vendor;
   distance?: number; // kilometers
 }
@@ -77,4 +77,3 @@ export function NearbyVendorCard({
   );
 }
 
-export default NearbyVendorCard;

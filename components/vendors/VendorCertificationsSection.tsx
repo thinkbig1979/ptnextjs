@@ -7,7 +7,7 @@ import { OptimizedImage } from '@/components/ui/optimized-image';
 import type { Vendor } from '@/lib/types';
 import { ensureUrlProtocol } from '@/lib/utils/url';
 
-export interface VendorCertificationsSectionProps {
+interface VendorCertificationsSectionProps {
   vendor: Vendor;
 }
 
@@ -97,4 +97,3 @@ export function VendorCertificationsSection({ vendor }: VendorCertificationsSect
   );
 }
 
-export default VendorCertificationsSection;

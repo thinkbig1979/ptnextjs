@@ -20,7 +20,7 @@ import { LocationFormFields } from './LocationFormFields';
 import { TierUpgradePrompt } from './TierUpgradePrompt';
 import { HelpTooltip } from '@/components/help';
 
-export interface LocationsManagerCardProps {
+interface LocationsManagerCardProps {
   vendor: {
     id: string;
     name: string;
@@ -411,4 +411,3 @@ export function LocationsManagerCard({ vendor, onUpdate }: LocationsManagerCardP
   );
 }
 
-export default LocationsManagerCard;

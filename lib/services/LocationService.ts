@@ -11,12 +11,12 @@
 
 import { VendorLocation } from '@/lib/types';
 
-export interface ValidationResult {
+interface ValidationResult {
   valid: boolean;
   errors: string[];
 }
 
-export interface TierAccessResult {
+interface TierAccessResult {
   allowed: boolean;
   error?: string;
 }

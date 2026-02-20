@@ -19,7 +19,7 @@ import { Page, Route } from '@playwright/test';
 /**
  * Photon API response format
  */
-export interface PhotonFeature {
+interface PhotonFeature {
   type: 'Feature';
   geometry: {
     coordinates: [number, number]; // [longitude, latitude]
@@ -42,7 +42,7 @@ export interface PhotonFeature {
   };
 }
 
-export interface PhotonResponse {
+interface PhotonResponse {
   type: 'FeatureCollection';
   features: PhotonFeature[];
 }
@@ -50,7 +50,7 @@ export interface PhotonResponse {
 /**
  * Captured geocode request data
  */
-export interface CapturedGeocodeRequest {
+interface CapturedGeocodeRequest {
   id: string;
   query: string;
   limit?: number;
@@ -62,7 +62,7 @@ export interface CapturedGeocodeRequest {
 /**
  * Mock configuration options
  */
-export interface GeocodeMockOptions {
+interface GeocodeMockOptions {
   /** Whether to log captured requests to console */
   verbose?: boolean;
   /** Custom response delay in ms (simulates network latency) */
@@ -373,7 +373,7 @@ const MOCK_LOCATIONS: Record<string, PhotonFeature[]> = {
  * Captures all geocoding requests without hitting the real API,
  * allowing tests to run without rate limiting issues.
  */
-export class GeocodeMock {
+class GeocodeMock {
   private page: Page;
   private requests: CapturedGeocodeRequest[] = [];
   private options: GeocodeMockOptions;
@@ -676,7 +676,7 @@ export class GeocodeMock {
 /**
  * Convenience function to create and setup a geocode mock
  */
-export async function setupGeocodeMock(
+async function setupGeocodeMock(
   page: Page,
   options?: GeocodeMockOptions
 ): Promise<GeocodeMock> {
@@ -688,7 +688,7 @@ export async function setupGeocodeMock(
 /**
  * Test fixture helper for consistent geocode mock setup/teardown
  */
-export function createGeocodeMockFixture(options?: GeocodeMockOptions) {
+function createGeocodeMockFixture(options?: GeocodeMockOptions) {
   return async (
     { page }: { page: Page },
     use: (mock: GeocodeMock) => Promise<void>
@@ -703,12 +703,12 @@ export function createGeocodeMockFixture(options?: GeocodeMockOptions) {
 /**
  * Pre-configured mock locations available for testing
  */
-export const AVAILABLE_MOCK_LOCATIONS = Object.keys(MOCK_LOCATIONS);
+const AVAILABLE_MOCK_LOCATIONS = Object.keys(MOCK_LOCATIONS);
 
 /**
  * Helper to create a custom PhotonFeature for testing
  */
-export function createMockLocation(
+function createMockLocation(
   name: string,
   longitude: number,
   latitude: number,

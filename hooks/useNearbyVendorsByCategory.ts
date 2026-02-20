@@ -12,11 +12,11 @@ export interface UseNearbyVendorsByCategoryOptions {
   maxResults?: number; // Default: 10
 }
 
-export type VendorWithCategoryCount<T extends VendorForLocation = VendorForLocation> = VendorWithDistance<T> & {
+type VendorWithCategoryCount<T extends VendorForLocation = VendorForLocation> = VendorWithDistance<T> & {
   productsInCategory: number; // Count of products in specified category
 };
 
-export interface UseNearbyVendorsByCategoryResult<T extends VendorForLocation> {
+interface UseNearbyVendorsByCategoryResult<T extends VendorForLocation> {
   vendors: VendorWithCategoryCount<T>[];
   isLoading: boolean;
   error: Error | null;

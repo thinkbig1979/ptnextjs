@@ -3,7 +3,7 @@ import { getPayload } from 'payload';
 import configPromise from '@payload-config';
 
 // Tier-restricted product fields (require tier2+)
-export const TIER2_FIELDS = [
+const TIER2_FIELDS = [
   'images', 'pricing', 'specifications', 'features',
   'categories', 'tags', 'actionButtons', 'badges', 'seo'
 ] as const;

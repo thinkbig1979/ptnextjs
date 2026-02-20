@@ -9,7 +9,7 @@ export interface TimelinePhase {
   primary?: boolean;
 }
 
-export interface TimelineVisualizationProps {
+interface TimelineVisualizationProps {
   /** Array of phases to display in the timeline */
   phases: TimelinePhase[];
   /** Label to display on active phases (default: "We support here") */

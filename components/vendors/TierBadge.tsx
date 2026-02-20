@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Crown, Star, Sparkles, Circle } from 'lucide-react';
 import { Tier } from '@/lib/services/TierService';
 
-export interface TierBadgeProps {
+interface TierBadgeProps {
   tier: Tier | string;
   size?: 'sm' | 'md' | 'lg';
   showIcon?: boolean;
@@ -77,4 +77,3 @@ export function TierBadge({
   );
 }
 
-export default TierBadge;

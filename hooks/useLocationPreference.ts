@@ -2,14 +2,14 @@
 
 import { useEffect, useState, useSyncExternalStore, useCallback } from 'react';
 
-export interface StoredLocation {
+interface StoredLocation {
   latitude: number;
   longitude: number;
   displayName: string;
   timestamp: number;
 }
 
-export interface UseLocationPreferenceResult {
+interface UseLocationPreferenceResult {
   location: StoredLocation | null;
   setLocation: (location: Omit<StoredLocation, 'timestamp'>) => void;
   clearLocation: () => void;

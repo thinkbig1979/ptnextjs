@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Lock, ArrowRight, Check } from 'lucide-react';
 import { Tier } from '@/lib/services/TierService';
 
-export interface UpgradePromptCardProps {
+interface UpgradePromptCardProps {
   currentTier: Tier;
   targetTier: Tier;
   feature: string;
@@ -133,4 +133,3 @@ export function UpgradePromptCard({
   return <Card className={className}>{content}</Card>;
 }
 
-export default UpgradePromptCard;

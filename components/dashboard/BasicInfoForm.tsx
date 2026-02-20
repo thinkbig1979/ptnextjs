@@ -15,7 +15,7 @@ import { useVendorDashboard } from '@/lib/context/VendorDashboardContext';
 import { toast } from 'sonner';
 import { HelpTooltip, CharacterCounter } from '@/components/help';
 
-export interface BasicInfoFormProps {
+interface BasicInfoFormProps {
   vendor: Vendor;
   onSubmit?: (data: BasicInfoFormData) => Promise<void>;
 }
@@ -327,4 +327,3 @@ export function BasicInfoForm({ vendor, onSubmit }: BasicInfoFormProps) {
   );
 }
 
-export default BasicInfoForm;

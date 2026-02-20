@@ -191,4 +191,3 @@ export function SpecificationsSection({
   );
 }
 
-export default SpecificationsSection;

@@ -54,7 +54,7 @@ interface ApiSuccessResponse {
 /**
  * Component Props
  */
-export interface AdminDirectTierChangeProps {
+interface AdminDirectTierChangeProps {
   vendorId: string;
   currentTier: TierType;
   vendorName: string;

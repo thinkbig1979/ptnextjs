@@ -1993,7 +1993,6 @@ class PayloadCMSDataService {
 
 // Export singleton instance
 export const payloadCMSDataService = new PayloadCMSDataService();
-export default payloadCMSDataService;
 
 /**
  * React.cache() wrapped functions for per-request deduplication
@@ -2008,63 +2007,63 @@ export default payloadCMSDataService;
  * const vendors = await cachedGetAllVendors();
  */
 
-export const cachedGetAllVendors = cache(async () => payloadCMSDataService.getAllVendors());
+const cachedGetAllVendors = cache(async () => payloadCMSDataService.getAllVendors());
 
-export const cachedGetAllProducts = cache(async () => payloadCMSDataService.getAllProducts());
+const cachedGetAllProducts = cache(async () => payloadCMSDataService.getAllProducts());
 
-export const cachedGetAllBlogPosts = cache(async () => payloadCMSDataService.getAllBlogPosts());
+const cachedGetAllBlogPosts = cache(async () => payloadCMSDataService.getAllBlogPosts());
 
-export const cachedGetCategories = cache(async () => payloadCMSDataService.getCategories());
+const cachedGetCategories = cache(async () => payloadCMSDataService.getCategories());
 
-export const cachedGetBlogCategories = cache(async () => payloadCMSDataService.getBlogCategories());
+const cachedGetBlogCategories = cache(async () => payloadCMSDataService.getBlogCategories());
 
-export const cachedGetTags = cache(async () => payloadCMSDataService.getTags());
+const cachedGetTags = cache(async () => payloadCMSDataService.getTags());
 
-export const cachedGetTeamMembers = cache(async () => payloadCMSDataService.getTeamMembers());
+const cachedGetTeamMembers = cache(async () => payloadCMSDataService.getTeamMembers());
 
-export const cachedGetCompanyInfo = cache(async () => payloadCMSDataService.getCompanyInfo());
+const cachedGetCompanyInfo = cache(async () => payloadCMSDataService.getCompanyInfo());
 
-export const cachedGetYachts = cache(async () => payloadCMSDataService.getYachts());
+const cachedGetYachts = cache(async () => payloadCMSDataService.getYachts());
 
-export const cachedGetFeaturedVendors = cache(async () =>
+const cachedGetFeaturedVendors = cache(async () =>
   payloadCMSDataService.getFeaturedVendors()
 );
 
-export const cachedGetFeaturedPartners = cache(async () =>
+const cachedGetFeaturedPartners = cache(async () =>
   payloadCMSDataService.getFeaturedPartners()
 );
 
-export const cachedGetFeaturedYachts = cache(async () => payloadCMSDataService.getFeaturedYachts());
+const cachedGetFeaturedYachts = cache(async () => payloadCMSDataService.getFeaturedYachts());
 
-export const cachedGetFeaturedProducts = cache(async () =>
+const cachedGetFeaturedProducts = cache(async () =>
   payloadCMSDataService.getFeaturedProducts()
 );
 
 // Parameterized cached functions
-export const cachedGetVendorBySlug = cache(async (slug: string) =>
+const cachedGetVendorBySlug = cache(async (slug: string) =>
   payloadCMSDataService.getVendorBySlug(slug)
 );
 
-export const cachedGetProductBySlug = cache(async (slug: string) =>
+const cachedGetProductBySlug = cache(async (slug: string) =>
   payloadCMSDataService.getProductBySlug(slug)
 );
 
-export const cachedGetBlogPostBySlug = cache(async (slug: string) =>
+const cachedGetBlogPostBySlug = cache(async (slug: string) =>
   payloadCMSDataService.getBlogPostBySlug(slug)
 );
 
-export const cachedGetYachtBySlug = cache(async (slug: string) =>
+const cachedGetYachtBySlug = cache(async (slug: string) =>
   payloadCMSDataService.getYachtBySlug(slug)
 );
 
-export const cachedGetCategoryBySlug = cache(async (slug: string) =>
+const cachedGetCategoryBySlug = cache(async (slug: string) =>
   payloadCMSDataService.getCategoryBySlug(slug)
 );
 
-export const cachedGetTagBySlug = cache(async (slug: string) =>
+const cachedGetTagBySlug = cache(async (slug: string) =>
   payloadCMSDataService.getTagBySlug(slug)
 );
 
-export const cachedGetProductsByVendor = cache(async (vendorId: string) =>
+const cachedGetProductsByVendor = cache(async (vendorId: string) =>
   payloadCMSDataService.getProductsByVendor(vendorId)
 );

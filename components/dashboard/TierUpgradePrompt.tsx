@@ -8,7 +8,7 @@ import { Lock, ArrowUpCircle, Check } from 'lucide-react';
 import Link from 'next/link';
 import { getTierExplanation } from '@/lib/help/content/tier-system';
 
-export interface TierUpgradePromptProps {
+interface TierUpgradePromptProps {
   currentTier: string;
   requiredTier: string;
   featureName: string;
@@ -128,4 +128,3 @@ export function TierUpgradePrompt({
   );
 }
 
-export default TierUpgradePrompt;

@@ -38,7 +38,7 @@ export interface VendorSeedData {
 /**
  * Product seed request data
  */
-export interface ProductSeedData {
+interface ProductSeedData {
   name: string;
   description?: string;
   category?: string;
@@ -53,7 +53,7 @@ export interface ProductSeedData {
 /**
  * Seed API response
  */
-export interface SeedResponse {
+interface SeedResponse {
   success: boolean;
   vendorIds?: string[];
   productIds?: string[];
@@ -163,7 +163,7 @@ export function createTestProduct(
 /**
  * Create multiple test vendors quickly
  */
-export function createTestVendors(
+function createTestVendors(
   count: number,
   baseOverrides: Partial<VendorSeedData> = {}
 ): VendorSeedData[] {
@@ -179,7 +179,7 @@ export function createTestVendors(
 /**
  * Create multiple test products quickly
  */
-export function createTestProducts(
+function createTestProducts(
   count: number,
   baseOverrides: Partial<ProductSeedData> = {}
 ): ProductSeedData[] {
@@ -194,7 +194,7 @@ export function createTestProducts(
 /**
  * Seed vendors and products in bulk
  */
-export async function seedTestData(
+async function seedTestData(
   page: Page,
   options: {
     vendorCount?: number;
@@ -236,7 +236,7 @@ export async function seedTestData(
  * Wait for seeded data to be available
  * (useful for ISR/cache invalidation)
  */
-export async function waitForSeedData(
+async function waitForSeedData(
   page: Page,
   vendorIds: string[],
   options: { timeout?: number } = {}
@@ -281,7 +281,7 @@ export async function waitForSeedData(
  * @param email - The vendor's email address
  * @returns The vendor ID if found
  */
-export async function lookupVendorIdByEmail(
+async function lookupVendorIdByEmail(
   page: Page,
   email: string
 ): Promise<{ success: boolean; vendorId?: number; error?: string }> {
@@ -315,7 +315,7 @@ export async function lookupVendorIdByEmail(
  * @param tier - The tier to set ('free', 'tier1', 'tier2', 'tier3')
  * @returns Success status
  */
-export async function resetVendorTier(
+async function resetVendorTier(
   page: Page,
   vendorId: number | string,
   tier: 'free' | 'tier1' | 'tier2' | 'tier3'
@@ -383,7 +383,7 @@ export async function resetVendorTierByEmail(
  * @param page - Playwright page object (must be logged in as the vendor)
  * @returns The vendor's current tier
  */
-export async function getVendorCurrentTier(
+async function getVendorCurrentTier(
   page: Page
 ): Promise<{ success: boolean; tier?: string; vendorId?: number; error?: string }> {
   const response = await page.request.get(`${BASE_URL}/api/portal/vendors/profile`);

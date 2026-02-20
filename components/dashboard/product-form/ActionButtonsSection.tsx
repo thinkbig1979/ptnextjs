@@ -323,4 +323,3 @@ export function ActionButtonsSection({
   );
 }
 
-export default ActionButtonsSection;

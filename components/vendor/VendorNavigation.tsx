@@ -15,7 +15,7 @@ import {
   Database,
 } from 'lucide-react';
 
-export interface VendorNavigationProps {
+interface VendorNavigationProps {
   className?: string;
 }
 

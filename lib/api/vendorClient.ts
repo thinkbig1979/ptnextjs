@@ -26,7 +26,7 @@ export interface ApiErrorResponse {
   };
 }
 
-export type ApiResponse<T> = ApiSuccessResponse<T> | ApiErrorResponse;
+type ApiResponse<T> = ApiSuccessResponse<T> | ApiErrorResponse;
 
 /**
  * Vendor API Response Types
@@ -67,7 +67,7 @@ export class VendorApiError extends Error {
  * @returns Vendor data
  * @throws VendorApiError
  */
-export async function fetchVendor(
+async function fetchVendor(
   vendorId: string,
   options?: RequestInit
 ): Promise<Vendor> {
@@ -104,7 +104,7 @@ export async function fetchVendor(
  * @returns Updated vendor data
  * @throws VendorApiError
  */
-export async function updateVendor(
+async function updateVendor(
   vendorId: string,
   updates: Partial<Vendor>,
   options?: RequestInit
@@ -143,7 +143,7 @@ export async function updateVendor(
  * @returns Updated vendor data
  * @throws VendorApiError
  */
-export async function patchVendor(
+async function patchVendor(
   vendorId: string,
   updates: Partial<Vendor>,
   options?: RequestInit
@@ -181,7 +181,7 @@ export async function patchVendor(
  * @returns Vendor data
  * @throws VendorApiError
  */
-export async function fetchVendorBySlug(
+async function fetchVendorBySlug(
   slug: string,
   options?: RequestInit
 ): Promise<Vendor> {
@@ -217,7 +217,7 @@ export async function fetchVendorBySlug(
  * @returns Logo URL
  * @throws VendorApiError
  */
-export async function uploadVendorLogo(
+async function uploadVendorLogo(
   vendorId: string,
   file: File,
   options?: RequestInit
@@ -254,7 +254,7 @@ export async function uploadVendorLogo(
  * @returns Success message
  * @throws VendorApiError
  */
-export async function deleteVendorLogo(
+async function deleteVendorLogo(
   vendorId: string,
   options?: RequestInit
 ): Promise<string> {
@@ -289,7 +289,7 @@ export async function deleteVendorLogo(
  * @param code - Error code to check
  * @returns Boolean
  */
-export function isApiError(error: unknown, code?: string): error is VendorApiError {
+function isApiError(error: unknown, code?: string): error is VendorApiError {
   if (!(error instanceof VendorApiError)) return false;
   if (!code) return true;
   return error.code === code;

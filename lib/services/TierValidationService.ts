@@ -7,13 +7,13 @@
 
 import { Tier, TierFeature, TIER_HIERARCHY, TIER_FEATURE_MAP, MAX_LOCATIONS_PER_TIER } from './TierService';
 
-export type TierValidationResult = {
+type TierValidationResult = {
   valid: boolean;
   errors?: string[];
   restrictedFields?: string[];
 };
 
-export type LocationLimitResult = {
+type LocationLimitResult = {
   valid: boolean;
   maxAllowed: number;
   current?: number;
@@ -276,4 +276,3 @@ export class TierValidationService {
   }
 }
 
-export default TierValidationService;

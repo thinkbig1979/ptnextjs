@@ -13,7 +13,7 @@ const API_BASE = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 // Type Definitions
 // ============================================================================
 
-export interface VendorTestData {
+interface VendorTestData {
   email: string;
   companyName: string;
   password: string;
@@ -27,7 +27,7 @@ export interface VendorTestData {
   slug?: string;
 }
 
-export interface LocationData {
+interface LocationData {
   name: string;
   address?: string;
   city: string;
@@ -40,7 +40,7 @@ export interface LocationData {
   isHQ?: boolean;
 }
 
-export interface CertificationData {
+interface CertificationData {
   name: string;
   issuer: string;
   dateIssued?: string;
@@ -48,7 +48,7 @@ export interface CertificationData {
   description?: string;
 }
 
-export interface TeamMemberData {
+interface TeamMemberData {
   name: string;
   title: string;
   bio?: string;
@@ -57,7 +57,7 @@ export interface TeamMemberData {
   photo?: string;
 }
 
-export interface CaseStudyData {
+interface CaseStudyData {
   title: string;
   description: string;
   client?: string;
@@ -68,7 +68,7 @@ export interface CaseStudyData {
   featured?: boolean;
 }
 
-export interface ProductData {
+interface ProductData {
   name: string;
   description: string;
   category?: string;
@@ -108,7 +108,7 @@ export function generateUniqueVendorData(
 /**
  * Generate test location data
  */
-export function generateLocationData(overrides?: Partial<LocationData>): LocationData {
+function generateLocationData(overrides?: Partial<LocationData>): LocationData {
   return {
     name: 'Test Office',
     address: '123 Test Street',
@@ -123,7 +123,7 @@ export function generateLocationData(overrides?: Partial<LocationData>): Locatio
 /**
  * Generate test certification data
  */
-export function generateCertificationData(
+function generateCertificationData(
   overrides?: Partial<CertificationData>
 ): CertificationData {
   return {
@@ -221,7 +221,7 @@ export async function registerVendor(
 /**
  * Login vendor and return vendor ID
  */
-export async function loginVendor(
+async function loginVendor(
   page: Page,
   email: string,
   password: string
@@ -270,7 +270,7 @@ export async function loginVendor(
 /**
  * Login vendor using VendorTestData
  */
-export async function loginVendorWithData(
+async function loginVendorWithData(
   page: Page,
   vendor: VendorTestData
 ): Promise<string> {
@@ -280,7 +280,7 @@ export async function loginVendorWithData(
 /**
  * Logout vendor
  */
-export async function logoutVendor(page: Page): Promise<void> {
+async function logoutVendor(page: Page): Promise<void> {
   console.log(`[Auth] Logging out vendor`);
 
   const logoutButton = page.locator('button:has-text("Logout"), a:has-text("Logout")').first();
@@ -298,7 +298,7 @@ export async function logoutVendor(page: Page): Promise<void> {
 /**
  * Get auth cookies
  */
-export async function getAuthCookies(context: BrowserContext): Promise<Cookie[]> {
+async function getAuthCookies(context: BrowserContext): Promise<Cookie[]> {
   return await context.cookies();
 }
 
@@ -310,7 +310,7 @@ export async function getAuthCookies(context: BrowserContext): Promise<Cookie[]>
  * Approve vendor via admin action
  * NOTE: This requires admin API endpoint or database access
  */
-export async function approveVendor(
+async function approveVendor(
   page: Page,
   vendorId: string
 ): Promise<void> {
@@ -342,7 +342,7 @@ export async function approveVendor(
 /**
  * Upgrade vendor tier via admin action
  */
-export async function upgradeTier(
+async function upgradeTier(
   page: Page,
   vendorId: string,
   tier: 'tier1' | 'tier2' | 'tier3'
@@ -375,7 +375,7 @@ export async function upgradeTier(
 /**
  * Create and approve vendor (complete setup)
  */
-export async function createAndApproveVendor(
+async function createAndApproveVendor(
   page: Page,
   overrides?: Partial<VendorTestData>
 ): Promise<VendorTestData & { id: string; slug: string }> {
@@ -394,7 +394,7 @@ export async function createAndApproveVendor(
 /**
  * Create vendor with specific tier
  */
-export async function createVendorWithTier(
+async function createVendorWithTier(
   page: Page,
   tier: 'free' | 'tier1' | 'tier2' | 'tier3',
   overrides?: Partial<VendorTestData>
@@ -419,7 +419,7 @@ export async function createVendorWithTier(
 /**
  * Navigate to profile editor
  */
-export async function navigateToProfileEditor(page: Page): Promise<void> {
+async function navigateToProfileEditor(page: Page): Promise<void> {
   await page.goto('/vendor/dashboard/profile/');
   await page.waitForLoadState('networkidle');
 }
@@ -427,7 +427,7 @@ export async function navigateToProfileEditor(page: Page): Promise<void> {
 /**
  * Update basic info
  */
-export async function updateBasicInfo(
+async function updateBasicInfo(
   page: Page,
   data: {
     companyName?: string;
@@ -464,7 +464,7 @@ export async function updateBasicInfo(
 /**
  * Fill brand story form (Tier 1+)
  */
-export async function fillBrandStory(
+async function fillBrandStory(
   page: Page,
   data: {
     website?: string;
@@ -532,7 +532,7 @@ export async function fillBrandStory(
 /**
  * Add certification
  */
-export async function addCertification(
+async function addCertification(
   page: Page,
   data: CertificationData
 ): Promise<void> {
@@ -568,7 +568,7 @@ export async function addCertification(
 /**
  * Add location
  */
-export async function addLocation(
+async function addLocation(
   page: Page,
   data: LocationData
 ): Promise<void> {
@@ -628,7 +628,7 @@ export async function addLocation(
 /**
  * Add team member
  */
-export async function addTeamMember(
+async function addTeamMember(
   page: Page,
   data: TeamMemberData
 ): Promise<void> {
@@ -667,7 +667,7 @@ export async function addTeamMember(
 /**
  * Add case study
  */
-export async function addCaseStudy(
+async function addCaseStudy(
   page: Page,
   data: CaseStudyData
 ): Promise<void> {
@@ -712,7 +712,7 @@ export async function addCaseStudy(
 /**
  * Add product
  */
-export async function addProduct(
+async function addProduct(
   page: Page,
   data: ProductData
 ): Promise<void> {
@@ -750,7 +750,7 @@ export async function addProduct(
 /**
  * Expect toast message
  */
-export async function expectToast(
+async function expectToast(
   page: Page,
   message: string | RegExp
 ): Promise<void> {
@@ -771,7 +771,7 @@ export async function expectToast(
 /**
  * Wait for API response with timeout
  */
-export async function waitForAPIResponse(
+async function waitForAPIResponse(
   page: Page,
   urlPattern: string | RegExp,
   timeout: number = 10000
@@ -797,7 +797,7 @@ export async function waitForAPIResponse(
 /**
  * Cleanup test vendor
  */
-export async function cleanupVendor(
+async function cleanupVendor(
   page: Page,
   vendorId: string
 ): Promise<void> {
@@ -818,7 +818,7 @@ export async function cleanupVendor(
 /**
  * Wait for cache revalidation (ISR)
  */
-export async function waitForCacheRevalidation(
+async function waitForCacheRevalidation(
   page: Page,
   delayMs: number = 2000
 ): Promise<void> {
@@ -829,7 +829,7 @@ export async function waitForCacheRevalidation(
 /**
  * Navigate to vendor public profile
  */
-export async function navigateToPublicProfile(
+async function navigateToPublicProfile(
   page: Page,
   slug: string
 ): Promise<void> {
@@ -846,7 +846,7 @@ export async function navigateToPublicProfile(
  * Wait for page to be ready after navigation or state change
  * Replaces waitForTimeout after page.goto or form submission
  */
-export async function waitForPageReady(
+async function waitForPageReady(
   page: Page,
   options: { timeout?: number } = {}
 ): Promise<void> {
@@ -863,7 +863,7 @@ export async function waitForPageReady(
  * Wait for a specific element to appear and stabilize
  * Replaces waitForTimeout followed by element interaction
  */
-export async function waitForElementStable(
+async function waitForElementStable(
   page: Page,
   selector: string,
   options: { timeout?: number; stable?: boolean } = {}
@@ -881,7 +881,7 @@ export async function waitForElementStable(
  * Wait for React form to be ready (inputs editable)
  * Replaces waitForTimeout after form loads
  */
-export async function waitForFormReady(
+async function waitForFormReady(
   page: Page,
   options: { timeout?: number } = {}
 ): Promise<void> {
@@ -903,7 +903,7 @@ export async function waitForFormReady(
  * Wait for a tab/panel content to load after clicking a tab
  * Replaces waitForTimeout after tab click
  */
-export async function waitForTabContent(
+async function waitForTabContent(
   page: Page,
   options: { timeout?: number; checkFor?: string } = {}
 ): Promise<void> {
@@ -923,7 +923,7 @@ export async function waitForTabContent(
  * Wait for API response after form submission
  * Replaces waitForTimeout after clicking submit
  */
-export async function waitForApiResponse(
+async function waitForApiResponse(
   page: Page,
   urlPattern: string | RegExp,
   options: { timeout?: number; method?: string } = {}

@@ -32,7 +32,7 @@ let payloadPromise: Promise<Payload> | null = null;
  * The config is cached after first load for performance.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function getPayloadConfig(): Promise<any> {
+async function getPayloadConfig(): Promise<any> {
   if (!configPromise) {
     configPromise = import('@/payload.config').then(m => m.default);
   }
@@ -58,7 +58,7 @@ export async function getPayloadClient(): Promise<Payload> {
  * Resets the cached config and client.
  * Only use this in tests or when you need to reload the configuration.
  */
-export function resetPayloadCache(): void {
+function resetPayloadCache(): void {
   configPromise = null;
   payloadPromise = null;
 }

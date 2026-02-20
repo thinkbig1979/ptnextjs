@@ -32,7 +32,7 @@ import { CaseStudiesManager } from './CaseStudiesManager';
 import { TeamMembersManager } from './TeamMembersManager';
 import { PromotionPackForm } from './PromotionPackForm';
 
-export interface ProfileEditTabsProps {
+interface ProfileEditTabsProps {
   vendor: Vendor;
 }
 
@@ -369,4 +369,3 @@ function PlaceholderComponent(title: string) {
   };
 }
 
-export default ProfileEditTabs;

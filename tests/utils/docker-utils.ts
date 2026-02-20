@@ -29,7 +29,7 @@ export async function isDockerAvailable(): Promise<boolean> {
  *
  * @returns Promise<boolean> - true if Docker daemon is accessible, false otherwise
  */
-export async function isDockerRunning(): Promise<boolean> {
+async function isDockerRunning(): Promise<boolean> {
   try {
     await execAsync('docker ps');
     return true;
@@ -43,7 +43,7 @@ export async function isDockerRunning(): Promise<boolean> {
  *
  * @returns Promise<boolean> - true if docker compose is available, false otherwise
  */
-export async function isDockerComposeAvailable(): Promise<boolean> {
+async function isDockerComposeAvailable(): Promise<boolean> {
   try {
     // Try new syntax first (docker compose)
     await execAsync('docker compose version').catch(() => {
@@ -62,7 +62,7 @@ export async function isDockerComposeAvailable(): Promise<boolean> {
  *
  * @returns Promise<string> - 'docker compose' or 'docker-compose'
  */
-export async function getDockerComposeCommand(): Promise<string> {
+async function getDockerComposeCommand(): Promise<string> {
   try {
     await execAsync('docker compose version');
     return 'docker compose';
@@ -85,7 +85,7 @@ export async function getDockerComposeCommand(): Promise<string> {
  * @param name - Test suite name
  * @param fn - Test suite callback function
  */
-export function describeIfDockerAvailable(name: string, fn: () => void): void {
+function describeIfDockerAvailable(name: string, fn: () => void): void {
   // Create a lazy evaluation wrapper
   describe(`${name} (Docker Required)`, () => {
     let dockerAvailable = false;
@@ -141,7 +141,7 @@ export function describeIfDockerAvailable(name: string, fn: () => void): void {
  * @param fn - Test callback function
  * @param timeout - Optional timeout in milliseconds
  */
-export function itIfDockerAvailable(
+function itIfDockerAvailable(
   name: string,
   fn: (done?: jest.DoneCallback) => void | Promise<void>,
   timeout?: number
@@ -163,7 +163,7 @@ export function itIfDockerAvailable(
  * @param context - Description of what requires Docker
  * @returns Formatted error message
  */
-export function getDockerNotAvailableMessage(context: string): string {
+function getDockerNotAvailableMessage(context: string): string {
   return (
     `Docker is required for: ${context}\n` +
     `Please install Docker to run these tests.\n` +
@@ -172,12 +172,3 @@ export function getDockerNotAvailableMessage(context: string): string {
   );
 }
 
-export default {
-  isDockerAvailable,
-  isDockerRunning,
-  isDockerComposeAvailable,
-  getDockerComposeCommand,
-  describeIfDockerAvailable,
-  itIfDockerAvailable,
-  getDockerNotAvailableMessage,
-};

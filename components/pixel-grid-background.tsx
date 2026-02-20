@@ -118,4 +118,3 @@ export function PixelGridBackground({
 /**
  * Default export for convenient importing.
  */
-export default PixelGridBackground;

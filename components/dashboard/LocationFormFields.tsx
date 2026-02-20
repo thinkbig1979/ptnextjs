@@ -9,7 +9,7 @@ import { GeocodingButton } from '@/components/vendor/GeocodingButton';
 import { Trash2 } from 'lucide-react';
 import { HelpTooltip } from '@/components/help';
 
-export interface LocationFormFieldsProps {
+interface LocationFormFieldsProps {
   location: VendorLocation;
   isHQ: boolean;
   onChange: (updatedLocation: VendorLocation) => void;
@@ -417,4 +417,3 @@ export function LocationFormFields({
   );
 }
 
-export default LocationFormFields;

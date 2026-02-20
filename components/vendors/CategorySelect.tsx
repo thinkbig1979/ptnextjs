@@ -11,7 +11,7 @@ import {
 import { cn } from '@/lib/utils';
 import type { Category } from '@/lib/types';
 
-export interface CategorySelectProps {
+interface CategorySelectProps {
   categories: Category[];
   value: string | null;
   onChange: (value: string | null) => void;
@@ -74,4 +74,3 @@ export function CategorySelect({
   );
 }
 
-export default CategorySelect;

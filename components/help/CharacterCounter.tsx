@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils';
 
-export interface CharacterCounterProps {
+interface CharacterCounterProps {
   /** Current character count */
   current: number;
   /** Maximum allowed characters */
@@ -90,4 +90,3 @@ export function CharacterCounter({
   );
 }
 
-export default CharacterCounter;

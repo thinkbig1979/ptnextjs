@@ -8,7 +8,7 @@ import { Switch } from '@/components/ui/switch';
 import { Pencil, Trash2 } from 'lucide-react';
 import { Product, Category } from '@/lib/types';
 
-export interface ProductCardProps {
+interface ProductCardProps {
   product: Product;
   onEdit: (product: Product) => void;
   onDelete: (product: Product) => void;

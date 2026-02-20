@@ -28,15 +28,15 @@
  */
 
 // Types
-export type { CacheEntry, CacheOptions, CacheStats, CacheEntryInfo } from './types';
+;
 
 // Core interface
 export type { CacheService } from './CacheService';
 
 // Implementations
-export { InMemoryCacheService, createCollectionPattern, createEntityTags } from './InMemoryCacheService';
-export { LRUCacheService, lruCacheService, createLRUCollectionPattern, createLRUEntityTags } from './LRUCacheService';
-export type { LRUCacheServiceOptions } from './LRUCacheService';
+export { InMemoryCacheService,   } from './InMemoryCacheService';
+;
+;
 
 // Default export - singleton instance with default TTL
-export { InMemoryCacheService as default } from './InMemoryCacheService';
+;

@@ -37,7 +37,7 @@ import { ValidationErrorsTable } from './ValidationErrorsTable';
 /**
  * Props for ExcelPreviewDialog component
  */
-export interface ExcelPreviewDialogProps {
+interface ExcelPreviewDialogProps {
   /** Whether the dialog is open */
   open: boolean;
   /** Callback when dialog is closed */

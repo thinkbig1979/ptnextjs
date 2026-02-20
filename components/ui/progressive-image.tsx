@@ -191,7 +191,7 @@ interface ImageGalleryProps {
   showLoadingState?: boolean;
 }
 
-export function ImageGallery({
+function ImageGallery({
   images,
   className,
   columns = 3,
@@ -259,7 +259,7 @@ interface HeroImageProps {
   priority?: boolean;
 }
 
-export function HeroImage({
+function HeroImage({
   src,
   alt,
   className,

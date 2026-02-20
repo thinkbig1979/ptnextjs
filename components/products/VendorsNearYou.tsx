@@ -12,7 +12,7 @@ import { useNearbyVendorsByCategory } from '@/hooks/useNearbyVendorsByCategory';
 import { cn } from '@/lib/utils';
 import type { Vendor, Product } from '@/lib/types';
 
-export interface VendorsNearYouProps {
+interface VendorsNearYouProps {
   category: string;
   currentVendorId?: string;
   maxVendors?: number; // Default: 4
@@ -195,4 +195,3 @@ export function VendorsNearYou({
   );
 }
 
-export default VendorsNearYou;

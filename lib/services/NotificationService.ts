@@ -20,7 +20,7 @@ import type {
 /**
  * Create a notification for a user
  */
-export async function createNotification(
+async function createNotification(
   payload: CreateNotificationPayload
 ): Promise<{ success: boolean; notification?: Notification; error?: string }> {
   try {
@@ -213,7 +213,7 @@ export async function markAllAsRead(
 /**
  * Create a notification for tier upgrade/downgrade request submission (admin notification)
  */
-export async function notifyAdminOfTierRequest(
+async function notifyAdminOfTierRequest(
   vendorName: string,
   currentTier: string,
   requestedTier: string,
@@ -261,7 +261,7 @@ export async function notifyAdminOfTierRequest(
 /**
  * Create a notification for tier request approval (vendor notification)
  */
-export async function notifyVendorOfApproval(
+async function notifyVendorOfApproval(
   userId: string,
   requestType: 'upgrade' | 'downgrade',
   currentTier: string,
@@ -297,7 +297,7 @@ export async function notifyVendorOfApproval(
 /**
  * Create a notification for tier request rejection (vendor notification)
  */
-export async function notifyVendorOfRejection(
+async function notifyVendorOfRejection(
   userId: string,
   requestType: 'upgrade' | 'downgrade',
   currentTier: string,

@@ -12,7 +12,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 
-export interface ProductDeleteDialogProps {
+interface ProductDeleteDialogProps {
   product: Product | null;
   open: boolean;
   onConfirm: () => void;

@@ -39,7 +39,7 @@ const CASE_STUDY_DEFAULT_VALUES: CaseStudyFormData = {
   featured: false,
 };
 
-export interface CaseStudiesManagerProps {
+interface CaseStudiesManagerProps {
   vendor: Vendor;
 }
 

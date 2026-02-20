@@ -4,7 +4,7 @@ import { generateTokens, verifyToken, refreshAccessToken, type JWTPayload, type 
 
 const BCRYPT_ROUNDS = 12;
 
-export interface LoginResponse {
+interface LoginResponse {
   user: {
     id: string;
     email: string;
@@ -205,4 +205,3 @@ class AuthService {
 
 // Export singleton instance
 export const authService = new AuthService();
-export default authService;

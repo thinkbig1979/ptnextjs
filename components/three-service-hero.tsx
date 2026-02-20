@@ -169,4 +169,3 @@ function ServiceCard({ service }: ServiceCardProps) {
   );
 }
 
-export default ThreeServiceHero;

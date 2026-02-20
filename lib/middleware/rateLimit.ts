@@ -76,7 +76,7 @@ function getClientIp(request: NextRequest): string {
 /**
  * Rate limit options
  */
-export interface RateLimitOptions {
+interface RateLimitOptions {
   /** Maximum requests per window (default: 10) */
   maxRequests?: number;
   /** Time window in milliseconds (default: 60000 = 1 minute) */
@@ -215,7 +215,7 @@ export function clearRateLimits(): boolean {
  * Clear rate limit for a specific IP
  * Only available in development/test environments
  */
-export function clearRateLimitForIp(ip: string): boolean {
+function clearRateLimitForIp(ip: string): boolean {
   if (process.env.NODE_ENV === 'production') {
     console.warn('[RateLimit] Cannot clear rate limits in production');
     return false;
@@ -236,7 +236,7 @@ export function clearRateLimitForIp(ip: string): boolean {
 /**
  * Export for testing purposes
  */
-export const _testing = {
+const _testing = {
   rateLimitStore,
   cleanupExpiredEntries,
   getClientIp,

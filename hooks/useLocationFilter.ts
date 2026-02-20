@@ -69,7 +69,7 @@ export type VendorWithDistance<T extends VendorForLocation = VendorForLocation> 
   matchedLocation?: NormalizedLocation;
 };
 
-export interface UseLocationFilterResult<T extends VendorForLocation> {
+interface UseLocationFilterResult<T extends VendorForLocation> {
   /** Vendors filtered by distance */
   filteredVendors: VendorWithDistance<T>[];
   /** Number of vendors with valid coordinates */

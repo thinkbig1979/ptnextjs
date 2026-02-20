@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { MapPin, Navigation, Map } from 'lucide-react';
 import { VendorLocation } from '@/lib/types';
 
-export interface LocationCardProps {
+interface LocationCardProps {
   location: VendorLocation;
   isHQ?: boolean;
   onShowOnMap?: (locationId: string) => void;
@@ -104,4 +104,3 @@ export function LocationCard({ location, isHQ = false, onShowOnMap, isFocused = 
   );
 }
 
-export default LocationCard;

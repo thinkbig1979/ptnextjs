@@ -223,4 +223,3 @@ export function SubmitProfileCard() {
   );
 }
 
-export default SubmitProfileCard;

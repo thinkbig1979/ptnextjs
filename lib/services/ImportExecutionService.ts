@@ -44,7 +44,7 @@ export interface FieldChange {
 /**
  * Imported row result
  */
-export interface ImportedRow {
+interface ImportedRow {
   rowNumber: number;
   success: boolean;
   changes: FieldChange[];
@@ -54,7 +54,7 @@ export interface ImportedRow {
 /**
  * Complete import execution result
  */
-export interface ImportExecutionResult {
+interface ImportExecutionResult {
   success: boolean;
   totalRows: number;
   successfulRows: number;

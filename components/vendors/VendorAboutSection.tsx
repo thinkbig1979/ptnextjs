@@ -8,7 +8,7 @@ import { CheckCircle } from 'lucide-react';
 import type { Vendor } from '@/lib/types';
 import { ensureUrlProtocol } from '@/lib/utils/url';
 
-export interface VendorAboutSectionProps {
+interface VendorAboutSectionProps {
   vendor: Vendor;
 }
 
@@ -188,4 +188,3 @@ export function VendorAboutSection({ vendor }: VendorAboutSectionProps) {
   );
 }
 
-export default VendorAboutSection;

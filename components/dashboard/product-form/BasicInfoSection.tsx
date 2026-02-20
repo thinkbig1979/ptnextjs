@@ -226,4 +226,3 @@ export function BasicInfoSection({
   );
 }
 
-export default BasicInfoSection;

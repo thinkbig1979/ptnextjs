@@ -27,7 +27,7 @@ import {
 /**
  * Export options
  */
-export interface ExportOptions {
+interface ExportOptions {
   includeMetadata?: boolean;
   filename?: string;
   sheetName?: string;

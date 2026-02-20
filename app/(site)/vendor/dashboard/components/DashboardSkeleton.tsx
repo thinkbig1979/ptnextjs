@@ -130,4 +130,3 @@ export function DashboardSkeleton() {
   );
 }
 
-export default DashboardSkeleton;

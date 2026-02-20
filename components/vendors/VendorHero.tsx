@@ -9,7 +9,7 @@ import { MapPin, Package } from 'lucide-react';
 import type { Vendor } from '@/lib/types';
 import { formatVendorLocation, getHQLocation } from '@/lib/utils/location';
 
-export interface VendorHeroProps {
+interface VendorHeroProps {
   vendor: Vendor;
   productCount: number;
 }
@@ -98,4 +98,3 @@ export function VendorHero({ vendor, productCount }: VendorHeroProps): React.JSX
   );
 }
 
-export default VendorHero;

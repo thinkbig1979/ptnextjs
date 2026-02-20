@@ -154,4 +154,3 @@ export function ConsultancyPreviewSection({ className }: ConsultancyPreviewSecti
   );
 }
 
-export default ConsultancyPreviewSection;

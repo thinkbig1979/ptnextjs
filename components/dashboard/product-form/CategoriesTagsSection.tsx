@@ -429,4 +429,3 @@ export function CategoriesTagsSection({
   );
 }
 
-export default CategoriesTagsSection;

@@ -154,4 +154,3 @@ export function VendorConsultancyPreviewSection({
   );
 }
 
-export default VendorConsultancyPreviewSection;

@@ -120,7 +120,7 @@ export function filterVendorPayload(vendor: any): Record<string, any> {
   return filtered;
 }
 
-export interface VendorDashboardContextValue {
+interface VendorDashboardContextValue {
   // Data
   vendor: Vendor | null;
   isLoading: boolean;
@@ -151,7 +151,7 @@ const fetcher = (url: string) => fetch(url).then(async (res) => {
   return json.success ? json.data : json;
 });
 
-export interface VendorDashboardProviderProps {
+interface VendorDashboardProviderProps {
   children: React.ReactNode;
   vendorId?: string;
   initialData?: Vendor;
@@ -344,4 +344,3 @@ export function useVendorDashboard(): VendorDashboardContextValue {
   return context;
 }
 
-export default VendorDashboardContext;

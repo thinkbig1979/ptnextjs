@@ -16,7 +16,7 @@ import { after } from 'next/server';
 /**
  * Audit event types for authentication tracking
  */
-export type AuditEvent =
+type AuditEvent =
   | 'LOGIN_SUCCESS'
   | 'LOGIN_FAILED'
   | 'LOGOUT'
@@ -30,7 +30,7 @@ export type AuditEvent =
 /**
  * Audit log entry structure
  */
-export interface AuditLogEntry {
+interface AuditLogEntry {
   event: AuditEvent;
   userId?: string;
   email: string;
@@ -48,7 +48,7 @@ export interface AuditLogEntry {
  * 2. x-real-ip (alternative proxy header)
  * 3. undefined if no IP headers present
  */
-export function getClientIp(request: NextRequest): string | undefined {
+function getClientIp(request: NextRequest): string | undefined {
   // Try x-forwarded-for first (may contain multiple IPs)
   const forwarded_for = request.headers.get('x-forwarded-for');
   if (forwarded_for) {
@@ -76,7 +76,7 @@ export function getClientIp(request: NextRequest): string | undefined {
  * @param entry - The audit log entry to record
  * @param request - Optional request object to extract IP and user agent
  */
-export async function logAuditEvent(
+async function logAuditEvent(
   entry: AuditLogEntry,
   request?: NextRequest
 ): Promise<void> {
@@ -115,7 +115,7 @@ export async function logAuditEvent(
  * @param token_id - The JTI of the newly issued access token
  * @param request - The HTTP request for context
  */
-export async function logLoginSuccess(
+async function logLoginSuccess(
   user_id: string,
   email: string,
   token_id: string,
@@ -139,7 +139,7 @@ export async function logLoginSuccess(
  * @param reason - The reason for failure (e.g., "Invalid password", "User not found")
  * @param request - The HTTP request for context
  */
-export async function logLoginFailed(
+async function logLoginFailed(
   email: string,
   reason: string,
   request: NextRequest
@@ -161,7 +161,7 @@ export async function logLoginFailed(
  * @param email - The user's email address
  * @param request - The HTTP request for context
  */
-export async function logLogout(
+async function logLogout(
   user_id: string,
   email: string,
   request: NextRequest
@@ -184,7 +184,7 @@ export async function logLogout(
  * @param new_token_id - The JTI of the newly issued token
  * @param request - The HTTP request for context
  */
-export async function logTokenRefresh(
+async function logTokenRefresh(
   user_id: string,
   email: string,
   new_token_id: string,
@@ -208,7 +208,7 @@ export async function logTokenRefresh(
  * @param reason - The reason for failure
  * @param request - The HTTP request for context
  */
-export async function logTokenRefreshFailed(
+async function logTokenRefreshFailed(
   email: string,
   reason: string,
   request: NextRequest
@@ -308,7 +308,7 @@ export async function logAccountStatusChange(
  * @param logFn - The audit log function to execute
  * @param args - Arguments to pass to the log function
  */
-export function deferAuditLog<T extends unknown[]>(
+function deferAuditLog<T extends unknown[]>(
   logFn: (...args: T) => Promise<void>,
   ...args: T
 ): void {
@@ -484,7 +484,7 @@ export function deferLogTokenRefreshFailed(
 }
 
 // Export the audit service as a namespace-like object for consistency
-export const auditService = {
+const auditService = {
   getClientIp,
   logAuditEvent,
   logLoginSuccess,
@@ -503,4 +503,3 @@ export const auditService = {
   deferLogTokenRefreshFailed,
 };
 
-export default auditService;

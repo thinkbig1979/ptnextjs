@@ -372,4 +372,3 @@ export function EnhancedProductForm({
   );
 }
 
-export default EnhancedProductForm;

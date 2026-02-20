@@ -55,7 +55,7 @@ export const MAX_LOCATIONS_PER_TIER: Record<Tier, number> = {
 /**
  * Maximum products allowed per tier
  */
-export const MAX_PRODUCTS_PER_TIER: Record<Tier, number> = {
+const MAX_PRODUCTS_PER_TIER: Record<Tier, number> = {
   free: 3,
   tier1: 10,
   tier2: 25,
@@ -65,7 +65,7 @@ export const MAX_PRODUCTS_PER_TIER: Record<Tier, number> = {
 /**
  * Maximum media items allowed per tier in the media gallery
  */
-export const MAX_MEDIA_PER_TIER: Record<Tier, number> = {
+const MAX_MEDIA_PER_TIER: Record<Tier, number> = {
   free: 5,
   tier1: 20,
   tier2: 50,
@@ -96,7 +96,7 @@ export const TIER_DESCRIPTIONS: Record<Tier, string> = {
  * Field access configuration by tier
  * Each tier includes access to all fields from lower tiers
  */
-export const TIER_FIELD_ACCESS: Record<Tier, string[]> = {
+const TIER_FIELD_ACCESS: Record<Tier, string[]> = {
   free: [
     'companyName',
     'slug',
@@ -153,7 +153,7 @@ export const TIER_FIELD_ACCESS: Record<Tier, string[]> = {
 /**
  * Features available by tier
  */
-export const TIER_FEATURES: Record<Tier, TierFeature[]> = {
+const TIER_FEATURES: Record<Tier, TierFeature[]> = {
   free: [],
   tier1: ['multipleLocations', 'media-gallery'],
   tier2: ['multipleLocations', 'media-gallery', 'advancedAnalytics', 'apiAccess', 'customDomain', 'excel-import', 'productManagement'],
@@ -173,7 +173,7 @@ export const TIER_FEATURES: Record<Tier, TierFeature[]> = {
 /**
  * Tier colors for UI display
  */
-export const TIER_COLORS: Record<Tier, { bg: string; text: string; border: string }> = {
+const TIER_COLORS: Record<Tier, { bg: string; text: string; border: string }> = {
   free: {
     bg: 'bg-muted',
     text: 'text-gray-800',
@@ -199,7 +199,7 @@ export const TIER_COLORS: Record<Tier, { bg: string; text: string; border: strin
 /**
  * Tier pricing information (for upgrade prompts)
  */
-export const TIER_PRICING: Record<Tier, { monthly: number; yearly: number }> = {
+const TIER_PRICING: Record<Tier, { monthly: number; yearly: number }> = {
   free: { monthly: 0, yearly: 0 },
   tier1: { monthly: 99, yearly: 990 },
   tier2: { monthly: 299, yearly: 2990 },
@@ -278,7 +278,7 @@ export function getMaxMedia(tier: Tier | undefined): number {
 /**
  * Helper function to check if can add more media items
  */
-export function canAddMedia(tier: Tier | undefined, currentMediaCount: number): boolean {
+function canAddMedia(tier: Tier | undefined, currentMediaCount: number): boolean {
   const maxMedia = getMaxMedia(tier);
   return currentMediaCount < maxMedia;
 }
@@ -314,7 +314,7 @@ export function canAccessField(tier: Tier | undefined, fieldName: string): boole
 /**
  * Helper function to get tier display info
  */
-export function getTierDisplayInfo(tier: Tier | undefined): {
+function getTierDisplayInfo(tier: Tier | undefined): {
   name: string;
   description: string;
   colors: typeof TIER_COLORS[Tier];

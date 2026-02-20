@@ -123,7 +123,7 @@ export const mockVendorSingleLocation = {
 };
 
 // Helper to create a vendor with custom locations
-export const createMockVendor = (
+const createMockVendor = (
   tier: 'free' | 'tier1' | 'tier2' | 'tier3',
   locations: VendorLocation[]
 ) => ({

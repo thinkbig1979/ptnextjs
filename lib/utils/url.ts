@@ -46,7 +46,7 @@ export function ensureUrlProtocol(url: string | null | undefined): string {
  * @param url - The URL to validate
  * @returns true if valid, false otherwise
  */
-export function isValidUrl(url: string | null | undefined): boolean {
+function isValidUrl(url: string | null | undefined): boolean {
   if (!url || typeof url !== 'string') {
     return false;
   }

@@ -13,7 +13,7 @@ const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000';
 /**
  * Configuration for creating an upgrade request
  */
-export interface UpgradeRequestConfig {
+interface UpgradeRequestConfig {
   requestedTier: 'tier1' | 'tier2' | 'tier3';
   vendorNotes?: string;
 }
@@ -21,7 +21,7 @@ export interface UpgradeRequestConfig {
 /**
  * Configuration for creating a downgrade request
  */
-export interface DowngradeRequestConfig {
+interface DowngradeRequestConfig {
   requestedTier: 'free' | 'tier1' | 'tier2';
   vendorNotes?: string;
 }
@@ -29,7 +29,7 @@ export interface DowngradeRequestConfig {
 /**
  * Result from upgrade/downgrade request operations
  */
-export interface UpgradeRequestResult {
+interface UpgradeRequestResult {
   success: boolean;
   requestId?: string;
   status?: 'pending' | 'approved' | 'rejected' | 'cancelled';
@@ -39,14 +39,14 @@ export interface UpgradeRequestResult {
 /**
  * Vendor configuration for seeding
  */
-export interface VendorConfig extends Partial<VendorSeedData> {
+interface VendorConfig extends Partial<VendorSeedData> {
   tier?: 'free' | 'tier1' | 'tier2' | 'tier3';
 }
 
 /**
  * Tier feature validation result
  */
-export interface TierFeatureValidation {
+interface TierFeatureValidation {
   hasExpectedFeatures: boolean;
   details: string;
   checkedFeatures: string[];
@@ -143,7 +143,7 @@ export async function seedVendorWithUpgradeRequest(
  * @param requestConfig - Downgrade request configuration
  * @returns Object with vendorId, requestId, and vendorData
  */
-export async function seedVendorWithDowngradeRequest(
+async function seedVendorWithDowngradeRequest(
   page: Page,
   vendorConfig: VendorConfig = {},
   requestConfig: DowngradeRequestConfig
@@ -219,7 +219,7 @@ export async function seedVendorWithDowngradeRequest(
  * @param requestId - ID of the request to approve
  * @returns Approval response data
  */
-export async function approveUpgradeRequest(
+async function approveUpgradeRequest(
   page: Page,
   requestId: string
 ): Promise<{ success: boolean; data?: any; error?: string }> {
@@ -262,7 +262,7 @@ export async function approveUpgradeRequest(
  * @param reason - Rejection reason (required, 10-1000 characters)
  * @returns Rejection response data
  */
-export async function rejectUpgradeRequest(
+async function rejectUpgradeRequest(
   page: Page,
   requestId: string,
   reason: string
@@ -310,7 +310,7 @@ export async function rejectUpgradeRequest(
  * @param vendorId - Vendor ID
  * @returns Request data or null if no pending request
  */
-export async function getUpgradeRequestStatus(
+async function getUpgradeRequestStatus(
   page: Page,
   vendorId: string
 ): Promise<any | null> {
@@ -348,7 +348,7 @@ export async function getUpgradeRequestStatus(
  * @param vendorId - Vendor ID
  * @returns Request data or null if no pending request
  */
-export async function getDowngradeRequestStatus(
+async function getDowngradeRequestStatus(
   page: Page,
   vendorId: string
 ): Promise<any | null> {
@@ -388,7 +388,7 @@ export async function getDowngradeRequestStatus(
  * @param notes - Optional vendor notes (max 500 characters)
  * @returns Result with success status, requestId, and error if failed
  */
-export async function submitUpgradeRequest(
+async function submitUpgradeRequest(
   page: Page,
   vendorId: string,
   targetTier: 'tier1' | 'tier2' | 'tier3',
@@ -447,7 +447,7 @@ export async function submitUpgradeRequest(
  * @param notes - Optional vendor notes (max 500 characters)
  * @returns Result with success status, requestId, and error if failed
  */
-export async function submitDowngradeRequest(
+async function submitDowngradeRequest(
   page: Page,
   vendorId: string,
   targetTier: 'free' | 'tier1' | 'tier2',
@@ -505,7 +505,7 @@ export async function submitDowngradeRequest(
  * @param requestId - Request ID to cancel
  * @returns Success boolean
  */
-export async function cancelUpgradeRequest(
+async function cancelUpgradeRequest(
   page: Page,
   vendorId: string,
   requestId: string
@@ -538,7 +538,7 @@ export async function cancelUpgradeRequest(
  * @param requestId - Request ID to cancel
  * @returns Success boolean
  */
-export async function cancelDowngradeRequest(
+async function cancelDowngradeRequest(
   page: Page,
   vendorId: string,
   requestId: string
@@ -574,7 +574,7 @@ export async function cancelDowngradeRequest(
  * @param timeout - Timeout in milliseconds (default: 10000)
  * @returns True if tier matches within timeout, false otherwise
  */
-export async function waitForTierUpdate(
+async function waitForTierUpdate(
   page: Page,
   vendorId: string,
   expectedTier: 'free' | 'tier1' | 'tier2' | 'tier3',
@@ -629,7 +629,7 @@ export async function waitForTierUpdate(
  * @param tier - Tier to validate features for
  * @returns Validation result with details
  */
-export async function verifyTierFeatures(
+async function verifyTierFeatures(
   page: Page,
   vendorId: string,
   tier: 'free' | 'tier1' | 'tier2' | 'tier3'
@@ -776,7 +776,7 @@ export async function verifyTierFeatures(
  * @param filters - Optional filters (status, vendorId, requestedTier, requestType)
  * @returns List of requests or null if failed
  */
-export async function listTierRequests(
+async function listTierRequests(
   page: Page,
   filters: {
     status?: 'pending' | 'approved' | 'rejected' | 'cancelled';
@@ -822,7 +822,7 @@ export async function listTierRequests(
  * @param vendorId - Vendor ID
  * @returns Current tier or null if failed
  */
-export async function getVendorTier(
+async function getVendorTier(
   page: Page,
   vendorId: string
 ): Promise<'free' | 'tier1' | 'tier2' | 'tier3' | null> {
@@ -857,7 +857,7 @@ export async function getVendorTier(
  * @param password - Vendor password
  * @returns True if login successful, false otherwise
  */
-export async function loginAsVendor(
+async function loginAsVendor(
   page: Page,
   email: string,
   password: string

@@ -34,7 +34,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Checkbox } from '@/components/ui/checkbox';
 import { AlertTriangle } from 'lucide-react';
 
-export interface TierDowngradeRequestFormProps {
+interface TierDowngradeRequestFormProps {
   vendorId: string;
   currentTier: 'free' | 'tier1' | 'tier2' | 'tier3';
   onSuccess?: (data?: any) => void;

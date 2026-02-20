@@ -27,7 +27,7 @@ interface LRUCacheEntry<T> {
 /**
  * LRU Cache configuration options
  */
-export interface LRUCacheServiceOptions {
+interface LRUCacheServiceOptions {
   /** Maximum number of items in cache (default: 500) */
   maxItems?: number;
   /** Default time-to-live in milliseconds (default: 5 minutes) */
@@ -42,7 +42,7 @@ export interface LRUCacheServiceOptions {
  * Provides efficient cross-request caching with automatic eviction
  * based on least-recently-used policy.
  */
-export class LRUCacheService implements CacheService {
+class LRUCacheService implements CacheService {
   private cache: LRUCache<string, LRUCacheEntry<unknown>>;
   private readonly defaultTTL: number;
   private hits = 0;
@@ -238,7 +238,7 @@ export class LRUCacheService implements CacheService {
  * Singleton instance for cross-request caching
  * Use this for frequently accessed data like vendors, products, categories
  */
-export const lruCacheService = new LRUCacheService({
+const lruCacheService = new LRUCacheService({
   maxItems: 500,
   defaultTTL: 5 * 60 * 1000, // 5 minutes
 });
@@ -246,14 +246,14 @@ export const lruCacheService = new LRUCacheService({
 /**
  * Create collection-specific cache patterns
  */
-export function createLRUCollectionPattern(collection: string): string {
+function createLRUCollectionPattern(collection: string): string {
   return `${collection}:*`;
 }
 
 /**
  * Create entity-specific tags for cache invalidation
  */
-export function createLRUEntityTags(collection: string, id?: string): string[] {
+function createLRUEntityTags(collection: string, id?: string): string[] {
   const tags = [collection];
   if (id) {
     tags.push(`${collection}:${id}`);

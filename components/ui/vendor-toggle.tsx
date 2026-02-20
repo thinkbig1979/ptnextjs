@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { Label } from "./label";
 import { Switch } from "./switch";
 
-export interface VendorToggleProps {
+interface VendorToggleProps {
   value: "partners" | "all";
   onValueChange: (value: "partners" | "all") => void;
   isLoading?: boolean;

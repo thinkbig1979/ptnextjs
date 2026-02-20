@@ -105,7 +105,7 @@ export interface NotificationFilters {
  * Get Notifications Response
  * API response for fetching user notifications
  */
-export interface GetNotificationsResponse {
+interface GetNotificationsResponse {
   success: true;
   notifications: Notification[];
   unreadCount: number;
@@ -116,7 +116,7 @@ export interface GetNotificationsResponse {
  * Mark As Read Response
  * API response for marking notification(s) as read
  */
-export interface MarkAsReadResponse {
+interface MarkAsReadResponse {
   success: true;
   message: string;
 }
@@ -125,7 +125,7 @@ export interface MarkAsReadResponse {
  * Notification Error Response
  * API error response for notification operations
  */
-export interface NotificationErrorResponse {
+interface NotificationErrorResponse {
   success: false;
   error: {
     code: 'UNAUTHORIZED' | 'FORBIDDEN' | 'NOT_FOUND' | 'VALIDATION_ERROR' | 'SERVER_ERROR';
@@ -138,7 +138,7 @@ export interface NotificationErrorResponse {
  * Notification Service Response
  * Union type for all notification API responses
  */
-export type NotificationResponse =
+type NotificationResponse =
   | GetNotificationsResponse
   | MarkAsReadResponse
   | NotificationErrorResponse;

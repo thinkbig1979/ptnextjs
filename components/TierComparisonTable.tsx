@@ -14,7 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { Check, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-export interface TierComparisonTableProps {
+interface TierComparisonTableProps {
   currentTier?: 'free' | 'tier1' | 'tier2' | 'tier3';
   highlightTier?: 'free' | 'tier1' | 'tier2' | 'tier3';
   className?: string;

@@ -64,7 +64,7 @@ const TIER_FIELDS: Record<VendorTier, string[]> = {
 /**
  * Get allowed fields for a given tier
  */
-export function getAllowedFieldsForTier(tier: VendorTier): string[] {
+function getAllowedFieldsForTier(tier: VendorTier): string[] {
   return TIER_FIELDS[tier] || TIER_FIELDS.free;
 }
 
@@ -115,7 +115,7 @@ export function filterFieldsByTier(
 /**
  * Check if a specific field is allowed for the given tier
  */
-export function isFieldAllowedForTier(
+function isFieldAllowedForTier(
   field: string,
   tier: VendorTier,
   isAdmin: boolean = false
@@ -131,7 +131,7 @@ export function isFieldAllowedForTier(
 /**
  * Get tier hierarchy level (for comparison)
  */
-export function getTierLevel(tier: VendorTier): number {
+function getTierLevel(tier: VendorTier): number {
   const tierLevels: Record<VendorTier, number> = {
     free: 0,
     tier1: 1,

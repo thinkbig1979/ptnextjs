@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Loader2, MapPin } from 'lucide-react';
 import { toast } from 'sonner';
 import GeocodingService from '@/lib/services/GeocodingService';
-export interface GeocodingButtonProps {
+interface GeocodingButtonProps {
   address: string;
   onSuccess: (latitude: number, longitude: number) => void;
   onError?: (error: Error) => void;
@@ -73,4 +73,3 @@ export function GeocodingButton({
     </Button>
   );
 }
-export default GeocodingButton;

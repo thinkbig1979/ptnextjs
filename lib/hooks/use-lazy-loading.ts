@@ -87,7 +87,7 @@ interface UseProgressiveImageReturn {
   hasError: boolean
 }
 
-export function useProgressiveImage({
+function useProgressiveImage({
   src,
   placeholder
 }: UseProgressiveImageOptions): UseProgressiveImageReturn {
@@ -209,7 +209,7 @@ interface UseMemoryMonitorReturn {
   updateMemoryInfo: () => void
 }
 
-export function useMemoryMonitor(): UseMemoryMonitorReturn {
+function useMemoryMonitor(): UseMemoryMonitorReturn {
   const [memoryInfo, setMemoryInfo] = useState<MemoryInfo | null>(null)
 
   const updateMemoryInfo = useCallback(() => {

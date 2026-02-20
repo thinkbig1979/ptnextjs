@@ -20,7 +20,7 @@ import { Page, Route, Request } from '@playwright/test';
 /**
  * Captured email data from mocked Resend API calls
  */
-export interface CapturedEmail {
+interface CapturedEmail {
   id: string;
   from: string;
   to: string | string[];
@@ -35,7 +35,7 @@ export interface CapturedEmail {
 /**
  * Email type classification based on subject/content patterns
  */
-export type EmailType =
+type EmailType =
   | 'vendor-registered'
   | 'vendor-approved'
   | 'vendor-rejected'
@@ -55,7 +55,7 @@ export type EmailType =
 /**
  * Mock configuration options
  */
-export interface EmailMockOptions {
+interface EmailMockOptions {
   /** Whether to log captured emails to console */
   verbose?: boolean;
   /** Custom response delay in ms (simulates network latency) */
@@ -454,7 +454,7 @@ export async function setupEmailMock(
 /**
  * Test fixture helper for consistent email mock setup/teardown
  */
-export function createEmailMockFixture(options?: EmailMockOptions) {
+function createEmailMockFixture(options?: EmailMockOptions) {
   return async ({ page }: { page: Page }, use: (mock: EmailMock) => Promise<void>) => {
     const mock = new EmailMock(page, options);
     await mock.setup();

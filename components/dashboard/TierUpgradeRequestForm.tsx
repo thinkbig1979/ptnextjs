@@ -34,7 +34,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Info, Clock, Check } from 'lucide-react';
 import { getTierExplanation } from '@/lib/help/content/tier-system';
 
-export interface TierUpgradeRequestFormProps {
+interface TierUpgradeRequestFormProps {
   vendorId: string;
   currentTier: 'free' | 'tier1' | 'tier2' | 'tier3';
   onSuccess?: (data?: any) => void;

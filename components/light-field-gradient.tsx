@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
  * - `center`: Gradient centered at 50% (uses .light-field-center)
  * - `right`: Gradient positioned at 70% from left (uses .light-field-right)
  */
-export type LightFieldPosition = "left" | "center" | "right";
+type LightFieldPosition = "left" | "center" | "right";
 
 /**
  * Intensity levels for the gradient opacity.
@@ -17,12 +17,12 @@ export type LightFieldPosition = "left" | "center" | "right";
  * - `strong`: 120% opacity via brightness filter - more prominent
  * - `intense`: 150% opacity via brightness filter - maximum visibility
  */
-export type LightFieldIntensity = "subtle" | "soft" | "normal" | "strong" | "intense";
+type LightFieldIntensity = "subtle" | "soft" | "normal" | "strong" | "intense";
 
 /**
  * Props for the LightFieldGradient component.
  */
-export interface LightFieldGradientProps {
+interface LightFieldGradientProps {
   /**
    * Position of the radial gradient center.
    * @default "left"
@@ -137,4 +137,3 @@ export function LightFieldGradient({
   );
 }
 
-export default LightFieldGradient;

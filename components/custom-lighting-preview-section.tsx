@@ -153,4 +153,3 @@ export function CustomLightingPreviewSection({ className }: CustomLightingPrevie
   );
 }
 
-export default CustomLightingPreviewSection;

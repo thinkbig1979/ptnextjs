@@ -11,18 +11,18 @@ import { TierValidationService } from './TierValidationService';
 import { VendorComputedFieldsService } from './VendorComputedFieldsService';
 import type { Tier } from './TierService';
 
-export interface VendorProfileOptions {
+interface VendorProfileOptions {
   includeComputed?: boolean;
   includeDraft?: boolean;
 }
 
-export interface UpdateVendorOptions {
+interface UpdateVendorOptions {
   userId: string;
   isAdmin: boolean;
   validateTier?: boolean;
 }
 
-export interface ValidationResult {
+interface ValidationResult {
   valid: boolean;
   errors?: string[];
 }
@@ -586,4 +586,3 @@ export class VendorProfileService {
   }
 }
 
-export default VendorProfileService;

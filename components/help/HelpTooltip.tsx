@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
-export interface HelpTooltipProps {
+interface HelpTooltipProps {
   /** Main content text for the tooltip */
   content: string;
   /** Optional title displayed at the top of the tooltip */
@@ -94,4 +94,3 @@ export function HelpTooltip({
   );
 }
 
-export default HelpTooltip;

@@ -17,7 +17,7 @@ import { TierUpgradePrompt } from '@/components/dashboard/TierUpgradePrompt';
 import { YearsInBusinessDisplay } from '@/components/vendors/YearsInBusinessDisplay';
 import { HelpTooltip, CharacterCounter } from '@/components/help';
 
-export interface BrandStoryFormProps {
+interface BrandStoryFormProps {
   vendor: Vendor;
   onSubmit?: (data: BrandStoryFormData) => Promise<void>;
 }

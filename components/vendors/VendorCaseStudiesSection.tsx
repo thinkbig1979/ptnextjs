@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { OptimizedImage } from '@/components/ui/optimized-image';
 import type { Vendor } from '@/lib/types';
 
-export interface VendorCaseStudiesSectionProps {
+interface VendorCaseStudiesSectionProps {
   vendor: Vendor;
 }
 
@@ -104,4 +104,3 @@ export function VendorCaseStudiesSection({ vendor }: VendorCaseStudiesSectionPro
   );
 }
 
-export default VendorCaseStudiesSection;

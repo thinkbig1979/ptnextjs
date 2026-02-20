@@ -3,7 +3,7 @@
  * Server-side verification of hCaptcha tokens
  */
 
-export interface HCaptchaVerifyResponse {
+interface HCaptchaVerifyResponse {
   success: boolean;
   challenge_ts?: string;
   hostname?: string;

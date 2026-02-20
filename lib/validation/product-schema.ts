@@ -84,7 +84,7 @@ export const ActionButtonSchema = z.object({
   order: z.number().int().min(0).optional().nullable(),
 });
 
-export type ActionButton = z.infer<typeof ActionButtonSchema>;
+type ActionButton = z.infer<typeof ActionButtonSchema>;
 
 // Badge Schema - matches Payload CMS badges array
 export const BadgeSchema = z.object({
@@ -121,7 +121,7 @@ export const SeoSchema = z.object({
   ),
 });
 
-export type Seo = z.infer<typeof SeoSchema>;
+type Seo = z.infer<typeof SeoSchema>;
 
 // Helper to coerce string or number to string for relationship IDs
 const relationshipIdSchema = z.preprocess(
@@ -258,10 +258,10 @@ export const BulkPublishSchema = z.object({
   published: z.boolean(),
 });
 
-export type BulkPublishInput = z.infer<typeof BulkPublishSchema>;
+type BulkPublishInput = z.infer<typeof BulkPublishSchema>;
 
 export const BulkDeleteSchema = z.object({
   productIds: z.array(z.string()).min(1, 'At least one product ID is required'),
 });
 
-export type BulkDeleteInput = z.infer<typeof BulkDeleteSchema>;
+type BulkDeleteInput = z.infer<typeof BulkDeleteSchema>;

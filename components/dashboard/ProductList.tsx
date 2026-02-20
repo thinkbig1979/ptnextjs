@@ -233,4 +233,3 @@ export function ProductList({ vendorId }: ProductListProps) {
   );
 }
 
-export default ProductList;

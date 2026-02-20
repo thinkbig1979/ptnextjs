@@ -60,7 +60,7 @@ const AWARD_DEFAULT_VALUES: AwardFormData = {
   description: '',
 };
 
-export interface CertificationsAwardsManagerProps {
+interface CertificationsAwardsManagerProps {
   vendor: Vendor;
 }
 

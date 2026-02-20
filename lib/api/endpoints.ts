@@ -15,7 +15,7 @@
 /**
  * Authentication endpoints
  */
-export const AUTH_ENDPOINTS = {
+const AUTH_ENDPOINTS = {
   login: '/api/auth/login',
   logout: '/api/auth/logout',
   me: '/api/auth/me',
@@ -52,7 +52,7 @@ export const VENDOR_PUBLIC_ENDPOINTS = {
 /**
  * Admin endpoints (admin authentication required)
  */
-export const ADMIN_ENDPOINTS = {
+const ADMIN_ENDPOINTS = {
   vendors: {
     pending: '/api/admin/vendors/pending',
     approve: (userId: string) => `/api/admin/vendors/${userId}/approve` as const,
@@ -71,7 +71,7 @@ export const ADMIN_ENDPOINTS = {
 /**
  * Product endpoints (public)
  */
-export const PRODUCT_ENDPOINTS = {
+const PRODUCT_ENDPOINTS = {
   list: '/api/public/products',
   byId: (productId: string) => `/api/public/products/${productId}` as const,
   reviews: (productId: string) => `/api/public/products/${productId}/reviews` as const,
@@ -80,14 +80,14 @@ export const PRODUCT_ENDPOINTS = {
 /**
  * Blog endpoints (public)
  */
-export const BLOG_ENDPOINTS = {
+const BLOG_ENDPOINTS = {
   list: '/api/public/blog',
 } as const;
 
 /**
  * Notification endpoints
  */
-export const NOTIFICATION_ENDPOINTS = {
+const NOTIFICATION_ENDPOINTS = {
   list: '/api/notifications',
   read: (notificationId: string) =>
     `/api/notifications/${notificationId}/read` as const,
@@ -97,7 +97,7 @@ export const NOTIFICATION_ENDPOINTS = {
 /**
  * Utility endpoints
  */
-export const UTILITY_ENDPOINTS = {
+const UTILITY_ENDPOINTS = {
   geocode: '/api/geocode',
   usersLogout: '/api/users/logout',
 } as const;
@@ -105,7 +105,7 @@ export const UTILITY_ENDPOINTS = {
 /**
  * Combined API endpoints object for convenience
  */
-export const API_ENDPOINTS = {
+const API_ENDPOINTS = {
   auth: AUTH_ENDPOINTS,
   portal: VENDOR_PORTAL_ENDPOINTS,
   public: VENDOR_PUBLIC_ENDPOINTS,
@@ -119,14 +119,14 @@ export const API_ENDPOINTS = {
 /**
  * Type helpers for endpoint return types
  */
-export type AuthEndpoint = (typeof AUTH_ENDPOINTS)[keyof typeof AUTH_ENDPOINTS];
+type AuthEndpoint = (typeof AUTH_ENDPOINTS)[keyof typeof AUTH_ENDPOINTS];
 
 // Helper type to extract return type from functions or use the value directly
 type EndpointValue<T> = T extends (...args: unknown[]) => infer R ? R : T;
 
-export type VendorPortalEndpoint = EndpointValue<
+type VendorPortalEndpoint = EndpointValue<
   (typeof VENDOR_PORTAL_ENDPOINTS)[keyof typeof VENDOR_PORTAL_ENDPOINTS]
 >;
-export type VendorPublicEndpoint = EndpointValue<
+type VendorPublicEndpoint = EndpointValue<
   (typeof VENDOR_PUBLIC_ENDPOINTS)[keyof typeof VENDOR_PUBLIC_ENDPOINTS]
 >;

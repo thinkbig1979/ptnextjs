@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import type { TierLevel } from './types';
 
-export interface FormSectionProps {
+interface FormSectionProps {
   title: string;
   description?: string;
   children: React.ReactNode;
@@ -187,4 +187,3 @@ export function FormSection({
   );
 }
 
-export default FormSection;

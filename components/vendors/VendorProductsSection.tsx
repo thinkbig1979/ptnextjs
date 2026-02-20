@@ -9,7 +9,7 @@ import { ArrowRight, Star, Package } from 'lucide-react';
 import Link from 'next/link';
 import type { Product } from '@/lib/types';
 
-export interface VendorProductsSectionProps {
+interface VendorProductsSectionProps {
   vendorName: string;
   vendorTier?: string;
   products: Product[];
@@ -127,4 +127,3 @@ export function VendorProductsSection({
   );
 }
 
-export default VendorProductsSection;

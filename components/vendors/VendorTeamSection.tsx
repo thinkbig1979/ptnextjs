@@ -6,7 +6,7 @@ import { OptimizedImage } from '@/components/ui/optimized-image';
 import { Linkedin } from 'lucide-react';
 import type { Vendor } from '@/lib/types';
 
-export interface VendorTeamSectionProps {
+interface VendorTeamSectionProps {
   vendor: Vendor;
 }
 
@@ -89,4 +89,3 @@ export function VendorTeamSection({ vendor }: VendorTeamSectionProps) {
   );
 }
 
-export default VendorTeamSection;

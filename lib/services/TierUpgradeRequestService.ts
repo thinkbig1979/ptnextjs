@@ -63,7 +63,7 @@ interface CreateUpgradeRequestPayload {
 }
 
 // Backward compatible alias
-export type CreateTierRequestPayload = CreateUpgradeRequestPayload;
+type CreateTierRequestPayload = CreateUpgradeRequestPayload;
 
 interface TierUpgradeRequest {
   id: string;
@@ -403,7 +403,7 @@ export async function createDowngradeRequest(
 /**
  * Unified function to create tier change requests (upgrade or downgrade)
  */
-export async function createTierChangeRequest(
+async function createTierChangeRequest(
   payload: CreateUpgradeRequestPayload & { requestType: RequestType }
 ): Promise<TierUpgradeRequest> {
   if (payload.requestType === 'downgrade') {

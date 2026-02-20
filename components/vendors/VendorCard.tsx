@@ -11,7 +11,7 @@ import { MapPin, Star } from 'lucide-react';
 import type { Vendor, SerializedVendor } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 
-export interface VendorCardProps {
+interface VendorCardProps {
   vendor: Vendor | SerializedVendor;
   featured?: boolean;
   showTierBadge?: boolean;
@@ -177,7 +177,7 @@ export function VendorCard({
  *
  * Loading skeleton for VendorCard
  */
-export function VendorCardSkeleton(): React.JSX.Element {
+function VendorCardSkeleton(): React.JSX.Element {
   return (
     <Card className="h-full">
       <CardContent className="p-4">
@@ -215,4 +215,3 @@ export function VendorCardSkeleton(): React.JSX.Element {
   );
 }
 
-export default VendorCard;

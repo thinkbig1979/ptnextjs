@@ -29,7 +29,7 @@ import { ArrowRight, Calendar, User } from 'lucide-react';
 
 import { TierUpgradeRequest } from '@/lib/types';
 
-export interface UpgradeRequestStatusCardProps {
+interface UpgradeRequestStatusCardProps {
   request: TierUpgradeRequest;
   vendorId: string;
   onCancel?: (requestId: string) => Promise<void>;

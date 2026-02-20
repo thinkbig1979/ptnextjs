@@ -51,7 +51,7 @@ const TEAM_MEMBER_DEFAULT_VALUES: TeamMemberFormData = {
   order: null,
 };
 
-export interface TeamMembersManagerProps {
+interface TeamMembersManagerProps {
   vendor: Vendor;
 }
 

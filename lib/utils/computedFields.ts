@@ -148,7 +148,7 @@ export function computeProfileStrength(completionPercentage: number): {
  * @param vendor - Vendor data object
  * @returns Total follower count across all platforms
  */
-export function computeTotalFollowers(vendor: Record<string, any>): number {
+function computeTotalFollowers(vendor: Record<string, any>): number {
   const linkedinFollowers = vendor.linkedinFollowers ?? 0;
   const instagramFollowers = vendor.instagramFollowers ?? 0;
   const twitterFollowers = vendor.twitterFollowers ?? 0;
@@ -191,7 +191,7 @@ export function formatLargeNumber(num: number | null | undefined): string {
  * @param reviews - Array of review objects with rating field
  * @returns Average rating or null
  */
-export function computeAverageRating(reviews?: Array<{ rating: number }>): number | null {
+function computeAverageRating(reviews?: Array<{ rating: number }>): number | null {
   if (!reviews || reviews.length === 0) return null;
 
   const sum = reviews.reduce((acc, review) => acc + (review.rating ?? 0), 0);
@@ -204,7 +204,7 @@ export function computeAverageRating(reviews?: Array<{ rating: number }>): numbe
  * @param rating - Rating value (0-5)
  * @returns Formatted rating string (e.g., "4.5")
  */
-export function formatRating(rating: number | null | undefined): string {
+function formatRating(rating: number | null | undefined): string {
   if (rating === null || rating === undefined || isNaN(rating)) return '0.0';
   return rating.toFixed(1);
 }
@@ -257,7 +257,7 @@ export function getMissingRequiredFields(vendor: Record<string, any>): string[] 
  * @param vendor - Vendor data object
  * @returns Array of recommended action strings
  */
-export function getRecommendedActions(vendor: Record<string, any>): string[] {
+function getRecommendedActions(vendor: Record<string, any>): string[] {
   const actions: string[] = [];
 
   if (!vendor.logo) {

@@ -5,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatDuration(seconds: number): string {
+function formatDuration(seconds: number): string {
   const hours = Math.floor(seconds / 3600)
   const minutes = Math.floor((seconds % 3600) / 60)
   const remainingSeconds = seconds % 60
@@ -41,7 +41,7 @@ export const parseFilterParams = (searchParams: URLSearchParams): {
   };
 };
 
-export const createFilterUrl = (basePath: string, params: {
+const createFilterUrl = (basePath: string, params: {
   category?: string;
   partner?: string;
   search?: string;

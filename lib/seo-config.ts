@@ -18,7 +18,7 @@ export const SITE_CONFIG = {
   },
 }
 
-export const PAGE_TITLES = {
+const PAGE_TITLES = {
   home: SITE_CONFIG.title,
   blog: 'Blog | Superyacht Technology Insights from Paul Thames',
   contact: 'Contact Paul Thames | Superyacht Technical Consultancy',
@@ -32,7 +32,7 @@ export const PAGE_TITLES = {
   consultancySuppliers: 'Vendor Consultancy | Market Access for Marine Technology',
 } as const
 
-export const PAGE_DESCRIPTIONS = {
+const PAGE_DESCRIPTIONS = {
   home: SITE_CONFIG.description,
   blog: 'Expert insights on superyacht AV/IT systems, security, and custom lighting from industry veterans Edwin Edelenbos and Roel van der Zwet.',
   contact:

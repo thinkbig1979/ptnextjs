@@ -245,4 +245,3 @@ export function BadgesSection({
   );
 }
 
-export default BadgesSection;
