@@ -5,21 +5,19 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { MediaItemFormDialog } from './MediaItemFormDialog';
+import type { MediaItemFormData } from './MediaItemFormDialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import {
   Upload,
   Image as ImageIcon,
   Video,
-  Plus,
   Trash2,
   Edit,
   AlertCircle,
   Loader2,
-  X,
   FileImage,
   Play
 } from 'lucide-react';
@@ -28,27 +26,13 @@ import { useVendorDashboard } from '@/lib/context/VendorDashboardContext';
 import { useTierAccess } from '@/hooks/useTierAccess';
 import { UpgradePromptCard } from './UpgradePromptCard';
 import { uploadFile } from '@/lib/utils/file-upload';
-import type { MediaGalleryItem, MediaGalleryItemType, Vendor } from '@/lib/types';
-import { HelpTooltip } from '@/components/help';
+import type { MediaGalleryItem, Vendor } from '@/lib/types';
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
-const MAX_CAPTION_LENGTH = 500;
-const MAX_ALT_TEXT_LENGTH = 255;
-const MAX_ALBUM_LENGTH = 255;
-
 interface MediaGalleryManagerProps {
   vendor: Vendor;
   onSubmit: (data: Partial<Vendor>) => Promise<void>;
-}
-
-interface MediaItemFormData {
-  type: MediaGalleryItemType;
-  file?: File;
-  videoUrl?: string;
-  caption?: string;
-  altText?: string;
-  album?: string;
 }
 
 export function MediaGalleryManager({ vendor, onSubmit }: MediaGalleryManagerProps) {
@@ -571,236 +555,29 @@ export function MediaGalleryManager({ vendor, onSubmit }: MediaGalleryManagerPro
         </CardFooter>
       </Card>
 
-      {/* Add Media Dialog */}
-      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add Media Item</DialogTitle>
-            <DialogDescription>
-              {formData.type === 'image' ? 'Upload an image file' : 'Add a video from YouTube or Vimeo'}
-            </DialogDescription>
-          </DialogHeader>
+      <MediaItemFormDialog
+        mode="add"
+        open={isAddDialogOpen}
+        onOpenChange={setIsAddDialogOpen}
+        formData={formData}
+        onFormDataChange={setFormData}
+        onSubmit={handleAddMediaItem}
+        uploading={uploading}
+        albums={albums}
+        showAltText={formData.type === 'image'}
+      />
 
-          <div className="space-y-4">
-            {/* Media Type Selector */}
-            <div className="space-y-2">
-              <Label>Media Type</Label>
-              <Select
-                value={formData.type}
-                onValueChange={(value: MediaGalleryItemType) => setFormData({ ...formData, type: value, file: undefined, videoUrl: undefined })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="image">Image</SelectItem>
-                  <SelectItem value="video">Video (YouTube/Vimeo)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Image Upload */}
-            {formData.type === 'image' && (
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Label htmlFor="image-file">Image File</Label>
-                  <HelpTooltip
-                    content="Upload JPEG, PNG, WebP, or GIF images (max 10MB). Use high-quality photos."
-                    title="Image Upload"
-                  />
-                </div>
-                <Input
-                  id="image-file"
-                  type="file"
-                  accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) setFormData({ ...formData, file });
-                  }}
-                />
-                {formData.file && (
-                  <p className="text-sm text-muted-foreground">
-                    {formData.file.name} ({(formData.file.size / 1024).toFixed(1)} KB)
-                  </p>
-                )}
-              </div>
-            )}
-
-            {/* Video URL */}
-            {formData.type === 'video' && (
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Label htmlFor="video-url">Video URL</Label>
-                  <HelpTooltip
-                    content="Paste a YouTube or Vimeo URL to embed a video in your gallery."
-                    title="Video URL"
-                  />
-                </div>
-                <Input
-                  id="video-url"
-                  type="url"
-                  placeholder="https://www.youtube.com/watch?v=..."
-                  value={formData.videoUrl || ''}
-                  onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
-                />
-                <p className="text-xs text-muted-foreground">
-                  Paste a YouTube or Vimeo video URL
-                </p>
-              </div>
-            )}
-
-            {/* Caption */}
-            <div className="space-y-2">
-              <Label htmlFor="caption">Caption (optional)</Label>
-              <Textarea
-                id="caption"
-                placeholder="Describe this media item..."
-                value={formData.caption || ''}
-                onChange={(e) => setFormData({ ...formData, caption: e.target.value })}
-                maxLength={MAX_CAPTION_LENGTH}
-              />
-              <p className="text-xs text-muted-foreground text-right">
-                {formData.caption?.length || 0} / {MAX_CAPTION_LENGTH}
-              </p>
-            </div>
-
-            {/* Alt Text (Images only) */}
-            {formData.type === 'image' && (
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Label htmlFor="alt-text">Alt Text (optional)</Label>
-                  <HelpTooltip
-                    content="Describe the image for accessibility and SEO. Screen readers use this text."
-                    title="Alt Text"
-                  />
-                </div>
-                <Input
-                  id="alt-text"
-                  placeholder="Descriptive text for accessibility"
-                  value={formData.altText || ''}
-                  onChange={(e) => setFormData({ ...formData, altText: e.target.value })}
-                  maxLength={MAX_ALT_TEXT_LENGTH}
-                />
-                <p className="text-xs text-muted-foreground text-right">
-                  {formData.altText?.length || 0} / {MAX_ALT_TEXT_LENGTH}
-                </p>
-              </div>
-            )}
-
-            {/* Album */}
-            <div className="space-y-2">
-              <Label htmlFor="album">Album (optional)</Label>
-              <Input
-                id="album"
-                placeholder="e.g., Projects, Products, Events"
-                value={formData.album || ''}
-                onChange={(e) => setFormData({ ...formData, album: e.target.value })}
-                maxLength={MAX_ALBUM_LENGTH}
-                list="existing-albums"
-              />
-              {albums.length > 0 && (
-                <datalist id="existing-albums">
-                  {albums.map(album => (
-                    <option key={album} value={album} />
-                  ))}
-                </datalist>
-              )}
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsAddDialogOpen(false)} disabled={uploading}>
-              Cancel
-            </Button>
-            <Button onClick={handleAddMediaItem} disabled={uploading || (formData.type === 'image' && !formData.file) || (formData.type === 'video' && !formData.videoUrl)}>
-              {uploading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Add Media
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Edit Media Dialog */}
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Media Item</DialogTitle>
-            <DialogDescription>
-              Update caption, alt text, and album information
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-4">
-            {/* Caption */}
-            <div className="space-y-2">
-              <Label htmlFor="edit-caption">Caption (optional)</Label>
-              <Textarea
-                id="edit-caption"
-                placeholder="Describe this media item..."
-                value={formData.caption || ''}
-                onChange={(e) => setFormData({ ...formData, caption: e.target.value })}
-                maxLength={MAX_CAPTION_LENGTH}
-              />
-              <p className="text-xs text-muted-foreground text-right">
-                {formData.caption?.length || 0} / {MAX_CAPTION_LENGTH}
-              </p>
-            </div>
-
-            {/* Alt Text (Images only) */}
-            {editingItem?.type === 'image' && (
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Label htmlFor="edit-alt-text">Alt Text (optional)</Label>
-                  <HelpTooltip
-                    content="Describe the image for accessibility and SEO. Screen readers use this text."
-                    title="Alt Text"
-                  />
-                </div>
-                <Input
-                  id="edit-alt-text"
-                  placeholder="Descriptive text for accessibility"
-                  value={formData.altText || ''}
-                  onChange={(e) => setFormData({ ...formData, altText: e.target.value })}
-                  maxLength={MAX_ALT_TEXT_LENGTH}
-                />
-                <p className="text-xs text-muted-foreground text-right">
-                  {formData.altText?.length || 0} / {MAX_ALT_TEXT_LENGTH}
-                </p>
-              </div>
-            )}
-
-            {/* Album */}
-            <div className="space-y-2">
-              <Label htmlFor="edit-album">Album (optional)</Label>
-              <Input
-                id="edit-album"
-                placeholder="e.g., Projects, Products, Events"
-                value={formData.album || ''}
-                onChange={(e) => setFormData({ ...formData, album: e.target.value })}
-                maxLength={MAX_ALBUM_LENGTH}
-                list="existing-albums-edit"
-              />
-              {albums.length > 0 && (
-                <datalist id="existing-albums-edit">
-                  {albums.map(album => (
-                    <option key={album} value={album} />
-                  ))}
-                </datalist>
-              )}
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)} disabled={uploading}>
-              Cancel
-            </Button>
-            <Button onClick={handleEditMediaItem} disabled={uploading}>
-              {uploading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Save Changes
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <MediaItemFormDialog
+        mode="edit"
+        open={isEditDialogOpen}
+        onOpenChange={setIsEditDialogOpen}
+        formData={formData}
+        onFormDataChange={setFormData}
+        onSubmit={handleEditMediaItem}
+        uploading={uploading}
+        albums={albums}
+        showAltText={editingItem?.type === 'image'}
+      />
     </>
   );
 }

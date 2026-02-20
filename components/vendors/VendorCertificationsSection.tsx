@@ -45,7 +45,7 @@ export function VendorCertificationsSection({ vendor }: VendorCertificationsSect
             Certifications & Compliance
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {vendor.certifications!.map((cert, index) => (
+            {vendor.certifications?.map((cert, index) => (
               <Card key={`${cert.name}-${index}`} className="p-4">
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="font-semibold">{cert.name}</h3>
@@ -78,7 +78,7 @@ export function VendorCertificationsSection({ vendor }: VendorCertificationsSect
         <div data-testid="awards">
           <h2 className="text-2xl font-cormorant font-bold mb-4">Awards & Recognition</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {vendor.awards!.map((award, index) => (
+            {vendor.awards?.map((award, index) => (
               <Card key={`${award.title}-${index}`} className="p-4">
                 <div className="flex items-start justify-between mb-2">
                   <h3 className="font-semibold">{award.title}</h3>

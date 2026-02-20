@@ -449,15 +449,16 @@ export class ImportValidationService {
     fieldMapping: FieldMapping,
     rowResult: RowValidationResult
   ): void {
-    if (!fieldMapping.allowedValues!.includes(String(value))) {
+    const allowed = fieldMapping.allowedValues ?? [];
+    if (!allowed.includes(String(value))) {
       rowResult.errors.push({
         rowNumber,
         field: fieldName,
         severity: ValidationSeverity.ERROR,
         code: 'INVALID_ENUM_VALUE',
-        message: `Value must be one of: ${fieldMapping.allowedValues!.join(', ')}`,
+        message: `Value must be one of: ${allowed.join(', ')}`,
         value,
-        suggestion: `Valid values: ${fieldMapping.allowedValues!.join(', ')}`
+        suggestion: `Valid values: ${allowed.join(', ')}`
       });
     }
   }
