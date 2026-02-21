@@ -162,43 +162,33 @@ export async function POST(
     }
 
     // Execute phase: Perform actual import
-    if (phase === 'execute') {
-      // Ensure validation passed
-      if (!validationResult.valid) {
-        return NextResponse.json(
-          {
-            error: 'Cannot execute import with validation errors',
-            validationResult,
-            parseResult
-          },
-          { status: 400 }
-        );
-      }
-
-      // Execute import with atomic operations
-      const executionResult = await ImportExecutionService.execute(
-        validationResult.rows,
+    if (!validationResult.valid) {
+      return NextResponse.json(
         {
-          vendorId: vendor.id as string,
-          userId: user.id.toString(),
-          overwriteExisting: true
-        }
+          error: 'Cannot execute import with validation errors',
+          validationResult,
+          parseResult
+        },
+        { status: 400 }
       );
-
-      return NextResponse.json({
-        phase: 'execute',
-        executionResult,
-        message: executionResult.success
-          ? `Successfully imported ${executionResult.successfulRows} records`
-          : `Import completed with errors. ${executionResult.successfulRows} successful, ${executionResult.failedRows} failed`
-      });
     }
 
-    // Should never reach here due to earlier phase validation
-    return NextResponse.json(
-      { error: 'Invalid phase' },
-      { status: 400 }
+    const executionResult = await ImportExecutionService.execute(
+      validationResult.rows,
+      {
+        vendorId: vendor.id as string,
+        userId: user.id.toString(),
+        overwriteExisting: true
+      }
     );
+
+    return NextResponse.json({
+      phase: 'execute',
+      executionResult,
+      message: executionResult.success
+        ? `Successfully imported ${executionResult.successfulRows} records`
+        : `Import completed with errors. ${executionResult.successfulRows} successful, ${executionResult.failedRows} failed`
+    });
 
   } catch (error) {
     console.error('Excel import error:', error);

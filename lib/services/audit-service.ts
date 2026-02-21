@@ -299,187 +299,92 @@ export async function logAccountStatusChange(
 }
 
 /**
- * Deferred audit logging using Next.js after()
+ * Deferred audit logging that captures request context eagerly.
  *
- * Schedules the audit log to be written after the response is sent,
- * improving response time. The logging will still execute even if
- * the client disconnects.
- *
- * @param logFn - The audit log function to execute
- * @param args - Arguments to pass to the log function
+ * Extracts IP/user-agent from the request immediately (before it closes),
+ * then schedules the audit log write via Next.js after().
  */
-function deferAuditLog<T extends unknown[]>(
-  logFn: (...args: T) => Promise<void>,
-  ...args: T
+function deferAuditLog(
+  event: AuditEvent,
+  request: NextRequest,
+  data: { userId?: string; email: string; metadata?: Record<string, unknown> }
 ): void {
+  const ip_address = getClientIp(request);
+  const user_agent = request.headers.get('user-agent') || undefined;
+
   after(async () => {
     try {
-      await logFn(...args);
+      const payload = await getPayloadClient();
+      await payload.create({
+        collection: 'audit_logs',
+        data: {
+          event,
+          userId: data.userId,
+          email: data.email,
+          ipAddress: ip_address,
+          userAgent: user_agent,
+          metadata: data.metadata,
+        },
+      });
     } catch (error) {
-      // Best-effort: log error but don't throw
-      console.error('Deferred audit log failed:', error);
+      console.error(`Deferred ${event} audit log failed:`, error);
     }
   });
 }
 
-/**
- * Deferred version of logLoginSuccess
- * Schedules login success logging to run after response is sent
- */
 export function deferLogLoginSuccess(
   user_id: string,
   email: string,
   token_id: string,
   request: NextRequest
 ): void {
-  // Capture request data before deferring (request may not be available later)
-  const ip_address = getClientIp(request);
-  const user_agent = request.headers.get('user-agent') || undefined;
-
-  after(async () => {
-    try {
-      const payload = await getPayloadClient();
-      await payload.create({
-        collection: 'audit_logs',
-        data: {
-          event: 'LOGIN_SUCCESS',
-          userId: user_id,
-          email,
-          ipAddress: ip_address,
-          userAgent: user_agent,
-          metadata: { tokenId: token_id },
-        },
-      });
-    } catch (error) {
-      console.error('Deferred login success audit log failed:', error);
-    }
+  deferAuditLog('LOGIN_SUCCESS', request, {
+    userId: user_id,
+    email,
+    metadata: { tokenId: token_id },
   });
 }
 
-/**
- * Deferred version of logLoginFailed
- * Schedules login failure logging to run after response is sent
- */
 export function deferLogLoginFailed(
   email: string,
   reason: string,
   request: NextRequest
 ): void {
-  // Capture request data before deferring
-  const ip_address = getClientIp(request);
-  const user_agent = request.headers.get('user-agent') || undefined;
-
-  after(async () => {
-    try {
-      const payload = await getPayloadClient();
-      await payload.create({
-        collection: 'audit_logs',
-        data: {
-          event: 'LOGIN_FAILED',
-          email,
-          ipAddress: ip_address,
-          userAgent: user_agent,
-          metadata: { reason },
-        },
-      });
-    } catch (error) {
-      console.error('Deferred login failed audit log failed:', error);
-    }
+  deferAuditLog('LOGIN_FAILED', request, {
+    email,
+    metadata: { reason },
   });
 }
 
-/**
- * Deferred version of logLogout
- * Schedules logout logging to run after response is sent
- */
 export function deferLogLogout(
   user_id: string,
   email: string,
   request: NextRequest
 ): void {
-  const ip_address = getClientIp(request);
-  const user_agent = request.headers.get('user-agent') || undefined;
-
-  after(async () => {
-    try {
-      const payload = await getPayloadClient();
-      await payload.create({
-        collection: 'audit_logs',
-        data: {
-          event: 'LOGOUT',
-          userId: user_id,
-          email,
-          ipAddress: ip_address,
-          userAgent: user_agent,
-        },
-      });
-    } catch (error) {
-      console.error('Deferred logout audit log failed:', error);
-    }
-  });
+  deferAuditLog('LOGOUT', request, { userId: user_id, email });
 }
 
-/**
- * Deferred version of logTokenRefresh
- * Schedules token refresh logging to run after response is sent
- */
 export function deferLogTokenRefresh(
   user_id: string,
   email: string,
   new_token_id: string,
   request: NextRequest
 ): void {
-  const ip_address = getClientIp(request);
-  const user_agent = request.headers.get('user-agent') || undefined;
-
-  after(async () => {
-    try {
-      const payload = await getPayloadClient();
-      await payload.create({
-        collection: 'audit_logs',
-        data: {
-          event: 'TOKEN_REFRESH',
-          userId: user_id,
-          email,
-          ipAddress: ip_address,
-          userAgent: user_agent,
-          metadata: { tokenId: new_token_id },
-        },
-      });
-    } catch (error) {
-      console.error('Deferred token refresh audit log failed:', error);
-    }
+  deferAuditLog('TOKEN_REFRESH', request, {
+    userId: user_id,
+    email,
+    metadata: { tokenId: new_token_id },
   });
 }
 
-/**
- * Deferred version of logTokenRefreshFailed
- * Schedules token refresh failure logging to run after response is sent
- */
 export function deferLogTokenRefreshFailed(
   email: string,
   reason: string,
   request: NextRequest
 ): void {
-  const ip_address = getClientIp(request);
-  const user_agent = request.headers.get('user-agent') || undefined;
-
-  after(async () => {
-    try {
-      const payload = await getPayloadClient();
-      await payload.create({
-        collection: 'audit_logs',
-        data: {
-          event: 'TOKEN_REFRESH_FAILED',
-          email,
-          ipAddress: ip_address,
-          userAgent: user_agent,
-          metadata: { reason },
-        },
-      });
-    } catch (error) {
-      console.error('Deferred token refresh failed audit log failed:', error);
-    }
+  deferAuditLog('TOKEN_REFRESH_FAILED', request, {
+    email,
+    metadata: { reason },
   });
 }
 

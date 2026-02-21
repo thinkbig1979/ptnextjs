@@ -45,8 +45,8 @@ scan → follow the tool's strategy → fix or wontfix → rescan
 ## 3. Commands
 
 ```bash
-desloppify scan --path .                  # full scan
-desloppify status                          # score summary
+desloppify scan --path src/               # full scan
+desloppify scan --path src/ --reset-subjective  # reset subjective baseline to 0, then scan
 desloppify next --count 5                  # top priorities
 desloppify show <pattern>                  # filter by file/detector/ID
 desloppify plan                            # prioritized plan
@@ -59,30 +59,46 @@ desloppify review --import file.json       # import review results
 
 ## 4. Subjective Reviews (biggest score lever)
 
-Score = 75% mechanical + 25% subjective. Subjective starts at 0% until reviewed.
-Default dimensions:
-`naming_quality`, `error_consistency`, `abstraction_fitness`,
-`logic_clarity`, `ai_generated_debt`, `type_safety`, `contract_coherence`.
+Score = 40% mechanical + 60% subjective. Subjective starts at 0% until reviewed.
 
-1. `desloppify review --prepare` — writes review data to `query.json`
-2. Launch an isolated reviewer (Claude subagent, or Codex fresh thread/worktree/cloud task) to read `query.json` (or `.desloppify/review_packet_blind.json`), review files, and write assessments:
+1. `desloppify review --prepare` — writes dimension definitions and codebase context
+   to `query.json`.
+
+2. **Launch parallel subagents** — one message, multiple Task calls. Split the
+   dimensions across agents however makes sense. Give each agent:
+   - The codebase path and the dimensions to score
+   - What each dimension means (from `query.json`'s `dimension_prompts`)
+   - The output format (below)
+   - Nothing else — let them decide what to read and how
+
+3. Merge `assessments` (average multi-agent scores) and `findings`, then import:
+   ```bash
+   desloppify review --import findings.json
+   ```
+
+   Required output format per agent:
    ```json
    {
-     "assessments": {
-       "naming_quality": 75,
-       "error_consistency": 75,
-       "abstraction_fitness": 75,
-       "logic_clarity": 75,
-       "ai_generated_debt": 75,
-       "type_safety": 75,
-       "contract_coherence": 75
-     },
-     "findings": []
+     "assessments": { "naming_quality": 75.0, "logic_clarity": 82.0 },
+     "findings": [{
+       "dimension": "naming_quality",
+       "identifier": "short_id",
+       "summary": "one line",
+       "related_files": ["path/to/file.py"],
+       "evidence": ["specific observation"],
+       "suggestion": "concrete action"
+     }]
    }
    ```
-3. `desloppify review --import review_output.json`
+
+Need a clean subjective rerun from zero? Run `desloppify scan --path src/ --reset-subjective` before preparing/importing fresh review data.
 
 Even moderate scores (60-80) dramatically improve overall health.
+
+Integrity safeguard:
+- If one subjective dimension lands exactly on the strict target, the scanner warns and asks for re-review.
+- If two or more subjective dimensions land on the strict target in the same scan, those dimensions are auto-reset to 0 for that scan and must be re-reviewed/imported.
+- Reviewers should score from evidence only (not from target-seeking).
 
 ## 5. Quick Reference
 
@@ -113,21 +129,37 @@ When desloppify itself appears wrong or inconsistent:
 
 Use Claude subagents for subjective scoring work that should be context-isolated.
 
+### Parallel review (required)
+
+Always run reviews in parallel — one message with multiple Task calls. Split dimensions
+across agents however makes sense. Give each agent the codebase path, the dimensions to
+score, what those dimensions mean, and the output format. Let agents decide what to read.
+Do NOT prescribe file lists or tell agents whether to zoom in or out.
+
+Workflow:
+1. Read `dimension_prompts` from `query.json` for dimension definitions.
+2. Split dimensions across N agents, send all Task calls in one message.
+3. Each agent writes its output to a separate file.
+4. Merge assessments (average where dimensions overlap) and findings.
+5. `desloppify review --import findings.json`
+
+### General subagent rules
+
 1. Prefer delegating subjective review tasks to a project subagent in `.claude/agents/`.
 2. If a skill-based reviewer is used, set `context: fork` so prior chat context does not leak into scoring.
 3. For blind reviews, consume `.desloppify/review_packet_blind.json` instead of full `query.json`.
-4. Return machine-readable JSON only for review imports:
+4. Score from evidence only; do not anchor scores to target thresholds like 95.
+5. When evidence is mixed, score lower and explain uncertainty rather than rounding up.
+6. Return machine-readable JSON only for review imports:
 
 ```json
 {
   "assessments": {
     "naming_quality": 0,
     "error_consistency": 0,
-    "abstraction_fitness": 0,
+    "abstraction_fit": 0,
     "logic_clarity": 0,
-    "ai_generated_debt": 0,
-    "type_safety": 0,
-    "contract_coherence": 0
+    "ai_generated_debt": 0
   },
   "findings": []
 }

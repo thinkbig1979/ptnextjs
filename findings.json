@@ -1,0 +1,658 @@
+{
+  "assessments": {
+    "cross_module_architecture": 78.5,
+    "convention_outlier": 72.3,
+    "error_consistency": 69.8,
+    "abstraction_fitness": 74.2,
+    "api_surface_coherence": 76.0,
+    "authorization_consistency": 82.5,
+    "ai_generated_debt": 71.0,
+    "incomplete_migration": 58.0,
+    "package_organization": 80.5,
+    "high_level_elegance": 83.0,
+    "mid_level_elegance": 75.5,
+    "low_level_elegance": 73.0,
+    "naming_quality": 79.0,
+    "logic_clarity": 82.5,
+    "type_safety": 68.0,
+    "contract_coherence": 74.5
+  },
+  "findings": [
+    {
+      "dimension": "incomplete_migration",
+      "identifier": "dual_repository_files",
+      "summary": "BlogRepository_new.ts, ProductRepository_new.ts, VendorRepository_new.ts coexist with originals",
+      "related_files": [
+        "lib/repositories/BlogRepository.ts",
+        "lib/repositories/BlogRepository_new.ts",
+        "lib/repositories/ProductRepository.ts",
+        "lib/repositories/ProductRepository_new.ts",
+        "lib/repositories/VendorRepository.ts",
+        "lib/repositories/VendorRepository_new.ts"
+      ],
+      "evidence": [
+        "Three repository files exist in both old and _new versions",
+        "index.ts exports the old versions (BlogRepository, ProductRepository, VendorRepository) not the _new ones",
+        "_new versions add pagination support and use different collection names (e.g., 'blog-posts' vs 'blog')",
+        "types_new.ts coexists with types.ts with overlapping interface definitions"
+      ],
+      "suggestion": "Complete the migration by replacing old repositories with _new versions, updating index.ts exports, and removing the _new suffix. Reconcile the collection name differences.",
+      "confidence": "high"
+    },
+    {
+      "dimension": "incomplete_migration",
+      "identifier": "types_new_coexists",
+      "summary": "types_new.ts duplicates types.ts with pagination extensions, neither is fully adopted",
+      "related_files": [
+        "lib/repositories/types.ts",
+        "lib/repositories/types_new.ts"
+      ],
+      "evidence": [
+        "types.ts defines QueryParams, VendorQueryParams, ProductQueryParams, BlogQueryParams",
+        "types_new.ts redefines same interfaces with PaginationParams extension",
+        "_new repositories import from types_new while old repos import from types",
+        "index.ts exports types from the old types.ts file only"
+      ],
+      "suggestion": "Merge types_new.ts into types.ts with the pagination extensions and update all imports.",
+      "confidence": "high"
+    },
+    {
+      "dimension": "incomplete_migration",
+      "identifier": "collection_name_discrepancy",
+      "summary": "Old repos use collection 'blog', new repos use 'blog-posts' - indicates schema migration gap",
+      "related_files": [
+        "lib/repositories/BlogRepository.ts",
+        "lib/repositories/BlogRepository_new.ts"
+      ],
+      "evidence": [
+        "BlogRepository.ts line 29: collection: 'blog'",
+        "BlogRepository_new.ts line 31: collection: 'blog-posts'",
+        "Both classes are named BlogRepository, creating ambiguity about which is active"
+      ],
+      "suggestion": "Determine the correct collection name and ensure only one BlogRepository exists with the right name.",
+      "confidence": "high"
+    },
+    {
+      "dimension": "error_consistency",
+      "identifier": "email_service_repetitive_error_handling",
+      "summary": "EmailService has 12 functions with identical try/catch/config-validate/template-load boilerplate",
+      "related_files": [
+        "lib/services/EmailService.ts"
+      ],
+      "evidence": [
+        "Every email function (sendVendorRegisteredEmail, sendProfilePublishedEmail, etc.) repeats the same ~30 lines of config validation, template loading, and error handling",
+        "The same config.skipped check pattern appears 12 times",
+        "The same error instanceof Error ? error.message : String(error) pattern appears 12 times",
+        "File is 1230 lines - could be reduced to ~400 with a shared wrapper"
+      ],
+      "suggestion": "Extract a generic sendEmail(templateName, subject, to, templateData) function that encapsulates config validation, template loading, sending, and error handling.",
+      "confidence": "high"
+    },
+    {
+      "dimension": "error_consistency",
+      "identifier": "inconsistent_error_response_shapes",
+      "summary": "Admin API routes return {error, message} while portal routes return {success, error: {code, message}}",
+      "related_files": [
+        "app/api/admin/tier-upgrade-requests/[id]/approve/route.ts",
+        "app/api/admin/vendors/approval/route.ts",
+        "app/api/portal/vendors/[id]/route.ts",
+        "app/api/portal/vendors/register/route.ts"
+      ],
+      "evidence": [
+        "Admin approve route returns: {success: false, error: 'INTERNAL_ERROR', message: 'Failed to approve request'}",
+        "Admin approval route returns: {error: message} without success field or error code structure",
+        "Portal vendor route returns: {success: false, error: {code: 'SERVER_ERROR', message: '...'}}",
+        "Two different error envelope shapes across the same API surface"
+      ],
+      "suggestion": "Standardize all API routes to use the {success, error: {code, message}} envelope used by portal routes. Create a shared error response helper.",
+      "confidence": "high"
+    },
+    {
+      "dimension": "error_consistency",
+      "identifier": "string_matching_for_error_dispatch",
+      "summary": "API routes use errorMessage.includes() to categorize service errors instead of typed errors",
+      "related_files": [
+        "app/api/portal/vendors/[id]/route.ts",
+        "app/api/auth/login/route.ts"
+      ],
+      "evidence": [
+        "Vendor route: errorMessage.includes('Unauthorized'), errorMessage.includes('not found'), errorMessage.includes('Tier validation failed'), errorMessage.includes('Location limit')",
+        "Login route: message.includes('Invalid credentials') || message.includes('pending approval') || message.includes('suspended')",
+        "Fragile pattern - any change to error wording breaks dispatch logic"
+      ],
+      "suggestion": "Create typed error classes (AuthorizationError, NotFoundError, TierValidationError) and use instanceof checks instead of string matching.",
+      "confidence": "high"
+    },
+    {
+      "dimension": "convention_outlier",
+      "identifier": "mixed_naming_conventions_services",
+      "summary": "Services use inconsistent file naming: PascalCase vs kebab-case (EmailService.ts vs audit-service.ts)",
+      "related_files": [
+        "lib/services/EmailService.ts",
+        "lib/services/audit-service.ts",
+        "lib/services/auth-service.ts",
+        "lib/services/GeocodingService.ts",
+        "lib/services/ProductService.ts",
+        "lib/services/TierService.ts"
+      ],
+      "evidence": [
+        "PascalCase files: EmailService.ts, ExcelExportService.ts, GeocodingService.ts, ProductService.ts, TierService.ts, VendorProfileService.ts",
+        "kebab-case files: audit-service.ts, auth-service.ts",
+        "15 of 17 service files use PascalCase; 2 use kebab-case"
+      ],
+      "suggestion": "Rename audit-service.ts and auth-service.ts to AuditService.ts and AuthService.ts to match the dominant PascalCase convention.",
+      "confidence": "high"
+    },
+    {
+      "dimension": "convention_outlier",
+      "identifier": "mixed_export_patterns_services",
+      "summary": "Services inconsistently use static class methods, singleton instances, or bare function exports",
+      "related_files": [
+        "lib/services/VendorProfileService.ts",
+        "lib/services/auth-service.ts",
+        "lib/services/TierUpgradeRequestService.ts",
+        "lib/services/GeocodingService.ts",
+        "lib/services/LocationService.ts"
+      ],
+      "evidence": [
+        "VendorProfileService: static class methods (VendorProfileService.getVendorProfile())",
+        "auth-service: singleton class instance (export const authService = new AuthService())",
+        "TierUpgradeRequestService: standalone exported functions (export function validateTierRequest())",
+        "GeocodingService: export default class with static methods + standalone functions",
+        "LocationService: standalone exported functions only"
+      ],
+      "suggestion": "Adopt a single pattern project-wide. Static class methods or standalone functions are both reasonable - pick one.",
+      "confidence": "high"
+    },
+    {
+      "dimension": "convention_outlier",
+      "identifier": "mixed_variable_naming",
+      "summary": "audit-service.ts uses snake_case variables while all other services use camelCase",
+      "related_files": [
+        "lib/services/audit-service.ts"
+      ],
+      "evidence": [
+        "audit-service.ts: forwarded_for, first_ip, real_ip, ip_address, user_agent, email_attempt",
+        "All other services consistently use camelCase (vendorData, requestData, templateName)",
+        "Login route also uses snake_case (email_attempt, login_response, token_id) matching audit conventions"
+      ],
+      "suggestion": "Convert snake_case variables in audit-service.ts and login route to camelCase to match project convention.",
+      "confidence": "high"
+    },
+    {
+      "dimension": "abstraction_fitness",
+      "identifier": "vendor_route_put_patch_duplication",
+      "summary": "PUT and PATCH handlers in vendor route duplicate 80% of their logic (auth, validation, error mapping)",
+      "related_files": [
+        "app/api/portal/vendors/[id]/route.ts"
+      ],
+      "evidence": [
+        "PUT handler (lines 171-365): auth check, body parse, validation, ownership check, tier filter, update, cache clear, revalidate, error mapping",
+        "PATCH handler (lines 381-572): auth check, body parse, validation, ownership check, tier filter, update, cache clear, revalidate, error mapping",
+        "PUT delegates to VendorProfileService; PATCH does raw Payload operations directly - inconsistent abstraction layers",
+        "Both have identical cache clearing and revalidation code"
+      ],
+      "suggestion": "Remove PATCH or consolidate both into a single handler that delegates to VendorProfileService. The two methods do the same thing at different abstraction levels.",
+      "confidence": "high"
+    },
+    {
+      "dimension": "abstraction_fitness",
+      "identifier": "repository_factory_uses_require",
+      "summary": "RepositoryFactory uses require() instead of imports, defeating TypeScript type checking",
+      "related_files": [
+        "lib/repositories/index.ts"
+      ],
+      "evidence": [
+        "All factory methods use const { X } = require('./X') pattern",
+        "This loses TypeScript type safety on the returned instances",
+        "Top-level exports already import the same classes via ES modules",
+        "The require() was likely used to avoid circular dependencies but defeats the purpose of TypeScript"
+      ],
+      "suggestion": "Replace require() calls with the already-imported ES module classes, or lazy import with dynamic import().",
+      "confidence": "medium"
+    },
+    {
+      "dimension": "abstraction_fitness",
+      "identifier": "geocoding_throw_object_literal",
+      "summary": "GeocodingService throws plain objects instead of Error instances for error handling",
+      "related_files": [
+        "lib/services/GeocodingService.ts"
+      ],
+      "evidence": [
+        "throw { code: 'INVALID_RESPONSE', message: '...' } as GeocodeError (line 76)",
+        "throw { code: 'RATE_LIMITED', message: '...' } as GeocodeError (line 98)",
+        "throw { code: 'NETWORK_ERROR', message: '...' } as GeocodeError (line 104)",
+        "Plain objects lack stack traces and break instanceof checks"
+      ],
+      "suggestion": "Create a GeocodingError class extending Error with a code property. Use throw new GeocodingError('RATE_LIMITED', '...').",
+      "confidence": "high"
+    },
+    {
+      "dimension": "api_surface_coherence",
+      "identifier": "admin_approval_status_mismatch",
+      "summary": "Admin approval route sets status to 'active' but auth-service checks for 'approved'",
+      "related_files": [
+        "app/api/admin/vendors/approval/route.ts",
+        "lib/services/auth-service.ts"
+      ],
+      "evidence": [
+        "approval/route.ts line 103: status: action === 'approve' ? 'active' : 'rejected'",
+        "auth-service.ts line 67-69: if (user.status !== 'approved') { throw new Error('Account not approved'); }",
+        "This means the approval route and the newer approve/reject routes may use different status values"
+      ],
+      "suggestion": "Audit all approval flows to ensure they set the status that auth-service expects ('approved' not 'active'). Consider a shared enum.",
+      "confidence": "high"
+    },
+    {
+      "dimension": "api_surface_coherence",
+      "identifier": "duplicate_admin_approval_endpoints",
+      "summary": "Two different admin approval flows exist: /api/admin/vendors/approval and /api/admin/vendors/[id]/approve",
+      "related_files": [
+        "app/api/admin/vendors/approval/route.ts",
+        "app/api/admin/vendors/[id]/approve/route.ts",
+        "app/api/admin/vendors/[id]/reject/route.ts"
+      ],
+      "evidence": [
+        "/api/admin/vendors/approval uses POST with {userId, action} body",
+        "/api/admin/vendors/[id]/approve uses PUT with ID in path",
+        "/api/admin/vendors/[id]/reject uses PUT with ID in path",
+        "The approval/ route has a TODO for email notifications; the approve/reject routes likely handle it"
+      ],
+      "suggestion": "Deprecate one of the two approval flows. The RESTful /api/admin/vendors/[id]/approve pattern is more conventional.",
+      "confidence": "high"
+    },
+    {
+      "dimension": "api_surface_coherence",
+      "identifier": "missing_rate_limiting_inconsistency",
+      "summary": "Rate limiting applied inconsistently - some admin routes have it, others do not",
+      "related_files": [
+        "app/api/admin/tier-upgrade-requests/[id]/approve/route.ts",
+        "app/api/admin/vendors/approval/route.ts",
+        "app/api/admin/vendors/[id]/approve/route.ts"
+      ],
+      "evidence": [
+        "tier-upgrade-requests approve uses rateLimit wrapper",
+        "vendors/approval has no rate limiting",
+        "vendors/[id]/approve - would need to check but the pattern is inconsistent"
+      ],
+      "suggestion": "Apply rate limiting consistently to all admin mutation endpoints via middleware or a shared wrapper.",
+      "confidence": "medium"
+    },
+    {
+      "dimension": "authorization_consistency",
+      "identifier": "two_auth_patterns",
+      "summary": "API routes use two different auth mechanisms: validateToken() and authenticateAdmin() inline",
+      "related_files": [
+        "app/api/portal/vendors/[id]/route.ts",
+        "app/api/admin/tier-upgrade-requests/[id]/approve/route.ts",
+        "app/api/admin/vendors/approval/route.ts"
+      ],
+      "evidence": [
+        "Portal routes use validateToken(request) from lib/auth",
+        "Admin tier routes define inline authenticateAdmin() using payload.auth()",
+        "Admin approval route uses requireAdmin(request) from lib/auth",
+        "Three different auth patterns across the API surface"
+      ],
+      "suggestion": "Consolidate to a single auth pattern. Use the lib/auth module's validateToken and requireAdmin for all routes.",
+      "confidence": "high"
+    },
+    {
+      "dimension": "ai_generated_debt",
+      "identifier": "over_documented_service_headers",
+      "summary": "Service files have verbose JSDoc headers restating what's obvious from the code",
+      "related_files": [
+        "lib/services/EmailService.ts",
+        "lib/services/TierUpgradeRequestService.ts",
+        "lib/services/audit-service.ts",
+        "lib/services/VendorProfileService.ts"
+      ],
+      "evidence": [
+        "EmailService header lists 'Provides:', 'Uses:', 'Security:' with 10 bullet points restating implementation details",
+        "TierUpgradeRequestService header lists 'Provides:', 'Used by:', 'Security Enhancements:' redundantly",
+        "Every function has JSDoc @param that just repeats the parameter name: '@param vendorData - Vendor information'",
+        "Formulaic pattern: every function gets identical comment structure regardless of complexity"
+      ],
+      "suggestion": "Remove boilerplate module-level comments. Keep JSDoc only where parameter names or return types are non-obvious. Remove @param that adds no information beyond the type.",
+      "confidence": "high"
+    },
+    {
+      "dimension": "ai_generated_debt",
+      "identifier": "excessive_inline_comments",
+      "summary": "Code has numerous comments restating what the next line does rather than why",
+      "related_files": [
+        "lib/services/TierUpgradeRequestService.ts",
+        "app/api/portal/vendors/[id]/route.ts",
+        "app/api/auth/login/route.ts"
+      ],
+      "evidence": [
+        "TierUpgradeRequestService: '// Required field validation', '// Tier value validation', '// Status validation' before obvious validation blocks",
+        "Vendor route: '// Authenticate user', '// Parse request body', '// Validate input', '// Get Payload instance' before self-explanatory lines",
+        "Login route: '// Set access token cookie (1 hour)' right above maxAge: 60 * 60, // 1 hour"
+      ],
+      "suggestion": "Remove comments that restate the code. Keep comments that explain business logic, non-obvious constraints, or workarounds.",
+      "confidence": "high"
+    },
+    {
+      "dimension": "ai_generated_debt",
+      "identifier": "unused_interfaces_in_types",
+      "summary": "types.ts defines 15+ interfaces that are never exported or used outside the file",
+      "related_files": [
+        "lib/types.ts"
+      ],
+      "evidence": [
+        "GeocodeQueryParams, GeocodeResponse declared but never exported",
+        "CreateTierUpgradeRequestPayload, GetTierUpgradeRequestResponse, DeleteTierUpgradeRequestResponse, ApproveTierUpgradeRequestResponse, RejectTierUpgradeRequestPayload, RejectTierUpgradeRequestResponse declared but never exported",
+        "TierUpgradeRequestError, TierUpgradeValidationResult, TierUpgradeRequestFilters declared but never exported",
+        "IntegrationCompatibility, ProductApiResponse and various union types declared as non-exported",
+        "Expense, ExpenseFormData, EXPENSE_CATEGORIES, DateRange are labeled 'Legacy expense tracker types'"
+      ],
+      "suggestion": "Remove unexported/unused interfaces. Move the exported ones to domain-specific type files. Delete legacy expense tracker types.",
+      "confidence": "high"
+    },
+    {
+      "dimension": "cross_module_architecture",
+      "identifier": "dual_data_access_layers",
+      "summary": "PayloadCMSDataService and Repository pattern coexist as competing data access layers",
+      "related_files": [
+        "lib/payload-cms-data-service.ts",
+        "lib/repositories/index.ts",
+        "lib/repositories/VendorRepository.ts",
+        "lib/repositories/BlogRepository.ts"
+      ],
+      "evidence": [
+        "payload-cms-data-service.ts has 14 'as unknown as' casts suggesting type friction",
+        "Repository layer wraps the same Payload find/findByID operations",
+        "Site layout imports payloadCMSDataService directly",
+        "VendorProfileService bypasses both and calls getPayloadClient() directly"
+      ],
+      "suggestion": "Choose one data access pattern. The repository pattern with caching is cleaner. Migrate remaining PayloadCMSDataService callers to repositories.",
+      "confidence": "high"
+    },
+    {
+      "dimension": "cross_module_architecture",
+      "identifier": "services_bypass_repositories",
+      "summary": "Service layer bypasses repository layer and calls getPayloadClient() directly",
+      "related_files": [
+        "lib/services/VendorProfileService.ts",
+        "lib/services/ProductService.ts",
+        "lib/services/TierUpgradeRequestService.ts",
+        "lib/services/auth-service.ts"
+      ],
+      "evidence": [
+        "VendorProfileService calls payload.find(), payload.findByID(), payload.update() directly",
+        "ProductService calls payload.find(), payload.findByID() directly",
+        "TierUpgradeRequestService calls payload.find(), payload.create(), payload.update() directly",
+        "None of these services use the VendorRepository, ProductRepository, etc.",
+        "Repository pattern exists but is only used by PayloadCMSDataService"
+      ],
+      "suggestion": "Have services consume repositories instead of raw Payload client. This centralizes query logic and enables caching uniformly.",
+      "confidence": "high"
+    },
+    {
+      "dimension": "low_level_elegance",
+      "identifier": "any_type_usage",
+      "summary": "35 occurrences of ': any' across lib/ directory, primarily in repository queries and transformers",
+      "related_files": [
+        "lib/transformers/vendor.ts",
+        "lib/transformers/yacht.ts",
+        "lib/repositories/BlogRepository.ts",
+        "lib/repositories/VendorRepository.ts"
+      ],
+      "evidence": [
+        "vendor.ts transformer has 11 occurrences of : any",
+        "yacht.ts transformer has 7 occurrences of : any",
+        "Repository files use 'const where: any = {}' for building Payload queries",
+        "41 'as unknown as' casts indicate type system friction with Payload CMS generated types"
+      ],
+      "suggestion": "Use Payload's generated types (Where type is already imported in some files). Replace 'any' with proper Payload document types from the generated types.",
+      "confidence": "high"
+    },
+    {
+      "dimension": "low_level_elegance",
+      "identifier": "vendor_type_bloat",
+      "summary": "Vendor interface has 60+ fields making it unwieldy; many are optional backward-compat aliases",
+      "related_files": [
+        "lib/types.ts"
+      ],
+      "evidence": [
+        "Vendor interface spans lines 344-425 with 60+ properties",
+        "Multiple alias fields: categoryName/category, tagNames/tags, logoUrl/logo, imageUrl/image",
+        "Comments like '// Alias for category', '// Alias for logo' appear 6 times",
+        "Both socialProof (object) and individual fields (totalProjects, employeeCount, linkedinFollowers) exist"
+      ],
+      "suggestion": "Remove alias fields and update consumers to use canonical names. Split Vendor into base + enhanced profile + computed fields interfaces.",
+      "confidence": "medium"
+    },
+    {
+      "dimension": "mid_level_elegance",
+      "identifier": "create_upgrade_downgrade_duplication",
+      "summary": "createUpgradeRequest and createDowngradeRequest are near-identical 40-line functions",
+      "related_files": [
+        "lib/services/TierUpgradeRequestService.ts"
+      ],
+      "evidence": [
+        "createUpgradeRequest (lines 282-339) and createDowngradeRequest (lines 344-401) share ~90% identical code",
+        "Both: get vendor, validate tier, check existing pending, create request",
+        "Only differences: comparison direction (<=/>= ) and requestType string",
+        "createTierChangeRequest (lines 406-413) exists but is private and not used externally"
+      ],
+      "suggestion": "Use the existing createTierChangeRequest function as the public API. Remove the separate upgrade/downgrade functions or make them thin wrappers.",
+      "confidence": "high"
+    },
+    {
+      "dimension": "mid_level_elegance",
+      "identifier": "location_search_duplication",
+      "summary": "VendorSearchBar and LocationSearchFilter duplicate geocoding/search logic (~200 lines each)",
+      "related_files": [
+        "components/VendorSearchBar.tsx",
+        "components/LocationSearchFilter.tsx"
+      ],
+      "evidence": [
+        "Both components have identical state variables for location search (locationInput, searchResults, isLoading, error, distance, selectedCoordinates, selectedResultIndex)",
+        "Both implement identical click-outside handlers with useEffect",
+        "Both have identical debounced geocoding API call logic with AbortController",
+        "VendorSearchBar is 20KB, LocationSearchFilter is 23KB"
+      ],
+      "suggestion": "Extract a useLocationSearch() custom hook containing the geocoding state, debounce logic, and API calls. Both components consume the hook.",
+      "confidence": "high"
+    },
+    {
+      "dimension": "package_organization",
+      "identifier": "legacy_expense_types",
+      "summary": "Legacy expense tracker types remain in types.ts with no consumers in the codebase",
+      "related_files": [
+        "lib/types.ts"
+      ],
+      "evidence": [
+        "Lines 1124-1152: Expense, ExpenseFormData, EXPENSE_CATEGORIES, DateRange types",
+        "Comment: '// Legacy expense tracker types (keeping for backward compatibility)'",
+        "No files in the codebase import or reference these types"
+      ],
+      "suggestion": "Remove the legacy expense tracker types. They add noise to the main types file.",
+      "confidence": "high"
+    },
+    {
+      "dimension": "package_organization",
+      "identifier": "test_api_routes_in_production",
+      "summary": "Test-only API routes are deployed in production code without environment guards",
+      "related_files": [
+        "app/api/test/rate-limit/clear/route.ts",
+        "app/api/test/health/route.ts",
+        "app/api/test/admin/tier-requests/route.ts",
+        "app/api/test/vendors/seed/route.ts",
+        "app/api/test/products/seed/route.ts"
+      ],
+      "evidence": [
+        "8 test API routes exist under app/api/test/",
+        "Includes data seeding (vendors/seed, products/seed), tier reset, rate limit clearing",
+        "These endpoints could be hit in production without any NODE_ENV guard"
+      ],
+      "suggestion": "Add environment guards (if NODE_ENV !== 'test') to all test routes, or exclude them from production builds via next.config.js.",
+      "confidence": "high"
+    },
+    {
+      "dimension": "high_level_elegance",
+      "identifier": "static_first_pattern_well_applied",
+      "summary": "Static-first SSG architecture is consistently applied across site pages (positive finding)",
+      "related_files": [
+        "app/(site)/layout.tsx",
+        "app/(site)/vendors/page.tsx",
+        "app/(site)/products/page.tsx",
+        "app/(site)/blog/page.tsx"
+      ],
+      "evidence": [
+        "All public-facing pages use RSC with Serialized* types for client boundaries",
+        "SerializedVendor, SerializedProduct interfaces reduce RSC payload size",
+        "Clean separation: Server Components fetch data, Client Components handle interactivity",
+        "Proper use of force-dynamic where DB access is needed at runtime"
+      ],
+      "suggestion": "No action needed. This is a well-implemented pattern worth preserving.",
+      "confidence": "high"
+    },
+    {
+      "dimension": "high_level_elegance",
+      "identifier": "auth_provider_at_layout",
+      "summary": "AuthProvider wraps entire site layout including public pages that don't need auth state",
+      "related_files": [
+        "app/(site)/layout.tsx"
+      ],
+      "evidence": [
+        "AuthProvider wraps all children in the site layout (line 102)",
+        "Public pages (blog, products, vendors listing, about) don't need auth context",
+        "Only vendor dashboard and admin pages need auth state"
+      ],
+      "suggestion": "Move AuthProvider to only wrap the vendor/ and admin/ route groups that need it.",
+      "confidence": "medium"
+    },
+    {
+      "dimension": "authorization_consistency",
+      "identifier": "admin_approval_missing_todo",
+      "summary": "Admin approval route has TODO for email notification, suggesting incomplete implementation",
+      "related_files": [
+        "app/api/admin/vendors/approval/route.ts"
+      ],
+      "evidence": [
+        "Line 119: '// TODO: Send email notification to vendor'",
+        "The newer approve/reject routes (admin/vendors/[id]/approve) may handle this",
+        "Indicates the older approval route was never fully completed"
+      ],
+      "suggestion": "Add email notification to the approval route or deprecate it in favor of the newer /approve and /reject routes.",
+      "confidence": "medium"
+    },
+    {
+      "dimension": "naming_quality",
+      "identifier": "generic_transformer_names",
+      "summary": "Transformer functions use generic names like 'transformVendor' without specifying source/target format",
+      "related_files": [
+        "lib/transformers/vendor.ts",
+        "lib/transformers/yacht.ts",
+        "lib/transformers/product.ts"
+      ],
+      "evidence": [
+        "transformVendor() doesn't indicate it transforms TinaCMS -> Payload format",
+        "transformYacht() similarly vague about data direction",
+        "The file-level comment says 'TinaCMS to Payload CMS migration' but function names don't reflect this"
+      ],
+      "suggestion": "Rename to transformTinaCMSVendorToPayload() or add a clear module-level namespace that makes the direction obvious.",
+      "confidence": "medium"
+    },
+    {
+      "dimension": "naming_quality",
+      "identifier": "payload_data_type_naming",
+      "summary": "PayloadVendorData interface uses 'Data' suffix inconsistently - some use it, most don't",
+      "related_files": [
+        "lib/transformers/vendor.ts",
+        "lib/types.ts"
+      ],
+      "evidence": [
+        "PayloadVendorData in vendor.ts vs Vendor in types.ts for similar purpose",
+        "No PayloadProductData or PayloadBlogData equivalents - only vendor gets this treatment",
+        "Suffix 'Data' adds no information beyond what the type already conveys"
+      ],
+      "suggestion": "Standardize on either the 'Payload' prefix pattern or the plain name pattern across all entity types.",
+      "confidence": "low"
+    },
+    {
+      "dimension": "logic_clarity",
+      "identifier": "dead_phase_check",
+      "summary": "Excel import route has unreachable code after exhaustive phase validation",
+      "related_files": [
+        "app/api/portal/vendors/[id]/excel-import/route.ts"
+      ],
+      "evidence": [
+        "Line 89-94: Validates phase is 'preview' or 'execute', returns 400 otherwise",
+        "Lines 153-162: if (phase === 'preview') return...",
+        "Lines 165-195: if (phase === 'execute') return...",
+        "Lines 198-201: return { error: 'Invalid phase' } - unreachable after the validation at line 89"
+      ],
+      "suggestion": "Remove the unreachable 'Invalid phase' return at the end, or restructure as if/else to make exhaustiveness obvious.",
+      "confidence": "high"
+    },
+    {
+      "dimension": "type_safety",
+      "identifier": "widespread_any_usage",
+      "summary": "33 occurrences of ': any' in lib/ with vendor.ts having 11 - defeats TypeScript checking",
+      "related_files": [
+        "lib/transformers/vendor.ts",
+        "lib/transformers/yacht.ts",
+        "lib/config/excel-field-mappings.ts"
+      ],
+      "evidence": [
+        "vendor.ts lines 201-224: certifications?: any[], awards?: any[], caseStudies?: any[], etc.",
+        "These have known structures from TinaCMS schema but are typed as any[]",
+        "Where clause building in repositories uses 'const where: any = {}' instead of Payload's Where type"
+      ],
+      "suggestion": "Define proper interfaces for TinaCMS data shapes. Use Payload's Where type for query building.",
+      "confidence": "high"
+    },
+    {
+      "dimension": "type_safety",
+      "identifier": "as_unknown_as_casts",
+      "summary": "49 'as unknown as' double casts in lib/ indicate systematic type friction with Payload CMS",
+      "related_files": [
+        "lib/payload-cms-data-service.ts",
+        "lib/repositories/TagRepository.ts",
+        "lib/services/TierUpgradeRequestService.ts"
+      ],
+      "evidence": [
+        "payload-cms-data-service.ts has 14 'as unknown as' casts",
+        "TagRepository has 5 casts",
+        "TierUpgradeRequestService has 5 casts",
+        "Double casts bypass TypeScript entirely - any runtime mismatch becomes a silent bug"
+      ],
+      "suggestion": "Create proper type adapters/mappers instead of casting. Where Payload types don't match app types, build explicit transform functions.",
+      "confidence": "high"
+    },
+    {
+      "dimension": "contract_coherence",
+      "identifier": "geocoding_error_contract",
+      "summary": "GeocodingService throws plain objects with 'as GeocodeError' - callers expect Error instances",
+      "related_files": [
+        "lib/services/GeocodingService.ts"
+      ],
+      "evidence": [
+        "Throws: throw { code: 'RATE_LIMITED', message: '...' } as GeocodeError",
+        "Callers use: error instanceof Error for type narrowing",
+        "Plain objects lack .stack property making debugging harder",
+        "The GeocodeError type is just an interface, not a class, so instanceof never matches"
+      ],
+      "suggestion": "Create a GeocodingError class extending Error. Use throw new GeocodingError(code, message).",
+      "confidence": "high"
+    },
+    {
+      "dimension": "contract_coherence",
+      "identifier": "vendor_profile_return_types",
+      "summary": "VendorProfileService methods return different shapes for success/failure without union types",
+      "related_files": [
+        "lib/services/VendorProfileService.ts"
+      ],
+      "evidence": [
+        "getVendorForEdit returns the vendor object or null, but null reason is opaque (not found vs unauthorized)",
+        "updateVendorProfile returns updated vendor but throws on validation failure",
+        "Mixed return-null vs throw patterns within the same service"
+      ],
+      "suggestion": "Use a consistent Result pattern or always throw typed errors. Don't mix null-return and throw for the same category of failure.",
+      "confidence": "medium"
+    }
+  ]
+}

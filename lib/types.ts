@@ -1,4 +1,4 @@
-// Media file types
+
 interface MediaFile {
   id: number | string;
   name: string;
@@ -74,18 +74,6 @@ export interface Category {
   description: string;
   icon: string;
   color: string;
-  order?: number;
-  createdAt: string;
-  updatedAt: string;
-  publishedAt: string;
-}
-
-interface BlogCategory {
-  id: string;
-  name: string;
-  slug: string;
-  description?: string;
-  color?: string;
   order?: number;
   createdAt: string;
   updatedAt: string;
@@ -170,15 +158,6 @@ export interface VendorInnovationHighlight {
   description?: string;
   uniqueApproach?: string;
   benefitsToClients?: string[];
-}
-
-interface VendorTeamMember {
-  name: string;
-  position: string;
-  bio?: string;
-  photo?: string;
-  linkedinUrl?: string;
-  expertise?: string[];
 }
 
 export interface VendorPromotionPack {
@@ -267,17 +246,6 @@ export interface PhotonResponse {
   features: PhotonFeature[];
 }
 
-/**
- * Query parameters for the /api/geocode endpoint
- */
-interface GeocodeQueryParams {
-  /** Location search query */
-  q: string;
-  /** Maximum number of results to return (default: 5) */
-  limit?: number;
-  /** Language code for results (default: 'en') */
-  lang?: string;
-}
 
 /**
  * Successful response from /api/geocode endpoint
@@ -298,10 +266,6 @@ export interface GeocodeErrorResponse {
   retryAfter?: number;
 }
 
-/**
- * Union type for all possible /api/geocode responses
- */
-type GeocodeResponse = GeocodeSuccessResponse | GeocodeErrorResponse;
 
 // ============================================================
 // Media Gallery Types (Tier 1+)
@@ -577,127 +541,6 @@ export interface TierUpgradeRequest {
   updatedAt: string;
 }
 
-/**
- * Payload for creating a tier upgrade request
- * POST /api/portal/vendors/[id]/tier-upgrade-request
- */
-interface CreateTierUpgradeRequestPayload {
-  /** Requested tier (must be higher than current tier) */
-  requestedTier: 'tier1' | 'tier2' | 'tier3';
-  /** Optional business justification (recommended, max 500 characters) */
-  vendorNotes?: string;
-}
-
-/**
- * Response for successful tier upgrade request creation
- */
-interface CreateTierUpgradeRequestResponse {
-  success: true;
-  data: TierUpgradeRequest;
-}
-
-/**
- * Response for getting vendor's tier upgrade request
- * GET /api/portal/vendors/[id]/tier-upgrade-request
- */
-interface GetTierUpgradeRequestResponse {
-  success: true;
-  /** null if no request found for vendor */
-  data: TierUpgradeRequest | null;
-}
-
-/**
- * Response for deleting a tier upgrade request
- * DELETE /api/portal/vendors/[id]/tier-upgrade-request/[requestId]
- */
-interface DeleteTierUpgradeRequestResponse {
-  success: true;
-  data: {
-    message: string;
-  };
-}
-
-/**
- * Response for approving a tier upgrade request
- * PUT /api/admin/tier-upgrade-requests/[id]/approve
- */
-interface ApproveTierUpgradeRequestResponse {
-  success: true;
-  data: {
-    /** Updated request with approved status */
-    request: TierUpgradeRequest;
-    /** Vendor with updated tier */
-    vendor: Vendor;
-  };
-}
-
-/**
- * Payload for rejecting a tier upgrade request
- * PUT /api/admin/tier-upgrade-requests/[id]/reject
- */
-interface RejectTierUpgradeRequestPayload {
-  /** Optional reason for rejection (max 1000 characters) */
-  rejectionReason?: string;
-}
-
-/**
- * Response for rejecting a tier upgrade request
- */
-interface RejectTierUpgradeRequestResponse {
-  success: true;
-  data: TierUpgradeRequest;
-}
-
-/**
- * Error response for tier upgrade request operations
- */
-interface TierUpgradeRequestError {
-  success: false;
-  error: {
-    /** Error code */
-    code:
-      | 'UNAUTHORIZED'
-      | 'FORBIDDEN'
-      | 'VALIDATION_ERROR'
-      | 'NOT_FOUND'
-      | 'DUPLICATE_REQUEST'
-      | 'INVALID_STATUS'
-      | 'SERVER_ERROR';
-    /** Human-readable error message */
-    message: string;
-    /** Field-specific validation errors */
-    fields?: Record<string, string>;
-    /** Additional error context */
-    details?: string;
-  };
-}
-
-/**
- * Validation result from service layer
- */
-interface TierUpgradeValidationResult {
-  /** Whether validation passed */
-  valid: boolean;
-  /** Error message if validation failed */
-  error?: string;
-}
-
-/**
- * Query filters for listing tier upgrade requests
- */
-interface TierUpgradeRequestFilters {
-  /** Filter by vendor ID */
-  vendorId?: string;
-  /** Filter by request status */
-  status?: 'pending' | 'approved' | 'rejected' | 'cancelled';
-  /** Filter by requested tier */
-  requestedTier?: 'tier1' | 'tier2' | 'tier3';
-  /** Filter by requests created after this date (ISO 8601) */
-  fromDate?: string;
-  /** Filter by requests created before this date (ISO 8601) */
-  toDate?: string;
-}
-
 export interface ProductSpecification {
   label: string;
   value: string;
@@ -789,12 +632,6 @@ export interface SystemRequirements {
   operatingTemp?: string;
   certification?: string;
   ipRating?: string;
-}
-
-interface IntegrationCompatibility {
-  supportedProtocols?: string[];
-  systemRequirements?: SystemRequirements;
-  compatibilityMatrix?: SystemCompatibility[];
 }
 
 export interface OwnerReview {
@@ -1121,103 +958,3 @@ export interface Yacht {
   totalSystems?: number; // Computed from supplierMap systems
 }
 
-// Legacy expense tracker types (keeping for backward compatibility)
-type Expense = {
-  id: string;
-  amount: number;
-  category: string;
-  description: string;
-  date: Date;
-};
-
-type ExpenseFormData = Omit<Expense, 'id' | 'date'> & {
-  date: string;
-};
-
-const EXPENSE_CATEGORIES = [
-  'Food',
-  'Transportation',
-  'Housing',
-  'Utilities',
-  'Entertainment',
-  'Healthcare',
-  'Shopping',
-  'Education',
-  'Other',
-] as const;
-
-type DateRange = {
-  from: Date | undefined;
-  to: Date | undefined;
-};
-
-// ===== Product API Types =====
-
-/**
- * API Error Response - shared across all product API endpoints
- */
-interface ProductApiErrorResponse {
-  success: false;
-  error: {
-    code: 'VALIDATION_ERROR' | 'UNAUTHORIZED' | 'FORBIDDEN' | 'NOT_FOUND' | 'SERVER_ERROR';
-    message: string;
-    fields?: Record<string, string>;
-    details?: string;
-  };
-}
-
-/**
- * Product API Success Response - base type for all success responses
- */
-interface ProductApiSuccessResponse<T> {
-  success: true;
-  data: T;
-}
-
-/**
- * GET /api/portal/vendors/[id]/products response
- * Returns array of products directly (not paginated)
- */
-type GetVendorProductsResponse = ProductApiSuccessResponse<Product[]>;
-
-/**
- * GET /api/portal/vendors/[id]/products/[productId] response
- * Returns single product
- */
-type GetProductResponse = ProductApiSuccessResponse<Product>;
-
-/**
- * POST /api/portal/vendors/[id]/products response
- * Returns created product
- */
-type CreateProductResponse = ProductApiSuccessResponse<Product>;
-
-/**
- * PUT /api/portal/vendors/[id]/products/[productId] response
- * Returns updated product
- */
-type UpdateProductResponse = ProductApiSuccessResponse<Product>;
-
-/**
- * DELETE /api/portal/vendors/[id]/products/[productId] response
- * Returns success message
- */
-type DeleteProductResponse = ProductApiSuccessResponse<{ message: string }>;
-
-/**
- * PATCH /api/portal/vendors/[id]/products/[productId]/publish response
- * Returns updated product
- */
-type TogglePublishResponse = ProductApiSuccessResponse<Product>;
-
-/**
- * Union type for all Product API responses
- */
-type ProductApiResponse =
-  | GetVendorProductsResponse
-  | GetProductResponse
-  | CreateProductResponse
-  | UpdateProductResponse
-  | DeleteProductResponse
-  | TogglePublishResponse
-  | ProductApiErrorResponse;

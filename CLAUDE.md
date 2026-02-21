@@ -1,229 +1,99 @@
 # CLAUDE.md - Paul Thames Superyacht Technology
 
-**Note**: This project uses [Agent OS Framework](.agent-os/CLAUDE.md) for development automation and [bd (beads)](https://github.com/steveyegge/beads) for issue tracking. Follow practices in [AGENTS.md](AGENTS.md).
+This project uses [Agent OS](.agent-os/CLAUDE.md) for orchestration and [bd (beads)](https://github.com/steveyegge/beads) for issue tracking. Follow [AGENTS.md](AGENTS.md).
 
-## Quick Start
-
-```bash
-npm install
-npm run dev              # Start dev server (http://localhost:3000)
-                         # CMS Admin: http://localhost:3000/admin
-npm run type-check       # Verify TypeScript
-npm run test:e2e         # Run Playwright tests
-```
-
-## Commands Reference
-
-| Category | Command | Description |
-|----------|---------|-------------|
-| **Dev** | `npm run dev` | Start development server |
-| | `npm run dev:e2e` | Dev server with E2E config (mocked external services) |
-| | `npm run dev:clean` | Clean restart (kills existing servers) |
-| | `npm run stop:dev` | Stop all dev servers |
-| **Build** | `npm run build` | Production build |
-| | `npm run start:e2e` | Production server with E2E config |
-| **Test** | `npm run test` | Jest unit tests |
-| | `npm run test:e2e` | Playwright E2E tests |
-| | `npm run test:e2e:ui` | E2E with Playwright UI |
-| **Quality** | `npm run type-check` | TypeScript validation |
-| | `npm run lint` | ESLint code quality |
-
-## Technology Stack
-
-- **Frontend**: Next.js 14 (App Router) + TypeScript
-- **Backend**: Payload CMS 3.x
-- **Database**: PostgreSQL (default) / SQLite (fallback)
-- **UI**: shadcn/ui + Tailwind CSS
-- **Testing**: Jest + Playwright
-
-## Project Structure
-
-```
-app/                    # Next.js App Router pages
-  [entity]/page.tsx     # List pages (vendors, products, blog)
-  [entity]/[slug]/      # Detail pages
-  api/                  # API routes
-components/             # Shared UI components (shadcn/ui)
-lib/
-  payload-cms-data-service.ts  # Core data access layer
-  types.ts              # TypeScript definitions
-  services/             # Business logic services
-payload/
-  collections/          # CMS collection schemas
-payload.config.ts       # Payload CMS configuration
-```
-
-## Architecture Overview
-
-**Data Flow**: Payload CMS → PayloadCMSDataService (with caching) → Static Site Generation
-
-**Core Collections**:
-- `vendors` - Vendor/partner companies (unified model with `partner` boolean flag)
-- `products` - Product catalog with vendor relationships
-- `categories`, `blog`, `team`, `company` - Supporting content
-
-**Key Patterns**:
-- Static-first: All pages pre-built at build time
-- Vendor-Partner unification: Single `Vendor` model, `partner` flag distinguishes types
-- In-memory caching for build performance
-
-## Key Features (See Supporting-Docs for Details)
-
-| Feature | Summary | Documentation |
-|---------|---------|---------------|
-| **Multi-Location** | Vendors manage multiple locations with geocoding, maps, tier limits | `Supporting-Docs/geocoding-*.md` |
-| **Tier System** | 4-tier vendor subscriptions with upgrade/downgrade workflow | `Supporting-Docs/tier-*.md` |
-| **Email Notifications** | Transactional emails via Resend for registration and tier changes | `Supporting-Docs/notification-system-*.md` |
-| **PostgreSQL Migration** | Full PostgreSQL support with SQLite→Postgres migration tools | `Supporting-Docs/database-migration/` |
-
-## Database Configuration
+## Commands
 
 ```bash
-# SQLite (default for development)
-DATABASE_URL=file:./data/payload.db
-
-# PostgreSQL (production)
-DATABASE_URL=postgresql://user:pass@localhost:5432/ptnextjs
-USE_POSTGRES=true
+npm run dev              # Dev server at localhost:3000 (CMS admin at /admin)
+npm run dev:e2e          # Dev with mocked external services
+npm run dev:clean        # Kill existing servers + restart
+npm run stop:dev         # Stop all dev servers
+npm run build            # Production build
+npm run test             # Jest unit tests
+npm run test:e2e         # Playwright E2E tests
+npm run type-check       # TypeScript validation
+npm run lint             # ESLint
 ```
 
-See `Supporting-Docs/database-migration/QUICK-REFERENCE.md` for full PostgreSQL setup.
+## Architecture (non-obvious patterns)
 
-## Environment Variables
+- **Static-first**: All pages pre-built at build time. All data must be available during `npm run build`.
+- **Data access**: ALWAYS use `PayloadCMSDataService` methods (`lib/payload-cms-data-service.ts`), never direct DB queries.
+- **Vendor-Partner unification**: Single `Vendor` model with `partner` boolean flag, not separate models.
+- **New content types**: Define in `payload.config.ts` → types in `lib/types.ts` → transform in data service.
 
-```bash
-# Required
-PAYLOAD_SECRET=your_secret_here
+## Payload CMS Gotchas
 
-# Email (optional)
-RESEND_API_KEY=re_xxx
-EMAIL_FROM_ADDRESS=notifications@domain.com
-ADMIN_EMAIL_ADDRESS=admin@domain.com
-
-# Production
-NEXT_PUBLIC_BASE_URL=https://yourdomain.com
-```
+- Collections may be referenced by **string only** (e.g., `collection: 'notifications'`), not imports. TypeScript and LSP won't find these.
+- `payload.config.ts` references components via **string paths** (e.g., `'@/payload/components/LogoutButton#LogoutButton'`). Not visible as imports.
+- Before deleting any file, verify with **multiple tools**: Serena `search_for_pattern`, LSP `findReferences`, AND Grep.
 
 ## E2E Testing
-
-Use `.env.e2e` for isolated testing with mocked external services:
 
 ```bash
 npm run build && npm run start:e2e   # Production server with E2E config
 npm run test:e2e                      # Run Playwright tests
 ```
 
-**E2E environment flags** (all set in `.env.e2e`):
-- `DISABLE_RATE_LIMIT=true` - Prevent 429 errors
-- `DISABLE_EMAILS=true` - No real emails sent
-- `MOCK_GEOCODING=true` - Mock Photon API responses
-- `DISABLE_CAPTCHA=true` - Skip captcha validation
+E2E flags (set in `.env.e2e`): `DISABLE_RATE_LIMIT`, `DISABLE_EMAILS`, `MOCK_GEOCODING`, `DISABLE_CAPTCHA` (all `=true`).
 
-## Development Guidelines
+## Environment Variables
 
-1. **Content Management**: Use Payload CMS admin at `/admin`
-2. **Data Access**: Use `PayloadCMSDataService` methods, not direct DB queries
-3. **New Content Types**: Define in `payload.config.ts` → types in `lib/types.ts` → transform in data service
-4. **Static Generation**: All data must be available at build time
+Required: `PAYLOAD_SECRET`. Optional: `RESEND_API_KEY`, `EMAIL_FROM_ADDRESS`, `ADMIN_EMAIL_ADDRESS`, `NEXT_PUBLIC_BASE_URL`. Database: `DATABASE_URL` (SQLite default: `file:./data/payload.db`; PostgreSQL: set `USE_POSTGRES=true`). See `Supporting-Docs/database-migration/QUICK-REFERENCE.md`.
 
-## Troubleshooting
+## Tool Usage — IMPORTANT
 
-```bash
-npm run stop:dev       # Fix port conflicts
-npm run dev:clean      # Clean restart
-npm run build          # Verify static generation works
-```
+You have powerful MCP tools. Use them in this priority order to minimize token cost and maximize accuracy.
 
-## Key Files
+### Code Navigation & Understanding (prefer Serena)
 
-| File | Purpose |
-|------|---------|
-| `lib/payload-cms-data-service.ts` | Core data access layer |
-| `lib/types.ts` | TypeScript definitions |
-| `payload.config.ts` | CMS schema configuration |
-| `app/layout.tsx` | Root layout with theme provider |
-| `.agent-os/config.yml` | Agent OS configuration |
+**IMPORTANT: Default to Serena's symbolic tools for code exploration.** Do NOT read entire files or grep blindly when Serena can give you precise, token-efficient answers.
 
-## References
+| Task | Use This | NOT This |
+|------|----------|----------|
+| Understand a file's structure | `serena::get_symbols_overview` | Reading the entire file |
+| Find a function/class/method | `serena::find_symbol` (with `include_body=true` only when needed) | Grep for function name |
+| See who calls a function | `serena::find_referencing_symbols` | Grep for the function name across all files |
+| Search for a pattern in code | `serena::search_for_pattern` (supports regex, glob filters, context lines) | Grep tool |
+| Replace a function/method body | `serena::replace_symbol_body` | Read file + Edit tool |
+| Add code after/before a symbol | `serena::insert_after_symbol` / `insert_before_symbol` | Read file + Edit tool |
+| Rename a symbol | `serena::rename_symbol` | Find-and-replace across files |
 
-- [Agent OS Framework](.agent-os/CLAUDE.md)
-- [Payload CMS Docs](https://payloadcms.com/docs)
-- [Next.js App Router](https://nextjs.org/docs/app)
-- [shadcn/ui](https://ui.shadcn.com)
+**When Serena is NOT the right choice:**
+- Editing a few lines within a large function → use `Edit` tool (more precise for partial changes)
+- Searching non-code files (YAML, JSON, MD, HTML) → use `Grep` or `serena::search_for_pattern` with `restrict_search_to_code_files=false`
+- Finding files by name/pattern → use `Glob`
+- Quick one-off string search you're confident about → `Grep` is fine
 
-# Drift - Architectural Pattern Enforcement
+### Serena Workflow (token-efficient pattern)
 
-Drift detects and enforces codebase patterns via MCP tools (49 available). It learns conventions from existing code and flags deviations.
+1. `get_symbols_overview(relative_path)` — see file structure without reading it
+2. `find_symbol(name_path, depth=1)` — drill into a class to see its methods
+3. `find_symbol(name_path, include_body=true)` — read only the specific method you need
+4. `find_referencing_symbols` — understand call sites before editing
+5. `replace_symbol_body` / `insert_after_symbol` — make surgical edits
 
-**Current health score: 95/100** | 751 approved patterns across 15 categories
+### Drift (Pattern Enforcement)
 
-## Quick Start (MCP Tools)
+Use Drift MCP tools to stay consistent with codebase conventions. Run `drift_capabilities` to discover available tools.
 
-| Task                      | Tool                     | Purpose                                    |
-| ------------------------- | ------------------------ | ------------------------------------------ |
-| Check codebase health     | `drift_status`           | Health score and pattern summary           |
-| Start any coding task     | `drift_context`          | Get patterns, examples, files to modify    |
-| Find tool for your intent | `drift_capabilities`     | Navigation guide with tool recommendations |
-| Validate before writing   | `drift_prevalidate`      | Check code follows patterns before commit  |
-| Validate after writing    | `drift_validate_change`  | Verify generated code matches patterns     |
+- **Before coding**: `drift_context(intent, focus)` — get relevant patterns and examples
+- **Quick lookups**: `drift_signature`, `drift_callers`, `drift_imports`, `drift_type` — fast, low-token
+- **After coding**: `drift_validate_change` — verify your code matches patterns
+- **Before commits**: `drift check --staged` via Bash
 
-## Common Workflows
+### LSP Tools
 
-**Adding a feature:**
-```
-drift_context(intent="add_feature", focus="user authentication")
-  → drift_code_examples  → drift_validate_change
-```
+Use the built-in LSP tool for:
+- `goToDefinition` — jump to where something is defined
+- `findReferences` — all usages of a symbol (complements Serena's `find_referencing_symbols`)
+- `hover` — type info and docs at a position
 
-**Fixing a bug:**
-```
-drift_context(intent="fix_bug", focus="payment")
-  → drift_file_patterns → drift_callers
-```
+### Browser Testing
 
-**Security review:**
-```
-drift_security_summary → drift_reachability → drift_error_handling
-```
+Prefer the `agent-browser` skill over writing Playwright scripts for quick interactive verification. Use Playwright for persistent test suites committed to the codebase.
 
-**Refactoring:**
-```
-drift_impact_analysis → drift_coupling → drift_test_topology
-```
+## Feature Documentation
 
-## Key MCP Tools by Category
-
-**Orchestration** (start here):
-- `drift_context` - Curated context for any task. **Always start here for code generation.**
-- `drift_package_context` - Package-specific context in monorepos
-
-**Surgical lookups** (fast, low token cost):
-- `drift_signature` - Function/class signature without reading files
-- `drift_callers` - Who calls this function
-- `drift_imports` - Correct import statements
-- `drift_type` - Expand type definitions
-- `drift_recent` - Recent changes in an area
-
-**Exploration**:
-- `drift_patterns_list` - List patterns by category/status
-- `drift_files_list` - Files with pattern counts
-- `drift_security_summary` - Security posture overview
-
-**Analysis**:
-- `drift_impact_analysis` - What breaks if you change X
-- `drift_coupling` - Module dependencies and cycles
-- `drift_test_topology` - Test coverage and mappings
-
-## Pattern Categories
-
-`structural`, `components`, `styling`, `api`, `auth`, `security`, `errors`, `types`, `logging`, `performance`, `accessibility`, `config`, `documentation`, `data-access`, `testing`
-
-## CLI Commands (Alternative)
-
-```bash
-drift status              # Health score and pattern summary
-drift check               # Check for violations (run before commits)
-drift check --staged      # Check only staged files
-```
-
-**Note**: The `.agent-os/hooks/` directory is excluded from certain API patterns as it contains internal tooling with different conventions.
+Detailed docs live in `Supporting-Docs/`: geocoding, tier system, email notifications, database migration. Check there before asking questions about these features.

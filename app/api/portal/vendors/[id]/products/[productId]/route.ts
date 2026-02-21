@@ -19,10 +19,12 @@ interface SuccessResponse {
   message?: string;
 }
 
+type ErrorCode = 'VALIDATION_ERROR' | 'UNAUTHORIZED' | 'FORBIDDEN' | 'NOT_FOUND' | 'SERVER_ERROR' | 'TIER_RESTRICTED';
+
 interface ErrorResponse {
   success: false;
   error: {
-    code: 'VALIDATION_ERROR' | 'UNAUTHORIZED' | 'FORBIDDEN' | 'NOT_FOUND' | 'SERVER_ERROR' | 'TIER_RESTRICTED';
+    code: ErrorCode;
     message: string;
     fields?: Record<string, string>;
     details?: string;
@@ -30,216 +32,125 @@ interface ErrorResponse {
   };
 }
 
+function errorResponse(
+  code: ErrorCode,
+  message: string,
+  status: number,
+  extra?: { fields?: Record<string, string>; upgradePath?: string }
+): NextResponse<ErrorResponse> {
+  return NextResponse.json(
+    { success: false, error: { code, message, ...extra } },
+    { status }
+  );
+}
+
+function handleServiceError(error: unknown, action: string): NextResponse<ErrorResponse> {
+  const msg = error instanceof Error ? error.message : 'Unknown error';
+
+  if (msg.includes('Unauthorized')) {
+    return errorResponse('FORBIDDEN', `You can only ${action} your own products`, 403);
+  }
+  if (msg.includes('not found')) {
+    return errorResponse('NOT_FOUND', 'Product not found', 404);
+  }
+
+  throw error;
+}
+
+function logAndReturnServerError(label: string, error: unknown, action: string): NextResponse<ErrorResponse> {
+  console.error(`[${label}] ${action} failed:`, {
+    error: error instanceof Error ? error.message : 'Unknown error',
+    stack: error instanceof Error ? error.stack : undefined,
+    timestamp: new Date().toISOString(),
+  });
+  return errorResponse('SERVER_ERROR', `An error occurred while ${action.toLowerCase()}`, 500);
+}
+
 /**
  * GET /api/portal/vendors/[id]/products/[productId]
- *
  * Fetch single product by ID
- *
- * Authorization:
- * - Vendor can only access their own products
- * - Admin can access any product
  */
 export async function GET(
   request: NextRequest,
   context: RouteContext
 ): Promise<NextResponse<SuccessResponse | ErrorResponse>> {
   try {
-    const resolvedParams = await context.params;
-    const { id: vendorId, productId } = resolvedParams;
-
-    // Authenticate user
+    const { id: vendorId, productId } = await context.params;
     const auth = await validateToken(request);
 
     if (!auth.success) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'UNAUTHORIZED',
-            message: auth.error,
-          },
-        },
-        { status: auth.status }
-      );
+      return errorResponse('UNAUTHORIZED', auth.error, auth.status);
     }
 
-    const user = auth.user;
-    const isAdmin = user.role === 'admin';
-
-    // Fetch product using ProductService
     try {
       const product = await ProductService.getProductById(
         productId,
-        user.id.toString(),
-        isAdmin
+        auth.user.id.toString(),
+        auth.user.role === 'admin'
       );
-
-      return NextResponse.json(
-        {
-          success: true,
-          data: product,
-        },
-        { status: 200 }
-      );
+      return NextResponse.json({ success: true, data: product }, { status: 200 });
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-
-      // Check for authorization error
-      if (errorMessage.includes('Unauthorized')) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: {
-              code: 'FORBIDDEN',
-              message: 'You can only access your own products',
-            },
-          },
-          { status: 403 }
-        );
-      }
-
-      // Check for not found error
-      if (errorMessage.includes('not found')) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: {
-              code: 'NOT_FOUND',
-              message: 'Product not found',
-            },
-          },
-          { status: 404 }
-        );
-      }
-
-      throw error; // Re-throw to be caught by outer try-catch
+      return handleServiceError(error, 'access');
     }
   } catch (error) {
-    // Log error for monitoring
-    console.error('[ProductGet] Fetch failed:', {
-      error: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined,
-      timestamp: new Date().toISOString(),
-    });
-
-    // Return generic error response
-    return NextResponse.json(
-      {
-        success: false,
-        error: {
-          code: 'SERVER_ERROR',
-          message: 'An error occurred while fetching product',
-        },
-      },
-      { status: 500 }
-    );
+    return logAndReturnServerError('ProductGet', error, 'fetching product');
   }
 }
 
 /**
  * PUT /api/portal/vendors/[id]/products/[productId]
- *
  * Update existing product
- *
- * Authorization:
- * - Vendor can only update their own products
- * - Admin can update any product
  */
 export async function PUT(
   request: NextRequest,
   context: RouteContext
 ): Promise<NextResponse<SuccessResponse | ErrorResponse>> {
   try {
-    const resolvedParams = await context.params;
-    const { id: vendorId, productId } = resolvedParams;
-
-    // Authenticate user
+    const { id: vendorId, productId } = await context.params;
     const auth = await validateToken(request);
 
     if (!auth.success) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'UNAUTHORIZED',
-            message: auth.error,
-          },
-        },
-        { status: auth.status }
-      );
+      return errorResponse('UNAUTHORIZED', auth.error, auth.status);
     }
 
     const user = auth.user;
     const isAdmin = user.role === 'admin';
 
-    // Tier validation - product management requires tier2+
-    // Store vendor for later sanitization (skip for admins)
     let vendorTier: Tier = 'free';
     if (!isAdmin) {
       const vendor = await getVendorWithTier(vendorId);
       vendorTier = (vendor?.tier as Tier) || 'free';
 
       if (!TierValidationService.canAccessFeature(vendorTier, 'productManagement')) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: {
-              code: 'TIER_RESTRICTED',
-              message: 'Product management requires Tier 2 or higher',
-              upgradePath: TierService.getUpgradePath('productManagement'),
-            },
-          },
-          { status: 403 }
+        return errorResponse(
+          'TIER_RESTRICTED',
+          'Product management requires Tier 2 or higher',
+          403,
+          { upgradePath: TierService.getUpgradePath('productManagement') }
         );
       }
     }
 
-    // Parse request body
     let body;
     try {
       body = await request.json();
-    } catch (error) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'VALIDATION_ERROR',
-            message: 'Invalid JSON in request body',
-          },
-        },
-        { status: 400 }
-      );
+    } catch {
+      return errorResponse('VALIDATION_ERROR', 'Invalid JSON in request body', 400);
     }
 
-    // Sanitize tier-restricted fields for non-admins (defense in depth)
     if (!isAdmin) {
       body = sanitizeForTier(body, vendorTier);
     }
 
-    // Validate body with UpdateProductSchema
     const validation = UpdateProductSchema.safeParse(body);
-
     if (!validation.success) {
-      const fieldErrors: Record<string, string> = {};
+      const fields: Record<string, string> = {};
       validation.error.errors.forEach((err) => {
-        const path = err.path.join('.');
-        fieldErrors[path] = err.message;
+        fields[err.path.join('.')] = err.message;
       });
-
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'VALIDATION_ERROR',
-            message: 'Validation failed',
-            fields: fieldErrors,
-          },
-        },
-        { status: 400 }
-      );
+      return errorResponse('VALIDATION_ERROR', 'Validation failed', 400, { fields });
     }
 
-    // Update product using ProductService
     try {
       const updatedProduct = await ProductService.updateProduct(
         productId,
@@ -247,173 +158,48 @@ export async function PUT(
         user.id.toString(),
         isAdmin
       );
-
       return NextResponse.json(
-        {
-          success: true,
-          data: updatedProduct,
-          message: 'Product updated successfully',
-        },
+        { success: true, data: updatedProduct, message: 'Product updated successfully' },
         { status: 200 }
       );
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-
-      // Check for authorization error
-      if (errorMessage.includes('Unauthorized')) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: {
-              code: 'FORBIDDEN',
-              message: 'You can only update your own products',
-            },
-          },
-          { status: 403 }
-        );
-      }
-
-      // Check for not found error
-      if (errorMessage.includes('not found')) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: {
-              code: 'NOT_FOUND',
-              message: 'Product not found',
-            },
-          },
-          { status: 404 }
-        );
-      }
-
-      throw error; // Re-throw to be caught by outer try-catch
+      return handleServiceError(error, 'update');
     }
   } catch (error) {
-    // Log error for monitoring
-    console.error('[ProductUpdate] Update failed:', {
-      error: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined,
-      timestamp: new Date().toISOString(),
-    });
-
-    // Return generic error response
-    return NextResponse.json(
-      {
-        success: false,
-        error: {
-          code: 'SERVER_ERROR',
-          message: 'An error occurred while updating product',
-        },
-      },
-      { status: 500 }
-    );
+    return logAndReturnServerError('ProductUpdate', error, 'updating product');
   }
 }
 
 /**
  * DELETE /api/portal/vendors/[id]/products/[productId]
- *
  * Delete product
- *
- * Authorization:
- * - Vendor can only delete their own products
- * - Admin can delete any product
  */
 export async function DELETE(
   request: NextRequest,
   context: RouteContext
 ): Promise<NextResponse<SuccessResponse | ErrorResponse>> {
   try {
-    const resolvedParams = await context.params;
-    const { id: vendorId, productId } = resolvedParams;
-
-    // Authenticate user
+    const { id: vendorId, productId } = await context.params;
     const auth = await validateToken(request);
 
     if (!auth.success) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'UNAUTHORIZED',
-            message: auth.error,
-          },
-        },
-        { status: auth.status }
-      );
+      return errorResponse('UNAUTHORIZED', auth.error, auth.status);
     }
 
-    const user = auth.user;
-    const isAdmin = user.role === 'admin';
-
-    // Delete product using ProductService
     try {
       await ProductService.deleteProduct(
         productId,
-        user.id.toString(),
-        isAdmin
+        auth.user.id.toString(),
+        auth.user.role === 'admin'
       );
-
       return NextResponse.json(
-        {
-          success: true,
-          data: { id: productId },
-          message: 'Product deleted successfully',
-        },
+        { success: true, data: { id: productId }, message: 'Product deleted successfully' },
         { status: 200 }
       );
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-
-      // Check for authorization error
-      if (errorMessage.includes('Unauthorized')) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: {
-              code: 'FORBIDDEN',
-              message: 'You can only delete your own products',
-            },
-          },
-          { status: 403 }
-        );
-      }
-
-      // Check for not found error
-      if (errorMessage.includes('not found')) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: {
-              code: 'NOT_FOUND',
-              message: 'Product not found',
-            },
-          },
-          { status: 404 }
-        );
-      }
-
-      throw error; // Re-throw to be caught by outer try-catch
+      return handleServiceError(error, 'delete');
     }
   } catch (error) {
-    // Log error for monitoring
-    console.error('[ProductDelete] Delete failed:', {
-      error: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined,
-      timestamp: new Date().toISOString(),
-    });
-
-    // Return generic error response
-    return NextResponse.json(
-      {
-        success: false,
-        error: {
-          code: 'SERVER_ERROR',
-          message: 'An error occurred while deleting product',
-        },
-      },
-      { status: 500 }
-    );
+    return logAndReturnServerError('ProductDelete', error, 'deleting product');
   }
 }
