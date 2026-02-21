@@ -90,6 +90,10 @@ coverage/
 backups/
 *.backup-*
 
+# Analysis reports
+bundle-analyzer-report.html
+lighthouse-report*
+
 # Temporary files and directories
 temp/
 creds.md
