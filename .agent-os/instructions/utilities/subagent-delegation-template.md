@@ -1,8 +1,9 @@
 # Subagent Delegation Template
 
-> **Version**: 1.0.0
+> **Version**: 2.0.0
 > **Purpose**: Standard template for constructing Task() prompts when delegating work to subagents
 > **Problem Solved**: Ensures mandatory instructions, skills, and context are passed to every subagent
+> **v2.0 Addition**: Model-tier selection for cost optimization
 
 ## The Problem
 
@@ -16,10 +17,40 @@ This template solves all of these gaps.
 
 ---
 
+## Model-Tier Selection
+
+Match agent model to role complexity for cost optimization:
+
+| Role | Model | Rationale |
+|------|-------|-----------|
+| Orchestrator/Lead | `opus` | Strategic decisions, minimal context usage |
+| PM (coordinator) | `opus` | Delegation judgment, complexity assessment |
+| QC Reviewer | `opus` | Must catch subtle architectural/security issues |
+| Implementation | `sonnet` | Competent, follows specs, cost-effective |
+| Test writing | `sonnet` | Follows patterns, needs some judgment |
+| File ops, refactors | `haiku` | Mechanical, explicit instructions, cheapest |
+
+**Rules:**
+- All QC must be done by an Opus agent that did NOT do the implementation
+- PM work is also reviewed by a QC reviewer (no self-QC, ever)
+- Haiku workers get explicit step-by-step instructions only, narrow scope
+- When model is not specified, defaults to the caller's model (current behavior)
+
+### Task Sizing Guidance
+
+Each task should consume 60-70% of the executing agent's context window:
+- **Under 60%**: Task may be too small, consider combining with related work
+- **60-70%**: Target range, leaves room for instruction loading and reporting
+- **Over 70%**: Risk of PreCompact during execution, split the task
+- **Over 85%**: Must split, agent will likely hit context limits
+
+---
+
 ## Quick Reference: Copy-Paste Template
 
 ```javascript
 Task(subagent_type: "general-purpose",
+     model: "{MODEL_TIER}",  // opus | sonnet | haiku - see Model-Tier Selection
      prompt: `
 ═══════════════════════════════════════════════════════════════════
 MANDATORY INSTRUCTION LOADING - DO NOT SKIP

@@ -1,6 +1,6 @@
 ---
-version: 5.7.0
-last-updated: 2026-02-08
+version: 5.8.0
+last-updated: 2026-02-21
 related-files:
   - docs/GETTING_STARTED.md
   - docs/ARCHITECTURE.md
@@ -9,7 +9,7 @@ related-files:
 
 # CLAUDE.md
 
-Agent OS v5.7.0 - Structured workflows for AI agents to build products systematically.
+Agent OS v5.8.0 - Structured workflows for AI agents to build products systematically.
 
 ## What is Agent OS?
 
@@ -73,6 +73,8 @@ config.yml          -> Feature toggles and thresholds
 | `/run` | 2-layer (Orchestrator → Workers) | < 10 tasks, single session expected |
 | `/run --quick` | 1-layer (direct) | Simple, immediate tasks |
 | `/orchestrate` | 3-layer (Orchestrator → PM → Workers) | > 10 tasks, multi-session, complex dependencies |
+| `/team` | Agent teams with inter-agent messaging | 10+ tasks, raw objectives, needs QC |
+| `/pick-orchestration` | Decision helper | Unsure which execution mode to use |
 
 ## Agent Execution Model
 
@@ -123,6 +125,12 @@ bd sync                               # Sync with git (always run at session end
 /orchestrate <SPEC_FOLDER>               # Execute spec with PM coordination
 # Note: Session start auto-detects ledger for resume
 
+# Task execution - Agent teams (inter-agent messaging, model tiers, QC)
+/team "Build auth module"               # Full lifecycle: plan → execute → QC
+/team --tasks                            # Execute existing Beads tasks with teams
+/team <SPEC_FOLDER>                      # Execute spec tasks with teams
+/pick-orchestration                      # Help choose /run vs /orchestrate vs /team
+
 # E2E Testing (unified command)
 /e2e                                     # Interactive test+fix workflow
 /e2e --auto                              # Auto-fix in priority order
@@ -154,7 +162,7 @@ bd sync                               # Sync with git (always run at session end
 ## File References
 
 Use `file:line` format for precision:
-- Internal: `src/models/user.ts:42`
+- Internal: `<project-dir>/models/user.ts:42`
 - Standards: `standards/testing-standards.md:150`
 
 ## Documentation

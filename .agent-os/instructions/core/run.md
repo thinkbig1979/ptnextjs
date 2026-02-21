@@ -1,9 +1,11 @@
 ---
-version: 2.0.0
-last-updated: 2026-01-20
+version: 2.1.0
+last-updated: 2026-02-21
 related-files:
   - instructions/core/orchestrate.md
+  - instructions/core/team.md
   - instructions/utilities/beads-integration-guide.md
+  - instructions/utilities/subagent-delegation-template.md
 ---
 
 # 2-Layer Execution Protocol
@@ -35,12 +37,14 @@ related-files:
 
 ## When to Use
 
-| Criteria | 2-Layer (`/run`) | 3-Layer (`/orchestrate`) |
-|----------|------------------|--------------------------|
-| Task count | < 10 | 10+ |
-| Complexity | Simple/medium | Complex |
-| Sessions | Single | Multi-session expected |
-| Parallelism | Parallel workers | PM coordinates workers |
+| Criteria | 2-Layer (`/run`) | 3-Layer (`/orchestrate`) | Team (`/team`) |
+|----------|------------------|--------------------------|----------------|
+| Task count | < 10 | 10+ | Any (can plan from scratch) |
+| Complexity | Simple/medium | Complex | Complex + planning |
+| Sessions | Single | Multi-session expected | Multi-session expected |
+| Parallelism | Parallel workers | PM coordinates workers | PM + inter-agent comms |
+| Model tiers | Yes (v2.1) | Yes (v1.1) | Yes (built-in) |
+| QC review | Yes (v2.1) | Yes (v1.1) | Yes (dynamic scaling) |
 
 ---
 
@@ -155,22 +159,30 @@ FOR each wave:
     WORKER_ID="aos-worker-${task}"
     bd agent state ${WORKER_ID} spawning
 
-  # 2.2: Dispatch workers IN PARALLEL
+  # 2.2: Determine model tier per task
+  FOR task in wave:
+    ROLE = determine_role(task)  # implementation-specialist, test-architect, etc.
+    MODEL_TIER = determine_model_tier(ROLE)
+    # See: instructions/utilities/subagent-delegation-template.md (Model-Tier Selection)
+    # implementation-specialist, test-architect → "sonnet"
+    # file ops, refactors → "haiku"
+    # security-sentinel, architectural decisions → "opus"
+
+  # 2.3: Dispatch workers IN PARALLEL
   FOR task in wave (PARALLEL):
     WORKER_ID="aos-worker-${task}"
-    ROLE = determine_role(task)  # implementation-specialist, test-architect, etc.
 
-    Task(subagent_type: "general-purpose", prompt: "
+    Task(subagent_type: "general-purpose", model: "${MODEL_TIER}", prompt: "
     ${WORKER_DISPATCH_TEMPLATE}
     ")
 
-  # 2.3: Collect worker responses
+  # 2.4: Collect worker responses
   FOR response in worker_responses:
     PARSE: status, task_id, completed, remaining, blockers
 
     IF status == "completed":
       bd agent state ${WORKER_ID} done
-      bd close ${task_id} --reason="[summary]"
+      ADD to completed_this_wave
 
     ELIF status == "stopped":
       bd agent state ${WORKER_ID} stopped
@@ -182,16 +194,52 @@ FOR each wave:
       DISPLAY blocker
       PROMPT user for resolution
 
-  # 2.4: Handle continuations
+  # 2.5: Post-Wave QC Review
+  IF len(completed_this_wave) > 0:
+    # Determine QC reviewer count based on wave output
+    completed_count = len(completed_this_wave)
+    IF completed_count <= 2:
+      qc_count = 1
+    ELIF completed_count <= 5:
+      qc_count = 2
+    ELSE:
+      qc_count = ceil(completed_count / 3)
+
+    # Distribute tasks across QC reviewers
+    qc_batches = split(completed_this_wave, qc_count)  # ~3 tasks per reviewer
+
+    # Spawn QC reviewers IN PARALLEL (always Opus, never the implementer)
+    FOR batch in qc_batches (PARALLEL):
+      QC_ID="aos-qc-wave${WAVE_NUMBER}-${batch_index}"
+      Task(subagent_type: "general-purpose", model: "opus", prompt: "
+      ${QC_REVIEWER_TEMPLATE}
+      ")
+
+    # Process QC results
+    FOR qc_response in qc_responses:
+      FOR task in qc_response.tasks:
+        IF task.qc_status == "pass":
+          bd close ${task.id} --reason="QC passed: ${task.summary}"
+        ELIF task.qc_status == "fail":
+          DISPLAY: "QC failed for ${task.id}: ${task.issues}"
+          # Re-assign to original worker for rework
+          ADD to rework_queue
+
+    # Handle rework if any
+    IF rework_queue not empty:
+      FOR task in rework_queue:
+        SPAWN worker with rework instructions (same model tier as original)
+
+  # 2.6: Handle continuations
   IF continuation_queue not empty:
     FOR checkpoint in continuation_queue:
       SPAWN worker with checkpoint context
 
-  # 2.5: Wave checkpoint
+  # 2.7: Wave checkpoint
   bd sync
   git add -A && git commit -m "checkpoint: wave ${WAVE_NUMBER} complete"
 
-  # 2.6: Next wave
+  # 2.8: Next wave
   WAVE_NUMBER++
 ```
 
@@ -296,6 +344,73 @@ ${IF blocked}
 BLOCKER: [description]
 NEED: [what's needed to unblock]
 ${ENDIF}
+---
+```
+
+### QC Reviewer Template
+
+```
+═══════════════════════════════════════════════════════════
+QC REVIEW SESSION - WAVE ${WAVE_NUMBER}
+═══════════════════════════════════════════════════════════
+
+QC_ID: ${QC_ID}
+MODEL: opus (always)
+
+You are a QC reviewer. Your job is to VALIDATE completed work,
+not implement or fix anything yourself.
+
+RULE: You must NOT have implemented any of the tasks you are reviewing.
+All reviews must be by a separate agent from the implementer.
+
+═══════════════════════════════════════════════════════════
+TASKS TO REVIEW
+═══════════════════════════════════════════════════════════
+
+${FOR each task in batch}
+TASK_ID: ${TASK_ID}
+TITLE: ${TASK_TITLE}
+IMPLEMENTER: ${WORKER_ID}
+FILES_MODIFIED: ${FILES_LIST}
+${ENDFOR}
+
+═══════════════════════════════════════════════════════════
+REVIEW CHECKLIST (per task)
+═══════════════════════════════════════════════════════════
+
+FOR each task:
+1. READ the task requirements: bd show ${TASK_ID}
+2. READ all modified files listed above
+3. VERIFY:
+   - [ ] Deliverables exist and match acceptance criteria
+   - [ ] Code compiles (no syntax errors)
+   - [ ] Tests pass (if applicable)
+   - [ ] No security vulnerabilities (OWASP Top 10)
+   - [ ] No hardcoded secrets or credentials
+   - [ ] Consistent with existing patterns in codebase
+   - [ ] No unnecessary changes beyond task scope
+4. RECORD: bd comments add ${TASK_ID} "QC: [pass/fail] - [summary]"
+
+═══════════════════════════════════════════════════════════
+REPORT FORMAT
+═══════════════════════════════════════════════════════════
+
+---
+QC_STATUS: [all_pass | has_failures]
+QC_ID: ${QC_ID}
+WAVE: ${WAVE_NUMBER}
+
+REVIEWS:
+${FOR each task}
+- TASK_ID: ${TASK_ID}
+  STATUS: [pass | fail]
+  ${IF fail}
+  ISSUES:
+  - [specific issue with file:line reference]
+  REWORK_NEEDED:
+  - [what needs to change]
+  ${ENDIF}
+${ENDFOR}
 ---
 ```
 
@@ -436,6 +551,21 @@ run:
   # Recommend 3-layer threshold
   recommend_orchestrate_threshold: 10
 
+  # Model tiers (v2.1)
+  model_tiers:
+    implementation: "sonnet"
+    testing: "sonnet"
+    security: "opus"
+    file_ops: "haiku"
+    qc: "opus"
+
+  # QC (v2.1)
+  qc:
+    enabled: true
+    min_reviewers: 1
+    tasks_per_reviewer: 3
+    no_self_review: true
+
   # Parallelism
   max_parallel_workers: 5
 
@@ -471,20 +601,24 @@ gates:
 - bd audit for decisions
 - Report status to orchestrator
 
-### Role Mapping
+### Role-to-Model Mapping
 
-| Task Type | Role |
-|-----------|------|
-| Implementation | implementation-specialist |
-| Tests (unit) | test-architect |
-| Tests (e2e) | test-architect |
-| Frontend | frontend-specialist |
-| Security review | security-sentinel |
+| Task Type | Role | Model Tier |
+|-----------|------|------------|
+| Implementation | implementation-specialist | sonnet |
+| Tests (unit) | test-architect | sonnet |
+| Tests (e2e) | test-architect | sonnet |
+| Frontend | frontend-specialist | sonnet |
+| Security review | security-sentinel | opus |
+| File ops/refactors | (direct) | haiku |
+| QC review | qc-reviewer | opus |
 
 ---
 
 ## See Also
 
-- `/orchestrate` - 3-layer protocol for complex work
+- `/orchestrate` - 3-layer protocol for complex work (subagent-based)
+- `/team` - Team-based protocol with inter-agent messaging and dynamic QC
+- `/pick-orchestration` - Decision helper to choose the right execution mode
 - `beads-integration-guide.md` - Full Beads reference
-- `subagent-delegation-template.md` - Delegation patterns
+- `subagent-delegation-template.md` - Delegation patterns and model-tier mapping

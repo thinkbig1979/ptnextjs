@@ -1,10 +1,11 @@
-# Agent OS Configuration v5.7.0
+# Agent OS Configuration v5.8.0
 # Clean configuration with sane defaults for compound engineering integration
 #
 # TOKEN EFFICIENCY NOTE:
 # - This file is loaded once per session (not repeatedly)
 # - Agents access specific sections via key lookup, not full-file parsing
 # - Unused sections do not consume additional context tokens
+# v5.8.0: Agent Teams Integration - /team command, model tiers (Opus/Sonnet/Haiku), dynamic QC, /pick-orchestration
 # v5.7.0: Implementation Guardrails & Codebase Sweep - Verify Target, Reference Audit, /sweep command
 # v5.4.1: Task Coverage Validation - Ensures tasks fully cover spec requirements
 # v5.4.0: Semantic Coverage Validation - Workflow, data flow, and integration coverage checks
@@ -25,7 +26,7 @@
 # v4.0.0: Test Failure Handling Protocol - Orchestrated test execution with subagent delegation
 # v3.3.0: Test Execution Monitoring - Real-time streaming, hung test detection, test/code alignment
 
-agent_os_version: 5.7.0
+agent_os_version: 5.8.0
 
 # ================================================
 # CONFIGURATION HIERARCHY
@@ -2103,3 +2104,34 @@ codebase_sweep:
   # Safety: Only auto-fix SAFE findings, report REVIEW findings
   auto_fix: true
   enforcement_mode: "advisory" # advisory | warning
+
+# ================================================
+# AGENT TEAMS (v5.8.0+)
+# ================================================
+# Configuration for the /team command.
+# Team-based orchestration with inter-agent messaging, model tiers, and dynamic QC.
+# Also applies model tiers to /run and /orchestrate.
+
+team:
+  enabled: true
+
+  # Model tier assignment per role
+  model_tiers:
+    lead: "opus"           # Strategic decisions, minimal context
+    pm: "opus"             # Delegation judgment, complexity assessment
+    qc: "opus"             # Must catch subtle architectural/security issues
+    implementation: "sonnet" # Competent, follows specs, cost-effective
+    testing: "sonnet"      # Follows patterns, needs some judgment
+    file_ops: "haiku"      # Mechanical, explicit instructions, cheapest
+
+  # QC review configuration
+  qc:
+    enabled: true
+    min_reviewers: 1       # Minimum QC reviewers per wave
+    tasks_per_reviewer: 3  # Target tasks per reviewer
+    no_self_review: true   # Implementer cannot review own work
+
+  # Task sizing
+  task_sizing:
+    target_context_pct: 0.65  # Target: 65% of agent's context window
+    max_context_pct: 0.70     # Split tasks above this threshold

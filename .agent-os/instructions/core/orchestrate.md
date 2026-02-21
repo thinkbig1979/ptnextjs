@@ -1,9 +1,11 @@
 ---
-version: 1.0.0
-last-updated: 2026-01-20
+version: 1.1.0
+last-updated: 2026-02-21
 related-files:
   - instructions/core/run.md
+  - instructions/core/team.md
   - instructions/utilities/beads-integration-guide.md
+  - instructions/utilities/subagent-delegation-template.md
 ---
 
 # 3-Layer Orchestration Protocol
@@ -114,11 +116,11 @@ WAIT for confirmation
 ```
 WHILE waves_remaining:
 
-  # 2.1: Spawn PM for current wave
+  # 2.1: Spawn PM for current wave (always Opus for coordination judgment)
   PM_ID="aos-pm-wave${WAVE_NUMBER}-$(date +%s)"
   bd agent state ${PM_ID} spawning
 
-  Task(subagent_type: "general-purpose", prompt: "
+  Task(subagent_type: "general-purpose", model: "opus", prompt: "
   ${PM_DISPATCH_TEMPLATE}
   ")
 
@@ -199,18 +201,35 @@ YOUR RESPONSIBILITIES
 ═══════════════════════════════════════════════════════════
 
 1. READ task details: bd show ${TASK_ID} for each task
-2. DISPATCH workers IN PARALLEL for independent tasks
-3. TRACK worker status via bd agent state
-4. AGGREGATE results from workers
-5. UPDATE task status: bd comments, bd close
-6. REPORT summary to orchestrator (not details)
-7. ESCALATE blockers/questions to orchestrator
+2. ASSESS task complexity and ASSIGN model tiers:
+   - Implementation, test writing → model: "sonnet"
+   - File ops, mechanical refactors → model: "haiku" (with explicit step-by-step instructions)
+   - Security review, architectural decisions → model: "opus"
+   See: instructions/utilities/subagent-delegation-template.md (Model-Tier Selection)
+3. SIZE tasks to 60-70% of executing agent's context window
+   - Split tasks exceeding 70% into subtasks
+   - Combine tasks under 40% if they're related
+4. DISPATCH workers IN PARALLEL for independent tasks
+5. TRACK worker status via bd agent state
+6. AFTER each wave: SPAWN QC reviewers (Opus) to validate completed work
+   - 1 QC reviewer per 3 completed tasks (minimum 1)
+   - QC reviewer must NOT have implemented the tasks they review
+   - If QC fails: assign rework to original implementer
+7. AGGREGATE results from workers and QC reviewers
+8. UPDATE task status: bd comments, bd close (only after QC passes)
+9. REPORT summary to orchestrator (not details)
+10. ESCALATE blockers/questions to orchestrator
+
+EXCEPTION: You may execute small complex tasks directly when delegation
+overhead exceeds task effort (e.g., a 2-line config change requiring
+full worker setup). Use judgment, but your own work is still reviewed by QC.
 
 DO NOT:
-- Implement tasks yourself
+- Implement large tasks yourself
 - Accumulate implementation code in your context
 - Make architectural decisions (escalate to orchestrator)
 - Read file contents unless absolutely necessary for coordination
+- Close tasks before QC review passes (no self-QC, ever)
 
 ═══════════════════════════════════════════════════════════
 WORKER DISPATCH
@@ -219,16 +238,20 @@ WORKER DISPATCH
 FOR each task (PARALLEL where independent):
 
   WORKER_ID="aos-${ROLE}-${TASK_ID}"
+  MODEL_TIER = determine_model_tier(ROLE)
+  # implementation-specialist, test-architect → "sonnet"
+  # file ops, refactors → "haiku"
+  # security-sentinel → "opus"
   bd agent state ${WORKER_ID} spawning
 
-  Task(subagent_type: "general-purpose", prompt: "
+  Task(subagent_type: "general-purpose", model: "${MODEL_TIER}", prompt: "
   ${WORKER_DISPATCH_TEMPLATE}
   ")
 
   # Process worker response
   IF worker_status == "completed":
     bd agent state ${WORKER_ID} done
-    bd close ${TASK_ID} --reason="[worker summary]"
+    ADD to completed_this_wave  # DO NOT bd close yet - QC first
 
   ELIF worker_status == "stopped":
     bd agent state ${WORKER_ID} stopped
@@ -240,6 +263,40 @@ FOR each task (PARALLEL where independent):
       RESOLVE and respawn worker
     ELSE:
       ESCALATE to orchestrator
+
+═══════════════════════════════════════════════════════════
+POST-WAVE QC REVIEW
+═══════════════════════════════════════════════════════════
+
+AFTER all workers in wave complete:
+
+  # Determine QC reviewer count
+  completed_count = len(completed_this_wave)
+  IF completed_count <= 2:
+    qc_count = 1
+  ELIF completed_count <= 5:
+    qc_count = 2
+  ELSE:
+    qc_count = ceil(completed_count / 3)
+
+  # Distribute tasks across QC reviewers (~3 per reviewer)
+  qc_batches = split(completed_this_wave, qc_count)
+
+  # Spawn QC reviewers IN PARALLEL (always Opus)
+  FOR batch in qc_batches (PARALLEL):
+    QC_ID="aos-qc-wave${WAVE_NUMBER}-${batch_index}"
+    Task(subagent_type: "general-purpose", model: "opus", prompt: "
+    ${QC_REVIEWER_TEMPLATE}
+    ")
+    # QC_REVIEWER_TEMPLATE: see run.md QC Reviewer Template section
+
+  # Process QC results
+  FOR task in qc_results:
+    IF task.qc_status == "pass":
+      bd close ${task.id} --reason="QC passed: ${task.summary}"
+    ELIF task.qc_status == "fail":
+      # Re-assign rework to original implementer
+      SPAWN worker with rework instructions (same model tier)
 
 ═══════════════════════════════════════════════════════════
 PRECOMPACT PROTOCOL
@@ -511,11 +568,12 @@ Orchestrator PreCompact:
 
 ## Beads Integration Summary
 
-| Tier | Commands Used |
-|------|---------------|
-| Orchestrator | `bd agent state` (PM), `bd ready`, `bd sync` |
-| PM | `bd agent state` (workers), `bd show`, `bd comments`, `bd close` |
-| Workers | `bd agent state`, `bd comments`, `bd audit`, `bd agent heartbeat` |
+| Tier | Model | Commands Used |
+|------|-------|---------------|
+| Orchestrator | opus | `bd agent state` (PM), `bd ready`, `bd sync` |
+| PM | opus | `bd agent state` (workers/QC), `bd show`, `bd comments`, `bd close` |
+| Workers | sonnet/haiku | `bd agent state`, `bd comments`, `bd audit`, `bd agent heartbeat` |
+| QC Reviewers | opus | `bd show`, `bd comments` (QC verdict), report to PM |
 
 ---
 
@@ -530,6 +588,27 @@ orchestrate:
   orchestrator_context: 0.05   # 5%
   pm_context: 0.30             # 30%
   worker_context: 0.60         # 60%
+
+  # Model tiers (v1.1)
+  model_tiers:
+    pm: "opus"
+    implementation: "sonnet"
+    testing: "sonnet"
+    security: "opus"
+    file_ops: "haiku"
+    qc: "opus"
+
+  # QC (v1.1)
+  qc:
+    enabled: true
+    min_reviewers: 1
+    tasks_per_reviewer: 3
+    no_self_review: true
+
+  # Task sizing (v1.1)
+  task_sizing:
+    target_context_pct: 0.65   # 65% of agent's context window
+    max_context_pct: 0.70      # Split above this
 
   # Parallelism
   max_parallel_workers: 5      # Per PM
@@ -560,15 +639,22 @@ orchestrate:
 
 ### PM Does:
 - Read task details (bd show)
-- Dispatch workers in parallel
-- Track worker status
-- Aggregate results
+- Assess task complexity and assign model tiers
+- Size tasks to 60-70% context budget
+- Dispatch workers in parallel (with correct model tier)
+- Spawn QC reviewers after each wave (Opus, never the implementer)
+- Track worker and QC status
+- Aggregate results, handle rework on QC failures
+- Close tasks only after QC passes
+- Execute small tasks directly when delegation overhead > task effort
 - Create PM handoff
 
 ### PM Does NOT:
-- Implement tasks
+- Implement large tasks
 - Read file contents
 - Make architectural decisions (escalate)
+- Close tasks before QC review
+- Self-review its own work (QC reviewer handles this)
 
 ### Workers Do:
 - Full implementation work
