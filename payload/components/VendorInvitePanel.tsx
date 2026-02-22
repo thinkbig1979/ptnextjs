@@ -82,8 +82,9 @@ export const VendorInvitePanel: FieldClientComponent = () => {
     fetchInvitations();
   }, [fetchInvitations]);
 
-  const handleSendInvitation = async (): Promise<void> => {
-    if (!vendorId || !email.trim()) return;
+  const handleSendInvitation = async (overrideEmail?: string): Promise<void> => {
+    const recipientEmail = (overrideEmail ?? email).trim();
+    if (!vendorId || !recipientEmail) return;
 
     setIsLoading(true);
     setMessage(null);
@@ -92,7 +93,7 @@ export const VendorInvitePanel: FieldClientComponent = () => {
       const res = await fetch('/api/admin/vendor-invitations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ vendorId, email: email.trim() }),
+        body: JSON.stringify({ vendorId, email: recipientEmail }),
       });
 
       const data = await res.json();
@@ -103,7 +104,7 @@ export const VendorInvitePanel: FieldClientComponent = () => {
         return;
       }
 
-      setMessage({ type: 'success', text: `Invitation sent to ${email.trim()}` });
+      setMessage({ type: 'success', text: `Invitation sent to ${recipientEmail}` });
       // Refresh history
       await fetchInvitations();
     } catch {
@@ -181,7 +182,7 @@ export const VendorInvitePanel: FieldClientComponent = () => {
         />
         <button
           type="button"
-          onClick={handleSendInvitation}
+          onClick={() => handleSendInvitation()}
           disabled={isLoading || !email.trim()}
           style={{
             width: '100%',
@@ -222,7 +223,7 @@ export const VendorInvitePanel: FieldClientComponent = () => {
         isFetching={isFetching}
         onResend={(invEmail: string) => {
           setEmail(invEmail);
-          handleSendInvitation();
+          handleSendInvitation(invEmail);
         }}
       />
     </div>

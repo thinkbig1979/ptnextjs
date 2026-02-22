@@ -25,6 +25,7 @@ import { requireAdmin } from '@/lib/auth';
 import { sendVendorInvitationEmail } from '@/lib/services/EmailService';
 
 const INVITATION_EXPIRY_DAYS = 7;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
  * Format a Date as a human-readable string for use in email copy.
@@ -104,6 +105,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     if (!recipientEmail) {
       return NextResponse.json(
         { error: 'No email address available. Provide email in the request body or ensure the vendor has a contactEmail.' },
+        { status: 422 }
+      );
+    }
+
+    if (!EMAIL_REGEX.test(recipientEmail)) {
+      return NextResponse.json(
+        { error: 'Invalid email address format' },
         { status: 422 }
       );
     }
@@ -193,8 +201,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     );
   } catch (error) {
     console.error('[VendorInvitations POST] Error:', error);
-    const message = error instanceof Error ? error.message : 'Failed to create vendor invitation';
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to create vendor invitation' }, { status: 500 });
   }
 }
 
@@ -235,12 +242,18 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     });
 
     return NextResponse.json({
-      invitations: result.docs,
+      invitations: result.docs.map((inv) => ({
+        id: inv.id,
+        email: inv.email,
+        status: inv.status,
+        expiresAt: inv.expiresAt,
+        claimedAt: inv.claimedAt,
+        createdAt: inv.createdAt,
+      })),
       totalDocs: result.totalDocs,
     });
   } catch (error) {
     console.error('[VendorInvitations GET] Error:', error);
-    const message = error instanceof Error ? error.message : 'Failed to fetch vendor invitations';
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to fetch vendor invitations' }, { status: 500 });
   }
 }
