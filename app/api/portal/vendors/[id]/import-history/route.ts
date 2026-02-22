@@ -62,7 +62,7 @@ export async function GET(
         depth: 0
       });
 
-      if (!vendor || vendor.user?.toString() !== user.id) {
+      if (!vendor || !vendor.user || vendor.user?.toString() !== user.id) {
         return NextResponse.json(
           { error: 'Forbidden - You do not have access to this vendor\'s import history' },
           { status: 403 }

@@ -1,3 +1,4 @@
+import { VendorInvitePanel as VendorInvitePanel_e35dd2eb1f039b1e9f7fd77d8ecd8c3e } from '@/payload/components/VendorInvitePanel'
 import { RscEntryLexicalCell as RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
 import { RscEntryLexicalField as RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
 import { LexicalDiffComponent as LexicalDiffComponent_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
@@ -25,6 +26,7 @@ import { GeocodingButton as GeocodingButton_c47ae601ce1aeb3c9f4798ee8cee980f } f
 import { LogoutButton as LogoutButton_4fa0da4f39e65c0a260a976af575b7d4 } from '@/payload/components/LogoutButton'
 
 export const importMap = {
+  "@/payload/components/VendorInvitePanel#VendorInvitePanel": VendorInvitePanel_e35dd2eb1f039b1e9f7fd77d8ecd8c3e,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalField": RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/rsc#LexicalDiffComponent": LexicalDiffComponent_44fe37237e0ebf4470c9990d8cb7b07e,

@@ -49,6 +49,10 @@ async function authenticateVendor(request: NextRequest, vendorId: string) {
       return { error: 'NOT_FOUND', status: 404, message: 'Vendor not found' };
     }
 
+    if (!vendor.user) {
+      return { error: 'FORBIDDEN', status: 403, message: 'Vendor not linked to user account' };
+    }
+
     // Check if this user owns the vendor account
     const vendorUserId = typeof vendor.user === 'object' && vendor.user !== null
       ? (vendor.user as { id: string | number }).id

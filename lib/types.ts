@@ -319,6 +319,7 @@ export interface Vendor {
   featured?: boolean;
   partner?: boolean; // New field: indicates if vendor is also a strategic partner
   profileSubmitted?: boolean; // Indicates if vendor has submitted their profile for review
+  claimStatus?: 'unclaimed' | 'invited' | 'claimed'; // Whether vendor profile has been claimed by a user
   createdAt?: string;
   updatedAt?: string;
   publishedAt?: string;

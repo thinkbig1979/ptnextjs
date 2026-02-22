@@ -52,6 +52,7 @@ import Yachts from './payload/collections/Yachts';
 import TierUpgradeRequests from './payload/collections/TierUpgradeRequests';
 import ImportHistory from './payload/collections/ImportHistory';
 import AuditLogs from './payload/collections/AuditLogs';
+import VendorInvitations from './payload/collections/VendorInvitations';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -135,6 +136,7 @@ export default buildConfig({
     TierUpgradeRequests,
     ImportHistory,
     AuditLogs,
+    VendorInvitations,
   ],
 
   // TypeScript configuration

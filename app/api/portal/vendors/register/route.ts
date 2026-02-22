@@ -262,6 +262,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             collection: "vendors",
             data: {
               user: Number(userId),
+              claimStatus: 'claimed',
               companyName: data.companyName,
               slug,
               contactEmail: data.contactEmail,

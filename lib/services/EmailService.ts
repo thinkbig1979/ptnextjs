@@ -53,6 +53,16 @@ export interface UserEmailData {
 /**
  * Data for profile submission emails (when vendor submits profile for review)
  */
+/**
+ * Data for vendor invitation emails (when admin invites a vendor to claim their profile)
+ */
+export interface VendorInvitationEmailData {
+  companyName: string;
+  email: string;
+  claimUrl: string;
+  expiryDate: string;
+}
+
 export interface ProfileSubmissionEmailData {
   companyName: string;
   contactEmail: string;
@@ -1221,6 +1231,71 @@ export async function sendProfileSubmittedVendorEmail(
       'Error sending profile submitted vendor email:',
       errorMessage
     );
+    return {
+      success: false,
+      error: errorMessage,
+    };
+  }
+}
+
+/**
+ * Send email invitation for a vendor to claim their profile
+ * Contains a link with a unique claim token
+ *
+ * @param invitationData - Invitation information
+ * @returns Email operation result
+ */
+export async function sendVendorInvitationEmail(
+  invitationData: VendorInvitationEmailData
+): Promise<EmailResult> {
+  try {
+    const config = validateEmailConfig();
+    if (!config.valid) {
+      if (config.skipped) {
+        return { success: true };
+      }
+      console.error('Email configuration invalid:', config.errors);
+      return {
+        success: false,
+        error: 'Email service not configured',
+      };
+    }
+
+    const resend = getResendClient();
+    const template = loadTemplate('vendor-invitation');
+
+    if (!template) {
+      throw new Error('Unable to load vendor-invitation template');
+    }
+
+    const html = renderTemplate(template, {
+      COMPANY_NAME: invitationData.companyName,
+      CLAIM_URL: invitationData.claimUrl,
+      EXPIRY_DATE: invitationData.expiryDate,
+      CURRENT_YEAR: new Date().getFullYear().toString(),
+    });
+
+    const subject = `Claim Your Vendor Profile - ${invitationData.companyName}`;
+
+    const result = await resend.emails.send({
+      from: process.env.EMAIL_FROM_ADDRESS || 'notifications@resend.dev',
+      to: invitationData.email,
+      subject,
+      html,
+    });
+
+    if (result.error) {
+      console.error('Failed to send vendor invitation email:', result.error);
+      return {
+        success: false,
+        error: result.error.message,
+      };
+    }
+
+    return { success: true };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('Error sending vendor invitation email:', errorMessage);
     return {
       success: false,
       error: errorMessage,
