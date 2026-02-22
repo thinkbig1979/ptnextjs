@@ -66,6 +66,16 @@ const Vendors: CollectionConfig = {
         readOnly: true,
       },
     },
+    {
+      name: 'vendorInvitePanel',
+      type: 'ui',
+      admin: {
+        position: 'sidebar',
+        components: {
+          Field: '@/payload/components/VendorInvitePanel#VendorInvitePanel',
+        },
+      },
+    },
 
     // Tier Configuration
     {
