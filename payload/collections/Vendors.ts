@@ -15,7 +15,7 @@ const Vendors: CollectionConfig = {
   slug: 'vendors',
   admin: {
     useAsTitle: 'companyName',
-    defaultColumns: ['companyName', 'tier', 'published', 'featured', 'createdAt'],
+    defaultColumns: ['companyName', 'tier', 'claimStatus', 'published', 'featured', 'createdAt'],
     group: 'Content',
   },  access: {
     // Admins can CRUD all vendors
@@ -40,15 +40,30 @@ const Vendors: CollectionConfig = {
       name: 'user',
       type: 'relationship',
       relationTo: 'users',
-      required: true,
+      required: false,
       unique: true,
       hasMany: false,
       admin: {
         position: 'sidebar',
-        description: 'Associated user account',
+        description: 'Associated user account (empty for unclaimed vendor profiles)',
       },      access: {
         // @ts-expect-error - Payload CMS 3.x field-level access type compatibility
         update: isAdmin, // Only admins can change user relationship
+      },
+    },
+    {
+      name: 'claimStatus',
+      type: 'select',
+      options: [
+        { label: 'Unclaimed', value: 'unclaimed' },
+        { label: 'Invited', value: 'invited' },
+        { label: 'Claimed', value: 'claimed' },
+      ],
+      defaultValue: 'unclaimed',
+      admin: {
+        position: 'sidebar',
+        description: 'Indicates whether this vendor profile has been claimed by a user',
+        readOnly: true,
       },
     },
 
@@ -1816,7 +1831,11 @@ const Vendors: CollectionConfig = {
       async ({ doc, previousDoc, operation }) => {
         try {
           // Handle new vendor registration (admin notification)
+          // Skip for unclaimed vendors (no user linked, e.g. bulk-imported profiles)
           if (operation === 'create') {
+            if (!doc.user) {
+              return doc;
+            }
             // Extract userId from the user relationship (can be number, string, or object with id)
             const userId = typeof doc.user === 'object' && doc.user !== null
               ? String(doc.user.id)

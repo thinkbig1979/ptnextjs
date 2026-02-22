@@ -27,6 +27,7 @@ interface SubmitProfileErrorResponse {
   error: {
     code:
       | 'UNAUTHORIZED'
+      | 'FORBIDDEN'
       | 'VENDOR_NOT_FOUND'
       | 'ALREADY_SUBMITTED'
       | 'VALIDATION_ERROR'
@@ -115,6 +116,19 @@ export async function POST(
           },
         },
         { status: 404 }
+      );
+    }
+
+    if (!vendor.user) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: 'FORBIDDEN',
+            message: 'Vendor not linked to user account',
+          },
+        },
+        { status: 403 }
       );
     }
 

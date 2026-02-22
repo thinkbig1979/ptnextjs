@@ -469,6 +469,19 @@ export async function PATCH(
       );
     }
 
+    if (!vendor.user) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: 'FORBIDDEN',
+            message: 'Vendor not linked to user account',
+          },
+        },
+        { status: 403 }
+      );
+    }
+
     const isAdmin = user.role === 'admin';
 
     // Check ownership (vendor can only update their own profile)
