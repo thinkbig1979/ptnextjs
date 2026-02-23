@@ -3,6 +3,21 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Grid, Layers, Star, Edit3, BarChart } from "lucide-react";
 import Image from "next/image";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: 'Vendor Information | Paul Thames - Superyacht Technology Solutions',
+  description: 'Information for marine technology vendors about listing products and services on Paul Thames Superyacht Technology Solutions.',
+  openGraph: {
+    title: 'Vendor Information | Paul Thames',
+    description: 'Information for marine technology vendors about listing products and services on Paul Thames Superyacht Technology Solutions.',
+    type: 'website',
+    url: '/info-for-vendors',
+  },
+  alternates: {
+    canonical: '/info-for-vendors',
+  },
+};
 
 const tieredStructure = [
   {

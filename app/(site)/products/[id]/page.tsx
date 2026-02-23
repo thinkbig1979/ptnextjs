@@ -30,6 +30,8 @@ import {
   VisualDemo
 } from "@/components/product-comparison";
 import { VendorsNearYou } from "@/components/products/VendorsNearYou";
+import { Metadata } from "next";
+import JsonLd from "@/components/seo/JsonLd";
 
 // Force dynamic rendering - database not available at Docker build time
 export const dynamic = 'force-dynamic';
@@ -68,6 +70,43 @@ interface ProductDetailPageProps {
   params: Promise<{
     id: string;
   }>;
+}
+
+export async function generateMetadata({ params }: ProductDetailPageProps): Promise<Metadata> {
+  const { id } = await params;
+
+  let product = await payloadCMSDataService.getProductBySlug(id);
+  if (!product) {
+    product = await payloadCMSDataService.getProductById(id);
+  }
+
+  if (!product) {
+    return { title: 'Product Not Found' };
+  }
+
+  const description = (product.shortDescription || product.description || '').slice(0, 160);
+  const title = `${product.name} | Products | Paul Thames - Superyacht Technology Solutions`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title: `${product.name} | Products`,
+      description,
+      type: 'website',
+      url: `/products/${product.slug || product.id}`,
+      images: product.image ? [{ url: product.image }] : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${product.name} | Products`,
+      description,
+      images: product.image ? [product.image] : undefined,
+    },
+    alternates: {
+      canonical: `/products/${product.slug || product.id}`,
+    },
+  };
 }
 
 export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
@@ -135,6 +174,15 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
   return (
     <div className="min-h-screen py-12">
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        name: product.name,
+        description: product.shortDescription || product.description,
+        image: product.image ? [product.image] : undefined,
+        brand: product.vendorName ? { '@type': 'Brand', name: product.vendorName } : undefined,
+        category: product.category,
+      }} />
       <div className="container max-w-6xl">
         {/* Back Button */}
         <div className="mb-8">
