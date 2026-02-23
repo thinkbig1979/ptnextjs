@@ -1,6 +1,7 @@
 'use client';
 
 import React, { ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/context/AuthContext';
 import { hasTierAccess, type VendorTier } from '@/lib/utils/tier-validator';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -62,6 +63,7 @@ export function TierGate({
   showUpgradeMessage = true,
 }: TierGateProps): React.JSX.Element | null {
   const { tier, role } = useAuth();
+  const router = useRouter();
 
   // Determine if user has access
   const currentTier = (tier || 'free') as VendorTier;
@@ -108,7 +110,7 @@ export function TierGate({
             type="button"
             className="inline-flex items-center gap-1 text-sm font-medium text-accent dark:text-accent hover:text-accent dark:hover:text-accent underline"
             onClick={() => {
-              // TODO: Navigate to upgrade page
+              router.push('/vendor/dashboard/subscription');
             }}
           >
             <ArrowUpCircle className="h-4 w-4" />
