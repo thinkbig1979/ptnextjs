@@ -69,8 +69,8 @@ export function BrandStoryForm({ vendor, onSubmit }: BrandStoryFormProps) {
       videoDuration: vendor.videoDuration || '',
       videoTitle: vendor.videoTitle || '',
       videoDescription: vendor.videoDescription || '',
-      serviceAreas: (vendor.serviceAreas || []).map((area: any) => typeof area === 'string' ? area : area.area || area.value || ''),
-      companyValues: (vendor.companyValues || []).map((val: any) => typeof val === 'string' ? val : val.value || ''),
+      serviceAreas: (vendor.serviceAreas || []).map((area) => area.area || ''),
+      companyValues: (vendor.companyValues || []).map((val) => val.value || ''),
     },
   });
   // TODO: Fix TypeScript issue with useFieldArray
@@ -85,15 +85,15 @@ export function BrandStoryForm({ vendor, onSubmit }: BrandStoryFormProps) {
 
   // Temporary workaround - using state directly
   const [serviceAreasFields, setServiceAreasFields] = useState<Array<{id: string, value: string}>>(
-    (vendor.serviceAreas || []).map((area: any, idx: number) => ({
+    (vendor.serviceAreas || []).map((area, idx) => ({
       id: `area-${idx}`,
-      value: typeof area === 'string' ? area : area.area || area.value || ''
+      value: area.area || ''
     }))
   );
   const [companyValuesFields, setCompanyValuesFields] = useState<Array<{id: string, value: string}>>(
-    (vendor.companyValues || []).map((value: any, idx: number) => ({
+    (vendor.companyValues || []).map((val, idx) => ({
       id: `value-${idx}`,
-      value: typeof value === 'string' ? value : value.value || ''
+      value: val.value || ''
     }))
   );
 

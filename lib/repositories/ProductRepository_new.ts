@@ -12,6 +12,7 @@ import type { CacheService } from '@/lib/cache';
 import type { ProductQueryParams } from './types_new';
 import type { PaginatedResult } from '@/lib/types/pagination';
 import { normalizePaginationParams, calculatePaginationMetadata, PAGINATION_DEFAULTS } from '@/lib/types/pagination';
+import type { Where } from 'payload';
 
 export class ProductRepository extends BaseRepository {
   constructor(cache?: CacheService) {
@@ -45,7 +46,7 @@ export class ProductRepository extends BaseRepository {
     const fetcher = async () => {
       const payload = await this.getPayload();
 
-      const where: any = {};
+      const where: Where = {};
 
       if (params?.category) {
         where.category = {
@@ -89,7 +90,7 @@ export class ProductRepository extends BaseRepository {
     const fetcher = async () => {
       const payload = await this.getPayload();
 
-      const where: any = {};
+      const where: Where = {};
 
       if (params?.category) {
         where.category = {
