@@ -94,20 +94,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const payload = await getPayloadClient();
 
     // Update user status
+    // Timestamps (approvedAt/rejectedAt) are set automatically by the Users beforeChange hook
     const updateData: {
       status: 'approved' | 'rejected';
-      approved_at?: string;
-      rejected_at?: string;
-      rejection_reason?: string;
+      rejectionReason?: string;
     } = {
       status: action === 'approve' ? 'approved' : 'rejected',
     };
 
-    if (action === 'approve') {
-      updateData.approved_at = new Date().toISOString();
-    } else {
-      updateData.rejected_at = new Date().toISOString();
-      updateData.rejection_reason = rejectionReason;
+    if (action === 'reject') {
+      updateData.rejectionReason = rejectionReason;
     }
 
     const updatedUser = await payload.update({
