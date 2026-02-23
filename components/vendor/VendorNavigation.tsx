@@ -13,6 +13,7 @@ import {
   CreditCard,
   LogOut,
   Database,
+  BarChart3,
 } from 'lucide-react';
 
 interface VendorNavigationProps {
@@ -53,6 +54,12 @@ export function VendorNavigation({ className }: VendorNavigationProps) {
       label: 'Products',
       icon: Package,
       visible: tier === 'tier2', // Visible for tier2+ vendors
+    },
+    {
+      href: '/vendor/dashboard/analytics',
+      label: 'Analytics',
+      icon: BarChart3,
+      visible: tier === 'tier2' || tier === 'tier3',
     },
     {
       href: '/vendor/dashboard/subscription',
