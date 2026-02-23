@@ -95,12 +95,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // Update user status
     const updateData: {
-      status: 'active' | 'rejected';
+      status: 'approved' | 'rejected';
       approved_at?: string;
       rejected_at?: string;
       rejection_reason?: string;
     } = {
-      status: action === 'approve' ? 'active' : 'rejected',
+      status: action === 'approve' ? 'approved' : 'rejected',
     };
 
     if (action === 'approve') {
@@ -116,7 +116,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       data: updateData,
     });
 
-    // TODO: Send email notification to vendor
+    // Email notification is sent automatically via the Users collection afterChange hook
+    // when status transitions to 'approved' or 'rejected'
 
     return NextResponse.json({
       message: `Vendor ${action === 'approve' ? 'approved' : 'rejected'} successfully`,
