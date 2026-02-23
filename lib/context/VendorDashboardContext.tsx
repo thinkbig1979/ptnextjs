@@ -59,8 +59,8 @@ const ALLOWED_UPDATE_FIELDS = new Set([
  * to the API to ensure updates persist correctly.
  */
 // Exported for testing - pure function, no React dependency
-export function filterVendorPayload(vendor: any): Record<string, any> {
-  const filtered: Record<string, any> = {};
+export function filterVendorPayload(vendor: Record<string, unknown>): Record<string, unknown> {
+  const filtered: Record<string, unknown> = {};
 
   Object.entries(vendor).forEach(([key, value]) => {
     // Only include fields that are in the allowed list
@@ -82,7 +82,7 @@ export function filterVendorPayload(vendor: any): Record<string, any> {
     // Filter empty entries from array fields (e.g., companyValues, serviceAreas)
     // Payload requires non-empty values for required sub-fields
     if (Array.isArray(value)) {
-      const cleanedArray = value.filter((item: any) => {
+      const cleanedArray = (value as unknown[]).filter((item: unknown) => {
         if (typeof item === 'string') return item.trim() !== '';
         if (typeof item === 'object' && item !== null) {
           // Filter objects with empty required fields (e.g., { value: '' })
@@ -223,7 +223,7 @@ export function VendorDashboardProvider({
       const url = `/api/portal/vendors/${dataToSave.id}`;
 
       // Filter payload to only include updatable fields and convert empty strings
-      const payloadToSend = filterVendorPayload(dataToSave);
+      const payloadToSend = filterVendorPayload(dataToSave as unknown as Record<string, unknown>);
 
       // Use vendor.id for PUT (actual vendor ID, not user ID)
       const response = await fetch(url, {

@@ -101,11 +101,11 @@ function DashboardContent({
   profileCompletion,
   router,
 }: {
-  user: any;
-  tier: any;
+  user: { id: string; email: string; role: string };
+  tier: string | null;
   approvalStatus: string;
   profileCompletion: number;
-  router: any;
+  router: { push: (url: string) => void };
 }) {
   const normalizedTier = (tier as Tier) || 'free';
   const isMaxTier = normalizedTier === 'tier3';

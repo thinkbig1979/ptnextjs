@@ -26,7 +26,7 @@ import {
 
 interface PromotionPackFormProps {
   vendor: Vendor;
-  onSubmit?: (data: any) => Promise<void>;
+  onSubmit?: (data: Record<string, unknown>) => Promise<void>;
   isAdmin?: boolean;
 }
 
