@@ -110,8 +110,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/payload.config.ts ./
 COPY --from=builder --chown=nextjs:nodejs /app/package.json ./
 
 # Copy migration scripts for runtime
-# Note: PostgreSQL schema sync is handled by hitting /admin endpoint after server starts,
-# which triggers Payload initialization and Drizzle's push mode
+# PostgreSQL schema sync: entrypoint hits /api/health/ready which initializes
+# Payload and triggers Drizzle push mode BEFORE cache warmup
 COPY --from=builder --chown=nextjs:nodejs /app/scripts/run-migrations.js ./run-migrations.js
 COPY --from=builder --chown=nextjs:nodejs /app/scripts/docker-entrypoint.sh ./docker-entrypoint.sh
 RUN chmod +x ./docker-entrypoint.sh
