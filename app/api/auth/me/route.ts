@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { authService } from '@/lib/services/auth-service';
 import { getPayloadClient } from '@/lib/utils/get-payload-config';
+import { rateLimit } from '@/lib/middleware/rateLimit';
+
+const ME_RATE_LIMIT = {
+  maxRequests: 30,
+  windowMs: 60 * 1000,
+  identifier: '/api/auth/me',
+};
 
 /**
  * GET /api/auth/me
@@ -9,6 +16,7 @@ import { getPayloadClient } from '@/lib/utils/get-payload-config';
  * Also fetches fresh approval status and tier from database to ensure they're up-to-date
  */
 export async function GET(request: NextRequest): Promise<NextResponse> {
+  return rateLimit(request, async () => {
   try {
     // Extract token from httpOnly cookie
     const token = request.cookies.get('access_token')?.value;
@@ -76,4 +84,5 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       { status: 401 }
     );
   }
+  }, ME_RATE_LIMIT);
 }

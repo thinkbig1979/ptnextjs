@@ -36,7 +36,7 @@ export interface ValidationError {
   message: string;
   suggestion?: string;
   severity: 'error' | 'warning';
-  value?: any;
+  value?: unknown;
 }
 
 interface ValidationErrorsTableProps {

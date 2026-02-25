@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   description: "Payload CMS Admin Panel",
 };
 
-const serverFunction: ServerFunctionClient = async function (args: any) {
+const serverFunction: ServerFunctionClient = async function (args) {
   "use server";
   return handleServerFunctions({
     ...args,

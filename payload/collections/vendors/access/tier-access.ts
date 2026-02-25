@@ -43,9 +43,9 @@ export const tier3UpdateAccess: FieldAccess = createTierUpdateAccess('tier3');
  * @returns Admin condition function
  */
 export const createTierCondition = (minTier: 'tier1' | 'tier2' | 'tier3') => {
-  return (data: any) => {
+  return (data: Record<string, unknown>) => {
     const tierOrder = ['free', 'tier1', 'tier2', 'tier3'];
-    const vendorTier = data?.tier || 'free';
+    const vendorTier = (data?.tier as string) || 'free';
     return tierOrder.indexOf(vendorTier) >= tierOrder.indexOf(minTier);
   };
 };

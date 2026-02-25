@@ -31,6 +31,8 @@ import { VendorProductsSection } from "@/components/vendors/VendorProductsSectio
 import { VendorMediaGallery } from "@/components/vendors/VendorMediaGallery";
 import VendorReviewsWrapper from "./_components/vendor-reviews-wrapper";
 import JsonLd from "@/components/seo/JsonLd";
+import { PromotionPackSection } from "@/components/vendors/PromotionPackSection";
+import { EditorialContentSection } from "@/components/vendors/EditorialContentSection";
 
 // Force dynamic rendering - database not available at Docker build time
 export const dynamic = 'force-dynamic';
@@ -268,6 +270,8 @@ export default async function VendorDetailPage({ params }: VendorDetailPageProps
                 <VendorCaseStudiesSection vendor={vendor} />
                 <VendorTeamSection vendor={vendor} />
                 <VendorMediaGallery mediaGallery={vendor.mediaGallery} vendorName={vendor.name} vendorTier={vendor.tier} />
+                <PromotionPackSection vendor={vendor} />
+                <EditorialContentSection vendor={vendor} />
               </TabsContent>
 
               {/* Locations Tab */}

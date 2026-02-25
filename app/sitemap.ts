@@ -16,6 +16,8 @@ const STATIC_PAGES: { path: string; changeFrequency: MetadataRoute.Sitemap[numbe
   { path: '/products', changeFrequency: 'weekly', priority: 0.9 },
   { path: '/testimonials', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/vendors', changeFrequency: 'weekly', priority: 0.9 },
+  { path: '/custom-lighting/services', changeFrequency: 'monthly', priority: 0.7 },
+  { path: '/info-for-vendors', changeFrequency: 'monthly', priority: 0.7 },
 ]
 
 const BASE_URL = 'https://paulthames.com'
@@ -56,5 +58,33 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.warn('Sitemap: Could not fetch vendors:', e instanceof Error ? e.message : e)
   }
 
-  return [...staticEntries, ...blogEntries, ...vendorEntries]
+  let productEntries: MetadataRoute.Sitemap = []
+
+  try {
+    const products = await payloadCMSDataService.getAllProducts()
+    productEntries = products.map((product) => ({
+      url: `${BASE_URL}/products/${product.slug || product.id}`,
+      lastModified: product.updatedAt ? new Date(product.updatedAt) : new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
+    }))
+  } catch (e) {
+    console.warn('Sitemap: Could not fetch products:', e instanceof Error ? e.message : e)
+  }
+
+  let yachtEntries: MetadataRoute.Sitemap = []
+
+  try {
+    const yachts = await payloadCMSDataService.getYachts()
+    yachtEntries = yachts.map((yacht) => ({
+      url: `${BASE_URL}/yachts/${yacht.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.5,
+    }))
+  } catch (e) {
+    console.warn('Sitemap: Could not fetch yachts:', e instanceof Error ? e.message : e)
+  }
+
+  return [...staticEntries, ...blogEntries, ...vendorEntries, ...productEntries, ...yachtEntries]
 }

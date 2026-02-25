@@ -14,6 +14,13 @@ import {
   transformMediaPath,
   extractNumericValue,
 } from './base';
+import type {
+  YachtTimelineEvent,
+  YachtSupplierRole,
+  YachtSustainabilityMetrics,
+  YachtCustomization,
+  YachtMaintenanceRecord,
+} from '@/lib/types';
 
 /**
  * TinaCMS yacht data structure
@@ -112,13 +119,13 @@ export interface PayloadYacht {
   featured: boolean;
   published: boolean;
   tags?: string[];
-  timeline?: any;
-  supplierMap?: any;
-  sustainabilityScore?: any;
-  customizations?: any;
-  maintenanceHistory?: any;
-  seo?: any;
-  [key: string]: any;
+  timeline?: Partial<YachtTimelineEvent>[];
+  supplierMap?: Partial<YachtSupplierRole>[];
+  sustainabilityScore?: Partial<YachtSustainabilityMetrics>;
+  customizations?: Partial<YachtCustomization>[];
+  maintenanceHistory?: Partial<YachtMaintenanceRecord>[];
+  seo?: Record<string, unknown>;
+  [key: string]: unknown;
 }
 
 export async function transformYachtFromMarkdown(

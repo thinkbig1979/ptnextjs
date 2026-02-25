@@ -7,6 +7,7 @@ import { OptimizedImage } from '@/components/ui/optimized-image';
 import { payloadCMSDataService } from '@/lib/payload-cms-data-service';
 import { YachtTimelineEvent, YachtCustomization } from '@/lib/types';
 import { formatVendorLocation, getHQLocation } from '@/lib/utils/location';
+import { Metadata } from 'next';
 
 // Force dynamic rendering - database not available at Docker build time
 export const dynamic = 'force-dynamic';
@@ -29,7 +30,44 @@ export async function generateStaticParams() {
   }
 }
 
-export default async function YachtDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+interface YachtDetailPageProps {
+  params: Promise<{ slug: string }>;
+}
+
+export async function generateMetadata({ params }: YachtDetailPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const yacht = await payloadCMSDataService.getYachtBySlug(slug);
+
+  if (!yacht) {
+    return { title: 'Yacht Not Found' };
+  }
+
+  const description = (yacht.description || `Detailed profile of ${yacht.name}`).slice(0, 160);
+  const title = `${yacht.name} | Yachts | Paul Thames - Superyacht Technology Solutions`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title: `${yacht.name} | Yachts`,
+      description,
+      type: 'website',
+      url: `/yachts/${slug}`,
+      images: yacht.image ? [{ url: yacht.image }] : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${yacht.name} | Yachts`,
+      description,
+      images: yacht.image ? [yacht.image] : undefined,
+    },
+    alternates: {
+      canonical: `/yachts/${slug}`,
+    },
+  };
+}
+
+export default async function YachtDetailPage({ params }: YachtDetailPageProps) {
   try {
     const resolvedParams = await params;
     const yacht = await payloadCMSDataService.getYachtBySlug(resolvedParams.slug);

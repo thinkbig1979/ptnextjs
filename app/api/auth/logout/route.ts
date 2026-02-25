@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { decodeToken } from '@/lib/utils/jwt';
 import { deferLogLogout } from '@/lib/services/audit-service';
+import { rateLimit } from '@/lib/middleware/rateLimit';
+
+const LOGOUT_RATE_LIMIT = {
+  maxRequests: 10,
+  windowMs: 60 * 1000,
+  identifier: '/api/auth/logout',
+};
 
 /**
  * POST /api/auth/logout
@@ -8,6 +15,7 @@ import { deferLogLogout } from '@/lib/services/audit-service';
  * Clears authentication cookies and logs the logout event
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
+  return rateLimit(request, async () => {
   // Try to decode the access token to log the logout event
   const access_token = request.cookies.get('access_token')?.value;
   if (access_token) {
@@ -41,4 +49,5 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   });
 
   return response;
+  }, LOGOUT_RATE_LIMIT);
 }

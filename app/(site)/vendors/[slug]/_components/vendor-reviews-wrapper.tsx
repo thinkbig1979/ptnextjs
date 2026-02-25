@@ -6,12 +6,12 @@ import type { VendorReview } from "@/lib/types";
 interface VendorReviewsWrapperProps {
   vendorId: string;
   vendorSlug: string;
-  vendorReviews?: any[];
+  vendorReviews?: VendorReview[];
 }
 
 export default function VendorReviewsWrapper({ vendorId, vendorSlug, vendorReviews }: VendorReviewsWrapperProps) {
   // Transform Payload CMS reviews to VendorReview format
-  const transformedReviews: VendorReview[] = (vendorReviews || []).map((review: any) => ({
+  const transformedReviews: VendorReview[] = (vendorReviews || []).map((review) => ({
     id: review.id || String(Math.random()),
     vendorId,
     reviewerName: review.reviewerName || '',
@@ -20,8 +20,8 @@ export default function VendorReviewsWrapper({ vendorId, vendorSlug, vendorRevie
     projectType: review.projectType,
     overallRating: review.overallRating || 0,
     title: review.title,
-    review: review.reviewText?.root?.children?.[0]?.children?.[0]?.text || '',
-    reviewText: review.reviewText?.root?.children?.[0]?.children?.[0]?.text,
+    review: typeof review.reviewText === 'string' ? review.reviewText : '',
+    reviewText: typeof review.reviewText === 'string' ? review.reviewText : undefined,
     pros: review.pros || [],
     cons: review.cons || [],
     reviewDate: review.reviewDate,

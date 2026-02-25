@@ -118,8 +118,26 @@ const Categories: CollectionConfig = {
             throw new Error('A category cannot be its own parent');
           }
 
-          // TODO: Add recursive check to prevent circular dependencies
-          // (e.g., A -> B -> C -> A)
+          // Recursive check to prevent circular dependencies (A -> B -> C -> A)
+          const visited = new Set<string>();
+          let currentId = data.parentCategory;
+          while (currentId) {
+            if (visited.has(currentId)) {
+              throw new Error('Circular dependency detected: a category cannot have a parent chain that loops back to itself');
+            }
+            if (operation === 'update' && currentId === originalDoc?.id) {
+              throw new Error('Circular dependency detected: setting this parent would create a loop');
+            }
+            visited.add(currentId);
+            const parent = await req.payload.findByID({
+              collection: 'categories',
+              id: currentId,
+              depth: 0,
+            });
+            currentId = typeof parent?.parentCategory === 'string'
+              ? parent.parentCategory
+              : (parent?.parentCategory as { id?: string })?.id;
+          }
         }
 
         return data;

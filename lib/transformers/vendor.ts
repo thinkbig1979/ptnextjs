@@ -16,7 +16,14 @@ import {
   isValidEmail,
   isValidUrl,
 } from './base';
-import { markdownToLexical } from './markdown-to-lexical';
+import { markdownToLexical, type LexicalDocument } from './markdown-to-lexical';
+import type {
+  VendorCertification,
+  VendorAward,
+  TeamMember,
+  ServiceArea,
+  CompanyValue,
+} from '@/lib/types';
 
 /**
  * TinaCMS vendor data structure
@@ -198,8 +205,8 @@ export interface PayloadVendor {
   website?: string;
   linkedinUrl?: string;
   twitterUrl?: string;
-  certifications?: any[];
-  awards?: any[];
+  certifications?: Partial<VendorCertification>[];
+  awards?: Partial<VendorAward>[];
   totalProjects?: number;
   yearsInBusiness?: number;
   employeeCount?: number;
@@ -208,20 +215,20 @@ export interface PayloadVendor {
   clientSatisfactionScore?: number;
   repeatClientPercentage?: number;
   videoUrl?: string;
-  videoThumbnail?: any;
+  videoThumbnail?: string;
   videoDuration?: number;
   videoTitle?: string;
   videoDescription?: string;
-  caseStudies?: any[];
-  innovationHighlights?: any[];
-  teamMembers?: any[];
-  yachtProjects?: any[];
-  longDescription?: any;
-  serviceAreas?: any[];
-  companyValues?: any[];
+  caseStudies?: Record<string, unknown>[];
+  innovationHighlights?: Record<string, unknown>[];
+  teamMembers?: Partial<TeamMember>[];
+  yachtProjects?: Record<string, unknown>[];
+  longDescription?: string | LexicalDocument;
+  serviceAreas?: Partial<ServiceArea>[];
+  companyValues?: Partial<CompanyValue>[];
   featured: boolean;
   published: boolean;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export async function transformVendorFromMarkdown(

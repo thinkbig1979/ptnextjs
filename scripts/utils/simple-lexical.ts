@@ -1,35 +1,13 @@
 /**
- * Simple markdown to Lexical converter stub
- * TODO: Implement proper markdown to Lexical conversion
+ * Simple markdown to Lexical converter
+ *
+ * Delegates to the full implementation in lib/transformers/markdown-to-lexical.ts
+ * This file exists for convenience in migration scripts.
  */
 
-export function markdownToLexical(markdown: string): any {
-  return {
-    root: {
-      type: 'root',
-      format: '',
-      indent: 0,
-      version: 1,
-      children: [
-        {
-          type: 'paragraph',
-          format: '',
-          indent: 0,
-          version: 1,
-          children: [
-            {
-              type: 'text',
-              format: 0,
-              detail: 0,
-              mode: 'normal',
-              style: '',
-              text: markdown,
-              version: 1,
-            },
-          ],
-        },
-      ],
-      direction: 'ltr',
-    },
-  };
+import { markdownToLexical as fullMarkdownToLexical } from '../../lib/transformers/markdown-to-lexical';
+import type { LexicalDocument } from '../../lib/transformers/markdown-to-lexical';
+
+export function markdownToLexical(markdown: string): LexicalDocument {
+  return fullMarkdownToLexical(markdown);
 }

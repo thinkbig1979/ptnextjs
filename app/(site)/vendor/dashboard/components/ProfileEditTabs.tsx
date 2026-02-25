@@ -73,7 +73,7 @@ export function ProfileEditTabs({ vendor }: ProfileEditTabsProps) {
    * Wrapper function for form submissions
    * Updates vendor state and saves to backend
    */
-  const handleFormSave = async (data: any) => {
+  const handleFormSave = async (data: Partial<Vendor>) => {
     // Pass through form data as-is - API expects companyName field
     const vendorUpdates: Partial<Vendor> = { ...data };
 
