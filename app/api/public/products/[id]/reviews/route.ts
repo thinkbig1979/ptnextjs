@@ -16,8 +16,8 @@ export async function POST(
     const { id } = await params;
     const body = await request.json();
 
-    // Verify hCaptcha token first
-    if (process.env.HCAPTCHA_SECRET_KEY) {
+    // Verify hCaptcha token first (skip if captcha is disabled for testing)
+    if (process.env.HCAPTCHA_SECRET_KEY && process.env.DISABLE_CAPTCHA !== 'true') {
       if (!body.captchaToken) {
         return NextResponse.json(
           { error: 'Captcha verification required. Please complete the captcha challenge.' },
