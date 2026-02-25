@@ -102,7 +102,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         <AuthProvider>
           <ThemeProvider
             attribute="class"
-            defaultTheme="system"
+            defaultTheme="dark"
             enableSystem={true}
             disableTransitionOnChange={false}
           >
